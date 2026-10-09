@@ -45,3 +45,14 @@ MonoBehaviour:
   sampleSpacing: 1
   checkpointCount: 6
   boundaryMargin: 25
+  rivers: []
+  lakes: []
+  oil:
+  - distance: 113.16373
+    lateral: 1.4
+    radius: 1.3
+  - distance: 251.08202
+    lateral: -1.2
+    radius: 1.3
+  rampLength: 3
+  rampWidth: 2.8

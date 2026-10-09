@@ -89,6 +89,7 @@ namespace SomeGame.Track
                         fromKerb -= (outside ? cornerRunoff : cornerRunoffInside) * Mathf.SmoothStep(0f, 1f, Mathf.Abs(turn) / runoffFullTurn);
                     if (fromKerb < kind.clearance.x) continue;
                     if (kind.clearance.y > 0f && fromKerb > kind.clearance.y) continue;
+                    if (track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     float r = size * 0.45f;
                     if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;
 

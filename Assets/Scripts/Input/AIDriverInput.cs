@@ -25,6 +25,9 @@ namespace SomeGame.Input
         [Tooltip("Fraction of the car's brake power the AI plans with (leaves a safety margin).")]
         [SerializeField, Range(0.1f, 1f)] float brakeMargin = 0.75f;
 
+        [Tooltip("Distance before a jump at which the car is lined up with the kicker ramp.")]
+        [SerializeField, Min(1f)] float rampLineUp = 20f;
+
         TrackSensor _sensor;
         CarMovement _car;
 
@@ -58,11 +61,25 @@ namespace SomeGame.Input
             float speed = Mathf.Max(0f, _car.ForwardSpeed);
 
             float ahead = distance + lookAheadBase + speed * lookAheadPerSpeed;
-            Vector2 aim = path.PointAt(ahead) + path.NormalAt(ahead) * laneOffset;
+            Vector2 aim = path.PointAt(ahead) + path.NormalAt(ahead) * LateralFor(path, distance);
             SteerDirection = (aim - _car.Body.position).normalized;
 
             float targetSpeed = TargetSpeed(path, distance);
             Throttle = speed < targetSpeed - 0.3f ? 1f : speed > targetSpeed + 1.5f ? -1f : 0f;
+        }
+
+        // The car's own lane, except before a jump: then it lines up with the kicker ramp.
+        float LateralFor(TrackPath path, float distance)
+        {
+            float lateral = laneOffset;
+            foreach (var jump in _sensor.Track.Jumps)
+            {
+                float toLip = path.DeltaDistance(distance, jump.Lip);
+                if (toLip < -1f || toLip > rampLineUp * 1.6f) continue;
+                float blend = Mathf.InverseLerp(rampLineUp * 1.6f, rampLineUp, toLip);
+                lateral = Mathf.Lerp(laneOffset, jump.Lateral, blend);
+            }
+            return lateral;
         }
 
         /// <summary>Fastest speed from which every corner in the scan range can still be taken.</summary>

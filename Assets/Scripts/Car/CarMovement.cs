@@ -26,6 +26,9 @@ namespace SomeGame.Car
         float _hopTimer;       // > 0 right after the drift button was pressed: the stick may pick a side
         float _driftTightness; // 0 = widest drift, 1 = tightest, smoothed
         float _laggedHeading;  // where the car was pointing a moment ago (smoothed), for steering intent
+        float _airTimer, _airDuration;
+        float _slipTimer, _slipDuration;
+        Collider2D _collider;
 
         /// <summary>Raised on every collision with the closing speed of the impact.</summary>
         public event Action<float> Collided;
@@ -34,6 +37,11 @@ namespace SomeGame.Car
         public event Action Hopped;
         /// <summary>A drift was released with enough charge; argument is boost strength 0..1.</summary>
         public event Action<float> BoostStarted;
+        /// <summary>The car left a ramp; argument is the time in the air.</summary>
+        public event Action<float> Launched;
+        public event Action Landed;
+        /// <summary>The car hit an oil puddle.</summary>
+        public event Action Slipped;
 
         public CarStats Stats
         {
@@ -70,6 +78,10 @@ namespace SomeGame.Car
         /// <summary>Throttle applied in the last physics step (-1..1; negative = braking, 0 without control).</summary>
         public float Throttle { get; private set; }
         public bool IsBoosting => _boostTimer > 0f;
+        public bool IsAirborne => _airTimer > 0f;
+        /// <summary>0 at take-off and landing, 1 at the top of the jump.</summary>
+        public float AirHeight => IsAirborne ? Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration)) : 0f;
+        public bool IsSlipping => _slipTimer > 0f;
         /// <summary>Strength (0..1) of the boost currently running.</summary>
         public float BoostStrength { get; private set; }
 
@@ -77,6 +89,7 @@ namespace SomeGame.Car
         {
             _body = GetComponent<Rigidbody2D>();
             _input = GetComponent<ICarInput>();
+            _collider = GetComponent<Collider2D>();
             if (sensor == null) sensor = GetComponent<TrackSensor>();
             ApplyStats();
         }
@@ -90,6 +103,11 @@ namespace SomeGame.Car
         void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
+            if (IsAirborne)
+            {
+                Fly(dt);
+                return;
+            }
             Vector2 forward = transform.up, right = transform.right;
             Vector2 velocity = _body.linearVelocity;
             float forwardSpeed = Vector2.Dot(velocity, forward);
@@ -145,6 +163,12 @@ namespace SomeGame.Car
             // Lateral: grip bleeds off sideways velocity; less grip at speed lets the car slide in fast corners.
             float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(0.01f, stats.topSpeed));
             float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f);
+            if (IsSlipping)
+            {
+                // On oil the tyres barely hold: the car keeps sliding the way it was going.
+                _slipTimer -= dt;
+                grip *= Mathf.Lerp(1f, stats.oilGrip, Mathf.Clamp01(_slipTimer / (_slipDuration * 0.4f)));
+            }
             sidewaysSpeed *= Mathf.Exp(-grip * dt);
 
             _body.linearVelocity = forward * forwardSpeed + right * sidewaysSpeed;
@@ -164,7 +188,7 @@ namespace SomeGame.Car
             float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(direction));
             float speedFactor = Mathf.Lerp(stats.standstillTurnFactor, 1f,
                 Mathf.Clamp01(Mathf.Abs(forwardSpeed) / stats.fullTurnSpeed));
-            float recovery = _hitTimer > 0f ? 0.3f : 1f;
+            float recovery = _hitTimer > 0f ? 0.3f : IsSlipping ? stats.oilSteering : 1f;
             float maxStep = stats.turnRate * speedFactor * recovery * dt;
             _body.angularVelocity = Mathf.Clamp(delta, -maxStep, maxStep) / dt;
         }
@@ -261,6 +285,69 @@ namespace SomeGame.Car
         {
             _driftDirection = 0;
             _driftCharge = 0f;
+        }
+
+        /// <summary>Sends the car into the air (off a ramp) for <paramref name="duration"/> seconds.</summary>
+        public void Launch(float duration)
+        {
+            if (IsAirborne || duration <= 0f) return;
+            EndDrift();
+            _airDuration = _airTimer = duration;
+            _body.angularVelocity = 0f;
+            if (_collider != null) _collider.enabled = false; // flies over cars and scenery
+            Launched?.Invoke(duration);
+        }
+
+        // In the air the car keeps its speed and heading; the stick only nudges it a little.
+        void Fly(float dt)
+        {
+            _airTimer -= dt;
+            Vector2 steer = ControlsEnabled && _input != null ? _input.SteerDirection : Vector2.zero;
+            if (steer.sqrMagnitude > 0.0001f)
+            {
+                float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(steer));
+                _body.angularVelocity = Mathf.Clamp(delta, -stats.turnRate * stats.airSteering * dt, stats.turnRate * stats.airSteering * dt) / dt;
+            }
+            else _body.angularVelocity = 0f;
+            float speed = _body.linearVelocity.magnitude;
+            _body.linearVelocity = (Vector2)transform.up * speed;
+            ForwardSpeed = speed;
+            SidewaysSpeed = 0f;
+            if (_airTimer > 0f) return;
+
+            _airTimer = 0f;
+            if (_collider != null) _collider.enabled = true;
+            _body.linearVelocity *= stats.landingSpeedKeep;
+            Collided?.Invoke(stats.landingImpact); // a little camera shake
+            Landed?.Invoke();
+        }
+
+        /// <summary>Makes the car lose grip for a moment (oil), with a small kick into a spin.</summary>
+        public void Slip(float duration, float spin)
+        {
+            if (IsAirborne || IsSlipping) return;
+            EndDrift();
+            _slipDuration = _slipTimer = duration;
+            _body.angularVelocity += spin;
+            _hitTimer = Mathf.Max(_hitTimer, duration * 0.5f);
+            Slipped?.Invoke();
+        }
+
+        /// <summary>Puts the car back on the road (after a splash), standing still.</summary>
+        public void Respawn(Pose pose)
+        {
+            _airTimer = 0f;
+            _slipTimer = 0f;
+            _boostTimer = 0f;
+            EndDrift();
+            if (_collider != null) _collider.enabled = true;
+            transform.SetPositionAndRotation(pose.position, pose.rotation);
+            _body.position = pose.position;
+            _body.rotation = pose.rotation.eulerAngles.z;
+            _body.linearVelocity = Vector2.zero;
+            _body.angularVelocity = 0f;
+            ForwardSpeed = SidewaysSpeed = 0f;
+            if (sensor != null) sensor.Sample();
         }
 
         /// <summary>Body rotation (degrees) that faces a world direction; the sprite faces +Y.</summary>

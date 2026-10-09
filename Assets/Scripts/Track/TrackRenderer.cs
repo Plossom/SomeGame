@@ -167,7 +167,7 @@ namespace SomeGame.Track
                     vertices.Add(p + normal * (kerbEdge - 0.05f));
                     vertices.Add(p + normal * (kerbEdge + w));
                     uvs.Add(new Vector2(0f, v));
-                    uvs.Add(new Vector2(1f, v));
+                    uvs.Add(new Vector2(0.96f, v));
                     if (i == n) break;
                     int a = start + i * 2;
                     if (side == 0) triangles.AddRange(new[] { a, a + 2, a + 1, a + 1, a + 2, a + 3 });

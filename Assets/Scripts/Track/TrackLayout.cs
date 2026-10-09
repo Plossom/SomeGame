@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SomeGame.Track
@@ -25,6 +27,46 @@ namespace SomeGame.Track
         [Min(2)] public int checkpointCount = 6;
         [Tooltip("Grass margin around the track before the invisible boundary wall.")]
         [Min(5f)] public float boundaryMargin = 25f;
+
+        [Header("Water, jumps and oil")]
+        [Tooltip("Rivers (open polylines). Where a river crosses the road there is a jump: a ramp before the water.")]
+        public List<River> rivers = new();
+        [Tooltip("Lakes (ellipses) beside the track. Driving in means a splash and a restart nearby.")]
+        public List<Lake> lakes = new();
+        [Tooltip("Oil puddles on the road: a car that drives through loses grip for a moment.")]
+        public List<OilSpot> oil = new();
+        [Tooltip("Length of the small take-off ramp (kicker) before each river crossing.")]
+        [Min(1f)] public float rampLength = 3f;
+        [Tooltip("Width of the kicker. Only cars that hit it fly over the river.")]
+        [Min(1f)] public float rampWidth = 2.8f;
+
+        [Serializable]
+        public class River
+        {
+            public Vector2[] points = { new(-40, 0), new(40, 0) };
+            [Min(1f)] public float width = 6f;
+            [Tooltip("Sideways position of the kicker at each crossing, in lap order (positive = left of the centre line).")]
+            public float[] rampLaterals = { 0f };
+        }
+
+        [Serializable]
+        public class Lake
+        {
+            public Vector2 center;
+            public Vector2 radii = new(8f, 5f);
+            [Tooltip("Rotation in degrees.")]
+            public float angle;
+        }
+
+        [Serializable]
+        public class OilSpot
+        {
+            [Tooltip("Distance along the lap from the start line.")]
+            public float distance;
+            [Tooltip("Sideways offset from the centre line (positive = left).")]
+            public float lateral;
+            [Min(0.3f)] public float radius = 1.3f;
+        }
 
         /// <summary>Raised when the layout is edited in the Inspector, so the track can rebuild.</summary>
         public event System.Action Changed;

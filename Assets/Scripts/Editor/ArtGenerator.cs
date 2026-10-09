@@ -93,6 +93,9 @@ namespace SomeGame.EditorTools
                 new Color(0.97f, 0.96f, 0.9f, (y < 32f ? 0.92f : 0f) * Mathf.Clamp01(1f - Mathf.Abs(x - 8f) / 8f * 0.3f)), 32, true);
             World("StartLine", 64, 32, (x, y) => ((int)(x / 16) + (int)(y / 16)) % 2 == 0 ? Color.white : Hex("23272A"), 64, true);
             World("Post", 128, 128, PostPixel, 64, false);
+            World("Water", 128, 128, WaterPixel, 32, true);
+            World("Ramp", 128, 160, RampPixel, 64, false);
+            World("Oil", 128, 128, OilPixel, 64, false);
             World("Smoke", 64, 64, (x, y) =>
             {
                 // A soft, slightly lumpy puff: white, tinted by the particle colour.
@@ -113,6 +116,9 @@ namespace SomeGame.EditorTools
             Material("Ground", "Grass");
             Material("Scenery", "Scenery");
             Material("Trail", null);
+            Material("Water", "Water");
+            Material("Ramp", "Ramp");
+            Material("Oil", "Oil");
             Material("Smoke", "Smoke");
         }
 
@@ -269,6 +275,66 @@ namespace SomeGame.EditorTools
             Color c = Color.Lerp(Hex("E3C98F"), Hex("F0DCAA"), n);
             float edge = 0.78f + (Noise(y / 7f, 3.5f, 9) - 0.5f) * 0.3f;
             c.a = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(edge - 0.08f, edge + 0.08f, u));
+            return c;
+        }
+
+        // Water: blue with soft lighter and darker patches and short light wave strokes (tiles).
+        static Color WaterPixel(float x, float y)
+        {
+            float n = Noise(x / 24f, y / 24f, 5) * 0.65f + Noise(x / 9f, y / 9f, 14) * 0.35f;
+            Color c = Color.Lerp(Hex("3E93BC"), Hex("58ADD1"), n);
+            // Waves: short horizontal strokes on a staggered grid.
+            int row = (int)(y / 16f);
+            float wx = Mathf.Repeat(x + row * 23f, 32f), wy = Mathf.Repeat(y, 16f);
+            float wave = Capsule(wx, wy, 8f, 8f, 20f, 8f, 1.4f);
+            if (Hash(row, (int)((x + row * 23f) / 32f)) > 0.45f) c = Over(c, Hex("A9DCEE"), Fill(wave) * 0.85f);
+            return c;
+        }
+
+        // The kicker ramp seen from above, lip at the top (+y): a plate getting lighter toward the lip,
+        // red and white side rails, white arrows pointing forward, a bright lip edge.
+        static Color RampPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float plate = RoundRect(x, y, 64, 80, 58, 76, 6);
+            Color face = Color.Lerp(Hex("4A545C"), Hex("7C8790"), y / 160f);
+            c = Over(c, face, Fill(plate));
+            // Side rails.
+            foreach (float rx in new[] { 10f, 118f })
+            {
+                float rail = RoundRect(x, y, rx, 80, 5, 74, 2);
+                bool red = Mathf.Repeat(y, 24f) < 12f;
+                c = Over(c, red ? Hex("D8382E") : Hex("F7F5EE"), Fill(rail));
+            }
+            // Arrows.
+            for (int k = 0; k < 3; k++)
+            {
+                float ay = 30f + k * 42f;
+                float arrow = Mathf.Min(Capsule(x, y, 40, ay, 64, ay + 20, 6), Capsule(x, y, 88, ay, 64, ay + 20, 6));
+                c = Over(c, new Color(1f, 1f, 1f, 0.95f), Fill(arrow));
+            }
+            // Lip.
+            c = Over(c, Hex("F2C230"), Fill(RoundRect(x, y, 64, 152, 56, 4, 2)));
+            c = Over(c, Hex("14231E"), Stroke(plate, 4f));
+            return c;
+        }
+
+        // An oil puddle: an irregular glossy black blob with a soft rainbow sheen.
+        static Color OilPixel(float x, float y)
+        {
+            float a = Mathf.Atan2(y - 64f, x - 64f);
+            float r = 50f * (1f + 0.12f * Mathf.Sin(a * 3f + 0.7f) + 0.08f * Mathf.Sin(a * 5f + 2f));
+            float d = Dist(x, y, 64f, 64f) - r;
+            Color c = new(0.05f, 0.05f, 0.07f, 0.92f * Fill(d));
+            // A blob or two of drips near the edge.
+            c = Over(c, new Color(0.05f, 0.05f, 0.07f, 0.92f), Fill(Circle(x, y, 112f, 40f, 7f)));
+            c = Over(c, new Color(0.05f, 0.05f, 0.07f, 0.92f), Fill(Circle(x, y, 20f, 96f, 5f)));
+            // Rainbow sheen band.
+            float band = Mathf.Exp(-Mathf.Pow((Dist(x, y, 50f, 76f) - 22f) / 6f, 2f)) * Fill(d + 6f);
+            Color rainbow = Color.HSVToRGB(Mathf.Repeat(a / (Mathf.PI * 2f) + 0.5f, 1f), 0.6f, 0.9f);
+            rainbow.a = 0.55f;
+            c = Over(c, rainbow, band);
+            c = Over(c, new Color(1f, 1f, 1f, 0.7f), Fill(Capsule(x, y, 40f, 82f, 52f, 88f, 2.5f)) * Fill(d + 4f));
             return c;
         }
 

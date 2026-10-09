@@ -3,8 +3,9 @@ using UnityEngine;
 namespace SomeGame.Car
 {
     /// <summary>
-    /// Small visual hop whenever the drift button is pressed: the car sprite scales up and back down
-    /// while its shadow drifts away and returns. Only moves visuals, never the physics body.
+    /// Fakes height for the top-down car: a small hop whenever the drift button is pressed, and a big
+    /// arc while the car flies off a ramp. The sprite scales up and back down while its shadow drifts
+    /// away and returns. Only moves visuals, never the physics body.
     /// </summary>
     [RequireComponent(typeof(CarMovement))]
     public class CarHop : MonoBehaviour
@@ -14,8 +15,12 @@ namespace SomeGame.Car
         [Tooltip("The drop shadow (child object), offset further while in the air.")]
         [SerializeField] Transform shadow;
         [SerializeField, Min(0.01f)] float duration = 0.28f;
-        [Tooltip("Sprite scale at the top of the hop.")]
-        [SerializeField, Min(1f)] float peakScale = 1.22f;
+        [Tooltip("Sprite scale at the top of the drift hop.")]
+        [SerializeField, Min(1f)] float peakScale = 1.08f;
+        [Tooltip("Sprite scale at the top of a ramp jump.")]
+        [SerializeField, Min(1f)] float jumpScale = 1.3f;
+        [Tooltip("Shadow offset at the top of a ramp jump (the hop uses shadowLift).")]
+        [SerializeField] Vector2 jumpShadowLift = new(0.8f, -1f);
         [SerializeField] Vector2 shadowOffset = new(0.08f, -0.1f);
         [Tooltip("Extra shadow offset at the top of the hop.")]
         [SerializeField] Vector2 shadowLift = new(0.25f, -0.3f);
@@ -45,7 +50,19 @@ namespace SomeGame.Car
 
         void Update()
         {
-            if (_time < 0f) return;
+            if (_car.IsAirborne)
+            {
+                float h = _car.AirHeight;
+                if (visual != null) visual.localScale = _visualScale * Mathf.Lerp(1f, jumpScale, h);
+                if (shadow != null) shadow.localPosition = shadowOffset + jumpShadowLift * h;
+                _time = -1f;
+                return;
+            }
+            if (_time < 0f)
+            {
+                Apply(0f);
+                return;
+            }
             _time += Time.deltaTime;
             float t = _time / duration;
             if (t >= 1f)

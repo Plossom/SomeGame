@@ -102,5 +102,23 @@ namespace SomeGame.Car
         [Min(0f)] public float hitRecoveryTime = 0.35f;
         [Tooltip("Rigidbody mass. Heavier cars push lighter ones more.")]
         [Min(0.01f)] public float mass = 1f;
+
+        [Header("Jumps and oil")]
+        [Tooltip("Time in the air off a ramp: base plus this much per unit of speed.")]
+        public float airTimeBase = 0.28f;
+        public float airTimePerSpeed = 0.03f;
+        [Tooltip("How much the stick can turn the car in the air (fraction of the turn rate).")]
+        [Range(0f, 1f)] public float airSteering = 0.15f;
+        [Tooltip("Speed kept on landing.")]
+        [Range(0.5f, 1f)] public float landingSpeedKeep = 0.94f;
+        [Tooltip("Impact reported on landing (drives the camera shake).")]
+        public float landingImpact = 7f;
+        [Tooltip("Grip left at the start of an oil slide (fraction).")]
+        [Range(0f, 1f)] public float oilGrip = 0.08f;
+        [Tooltip("Steering left while sliding on oil (fraction).")]
+        [Range(0f, 1f)] public float oilSteering = 0.35f;
+        public float oilSlideSeconds = 1.2f;
+        [Tooltip("Spin kick (degrees per second) when hitting oil.")]
+        public float oilSpin = 160f;
     }
 }

@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Level02
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Pine Pass
+  displayName: River Jump
   chapter: "ALPINE CUP \xB7 RACE 2"
-  track: {fileID: 11400000, guid: e500d766ff1cc489e84aa2831ce0d3c9, type: 2}
+  track: {fileID: 11400000, guid: 3ce33ba26a9dc4a698942ef4b84bf3ca, type: 2}
   laps: 2
   rivalCount: 7
   rivalSpeedScale: 0.94
   rivalCornerScale: 0.92
   starsRequired: 1
   starTimes:
-  - 59.5
-  - 55.5
-  - 52.5
+  - 53
+  - 49.7
+  - 46.8

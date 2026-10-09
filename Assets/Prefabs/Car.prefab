@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6558371842738968839}
   - component: {fileID: 4003634913073525109}
   - component: {fileID: 6502800385224107047}
+  - component: {fileID: 4904072248561120939}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -103,7 +104,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.95, y: 1.7}
+  m_Size: {x: 1.32, y: 2.3}
   m_Direction: 0
 --- !u!114 &1937283969332157007
 MonoBehaviour:
@@ -184,7 +185,9 @@ MonoBehaviour:
   visual: {fileID: 179396151513136830}
   shadow: {fileID: 1297978802845913396}
   duration: 0.28
-  peakScale: 1.22
+  peakScale: 1.08
+  jumpScale: 1.3
+  jumpShadowLift: {x: 0.8, y: -1}
   shadowOffset: {x: 0.14, y: -0.18}
   shadowLift: {x: 0.18, y: -0.22}
 --- !u!114 &6502800385224107047
@@ -214,6 +217,23 @@ MonoBehaviour:
   lifetime: {x: 0.6, y: 1.2}
   startSize: {x: 0.4, y: 0.65}
   growth: 3.5
+--- !u!114 &4904072248561120939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026754258347199695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0764a0e33b27c43a1b16b50aad6e1436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.CarTerrain
+  particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
+  minLaunchSpeed: 4
+  respawnBack: 6
+  blinkSeconds: 1.2
+  sortingOrder: 13
 --- !u!1 &3861201061229663733
 GameObject:
   m_ObjectHideFlags: 0
