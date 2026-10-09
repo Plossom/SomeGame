@@ -3,9 +3,9 @@ using UnityEngine;
 namespace SomeGame.Car
 {
     /// <summary>
-    /// Exhaust smoke from the back of the car: soft grey puffs that grow and fade behind it. The more
-    /// throttle the car puts down, the more (and darker) smoke, most when accelerating from low speed;
-    /// a boost adds a thick burst. Purely visual.
+    /// Exhaust smoke from the back of the car: soft puffs that grow and fade behind it. It only shows
+    /// while the car accelerates hard from low speed (the start, slow corners, after a crash) and fades
+    /// out as the car gets up to speed; a boost adds a thick trail. Purely visual.
     /// </summary>
     [RequireComponent(typeof(CarMovement))]
     public class EngineSmoke : MonoBehaviour
@@ -18,8 +18,10 @@ namespace SomeGame.Car
         [Header("Amount")]
         [Tooltip("Puffs per second per pipe at full intensity.")]
         [SerializeField, Min(0f)] float maxRate = 30f;
-        [Tooltip("Share of the intensity that full throttle gives even at top speed (the rest comes from accelerating).")]
-        [Range(0f, 1f)] [SerializeField] float cruiseShare = 0.3f;
+        [Tooltip("Speed (fraction of top speed) at which the smoke has faded out completely.")]
+        [Range(0.1f, 1f)] [SerializeField] float fadeOutSpeed = 0.8f;
+        [Tooltip("Extra puffs per world unit travelled at full intensity, so a fast car leaves a continuous trail instead of dots.")]
+        [SerializeField, Min(0f)] float ratePerUnit = 2.5f;
         [Tooltip("Intensity added while a boost runs.")]
         [SerializeField, Min(0f)] float boostIntensity = 1f;
         [Tooltip("How quickly the smoke follows throttle changes.")]
@@ -51,7 +53,8 @@ namespace SomeGame.Car
         {
             float throttle = Mathf.Clamp01(_car.Throttle);
             float speed01 = _car.Stats != null ? Mathf.Clamp01(_car.ForwardSpeed / _car.Stats.topSpeed) : 0f;
-            float target = throttle * (cruiseShare + (1f - cruiseShare) * (1f - speed01));
+            float lowSpeed = 1f - Mathf.Clamp01(speed01 / fadeOutSpeed);
+            float target = throttle * lowSpeed;
             if (_car.IsBoosting) target += boostIntensity * Mathf.Max(0.5f, _car.BoostStrength);
             _intensity = Mathf.MoveTowards(_intensity, target, response * Time.deltaTime);
 
@@ -60,6 +63,7 @@ namespace SomeGame.Car
             {
                 var emission = system.emission;
                 emission.rateOverTime = maxRate * _intensity;
+                emission.rateOverDistance = ratePerUnit * _intensity;
                 var main = system.main;
                 main.startColor = Color.Lerp(lightSmoke, heavySmoke, heavy * heavy);
                 main.startSize = new ParticleSystem.MinMaxCurve(startSize.x * (0.8f + heavy * 0.5f), startSize.y * (0.8f + heavy * 0.5f));

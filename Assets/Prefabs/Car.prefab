@@ -205,7 +205,8 @@ MonoBehaviour:
   - {x: 0.32, y: -1.12}
   sortingOrder: 8
   maxRate: 30
-  cruiseShare: 0.3
+  fadeOutSpeed: 0.8
+  ratePerUnit: 2.5
   boostIntensity: 1
   response: 6
   lightSmoke: {r: 1, g: 1, b: 0.98, a: 0.45}
