@@ -3039,7 +3039,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 14
+  orthographic size: 16
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -3083,11 +3083,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.CameraRig.FollowCamera
   target: {fileID: 1352056958}
-  orthographicSize: 14
+  orthographicSize: 16
   followSmoothTime: 0.12
   lookAheadTime: 0.35
-  maxLookAhead: 4
-  framingOffset: {x: 0, y: -3}
+  maxLookAhead: 6
+  framingOffset: {x: 0, y: 0}
+  minCarScreenHeight: 0.4
   lookAheadSmoothTime: 0.5
 --- !u!114 &1585216747
 MonoBehaviour:

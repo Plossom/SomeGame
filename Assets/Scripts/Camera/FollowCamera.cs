@@ -11,14 +11,17 @@ namespace SomeGame.CameraRig
     {
         [SerializeField] Rigidbody2D target;
         [Tooltip("Zoom: half the visible height in world units.")]
-        [SerializeField, Min(1f)] float orthographicSize = 14f;
+        [SerializeField, Min(1f)] float orthographicSize = 16f;
         [Tooltip("Seconds to catch up with the target (lower = tighter).")]
         [SerializeField, Min(0f)] float followSmoothTime = 0.12f;
         [Tooltip("Look this many seconds ahead along the velocity.")]
         [SerializeField, Min(0f)] float lookAheadTime = 0.35f;
-        [SerializeField, Min(0f)] float maxLookAhead = 4f;
-        [Tooltip("Constant camera offset from the car. Negative Y keeps the car above the thumb zone.")]
-        [SerializeField] Vector2 framingOffset = new(0f, -3f);
+        [SerializeField, Min(0f)] float maxLookAhead = 6f;
+        [Tooltip("Constant camera offset from the car (world units).")]
+        [SerializeField] Vector2 framingOffset = Vector2.zero;
+        [Tooltip("The car never sits lower than this fraction of the screen height (0 = bottom, 0.5 = centre), " +
+                 "so look-ahead while driving up the screen does not put it under the thumb.")]
+        [SerializeField, Range(0f, 0.5f)] float minCarScreenHeight = 0.4f;
         [SerializeField, Min(0f)] float lookAheadSmoothTime = 0.5f;
 
         Camera _camera;
@@ -75,7 +78,11 @@ namespace SomeGame.CameraRig
 
         void Apply()
         {
-            Vector2 p = _focus + _lookAhead + framingOffset + Offset;
+            Vector2 p = _focus + _lookAhead + framingOffset;
+            // Keep the car at or above minCarScreenHeight: limit how far the camera sits above it.
+            float carY = target != null ? target.transform.position.y : p.y;
+            p.y = Mathf.Min(p.y, carY + orthographicSize * (1f - 2f * minCarScreenHeight));
+            p += Offset;
             transform.SetPositionAndRotation(new Vector3(p.x, p.y, transform.position.z), Quaternion.identity);
             _camera.orthographicSize = orthographicSize;
         }
