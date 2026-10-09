@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1937283969332157007}
   - component: {fileID: 7031315524231174173}
   - component: {fileID: 9026882871104141456}
+  - component: {fileID: 6558371842738968839}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -201,3 +202,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a5abff000303446d9f455826074d890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.RaceProgress
+--- !u!114 &6558371842738968839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026754258347199695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2a8edb0e41f4f878edefeaa53757cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.TyreMarks
+  material: {fileID: 2100000, guid: 91ad993c91c2b4a78a61533d74491229, type: 2}
+  wheels:
+  - {x: -0.38, y: -0.55}
+  - {x: 0.38, y: -0.55}
+  width: 0.2
+  fadeSeconds: 4
+  color: {r: 0.12, g: 0.12, b: 0.12, a: 0.55}
+  sortingOrder: -40
