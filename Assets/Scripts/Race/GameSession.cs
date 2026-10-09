@@ -16,8 +16,11 @@ namespace SomeGame.Race
 
         public static void StartRace(LevelDefinition level)
         {
+            if (Loading) return;
             CurrentLevel = level;
-            Load(RaceScene);
+            // The loading screen shows the track and the progress, then hands over to the race.
+            Loading = true;
+            SomeGame.UI.LoadingScreen.Show(level, RaceScene, () => Loading = false);
         }
 
         public static void ReturnToMap() => Load(MapScene);

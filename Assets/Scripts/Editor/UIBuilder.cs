@@ -31,6 +31,72 @@ namespace SomeGame.EditorTools
             EditorSceneManager.SaveOpenScenes();
             BuildRace();
             BuildMap();
+            BuildLoadingScreen();
+        }
+
+        // ================================================================== LOADING SCREEN
+
+        public const string LoadingScreenPath = "Assets/Resources/LoadingScreen.prefab";
+
+        [MenuItem("SomeGame/Rebuild Loading Screen")]
+        public static void BuildLoadingScreen()
+        {
+            LoadFonts();
+            var canvas = CreateCanvas();
+            canvas.name = "LoadingScreen";
+            canvas.GetComponent<Canvas>().sortingOrder = 100;
+            var group = canvas.gameObject.AddComponent<CanvasGroup>();
+            Img(Stretch("Background", canvas), null, Theme.Cream, raycast: true);
+            Img(At("HillBack", canvas, new Vector2(0.5f, 0f), new Vector2(-300f, -760f), new Vector2(2000f, 1500f)), "Circle", Hex("9CC383")).preserveAspect = false;
+            Img(At("HillFront", canvas, new Vector2(0.5f, 0f), new Vector2(260f, -960f), new Vector2(2200f, 1600f)), "Circle", Hex("7FB06C")).preserveAspect = false;
+            var safe = SafeArea(canvas);
+            var band = At("Checker", safe, new Vector2(0.5f, 1f), new Vector2(0f, -60f), new Vector2(1400f, 80f));
+            var checker = Img(band, "Checker", Color.white);
+            checker.type = Image.Type.Tiled; checker.preserveAspect = false; checker.pixelsPerUnitMultiplier = 1.6f;
+
+            var chapter = Txt(At("Chapter", safe, new Vector2(0.5f, 1f), new Vector2(0f, -190f), new Vector2(1000f, 60f)), "ALPINE CUP · RACE 1", 44, Theme.Rust, _condItalic);
+            chapter.characterSpacing = 8f;
+            var title = Txt(At("Title", safe, new Vector2(0.5f, 1f), new Vector2(0f, -250f), new Vector2(1050f, 190f)), "MEADOW RUN", 170, Theme.Ink, _black);
+            title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 170;
+            var details = Txt(At("Details", safe, new Vector2(0.5f, 1f), new Vector2(0f, -450f), new Vector2(1000f, 60f)), "3 laps  ·  7 rivals", 44, Theme.InkSoft, _bold);
+
+            // The track picture in a framed card with a hard shadow.
+            var card = At("Preview", safe, new Vector2(0.5f, 1f), new Vector2(0f, -560f), new Vector2(860f, 1500f));
+            var cardShadow = Stretch("Shadow", card);
+            cardShadow.offsetMin = cardShadow.offsetMax = new Vector2(0f, -22f);
+            Img(cardShadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
+            Img(Stretch("Frame", card), "Round", Theme.Ink, sliced: true);
+            var picture = Stretch("Picture", card);
+            picture.offsetMin = new Vector2(22f, 22f); picture.offsetMax = new Vector2(-22f, -22f);
+            var previewImage = Img(picture, null, Color.white);
+            previewImage.preserveAspect = true;
+
+            // Progress bar with the buggy riding along it.
+            var bar = At("Bar", safe, new Vector2(0.5f, 0f), new Vector2(0f, 230f), new Vector2(900f, 56f));
+            Img(bar, "Pill", Theme.Ink, sliced: true);
+            var fillRt = Stretch("Fill", bar);
+            fillRt.offsetMin = new Vector2(8f, 8f); fillRt.offsetMax = new Vector2(-8f, -8f);
+            var fill = Img(fillRt, "Pill", Theme.Orange);
+            fill.type = Image.Type.Filled; fill.fillMethod = Image.FillMethod.Horizontal; fill.fillAmount = 0.3f; fill.preserveAspect = false;
+            var track = Rt("CarTrack", bar);
+            track.anchorMin = new Vector2(0f, 0.5f); track.anchorMax = new Vector2(1f, 0.5f); track.sizeDelta = new Vector2(0f, 0f);
+            var car = At("Car", track, new Vector2(0f, 0.5f), new Vector2(0f, 74f), new Vector2(70f, 122f));
+            car.pivot = new Vector2(0.5f, 0.5f);
+            car.localRotation = Quaternion.Euler(0f, 0f, -90f);
+            Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
+            Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
+            var percent = Txt(At("Percent", safe, new Vector2(0.5f, 0f), new Vector2(0f, 120f), new Vector2(900f, 70f)), "LOADING 30%", 48, Theme.Ink, _condItalic);
+            percent.characterSpacing = 6f;
+
+            var screen = canvas.gameObject.AddComponent<LoadingScreen>();
+            var so = new SerializedObject(screen);
+            Set(so, "group", group); Set(so, "preview", previewImage); Set(so, "chapter", chapter); Set(so, "title", title);
+            Set(so, "details", details); Set(so, "barFill", fill); Set(so, "barCar", car); Set(so, "percent", percent);
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            System.IO.Directory.CreateDirectory("Assets/Resources");
+            PrefabUtility.SaveAsPrefabAsset(canvas.gameObject, LoadingScreenPath);
+            Object.DestroyImmediate(canvas.gameObject);
         }
 
         // ================================================================== MAP

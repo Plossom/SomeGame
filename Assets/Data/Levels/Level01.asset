@@ -15,6 +15,7 @@ MonoBehaviour:
   displayName: Meadow Run
   chapter: "ALPINE CUP \xB7 RACE 1"
   track: {fileID: 11400000, guid: 546c27345ae2748229da7e06f2dcaddb, type: 2}
+  preview: {fileID: 21300000, guid: c6e382da33f42453b97c85bd7473962f, type: 3}
   laps: 3
   rivalCount: 7
   rivalSpeedScale: 0.95

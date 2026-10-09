@@ -71,7 +71,7 @@ namespace SomeGame.Car
             {
                 Vector2 local = shortcut.Local(position);
                 bool onApproach = local.y < -shortcut.Length * 0.5f;
-                float halfWidth = shortcut.Width * 0.5f + (onApproach ? 1.4f : 0f);
+                float halfWidth = shortcut.Width * 0.5f + (onApproach ? 0.2f : 0f);
                 if (Mathf.Abs(local.x) > halfWidth || local.y < -shortcut.Length * 0.5f - 3.4f || local.y > shortcut.Length * 0.5f) continue;
                 _car.OnRamp = true;
                 // Take off anywhere on the front half, when moving roughly along the arrows.

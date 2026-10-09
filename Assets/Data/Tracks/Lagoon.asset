@@ -126,16 +126,16 @@ MonoBehaviour:
   oil:
   - distance: 105.63663
     lateral: -1
-    radius: 1.15
+    radius: 0.9775
   - distance: 194.64668
     lateral: 1
-    radius: 1.15
+    radius: 0.9775
   - distance: 437.08984
     lateral: -1
-    radius: 1.15
+    radius: 0.9775
   - distance: 380.4535
     lateral: 0.6
-    radius: 1.15
+    radius: 0.9775
   rampLength: 3
   rampWidth: 3.2
   shortcuts:

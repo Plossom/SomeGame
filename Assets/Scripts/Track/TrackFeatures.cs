@@ -75,7 +75,7 @@ namespace SomeGame.Track
                 r.Quad(ramp.Centre, across * (ramp.Width * 0.5f), ramp.Direction * (ramp.Length * 0.5f), new Rect(0f, 0f, 1f, 1f));
                 // Sandy approach from the road to the ramp.
                 Vector2 padCentre = ramp.Centre - ramp.Direction * (ramp.Length * 0.5f + 1.4f);
-                Vector2 hx = across * (ramp.Width * 0.5f + 1.4f), hy = ramp.Direction * 2f;
+                Vector2 hx = across * (ramp.Width * 0.5f + 0.2f), hy = ramp.Direction * 2f;
                 pads.QuadPoints(padCentre - hx - hy, padCentre + hx - hy, padCentre + hx + hy, padCentre - hx + hy,
                     new Vector2(0.2f, 0f), new Vector2(0.2f, 1f), new Vector2(0.2f, 1f), new Vector2(0.2f, 0f));
             }
