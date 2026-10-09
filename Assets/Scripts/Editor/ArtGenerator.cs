@@ -93,6 +93,15 @@ namespace SomeGame.EditorTools
                 new Color(0.97f, 0.96f, 0.9f, (y < 32f ? 0.92f : 0f) * Mathf.Clamp01(1f - Mathf.Abs(x - 8f) / 8f * 0.3f)), 32, true);
             World("StartLine", 64, 32, (x, y) => ((int)(x / 16) + (int)(y / 16)) % 2 == 0 ? Color.white : Hex("23272A"), 64, true);
             World("Post", 128, 128, PostPixel, 64, false);
+            World("Smoke", 64, 64, (x, y) =>
+            {
+                // A soft, slightly lumpy puff: white, tinted by the particle colour.
+                float a = Mathf.Atan2(y - 32f, x - 32f);
+                float r = 26f * (1f + 0.025f * Mathf.Sin(a * 3f + 1f));
+                float d = Dist(x, y, 32f, 32f);
+                float soft = Mathf.Clamp01(1f - d / r);
+                return White(Mathf.SmoothStep(0f, 1f, soft) * 0.9f);
+            }, 64, false);
             World("Scenery", 1024, 512, SceneryPixel, 128, false);
 
             Material("Road", "Asphalt");
@@ -104,6 +113,7 @@ namespace SomeGame.EditorTools
             Material("Ground", "Grass");
             Material("Scenery", "Scenery");
             Material("Trail", null);
+            Material("Smoke", "Smoke");
         }
 
         // ---------- car: off-road buggy, nose up ----------

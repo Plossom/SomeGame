@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 9026882871104141456}
   - component: {fileID: 6558371842738968839}
   - component: {fileID: 4003634913073525109}
+  - component: {fileID: 6502800385224107047}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -186,6 +187,32 @@ MonoBehaviour:
   peakScale: 1.22
   shadowOffset: {x: 0.14, y: -0.18}
   shadowLift: {x: 0.18, y: -0.22}
+--- !u!114 &6502800385224107047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026754258347199695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9f030d8bc294d718a143708cd90c11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.EngineSmoke
+  particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
+  exhausts:
+  - {x: -0.32, y: -1.12}
+  - {x: 0.32, y: -1.12}
+  sortingOrder: 8
+  maxRate: 30
+  cruiseShare: 0.3
+  boostIntensity: 1
+  response: 6
+  lightSmoke: {r: 1, g: 1, b: 0.98, a: 0.45}
+  heavySmoke: {r: 0.82, g: 0.82, b: 0.8, a: 0.8}
+  lifetime: {x: 0.6, y: 1.2}
+  startSize: {x: 0.4, y: 0.65}
+  growth: 3.5
 --- !u!1 &3861201061229663733
 GameObject:
   m_ObjectHideFlags: 0

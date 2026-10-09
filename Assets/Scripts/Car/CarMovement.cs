@@ -67,6 +67,8 @@ namespace SomeGame.Car
                 return _driftCharge >= (stats.driftMinCharge + stats.driftMaxCharge) * 0.5f ? 2 : 1;
             }
         }
+        /// <summary>Throttle applied in the last physics step (-1..1; negative = braking, 0 without control).</summary>
+        public float Throttle { get; private set; }
         public bool IsBoosting => _boostTimer > 0f;
         /// <summary>Strength (0..1) of the boost currently running.</summary>
         public float BoostStrength { get; private set; }
@@ -96,6 +98,7 @@ namespace SomeGame.Car
             bool offRoad = IsOffRoad;
             bool hasControl = ControlsEnabled && _input != null;
             float throttle = hasControl ? Mathf.Clamp(_input.Throttle, -1f, 1f) : 0f;
+            Throttle = throttle;
             Vector2 steer = hasControl ? _input.SteerDirection : Vector2.zero;
             bool driftHeld = hasControl && _input.DriftHeld;
             if (driftHeld && !_driftHeldLastStep)
