@@ -44,6 +44,8 @@ namespace SomeGame.EditorTools
             WriteMaterial("Road", "RoadSurface");
             WriteMaterial("Kerb", "Kerb");
             WriteMaterial("StartLine", "StartLine");
+            WriteMaterial("Grass", "Grass");
+            WriteMaterial("Tree", "Tree");
             WriteMaterial("TyreMark", null);
 
             AssetDatabase.Refresh();
