@@ -23,10 +23,6 @@ namespace SomeGame.Track
         [Min(0.25f)] public float sampleSpacing = 1f;
         [Tooltip("Checkpoints evenly spaced along the lap, checkpoint 0 is the start/finish line.")]
         [Min(2)] public int checkpointCount = 12;
-        [Tooltip("Grass run-off between the kerb and the barrier wall on each side.")]
-        [Min(0f)] public float barrierRunOff = 6f;
-        [Tooltip("Thickness of the barrier wall.")]
-        [Min(0.1f)] public float barrierWidth = 0.7f;
         [Tooltip("Grass margin around the track before the invisible boundary wall.")]
         [Min(5f)] public float boundaryMargin = 25f;
 
@@ -38,7 +34,5 @@ namespace SomeGame.Track
         public float HalfWidth => roadWidth * 0.5f;
         /// <summary>Lateral distance from the centre line beyond which a car is on grass.</summary>
         public float OffRoadDistance => HalfWidth + kerbWidth;
-        /// <summary>Lateral distance from the centre line to the inner face of the barrier (before tight-corner reduction).</summary>
-        public float BarrierDistance => OffRoadDistance + barrierRunOff;
     }
 }

@@ -35,10 +35,6 @@ namespace SomeGame.EditorTools
             Write("Kerb", 16, 64, (x, y) => y < 32 ? KerbRed : KerbWhite, tiled: true);
             Write("Grass", 64, 64, (x, y) => (y / 32) % 2 == 0 ? Grass : GrassDark, tiled: true);
             Write("Tree", 128, 128, Tree, tiled: false);
-            // Tyre wall: dark tyre blocks with light seams along V, a blue/white top band across U.
-            Write("Barrier", 16, 32, (x, y) => y >= 28 ? new Color(0.7f, 0.7f, 0.72f)
-                : x >= 12 ? (y / 4 % 2 == 0 ? Hex("2F6FD6") : Color.white)
-                : new Color(0.2f, 0.2f, 0.22f), tiled: true);
             Write("StartLine", 64, 32, (x, y) => ((x / 16) + (y / 16)) % 2 == 0 ? Color.white : Color.black, tiled: true);
             Write("JoystickBase", 256, 256, (x, y) => Ring(x, y, 256, 120, 112, 0.45f), tiled: false);
             Write("JoystickKnob", 128, 128, (x, y) => Disc(x, y, 128, 60, 0.8f), tiled: false);
@@ -50,7 +46,6 @@ namespace SomeGame.EditorTools
             WriteMaterial("StartLine", "StartLine");
             WriteMaterial("Grass", "Grass");
             WriteMaterial("Tree", "Tree");
-            WriteMaterial("Barrier", "Barrier");
             WriteMaterial("TyreMark", null);
             WriteMaterial("Spark", "Circle");
 

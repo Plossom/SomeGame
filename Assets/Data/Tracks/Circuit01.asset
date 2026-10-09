@@ -44,6 +44,4 @@ MonoBehaviour:
   kerbWidth: 0.8
   sampleSpacing: 1
   checkpointCount: 12
-  barrierRunOff: 6
-  barrierWidth: 0.7
   boundaryMargin: 25

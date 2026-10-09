@@ -9,8 +9,8 @@ namespace SomeGame.Track
         [SerializeField] MeshFilter trees;
         [SerializeField, Min(0)] int treeCount = 40;
         [SerializeField] int seed = 12345;
-        [Tooltip("Minimum gap between a tree's edge and the outside of the barrier wall.")]
-        [SerializeField, Min(0f)] float barrierClearance = 1f;
+        [Tooltip("Minimum gap between a tree's centre and the kerb edge.")]
+        [SerializeField, Min(0f)] float roadClearance = 3f;
         [SerializeField] Vector2 sizeRange = new(2.2f, 3.6f);
 
         protected override void Build(TrackPath path, TrackLayout layout)
@@ -31,8 +31,7 @@ namespace SomeGame.Track
             {
                 var p = new Vector2(Range(area.xMin, area.xMax), Range(area.yMin, area.yMax));
                 float size = Range(sizeRange.x, sizeRange.y);
-                float clearance = layout.BarrierDistance + layout.barrierWidth + barrierClearance + size * 0.5f;
-                if (Mathf.Abs(path.Project(p).Lateral) < clearance) continue;
+                if (Mathf.Abs(path.Project(p).Lateral) < layout.OffRoadDistance + roadClearance + size * 0.5f) continue;
                 if (placed.Exists(q => (q - p).sqrMagnitude < size * size)) continue;
 
                 placed.Add(p);
