@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: Lagoon
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: -30}
+  - {x: 0, y: -10}
+  - {x: 0, y: 10}
+  - {x: 5, y: 22}
+  - {x: -3, y: 34}
+  - {x: 5, y: 46}
+  - {x: -3, y: 58}
+  - {x: 2, y: 70}
+  - {x: 14, y: 78}
+  - {x: 28, y: 76}
+  - {x: 36, y: 68}
+  - {x: 44, y: 60}
+  - {x: 52, y: 52}
+  - {x: 60, y: 44}
+  - {x: 66, y: 34}
+  - {x: 62, y: 22}
+  - {x: 70, y: 10}
+  - {x: 64, y: -2}
+  - {x: 70, y: -14}
+  - {x: 66, y: -28}
+  - {x: 58, y: -38}
+  - {x: 48, y: -40}
+  - {x: 36, y: -40}
+  - {x: 24, y: -40}
+  - {x: 12, y: -40}
+  - {x: 4, y: -36}
+  roadWidth: 6
+  kerbWidth: 0.6
+  sampleSpacing: 1
+  checkpointCount: 5
+  boundaryMargin: 25
+  waterWorld: 1
+  gaps:
+  - from: 162.46335
+    to: 173.06996
+    rampLateral: 0.9
+  - from: 299.68585
+    to: 310.18558
+    rampLateral: -0.9
+  rivers: []
+  lakes: []
+  oil:
+  - distance: 75.25469
+    lateral: 1
+    radius: 1.1
+  - distance: 177.87471
+    lateral: -1
+    radius: 1.1
+  - distance: 225.76408
+    lateral: 1
+    radius: 1.1
+  - distance: 307.86008
+    lateral: -0.9
+    radius: 1.1
+  rampLength: 3
+  rampWidth: 3.2
+  shortcuts: []
+  scenery:
+  - name: Island
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6666667
+      width: 0.25
+      height: 0.33333334
+    count: 9
+    sizeRange: {x: 9, y: 13}
+    clearance: {x: 6, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    solid: 0
+    solidSize: {x: 0.35, y: 0.35}
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+  - name: Boat
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6666667
+      width: 0.25
+      height: 0.33333334
+    count: 14
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 3, y: 30}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    solid: 0
+    solidSize: {x: 0.35, y: 0.35}
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+  - name: LilyPads
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6666667
+      width: 0.25
+      height: 0.33333334
+    count: 60
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.5, y: 0}
+    alignToRoad: 0
+    clustered: 1
+    cornerOnly: 0
+    squareAngle: 0
+    solid: 0
+    solidSize: {x: 0.35, y: 0.35}
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+  - name: Buoy
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6666667
+      width: 0.25
+      height: 0.33333334
+    count: 70
+    sizeRange: {x: 1.1, y: 1.5}
+    clearance: {x: 0.5, y: 5}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    solid: 0
+    solidSize: {x: 0.35, y: 0.35}
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}

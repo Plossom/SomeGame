@@ -105,7 +105,7 @@ namespace SomeGame.EditorTools
                 float soft = Mathf.Clamp01(1f - d / r);
                 return White(Mathf.SmoothStep(0f, 1f, soft) * 0.9f);
             }, 64, false);
-            World("Scenery", 1024, 512, SceneryPixel, 128, false);
+            World("Scenery", 1024, 768, SceneryPixel, 128, false);
 
             Material("Road", "Asphalt");
             Material("Kerb", "Kerb");
@@ -343,14 +343,15 @@ namespace SomeGame.EditorTools
             return c;
         }
 
-        // ---------- scenery atlas: 4 x 2 cells of 256 px ----------
+        // ---------- scenery atlas: 4 x 3 cells of 256 px ----------
         // row 0: pine, round tree, bush clump, tyre stack     row 1: chalet, rock, crop field, barn
+        // row 2 (water): buoy, rowing boat, lily pads, rock island
 
-        public static readonly string[] SceneryCells = { "Pine", "Tree", "Bushes", "Tyres", "Chalet", "Rock", "Field", "Barn" };
+        public static readonly string[] SceneryCells = { "Pine", "Tree", "Bushes", "Tyres", "Chalet", "Rock", "Field", "Barn", "Buoy", "Boat", "LilyPads", "Island" };
 
         static Color SceneryPixel(float x, float y)
         {
-            int col = (int)(x / 256), row = y < 256 ? 0 : 1;
+            int col = (int)(x / 256), row = (int)(y / 256);
             float lx = x - col * 256, ly = y - row * 256;
             return (row * 4 + col) switch
             {
@@ -361,7 +362,11 @@ namespace SomeGame.EditorTools
                 4 => Chalet(lx, ly),
                 5 => Rock(lx, ly),
                 6 => Field(lx, ly),
-                _ => Barn(lx, ly),
+                7 => Barn(lx, ly),
+                8 => Buoy(lx, ly),
+                9 => Boat(lx, ly),
+                10 => LilyPads(lx, ly),
+                _ => Island(lx, ly),
             };
         }
 
@@ -480,6 +485,82 @@ namespace SomeGame.EditorTools
             c = Over(c, face, Fill(roof));
             c = Over(c, Hex("CBD1D3"), Fill(RoundRect(x, y, 128, 128, 92, 3f, 1)) * Fill(roof));
             c = Over(c, Outline, Stroke(roof, 5f));
+            return c;
+        }
+
+        // A soft light ring on the water around a floating thing.
+        static Color Ripple(Color c, float x, float y, float r)
+        {
+            float d = Mathf.Abs(Dist(x, y, 128, 128) - r);
+            return Over(c, new Color(1f, 1f, 1f, 0.35f), Mathf.Clamp01(1f - d / 5f));
+        }
+
+        // A red and white buoy seen from above, with its ripple.
+        static Color Buoy(float x, float y)
+        {
+            Color c = Ripple(new Color(0, 0, 0, 0), x, y, 70f);
+            c = Over(c, Shadow, Soft(Circle(x, y, 140, 116, 40), 8f));
+            float body = Circle(x, y, 128, 128, 40);
+            float a = Mathf.Atan2(y - 128, x - 128);
+            bool red = Mathf.Repeat(a / (Mathf.PI * 2f) * 4f, 1f) < 0.5f;
+            c = Over(c, red ? Hex("D8382E") : Hex("F7F5EE"), Fill(body));
+            c = Over(c, Hex("FFE9A8"), Fill(Circle(x, y, 128, 128, 11)));
+            c = Over(c, Outline, Stroke(body, 5f));
+            return c;
+        }
+
+        // A wooden rowing boat with two oars, seen from above.
+        static Color Boat(float x, float y)
+        {
+            Color c = Ripple(new Color(0, 0, 0, 0), x, y, 108f);
+            float hull = Mathf.Max(RoundRect(x, y, 128, 128, 44, 100, 40), -0f + Ellipse(x, y, 128, 128, 44, 100));
+            c = Over(c, Shadow, Soft(RoundRect(x, y, 140, 116, 44, 100, 40), 8f));
+            c = Over(c, Hex("9A6440"), Fill(hull));
+            c = Over(c, Hex("C08A5A"), Fill(RoundRect(x, y, 128, 128, 34, 88, 32)));
+            for (int k = -1; k <= 1; k++) c = Over(c, Hex("7A4A2C"), Fill(RoundRect(x, y, 128, 128 + k * 42, 34, 5, 2)));
+            float oars = Mathf.Min(Capsule(x, y, 70, 120, 20, 96, 3.5f), Capsule(x, y, 186, 120, 236, 96, 3.5f));
+            c = Over(c, Hex("C9A26B"), Fill(oars));
+            c = Over(c, Outline, Stroke(hull, 5f));
+            return c;
+        }
+
+        // Lily pads (round leaves with a notch) and a pink flower.
+        static Color LilyPads(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            var pads = new[] { new Vector3(100, 140, 46), new Vector3(168, 112, 36), new Vector3(150, 180, 28), new Vector3(80, 82, 26) };
+            foreach (var p in pads)
+            {
+                float leaf = Circle(x, y, p.x, p.y, p.z);
+                float a = Mathf.Atan2(y - p.y, x - p.x);
+                bool notch = Mathf.Abs(Mathf.DeltaAngle(a * Mathf.Rad2Deg, p.x)) < 18f && leaf < 0f && Dist(x, y, p.x, p.y) > 4f;
+                if (notch) continue;
+                c = Over(c, Hex("4E9A45"), Fill(leaf));
+                c = Over(c, Hex("6DB85A"), Fill(Circle(x, y, p.x - p.z * 0.2f, p.y + p.z * 0.2f, p.z * 0.6f)) * Fill(leaf + 3f));
+                c = Over(c, Hex("2E6A35"), Stroke(leaf, 3f) * 0.7f);
+            }
+            float flower = Star(x, y, 108, 146, 16, 8, 6, 0f);
+            c = Over(c, Hex("F29BB0"), Fill(flower));
+            c = Over(c, Hex("FFE08A"), Fill(Circle(x, y, 108, 146, 5)));
+            return c;
+        }
+
+        // A small rock island with a sandy shore and a pine on it.
+        static Color Island(float x, float y)
+        {
+            Color c = Ripple(new Color(0, 0, 0, 0), x, y, 112f);
+            float shore = Circle(x, y, 128, 128, 100) + 6f * Mathf.Sin(Mathf.Atan2(y - 128, x - 128) * 5f);
+            c = Over(c, Hex("E8D3A0"), Fill(shore));
+            var rock = new[] { new Vector2(60, 120), new Vector2(84, 180), new Vector2(150, 196), new Vector2(196, 150), new Vector2(188, 84), new Vector2(124, 58), new Vector2(70, 72) };
+            float r = Polygon(x, y, rock);
+            c = Over(c, Hex("8F918A"), Fill(r));
+            c = Over(c, Hex("B6B7AE"), Fill(Polygon(x, y, new[] { new Vector2(60, 120), new Vector2(84, 180), new Vector2(150, 196), new Vector2(128, 128) })));
+            c = Over(c, Outline, Stroke(r, 4f));
+            c = Over(c, Shadow, Soft(Star(x, y, 140, 120, 60, 46, 11, 0.2f), 8f));
+            float pine = Star(x, y, 128, 134, 60, 46, 11, 0.2f);
+            c = Over(c, Hex("2F6A4A"), Fill(pine));
+            c = Over(c, Hex("4F8F62"), Fill(Star(x, y, 124, 138, 30, 22, 8, 0.1f)));
+            c = Over(c, Outline, Stroke(pine, 3f) * 0.8f);
             return c;
         }
 

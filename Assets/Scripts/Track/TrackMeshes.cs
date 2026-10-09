@@ -36,6 +36,37 @@ namespace SomeGame.Track
             return Create(name, vertices, uvs, triangles, color);
         }
 
+        /// <summary>
+        /// Like <see cref="Strip(TrackPath, float, float, float, float, string, Color)"/>, but only for the
+        /// stretches where <paramref name="keep"/> is true for the distance (e.g. leaving out gaps in the road).
+        /// </summary>
+        public static Mesh Strip(TrackPath path, float lateralA, float lateralB, float uMax, float vLength, string name, Color color,
+            System.Func<float, bool> keep, Vector2 offset = default)
+        {
+            var vertices = new List<Vector3>();
+            var uvs = new List<Vector2>();
+            var triangles = new List<int>();
+            for (int i = 0; i < path.Count; i++)
+            {
+                float d0 = path.DistanceAt(i), d1 = d0 + path.SegmentLength(i);
+                if (!keep((d0 + d1) * 0.5f)) continue;
+                int a = vertices.Count;
+                for (int k = 0; k <= 1; k++)
+                {
+                    Vector2 p = path[i + k], normal = path.SampleNormal(i + k);
+                    float v = (k == 0 ? d0 : d1) / vLength;
+                    vertices.Add(p + normal * lateralA + offset);
+                    vertices.Add(p + normal * lateralB + offset);
+                    uvs.Add(new Vector2(0f, v));
+                    uvs.Add(new Vector2(uMax, v));
+                }
+                triangles.AddRange(new[] { a, a + 2, a + 1, a + 1, a + 2, a + 3 });
+            }
+            var colors = new List<Color32>(vertices.Count);
+            for (int i = 0; i < vertices.Count; i++) colors.Add(color);
+            return Quads(name, vertices, uvs, triangles, colors);
+        }
+
         /// <summary>A quad defined by its centre, half extents along two axes, and UV range.</summary>
         public static void AddQuad(List<Vector3> vertices, List<Vector2> uvs, List<int> triangles,
             Vector2 centre, Vector2 halfRight, Vector2 halfUp, Vector2 uvMax)

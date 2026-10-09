@@ -44,6 +44,8 @@ MonoBehaviour:
   sampleSpacing: 1
   checkpointCount: 6
   boundaryMargin: 25
+  waterWorld: 0
+  gaps: []
   rivers:
   - points:
     - {x: -45, y: 18.435774}
@@ -117,12 +119,13 @@ MonoBehaviour:
   - from: 319
     to: 341
     side: 1
-    length: 3.5
-    width: 3.2
+    length: 4
+    width: 4.2
     designSpeed: 15
   - from: 110
     to: 132
     side: 1
-    length: 3.5
-    width: 3.2
+    length: 4
+    width: 4.2
     designSpeed: 15
+  scenery: []

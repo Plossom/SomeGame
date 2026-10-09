@@ -95,3 +95,5 @@ MonoBehaviour:
   cornerGrip: 24
   cornerScanDistance: 26
   brakeMargin: 0.75
+  rampLineUp: 20
+  oilLookAhead: 22

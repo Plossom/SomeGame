@@ -72,7 +72,9 @@ namespace SomeGame.Track
             var items = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint)>();
             var solids = new List<Vector2[]>();
 
-            foreach (var kind in kinds)
+            // A track can bring its own scenery (e.g. boats and buoys for a water track).
+            var useKinds = layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds;
+            foreach (var kind in useKinds)
             {
                 int done = 0;
                 for (int attempt = 0; attempt < kind.count * 30 && done < kind.count; attempt++)
@@ -89,7 +91,7 @@ namespace SomeGame.Track
                         fromKerb -= (outside ? cornerRunoff : cornerRunoffInside) * Mathf.SmoothStep(0f, 1f, Mathf.Abs(turn) / runoffFullTurn);
                     if (fromKerb < kind.clearance.x) continue;
                     if (kind.clearance.y > 0f && fromKerb > kind.clearance.y) continue;
-                    if (track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
+                    if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     if (InShortcutPath(p, size)) continue;
                     float r = size * 0.45f;
                     if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;

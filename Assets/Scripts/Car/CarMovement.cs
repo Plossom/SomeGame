@@ -369,6 +369,15 @@ namespace SomeGame.Car
             }
         }
 
+        /// <summary>Starts a boost without a drift (e.g. a reward for landing a shortcut jump).</summary>
+        public void GiveBoost(float strength)
+        {
+            BoostStrength = Mathf.Clamp01(strength);
+            _boostDuration = Mathf.Lerp(stats.boostMinDuration, stats.boostMaxDuration, BoostStrength);
+            _boostTimer = _boostDuration;
+            BoostStarted?.Invoke(BoostStrength);
+        }
+
         /// <summary>Puts the car back on the road (after a splash), standing still.</summary>
         public void Respawn(Pose pose)
         {

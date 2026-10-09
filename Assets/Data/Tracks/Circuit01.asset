@@ -45,6 +45,8 @@ MonoBehaviour:
   sampleSpacing: 1
   checkpointCount: 6
   boundaryMargin: 25
+  waterWorld: 0
+  gaps: []
   rivers: []
   lakes: []
   oil:
@@ -72,12 +74,13 @@ MonoBehaviour:
   - from: 79
     to: 100
     side: -1
-    length: 3.5
-    width: 3.2
+    length: 4
+    width: 4.2
     designSpeed: 15
   - from: 249
     to: 273
     side: 1
-    length: 3.5
-    width: 3.2
+    length: 4
+    width: 4.2
     designSpeed: 15
+  scenery: []

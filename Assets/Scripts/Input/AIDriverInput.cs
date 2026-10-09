@@ -73,13 +73,15 @@ namespace SomeGame.Input
         // The car's own lane, except before a jump (it lines up with the kicker ramp) and near oil (it goes round).
         float LateralFor(TrackPath path, float distance)
         {
-            float lateral = laneOffset;
+            // On a water track the edge of the road is the water: stay nearer the middle.
+            float lane = _sensor.Track.Layout.waterWorld ? laneOffset * 0.4f : laneOffset;
+            float lateral = lane;
             foreach (var jump in _sensor.Track.Jumps)
             {
                 float toLip = path.DeltaDistance(distance, jump.Lip);
                 if (toLip < -1f || toLip > rampLineUp * 1.6f) continue;
                 float blend = Mathf.InverseLerp(rampLineUp * 1.6f, rampLineUp, toLip);
-                lateral = Mathf.Lerp(laneOffset, jump.Lateral, blend);
+                lateral = Mathf.Lerp(lane, jump.Lateral, blend);
             }
             // Steer around oil puddles ahead: pass on whichever side needs the smaller move.
             var layout = _sensor.Track.Layout;

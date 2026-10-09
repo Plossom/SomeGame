@@ -68,7 +68,8 @@ namespace SomeGame.Track
             var list = new List<ShortcutRamp>();
             foreach (var s in layout.shortcuts)
             {
-                Vector2 roadEdge = Path.PointAt(s.from) + Path.NormalAt(s.from) * (Mathf.Sign(s.side) * (layout.OffRoadDistance + 0.6f));
+                // The ramp starts on the kerb, so a car can drive straight off the road onto it.
+                Vector2 roadEdge = Path.PointAt(s.from) + Path.NormalAt(s.from) * (Mathf.Sign(s.side) * (layout.OffRoadDistance - 0.4f));
                 Vector2 target = Path.PointAt(s.to);
                 Vector2 dir = (target - roadEdge).normalized;
                 Vector2 centre = roadEdge + dir * (s.length * 0.5f);
@@ -104,7 +105,25 @@ namespace SomeGame.Track
             return d;
         }
 
-        public bool IsWater(Vector2 p) => WaterDistance(p) < 0f;
+        public bool IsWater(Vector2 p)
+        {
+            if (WaterDistance(p) < 0f) return true;
+            if (!layout.waterWorld) return false;
+            // Water world: off the road, or over a gap in it, is water.
+            var point = Path.Project(p);
+            return Mathf.Abs(point.Lateral) > layout.OffRoadDistance + 0.15f || InGap(point.Distance);
+        }
+
+        /// <summary>True where the road is missing (a gap over water).</summary>
+        public bool InGap(float distance)
+        {
+            foreach (var gap in layout.gaps)
+            {
+                float into = Path.DeltaDistance(gap.from, distance);
+                if (into >= 0f && into <= Path.DeltaDistance(gap.from, gap.to)) return true;
+            }
+            return false;
+        }
 
         /// <summary>The oil puddle under a point, if any.</summary>
         public bool IsOil(Vector2 p)
@@ -153,6 +172,12 @@ namespace SomeGame.Track
                     wasIn = isIn;
                 }
             }
+            foreach (var gap in layout.gaps)
+                jumps.Add(new Jump
+                {
+                    RampStart = path.WrapDistance(gap.from - layout.rampLength), Lip = path.WrapDistance(gap.from),
+                    FarBank = path.WrapDistance(gap.to), Lateral = gap.rampLateral,
+                });
             jumps.Sort((a, b) => a.RampStart.CompareTo(b.RampStart));
             return jumps;
         }

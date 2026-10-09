@@ -29,6 +29,10 @@ namespace SomeGame.Track
         [Min(5f)] public float boundaryMargin = 25f;
 
         [Header("Water, jumps and oil")]
+        [Tooltip("The whole world is water: the road is a causeway, and anything off the road is a splash.")]
+        public bool waterWorld;
+        [Tooltip("Gaps in the road over water (lap distances), each with a kicker ramp just before it.")]
+        public List<Gap> gaps = new();
         [Tooltip("Rivers (open polylines). Where a river crosses the road there is a jump: a ramp before the water.")]
         public List<River> rivers = new();
         [Tooltip("Lakes (ellipses) beside the track. Driving in means a splash and a restart nearby.")]
@@ -43,6 +47,20 @@ namespace SomeGame.Track
         [Tooltip("Small ramps beside the road on the inside of a corner: driven straight at speed, they hop a car across the corner.")]
         public List<Shortcut> shortcuts = new();
 
+        [Tooltip("Scenery for this track. Empty = the scene's default scenery.")]
+        public List<TrackScenery.Kind> scenery = new();
+
+        [Serializable]
+        public class Gap
+        {
+            [Tooltip("Lap distance where the road stops (the ramp's lip).")]
+            public float from;
+            [Tooltip("Lap distance where the road starts again.")]
+            public float to;
+            [Tooltip("Sideways position of the kicker (positive = left of the centre line).")]
+            public float rampLateral;
+        }
+
         [Serializable]
         public class Shortcut
         {
@@ -52,8 +70,8 @@ namespace SomeGame.Track
             public float to;
             [Tooltip("Which side of the road the ramp is on: +1 left, -1 right (the inside of the corner).")]
             public float side = 1f;
-            [Min(1f)] public float length = 3.5f;
-            [Min(1f)] public float width = 3.2f;
+            [Min(1f)] public float length = 4f;
+            [Min(1f)] public float width = 4.2f;
             [Tooltip("Speed at which the jump lands exactly on target; slower cars land short.")]
             [Min(1f)] public float designSpeed = 15f;
         }

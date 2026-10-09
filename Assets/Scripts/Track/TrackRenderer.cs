@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,6 +51,18 @@ namespace SomeGame.Track
         [SerializeField, Min(1)] int runoffSpan = 9;
         [SerializeField, Min(0.1f)] float runoffTile = 4f;
 
+        [Header("Water tracks")]
+        [Tooltip("Ground materials: grass normally, water on a water-world track.")]
+        [SerializeField] Material grassMaterial;
+        [SerializeField] Material waterMaterial;
+        [SerializeField, Min(0.1f)] float waterTile = 8f;
+        [Tooltip("Camera background beyond the ground, on grass and water tracks.")]
+        [SerializeField] Color grassBackground = new(0.373f, 0.627f, 0.247f);
+        [SerializeField] Color waterBackground = new(0.25f, 0.58f, 0.74f);
+        [Tooltip("Shadow of the road on the water (water tracks only).")]
+        [SerializeField] MeshFilter roadShadow;
+        [SerializeField] Vector2 roadShadowOffset = new(0.35f, -0.5f);
+
         [Tooltip("Grass tint range for the large meadow patches.")]
         [SerializeField] Color meadowDark = new(0.8f, 0.88f, 0.8f);
         [SerializeField] Color meadowLight = Color.white;
@@ -58,12 +71,19 @@ namespace SomeGame.Track
         {
             float hw = layout.HalfWidth, outer = hw + layout.kerbWidth;
 
-            Assign(road, TrackMeshes.Strip(path, -outer - 0.02f, outer + 0.02f, outer * 2f / roadTile, roadTile, "Road"));
+            bool water = layout.waterWorld;
+            Func<float, bool> keep = d => !track.InGap(d);
+            Assign(road, TrackMeshes.Strip(path, -outer - 0.02f, outer + 0.02f, outer * 2f / roadTile, roadTile, "Road", Color.white, keep));
+            // On a water track the road stands above the water and casts a soft shadow onto it.
+            if (roadShadow != null)
+                Assign(roadShadow, water
+                    ? TrackMeshes.Strip(path, -outer - 0.1f, outer + 0.1f, 1f, 4f, "RoadShadow", new Color(0f, 0.05f, 0.1f, 0.3f), keep, roadShadowOffset)
+                    : new Mesh { name = "RoadShadow", hideFlags = HideFlags.DontSave });
             Assign(kerbs, BuildKerbs(path, hw, outer));
             if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path, outer));
             Assign(startLine, BuildStartLine(path, hw));
             if (gridLines != null) Assign(gridLines, BuildGrid(path, layout));
-            if (runoff != null) Assign(runoff, BuildRunoff(path, outer));
+            if (runoff != null) Assign(runoff, water ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path, outer));
             if (centerLine != null)
             {
                 float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / centerLineCycle));
@@ -71,7 +91,11 @@ namespace SomeGame.Track
             }
 
             Rect area = Expand(path.Bounds(), layout.boundaryMargin);
-            Assign(grass, BuildGrass(Expand(area, grassOverscan)));
+            Assign(grass, BuildGrass(Expand(area, grassOverscan), water));
+            if (Application.isPlaying && Camera.main != null) Camera.main.backgroundColor = water ? waterBackground : grassBackground;
+            var groundRenderer = grass != null ? grass.GetComponent<MeshRenderer>() : null;
+            if (groundRenderer != null && grassMaterial != null && waterMaterial != null)
+                groundRenderer.sharedMaterial = water ? waterMaterial : grassMaterial;
             if (boundary != null && Application.isPlaying)
             {
                 Rect wall = Expand(area, -1f);
@@ -90,7 +114,7 @@ namespace SomeGame.Track
             int n = path.Count;
             float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / kerbCycle));
             var corner = new bool[n];
-            for (int i = 0; i < n; i++) corner[i] = Mathf.Abs(path.TurnAt(i, runoffSpan)) >= kerbTurn;
+            for (int i = 0; i < n; i++) corner[i] = Mathf.Abs(path.TurnAt(i, runoffSpan)) >= kerbTurn && !track.InGap(path.DistanceAt(i) + 0.5f);
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
             var triangles = new List<int>();
@@ -121,8 +145,9 @@ namespace SomeGame.Track
         Mesh BuildEdgeLines(TrackPath path, float outer)
         {
             float inner = outer - edgeLineWidth;
-            var left = TrackMeshes.Strip(path, inner, outer, 1f, 4f, "EdgeLeft");
-            var right = TrackMeshes.Strip(path, -inner, -outer, 1f, 4f, "EdgeRight");
+            Func<float, bool> keep = d => !track.InGap(d);
+            var left = TrackMeshes.Strip(path, inner, outer, 1f, 4f, "EdgeLeft", Color.white, keep);
+            var right = TrackMeshes.Strip(path, -inner, -outer, 1f, 4f, "EdgeRight", Color.white, keep);
             var combined = new Mesh { name = "EdgeLines", hideFlags = HideFlags.DontSave };
             combined.CombineMeshes(new[]
             {
@@ -214,7 +239,7 @@ namespace SomeGame.Track
         }
 
         // A grid so the grass can carry large, soft light and dark meadow patches in its vertex colours.
-        Mesh BuildGrass(Rect area)
+        Mesh BuildGrass(Rect area, bool water)
         {
             const float cell = 3f;
             int nx = Mathf.CeilToInt(area.width / cell), ny = Mathf.CeilToInt(area.height / cell);
@@ -227,9 +252,10 @@ namespace SomeGame.Track
                 {
                     var p = new Vector2(area.xMin + i * cell, area.yMin + j * cell);
                     vertices.Add(p);
-                    uvs.Add(new Vector2(p.x / grassTile, p.y / grassTile));
+                    float tile = water ? waterTile : grassTile;
+                    uvs.Add(new Vector2(p.x / tile, p.y / tile));
                     float t = Mathf.PerlinNoise(p.x * 0.035f + 100f, p.y * 0.035f) * 0.7f + Mathf.PerlinNoise(p.x * 0.11f, p.y * 0.11f + 50f) * 0.3f;
-                    colors.Add(Color.Lerp(meadowDark, meadowLight, Mathf.SmoothStep(0f, 1f, t)));
+                    colors.Add(water ? Color.Lerp(new Color(0.9f, 0.95f, 1f), Color.white, t) : Color.Lerp(meadowDark, meadowLight, Mathf.SmoothStep(0f, 1f, t)));
                 }
             for (int j = 0; j < ny; j++)
                 for (int i = 0; i < nx; i++)
@@ -243,7 +269,7 @@ namespace SomeGame.Track
         static Rect Expand(Rect r, float margin) =>
             Rect.MinMaxRect(r.xMin - margin, r.yMin - margin, r.xMax + margin, r.yMax + margin);
 
-        static void DestroyTemp(Object o)
+        static void DestroyTemp(UnityEngine.Object o)
         {
             if (Application.isPlaying) Destroy(o); else DestroyImmediate(o);
         }

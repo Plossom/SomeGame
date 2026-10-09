@@ -6395,7 +6395,7 @@ MonoBehaviour:
       x: 0.75
       y: 0
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 110
     sizeRange: {x: 2.4, y: 3.2}
     clearance: {x: 0.2, y: 2.4}
@@ -6411,9 +6411,9 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.5
-      y: 0.5
+      y: 0.33333334
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 9
     sizeRange: {x: 9, y: 13}
     clearance: {x: 3, y: 30}
@@ -6431,9 +6431,9 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.75
-      y: 0.5
+      y: 0.33333334
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 5
     sizeRange: {x: 6, y: 7.5}
     clearance: {x: 2.5, y: 25}
@@ -6449,9 +6449,9 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0
-      y: 0.5
+      y: 0.33333334
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 10
     sizeRange: {x: 4.4, y: 5.4}
     clearance: {x: 1.2, y: 5}
@@ -6470,7 +6470,7 @@ MonoBehaviour:
       x: 0.5
       y: 0
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 420
     sizeRange: {x: 5, y: 7.5}
     clearance: {x: 0.9, y: 0}
@@ -6490,7 +6490,7 @@ MonoBehaviour:
       x: 0.25
       y: 0
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 220
     sizeRange: {x: 2.6, y: 3.8}
     clearance: {x: 0.7, y: 0}
@@ -6509,7 +6509,7 @@ MonoBehaviour:
       x: 0
       y: 0
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 140
     sizeRange: {x: 3, y: 4.6}
     clearance: {x: 1, y: 0}
@@ -6526,9 +6526,9 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0.5
+      y: 0.33333334
       width: 0.25
-      height: 0.5
+      height: 0.33333334
     count: 30
     sizeRange: {x: 0.9, y: 1.9}
     clearance: {x: 0.4, y: 10}
@@ -6584,6 +6584,11 @@ MonoBehaviour:
   runoffFullTurn: 70
   runoffSpan: 9
   runoffTile: 4
+  grassMaterial: {fileID: 2100000, guid: aa70a4341c61141b1bffba2960728562, type: 2}
+  waterMaterial: {fileID: 2100000, guid: 84ac86df31cdc4bf8889c0a816809ac4, type: 2}
+  waterTile: 8
+  roadShadow: {fileID: 2077776332}
+  roadShadowOffset: {x: 0.35, y: -0.5}
   meadowDark: {r: 0.8, g: 0.88, b: 0.8, a: 1}
   meadowLight: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1295174578
@@ -6625,6 +6630,7 @@ Transform:
   - {fileID: 98471524}
   - {fileID: 788309762}
   - {fileID: 99935961}
+  - {fileID: 2077776334}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1295174580
@@ -12060,6 +12066,96 @@ MonoBehaviour:
   nextStarValue: {fileID: 110557922}
   continueButton: {fileID: 184785529}
   retryButton: {fileID: 1852129988}
+--- !u!1 &2077776331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2077776334}
+  - component: {fileID: 2077776332}
+  - component: {fileID: 2077776333}
+  m_Layer: 0
+  m_Name: RoadShadow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!33 &2077776332
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077776331}
+  m_Mesh: {fileID: 0}
+--- !u!23 &2077776333
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077776331}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 4d09e3a992272422e8bdf7e5aa03b8f5, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: -55
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!4 &2077776334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077776331}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1295174579}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2078397659
 GameObject:
   m_ObjectHideFlags: 0

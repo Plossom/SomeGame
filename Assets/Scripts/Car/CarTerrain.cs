@@ -18,6 +18,10 @@ namespace SomeGame.Car
         [SerializeField] Material particleMaterial;
         [Tooltip("Cars slower than this along the road just roll off the ramp into the water.")]
         [SerializeField, Min(0f)] float minLaunchSpeed = 4f;
+        [Tooltip("Boost strength (0-1) for landing a corner-cut jump on the road.")]
+        [SerializeField, Range(0f, 1f)] float shortcutBoost = 0.6f;
+        [Tooltip("A corner-cut ramp launches a car moving within this angle of its arrows.")]
+        [SerializeField, Range(10f, 90f)] float shortcutMaxAngle = 50f;
         [Tooltip("How far back along the road a car restarts after a splash.")]
         [SerializeField, Min(0f)] float respawnBack = 10f;
         [Tooltip("Seconds the car blinks after a restart.")]
@@ -59,10 +63,15 @@ namespace SomeGame.Car
             foreach (var shortcut in track.Shortcuts)
             {
                 Vector2 local = shortcut.Local(position);
-                if (Mathf.Abs(local.x) > shortcut.Width * 0.5f || local.y < -shortcut.Length * 0.5f - 2.5f || local.y > shortcut.Length * 0.5f) continue;
+                bool onApproach = local.y < -shortcut.Length * 0.5f;
+                float halfWidth = shortcut.Width * 0.5f + (onApproach ? 1.4f : 0f);
+                if (Mathf.Abs(local.x) > halfWidth || local.y < -shortcut.Length * 0.5f - 3.4f || local.y > shortcut.Length * 0.5f) continue;
                 _car.OnRamp = true;
-                float speedAlong = Vector2.Dot(_car.Body.linearVelocity, shortcut.Direction);
-                if (local.y > shortcut.Length * 0.5f - 0.8f && speedAlong > minLaunchSpeed)
+                // Take off anywhere on the front half, when moving roughly along the arrows.
+                Vector2 velocity = _car.Body.linearVelocity;
+                float speedAlong = Vector2.Dot(velocity, shortcut.Direction);
+                bool aligned = Vector2.Angle(velocity, shortcut.Direction) < shortcutMaxAngle;
+                if (local.y > 0f && local.y <= shortcut.Length * 0.5f && aligned && speedAlong > minLaunchSpeed)
                 {
                     _shortcutFrom = shortcut.From;
                     _car.Launch(shortcut.AirTime); // the car keeps its own heading: aim at the arrows
@@ -97,8 +106,12 @@ namespace SomeGame.Car
         {
             var track = _sensor.Track;
             _sensor.Sample();
-            if (_shortcutFrom.HasValue && _progress != null && track != null && !track.IsWater(_car.Body.position))
-                _progress.CreditFlight(_shortcutFrom.Value, _sensor.Current.Distance);
+            bool dry = track != null && !track.IsWater(_car.Body.position);
+            if (_shortcutFrom.HasValue && dry)
+            {
+                if (_progress != null) _progress.CreditFlight(_shortcutFrom.Value, _sensor.Current.Distance);
+                if (!_car.IsOffRoad) _car.GiveBoost(shortcutBoost); // landed the cut on the road: reward
+            }
             _shortcutFrom = null;
             if (track != null && track.IsWater(_car.Body.position)) Splash(track);
             else _dust.Emit(18);
