@@ -17,7 +17,7 @@ namespace SomeGame.Race
         [Min(1)] public int laps = 3;
 
         [Header("Rivals")]
-        [Range(0, 3)] public int rivalCount = 3;
+        [Range(0, 7)] public int rivalCount = 7;
         [Tooltip("Multiplies each rival's top speed (and acceleration).")]
         [Range(0.5f, 1.5f)] public float rivalSpeedScale = 1f;
         [Tooltip("Multiplies how fast rivals dare to take corners.")]

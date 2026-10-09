@@ -16,7 +16,7 @@ MonoBehaviour:
   chapter: "ALPINE CUP \xB7 RACE 2"
   track: {fileID: 11400000, guid: e500d766ff1cc489e84aa2831ce0d3c9, type: 2}
   laps: 2
-  rivalCount: 3
+  rivalCount: 7
   rivalSpeedScale: 0.94
   rivalCornerScale: 0.92
   starsRequired: 1

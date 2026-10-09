@@ -18,7 +18,7 @@ namespace SomeGame.Track
         [SerializeField, Min(0.01f)] float edgeLineWidth = 0.28f;
         [Tooltip("White starting-grid boxes behind the start line.")]
         [SerializeField] MeshFilter gridLines;
-        [SerializeField, Min(0)] int gridSlots = 6;
+        [SerializeField, Min(0)] int gridSlots = 8;
         [Tooltip("Optional sandy run-off beyond the kerbs in the corners (wider on the outside).")]
         [SerializeField] MeshFilter runoff;
         [Tooltip("Optional dashed centre line.")]
