@@ -9,8 +9,8 @@ namespace SomeGame.EditorTools
 {
     /// <summary>
     /// Paints the map screen's landscape into Assets/Art/Rally/MapBackground.png: warm sky and sun,
-    /// low-poly snowy mountains, rolling meadows, a lake with a village, pine forests and the winding
-    /// mountain road of <see cref="MapLayout"/>. Works in map canvas units (1170 x 2532, origin bottom
+    /// hazy forest bands on the horizon, rolling meadows, a lake with a village, pine forests and the
+    /// winding forest road of <see cref="MapLayout"/>, which disappears behind the trees on the horizon. Works in map canvas units (1170 x 2532, origin bottom
     /// left) and renders at <see cref="Scale"/> of that size.
     /// </summary>
     public static class MapArtGenerator
@@ -34,32 +34,14 @@ namespace SomeGame.EditorTools
                     _px[py * _w + px] = Landscape((px + 0.5f) / Scale, (py + 0.5f) / Scale);
 
             Road();
-            Tunnel();
             Objects();
+            HorizonTrees();
             Sdf.WritePixels(ArtGenerator.Folder, "MapBackground", _w, _h, _px, 100, false, 0, compress: true);
             _px = null;
             Debug.Log("Map art generated");
         }
 
         // ================================================================== landscape layers
-
-        static readonly Vector2[] FarRidge =
-        {
-            new(-60, 1560), new(90, 1790), new(200, 1700), new(330, 1900), new(470, 1740), new(560, 1800),
-            new(650, 1680), new(760, 1830), new(860, 1730), new(1000, 1910), new(1110, 1760), new(1240, 1660),
-        };
-        static readonly Vector2[] MidRidge =
-        {
-            new(-60, 1500), new(60, 1640), new(170, 1560), new(290, 1690), new(420, 1570), new(520, 1610),
-            new(655, 1790), new(780, 1620), new(880, 1570), new(1000, 1700), new(1120, 1590), new(1240, 1520),
-        };
-
-        static float Ridge(Vector2[] pts, float x)
-        {
-            for (int i = 1; i < pts.Length; i++)
-                if (x <= pts[i].x) return Mathf.Lerp(pts[i - 1].y, pts[i].y, Mathf.InverseLerp(pts[i - 1].x, pts[i].x, x));
-            return pts[^1].y;
-        }
 
         // Rolling meadows from back to front: (top edge, colour).
         static float Hill(int i, float x) => i switch
@@ -90,8 +72,9 @@ namespace SomeGame.EditorTools
             c = Over(c, Hex("FFB347"), Cov(sun));
             c = Clouds(c, x, y);
 
-            c = Mountain(c, x, y, FarRidge, Hex("A9B6C2"), Hex("C3CDD5"), 1790f, Hex("FFFBF2"), Hex("DCE3EA"));
-            c = Mountain(c, x, y, MidRidge, Hex("7F9B8F"), Hex("97B1A3"), 1690f, Hex("FBF8EE"), Hex("D7E0DE"));
+            // Distant forest: two hazy bands of tree tops above the near forest.
+            c = Over(c, Hex("B5CCA8"), Cov(y - (1610f + 22f * Mathf.Sin(x / 210f + 0.4f) + 9f * Mathf.Abs(Mathf.Sin(x / 13f)))));
+            c = Over(c, Hex("8DB38D"), Cov(y - (1545f + 26f * Mathf.Sin(x / 160f + 2f) + 11f * Mathf.Abs(Mathf.Sin(x / 12f + 1f)))));
 
             for (int i = 0; i < HillColors.Length; i++)
             {
@@ -137,19 +120,6 @@ namespace SomeGame.EditorTools
             return Over(c, Hex("FFF7E8"), Cov(d) * 0.95f);
         }
 
-        // Low-poly mountain range: lit slopes face left, snow above the snow line.
-        static Color Mountain(Color c, float x, float y, Vector2[] ridge, Color shade, Color lit, float snowLine, Color snowLit, Color snowShade)
-        {
-            float top = Ridge(ridge, x);
-            float d = y - top;
-            if (d > 3f / Scale) return c;
-            bool leftFacing = Ridge(ridge, x + 1f) > Ridge(ridge, x - 1f);
-            c = Over(c, leftFacing ? lit : shade, Cov(d));
-            float snowEdge = snowLine + 16f * Mathf.Abs(Mathf.Sin(x / 17f)) + 10f * Mathf.Sin(x / 41f);
-            c = Over(c, leftFacing ? snowLit : snowShade, Cov(d) * Cov(snowEdge - y));
-            return c;
-        }
-
         static float Cov(float d) => Mathf.Clamp01(0.5f - d * Scale);
 
         // ================================================================== road
@@ -176,28 +146,6 @@ namespace SomeGame.EditorTools
                 float period = Mathf.Max(18f, w * 0.75f);
                 if (Mathf.Repeat(dist, period) < period * 0.5f) Disc(p, Mathf.Max(1.6f, w * 0.045f), new Color(1f, 0.98f, 0.92f, 0.85f));
             }
-        }
-
-        // Where the road meets the mountain it disappears into a stone tunnel portal.
-        static void Tunnel()
-        {
-            var s = MapLayout.Samples;
-            Vector2 end = s[^1];
-            float w = MapLayout.WidthAt(end.y);
-            float outer = w * 1.25f, mouth = w * 0.78f;
-            Vector2 c = end + new Vector2(0f, w * 0.15f);
-            // Stone arch: half disc on a short wall, with block joints.
-            float Arch(float x, float y, float r) => Mathf.Max(Mathf.Min(Circle(x, y, c.x, c.y, r), RoundRect(x, y, c.x, c.y - r * 0.25f, r, r * 0.25f, 0.5f)), c.y - r * 0.5f - y);
-            Shape(Box(c, outer + 4f), (x, y) => Arch(x, y, outer), Hex("B9B2A2"));
-            Shape(Box(c, outer + 4f), (x, y) =>
-            {
-                float a = Mathf.Atan2(y - c.y, x - c.x) * Mathf.Rad2Deg;
-                float joint = Mathf.Abs(Mathf.Repeat(a + 9f, 22.5f) - 11.25f) * Mathf.Deg2Rad * Dist(x, y, c.x, c.y);
-                return Mathf.Max(Mathf.Max(Arch(x, y, outer - 1.5f), -Arch(x, y, mouth + 1.5f)), joint - 0.9f);
-            }, Hex("8E8878"));
-            Shape(Box(c, outer + 4f), (x, y) => Arch(x, y, mouth), Hex("1C2420"));
-            Shape(Box(c, outer + 4f), (x, y) => Shell(Arch(x, y, outer), 1.2f), Outline);
-            Shape(Box(c, outer + 4f), (x, y) => Shell(Arch(x, y, mouth), 1f), Outline);
         }
 
         static void Disc(Vector2 c, float r, Color color) =>
@@ -284,6 +232,21 @@ namespace SomeGame.EditorTools
 
             items.Sort((a, b) => b.y.CompareTo(a.y)); // far (high) first
             foreach (var (_, draw) in items) draw();
+        }
+
+        // A row of small pines along the near forest edge; it also hides the end of the road, so the road
+        // seems to run on into the forest.
+        static void HorizonTrees()
+        {
+            var rng = new System.Random(5);
+            var trees = new List<Vector2>();
+            for (float x = -20f; x < 1200f; x += 24f + (float)rng.NextDouble() * 10f)
+                trees.Add(new Vector2(x, Hill(0, x) - 26f - (float)rng.NextDouble() * 14f));
+            // A few extra right where the road ends.
+            Vector2 end = MapLayout.Samples[^1];
+            for (int i = -2; i <= 2; i++) trees.Add(new Vector2(end.x + i * 15f, end.y - 4f - Mathf.Abs(i) * 3f));
+            trees.Sort((a, b) => b.y.CompareTo(a.y));
+            foreach (var t in trees) Pine(t, 0.42f + (float)rng.NextDouble() * 0.08f);
         }
 
         static void Pine(Vector2 p, float s)

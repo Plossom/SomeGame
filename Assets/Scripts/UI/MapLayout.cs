@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SomeGame.UI
 {
     /// <summary>
-    /// The mountain road on the map screen, in canvas units of the 1170 x 2532 map picture (origin at
+    /// The forest road on the map screen, in canvas units of the 1170 x 2532 map picture (origin at
     /// the bottom left). Shared by the painter that bakes the landscape and by <see cref="MapScreen"/>,
     /// which places the race stops, the progress line and the car on the same road.
     /// </summary>
@@ -12,11 +12,11 @@ namespace SomeGame.UI
     {
         public static readonly Vector2 Size = new(1170f, 2532f);
 
-        // The road winds up from the bottom of the screen, past the race stops, into the mountain pass.
+        // The road winds up from the bottom of the screen, past the race stops, into the forest.
         static readonly Vector2[] Points =
         {
             new(40f, -160f), new(190f, 300f), new(330f, 720f), new(640f, 880f), new(890f, 960f),
-            new(800f, 1170f), new(500f, 1290f), new(410f, 1440f), new(560f, 1478f), new(640f, 1510f),
+            new(800f, 1170f), new(500f, 1290f), new(410f, 1440f), new(540f, 1462f), new(600f, 1478f),
         };
 
         /// <summary>Index into the control points of each stop: race 1, race 2, then the "more soon" teaser.</summary>
@@ -42,7 +42,7 @@ namespace SomeGame.UI
         public static Vector2 StopPosition(int index) => Points[StopPoints[index]];
 
         /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
-        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(800f, 1510f, y));
+        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(800f, 1478f, y));
 
         public static Vector2 PointAt(float distance, out Vector2 tangent)
         {
