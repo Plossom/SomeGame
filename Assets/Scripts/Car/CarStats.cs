@@ -42,8 +42,10 @@ namespace SomeGame.Car
         [Range(0f, 1f)] public float offRoadGrip = 0.6f;
 
         [Header("Drift (second finger while steering)")]
-        [Tooltip("Minimum forward speed to start a drift (units/s).")]
-        [Min(0f)] public float driftMinSpeed = 7f;
+        [Tooltip("Minimum speed to start a drift (units/s). Drifting only works on the road, never on grass.")]
+        [Min(0f)] public float driftMinSpeed = 12f;
+        [Tooltip("A drift ends (without boost) when the speed drops below this fraction of driftMinSpeed.")]
+        [Range(0f, 1f)] public float driftKeepSpeedFactor = 0.6f;
         [Tooltip("Stick must point at least this many degrees off the car's heading to pick a drift side.")]
         [Range(0f, 90f)] public float driftStartAngle = 8f;
         [Tooltip("How fast the direction of travel follows the stick into the drift side (degrees/s).")]
@@ -52,6 +54,12 @@ namespace SomeGame.Car
         [Min(0f)] public float driftCounterTurnRate = 70f;
         [Tooltip("How far the car body points into the corner relative to its direction of travel (degrees).")]
         [Range(0f, 80f)] public float driftAngle = 32f;
+        [Tooltip("Extra rotation on drift entry: the car snaps this many degrees past the drift angle, then settles.")]
+        [Range(0f, 60f)] public float driftEntryKick = 22f;
+        [Tooltip("Seconds the entry kick takes to settle back to the drift angle.")]
+        [Min(0.01f)] public float driftEntryTime = 0.3f;
+        [Tooltip("Rotation speed of the snap into the drift (degrees/s).")]
+        [Min(0f)] public float driftEntryRotationSpeed = 900f;
         [Tooltip("Top speed multiplier while drifting.")]
         [Range(0.1f, 1f)] public float driftSpeedFactor = 0.92f;
         [Tooltip("Seconds of drifting before releasing gives any boost (first spark colour).")]

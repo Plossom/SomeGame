@@ -94,7 +94,7 @@ namespace SomeGame.Car
             bool driftHeld = hasControl && _input.DriftHeld;
             _hitTimer = Mathf.Max(0f, _hitTimer - dt);
 
-            forwardSpeed += UpdateDrift(driftHeld, steer, throttle, forwardSpeed, dt);
+            forwardSpeed += UpdateDrift(driftHeld, steer, throttle, velocity.magnitude, offRoad, dt);
 
             // Boost: raises top speed and acceleration, fading out over the last third.
             float boost = 0f;
@@ -155,19 +155,21 @@ namespace SomeGame.Car
         /// <summary>
         /// Starts, charges and ends drifts. Returns instant forward speed to add (boost kick).
         /// </summary>
-        float UpdateDrift(bool held, Vector2 steer, float throttle, float forwardSpeed, float dt)
+        float UpdateDrift(bool held, Vector2 steer, float throttle, float speed, bool offRoad, float dt)
         {
             if (IsDrifting)
             {
                 _driftCharge += dt;
-                if (!ControlsEnabled || throttle <= 0f || forwardSpeed < stats.driftMinSpeed * 0.5f)
-                    EndDrift();                 // lifted the steering thumb or stalled: no boost
+                // Lifted the steering thumb, ran onto the grass or got too slow: drift lost, no boost.
+                if (!ControlsEnabled || throttle <= 0f || offRoad || speed < stats.driftMinSpeed * stats.driftKeepSpeedFactor)
+                    EndDrift();
                 else if (!held)
                     return ReleaseDrift();      // let go of the drift finger: boost
                 return 0f;
             }
 
-            if (!held || throttle <= 0f || forwardSpeed < stats.driftMinSpeed || steer.sqrMagnitude < 0.0001f)
+            // Drifts only start on the road, at speed, with the stick pointing to one side.
+            if (!held || throttle <= 0f || offRoad || speed < stats.driftMinSpeed || steer.sqrMagnitude < 0.0001f)
                 return 0f;
 
             // The side is picked by where the stick points relative to the car.
@@ -203,9 +205,13 @@ namespace SomeGame.Car
             float rad = (travel + 90f) * Mathf.Deg2Rad;
             _body.linearVelocity = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * speed;
 
-            float bodyTarget = travel + _driftDirection * stats.driftAngle;
+            // Entry kick: snap past the drift angle, then ease back to it.
+            float entry = 1f - Mathf.Clamp01(_driftCharge / stats.driftEntryTime);
+            float angle = stats.driftAngle + stats.driftEntryKick * entry * entry;
+            float bodyTarget = travel + _driftDirection * angle;
             float bodyStep = Mathf.DeltaAngle(_body.rotation, bodyTarget);
-            float maxBodyStep = stats.driftTurnRate * 2f * dt;
+            float bodyRate = entry > 0f ? stats.driftEntryRotationSpeed : stats.driftTurnRate * 2f;
+            float maxBodyStep = bodyRate * dt;
             _body.angularVelocity = Mathf.Clamp(bodyStep, -maxBodyStep, maxBodyStep) / dt;
 
             ForwardSpeed = Vector2.Dot(_body.linearVelocity, transform.up);
