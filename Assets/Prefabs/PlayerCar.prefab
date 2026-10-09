@@ -67,6 +67,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2026754258347199695, guid: 2116e51b364f546689f60112dd313353, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7188365303447697801}
+    - targetCorrespondingSourceObject: {fileID: 2026754258347199695, guid: 2116e51b364f546689f60112dd313353, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6727631803806171924}
   m_SourcePrefab: {fileID: 100100000, guid: 2116e51b364f546689f60112dd313353, type: 3}
 --- !u!1 &2487960657331238805 stripped
 GameObject:
@@ -85,3 +88,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 635e1d568d48941b4ae5e6ec4030f365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Input.PlayerCarInput
+  joystick: {fileID: 0}
+--- !u!114 &6727631803806171924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2487960657331238805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71068b66c268f4172b703f77566d896a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.DriftEffects
+  particleMaterial: {fileID: 2100000, guid: 07f97dab66cc547f48b8b5ed67acee3c, type: 2}
+  wheels:
+  - {x: -0.4, y: -0.6}
+  - {x: 0.4, y: -0.6}
+  exhaust: {x: 0, y: -0.95}
+  sortingOrder: 12
+  tierColors:
+  - {r: 1, g: 1, b: 1, a: 0.55}
+  - {r: 0.35, g: 0.65, b: 1, a: 1}
+  - {r: 1, g: 0.6, b: 0.1, a: 1}
+  - {r: 0.9, g: 0.35, b: 1, a: 1}
+  tierRates:
+  - 14
+  - 45
+  - 60
+  - 80
+  tierSizes:
+  - 0.18
+  - 0.27
+  - 0.33
+  - 0.42
+  tierUpBurst: 14
+  flameStart: {r: 1, g: 0.95, b: 0.55, a: 1}
+  flameEnd: {r: 1, g: 0.3, b: 0.05, a: 0}
+  flameRate: {x: 40, y: 140}
+  flameSize: {x: 0.3, y: 0.55}

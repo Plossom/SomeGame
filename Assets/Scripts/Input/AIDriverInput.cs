@@ -29,6 +29,7 @@ namespace SomeGame.Input
 
         public Vector2 SteerDirection { get; private set; }
         public float Throttle { get; private set; }
+        public bool DriftHeld => false;
 
         public float LaneOffset
         {

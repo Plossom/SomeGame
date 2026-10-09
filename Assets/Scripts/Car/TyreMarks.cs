@@ -39,8 +39,13 @@ namespace SomeGame.Car
         void OnDisable()
         {
             if (_active == null) return;
+            // Re-parenting is not allowed while the car is being deactivated, so marks that are still
+            // attached just stop here and go away with the car.
             for (int i = 0; i < _active.Length; i++)
-                if (_active[i] != null) EndMark(i);
+            {
+                if (_active[i] != null) _active[i].emitting = false;
+                _active[i] = null;
+            }
         }
 
         TrailRenderer StartMark(Vector2 localPosition)

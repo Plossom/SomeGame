@@ -16,5 +16,8 @@ namespace SomeGame.Car
 
         /// <summary>0 = coast, 1 = full throttle.</summary>
         float Throttle { get; }
+
+        /// <summary>Held to drift; releasing a charged drift fires a boost.</summary>
+        bool DriftHeld { get; }
     }
 }

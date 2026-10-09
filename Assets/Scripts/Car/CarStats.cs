@@ -41,6 +41,36 @@ namespace SomeGame.Car
         [Tooltip("Grip multiplier on grass.")]
         [Range(0f, 1f)] public float offRoadGrip = 0.6f;
 
+        [Header("Drift (second finger while steering)")]
+        [Tooltip("Minimum forward speed to start a drift (units/s).")]
+        [Min(0f)] public float driftMinSpeed = 7f;
+        [Tooltip("Stick must point at least this many degrees off the car's heading to pick a drift side.")]
+        [Range(0f, 90f)] public float driftStartAngle = 8f;
+        [Tooltip("How fast the direction of travel follows the stick into the drift side (degrees/s).")]
+        [Min(0f)] public float driftTurnRate = 200f;
+        [Tooltip("How fast it follows the stick toward the other side, i.e. widening the drift (degrees/s).")]
+        [Min(0f)] public float driftCounterTurnRate = 70f;
+        [Tooltip("How far the car body points into the corner relative to its direction of travel (degrees).")]
+        [Range(0f, 80f)] public float driftAngle = 32f;
+        [Tooltip("Top speed multiplier while drifting.")]
+        [Range(0.1f, 1f)] public float driftSpeedFactor = 0.92f;
+        [Tooltip("Seconds of drifting before releasing gives any boost (first spark colour).")]
+        [Min(0f)] public float driftMinCharge = 0.6f;
+        [Tooltip("Seconds of drifting for the strongest boost (last spark colour).")]
+        [Min(0.01f)] public float driftMaxCharge = 2.4f;
+
+        [Header("Boost (released drift)")]
+        [Tooltip("Boost length for the weakest / strongest charge (seconds).")]
+        [Min(0f)] public float boostMinDuration = 0.5f;
+        [Min(0f)] public float boostMaxDuration = 1.5f;
+        [Tooltip("Extra top speed as a fraction of topSpeed, weakest / strongest charge.")]
+        [Min(0f)] public float boostMinSpeedBonus = 0.15f;
+        [Min(0f)] public float boostMaxSpeedBonus = 0.45f;
+        [Tooltip("Extra acceleration while boosting (units/s²).")]
+        [Min(0f)] public float boostAcceleration = 30f;
+        [Tooltip("Instant forward speed added when a full-strength boost fires (units/s).")]
+        [Min(0f)] public float boostKick = 4f;
+
         [Header("Collisions")]
         [Tooltip("Extra impulse given to a car you drive into, per unit of closing speed.")]
         [Min(0f)] public float ramForce = 0.7f;

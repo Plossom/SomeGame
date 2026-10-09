@@ -47,6 +47,7 @@ namespace SomeGame.EditorTools
             WriteMaterial("Grass", "Grass");
             WriteMaterial("Tree", "Tree");
             WriteMaterial("TyreMark", null);
+            WriteMaterial("Spark", "Circle");
 
             AssetDatabase.Refresh();
             Debug.Log($"Placeholder art generated in {Folder}");
