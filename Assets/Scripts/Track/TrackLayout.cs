@@ -24,7 +24,7 @@ namespace SomeGame.Track
         [Tooltip("Checkpoints evenly spaced along the lap, checkpoint 0 is the start/finish line.")]
         [Min(2)] public int checkpointCount = 12;
         [Tooltip("Grass run-off between the kerb and the barrier wall on each side.")]
-        [Min(0f)] public float barrierRunOff = 3.5f;
+        [Min(0f)] public float barrierRunOff = 6f;
         [Tooltip("Thickness of the barrier wall.")]
         [Min(0.1f)] public float barrierWidth = 0.7f;
         [Tooltip("Grass margin around the track before the invisible boundary wall.")]
