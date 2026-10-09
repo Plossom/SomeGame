@@ -16,6 +16,9 @@ namespace SomeGame.Track
         [Tooltip("White line along both road edges.")]
         [SerializeField] MeshFilter edgeLines;
         [SerializeField, Min(0.01f)] float edgeLineWidth = 0.28f;
+        [Tooltip("White starting-grid boxes behind the start line.")]
+        [SerializeField] MeshFilter gridLines;
+        [SerializeField, Min(0)] int gridSlots = 6;
         [Tooltip("Optional sandy run-off beyond the kerbs in the corners (wider on the outside).")]
         [SerializeField] MeshFilter runoff;
         [Tooltip("Optional dashed centre line.")]
@@ -59,6 +62,7 @@ namespace SomeGame.Track
             Assign(kerbs, BuildKerbs(path, hw, outer));
             if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path, outer));
             Assign(startLine, BuildStartLine(path, hw));
+            if (gridLines != null) Assign(gridLines, BuildGrid(path, layout));
             if (runoff != null) Assign(runoff, BuildRunoff(path, outer));
             if (centerLine != null)
             {
@@ -171,6 +175,31 @@ namespace SomeGame.Track
                 }
             }
             return TrackMeshes.Quads("Runoff", vertices, uvs, triangles);
+        }
+
+        // One open box per grid slot (same placement as Track.GridSlot): a bar across in front of the car
+        // and two short bars along its sides, open toward the back.
+        Mesh BuildGrid(TrackPath path, TrackLayout layout)
+        {
+            const float bar = 0.16f, halfWidth = 0.95f, front = 1.35f, sideLength = 1.1f;
+            var vertices = new List<Vector3>();
+            var uvs = new List<Vector2>();
+            var triangles = new List<int>();
+            for (int i = 0; i < gridSlots; i++)
+            {
+                float distance = -(3f + i * 2.6f);
+                float lateral = (i % 2 == 0 ? 1f : -1f) * layout.roadWidth * 0.22f;
+                Vector2 forward = path.TangentAt(distance), side = path.NormalAt(distance);
+                Vector2 centre = path.PointAt(distance) + side * lateral;
+                Vector2 frontCentre = centre + forward * front;
+                TrackMeshes.AddQuad(vertices, uvs, triangles, frontCentre, side * (halfWidth + bar * 0.5f), forward * (bar * 0.5f), Vector2.one);
+                for (int k = -1; k <= 1; k += 2)
+                {
+                    Vector2 c = frontCentre + side * (k * halfWidth) - forward * (sideLength * 0.5f);
+                    TrackMeshes.AddQuad(vertices, uvs, triangles, c, side * (bar * 0.5f), forward * (sideLength * 0.5f), Vector2.one);
+                }
+            }
+            return TrackMeshes.Quads("Grid", vertices, uvs, triangles);
         }
 
         Mesh BuildStartLine(TrackPath path, float hw)

@@ -16,8 +16,7 @@ namespace SomeGame.UI
         static readonly Vector2[] Points =
         {
             new(40f, -160f), new(190f, 300f), new(330f, 720f), new(640f, 880f), new(890f, 960f),
-            new(800f, 1170f), new(500f, 1290f), new(410f, 1440f), new(590f, 1520f), new(700f, 1560f),
-            new(620f, 1600f), new(650f, 1632f),
+            new(800f, 1170f), new(500f, 1290f), new(410f, 1440f), new(560f, 1478f), new(640f, 1510f),
         };
 
         /// <summary>Index into the control points of each stop: race 1, race 2, then the "more soon" teaser.</summary>
@@ -43,7 +42,7 @@ namespace SomeGame.UI
         public static Vector2 StopPosition(int index) => Points[StopPoints[index]];
 
         /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
-        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(800f, 1632f, y));
+        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(800f, 1510f, y));
 
         public static Vector2 PointAt(float distance, out Vector2 tangent)
         {

@@ -80,7 +80,7 @@ namespace SomeGame.EditorTools
             World("CarDetails", 192, 336, CarDetailsPixel, 192, false);
             World("CarShadow", 192, 336, (x, y) =>
             {
-                float d = RoundRect(x, y, 96, 168, 74, 154, 40);
+                float d = RoundRect(x, y, 96, 170, 84, 146, 40);
                 return new Color(0, 0, 0, Mathf.Clamp01(0.5f - d / 14f));
             }, 192, false);
 
@@ -106,85 +106,104 @@ namespace SomeGame.EditorTools
             Material("Trail", null);
         }
 
-        // ---------- car: rally hatchback, nose up; body is tinted, details keep their colours ----------
+        // ---------- car: off-road buggy, nose up ----------
+        // Body layer (tinted with the team colour): bodywork and the tubular roll cage over a dark cockpit,
+        // big black wheels on suspension arms. Details layer (untinted): seat highlights, steering wheel,
+        // lights and the spare wheel.
 
-        static float CarBodySdf(float x, float y)
+        static readonly Vector4[] Wheels =
         {
-            float taper = Mathf.Lerp(68f, 60f, Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(220f, 330f, y)));
-            float core = RoundRect(96f + (x - 96f) * 68f / taper, y, 96, 170, 68, 152, 36);
-            float flares = Mathf.Min(RoundRect(x, y, 96, 258, 80, 34, 22), RoundRect(x, y, 96, 84, 82, 38, 24));
-            return SMin(core, flares, 12f);
+            new(28, 266, 19, 30), new(164, 266, 19, 30), // front: centre x, y, half width, half length
+            new(24, 72, 22, 34), new(168, 72, 22, 34),   // rear: wider
+        };
+
+        static float WheelSdf(float x, float y)
+        {
+            float d = float.MaxValue;
+            foreach (var w in Wheels) d = Mathf.Min(d, RoundRect(x, y, w.x, w.y, w.z, w.w, 9));
+            return d;
         }
 
-        static float GlassFront(float x, float y) =>
-            Polygon(x, y, new[] { new Vector2(44, 206), new Vector2(148, 206), new Vector2(134, 238), new Vector2(58, 238) }) - 4f;
-        static float GlassRear(float x, float y) =>
-            Polygon(x, y, new[] { new Vector2(52, 96), new Vector2(140, 96), new Vector2(146, 116), new Vector2(46, 116) }) - 3f;
-        static float SideWindows(float x, float y) =>
-            Mathf.Min(RoundRect(x, y, 44, 160, 5, 40, 4), RoundRect(x, y, 148, 160, 5, 40, 4));
+        // Bodywork: tapered nose, side pods and the engine cover at the back.
+        static float BodySdf(float x, float y)
+        {
+            float nose = Polygon(x, y, new[] { new Vector2(44, 226), new Vector2(148, 226), new Vector2(126, 318), new Vector2(66, 318) }) - 8f;
+            float pods = Mathf.Min(RoundRect(x, y, 46, 166, 18, 62, 9), RoundRect(x, y, 146, 166, 18, 62, 9));
+            float tail = RoundRect(x, y, 96, 70, 54, 42, 14);
+            return Mathf.Min(nose, Mathf.Min(pods, tail));
+        }
+
+        static float Cockpit(float x, float y) => RoundRect(x, y, 96, 166, 44, 64, 10);
+
+        // Roll cage: outer frame, cross bars, a diagonal and the bars running to the nose and tail.
+        static float CageSdf(float x, float y)
+        {
+            const float r = 4.2f;
+            float frame = Shell(RoundRect(x, y, 96, 166, 46, 66, 12), r);
+            float bars = Min(Capsule(x, y, 52, 196, 140, 196, r), Capsule(x, y, 52, 138, 140, 138, r), Capsule(x, y, 96, 100, 96, 232, r * 0.9f),
+                             Capsule(x, y, 60, 232, 78, 300, r), Capsule(x, y, 132, 232, 114, 300, r),
+                             Capsule(x, y, 78, 300, 114, 300, r), Capsule(x, y, 58, 100, 72, 44, r), Capsule(x, y, 134, 100, 120, 44, r));
+            return Mathf.Min(frame, bars);
+        }
 
         static Color CarBodyPixel(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            float tyres = Min(RoundRect(x, y, 22, 258, 14, 28, 8), RoundRect(x, y, 170, 258, 14, 28, 8),
-                              RoundRect(x, y, 20, 84, 15, 30, 8), RoundRect(x, y, 172, 84, 15, 30, 8));
-            c = Over(c, Hex("1D2421"), Fill(tyres));
-            c = Over(c, Outline, Stroke(tyres, 4f));
+            // Suspension arms (dark, nearly untouched by the tint).
+            float arms = Min(Capsule(x, y, 48, 254, 28, 262, 4), Capsule(x, y, 48, 278, 28, 272, 4), Capsule(x, y, 144, 254, 164, 262, 4), Capsule(x, y, 144, 278, 164, 272, 4),
+                             Capsule(x, y, 54, 62, 24, 66, 4.5f), Capsule(x, y, 54, 84, 24, 80, 4.5f), Capsule(x, y, 138, 62, 168, 66, 4.5f), Capsule(x, y, 138, 84, 168, 80, 4.5f));
+            c = Over(c, new Color(0.16f, 0.16f, 0.16f), Fill(arms));
+            // Wheels with tread blocks.
+            float wheels = WheelSdf(x, y);
+            bool tread = Mathf.Repeat(y, 9f) < 4f;
+            c = Over(c, tread ? new Color(0.11f, 0.11f, 0.11f) : new Color(0.17f, 0.17f, 0.17f), Fill(wheels));
+            c = Over(c, Outline, Stroke(wheels, 4f));
 
-            float body = CarBodySdf(x, y);
-            float inside = Mathf.Clamp01(-body / 22f);
-            // Flat colour with a soft lighter left side and a darker right edge (light from the top left).
-            float v = Mathf.Lerp(0.78f, 1f, Mathf.Pow(inside, 0.5f)) - Mathf.Clamp01((x - 120f) / 60f) * 0.1f * inside;
+            float body = BodySdf(x, y);
+            float inside = Mathf.Clamp01(-body / 14f);
+            float v = Mathf.Lerp(0.8f, 1f, inside) - Mathf.Clamp01((x - 120f) / 60f) * 0.08f;
             c = Over(c, new Color(v, v, v), Fill(body));
-            float mirrors = Mathf.Min(RoundRect(x, y, 22, 206, 10, 7, 5), RoundRect(x, y, 170, 206, 10, 7, 5));
-            c = Over(c, new Color(0.9f, 0.9f, 0.9f), Fill(mirrors));
-            c = Over(c, Outline, Stroke(Mathf.Min(body, mirrors), 6f));
+            // Raised centre of the nose and the engine cover catch the light.
+            c = Over(c, new Color(0.92f, 0.92f, 0.92f), Fill(Polygon(x, y, new[] { new Vector2(80, 240), new Vector2(112, 240), new Vector2(104, 304), new Vector2(88, 304) })) * Fill(body + 4f));
+            c = Over(c, new Color(0.9f, 0.9f, 0.9f), Fill(RoundRect(x, y, 96, 62, 26, 24, 8)) * Fill(body + 4f));
+            c = Over(c, Outline, Stroke(body, 4.5f));
+
+            // Dark cockpit with two seats.
+            float cockpit = Cockpit(x, y);
+            c = Over(c, new Color(0.13f, 0.13f, 0.14f), Fill(cockpit));
+            float seats = Mathf.Min(RoundRect(x, y, 74, 160, 17, 26, 7), RoundRect(x, y, 118, 160, 17, 26, 7));
+            c = Over(c, new Color(0.24f, 0.24f, 0.26f), Fill(seats));
+            float heads = Mathf.Min(RoundRect(x, y, 74, 128, 12, 7, 4), RoundRect(x, y, 118, 128, 12, 7, 4));
+            c = Over(c, new Color(0.24f, 0.24f, 0.26f), Fill(heads));
+
+            // Roll cage tubes on top (tinted), each with a light top edge.
+            float cage = CageSdf(x, y);
+            c = Over(c, new Color(0.95f, 0.95f, 0.95f), Fill(cage));
+            c = Over(c, Outline, Stroke(cage, 2.5f));
             return c;
         }
 
         static Color CarDetailsPixel(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            float body = CarBodySdf(x, y);
-            Color glass = Hex("2E4656"), glassHi = Hex("7FA3B8");
-
-            // Racing stripes over hood, roof and tail.
-            float stripes = Mathf.Min(RoundRect(x, y, 84, 170, 6, 160, 2), RoundRect(x, y, 108, 170, 6, 160, 2));
-            stripes = Mathf.Max(stripes, body + 7f);
-            c = Over(c, new Color(1f, 1f, 1f, 0.95f), Fill(stripes));
-
-            // Glass with a diagonal reflection.
-            float front = GlassFront(x, y), rear = GlassRear(x, y), side = SideWindows(x, y);
-            float reflection = Mathf.Clamp01(1f - Mathf.Abs((x - 80f) - (y - 222f) * 0.9f) / 7f);
-            c = Over(c, Color.Lerp(glass, glassHi, reflection * 0.6f), Fill(front));
-            c = Over(c, glass, Fill(Mathf.Min(rear, side)));
-            c = Over(c, Outline, Stroke(Min(front, rear, side), 3.5f));
-
-            // Roof roundel.
-            float roundel = Circle(x, y, 96, 160, 22);
-            c = Over(c, Color.white, Fill(roundel));
-            c = Over(c, Outline, Stroke(roundel, 4f));
-            c = Over(c, Hex("E8501A"), Fill(Circle(x, y, 96, 160, 9)));
-
-            // Light pod on the bonnet.
-            for (int i = 0; i < 4; i++)
+            // Seat cushions and belts.
+            foreach (float sx in new[] { 74f, 118f })
             {
-                float lx = 57f + i * 26f;
-                float lamp = Circle(x, y, lx, 290, 10);
-                c = Over(c, Hex("FFF6D8"), Fill(lamp));
-                c = Over(c, Outline, Stroke(lamp, 3.5f));
+                c = Over(c, new Color(1f, 1f, 1f, 0.08f), Fill(RoundRect(x, y, sx - 4, 166, 9, 16, 5)));
+                c = Over(c, new Color(0.85f, 0.3f, 0.2f, 0.9f), Fill(Mathf.Min(Capsule(x, y, sx - 9, 180, sx - 9, 146, 2f), Capsule(x, y, sx + 9, 180, sx + 9, 146, 2f))) * Fill(RoundRect(x, y, sx, 160, 17, 26, 7)));
             }
-            // Headlights and tail lights.
-            float heads = Mathf.Min(Capsule(x, y, 48, 316, 62, 322, 6), Capsule(x, y, 144, 316, 130, 322, 6));
-            c = Over(c, Hex("FFFBEA"), Fill(heads));
-            float tails = Mathf.Min(Capsule(x, y, 40, 26, 62, 22, 6), Capsule(x, y, 152, 26, 130, 22, 6));
+            // Steering wheel in front of the left seat.
+            c = Over(c, new Color(0.08f, 0.08f, 0.08f), Stroke(Circle(x, y, 74, 204, 11), 4f));
+            // Headlights on the nose, tail lights and the spare wheel on the engine cover.
+            float heads = Mathf.Min(Circle(x, y, 78, 306, 7), Circle(x, y, 114, 306, 7));
+            c = Over(c, Hex("FFF6D8"), Fill(heads));
+            c = Over(c, Outline, Stroke(heads, 2.5f));
+            float tails = Mathf.Min(RoundRect(x, y, 62, 34, 8, 4, 2), RoundRect(x, y, 130, 34, 8, 4, 2));
             c = Over(c, Hex("E0303A"), Fill(tails));
-            // Rear wing.
-            float wing = RoundRect(x, y, 96, 48, 76, 9, 4);
-            c = Over(c, Hex("2A302D"), Fill(wing));
-            c = Over(c, Outline, Stroke(wing, 3.5f));
-            // Bonnet vent.
-            c = Over(c, Hex("2A302D"), Fill(RoundRect(x, y, 96, 262, 20, 6, 3)));
+            float spare = Circle(x, y, 96, 62, 19);
+            c = Over(c, new Color(0.12f, 0.12f, 0.12f), Fill(spare));
+            c = Over(c, new Color(0.45f, 0.45f, 0.47f), Fill(Circle(x, y, 96, 62, 8)));
+            c = Over(c, Outline, Stroke(spare, 3f));
             return c;
         }
 
