@@ -614,17 +614,17 @@ PrefabInstance:
       propertyPath: stats
       value: 
       objectReference: {fileID: 11400000, guid: ca23b7784177c4b26bb90caf844317a3, type: 2}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.b
       value: 0.2
       objectReference: {fileID: 0}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.g
-      value: 0.25
+      value: 0.2509804
       objectReference: {fileID: 0}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.r
-      value: 0.9
+      value: 0.9019608
       objectReference: {fileID: 0}
     - target: {fileID: 5684117315000715801, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: laneOffset
@@ -792,17 +792,17 @@ PrefabInstance:
       propertyPath: stats
       value: 
       objectReference: {fileID: 11400000, guid: 166c99d2dc8d548f8b951d29ffe33a4b, type: 2}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.b
-      value: 0.9
+      value: 0.9019608
       objectReference: {fileID: 0}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.g
-      value: 0.35
+      value: 0.34901962
       objectReference: {fileID: 0}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.r
-      value: 0.65
+      value: 0.6509804
       objectReference: {fileID: 0}
     - target: {fileID: 5684117315000715801, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: laneOffset
@@ -3227,11 +3227,11 @@ PrefabInstance:
       propertyPath: stats
       value: 
       objectReference: {fileID: 11400000, guid: 64445d2ed093048808b24ad8bb21b16b, type: 2}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.b
-      value: 0.15
+      value: 0.14901961
       objectReference: {fileID: 0}
-    - target: {fileID: 4594569215441041819, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+    - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.g
       value: 0.8
       objectReference: {fileID: 0}

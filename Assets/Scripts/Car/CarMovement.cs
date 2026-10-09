@@ -22,10 +22,13 @@ namespace SomeGame.Car
         int _driftDirection;   // +1 drifting left (counter-clockwise), -1 right, 0 not drifting
         float _driftCharge;    // seconds spent in the current drift
         float _boostTimer, _boostDuration;
+        bool _driftHeldLastStep;
 
         /// <summary>Raised on every collision with the closing speed of the impact.</summary>
         public event Action<float> Collided;
         public event Action DriftStarted;
+        /// <summary>The drift button was pressed. The car always hops; a drift follows only if conditions allow.</summary>
+        public event Action Hopped;
         /// <summary>A drift was released with enough charge; argument is boost strength 0..1.</summary>
         public event Action<float> BoostStarted;
 
@@ -92,6 +95,8 @@ namespace SomeGame.Car
             float throttle = hasControl ? Mathf.Clamp01(_input.Throttle) : 0f;
             Vector2 steer = hasControl ? _input.SteerDirection : Vector2.zero;
             bool driftHeld = hasControl && _input.DriftHeld;
+            if (driftHeld && !_driftHeldLastStep) Hopped?.Invoke();
+            _driftHeldLastStep = driftHeld;
             _hitTimer = Mathf.Max(0f, _hitTimer - dt);
 
             forwardSpeed += UpdateDrift(driftHeld, steer, throttle, velocity.magnitude, offRoad, dt);
