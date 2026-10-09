@@ -32,7 +32,9 @@ namespace SomeGame.Car
         /// <summary>When false the car ignores its input and coasts (countdown, finished).</summary>
         public bool ControlsEnabled { get; set; } = true;
 
-        public Rigidbody2D Body => _body;
+        // Resolved lazily: other scripts (RaceManager) may use it before this Awake has run,
+        // and Awake order between objects differs between the Editor and device builds.
+        public Rigidbody2D Body => _body != null ? _body : _body = GetComponent<Rigidbody2D>();
         public float ForwardSpeed { get; private set; }
         public float SidewaysSpeed { get; private set; }
         public bool IsSliding => Mathf.Abs(SidewaysSpeed) > stats.slideThreshold;
