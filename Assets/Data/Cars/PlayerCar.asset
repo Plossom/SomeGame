@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1157046518bc491eabfa6e6ea03de2e, type: 3}
+  m_Name: PlayerCar
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.CarStats
+  topSpeed: 18
+  acceleration: 11
+  drag: 5
+  turnRate: 220
+  fullTurnSpeed: 6
+  standstillTurnFactor: 0.35
+  grip: 7
+  highSpeedGripLoss: 0.5
+  slideThreshold: 3
+  offRoadSlowdown: 0.4
+  offRoadDeceleration: 22
+  offRoadGrip: 0.6
+  ramForce: 0.7
+  hitRecoveryTime: 0.35
+  mass: 1
