@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using SomeGame.Input;
 using SomeGame.Race;
 using TMPro;
 using UnityEngine;
@@ -20,8 +19,6 @@ namespace SomeGame.UI
         [SerializeField] MapNode nodeTemplate;
         [SerializeField] LevelCard card;
         [SerializeField] TMP_Text totalStars;
-        [SerializeField] UnityEngine.UI.Button joystickButton;
-        [SerializeField] TMP_Text joystickLabel;
 
         [Header("Layout (canvas units)")]
         [SerializeField, Min(50f)] float nodeSpacing = 360f;
@@ -36,15 +33,10 @@ namespace SomeGame.UI
 
         void Start()
         {
-            joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
-            ControlSettings.Changed += RefreshJoystickLabel;
-            RefreshJoystickLabel();
             Build();
             Refresh();
             ScrollToLatest();
         }
-
-        void OnDestroy() => ControlSettings.Changed -= RefreshJoystickLabel;
 
         Vector2 NodePosition(int index) =>
             new(Mathf.Sin(index * 1.3f) * sideSwing, bottomPadding + index * nodeSpacing);
@@ -110,8 +102,5 @@ namespace SomeGame.UI
             float target = NodePosition(latest).y - viewport * 0.4f;
             scroll.verticalNormalizedPosition = Mathf.Clamp01(target / scrollable);
         }
-
-        void RefreshJoystickLabel() =>
-            joystickLabel.text = ControlSettings.InvisibleJoystick ? "Joystick: Invisible" : "Joystick: Visible";
     }
 }

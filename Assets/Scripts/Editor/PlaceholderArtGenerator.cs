@@ -41,6 +41,9 @@ namespace SomeGame.EditorTools
             Write("Circle", 64, 64, (x, y) => Disc(x, y, 64, 31, 1f), tiled: false);
             Write("Star", 128, 128, (x, y) => InStar(x + 0.5f, y + 0.5f, 64f, 64f, 60f, 25f) ? Color.white : Clear, tiled: false);
             Write("Lock", 64, 64, Lock, tiled: false);
+            // Menu icon: three rounded bars.
+            Write("Menu", 64, 64, (x, y) => x >= 8 && x < 56 && (Mathf.Abs(y - 14) < 4 || Mathf.Abs(y - 32) < 4 || Mathf.Abs(y - 50) < 4)
+                ? Color.white : Clear, tiled: false);
 
             // Track meshes and tyre marks are not sprites, so they need unlit sprite materials.
             WriteMaterial("Road", "RoadSurface");

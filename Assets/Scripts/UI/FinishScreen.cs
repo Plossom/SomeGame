@@ -1,12 +1,11 @@
 using System.Text;
-using SomeGame.Input;
 using SomeGame.Race;
 using TMPro;
 using UnityEngine;
 
 namespace SomeGame.UI
 {
-    /// <summary>Results panel shown when the player finishes, with Restart and the joystick setting.</summary>
+    /// <summary>Results panel shown when the player finishes: place, stars, times, Continue and Retry.</summary>
     public class FinishScreen : MonoBehaviour
     {
         [SerializeField] RaceManager race;
@@ -21,8 +20,6 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text starInfo;
         [SerializeField] Color starOn = new(1f, 0.82f, 0.2f);
         [SerializeField] Color starOff = new(1f, 1f, 1f, 0.15f);
-        [SerializeField] UnityEngine.UI.Button joystickButton;
-        [SerializeField] TMP_Text joystickButtonLabel;
 
         bool _newBest;
 
@@ -31,22 +28,18 @@ namespace SomeGame.UI
             panel.SetActive(false);
             restartButton.onClick.AddListener(race.Restart);
             if (continueButton != null) continueButton.onClick.AddListener(GameSession.ReturnToMap);
-            joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
         }
 
         void OnEnable()
         {
             race.PlayerFinished += Show;
             race.PlayerLapCompleted += OnLap;
-            ControlSettings.Changed += RefreshJoystickLabel;
-            RefreshJoystickLabel();
         }
 
         void OnDisable()
         {
             race.PlayerFinished -= Show;
             race.PlayerLapCompleted -= OnLap;
-            ControlSettings.Changed -= RefreshJoystickLabel;
         }
 
         void OnLap(float lapTime, bool newBest) => _newBest |= newBest;
@@ -101,7 +94,5 @@ namespace SomeGame.UI
             return string.Join("  ·  ", parts);
         }
 
-        void RefreshJoystickLabel() =>
-            joystickButtonLabel.text = ControlSettings.InvisibleJoystick ? "Joystick: Invisible" : "Joystick: Visible";
     }
 }
