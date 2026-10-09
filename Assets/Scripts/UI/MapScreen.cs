@@ -42,13 +42,14 @@ namespace SomeGame.UI
         [SerializeField] float carOffset = 95f;
 
         readonly List<MapNode> _nodes = new();
+        readonly List<GameObject> _progress = new();
         int _selected;
         Vector2 _lastParentSize;
 
         void Start()
         {
             startButton.onClick.AddListener(StartSelected);
-            _selected = LatestVisible();
+            _selected = InitialSelection();
             Build();
             Refresh();
             FitWorld();
@@ -67,6 +68,14 @@ namespace SomeGame.UI
             world.localScale = Vector3.one * scale;
         }
 
+        // On game start race 1 is selected; back from a race, the race just played.
+        int InitialSelection()
+        {
+            var last = GameSession.CurrentLevel;
+            int index = last != null ? catalog.IndexOf(last) : -1;
+            return index >= 0 && ProgressStore.IsVisible(catalog, index) ? index : 0;
+        }
+
         int LatestVisible()
         {
             int latest = 0;
@@ -78,15 +87,6 @@ namespace SomeGame.UI
         void Build()
         {
             nodeTemplate.gameObject.SetActive(false);
-            int latest = LatestVisible();
-
-            // Opened road: from the bottom of the map to the car.
-            float carDistance = Mathf.Max(0f, MapLayout.StopDistance(latest) - carOffset);
-            DrawProgress(carDistance);
-            Vector2 carPos = MapLayout.PointAt(carDistance, out var tangent);
-            car.anchoredPosition = carPos;
-            car.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f);
-            car.SetAsLastSibling();
 
             int stops = Mathf.Min(MapLayout.StopCount, catalog.Count + 1);
             for (int i = 0; i < stops; i++)
@@ -98,6 +98,21 @@ namespace SomeGame.UI
                 node.gameObject.SetActive(true);
                 _nodes.Add(node);
             }
+            PlaceCar();
+        }
+
+        // The car waits on the road just before the selected race; the road behind it is orange.
+        void PlaceCar()
+        {
+            foreach (var piece in _progress) if (piece != null) Destroy(piece);
+            _progress.Clear();
+            float carDistance = Mathf.Max(0f, MapLayout.StopDistance(_selected) - carOffset);
+            DrawProgress(carDistance);
+            Vector2 carPos = MapLayout.PointAt(carDistance, out var tangent);
+            car.anchoredPosition = carPos;
+            car.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f);
+            car.SetAsLastSibling();
+            foreach (var node in _nodes) node.transform.SetAsLastSibling(); // stops stay on top of the line
         }
 
         void DrawProgress(float until)
@@ -118,12 +133,15 @@ namespace SomeGame.UI
                 var image = piece.GetComponent<UnityEngine.UI.Image>();
                 image.color = Theme.Orange;
                 image.raycastTarget = false;
+                rect.SetSiblingIndex(1); // just above the map picture
+                _progress.Add(piece);
             }
         }
 
         void Select(int index)
         {
             _selected = index;
+            PlaceCar();
             Refresh();
         }
 
@@ -171,7 +189,7 @@ namespace SomeGame.UI
             bool last = _selected == catalog.Count - 1;
             hint.text = !canEnter ? $"Collect {missing} more star{(missing == 1 ? "" : "s")}"
                 : ProgressStore.HasWon(level) ? "Beat your time for more stars"
-                : last ? "Win to earn stars" : "Win to open the next race";
+                : last || ProgressStore.UnlockAll ? "Win to earn stars" : "Win to open the next race";
         }
 
         void StartSelected()
