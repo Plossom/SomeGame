@@ -904,6 +904,11 @@ Transform:
   - {fileID: 1145898039}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &1352056958 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 7105021694138896427, guid: 314022787099a498d9eadbbd333c511a, type: 3}
+  m_PrefabInstance: {fileID: 2078547895}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1355385416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1109,6 +1114,7 @@ GameObject:
   - component: {fileID: 1585216745}
   - component: {fileID: 1585216744}
   - component: {fileID: 1585216743}
+  - component: {fileID: 1585216746}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1195,7 +1201,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 11
+  orthographic size: 14
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -1220,12 +1226,30 @@ Transform:
   m_GameObject: {fileID: 1585216742}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 1.54, y: -18.799992, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1585216746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1585216742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcec8aea494b644418eceeaef9f4d5fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.CameraRig.FollowCamera
+  target: {fileID: 1352056958}
+  orthographicSize: 14
+  followSmoothTime: 0.12
+  lookAheadTime: 0.35
+  maxLookAhead: 6
+  lookAheadSmoothTime: 0.5
 --- !u!1 &2066296779
 GameObject:
   m_ObjectHideFlags: 0
