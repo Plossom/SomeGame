@@ -99,8 +99,13 @@ have at most 3 such apps installed at once.
   have no brake), so it sometimes runs wide onto the grass at the hairpin. It does not try to
   overtake or avoid other cars. After the player finishes, rivals keep driving and their finish
   times are not shown.
-- **Wrong way:** a blinking WRONG WAY warning appears after ~0.8 s of driving against the track
-  direction (`RaceProgress.wrongWayDelay` on the car prefab).
+- **Track limits:** there are no walls. Grass caps your speed at 40%, so running wide just costs
+  time. Cutting a corner across the grass (gaining more track than you drive) adds a **+2 s
+  penalty** to your race time ("+2 s CORNER CUT"), and that lap cannot become your best lap.
+  Skipping a whole section shows **MISSED CHECKPOINT / GO BACK** until you return; the lap does not
+  count until you do. Driving backwards shows **WRONG WAY**. Penalties count in the final
+  classification. Values: `RaceProgress` on the car prefab (`cutTolerance`, `cutPenaltySeconds`,
+  `missedCheckpointMargin`, `wrongWayDelay`). Only the player is checked; rivals do not cut.
 - **Kerbs run along the whole circuit**, not just the corners. Trees are scenery only (no
   colliders). The map edge is an invisible wall.
 - **Ram force applies to every car-to-car hit**, AI vs AI included. With the joystick only the

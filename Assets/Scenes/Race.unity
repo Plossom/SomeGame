@@ -614,7 +614,7 @@ GameObject:
   - component: {fileID: 297091892}
   - component: {fileID: 297091891}
   m_Layer: 0
-  m_Name: WrongWay
+  m_Name: Warning
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -637,7 +637,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -400}
-  m_SizeDelta: {x: 1000, y: 180}
+  m_SizeDelta: {x: 1050, y: 260}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &297091891
 MonoBehaviour:
@@ -689,9 +689,9 @@ MonoBehaviour:
   m_fontSize: 130
   m_fontSizeBase: 130
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 50
+  m_fontSizeMax: 130
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1585,7 +1585,7 @@ MonoBehaviour:
   positionLabel: {fileID: 226629296}
   lapFlashLabel: {fileID: 1474915862}
   lapFlashSeconds: 2.5
-  wrongWayLabel: {fileID: 297091891}
+  warningLabel: {fileID: 297091891}
 --- !u!114 &863940448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1817,9 +1817,9 @@ MonoBehaviour:
   m_fontSize: 80
   m_fontSizeBase: 80
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 44
+  m_fontSizeMax: 80
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -2409,7 +2409,7 @@ MonoBehaviour:
   trees: {fileID: 45056160}
   treeCount: 40
   seed: 12345
-  barrierClearance: 1
+  roadClearance: 3
   sizeRange: {x: 2.2, y: 3.6}
 --- !u!114 &1295174577
 MonoBehaviour:

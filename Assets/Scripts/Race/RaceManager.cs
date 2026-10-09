@@ -51,6 +51,12 @@ namespace SomeGame.Race
             _ => Time.time - _startTime,
         };
 
+        /// <summary>Race time plus the player's corner-cut penalties.</summary>
+        public float PlayerTotalTime => RaceTime + Player.PenaltySeconds;
+
+        /// <summary>The player's final place, including penalties. Valid once PlayerFinished fired.</summary>
+        public int FinalPosition { get; private set; }
+
         /// <summary>1-based position of a car in the current standings.</summary>
         public int PositionOf(RaceProgress car) => _standings.IndexOf(car) + 1;
 
@@ -60,6 +66,7 @@ namespace SomeGame.Race
             int slot = 0;
             foreach (var rival in rivals) Register(rival, slot++, $"Rival {slot}");
             Player = Register(player, slot, "You");
+            Player.DetectCuts = true;
         }
 
         RaceProgress Register(CarMovement car, int gridSlot, string displayName)
@@ -117,7 +124,9 @@ namespace SomeGame.Race
 
         void OnPlayerLap(RaceProgress car, float lapTime)
         {
-            bool newBest = BestLapStore.Submit(TrackId, lapTime);
+            // Laps with a corner cut never count as best lap.
+            bool clean = car.LapClean.Count > 0 && car.LapClean[car.LapClean.Count - 1];
+            bool newBest = clean && BestLapStore.Submit(TrackId, lapTime);
             PlayerLapCompleted?.Invoke(lapTime, newBest);
         }
 
@@ -130,6 +139,20 @@ namespace SomeGame.Race
             State = RaceState.Finished;
             player.ControlsEnabled = false;
             if (joystick != null) joystick.Interactable = false;
+            StartCoroutine(ClassifyPlayer());
+        }
+
+        // With penalties the player's real result is finish time + penalty. Rivals finishing within
+        // that window still beat the player, so wait it out before showing the result.
+        IEnumerator ClassifyPlayer()
+        {
+            float adjusted = Player.FinishTime + Player.PenaltySeconds;
+            while (Time.time < adjusted) yield return null;
+
+            int ahead = 0;
+            foreach (var car in _cars)
+                if (car != Player && car.IsFinished && car.FinishTime < adjusted) ahead++;
+            FinalPosition = ahead + 1;
             PlayerFinished?.Invoke();
         }
 
