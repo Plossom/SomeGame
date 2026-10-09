@@ -24,8 +24,8 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
    Rules:
    - **All races are open from the start** (`ProgressStore.UnlockAll`; set it to false to bring back
      the rules: a race appears once the previous one is won and needs enough total stars).
-   - Stars per race (0-3) depend **only on your total time**, and only if you **win**; otherwise 0.
-     Your best result per race is kept.
+   - Stars per race (0-3) depend **only on your total time** (you don't have to win, but the star
+     times are fast, so it usually takes a win). Your best result per race is kept.
    - There is no garage: you drive one car, the orange buggy.
 3. After **3-2-1-GO**, touch (or click) anywhere and drag. A joystick appears under your
    thumb. The car turns toward the direction the stick points (north is always up) and

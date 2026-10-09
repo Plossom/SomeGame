@@ -27,14 +27,13 @@ namespace SomeGame.Race
         [Tooltip("Total stars needed to enter this race (it also needs the previous race won).")]
         [Min(0)] public int starsRequired;
 
-        [Header("Stars (only when you win)")]
+        [Header("Stars (by total time; winning is not required)")]
         [Tooltip("Total race time (including penalties) for 1, 2 and 3 stars, in seconds. Must decrease.")]
         public float[] starTimes = { 75f, 68f, 63f };
 
-        /// <summary>Stars for a finished race: 0 unless won, then by total time.</summary>
+        /// <summary>Stars for a finished race, by total time only (the place does not matter).</summary>
         public int StarsFor(bool won, float totalTime)
         {
-            if (!won) return 0;
             int stars = 0;
             for (int i = 0; i < starTimes.Length; i++)
                 if (totalTime <= starTimes[i]) stars = i + 1;

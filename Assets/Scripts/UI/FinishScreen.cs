@@ -91,11 +91,6 @@ namespace SomeGame.UI
                 nextStarLabel.text = "No stars in test races";
                 nextStarValue.text = "";
             }
-            else if (!won)
-            {
-                nextStarLabel.text = "Win to earn stars";
-                nextStarValue.text = "";
-            }
             else if (earned >= level.starTimes.Length)
             {
                 nextStarLabel.text = "All stars";

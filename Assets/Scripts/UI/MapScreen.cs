@@ -189,7 +189,7 @@ namespace SomeGame.UI
             bool last = _selected == catalog.Count - 1;
             hint.text = !canEnter ? $"Collect {missing} more star{(missing == 1 ? "" : "s")}"
                 : ProgressStore.HasWon(level) ? "Beat your time for more stars"
-                : last || ProgressStore.UnlockAll ? "Win to earn stars" : "Win to open the next race";
+                : last || ProgressStore.UnlockAll ? "Beat the star times" : "Win to open the next race";
         }
 
         void StartSelected()
