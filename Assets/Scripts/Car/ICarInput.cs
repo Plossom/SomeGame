@@ -14,7 +14,7 @@ namespace SomeGame.Car
         /// </summary>
         Vector2 SteerDirection { get; }
 
-        /// <summary>0 = coast, 1 = full throttle.</summary>
+        /// <summary>0 = coast, 1 = full throttle, negative = brake (used by the AI).</summary>
         float Throttle { get; }
 
         /// <summary>Held to drift; releasing a charged drift fires a boost.</summary>

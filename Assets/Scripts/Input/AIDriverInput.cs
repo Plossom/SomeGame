@@ -6,8 +6,9 @@ namespace SomeGame.Input
 {
     /// <summary>
     /// AI driver: steers at a point ahead on the track centre line (plus its own lane offset) and
-    /// lifts off the throttle when a sharp corner is coming. Speed differences between rivals come
-    /// from their <see cref="CarStats"/> assets.
+    /// brakes for corners: from the curvature of the track ahead it works out the fastest speed it
+    /// can still slow down from in time. Speed differences between rivals come from their
+    /// <see cref="CarStats"/> assets and <see cref="cornerGrip"/>.
     /// </summary>
     [RequireComponent(typeof(TrackSensor), typeof(CarMovement))]
     public class AIDriverInput : MonoBehaviour, ICarInput
@@ -17,12 +18,12 @@ namespace SomeGame.Input
         [Tooltip("Steering target distance ahead: base + speed * factor.")]
         [SerializeField, Min(0f)] float lookAheadBase = 4f;
         [SerializeField, Min(0f)] float lookAheadPerSpeed = 0.3f;
-        [Tooltip("How far ahead to look for corners when deciding to lift off.")]
-        [SerializeField, Min(1f)] float cornerScanDistance = 26f;
-        [Tooltip("Speed the AI aims for in the tightest corners, as a fraction of its top speed.")]
-        [SerializeField, Range(0.1f, 1f)] float tightCornerSpeedFactor = 0.5f;
-        [Tooltip("Turn angle (degrees) over the scan distance that counts as the tightest corner.")]
-        [SerializeField, Min(1f)] float tightCornerAngle = 150f;
+        [Tooltip("Sideways acceleration the AI trusts in corners (units/s²). Higher = faster, riskier cornering.")]
+        [SerializeField, Min(1f)] float cornerGrip = 24f;
+        [Tooltip("How far ahead to read the track for corners (units).")]
+        [SerializeField, Min(1f)] float cornerScanDistance = 45f;
+        [Tooltip("Fraction of the car's brake power the AI plans with (leaves a safety margin).")]
+        [SerializeField, Range(0.1f, 1f)] float brakeMargin = 0.75f;
 
         TrackSensor _sensor;
         CarMovement _car;
@@ -51,18 +52,29 @@ namespace SomeGame.Input
             float speed = Mathf.Max(0f, _car.ForwardSpeed);
 
             float ahead = distance + lookAheadBase + speed * lookAheadPerSpeed;
-            Vector2 target = path.PointAt(ahead) + path.NormalAt(ahead) * laneOffset;
-            SteerDirection = (target - _car.Body.position).normalized;
+            Vector2 aim = path.PointAt(ahead) + path.NormalAt(ahead) * laneOffset;
+            SteerDirection = (aim - _car.Body.position).normalized;
 
-            // Biggest change of direction between here and the scan distance ahead.
-            Vector2 now = path.TangentAt(distance);
-            float sharpest = 0f;
-            for (float d = 4f; d <= cornerScanDistance; d += 4f)
-                sharpest = Mathf.Max(sharpest, Vector2.Angle(now, path.TangentAt(distance + d)));
+            float targetSpeed = TargetSpeed(path, distance);
+            Throttle = speed < targetSpeed - 0.3f ? 1f : speed > targetSpeed + 1.5f ? -1f : 0f;
+        }
 
-            float topSpeed = _car.Stats.topSpeed;
-            float allowed = Mathf.Lerp(topSpeed, topSpeed * tightCornerSpeedFactor, sharpest / tightCornerAngle);
-            Throttle = speed < allowed ? 1f : 0f;
+        /// <summary>Fastest speed from which every corner in the scan range can still be taken.</summary>
+        float TargetSpeed(TrackPath path, float distance)
+        {
+            const float window = 6f; // track length over which curvature is measured
+            float brake = _car.Stats.brakeDeceleration * brakeMargin;
+            float target = _car.Stats.topSpeed;
+            for (float d = 0f; d <= cornerScanDistance; d += 2f)
+            {
+                float at = distance + d;
+                float turn = Vector2.Angle(path.TangentAt(at - window * 0.5f), path.TangentAt(at + window * 0.5f)) * Mathf.Deg2Rad;
+                float curvature = turn / window;
+                if (curvature < 0.002f) continue;
+                float cornerSpeed = Mathf.Sqrt(cornerGrip / curvature);
+                target = Mathf.Min(target, Mathf.Sqrt(cornerSpeed * cornerSpeed + 2f * brake * d));
+            }
+            return target;
         }
     }
 }

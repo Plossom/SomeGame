@@ -95,7 +95,7 @@ namespace SomeGame.Car
 
             bool offRoad = IsOffRoad;
             bool hasControl = ControlsEnabled && _input != null;
-            float throttle = hasControl ? Mathf.Clamp01(_input.Throttle) : 0f;
+            float throttle = hasControl ? Mathf.Clamp(_input.Throttle, -1f, 1f) : 0f;
             Vector2 steer = hasControl ? _input.SteerDirection : Vector2.zero;
             bool driftHeld = hasControl && _input.DriftHeld;
             if (driftHeld && !_driftHeldLastStep)
@@ -130,7 +130,9 @@ namespace SomeGame.Car
             }
 
             Steer(steer, forwardSpeed, dt);
-            if (forwardSpeed > maxSpeed)
+            if (throttle < 0f)
+                forwardSpeed = Mathf.MoveTowards(forwardSpeed, 0f, stats.brakeDeceleration * -throttle * dt);
+            else if (forwardSpeed > maxSpeed)
                 forwardSpeed = Mathf.MoveTowards(forwardSpeed, maxSpeed, (offRoad ? stats.offRoadDeceleration : stats.drag) * dt);
             else if (throttle > 0f)
                 forwardSpeed = Mathf.Min(maxSpeed, forwardSpeed + acceleration * throttle * dt);

@@ -15,6 +15,7 @@ MonoBehaviour:
   topSpeed: 18
   acceleration: 11
   drag: 5
+  brakeDeceleration: 18
   turnRate: 220
   fullTurnSpeed: 6
   standstillTurnFactor: 0.35

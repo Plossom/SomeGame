@@ -16,6 +16,8 @@ namespace SomeGame.Car
         [Min(0f)] public float acceleration = 11f;
         [Tooltip("Deceleration when the throttle is released (units/s²).")]
         [Min(0f)] public float drag = 5f;
+        [Tooltip("Deceleration at full brake (negative throttle; only the AI brakes) (units/s²).")]
+        [Min(0f)] public float brakeDeceleration = 18f;
 
         [Header("Steering")]
         [Tooltip("Maximum rotation speed toward the stick direction (degrees/s).")]
