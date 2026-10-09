@@ -1898,14 +1898,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.CheckpointGates
   race: {fileID: 1995061807}
   track: {fileID: 1295174578}
-  lineSprite: {fileID: 21300000, guid: ef7e243b930814a49adea7c7e2b10b2c, type: 3}
   postSprite: {fileID: 21300000, guid: 00903ea157b8c4954822b67d5d0ae699, type: 3}
-  lineThickness: 0.3
-  postSize: 0.9
-  idleColor: {r: 1, g: 1, b: 1, a: 0.25}
+  postSize: 1.1
+  idleColor: {r: 1, g: 1, b: 1, a: 0.45}
   nextColor: {r: 1, g: 0.85, b: 0.2, a: 0.9}
   pulseSpeed: 4
-  lineSortingOrder: -47
   postSortingOrder: 5
 --- !u!4 &905098331
 Transform:

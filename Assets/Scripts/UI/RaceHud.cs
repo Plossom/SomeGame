@@ -41,7 +41,7 @@ namespace SomeGame.UI
             lapLabel.text = $"LAP {player.CurrentLap}/{race.Laps}";
             float penalty = player.PenaltySeconds;
             timeLabel.text = TimeFormat.Race(race.RaceTime)
-                + (penalty > 0f ? $"<size=55%><color=#FF6A5A> +{penalty:0}s</color></size>" : "");
+                + (penalty > 0f ? $"<size=55%><color=#FF6A5A> +{penalty:0.#}s</color></size>" : "");
             int position = race.PositionOf(player);
             positionLabel.text = $"{TimeFormat.Ordinal(position)}<size=60%>/{race.Standings.Count}</size>";
 

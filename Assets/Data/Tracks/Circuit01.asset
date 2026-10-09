@@ -43,5 +43,5 @@ MonoBehaviour:
   roadWidth: 7
   kerbWidth: 0.8
   sampleSpacing: 1
-  checkpointCount: 12
+  checkpointCount: 6
   boundaryMargin: 25

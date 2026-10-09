@@ -22,7 +22,7 @@ namespace SomeGame.Track
         [Tooltip("Distance between samples on the smoothed centre line.")]
         [Min(0.25f)] public float sampleSpacing = 1f;
         [Tooltip("Checkpoints evenly spaced along the lap, checkpoint 0 is the start/finish line.")]
-        [Min(2)] public int checkpointCount = 12;
+        [Min(2)] public int checkpointCount = 6;
         [Tooltip("Grass margin around the track before the invisible boundary wall.")]
         [Min(5f)] public float boundaryMargin = 25f;
 

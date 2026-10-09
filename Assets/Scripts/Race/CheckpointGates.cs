@@ -4,22 +4,18 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>
-    /// Makes the checkpoints visible: a faint line across the road with a post at each kerb. The
-    /// checkpoint the player has to pass next is highlighted and pulses. Checkpoint 0 is the
-    /// start/finish line, which already has its own chequered stripe, so it only gets posts.
+    /// Makes the checkpoints visible as a pair of posts, one at each kerb; cars have to drive between
+    /// them. The checkpoint the player has to pass next is highlighted and pulses.
     /// </summary>
     public class CheckpointGates : MonoBehaviour
     {
         [SerializeField] RaceManager race;
         [SerializeField] SomeGame.Track.Track track;
-        [SerializeField] Sprite lineSprite;
         [SerializeField] Sprite postSprite;
-        [SerializeField, Min(0.05f)] float lineThickness = 0.3f;
-        [SerializeField, Min(0.1f)] float postSize = 0.9f;
-        [SerializeField] Color idleColor = new(1f, 1f, 1f, 0.25f);
+        [SerializeField, Min(0.1f)] float postSize = 1.1f;
+        [SerializeField] Color idleColor = new(1f, 1f, 1f, 0.45f);
         [SerializeField] Color nextColor = new(1f, 0.85f, 0.2f, 0.9f);
         [SerializeField, Min(0f)] float pulseSpeed = 4f;
-        [SerializeField] int lineSortingOrder = -47;
         [SerializeField] int postSortingOrder = 5;
 
         readonly List<SpriteRenderer[]> _gates = new();
@@ -41,11 +37,6 @@ namespace SomeGame.Race
                     Create(gate, postSprite, centre + normal * halfSpan, Vector2.one * postSize, 0f, postSortingOrder),
                     Create(gate, postSprite, centre - normal * halfSpan, Vector2.one * postSize, 0f, postSortingOrder),
                 };
-                if (k != 0)
-                {
-                    float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
-                    renderers.Add(Create(gate, lineSprite, centre, new Vector2(layout.roadWidth, lineThickness), angle, lineSortingOrder));
-                }
                 _gates.Add(renderers.ToArray());
             }
             SetAll(idleColor);
@@ -62,7 +53,7 @@ namespace SomeGame.Race
                 SetAll(idleColor);
                 _highlighted = next;
             }
-            if (_highlighted < 0) return;
+            if (_highlighted < 0 || _highlighted >= _gates.Count) return;
 
             float pulse = Mathf.PingPong(Time.time * pulseSpeed, 1f);
             var color = Color.Lerp(nextColor, Color.white, pulse * 0.35f);

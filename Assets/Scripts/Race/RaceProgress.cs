@@ -19,8 +19,14 @@ namespace SomeGame.Race
         [Tooltip("A trip onto the grass is a cut when it gains this much more track distance than the car " +
                  "actually drove (units). Running wide never gains distance, so it is never penalised.")]
         [SerializeField, Min(0f)] float cutTolerance = 2.5f;
-        [Tooltip("Seconds added to the race time for each cut.")]
-        [SerializeField, Min(0f)] float cutPenaltySeconds = 2f;
+        [Tooltip("Fixed seconds added for each cut.")]
+        [SerializeField, Min(0f)] float cutPenaltySeconds = 1f;
+        [Tooltip("Plus the distance gained by the cut converted to time at this speed (units/s). Kept well " +
+                 "below the average race speed, so a cut always costs more than it saves.")]
+        [SerializeField, Min(1f)] float cutPenaltySpeed = 10f;
+        [Tooltip("A checkpoint only counts when passed between its posts: within this distance of the " +
+                 "centre line beyond the kerb (units).")]
+        [SerializeField, Min(0f)] float gateMargin = 0.5f;
         [Tooltip("How far past the next checkpoint (units) the car must be before Missed Checkpoint shows.")]
         [SerializeField, Min(0f)] float missedCheckpointMargin = 6f;
 
@@ -121,7 +127,8 @@ namespace SomeGame.Race
             if (!_sensor.Jumped)
             {
                 float toCheckpoint = path.DeltaDistance(_lastDistance, Circuit.CheckpointDistance(NextCheckpoint));
-                if (moved > 0f && toCheckpoint > 0f && toCheckpoint <= moved)
+                bool betweenPosts = Mathf.Abs(_sensor.Current.Lateral) <= Circuit.Layout.OffRoadDistance + gateMargin;
+                if (moved > 0f && toCheckpoint > 0f && toCheckpoint <= moved && betweenPosts)
                     PassCheckpoint();
             }
             _lastDistance = distance;
@@ -145,11 +152,13 @@ namespace SomeGame.Race
 
             if (!_onGrass) return;
             _onGrass = false;
-            if (_grassProgress - _grassTravelled <= cutTolerance) return;
+            float gained = _grassProgress - _grassTravelled;
+            if (gained <= cutTolerance) return;
 
-            PenaltySeconds += cutPenaltySeconds;
+            float penalty = cutPenaltySeconds + gained / cutPenaltySpeed;
+            PenaltySeconds += penalty;
             _lapHadCut = true;
-            CornerCut?.Invoke(this, cutPenaltySeconds);
+            CornerCut?.Invoke(this, penalty);
         }
 
         void UpdateWrongWay(Vector2 trackDirection, float dt)
