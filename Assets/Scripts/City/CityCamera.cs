@@ -6,15 +6,15 @@ using UnityEngine.InputSystem;
 namespace SomeGame.City
 {
     /// <summary>
-    /// Tilted perspective camera over the city. One finger (or the mouse) drags the map, two fingers
+    /// Perspective camera over the city (straight down by default). One finger (or the mouse) drags the map, two fingers
     /// pinch to zoom (mouse wheel in the Editor), a short tap reports the ground point it hit.
     /// <see cref="FocusOn"/> glides to a point.
     /// </summary>
     [RequireComponent(typeof(UnityEngine.Camera))]
     public class CityCamera : MonoBehaviour
     {
-        [SerializeField, Range(20f, 89f)] float pitch = 52f;
-        [SerializeField] Vector2 distanceRange = new(120f, 420f);
+        [SerializeField, Range(20f, 90f)] float pitch = 90f;
+        [SerializeField] Vector2 distanceRange = new(120f, 600f);
         [SerializeField, Min(1f)] float distance = 280f;
         [Tooltip("The focus point is kept inside these bounds (world X/Z).")]
         [SerializeField] Rect bounds = new(-120, -90, 240, 200);

@@ -1,8 +1,8 @@
 # SomeGame – first playable prototype
 
 Top-down arcade racer for iPhone, portrait, one thumb, in a **Night Neon** look: dark asphalt and
-grid, glowing magenta/cyan track edges, neon cars with underglow, bloom. The start screen is a 3D neon
-city. All art is generated in the Editor (`SomeGame > Generate Neon Art`, `SomeGame > Generate City Art`).
+grid, glowing magenta/cyan track edges, neon cars with underglow, bloom. The start screen is a flat,
+top-down neon city map. All art is generated in the Editor (`SomeGame > Generate Neon Art`, `SomeGame > Generate City Art`).
 The city scene, including its UI, is built by `SomeGame > Rebuild City Scene`. The race UI is built by
 `SomeGame > Rebuild Neon UI (Race)`.
 Font: Chakra Petch (SIL Open Font License, `Assets/Art/Fonts/ChakraPetch/OFL.txt`).
@@ -78,7 +78,7 @@ Font: Chakra Petch (SIL Open Font License, `Assets/Art/Fonts/ChakraPetch/OFL.txt
 | Races: name, track, laps, rival count and strength, star times | `Assets/Data/Levels/Level01-10.asset` (`LevelDefinition`). Tracks: `Circuit01`, `Circuit02` and their reversed versions `Circuit01R`, `Circuit02R` |
 | Districts: name, tagline, feature, accent colour, stars required, race order, "coming soon" | `Assets/Data/Districts/*.asset` (`DistrictDefinition`), order in `Campaign.asset` |
 | City layout: district areas, styles, landmarks, garage position | `Assets/Scripts/Editor/CitySceneBuilder.cs` and `CityGenerator` in the `City` scene (rebuild with `SomeGame > Rebuild City Scene`) |
-| City camera (pitch, zoom range, drag/pinch feel), fog, traffic | `City` scene: `CityCamera`, `CityFog`, `CityTraffic`; glow in `Assets/Settings/CityVolume.asset` |
+| City camera (pitch 90 = straight down, zoom range, drag/pinch feel), fog over locked districts | `City` scene: `CityCamera`, `CityFog`; glow in `Assets/Settings/CityVolume.asset` |
 | District labels (edge margin), focus distance | `DistrictMarker` (template in the `UI` canvas), `CityScreen` |
 | Colours of the whole UI | `Assets/Scripts/UI/NeonTheme.cs` (then rebuild the UI from the menu) |
 | UI layout | `Assets/Scripts/Editor/NeonUIBuilder.cs` — rebuilding replaces each scene's `UI` canvas, so hand edits to the UI are lost |
@@ -101,8 +101,8 @@ Edits to `Circuit01` waypoints update the track in the Scene view right away. Se
 - `Race/`: `RaceManager`, `RaceProgress`, `CheckpointGates`, `LevelDefinition`, `DistrictDefinition`,
   `Campaign`, `ProgressStore` (stars and unlocks), `GameSession` (scene switching), `BestLapStore`,
   `FrameRateBootstrap` (60 fps).
-- `City/`: `CityGenerator` (builds the whole 3D city from `CityZone`s), `CityMeshBatch`, `CityCamera`,
-  `CityFog`, `CityTraffic`, `CityScroll`, `CityBlink`.
+- `City/`: `CityGenerator` (builds the flat city map from `CityZone`s), `CityMeshBatch`, `CityCamera`,
+  `CityFog`.
 - `UI/`: race UI (`RaceHud`, `CountdownView`, `FinishScreen`, `GameMenu`) and city UI (`CityScreen`,
   `DistrictMarker`, `DistrictSheet`, `RaceCard`, `GarageScreen`). Also `NeonTheme`, `SafeAreaFitter`
   and `TimeFormat`.

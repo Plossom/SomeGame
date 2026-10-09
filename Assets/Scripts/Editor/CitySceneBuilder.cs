@@ -10,8 +10,8 @@ using UnityEngine.Rendering.Universal;
 namespace SomeGame.EditorTools
 {
     /// <summary>
-    /// Creates the City scene (start screen): camera with the 3D renderer and bloom, the city
-    /// generator with one zone per district, traffic, and then the UI via <see cref="NeonUIBuilder"/>.
+    /// Creates the City scene (start screen): top-down camera with the 3D renderer and bloom, the city
+    /// generator with one zone per district, and then the UI via <see cref="NeonUIBuilder"/>.
     /// </summary>
     public static class CitySceneBuilder
     {
@@ -39,16 +39,16 @@ namespace SomeGame.EditorTools
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color(0.02f, 0.027f, 0.043f);
             cam.fieldOfView = 38f;
-            cam.nearClipPlane = 1f;
+            cam.nearClipPlane = 20f;
             cam.farClipPlane = 1400f;
             cam.allowHDR = true;
             var data = camGo.AddComponent<UniversalAdditionalCameraData>();
             data.renderPostProcessing = true;
             data.SetRenderer(1);
             var cityCam = camGo.AddComponent<CityCamera>();
-            Configure(cityCam, ("bounds", new Rect(-110, -78, 220, 190)));
+            Configure(cityCam, ("bounds", new Rect(-110, -78, 220, 190)), ("pitch", 90f));
 
-            RenderSettings.fog = true;
+            RenderSettings.fog = false;
             RenderSettings.fogMode = FogMode.Linear;
             RenderSettings.fogColor = new Color(0.02f, 0.027f, 0.043f);
             RenderSettings.fogStartDistance = 330f;
@@ -63,7 +63,7 @@ namespace SomeGame.EditorTools
                 AssetDatabase.CreateAsset(prof, profPath);
             }
             if (!prof.TryGet<Bloom>(out var bloom)) { bloom = prof.Add<Bloom>(true); AssetDatabase.AddObjectToAsset(bloom, prof); }
-            bloom.threshold.Override(1f); bloom.intensity.Override(1.25f); bloom.scatter.Override(0.72f);
+            bloom.threshold.Override(1f); bloom.intensity.Override(0.9f); bloom.scatter.Override(0.72f);
             if (!prof.TryGet<Vignette>(out var vignette)) { vignette = prof.Add<Vignette>(true); AssetDatabase.AddObjectToAsset(vignette, prof); }
             vignette.intensity.Override(0.32f); vignette.smoothness.Override(0.55f);
             if (!prof.TryGet<Tonemapping>(out var tone)) { tone = prof.Add<Tonemapping>(true); AssetDatabase.AddObjectToAsset(tone, prof); }
@@ -73,7 +73,7 @@ namespace SomeGame.EditorTools
             volume.isGlobal = true;
             volume.sharedProfile = prof;
 
-            // City generator + zones + traffic.
+            // City generator + zones.
             var cityGo = new GameObject("City");
             var generator = cityGo.AddComponent<CityGenerator>();
             for (int i = 0; i < Layout.Length; i++)
@@ -86,21 +86,15 @@ namespace SomeGame.EditorTools
                     ("district", AssetDatabase.LoadAssetAtPath<DistrictDefinition>($"Assets/Data/Districts/{asset}.asset")),
                     ("style", (int)style), ("area", area), ("landmark", landmark), ("seed", i + 1));
             }
-            var trafficGo = new GameObject("Traffic");
-            trafficGo.transform.SetParent(cityGo.transform, false);
-            trafficGo.AddComponent<MeshFilter>();
-            trafficGo.AddComponent<MeshRenderer>().sharedMaterial = Mat("CityGlow");
-            var traffic = trafficGo.AddComponent<CityTraffic>();
 
             Configure(generator,
-                ("wallsMaterial", Mat("CityWalls")), ("flatMaterial", Mat("CityFlat")), ("linesMaterial", Mat("CityLines")),
-                ("neonMaterial", Mat("CityNeon")), ("waterMaterial", Mat("CityWater")), ("glowMaterial", Mat("CityGlow")),
+                ("flatMaterial", Mat("CityFlat")), ("linesMaterial", Mat("CityLines")),
+                ("neonMaterial", Mat("CityNeon")), ("glowMaterial", Mat("CityGlow")),
                 ("fogMaterial", Mat("CityFog")), ("garagePosition", new Vector2(-8f, -60f)),
                 ("carSprite", AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Neon/Car.png")),
                 ("carDetailsSprite", AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Neon/CarDetails.png")),
                 ("glowSprite", AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Neon/Glow.png")),
-                ("signFont", AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Art/Fonts/ChakraPetch/ChakraPetch-BoldItalic SDF.asset")),
-                ("traffic", traffic));
+                ("signFont", AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Art/Fonts/ChakraPetch/ChakraPetch-BoldItalic SDF.asset")));
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             NeonUIBuilder.BuildCityUI();

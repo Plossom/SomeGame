@@ -22,7 +22,7 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text totalStars;
         [Tooltip("Taps within this distance of the garage open it (world units).")]
         [SerializeField, Min(1f)] float garageTapRadius = 16f;
-        [SerializeField] float overviewDistance = 400f;
+        [SerializeField] float overviewDistance = 560f;
         [SerializeField] float focusDistance = 240f;
 
         readonly List<(CityZone zone, DistrictMarker marker)> _markers = new();
@@ -57,7 +57,7 @@ namespace SomeGame.UI
             }
             else
             {
-                cityCamera.Jump(new Vector3(4f, 0f, 2f), overviewDistance);
+                cityCamera.Jump(new Vector3(0f, 0f, 14f), overviewDistance);
             }
         }
 
