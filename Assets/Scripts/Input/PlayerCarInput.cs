@@ -5,15 +5,32 @@ using UnityEngine.InputSystem;
 namespace SomeGame.Input
 {
     /// <summary>
-    /// Player driver: WASD / arrow keys pick an absolute direction (8-way) at full throttle.
+    /// Player driver. Floating joystick: the car turns toward the stick direction and drives at full
+    /// throttle once the stick leaves the dead zone; lifting the thumb coasts.
+    /// Keyboard (WASD / arrows) works the same way with 8 directions, for testing in the Editor.
     /// </summary>
     public class PlayerCarInput : MonoBehaviour, ICarInput
     {
+        [Tooltip("Found in the scene automatically when left empty.")]
+        [SerializeField] FloatingJoystick joystick;
+
         public Vector2 SteerDirection { get; private set; }
         public float Throttle { get; private set; }
 
+        void Awake()
+        {
+            if (joystick == null) joystick = FindAnyObjectByType<FloatingJoystick>();
+        }
+
         void Update()
         {
+            if (joystick != null && joystick.IsPastDeadZone)
+            {
+                SteerDirection = joystick.Value.normalized;
+                Throttle = 1f;
+                return;
+            }
+
             Vector2 keys = ReadKeyboard();
             SteerDirection = keys;
             Throttle = keys == Vector2.zero ? 0f : 1f;
