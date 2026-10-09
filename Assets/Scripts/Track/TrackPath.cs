@@ -94,6 +94,14 @@ namespace SomeGame.Track
             Left((SegmentDirection(i - 1) + SegmentDirection(i)).normalized);
 
         public Vector2 SegmentDirection(int i) => (this[i + 1] - this[i]).normalized;
+
+        /// <summary>
+        /// How much the road turns around sample i, in degrees over ±<paramref name="span"/> samples.
+        /// Positive turns left (toward the left-hand normal), negative turns right.
+        /// </summary>
+        public float TurnAt(int i, int span) => Vector2.SignedAngle(SegmentDirection(i - span), SegmentDirection(i + span));
+
+        public float TurnAtDistance(float distance, int span) => TurnAt(SegmentAt(distance), span);
         public float SegmentLength(int i) => Vector2.Distance(this[i], this[i + 1]);
 
         /// <summary>

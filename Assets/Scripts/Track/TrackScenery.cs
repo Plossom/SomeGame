@@ -1,22 +1,53 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SomeGame.Track
 {
     /// <summary>
-    /// Scatters scenery (trees, or neon light pylons) on the ground, keeping clear of the road.
-    /// Each item gets one of <see cref="colors"/>. Pure scenery, no colliders.
+    /// Scatters scenery (trees, bushes, chalets, fields, tyre walls...) around the track, keeping clear of
+    /// the road and of the sandy run-off on the outside of corners.
+    /// Each kind takes its picture from a cell of one atlas texture, so everything is a single mesh.
+    /// Pure scenery, no colliders.
     /// </summary>
     public class TrackScenery : TrackDerivedBehaviour
     {
+        [Serializable]
+        public class Kind
+        {
+            public string name = "Tree";
+            [Tooltip("Area of the atlas texture holding the picture (0-1 UV).")]
+            public Rect uv = new(0f, 0f, 0.5f, 0.5f);
+            [Min(0)] public int count = 40;
+            public Vector2 sizeRange = new(2.2f, 3.6f);
+            [Tooltip("Distance from the outer kerb edge: min and max (0 = no limit).")]
+            public Vector2 clearance = new(3f, 0f);
+            [Tooltip("Turned to follow the road (houses), instead of a random angle.")]
+            public bool alignToRoad;
+            [Tooltip("Clustered in forests instead of spread evenly.")]
+            public bool clustered;
+            [Tooltip("Only in corners, on the sand (tyre piles).")]
+            public bool cornerOnly;
+            [Tooltip("Turned to a multiple of 90 degrees instead of a random angle (fields, barns).")]
+            public bool squareAngle;
+            [Tooltip("Each item picks one of these tints at random.")]
+            public Color[] tints = { Color.white };
+        }
+
         [SerializeField] MeshFilter trees;
-        [SerializeField, Min(0)] int treeCount = 40;
         [SerializeField] int seed = 12345;
-        [Tooltip("Minimum gap between a tree's centre and the kerb edge.")]
-        [SerializeField, Min(0f)] float roadClearance = 3f;
-        [SerializeField] Vector2 sizeRange = new(2.2f, 3.6f);
-        [Tooltip("Each item picks one of these tints at random. Empty = untinted.")]
-        [SerializeField] Color[] colors = { Color.white };
+        [Tooltip("Scenery also fills this far beyond the play area, so the world has no visible edge.")]
+        [SerializeField, Min(0f)] float overscan = 14f;
+        [SerializeField] Kind[] kinds = { new() };
+
+        [Header("Run-off (match TrackRenderer)")]
+        [Tooltip("Extra clearance on the outside / inside of the tightest corners, where the sand run-off is.")]
+        [SerializeField, Min(0f)] float cornerRunoff = 5f;
+        [SerializeField, Min(0f)] float cornerRunoffInside = 2.5f;
+        [SerializeField, Min(1f)] float runoffFullTurn = 70f;
+        [SerializeField, Min(1)] int runoffSpan = 9;
+        [Tooltip("Road turn (degrees over the span) that counts as a corner for tyre walls.")]
+        [SerializeField] float cornerTurn = 35f;
 
         protected override void Build(TrackPath path, TrackLayout layout)
         {
@@ -24,27 +55,56 @@ namespace SomeGame.Track
             float Range(float min, float max) => min + (float)random.NextDouble() * (max - min);
 
             Rect bounds = path.Bounds();
-            float margin = layout.boundaryMargin - 2f;
+            float margin = layout.boundaryMargin + overscan;
             var area = Rect.MinMaxRect(bounds.xMin - margin, bounds.yMin - margin, bounds.xMax + margin, bounds.yMax + margin);
 
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
             var triangles = new List<int>();
-            var placed = new List<Vector2>();
             var tints = new List<Color32>();
+            var placed = new List<(Vector2 p, float r)>();
+            var items = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint)>();
 
-            for (int attempt = 0; attempt < treeCount * 20 && placed.Count < treeCount; attempt++)
+            foreach (var kind in kinds)
             {
-                var p = new Vector2(Range(area.xMin, area.xMax), Range(area.yMin, area.yMax));
-                float size = Range(sizeRange.x, sizeRange.y);
-                if (Mathf.Abs(path.Project(p).Lateral) < layout.OffRoadDistance + roadClearance + size * 0.5f) continue;
-                if (placed.Exists(q => (q - p).sqrMagnitude < size * size)) continue;
+                int done = 0;
+                for (int attempt = 0; attempt < kind.count * 30 && done < kind.count; attempt++)
+                {
+                    var p = new Vector2(Range(area.xMin, area.xMax), Range(area.yMin, area.yMax));
+                    if (kind.clustered && Mathf.PerlinNoise(p.x * 0.045f + seed % 100, p.y * 0.045f) < 0.45f) continue;
+                    float size = Range(kind.sizeRange.x, kind.sizeRange.y);
+                    var projection = path.Project(p);
+                    float fromKerb = Mathf.Abs(projection.Lateral) - layout.OffRoadDistance - size * 0.5f;
+                    float turn = path.TurnAtDistance(projection.Distance, runoffSpan);
+                    bool outside = turn * projection.Lateral < 0f; // left turn: the right side is outside
+                    if (kind.cornerOnly && Mathf.Abs(turn) < cornerTurn) continue;
+                    if (!kind.cornerOnly)
+                        fromKerb -= (outside ? cornerRunoff : cornerRunoffInside) * Mathf.SmoothStep(0f, 1f, Mathf.Abs(turn) / runoffFullTurn);
+                    if (fromKerb < kind.clearance.x) continue;
+                    if (kind.clearance.y > 0f && fromKerb > kind.clearance.y) continue;
+                    float r = size * 0.45f;
+                    if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;
 
-                placed.Add(p);
-                float angle = Range(0f, Mathf.PI * 2f);
-                var right = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (size * 0.5f);
+                    placed.Add((p, r));
+                    done++;
+                    float angle = kind.alignToRoad
+                        ? Mathf.Atan2(path.TangentAt(projection.Distance).y, path.TangentAt(projection.Distance).x)
+                        : kind.squareAngle ? random.Next(4) * Mathf.PI * 0.5f + Range(-0.06f, 0.06f)
+                        : Range(0f, Mathf.PI * 2f);
+                    var right = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (size * 0.5f);
+                    Color32 tint = kind.tints is { Length: > 0 } ? kind.tints[random.Next(kind.tints.Length)] : Color.white;
+                    items.Add((p, right, kind.uv, tint));
+                }
+            }
+
+            // Draw top-down from the back so overlapping crowns read naturally.
+            items.Sort((a, b) => b.p.y.CompareTo(a.p.y));
+            foreach (var (p, right, uv, tint) in items)
+            {
+                int first = vertices.Count;
                 TrackMeshes.AddQuad(vertices, uvs, triangles, p, right, new Vector2(-right.y, right.x), Vector2.one);
-                Color32 tint = colors is { Length: > 0 } ? colors[random.Next(colors.Length)] : Color.white;
+                for (int k = first; k < uvs.Count; k++)
+                    uvs[k] = new Vector2(uv.x + uvs[k].x * uv.width, uv.y + uvs[k].y * uv.height);
                 for (int k = 0; k < 4; k++) tints.Add(tint);
             }
 

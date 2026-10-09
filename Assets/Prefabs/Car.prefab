@@ -159,14 +159,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2a8edb0e41f4f878edefeaa53757cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.TyreMarks
-  material: {fileID: 2100000, guid: 7238efbc5f7924b7ba2c3a5507d6f3a6, type: 2}
+  material: {fileID: 2100000, guid: 4d09e3a992272422e8bdf7e5aa03b8f5, type: 2}
   wheels:
   - {x: -0.38, y: -0.55}
   - {x: 0.38, y: -0.55}
   width: 0.16
   fadeSeconds: 2.5
-  color: {r: 1, g: 1, b: 1, a: 0.28}
-  colorSource: {fileID: 6973858104975654920}
+  color: {r: 0.16, g: 0.17, b: 0.16, a: 0.4}
+  colorSource: {fileID: 0}
   sortingOrder: -40
 --- !u!114 &4003634913073525109
 MonoBehaviour:
@@ -184,7 +184,7 @@ MonoBehaviour:
   shadow: {fileID: 1297978802845913396}
   duration: 0.28
   peakScale: 1.22
-  shadowOffset: {x: 0, y: -0.05}
+  shadowOffset: {x: 0.14, y: -0.18}
   shadowLift: {x: 0.18, y: -0.22}
 --- !u!1 &3861201061229663733
 GameObject:
@@ -267,7 +267,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 11
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: fa9db5211a78f4980977ac80083c61e0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 33d58208ae9974eb4bfecfa2edac9e75, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -360,7 +360,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 05a3885afcc494d36895003dff1e533d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 116ad1292413a4d0e93dbc3c5fa8fe8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -397,8 +397,8 @@ Transform:
   m_GameObject: {fileID: 8698995244233966885}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.05, z: 0}
-  m_LocalScale: {x: 1.1, y: 1.45, z: 1}
+  m_LocalPosition: {x: 0.14, y: -0.18, z: 0}
+  m_LocalScale: {x: 1.248, y: 1.248, z: 1.248}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4477349153591882648}
@@ -452,8 +452,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 9
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: cbff6d20030604170b44d6777a50f26b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.45}
+  m_Sprite: {fileID: 21300000, guid: e0610355f7d71451e9e2ca14f4fe3a55, type: 3}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.35}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

@@ -102,8 +102,8 @@ namespace SomeGame.UI
         {
             volumeSlider.SetValueWithoutNotify(SoundSettings.Volume);
             joystickLabel.text = ControlSettings.InvisibleJoystick
-                ? $"JOYSTICK   <color={NeonTheme.Html(NeonTheme.Dim)}>HIDDEN</color>"
-                : $"JOYSTICK   <color={NeonTheme.Html(NeonTheme.Lime)}>VISIBLE</color>";
+                ? $"JOYSTICK   <color={Theme.Html(Theme.StoneDark)}>HIDDEN</color>"
+                : $"JOYSTICK   <color={Theme.Html(Theme.Orange)}>VISIBLE</color>";
         }
     }
 }

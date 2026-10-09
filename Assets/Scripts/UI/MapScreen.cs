@@ -1,0 +1,182 @@
+using System.Collections.Generic;
+using SomeGame.Race;
+using TMPro;
+using UnityEngine;
+
+namespace SomeGame.UI
+{
+    /// <summary>
+    /// The map (start screen): a painted alpine valley with the mountain road of <see cref="MapLayout"/>.
+    /// The races sit on the road, followed by a "more soon" stop. The road you have opened up is drawn
+    /// in orange up to your car. Tapping a race selects it; its details show at the top and START at
+    /// the bottom enters it.
+    /// </summary>
+    public class MapScreen : MonoBehaviour
+    {
+        [SerializeField] LevelCatalog catalog;
+        [Tooltip("Holds the map picture; scaled to cover the screen. Stops, road and car are placed in it.")]
+        [SerializeField] RectTransform world;
+        [Tooltip("Inactive node used as a template.")]
+        [SerializeField] MapNode nodeTemplate;
+        [SerializeField] RectTransform car;
+        [SerializeField] TMP_Text totalStars;
+
+        [Header("Selected race")]
+        [SerializeField] TMP_Text chapterLabel;
+        [SerializeField] TMP_Text titleLabel;
+        [SerializeField] TMP_Text lapsChip;
+        [SerializeField] TMP_Text rivalsChip;
+        [SerializeField] TMP_Text bestChip;
+        [Tooltip("Times for 1, 2 and 3 stars.")]
+        [SerializeField] TMP_Text[] starTimes;
+        [SerializeField] TMP_Text hint;
+        [SerializeField] UnityEngine.UI.Button startButton;
+        [SerializeField] UnityEngine.UI.Image startFace;
+        [SerializeField] UnityEngine.UI.Image startShadow;
+        [SerializeField] TMP_Text startLabel;
+        [SerializeField] GameObject startRing;
+
+        [Header("Road progress")]
+        [SerializeField, Min(1f)] float progressWidth = 22f;
+        [Tooltip("How far before its race stop the car waits (canvas units along the road).")]
+        [SerializeField] float carOffset = 95f;
+
+        readonly List<MapNode> _nodes = new();
+        int _selected;
+        Vector2 _lastParentSize;
+
+        void Start()
+        {
+            startButton.onClick.AddListener(StartSelected);
+            _selected = LatestVisible();
+            Build();
+            Refresh();
+            FitWorld();
+        }
+
+        void LateUpdate() => FitWorld();
+
+        // Scale the fixed-size map so it covers the screen, keeping its centre.
+        void FitWorld()
+        {
+            var parent = (RectTransform)world.parent;
+            Vector2 size = parent.rect.size;
+            if (size == _lastParentSize) return;
+            _lastParentSize = size;
+            float scale = Mathf.Max(size.x / MapLayout.Size.x, size.y / MapLayout.Size.y);
+            world.localScale = Vector3.one * scale;
+        }
+
+        int LatestVisible()
+        {
+            int latest = 0;
+            for (int i = 0; i < catalog.Count; i++)
+                if (ProgressStore.IsVisible(catalog, i)) latest = i;
+            return latest;
+        }
+
+        void Build()
+        {
+            nodeTemplate.gameObject.SetActive(false);
+            int latest = LatestVisible();
+
+            // Opened road: from the bottom of the map to the car.
+            float carDistance = Mathf.Max(0f, MapLayout.StopDistance(latest) - carOffset);
+            DrawProgress(carDistance);
+            Vector2 carPos = MapLayout.PointAt(carDistance, out var tangent);
+            car.anchoredPosition = carPos;
+            car.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f);
+            car.SetAsLastSibling();
+
+            int stops = Mathf.Min(MapLayout.StopCount, catalog.Count + 1);
+            for (int i = 0; i < stops; i++)
+            {
+                var node = Instantiate(nodeTemplate, world);
+                node.name = i < catalog.Count ? $"Node{i + 1}" : "NodeSoon";
+                var rect = (RectTransform)node.transform;
+                rect.anchoredPosition = MapLayout.StopPosition(i);
+                node.gameObject.SetActive(true);
+                _nodes.Add(node);
+            }
+        }
+
+        void DrawProgress(float until)
+        {
+            const float step = 10f;
+            for (float d = 0f; d < until; d += step)
+            {
+                Vector2 a = MapLayout.PointAt(d, out _), b = MapLayout.PointAt(Mathf.Min(until, d + step), out _);
+                Vector2 delta = b - a;
+                if (delta.sqrMagnitude < 0.01f) continue;
+                var piece = new GameObject("Progress", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                var rect = (RectTransform)piece.transform;
+                rect.SetParent(world, false);
+                rect.anchorMin = rect.anchorMax = Vector2.zero;
+                rect.anchoredPosition = (a + b) * 0.5f;
+                rect.sizeDelta = new Vector2(delta.magnitude + 2f, progressWidth);
+                rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+                var image = piece.GetComponent<UnityEngine.UI.Image>();
+                image.color = Theme.Orange;
+                image.raycastTarget = false;
+            }
+        }
+
+        void Select(int index)
+        {
+            _selected = index;
+            Refresh();
+        }
+
+        void Refresh()
+        {
+            totalStars.text = ProgressStore.TotalStars.ToString();
+            for (int i = 0; i < _nodes.Count; i++)
+            {
+                int index = i;
+                if (i >= catalog.Count)
+                {
+                    _nodes[i].Bind("?", MapNodeState.Hidden, 0, 0, false, "MORE SOON", null);
+                    continue;
+                }
+                var level = catalog[i];
+                var state = !ProgressStore.IsVisible(catalog, i) ? MapNodeState.Hidden
+                    : ProgressStore.HasWon(level) ? MapNodeState.Won
+                    : ProgressStore.CanEnter(catalog, i) ? MapNodeState.Open
+                    : MapNodeState.Locked;
+                _nodes[i].Bind((i + 1).ToString(), state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, null, () => Select(index));
+            }
+            ShowSelected();
+        }
+
+        void ShowSelected()
+        {
+            var level = catalog[_selected];
+            chapterLabel.text = level.chapter;
+            titleLabel.text = level.displayName.ToUpperInvariant();
+            lapsChip.text = $"{level.laps} laps";
+            rivalsChip.text = $"{level.rivalCount} rivals";
+            var best = ProgressStore.BestTimeOf(level);
+            bestChip.text = best.HasValue ? $"Best {TimeFormat.Race(best.Value)}" : "Best —";
+            for (int i = 0; i < starTimes.Length; i++)
+                starTimes[i].text = i < level.starTimes.Length ? TimeFormat.Race(level.starTimes[i]) : "-";
+
+            bool canEnter = ProgressStore.CanEnter(catalog, _selected);
+            int missing = Mathf.Max(0, level.starsRequired - ProgressStore.TotalStars);
+            startButton.interactable = canEnter;
+            startFace.color = canEnter ? Theme.Orange : Theme.Stone;
+            startShadow.color = canEnter ? Theme.OrangeDeep : Theme.StoneDark;
+            startLabel.text = canEnter ? "START" : "LOCKED";
+            startLabel.color = canEnter ? Theme.White : Theme.StoneDark;
+            startRing.SetActive(canEnter);
+            bool last = _selected == catalog.Count - 1;
+            hint.text = !canEnter ? $"Collect {missing} more star{(missing == 1 ? "" : "s")}"
+                : ProgressStore.HasWon(level) ? "Beat your time for more stars"
+                : last ? "Win to earn stars" : "Win to open the next race";
+        }
+
+        void StartSelected()
+        {
+            if (ProgressStore.CanEnter(catalog, _selected)) GameSession.StartRace(catalog[_selected]);
+        }
+    }
+}

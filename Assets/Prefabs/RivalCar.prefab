@@ -52,6 +52,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6973858104975654920, guid: 2116e51b364f546689f60112dd313353, type: 3}
+      propertyPath: m_Color.b
+      value: 0.84705883
+      objectReference: {fileID: 0}
+    - target: {fileID: 6973858104975654920, guid: 2116e51b364f546689f60112dd313353, type: 3}
+      propertyPath: m_Color.g
+      value: 0.49019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 6973858104975654920, guid: 2116e51b364f546689f60112dd313353, type: 3}
+      propertyPath: m_Color.r
+      value: 0.23921569
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -80,6 +92,6 @@ MonoBehaviour:
   laneOffset: 0
   lookAheadBase: 4
   lookAheadPerSpeed: 0.3
+  cornerGrip: 24
   cornerScanDistance: 26
-  tightCornerSpeedFactor: 0.5
-  tightCornerAngle: 150
+  brakeMargin: 0.75

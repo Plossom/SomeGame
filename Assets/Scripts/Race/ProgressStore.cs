@@ -5,13 +5,13 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>
-    /// Saved progress per race (best stars, won, best time) and the unlock rules:
-    /// a district (Grand Prix) unlocks once the total stars reach its requirement; inside it,
-    /// the first race is open and every further race unlocks by winning the previous one.
+    /// Saved progress per race (best stars, won, best time) and the two-step unlock rules of the map:
+    /// a race becomes visible once the previous race is won, and can be entered once the total stars
+    /// reach its requirement.
     /// </summary>
     public static class ProgressStore
     {
-        const string Key = "Progress.v1";
+        const string Key = "Progress.v2"; // v1 belonged to the old 10-race city campaign
 
         [Serializable]
         class Entry
@@ -47,20 +47,11 @@ namespace SomeGame.Race
             }
         }
 
-        public static bool IsUnlocked(DistrictDefinition district) =>
-            !district.ComingSoon && TotalStars >= district.starsRequired;
+        public static bool IsVisible(LevelCatalog catalog, int index) =>
+            index == 0 || (index > 0 && index < catalog.Count && HasWon(catalog[index - 1]));
 
-        /// <summary>Race <paramref name="index"/> of an unlocked district is open once the previous race is won.</summary>
-        public static bool CanEnter(DistrictDefinition district, int index) =>
-            IsUnlocked(district) && index >= 0 && index < district.races.Count &&
-            (index == 0 || HasWon(district.races[index - 1]));
-
-        public static int StarsIn(DistrictDefinition district)
-        {
-            int total = 0;
-            foreach (var race in district.races) total += StarsOf(race);
-            return total;
-        }
+        public static bool CanEnter(LevelCatalog catalog, int index) =>
+            IsVisible(catalog, index) && TotalStars >= catalog[index].starsRequired;
 
         /// <summary>Stores a finished race; keeps the best stars and time. Returns the stars for this run.</summary>
         public static int Record(LevelDefinition level, bool won, float totalTime)

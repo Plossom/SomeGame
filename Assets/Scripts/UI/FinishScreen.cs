@@ -56,16 +56,16 @@ namespace SomeGame.UI
             bool won = position == 1;
 
             raceLabel.text = level != null ? level.chapter : "TEST RACE";
-            positionLabel.text = $"P{position}";
-            positionLabel.color = won ? NeonTheme.Lime : NeonTheme.Text;
-            subtitle.text = won ? "FINISHED  //  WINNER" : $"FINISHED  //  {TimeFormat.Ordinal(position).ToUpperInvariant()} PLACE";
+            positionLabel.text = TimeFormat.Ordinal(position).ToUpperInvariant();
+            positionLabel.color = won ? Theme.Orange : Theme.Ink;
+            subtitle.text = won ? "PLACE · WINNER" : "PLACE";
             newBestTag.SetActive(_newBest);
 
             int earned = race.StarsEarned;
             for (int i = 0; i < stars.Length; i++)
             {
                 stars[i].gameObject.SetActive(level != null);
-                stars[i].color = i < earned ? NeonTheme.Lime : NeonTheme.Faint;
+                stars[i].color = i < earned ? Theme.Amber : Theme.CreamDark;
             }
 
             totalValue.text = TimeFormat.Race(race.RaceTime);
@@ -75,22 +75,22 @@ namespace SomeGame.UI
 
             if (level == null)
             {
-                nextStarLabel.text = "NO STARS IN TEST RACES";
+                nextStarLabel.text = "No stars in test races";
                 nextStarValue.text = "";
             }
             else if (!won)
             {
-                nextStarLabel.text = "WIN TO EARN STARS";
+                nextStarLabel.text = "Win to earn stars";
                 nextStarValue.text = "";
             }
             else if (earned >= level.starTimes.Length)
             {
-                nextStarLabel.text = "ALL STARS";
+                nextStarLabel.text = "All stars";
                 nextStarValue.text = $"{earned}/{level.starTimes.Length}";
             }
             else
             {
-                nextStarLabel.text = $"{TimeFormat.Ordinal(earned + 1).ToUpperInvariant()} STAR AT";
+                nextStarLabel.text = $"{TimeFormat.Ordinal(earned + 1)} star at";
                 nextStarValue.text = TimeFormat.Race(level.starTimes[earned]);
             }
 

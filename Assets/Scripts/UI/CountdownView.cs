@@ -10,7 +10,7 @@ namespace SomeGame.UI
         [SerializeField] RaceManager race;
         [SerializeField] TMP_Text label;
         [SerializeField, Min(0f)] float goVisibleSeconds = 0.8f;
-        [Tooltip("Soft glow behind the number, tinted with it.")]
+        [Tooltip("Optional disc behind the number (dark for numbers, white for GO).")]
         [SerializeField] UnityEngine.UI.Image glow;
 
         float _hideAt = -1f;
@@ -22,8 +22,8 @@ namespace SomeGame.UI
         {
             label.gameObject.SetActive(true);
             label.text = n > 0 ? n.ToString() : "GO!";
-            label.color = n > 0 ? NeonTheme.Text : NeonTheme.Lime;
-            if (glow != null) glow.color = NeonTheme.WithAlpha(n > 0 ? NeonTheme.Cyan : NeonTheme.Lime, 0.55f);
+            label.color = n > 0 ? Theme.White : Theme.Orange;
+            if (glow != null) glow.color = n > 0 ? Theme.Ink : Theme.White;
             label.transform.localScale = Vector3.one * 1.4f;
             _hideAt = n > 0 ? -1f : Time.time + goVisibleSeconds;
         }

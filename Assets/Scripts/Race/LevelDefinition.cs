@@ -4,14 +4,14 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>
-    /// One race of a district's Grand Prix: which track, how many laps, how strong the rivals are and
-    /// the star times. Unlocking is handled by the district (<see cref="DistrictDefinition"/>).
+    /// One race on the map: which track, how many laps, how strong the rivals are, the star times and
+    /// how many total stars it takes to enter.
     /// </summary>
     [CreateAssetMenu(menuName = "SomeGame/Level", fileName = "Level")]
     public class LevelDefinition : ScriptableObject
     {
         public string displayName = "Race";
-        [Tooltip("Shown above the race name on the map, e.g. CHAPTER 01 // NEON GRID.")]
+        [Tooltip("Shown above the race name on the map, e.g. ALPINE CUP · RACE 1.")]
         public string chapter = "CHAPTER 01";
         public TrackLayout track;
         [Min(1)] public int laps = 3;
@@ -22,6 +22,10 @@ namespace SomeGame.Race
         [Range(0.5f, 1.5f)] public float rivalSpeedScale = 1f;
         [Tooltip("Multiplies how fast rivals dare to take corners.")]
         [Range(0.5f, 1.5f)] public float rivalCornerScale = 1f;
+
+        [Header("Unlock")]
+        [Tooltip("Total stars needed to enter this race (it also needs the previous race won).")]
+        [Min(0)] public int starsRequired;
 
         [Header("Stars (only when you win)")]
         [Tooltip("Total race time (including penalties) for 1, 2 and 3 stars, in seconds. Must decrease.")]

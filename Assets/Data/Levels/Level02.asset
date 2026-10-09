@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Level02
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Club Race
-  chapter: DOWNTOWN // GRAND PRIX
-  track: {fileID: 11400000, guid: 546c27345ae2748229da7e06f2dcaddb, type: 2}
-  laps: 3
+  displayName: Pine Pass
+  chapter: "ALPINE CUP \xB7 RACE 2"
+  track: {fileID: 11400000, guid: e500d766ff1cc489e84aa2831ce0d3c9, type: 2}
+  laps: 2
   rivalCount: 3
   rivalSpeedScale: 0.94
   rivalCornerScale: 0.92
+  starsRequired: 1
   starTimes:
-  - 73
-  - 68.5
-  - 64.5
-  starsRequired: 0
+  - 59.5
+  - 55.5
+  - 52.5

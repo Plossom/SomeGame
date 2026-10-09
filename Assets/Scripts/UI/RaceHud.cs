@@ -14,29 +14,35 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text positionLabel;
         [Tooltip("Shows the last lap time for a few seconds after each lap.")]
         [SerializeField] TMP_Text lapFlashLabel;
+        [Tooltip("Optional background shown and hidden together with the lap flash.")]
+        [SerializeField] GameObject lapFlashRoot;
         [SerializeField, Min(0f)] float lapFlashSeconds = 2.5f;
         [Tooltip("Blinking warning: WRONG WAY or MISSED CHECKPOINT.")]
         [SerializeField, FormerlySerializedAs("wrongWayLabel")] TMP_Text warningLabel;
 
+        static readonly string Muted = Theme.Html(Theme.Stone);
+
         float _hideFlashAt;
+
+        GameObject LapFlash => lapFlashRoot != null ? lapFlashRoot : lapFlashLabel.gameObject;
 
         void OnEnable() => race.PlayerLapCompleted += FlashLap;
         void OnDisable() => race.PlayerLapCompleted -= FlashLap;
 
         void Start()
         {
-            lapFlashLabel.gameObject.SetActive(false);
+            LapFlash.SetActive(false);
             if (warningLabel != null) warningLabel.gameObject.SetActive(false);
         }
 
         void Update()
         {
             var player = race.Player;
-            lapLabel.text = $"{player.CurrentLap}<size=55%><color={NeonTheme.Html(NeonTheme.Dim)}>/{race.Laps}</color></size>";
+            lapLabel.text = $"{player.CurrentLap}<size=60%><color={Muted}>/{race.Laps}</color></size>";
             timeLabel.text = TimeFormat.Race(race.RaceTime);
             int position = race.PositionOf(player);
-            positionLabel.text = $"P{position}<size=50%><color={NeonTheme.Html(NeonTheme.Dim)}>/{race.Standings.Count}</color></size>";
-            positionLabel.color = position == 1 ? NeonTheme.Lime : NeonTheme.Text;
+            positionLabel.text = $"{TimeFormat.Ordinal(position).ToUpperInvariant()}<size=60%><color={Muted}>/{race.Standings.Count}</color></size>";
+            positionLabel.color = position == 1 ? Theme.Amber : Theme.White;
 
             if (warningLabel != null)
             {
@@ -53,15 +59,15 @@ namespace SomeGame.UI
                 }
             }
 
-            if (lapFlashLabel.gameObject.activeSelf && Time.time >= _hideFlashAt)
-                lapFlashLabel.gameObject.SetActive(false);
+            if (LapFlash.activeSelf && Time.time >= _hideFlashAt)
+                LapFlash.SetActive(false);
         }
 
         void FlashLap(float lapTime, bool newBest)
         {
-            lapFlashLabel.text = $"LAP  {TimeFormat.Race(lapTime)}{(newBest ? "  //  BEST" : "")}";
-            lapFlashLabel.color = newBest ? NeonTheme.Lime : NeonTheme.Cyan;
-            lapFlashLabel.gameObject.SetActive(true);
+            lapFlashLabel.text = $"LAP  {TimeFormat.Race(lapTime)}{(newBest ? "  ·  BEST" : "")}";
+            lapFlashLabel.color = newBest ? Theme.Orange : Theme.Ink;
+            LapFlash.SetActive(true);
             _hideFlashAt = Time.time + lapFlashSeconds;
         }
     }
