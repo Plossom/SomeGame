@@ -12,6 +12,8 @@ namespace SomeGame.Race
         {
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = TargetFrameRate;
+            // Racing is mostly steering with one thumb; never let the phone dim or lock mid-race.
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
         }
     }
 }
