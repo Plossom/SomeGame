@@ -144,6 +144,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a5abff000303446d9f455826074d890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.RaceProgress
+  wrongWayDelay: 0.8
+  gateMargin: 0.5
+  missedCheckpointMargin: 6
 --- !u!114 &6558371842738968839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,13 +159,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2a8edb0e41f4f878edefeaa53757cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.TyreMarks
-  material: {fileID: 2100000, guid: 91ad993c91c2b4a78a61533d74491229, type: 2}
+  material: {fileID: 2100000, guid: 7238efbc5f7924b7ba2c3a5507d6f3a6, type: 2}
   wheels:
   - {x: -0.38, y: -0.55}
   - {x: 0.38, y: -0.55}
-  width: 0.2
-  fadeSeconds: 4
-  color: {r: 0.12, g: 0.12, b: 0.12, a: 0.55}
+  width: 0.16
+  fadeSeconds: 2.5
+  color: {r: 1, g: 1, b: 1, a: 0.28}
+  colorSource: {fileID: 6973858104975654920}
   sortingOrder: -40
 --- !u!114 &4003634913073525109
 MonoBehaviour:
@@ -180,8 +184,8 @@ MonoBehaviour:
   shadow: {fileID: 1297978802845913396}
   duration: 0.28
   peakScale: 1.22
-  shadowOffset: {x: 0.08, y: -0.1}
-  shadowLift: {x: 0.25, y: -0.3}
+  shadowOffset: {x: 0, y: -0.05}
+  shadowLift: {x: 0.18, y: -0.22}
 --- !u!1 &8655561185844003468
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,7 +267,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: e6d5f4651231d4bd9aec7550bf297945, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 05a3885afcc494d36895003dff1e533d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -300,8 +304,8 @@ Transform:
   m_GameObject: {fileID: 8698995244233966885}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.08, y: -0.1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.05, z: 0}
+  m_LocalScale: {x: 0.95, y: 1.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4477349153591882648}
@@ -355,8 +359,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 9
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: e6d5f4651231d4bd9aec7550bf297945, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.3}
+  m_Sprite: {fileID: 21300000, guid: cbff6d20030604170b44d6777a50f26b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.45}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

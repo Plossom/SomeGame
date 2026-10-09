@@ -12,6 +12,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerCar
       objectReference: {fileID: 0}
+    - target: {fileID: 3262674521786939472, guid: 2116e51b364f546689f60112dd313353, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3262674521786939472, guid: 2116e51b364f546689f60112dd313353, type: 3}
+      propertyPath: m_Color.g
+      value: 0.8784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 3262674521786939472, guid: 2116e51b364f546689f60112dd313353, type: 3}
+      propertyPath: m_Color.r
+      value: 0.23921569
+      objectReference: {fileID: 0}
     - target: {fileID: 4477349153591882648, guid: 2116e51b364f546689f60112dd313353, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -54,11 +66,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6973858104975654920, guid: 2116e51b364f546689f60112dd313353, type: 3}
       propertyPath: m_Color.g
-      value: 0.54901963
+      value: 0.8784314
       objectReference: {fileID: 0}
     - target: {fileID: 6973858104975654920, guid: 2116e51b364f546689f60112dd313353, type: 3}
       propertyPath: m_Color.r
-      value: 0.2
+      value: 0.23921569
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

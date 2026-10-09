@@ -246,7 +246,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6c611cb2878fb4245b0bc9f43fc0e618, type: 2}
+  - {fileID: 2100000, guid: fd9d8ecd1fb844783b936b5bd1931e52, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -267,7 +267,7 @@ MeshRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 50
+  m_SortingOrder: -60
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!4 &45056162
@@ -336,7 +336,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e1b5b8f10b7449608fefb79e241836b, type: 2}
+  - {fileID: 2100000, guid: 19fc1f99f7b774116969d57d1aef042f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -850,7 +850,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 62f94de4e561746e98aa708d17406915, type: 2}
+  - {fileID: 2100000, guid: e5e43cbb2f537460c89dba9ae595c86f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1432,15 +1432,27 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: ca23b7784177c4b26bb90caf844317a3, type: 2}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.b
-      value: 0.2
+      value: 0.49803922
       objectReference: {fileID: 0}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.g
-      value: 0.2509804
+      value: 0.23921569
       objectReference: {fileID: 0}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.r
-      value: 0.9019608
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.b
+      value: 0.49803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.g
+      value: 0.23921569
       objectReference: {fileID: 0}
     - target: {fileID: 5684117315000715801, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: cornerGrip
@@ -1599,7 +1611,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1a5733bb754f74a42a56134fe6177dad, type: 2}
+  - {fileID: 2100000, guid: ce104bb2b923d419e9a23151c73cef59, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1652,13 +1664,25 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 166c99d2dc8d548f8b951d29ffe33a4b, type: 2}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.b
-      value: 0.9019608
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.g
-      value: 0.34901962
+      value: 0.41960785
       objectReference: {fileID: 0}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.r
+      value: 0.6509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.g
+      value: 0.41960785
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.r
       value: 0.6509804
       objectReference: {fileID: 0}
@@ -3144,10 +3168,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.CheckpointGates
   race: {fileID: 1995061807}
   track: {fileID: 1295174578}
-  postSprite: {fileID: 21300000, guid: 00903ea157b8c4954822b67d5d0ae699, type: 3}
-  postSize: 1.1
-  idleColor: {r: 1, g: 1, b: 1, a: 0.45}
-  nextColor: {r: 1, g: 0.85, b: 0.2, a: 0.9}
+  postSprite: {fileID: 21300000, guid: f431ea83c9b0849ea97561d5806cd950, type: 3}
+  postSize: 2.2
+  idleColor: {r: 0.23921569, g: 0.8784314, b: 1, a: 0.45}
+  nextColor: {r: 0.78431374, g: 1, b: 0.23921569, a: 1}
   pulseSpeed: 4
   postSortingOrder: 5
 --- !u!4 &905098331
@@ -3576,6 +3600,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 983767877}
   m_CullTransparentMesh: 1
+--- !u!1 &1020204632
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1020204634}
+  - component: {fileID: 1020204633}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1020204633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020204632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: bf1a30685d2b94d949046ebd79f4e297, type: 2}
+--- !u!4 &1020204634
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020204632}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1079140775
 GameObject:
   m_ObjectHideFlags: 0
@@ -4177,10 +4250,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackScenery
   track: {fileID: 1295174578}
   trees: {fileID: 45056160}
-  treeCount: 40
+  treeCount: 90
   seed: 12345
-  roadClearance: 3
-  sizeRange: {x: 2.2, y: 3.6}
+  roadClearance: 2.5
+  sizeRange: {x: 0.9, y: 2}
+  colors:
+  - {r: 0.23921569, g: 0.8784314, b: 1, a: 0.85}
+  - {r: 1, g: 0.23921569, b: 0.49803922, a: 0.85}
+  - {r: 0.78431374, g: 1, b: 0.23921569, a: 0.7}
+  - {r: 0.6509804, g: 0.41960785, b: 1, a: 0.8}
 --- !u!114 &1295174577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4199,9 +4277,11 @@ MonoBehaviour:
   kerbs: {fileID: 1490674662}
   startLine: {fileID: 57487253}
   boundary: {fileID: 1145898038}
-  roadTile: 4
+  roadTile: 6
   grassTile: 4
-  kerbCycle: 2.4
+  kerbCycle: 4
+  leftEdgeColor: {r: 1, g: 0.23921569, b: 0.49803922, a: 1}
+  rightEdgeColor: {r: 0.23921569, g: 0.8784314, b: 1, a: 1}
 --- !u!114 &1295174578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5023,7 +5103,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: df8c3d8e7925f44b49b4d6c958fd14b2, type: 2}
+  - {fileID: 2100000, guid: 8445855b392f44988ac0e3ff0c076955, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5430,7 +5510,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -5461,7 +5541,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.36, g: 0.62, b: 0.27, a: 1}
+  m_BackGroundColor: {r: 0.05490196, g: 0.06666667, b: 0.08627451, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -5834,11 +5914,23 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 64445d2ed093048808b24ad8bb21b16b, type: 2}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.b
-      value: 0.14901961
+      value: 0.2627451
       objectReference: {fileID: 0}
     - target: {fileID: 818472552071289077, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: m_Color.g
-      value: 0.8
+      value: 0.62352943
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.b
+      value: 0.2627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103857920395944109, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
+      propertyPath: m_Color.g
+      value: 0.62352943
       objectReference: {fileID: 0}
     - target: {fileID: 5684117315000715801, guid: 3426aae1e4aa74825bdde7e5b7a5966f, type: 3}
       propertyPath: cornerGrip
@@ -6954,3 +7046,4 @@ SceneRoots:
   - {fileID: 1825290912}
   - {fileID: 678245770}
   - {fileID: 905098331}
+  - {fileID: 1020204634}

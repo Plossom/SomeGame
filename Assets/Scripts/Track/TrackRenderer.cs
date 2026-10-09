@@ -16,8 +16,11 @@ namespace SomeGame.Track
         [Header("Texture tiling (world units per texture repeat)")]
         [SerializeField, Min(0.1f)] float roadTile = 4f;
         [SerializeField, Min(0.1f)] float grassTile = 4f;
-        [Tooltip("Approximate length of one red + white kerb block pair; adjusted so the loop closes cleanly.")]
+        [Tooltip("Approximate length of one edge texture repeat; adjusted so the loop closes cleanly.")]
         [SerializeField, Min(0.1f)] float kerbCycle = 2.4f;
+        [Tooltip("Vertex colour of the edge strip on the left / right of the driving direction.")]
+        [SerializeField] Color leftEdgeColor = Color.white;
+        [SerializeField] Color rightEdgeColor = Color.white;
 
         protected override void Build(TrackPath path, TrackLayout layout)
         {
@@ -44,8 +47,8 @@ namespace SomeGame.Track
         Mesh BuildKerbs(TrackPath path, float inner, float outer)
         {
             float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / kerbCycle));
-            var left = TrackMeshes.Strip(path, inner, outer, 1f, cycle, "KerbLeft");
-            var right = TrackMeshes.Strip(path, -inner, -outer, 1f, cycle, "KerbRight");
+            var left = TrackMeshes.Strip(path, inner, outer, 1f, cycle, "KerbLeft", leftEdgeColor);
+            var right = TrackMeshes.Strip(path, -inner, -outer, 1f, cycle, "KerbRight", rightEdgeColor);
             var combined = new Mesh { name = "Kerbs", hideFlags = HideFlags.DontSave };
             combined.CombineMeshes(new[]
             {

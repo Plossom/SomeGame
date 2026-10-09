@@ -3,7 +3,10 @@ using UnityEngine;
 
 namespace SomeGame.Track
 {
-    /// <summary>Scatters trees on the grass, keeping clear of the road. Pure scenery, no colliders.</summary>
+    /// <summary>
+    /// Scatters scenery (trees, or neon light pylons) on the ground, keeping clear of the road.
+    /// Each item gets one of <see cref="colors"/>. Pure scenery, no colliders.
+    /// </summary>
     public class TrackScenery : TrackDerivedBehaviour
     {
         [SerializeField] MeshFilter trees;
@@ -12,6 +15,8 @@ namespace SomeGame.Track
         [Tooltip("Minimum gap between a tree's centre and the kerb edge.")]
         [SerializeField, Min(0f)] float roadClearance = 3f;
         [SerializeField] Vector2 sizeRange = new(2.2f, 3.6f);
+        [Tooltip("Each item picks one of these tints at random. Empty = untinted.")]
+        [SerializeField] Color[] colors = { Color.white };
 
         protected override void Build(TrackPath path, TrackLayout layout)
         {
@@ -26,6 +31,7 @@ namespace SomeGame.Track
             var uvs = new List<Vector2>();
             var triangles = new List<int>();
             var placed = new List<Vector2>();
+            var tints = new List<Color32>();
 
             for (int attempt = 0; attempt < treeCount * 20 && placed.Count < treeCount; attempt++)
             {
@@ -38,9 +44,11 @@ namespace SomeGame.Track
                 float angle = Range(0f, Mathf.PI * 2f);
                 var right = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (size * 0.5f);
                 TrackMeshes.AddQuad(vertices, uvs, triangles, p, right, new Vector2(-right.y, right.x), Vector2.one);
+                Color32 tint = colors is { Length: > 0 } ? colors[random.Next(colors.Length)] : Color.white;
+                for (int k = 0; k < 4; k++) tints.Add(tint);
             }
 
-            Assign(trees, TrackMeshes.Quads("Trees", vertices, uvs, triangles));
+            Assign(trees, TrackMeshes.Quads("Scenery", vertices, uvs, triangles, tints));
         }
     }
 }

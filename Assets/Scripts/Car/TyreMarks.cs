@@ -15,6 +15,8 @@ namespace SomeGame.Car
         [SerializeField, Min(0.01f)] float width = 0.2f;
         [SerializeField, Min(0.1f)] float fadeSeconds = 4f;
         [SerializeField] Color color = new(0.12f, 0.12f, 0.12f, 0.55f);
+        [Tooltip("Use the car's own colour (from this sprite) for the marks, keeping the alpha above: light trails.")]
+        [SerializeField] SpriteRenderer colorSource;
         [SerializeField] int sortingOrder = -40;
 
         CarMovement _car;
@@ -24,6 +26,11 @@ namespace SomeGame.Car
         {
             _car = GetComponent<CarMovement>();
             _active = new TrailRenderer[wheels.Length];
+            if (colorSource != null)
+            {
+                var c = colorSource.color;
+                color = new Color(c.r, c.g, c.b, color.a);
+            }
         }
 
         void LateUpdate()

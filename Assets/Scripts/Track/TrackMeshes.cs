@@ -10,7 +10,11 @@ namespace SomeGame.Track
         /// A strip following the closed centre line between two lateral offsets.
         /// U runs 0..uMax across the strip, V is distance along the lap divided by vLength.
         /// </summary>
-        public static Mesh Strip(TrackPath path, float lateralA, float lateralB, float uMax, float vLength, string name)
+        public static Mesh Strip(TrackPath path, float lateralA, float lateralB, float uMax, float vLength, string name) =>
+            Strip(path, lateralA, lateralB, uMax, vLength, name, Color.white);
+
+        /// <summary>Strip tinted with a vertex colour (unlit sprite materials multiply it in).</summary>
+        public static Mesh Strip(TrackPath path, float lateralA, float lateralB, float uMax, float vLength, string name, Color color)
         {
             int n = path.Count;
             var vertices = new Vector3[(n + 1) * 2];
@@ -29,7 +33,7 @@ namespace SomeGame.Track
                 triangles[t] = a; triangles[t + 1] = a + 2; triangles[t + 2] = a + 1;
                 triangles[t + 3] = a + 1; triangles[t + 4] = a + 2; triangles[t + 5] = a + 3;
             }
-            return Create(name, vertices, uvs, triangles);
+            return Create(name, vertices, uvs, triangles, color);
         }
 
         /// <summary>A quad defined by its centre, half extents along two axes, and UV range.</summary>
@@ -48,13 +52,18 @@ namespace SomeGame.Track
             triangles.AddRange(new[] { start, start + 2, start + 1, start + 1, start + 2, start + 3 });
         }
 
-        public static Mesh Quads(string name, List<Vector3> vertices, List<Vector2> uvs, List<int> triangles) =>
-            Create(name, vertices.ToArray(), uvs.ToArray(), triangles.ToArray());
+        public static Mesh Quads(string name, List<Vector3> vertices, List<Vector2> uvs, List<int> triangles,
+            List<Color32> colors = null)
+        {
+            var mesh = Create(name, vertices.ToArray(), uvs.ToArray(), triangles.ToArray(), Color.white);
+            if (colors != null && colors.Count == vertices.Count) mesh.colors32 = colors.ToArray();
+            return mesh;
+        }
 
-        static Mesh Create(string name, Vector3[] vertices, Vector2[] uvs, int[] triangles)
+        static Mesh Create(string name, Vector3[] vertices, Vector2[] uvs, int[] triangles, Color color)
         {
             var colors = new Color32[vertices.Length];
-            for (int i = 0; i < colors.Length; i++) colors[i] = new Color32(255, 255, 255, 255);
+            for (int i = 0; i < colors.Length; i++) colors[i] = color;
 
             var mesh = new Mesh { name = name, hideFlags = HideFlags.DontSave };
             if (vertices.Length > 65000) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
