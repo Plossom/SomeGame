@@ -24,6 +24,29 @@ MonoBehaviour:
   offRoadSlowdown: 0.4
   offRoadDeceleration: 22
   offRoadGrip: 0.6
+  driftMinSpeed: 10
+  driftKeepSpeedFactor: 0.6
+  driftHopTime: 0.4
+  driftNeutralAngle: 6
+  driftSteerMemory: 0.6
+  driftWideTurnRate: 30
+  driftTightTurnRate: 170
+  driftFullInsideAngle: 70
+  driftTightnessResponse: 5
+  driftAngleWide: 22
+  driftAngleTight: 45
+  driftEntryKick: 12
+  driftEntryTime: 0.3
+  driftEntryRotationSpeed: 900
+  driftSpeedFactor: 0.92
+  driftMinCharge: 0.6
+  driftMaxCharge: 2.4
+  boostMinDuration: 0.5
+  boostMaxDuration: 1.5
+  boostMinSpeedBonus: 0.15
+  boostMaxSpeedBonus: 0.45
+  boostAcceleration: 30
+  boostKick: 4
   ramForce: 0.7
   hitRecoveryTime: 0.35
   mass: 1

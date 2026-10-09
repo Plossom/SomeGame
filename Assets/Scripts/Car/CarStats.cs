@@ -43,13 +43,18 @@ namespace SomeGame.Car
 
         [Header("Drift (second finger while steering)")]
         [Tooltip("Minimum speed to start a drift (units/s). Drifting only works on the road, never on grass.")]
-        [Min(0f)] public float driftMinSpeed = 12f;
+        [Min(0f)] public float driftMinSpeed = 10f;
         [Tooltip("A drift ends (without boost) when the speed drops below this fraction of driftMinSpeed.")]
         [Range(0f, 1f)] public float driftKeepSpeedFactor = 0.6f;
         [Tooltip("Seconds after pressing the drift button (the hop) in which the stick picks a drift side.")]
-        [Min(0f)] public float driftHopTime = 0.28f;
-        [Tooltip("Stick within this many degrees of the car's heading counts as straight: the car only hops, no drift.")]
-        [Range(0f, 90f)] public float driftNeutralAngle = 15f;
+        [Min(0f)] public float driftHopTime = 0.4f;
+        [Tooltip("Steering intent within this many degrees counts as straight: the car only hops, no drift. " +
+                 "Intent = stick direction compared with where the car was heading a moment ago (driftSteerMemory).")]
+        [Range(0f, 90f)] public float driftNeutralAngle = 6f;
+        [Tooltip("How long a recent steering movement still counts as intent when picking the drift side (seconds, " +
+                 "time constant of the lagging heading). Lets you press just after turning in, when the car has " +
+                 "already caught up with the stick.")]
+        [Min(0.01f)] public float driftSteerMemory = 0.6f;
         [Tooltip("Curve rate while drifting with the stick straight ahead or pointing out of the corner (degrees/s). " +
                  "A drift always curves at least this much toward its side.")]
         [Min(0f)] public float driftWideTurnRate = 30f;

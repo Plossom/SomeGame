@@ -25,6 +25,7 @@ namespace SomeGame.Car
         bool _driftHeldLastStep;
         float _hopTimer;       // > 0 right after the drift button was pressed: the stick may pick a side
         float _driftTightness; // 0 = widest drift, 1 = tightest, smoothed
+        float _laggedHeading;  // where the car was pointing a moment ago (smoothed), for steering intent
 
         /// <summary>Raised on every collision with the closing speed of the impact.</summary>
         public event Action<float> Collided;
@@ -170,6 +171,7 @@ namespace SomeGame.Car
         {
             bool choosingSide = _hopTimer > 0f;
             _hopTimer -= dt;
+            _laggedHeading += Mathf.DeltaAngle(_laggedHeading, _body.rotation) * (1f - Mathf.Exp(-dt / stats.driftSteerMemory));
 
             if (IsDrifting)
             {
@@ -186,11 +188,12 @@ namespace SomeGame.Car
             if (!held || !choosingSide || throttle <= 0f || offRoad || speed < stats.driftMinSpeed || steer.sqrMagnitude < 0.0001f)
                 return 0f;
 
-            // Stick slightly left or right of the car picks the side; roughly straight is just a hop.
-            float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(steer));
-            if (Mathf.Abs(delta) < stats.driftNeutralAngle) return 0f;
+            // Stick slightly left or right of where the car was heading a moment ago picks the side
+            // (so a press just after turning in still counts); roughly straight is just a hop.
+            float intent = Mathf.DeltaAngle(_laggedHeading, HeadingOf(steer));
+            if (Mathf.Abs(intent) < stats.driftNeutralAngle) return 0f;
 
-            _driftDirection = delta > 0f ? 1 : -1;
+            _driftDirection = intent > 0f ? 1 : -1;
             _driftCharge = 0f;
             _driftTightness = 0f;
             _hopTimer = 0f;
