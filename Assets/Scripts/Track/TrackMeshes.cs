@@ -10,7 +10,12 @@ namespace SomeGame.Track
         /// A strip following the closed centre line between two lateral offsets.
         /// U runs 0..uMax across the strip, V is distance along the lap divided by vLength.
         /// </summary>
-        public static Mesh Strip(TrackPath path, float lateralA, float lateralB, float uMax, float vLength, string name)
+        public static Mesh Strip(TrackPath path, float lateralA, float lateralB, float uMax, float vLength, string name) =>
+            Strip(path, i => lateralA, i => lateralB, uMax, vLength, name);
+
+        /// <summary>Strip with per-sample lateral offsets.</summary>
+        public static Mesh Strip(TrackPath path, System.Func<int, float> lateralA, System.Func<int, float> lateralB,
+            float uMax, float vLength, string name)
         {
             int n = path.Count;
             var vertices = new Vector3[(n + 1) * 2];
@@ -20,8 +25,9 @@ namespace SomeGame.Track
             {
                 Vector2 p = path[i], normal = path.SampleNormal(i);
                 float v = (i == n ? path.Length : path.DistanceAt(i)) / vLength;
-                vertices[i * 2] = p + normal * lateralA;
-                vertices[i * 2 + 1] = p + normal * lateralB;
+                int sample = path.Wrap(i);
+                vertices[i * 2] = p + normal * lateralA(sample);
+                vertices[i * 2 + 1] = p + normal * lateralB(sample);
                 uvs[i * 2] = new Vector2(0f, v);
                 uvs[i * 2 + 1] = new Vector2(uMax, v);
                 if (i == n) break;

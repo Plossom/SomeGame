@@ -133,6 +133,44 @@ namespace SomeGame.Track
             return best;
         }
 
+        /// <summary>
+        /// Lateral offsets (positive magnitudes) for a line running alongside the track on one side
+        /// (+1 left, -1 right). Starts at <paramref name="desired"/> and pulls in wherever that would
+        /// fold over itself (inside of tight corners) or come closer to another part of the circuit,
+        /// but never below <paramref name="minimum"/>. The result is smoothed so the line has no kinks.
+        /// </summary>
+        public float[] SideOffsets(int side, float desired, float minimum, float step = 0.25f)
+        {
+            int n = _points.Length;
+            var raw = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                Vector2 p = _points[i], normal = SampleNormal(i) * side;
+                float lateral = desired;
+                while (lateral > minimum && Mathf.Abs(Project(p + normal * lateral).Lateral) < lateral - step)
+                    lateral -= step;
+                raw[i] = Mathf.Max(minimum, lateral);
+            }
+
+            // Min filter keeps every reduction, then an average filter rounds off the steps.
+            const int radius = 3;
+            var minimised = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float m = raw[i];
+                for (int k = -radius; k <= radius; k++) m = Mathf.Min(m, raw[Wrap(i + k)]);
+                minimised[i] = m;
+            }
+            var smoothed = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float sum = 0f;
+                for (int k = -radius; k <= radius; k++) sum += minimised[Wrap(i + k)];
+                smoothed[i] = Mathf.Min(sum / (radius * 2 + 1), raw[i]);
+            }
+            return smoothed;
+        }
+
         public Rect Bounds()
         {
             Vector2 min = _points[0], max = _points[0];
