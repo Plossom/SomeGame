@@ -15,15 +15,6 @@ namespace SomeGame.Race
     {
         [Tooltip("Seconds of driving against the track direction before Wrong Way is shown.")]
         [SerializeField, Min(0f)] float wrongWayDelay = 0.8f;
-        [Header("Corner cutting (only when DetectCuts is on, i.e. the player)")]
-        [Tooltip("A trip onto the grass is a cut when it gains this much more track distance than the car " +
-                 "actually drove (units). Running wide never gains distance, so it is never penalised.")]
-        [SerializeField, Min(0f)] float cutTolerance = 2.5f;
-        [Tooltip("Fixed seconds added for each cut.")]
-        [SerializeField, Min(0f)] float cutPenaltySeconds = 1f;
-        [Tooltip("Plus the distance gained by the cut converted to time at this speed (units/s). Kept well " +
-                 "below the average race speed, so a cut always costs more than it saves.")]
-        [SerializeField, Min(1f)] float cutPenaltySpeed = 10f;
         [Tooltip("A checkpoint only counts when passed between its posts: within this distance of the " +
                  "centre line beyond the kerb (units).")]
         [SerializeField, Min(0f)] float gateMargin = 0.5f;
@@ -33,10 +24,6 @@ namespace SomeGame.Race
         TrackSensor _sensor;
         Rigidbody2D _body;
         float _wrongWayTimer;
-        bool _onGrass;
-        float _grassProgress, _grassTravelled;
-        bool _lapHadCut;
-        readonly List<bool> _lapClean = new();
         float _lastDistance;
         float _lapStartTime;
         bool _tracking;
@@ -44,8 +31,6 @@ namespace SomeGame.Race
 
         public event Action<RaceProgress, float> LapCompleted;
         public event Action<RaceProgress> Finished;
-        /// <summary>A corner cut was penalised: (car, penalty seconds).</summary>
-        public event Action<RaceProgress, float> CornerCut;
 
         public string DisplayName { get; set; }
         public int TotalLaps { get; private set; } = 3;
@@ -53,13 +38,6 @@ namespace SomeGame.Race
         public bool IsFinished { get; private set; }
         public float FinishTime { get; private set; }
         public IReadOnlyList<float> LapTimes => _lapTimes;
-        /// <summary>Per lap: true if the lap had no corner cut (only clean laps count as best lap).</summary>
-        public IReadOnlyList<bool> LapClean => _lapClean;
-        /// <summary>When on, corner cuts are detected and penalised. Set for the player.</summary>
-        public bool DetectCuts { get; set; }
-        /// <summary>Total penalty seconds collected for corner cuts.</summary>
-        public float PenaltySeconds { get; private set; }
-
         /// <summary>True when the car is clearly beyond the checkpoint it still has to pass (took a shortcut).</summary>
         public bool MissedCheckpoint =>
             _tracking && !IsFinished &&
@@ -99,10 +77,7 @@ namespace SomeGame.Race
             TotalLaps = totalLaps;
             CheckpointsPassed = 0;
             IsFinished = false;
-            PenaltySeconds = 0f;
-            _onGrass = _lapHadCut = false;
             _lapTimes.Clear();
-            _lapClean.Clear();
             _lapStartTime = startTime;
             _sensor.Sample();
             _lastDistance = _sensor.Current.Distance;
@@ -121,7 +96,6 @@ namespace SomeGame.Race
             UpdateWrongWay(path.TangentAt(distance), Time.fixedDeltaTime);
 
             float moved = path.DeltaDistance(_lastDistance, distance);
-            if (DetectCuts) TrackCornerCut(moved);
 
             // A jump means the car was re-located (cut across grass); it does not pass checkpoints.
             if (!_sensor.Jumped)
@@ -132,33 +106,6 @@ namespace SomeGame.Race
                     PassCheckpoint();
             }
             _lastDistance = distance;
-        }
-
-        // Each trip onto the grass compares track distance gained with distance actually driven.
-        // Cutting the inside of a corner gains more track than it drives; that is a cut.
-        void TrackCornerCut(float moved)
-        {
-            if (_sensor.IsOffRoad)
-            {
-                if (!_onGrass)
-                {
-                    _onGrass = true;
-                    _grassProgress = _grassTravelled = 0f;
-                }
-                _grassProgress += moved;
-                _grassTravelled += _body.linearVelocity.magnitude * Time.fixedDeltaTime;
-                return;
-            }
-
-            if (!_onGrass) return;
-            _onGrass = false;
-            float gained = _grassProgress - _grassTravelled;
-            if (gained <= cutTolerance) return;
-
-            float penalty = cutPenaltySeconds + gained / cutPenaltySpeed;
-            PenaltySeconds += penalty;
-            _lapHadCut = true;
-            CornerCut?.Invoke(this, penalty);
         }
 
         void UpdateWrongWay(Vector2 trackDirection, float dt)
@@ -181,8 +128,6 @@ namespace SomeGame.Race
             float lapTime = now - _lapStartTime;
             _lapStartTime = now;
             _lapTimes.Add(lapTime);
-            _lapClean.Add(!_lapHadCut);
-            _lapHadCut = false;
             LapCompleted?.Invoke(this, lapTime);
 
             if (LapsCompleted >= TotalLaps)

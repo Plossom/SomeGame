@@ -51,10 +51,7 @@ namespace SomeGame.Race
             _ => Time.time - _startTime,
         };
 
-        /// <summary>Race time plus the player's corner-cut penalties.</summary>
-        public float PlayerTotalTime => RaceTime + Player.PenaltySeconds;
-
-        /// <summary>The player's final place, including penalties. Valid once PlayerFinished fired.</summary>
+        /// <summary>The player's final place. Valid once PlayerFinished fired.</summary>
         public int FinalPosition { get; private set; }
 
         /// <summary>The race from the map, or null when the scene was opened directly.</summary>
@@ -90,7 +87,6 @@ namespace SomeGame.Race
                 Register(rivals[i], slot++, $"Rival {i + 1}");
             }
             Player = Register(player, slot, "You");
-            Player.DetectCuts = true;
         }
 
         // Rivals share their CarStats assets, so each gets a scaled runtime copy.
@@ -158,9 +154,7 @@ namespace SomeGame.Race
 
         void OnPlayerLap(RaceProgress car, float lapTime)
         {
-            // Laps with a corner cut never count as best lap.
-            bool clean = car.LapClean.Count > 0 && car.LapClean[car.LapClean.Count - 1];
-            bool newBest = clean && BestLapStore.Submit(TrackId, lapTime);
+            bool newBest = BestLapStore.Submit(TrackId, lapTime);
             PlayerLapCompleted?.Invoke(lapTime, newBest);
         }
 
@@ -173,23 +167,9 @@ namespace SomeGame.Race
             State = RaceState.Finished;
             player.ControlsEnabled = false;
             if (joystick != null) joystick.Interactable = false;
-            StartCoroutine(ClassifyPlayer());
-        }
-
-        // With penalties the player's real result is finish time + penalty. Rivals finishing within
-        // that window still beat the player, so wait it out before showing the result.
-        IEnumerator ClassifyPlayer()
-        {
-            float adjusted = Player.FinishTime + Player.PenaltySeconds;
-            while (Time.time < adjusted) yield return null;
-
-            int ahead = 0;
-            foreach (var car in _cars)
-                if (car != Player && car.IsFinished && car.FinishTime < adjusted) ahead++;
-            FinalPosition = ahead + 1;
-            bool won = FinalPosition == 1;
+            FinalPosition = _finishOrder.IndexOf(Player) + 1;
             StarsEarned = Level != null
-                ? ProgressStore.Record(Level, won, PlayerTotalTime)
+                ? ProgressStore.Record(Level, FinalPosition == 1, RaceTime)
                 : 0;
             PlayerFinished?.Invoke();
         }

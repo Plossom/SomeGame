@@ -27,21 +27,13 @@ namespace SomeGame.UI
         {
             lapFlashLabel.gameObject.SetActive(false);
             if (warningLabel != null) warningLabel.gameObject.SetActive(false);
-            race.Player.CornerCut += FlashPenalty; // Player exists once all Awakes have run
-        }
-
-        void OnDestroy()
-        {
-            if (race != null && race.Player != null) race.Player.CornerCut -= FlashPenalty;
         }
 
         void Update()
         {
             var player = race.Player;
             lapLabel.text = $"LAP {player.CurrentLap}/{race.Laps}";
-            float penalty = player.PenaltySeconds;
-            timeLabel.text = TimeFormat.Race(race.RaceTime)
-                + (penalty > 0f ? $"<size=55%><color=#FF6A5A> +{penalty:0.#}s</color></size>" : "");
+            timeLabel.text = TimeFormat.Race(race.RaceTime);
             int position = race.PositionOf(player);
             positionLabel.text = $"{TimeFormat.Ordinal(position)}<size=60%>/{race.Standings.Count}</size>";
 
@@ -62,14 +54,6 @@ namespace SomeGame.UI
 
             if (lapFlashLabel.gameObject.activeSelf && Time.time >= _hideFlashAt)
                 lapFlashLabel.gameObject.SetActive(false);
-        }
-
-        void FlashPenalty(RaceProgress car, float seconds)
-        {
-            lapFlashLabel.text = $"+{seconds:0.#} s  CORNER CUT";
-            lapFlashLabel.color = new Color(1f, 0.42f, 0.35f);
-            lapFlashLabel.gameObject.SetActive(true);
-            _hideFlashAt = Time.time + lapFlashSeconds;
         }
 
         void FlashLap(float lapTime, bool newBest)

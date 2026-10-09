@@ -30,7 +30,6 @@ namespace SomeGame.UI
 
         [Header("Settings")]
         [SerializeField] UnityEngine.UI.Slider volumeSlider;
-        [SerializeField] TMP_Text volumeValue;
         [SerializeField] UnityEngine.UI.Button joystickButton;
         [SerializeField] TMP_Text joystickLabel;
 
@@ -99,7 +98,6 @@ namespace SomeGame.UI
         void RefreshSettings()
         {
             volumeSlider.SetValueWithoutNotify(SoundSettings.Volume);
-            volumeValue.text = $"{Mathf.RoundToInt(SoundSettings.Volume * 100f)}%";
             joystickLabel.text = ControlSettings.InvisibleJoystick ? "Joystick: Invisible" : "Joystick: Visible";
         }
     }

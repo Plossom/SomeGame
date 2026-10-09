@@ -50,17 +50,10 @@ namespace SomeGame.UI
             title.text = $"{TimeFormat.Ordinal(position)} PLACE";
 
             var text = new StringBuilder();
-            float penalty = race.Player.PenaltySeconds;
-            text.AppendLine($"Total  {TimeFormat.Race(race.PlayerTotalTime)}");
-            if (penalty > 0f)
-                text.AppendLine($"<size=75%><color=#FF6A5A>incl. +{penalty:0.0} s corner cuts</color></size>");
+            text.AppendLine($"Total  {TimeFormat.Race(race.RaceTime)}");
             var laps = race.Player.LapTimes;
-            var clean = race.Player.LapClean;
             for (int i = 0; i < laps.Count; i++)
-            {
-                bool cut = i < clean.Count && !clean[i];
-                text.AppendLine($"Lap {i + 1}  {TimeFormat.Race(laps[i])}{(cut ? "<size=70%><color=#FF6A5A>  cut</color></size>" : "")}");
-            }
+                text.AppendLine($"Lap {i + 1}  {TimeFormat.Race(laps[i])}");
             if (race.BestLap.HasValue)
                 text.Append($"Best lap  {TimeFormat.Race(race.BestLap.Value)}{(_newBest ? "  NEW!" : "")}");
             details.text = text.ToString();
