@@ -17,6 +17,8 @@ namespace SomeGame.CameraRig
         [Tooltip("Look this many seconds ahead along the velocity.")]
         [SerializeField, Min(0f)] float lookAheadTime = 0.35f;
         [SerializeField, Min(0f)] float maxLookAhead = 6f;
+        [Tooltip("Scales sideways look-ahead; the portrait screen is narrow, so less lead left/right than up/down.")]
+        [SerializeField, Range(0f, 1f)] float horizontalLookAheadFactor = 0.7f;
         [Tooltip("Constant camera offset from the car (world units).")]
         [SerializeField] Vector2 framingOffset = Vector2.zero;
         [Tooltip("The car never sits lower than this fraction of the screen height (0 = bottom, 0.5 = centre), " +
@@ -71,6 +73,7 @@ namespace SomeGame.CameraRig
             float dt = Time.deltaTime;
 
             Vector2 desiredLookAhead = Vector2.ClampMagnitude(target.linearVelocity * lookAheadTime, maxLookAhead);
+            desiredLookAhead.x *= horizontalLookAheadFactor;
             _lookAhead = Vector2.SmoothDamp(_lookAhead, desiredLookAhead, ref _lookAheadVelocity, lookAheadSmoothTime, Mathf.Infinity, dt);
             _focus = Vector2.SmoothDamp(_focus, (Vector2)target.transform.position, ref _focusVelocity, followSmoothTime, Mathf.Infinity, dt);
             Apply();
