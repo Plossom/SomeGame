@@ -97,7 +97,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 | Rival handling (top speeds 18.8 down to 16.4 in steps of 0.4 for Rival 1-7, vs player 18; scaled per race: Meadow Run ×0.95, River Jump ×1.0) and cornering (`cornerGrip` 28 down to 22 on `Rival1-7` in the scene) | `Assets/Data/Cars/Rival1-7.asset` |
 | Track shape (waypoints), road width, kerb width, checkpoint count, grass margin | `Assets/Data/Tracks/Circuit01.asset` (`TrackLayout`): the single source for road, off-road, checkpoints, laps and AI line |
 | Texture tiling of road, grass and kerbs; which stretches count as corners (`kerbTurn`: red-and-white kerbs there, a white edge line elsewhere); sand run-off width in corners (`runoffCorner` outside, `runoffInside`); meadow patch tints; number of starting-grid boxes (`gridSlots`) | `Track` object, `TrackRenderer` component |
-| Scenery: one entry per kind (tyre piles, fields, barns, chalets, bushes, trees, pines, rocks) with count, size, distance from the kerb, clustering, corner-only, angle, tints and collider (`solid`: circle or box, `solidSize`; fields have none) | `Track` object, `TrackScenery` component (`kinds`; pictures from `Assets/Art/Rally/Scenery.png`) |
+| Scenery: one entry per kind (tyre piles, fields, barns, chalets, bushes, trees, pines, rocks) with count, size, distance from the kerb, clustering, corner-only, angle and tints (after changes: `SomeGame > Bake Scenery (all tracks)`) | `Track` object, `TrackScenery` component (`kinds`; pictures from `Assets/Art/Rally/Scenery.png`) |
 | Camera zoom (`orthographicSize`, now 16), follow smoothing, look-ahead (max 4.5, sideways × `horizontalLookAheadFactor` 0.7), framing offset, lowest car screen position (`minCarScreenHeight`, 0.44) | `Main Camera`, `FollowCamera` |
 | Camera shake thresholds and strength | `Main Camera`, `CameraShake` |
 | Joystick radius and dead zone | `UI/JoystickArea`, `FloatingJoystick` |
@@ -182,7 +182,7 @@ have at most 3 such apps installed at once.
 - **Props are decoration only** (no collisions; that kept races loading for minutes on the phone). The
   rolling hay bales and logs are solid. The map edge is an invisible wall.
 - **Scenery is baked:** it is placed in the Editor and stored in each track (the Race scene re-places
-  the track it shows whenever its scenery settings change;  does
+  the track it shows whenever its scenery settings change; `SomeGame > Bake Scenery (all tracks)` does
   all tracks). A race loads in about half a second in the Editor.
 - **Ram force applies to every car-to-car hit**, AI vs AI included. With the joystick only the
   first touch is used. Touches that start on a button never create the joystick.
