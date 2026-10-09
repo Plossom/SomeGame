@@ -78,7 +78,8 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
    - Rivals that splash at the same spot three times are put down past the water, so they never get
      stuck for good. Pass the checkpoints in order (cutting across the grass does
    not count). Grass slows you down hard. You can push and ram the rivals.
-7. The HUD at the top shows lap, race time and position. When you finish, the results
+7. The HUD at the top shows lap, race time (minutes and seconds; hundredths only on the results
+   screen) and position. When you finish, the results
    screen shows your place, the stars earned and the star times, lap times and best lap,
    **NEXT** (back to the map) and **RETRY**.
 8. **Menu (☰, top left)** on the map and in races. In a race it **pauses** the game (timer, cars,
@@ -178,8 +179,11 @@ have at most 3 such apps installed at once.
   pass next glows yellow. Skipping one shows **MISSED CHECKPOINT / GO BACK** until you return; the
   lap does not count until you do. Driving backwards shows **WRONG WAY**. Values: `RaceProgress` on
   the car prefab (`gateMargin`, `missedCheckpointMargin`, `wrongWayDelay`).
-- **Props are solid:** trees, bushes, pines, rocks, chalets, barns and tyre piles block the car (a
-  hard knock also ends a drift); fields can be driven over. The map edge is an invisible wall.
+- **Props are decoration only** (no collisions; that kept races loading for minutes on the phone). The
+  rolling hay bales and logs are solid. The map edge is an invisible wall.
+- **Scenery is baked:** it is placed in the Editor and stored in each track (the Race scene re-places
+  the track it shows whenever its scenery settings change;  does
+  all tracks). A race loads in about half a second in the Editor.
 - **Ram force applies to every car-to-car hit**, AI vs AI included. With the joystick only the
   first touch is used. Touches that start on a button never create the joystick.
 - **Keyboard steering is 8-directional only** (it is meant for testing).

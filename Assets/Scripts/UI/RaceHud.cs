@@ -39,7 +39,7 @@ namespace SomeGame.UI
         {
             var player = race.Player;
             lapLabel.text = $"{player.CurrentLap}<size=60%><color={Muted}>/{race.Laps}</color></size>";
-            timeLabel.text = TimeFormat.Race(race.RaceTime);
+            timeLabel.text = TimeFormat.Clock(race.RaceTime); // hundredths only on the results screen
             int position = race.PositionOf(player);
             positionLabel.text = $"{TimeFormat.Ordinal(position).ToUpperInvariant()}<size=60%><color={Muted}>/{race.Standings.Count}</color></size>";
             positionLabel.color = position == 1 ? Theme.Amber : Theme.White;

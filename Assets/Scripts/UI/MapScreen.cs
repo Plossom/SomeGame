@@ -194,7 +194,11 @@ namespace SomeGame.UI
 
         void StartSelected()
         {
-            if (ProgressStore.CanEnter(catalog, _selected)) GameSession.StartRace(catalog[_selected]);
+            if (!ProgressStore.CanEnter(catalog, _selected) || GameSession.Loading) return;
+            startLabel.text = "LOADING";
+            startLabel.fontSize *= 0.7f;
+            startRing.SetActive(false);
+            GameSession.StartRace(catalog[_selected]);
         }
     }
 }

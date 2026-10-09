@@ -114,6 +114,19 @@ namespace SomeGame.Track
         [Tooltip("Scenery for this track. Empty = the scene's default scenery.")]
         public List<TrackScenery.Kind> scenery = new();
 
+        [Tooltip("Scenery placed in the Editor (computed automatically when the track or its scenery settings change), so a race loads instantly.")]
+        [HideInInspector] public List<SceneryItem> bakedScenery = new();
+        [HideInInspector] public string bakedSignature;
+
+        [Serializable]
+        public struct SceneryItem
+        {
+            public Vector2 position;
+            public Vector2 right;
+            public Rect uv;
+            public Color32 tint;
+        }
+
         [Serializable]
         public class Gap
         {

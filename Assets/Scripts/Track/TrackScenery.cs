@@ -7,13 +7,12 @@ namespace SomeGame.Track
     /// <summary>
     /// Scatters scenery (trees, bushes, chalets, fields, tyre piles...) around the track, keeping clear of
     /// the road and of the sandy run-off in the corners. Each kind takes its picture from a cell of one
-    /// atlas texture, so everything is a single mesh. Solid kinds also get a collider in Play mode, so
-    /// cars bump into them instead of driving through.
+    /// atlas texture, so everything is a single mesh. Pure scenery: no colliders. Placing is slow, so it is
+    /// done in the Editor and stored in the track (<see cref="TrackLayout.bakedScenery"/>); a race only
+    /// reads it back.
     /// </summary>
     public class TrackScenery : TrackDerivedBehaviour
     {
-        public enum Solid { None, Circle, Box }
-
         [Serializable]
         public class Kind
         {
@@ -32,10 +31,6 @@ namespace SomeGame.Track
             public bool cornerOnly;
             [Tooltip("Turned to a multiple of 90 degrees instead of a random angle (fields, barns).")]
             public bool squareAngle;
-            [Tooltip("Collider shape in Play mode (None = cars drive over it).")]
-            public Solid solid;
-            [Tooltip("Collider size as a fraction of the item size: circle radius in x, or box half width / half length.")]
-            public Vector2 solidSize = new(0.35f, 0.35f);
             [Tooltip("Each item picks one of these tints at random.")]
             public Color[] tints = { Color.white };
         }
@@ -57,6 +52,76 @@ namespace SomeGame.Track
 
         protected override void Build(TrackPath path, TrackLayout layout)
         {
+            string signature = Signature(layout);
+            bool baked = layout.bakedScenery is { Count: > 0 } && layout.bakedSignature == signature;
+#if !UNITY_EDITOR
+            baked |= layout.bakedScenery is { Count: > 0 }; // a build always trusts the stored scenery
+#endif
+            if (!baked)
+            {
+                layout.bakedScenery = Place(path, layout);
+                layout.bakedSignature = signature;
+#if UNITY_EDITOR
+                if (!Application.isPlaying) UnityEditor.EditorUtility.SetDirty(layout);
+#endif
+            }
+            Assign(trees, ToMesh(layout.bakedScenery));
+        }
+
+        /// <summary>Everything that decides where the scenery goes; when it changes, the scenery is placed again.</summary>
+        string Signature(TrackLayout layout)
+        {
+            var sig = new SignatureData
+            {
+                waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
+                margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps,
+                shortcuts = layout.shortcuts, waterWorld = layout.waterWorld,
+                kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
+                seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
+            };
+            string json = JsonUtility.ToJson(sig);
+            ulong hash = 14695981039346656037UL;
+            foreach (char c in json) { hash ^= c; hash *= 1099511628211UL; }
+            return hash.ToString("x16");
+        }
+
+        [Serializable]
+        class SignatureData
+        {
+            public Vector2[] waypoints;
+            public float roadWidth, kerbWidth, spacing, margin, overscan;
+            public List<TrackLayout.WidthKey> widths;
+            public List<TrackLayout.River> rivers;
+            public List<TrackLayout.Lake> lakes;
+            public List<TrackLayout.Gap> gaps;
+            public List<TrackLayout.Shortcut> shortcuts;
+            public bool waterWorld;
+            public List<Kind> kinds;
+            public int seed, span;
+            public Vector4 runoff;
+        }
+
+        Mesh ToMesh(List<TrackLayout.SceneryItem> items)
+        {
+            var vertices = new List<Vector3>(items.Count * 4);
+            var uvs = new List<Vector2>(items.Count * 4);
+            var triangles = new List<int>(items.Count * 6);
+            var tints = new List<Color32>(items.Count * 4);
+            foreach (var item in items)
+            {
+                int first = vertices.Count;
+                Vector2 right = item.right;
+                TrackMeshes.AddQuad(vertices, uvs, triangles, item.position, right, new Vector2(-right.y, right.x), Vector2.one);
+                var uv = item.uv;
+                for (int k = first; k < uvs.Count; k++)
+                    uvs[k] = new Vector2(uv.x + uvs[k].x * uv.width, uv.y + uvs[k].y * uv.height);
+                for (int k = 0; k < 4; k++) tints.Add(item.tint);
+            }
+            return TrackMeshes.Quads("Scenery", vertices, uvs, triangles, tints);
+        }
+
+        List<TrackLayout.SceneryItem> Place(TrackPath path, TrackLayout layout)
+        {
             var random = new System.Random(seed);
             float Range(float min, float max) => min + (float)random.NextDouble() * (max - min);
 
@@ -64,13 +129,8 @@ namespace SomeGame.Track
             float margin = layout.boundaryMargin + overscan;
             var area = Rect.MinMaxRect(bounds.xMin - margin, bounds.yMin - margin, bounds.xMax + margin, bounds.yMax + margin);
 
-            var vertices = new List<Vector3>();
-            var uvs = new List<Vector2>();
-            var triangles = new List<int>();
-            var tints = new List<Color32>();
             var placed = new List<(Vector2 p, float r)>();
             var items = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint)>();
-            var solids = new List<Vector2[]>();
 
             // A track can bring its own scenery (e.g. boats and buoys for a water track).
             var useKinds = layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds;
@@ -105,23 +165,12 @@ namespace SomeGame.Track
                     var right = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (size * 0.5f);
                     Color32 tint = kind.tints is { Length: > 0 } ? kind.tints[random.Next(kind.tints.Length)] : Color.white;
                     items.Add((p, right, kind.uv, tint));
-                    if (kind.solid != Solid.None) solids.Add(Outline(kind, p, right, size));
                 }
             }
 
             // Draw top-down from the back so overlapping crowns read naturally.
             items.Sort((a, b) => b.p.y.CompareTo(a.p.y));
-            foreach (var (p, right, uv, tint) in items)
-            {
-                int first = vertices.Count;
-                TrackMeshes.AddQuad(vertices, uvs, triangles, p, right, new Vector2(-right.y, right.x), Vector2.one);
-                for (int k = first; k < uvs.Count; k++)
-                    uvs[k] = new Vector2(uv.x + uvs[k].x * uv.width, uv.y + uvs[k].y * uv.height);
-                for (int k = 0; k < 4; k++) tints.Add(tint);
-            }
-
-            Assign(trees, TrackMeshes.Quads("Scenery", vertices, uvs, triangles, tints));
-            if (Application.isPlaying) BuildColliders(solids);
+            return items.ConvertAll(i => new TrackLayout.SceneryItem { position = i.p, right = i.right, uv = i.uv, tint = i.tint });
         }
 
         // The corridor a shortcut jump flies through stays clear, so a short landing is never inside a tree.
@@ -135,42 +184,6 @@ namespace SomeGame.Track
                 if (Vector2.Distance(p, a + ab * t) < ramp.Width * 0.5f + 2f + size * 0.5f) return true;
             }
             return false;
-        }
-
-        // A collider outline in world space: an octagon for round things, a rotated box for buildings.
-        static Vector2[] Outline(Kind kind, Vector2 p, Vector2 right, float size)
-        {
-            Vector2 x = right.normalized, y = new(-x.y, x.x);
-            if (kind.solid == Solid.Box)
-            {
-                Vector2 hx = x * (kind.solidSize.x * size), hy = y * (kind.solidSize.y * size);
-                return new[] { p - hx - hy, p + hx - hy, p + hx + hy, p - hx + hy };
-            }
-            float r = kind.solidSize.x * size;
-            var points = new Vector2[8];
-            for (int i = 0; i < 8; i++)
-            {
-                float a = i * Mathf.PI / 4f;
-                points[i] = p + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
-            }
-            return points;
-        }
-
-        // All solid props share one static polygon collider (one path each) on a child object.
-        void BuildColliders(List<Vector2[]> solids)
-        {
-            var child = transform.Find("Obstacles");
-            if (child == null)
-            {
-                child = new GameObject("Obstacles").transform;
-                child.SetParent(transform, false);
-            }
-            child.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-            child.localScale = Vector3.one;
-            var polygon = child.GetComponent<PolygonCollider2D>();
-            if (polygon == null) polygon = child.gameObject.AddComponent<PolygonCollider2D>();
-            polygon.pathCount = solids.Count;
-            for (int i = 0; i < solids.Count; i++) polygon.SetPath(i, solids[i]);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace SomeGame.Track
         [SerializeField] protected Track track;
 
         readonly List<Mesh> _meshes = new();
+        bool _started;
 
         protected abstract void Build(TrackPath path, TrackLayout layout);
 
@@ -21,7 +22,15 @@ namespace SomeGame.Track
         {
             if (track == null) return;
             track.Rebuilt += ScheduleRebuild;
-            Rebuild();
+            // In Play mode the race may still switch to another track in its Awake: build once, in Start.
+            if (!Application.isPlaying || _started) Rebuild();
+        }
+
+        protected virtual void Start()
+        {
+            if (!Application.isPlaying || _started) return;
+            _started = true;
+            if (track != null) Rebuild();
         }
 
         protected virtual void OnDisable()
@@ -34,7 +43,7 @@ namespace SomeGame.Track
         {
             if (Application.isPlaying)
             {
-                Rebuild(); // runtime layout switch (level loading): rebuild right away
+                if (_started) Rebuild(); // a later runtime layout switch: rebuild right away
                 return;
             }
 #if UNITY_EDITOR

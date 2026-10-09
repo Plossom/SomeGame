@@ -68,7 +68,7 @@ namespace SomeGame.Race
             }
             entry.stars = Mathf.Max(entry.stars, stars);
             entry.won |= won;
-            if (won && (entry.bestTime <= 0f || totalTime < entry.bestTime)) entry.bestTime = totalTime;
+            if (entry.bestTime <= 0f || totalTime < entry.bestTime) entry.bestTime = totalTime; // any finish counts
             Save();
             return stars;
         }
