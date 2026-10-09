@@ -14,13 +14,19 @@ namespace SomeGame.UI
         [Tooltip("Shows the last lap time for a few seconds after each lap.")]
         [SerializeField] TMP_Text lapFlashLabel;
         [SerializeField, Min(0f)] float lapFlashSeconds = 2.5f;
+        [Tooltip("Blinking warning shown while the player drives the wrong way.")]
+        [SerializeField] TMP_Text wrongWayLabel;
 
         float _hideFlashAt;
 
         void OnEnable() => race.PlayerLapCompleted += FlashLap;
         void OnDisable() => race.PlayerLapCompleted -= FlashLap;
 
-        void Start() => lapFlashLabel.gameObject.SetActive(false);
+        void Start()
+        {
+            lapFlashLabel.gameObject.SetActive(false);
+            if (wrongWayLabel != null) wrongWayLabel.gameObject.SetActive(false);
+        }
 
         void Update()
         {
@@ -29,6 +35,13 @@ namespace SomeGame.UI
             timeLabel.text = TimeFormat.Race(race.RaceTime);
             int position = race.PositionOf(player);
             positionLabel.text = $"{TimeFormat.Ordinal(position)}<size=60%>/{race.Standings.Count}</size>";
+
+            if (wrongWayLabel != null)
+            {
+                bool show = player.IsWrongWay && race.State == RaceState.Racing;
+                if (wrongWayLabel.gameObject.activeSelf != show) wrongWayLabel.gameObject.SetActive(show);
+                if (show) wrongWayLabel.alpha = Mathf.PingPong(Time.time * 3f, 1f) * 0.6f + 0.4f;
+            }
 
             if (lapFlashLabel.gameObject.activeSelf && Time.time >= _hideFlashAt)
                 lapFlashLabel.gameObject.SetActive(false);

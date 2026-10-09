@@ -13,7 +13,12 @@ namespace SomeGame.Race
     [RequireComponent(typeof(TrackSensor))]
     public class RaceProgress : MonoBehaviour
     {
+        [Tooltip("Seconds of driving against the track direction before Wrong Way is shown.")]
+        [SerializeField, Min(0f)] float wrongWayDelay = 0.8f;
+
         TrackSensor _sensor;
+        Rigidbody2D _body;
+        float _wrongWayTimer;
         float _lastDistance;
         float _lapStartTime;
         bool _tracking;
@@ -28,6 +33,8 @@ namespace SomeGame.Race
         public bool IsFinished { get; private set; }
         public float FinishTime { get; private set; }
         public IReadOnlyList<float> LapTimes => _lapTimes;
+        /// <summary>True while the car has been driving against the track direction for a moment.</summary>
+        public bool IsWrongWay => _wrongWayTimer >= wrongWayDelay;
 
         SomeGame.Track.Track Circuit => _sensor.Track;
         int CheckpointCount => Circuit.CheckpointCount;
@@ -48,7 +55,11 @@ namespace SomeGame.Race
             }
         }
 
-        void Awake() => _sensor = GetComponent<TrackSensor>();
+        void Awake()
+        {
+            _sensor = GetComponent<TrackSensor>();
+            _body = GetComponent<Rigidbody2D>();
+        }
 
         /// <summary>Starts counting from the current position. Call at GO.</summary>
         public void Begin(int totalLaps, float startTime)
@@ -65,9 +76,14 @@ namespace SomeGame.Race
 
         void FixedUpdate()
         {
-            if (!_tracking || IsFinished) return;
+            if (!_tracking || IsFinished)
+            {
+                _wrongWayTimer = 0f;
+                return;
+            }
             var path = Circuit.Path;
             float distance = _sensor.Current.Distance;
+            UpdateWrongWay(path.TangentAt(distance), Time.fixedDeltaTime);
 
             // A jump means the car was re-located (cut across grass); it does not pass checkpoints.
             if (!_sensor.Jumped)
@@ -78,6 +94,16 @@ namespace SomeGame.Race
                     PassCheckpoint();
             }
             _lastDistance = distance;
+        }
+
+        void UpdateWrongWay(Vector2 trackDirection, float dt)
+        {
+            Vector2 velocity = _body.linearVelocity;
+            float speed = velocity.magnitude;
+            bool backwards = speed > 2f && Vector2.Dot(velocity, trackDirection) < -0.5f * speed;
+            _wrongWayTimer = backwards
+                ? _wrongWayTimer + dt
+                : Mathf.Max(0f, Mathf.Min(_wrongWayTimer, wrongWayDelay) - dt * 2f);
         }
 
         void PassCheckpoint()

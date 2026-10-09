@@ -100,10 +100,10 @@ have at most 3 such apps installed at once.
   have no brake), so it sometimes runs wide onto the grass at the hairpin. It does not try to
   overtake or avoid other cars. After the player finishes, rivals keep driving and their finish
   times are not shown.
-- **No feedback for missed checkpoints or driving the wrong way.** The lap simply doesn't count
-  until you go back.
+- **Wrong way:** a blinking WRONG WAY warning appears after ~0.8 s of driving against the track
+  direction (`RaceProgress.wrongWayDelay` on the car prefab).
 - **Kerbs run along the whole circuit**, not just the corners. Trees are scenery only (no
-  colliders). A solid tyre barrier runs ~3.5 m outside the kerbs on both sides (pulled in on the
+  colliders). A solid tyre barrier runs ~6 m outside the kerbs on both sides (pulled in on the
   inside of tight corners), so corners cannot be cut.
 - **Ram force applies to every car-to-car hit**, AI vs AI included. With the joystick only the
   first touch is used. Touches that start on a button never create the joystick.
