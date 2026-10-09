@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
-  m_Name: Level03
+  m_Name: Level08
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Downtown Grand Prix
+  displayName: Wrong Way Home
   chapter: DOWNTOWN // GRAND PRIX
-  track: {fileID: 11400000, guid: 546c27345ae2748229da7e06f2dcaddb, type: 2}
+  track: {fileID: 11400000, guid: 8b6840e9c1cf4450c91aa19b2af7910d, type: 2}
   laps: 3
   rivalCount: 3
-  rivalSpeedScale: 1
-  rivalCornerScale: 1
+  rivalSpeedScale: 0.97
+  rivalCornerScale: 0.96
   starTimes:
-  - 73.5
-  - 68.5
-  - 64.5
+  - 75
+  - 68
+  - 63
   starsRequired: 0

@@ -29,6 +29,13 @@ namespace SomeGame.EditorTools
             BuildRace();
         }
 
+        // ================================================================== CITY
+
+        public static void BuildCityUI()
+        {
+            // Filled in with the city overlay (markers, district sheet, garage) in the next step.
+        }
+
         // ================================================================== MAP
 
         public static void BuildMap()

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level02
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Club Race
-  chapter: CHAPTER 01 // NEON GRID
+  chapter: DOWNTOWN // GRAND PRIX
   track: {fileID: 11400000, guid: 546c27345ae2748229da7e06f2dcaddb, type: 2}
   laps: 3
   rivalCount: 3
@@ -23,4 +23,4 @@ MonoBehaviour:
   - 73
   - 68.5
   - 64.5
-  starsRequired: 1
+  starsRequired: 0

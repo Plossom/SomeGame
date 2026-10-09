@@ -5,9 +5,9 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>
-    /// Saved map progress per race (best stars, won, best time) and the unlock rules:
-    /// a race is visible once the previous one has been won, and can be entered once the total
-    /// stars reach its requirement.
+    /// Saved progress per race (best stars, won, best time) and the unlock rules:
+    /// a district (Grand Prix) unlocks once the total stars reach its requirement; inside it,
+    /// the first race is open and every further race unlocks by winning the previous one.
     /// </summary>
     public static class ProgressStore
     {
@@ -45,6 +45,21 @@ namespace SomeGame.Race
                 foreach (var e in Saved.entries) total += e.stars;
                 return total;
             }
+        }
+
+        public static bool IsUnlocked(DistrictDefinition district) =>
+            !district.ComingSoon && TotalStars >= district.starsRequired;
+
+        /// <summary>Race <paramref name="index"/> of an unlocked district is open once the previous race is won.</summary>
+        public static bool CanEnter(DistrictDefinition district, int index) =>
+            IsUnlocked(district) && index >= 0 && index < district.races.Count &&
+            (index == 0 || HasWon(district.races[index - 1]));
+
+        public static int StarsIn(DistrictDefinition district)
+        {
+            int total = 0;
+            foreach (var race in district.races) total += StarsOf(race);
+            return total;
         }
 
         public static bool IsVisible(LevelCatalog catalog, int index) =>

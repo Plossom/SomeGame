@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Level05
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Valley Cup
-  chapter: CHAPTER 02 // NIGHT VALLEY
+  displayName: Container Cup
+  chapter: HARBOR // GRAND PRIX
   track: {fileID: 11400000, guid: e500d766ff1cc489e84aa2831ce0d3c9, type: 2}
   laps: 3
   rivalCount: 3
@@ -23,4 +23,4 @@ MonoBehaviour:
   - 88.5
   - 82.5
   - 78
-  starsRequired: 7
+  starsRequired: 0

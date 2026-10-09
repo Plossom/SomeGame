@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce1c3fdb6b454611bfca80d74d32dea, type: 3}
+  m_Name: Harbor
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.DistrictDefinition
+  displayName: HARBOR
+  tagline: Long straights between the container stacks. Top speed rules here.
+  feature: NEW // HIGH-SPEED CIRCUITS
+  accent: {r: 0.23921569, g: 0.8784314, b: 1, a: 1}
+  starsRequired: 9
+  races:
+  - {fileID: 11400000, guid: 8a59a8f0bcd4e4f908fcaea09a66e07e, type: 2}
+  - {fileID: 11400000, guid: b2a0ec13de4a7423183e2928ce224fcc, type: 2}
+  - {fileID: 11400000, guid: 5a067f9ab43f7447eb2fef039d5475de, type: 2}
+  - {fileID: 11400000, guid: 6d2daaccec0584eaaa43177ab0b1b7ab, type: 2}
+  - {fileID: 11400000, guid: adc9f51d698644e75b0494683a35db51, type: 2}
