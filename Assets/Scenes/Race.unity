@@ -3086,9 +3086,10 @@ MonoBehaviour:
   orthographicSize: 16
   followSmoothTime: 0.12
   lookAheadTime: 0.35
-  maxLookAhead: 6
+  maxLookAhead: 4.5
+  horizontalLookAheadFactor: 0.7
   framingOffset: {x: 0, y: 0}
-  minCarScreenHeight: 0.4
+  minCarScreenHeight: 0.44
   lookAheadSmoothTime: 0.5
 --- !u!114 &1585216747
 MonoBehaviour:

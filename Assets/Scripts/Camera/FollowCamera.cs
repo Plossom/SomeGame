@@ -16,14 +16,14 @@ namespace SomeGame.CameraRig
         [SerializeField, Min(0f)] float followSmoothTime = 0.12f;
         [Tooltip("Look this many seconds ahead along the velocity.")]
         [SerializeField, Min(0f)] float lookAheadTime = 0.35f;
-        [SerializeField, Min(0f)] float maxLookAhead = 6f;
+        [SerializeField, Min(0f)] float maxLookAhead = 4.5f;
         [Tooltip("Scales sideways look-ahead; the portrait screen is narrow, so less lead left/right than up/down.")]
         [SerializeField, Range(0f, 1f)] float horizontalLookAheadFactor = 0.7f;
         [Tooltip("Constant camera offset from the car (world units).")]
         [SerializeField] Vector2 framingOffset = Vector2.zero;
         [Tooltip("The car never sits lower than this fraction of the screen height (0 = bottom, 0.5 = centre), " +
                  "so look-ahead while driving up the screen does not put it under the thumb.")]
-        [SerializeField, Range(0f, 0.5f)] float minCarScreenHeight = 0.4f;
+        [SerializeField, Range(0f, 0.5f)] float minCarScreenHeight = 0.44f;
         [SerializeField, Min(0f)] float lookAheadSmoothTime = 0.5f;
 
         Camera _camera;
