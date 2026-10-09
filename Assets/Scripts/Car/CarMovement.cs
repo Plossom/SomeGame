@@ -23,6 +23,8 @@ namespace SomeGame.Car
         float _driftCharge;    // seconds spent in the current drift
         float _boostTimer, _boostDuration;
         bool _driftHeldLastStep;
+        float _hopTimer;       // > 0 right after the drift button was pressed: the stick may pick a side
+        float _driftTightness; // 0 = widest drift, 1 = tightest, smoothed
 
         /// <summary>Raised on every collision with the closing speed of the impact.</summary>
         public event Action<float> Collided;
@@ -95,7 +97,11 @@ namespace SomeGame.Car
             float throttle = hasControl ? Mathf.Clamp01(_input.Throttle) : 0f;
             Vector2 steer = hasControl ? _input.SteerDirection : Vector2.zero;
             bool driftHeld = hasControl && _input.DriftHeld;
-            if (driftHeld && !_driftHeldLastStep) Hopped?.Invoke();
+            if (driftHeld && !_driftHeldLastStep)
+            {
+                _hopTimer = stats.driftHopTime;
+                Hopped?.Invoke();
+            }
             _driftHeldLastStep = driftHeld;
             _hitTimer = Mathf.Max(0f, _hitTimer - dt);
 
@@ -162,6 +168,9 @@ namespace SomeGame.Car
         /// </summary>
         float UpdateDrift(bool held, Vector2 steer, float throttle, float speed, bool offRoad, float dt)
         {
+            bool choosingSide = _hopTimer > 0f;
+            _hopTimer -= dt;
+
             if (IsDrifting)
             {
                 _driftCharge += dt;
@@ -173,22 +182,25 @@ namespace SomeGame.Car
                 return 0f;
             }
 
-            // Drifts only start on the road, at speed, with the stick pointing to one side.
-            if (!held || throttle <= 0f || offRoad || speed < stats.driftMinSpeed || steer.sqrMagnitude < 0.0001f)
+            // A drift can only begin during the hop, on the road, at speed.
+            if (!held || !choosingSide || throttle <= 0f || offRoad || speed < stats.driftMinSpeed || steer.sqrMagnitude < 0.0001f)
                 return 0f;
 
-            // The side is picked by where the stick points relative to the car.
+            // Stick slightly left or right of the car picks the side; roughly straight is just a hop.
             float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(steer));
-            if (Mathf.Abs(delta) < stats.driftStartAngle) return 0f;
+            if (Mathf.Abs(delta) < stats.driftNeutralAngle) return 0f;
 
             _driftDirection = delta > 0f ? 1 : -1;
             _driftCharge = 0f;
+            _driftTightness = 0f;
+            _hopTimer = 0f;
             DriftStarted?.Invoke();
             return 0f;
         }
 
-        // While drifting the stick steers the direction of travel (fast into the drift side, slower
-        // out of it to widen the line) and the body stays angled into the corner by driftAngle.
+        // A drift always curves toward its side. The stick only sets how tight: pointing into the
+        // corner (relative to the direction of travel) tightens it, straight or outward is the widest
+        // line. The body is angled into the corner, more so in a tight drift.
         void DriftMotion(Vector2 steer, float throttle, float maxSpeed, float acceleration, bool offRoad, float dt)
         {
             Vector2 velocity = _body.linearVelocity;
@@ -200,24 +212,25 @@ namespace SomeGame.Car
             else
                 speed = Mathf.Min(maxSpeed, speed + acceleration * throttle * dt);
 
-            if (steer.sqrMagnitude > 0.0001f)
-            {
-                float delta = Mathf.DeltaAngle(travel, HeadingOf(steer));
-                float rate = Mathf.Sign(delta) == _driftDirection ? stats.driftTurnRate : stats.driftCounterTurnRate;
-                travel += Mathf.Clamp(delta, -rate * dt, rate * dt);
-            }
+            float inside = steer.sqrMagnitude > 0.0001f
+                ? Mathf.DeltaAngle(travel, HeadingOf(steer)) * _driftDirection
+                : 0f;
+            float tightness = Mathf.Clamp01(inside / stats.driftFullInsideAngle);
+            _driftTightness = Mathf.MoveTowards(_driftTightness, tightness, stats.driftTightnessResponse * dt);
 
+            // Entry: the car tilts quickly into the corner (slightly past the drift angle) while its
+            // path stays almost straight; the curve fades in as the entry settles.
+            float entry = 1f - Mathf.Clamp01(_driftCharge / stats.driftEntryTime);
+            float curve = Mathf.Lerp(stats.driftWideTurnRate, stats.driftTightTurnRate, _driftTightness) * (1f - entry);
+            travel += _driftDirection * curve * dt;
             float rad = (travel + 90f) * Mathf.Deg2Rad;
             _body.linearVelocity = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * speed;
 
-            // Entry kick: snap past the drift angle, then ease back to it.
-            float entry = 1f - Mathf.Clamp01(_driftCharge / stats.driftEntryTime);
-            float angle = stats.driftAngle + stats.driftEntryKick * entry * entry;
-            float bodyTarget = travel + _driftDirection * angle;
-            float bodyStep = Mathf.DeltaAngle(_body.rotation, bodyTarget);
-            float bodyRate = entry > 0f ? stats.driftEntryRotationSpeed : stats.driftTurnRate * 2f;
-            float maxBodyStep = bodyRate * dt;
-            _body.angularVelocity = Mathf.Clamp(bodyStep, -maxBodyStep, maxBodyStep) / dt;
+            float angle = Mathf.Lerp(stats.driftAngleWide, stats.driftAngleTight, _driftTightness)
+                        + stats.driftEntryKick * entry * entry;
+            float bodyStep = Mathf.DeltaAngle(_body.rotation, travel + _driftDirection * angle);
+            float bodyRate = stats.driftEntryRotationSpeed * (entry > 0f ? 1f : 0.5f);
+            _body.angularVelocity = Mathf.Clamp(bodyStep, -bodyRate * dt, bodyRate * dt) / dt;
 
             ForwardSpeed = Vector2.Dot(_body.linearVelocity, transform.up);
             SidewaysSpeed = Vector2.Dot(_body.linearVelocity, transform.right);

@@ -46,16 +46,25 @@ namespace SomeGame.Car
         [Min(0f)] public float driftMinSpeed = 12f;
         [Tooltip("A drift ends (without boost) when the speed drops below this fraction of driftMinSpeed.")]
         [Range(0f, 1f)] public float driftKeepSpeedFactor = 0.6f;
-        [Tooltip("Stick must point at least this many degrees off the car's heading to pick a drift side.")]
-        [Range(0f, 90f)] public float driftStartAngle = 8f;
-        [Tooltip("How fast the direction of travel follows the stick into the drift side (degrees/s).")]
-        [Min(0f)] public float driftTurnRate = 200f;
-        [Tooltip("How fast it follows the stick toward the other side, i.e. widening the drift (degrees/s).")]
-        [Min(0f)] public float driftCounterTurnRate = 70f;
-        [Tooltip("How far the car body points into the corner relative to its direction of travel (degrees).")]
-        [Range(0f, 80f)] public float driftAngle = 32f;
+        [Tooltip("Seconds after pressing the drift button (the hop) in which the stick picks a drift side.")]
+        [Min(0f)] public float driftHopTime = 0.28f;
+        [Tooltip("Stick within this many degrees of the car's heading counts as straight: the car only hops, no drift.")]
+        [Range(0f, 90f)] public float driftNeutralAngle = 15f;
+        [Tooltip("Curve rate while drifting with the stick straight ahead or pointing out of the corner (degrees/s). " +
+                 "A drift always curves at least this much toward its side.")]
+        [Min(0f)] public float driftWideTurnRate = 30f;
+        [Tooltip("Curve rate with the stick pointed fully into the corner (degrees/s).")]
+        [Min(0f)] public float driftTightTurnRate = 170f;
+        [Tooltip("Stick angle into the corner (relative to the direction of travel) that gives the tightest drift.")]
+        [Range(1f, 180f)] public float driftFullInsideAngle = 70f;
+        [Tooltip("How fast the drift reacts to stick changes between wide and tight (per second).")]
+        [Min(0.1f)] public float driftTightnessResponse = 5f;
+        [Tooltip("Body angle into the corner relative to the direction of travel, wide drift (degrees).")]
+        [Range(0f, 80f)] public float driftAngleWide = 22f;
+        [Tooltip("Body angle into the corner, tight drift (degrees).")]
+        [Range(0f, 80f)] public float driftAngleTight = 45f;
         [Tooltip("Extra rotation on drift entry: the car snaps this many degrees past the drift angle, then settles.")]
-        [Range(0f, 60f)] public float driftEntryKick = 22f;
+        [Range(0f, 60f)] public float driftEntryKick = 12f;
         [Tooltip("Seconds the entry kick takes to settle back to the drift angle.")]
         [Min(0.01f)] public float driftEntryTime = 0.3f;
         [Tooltip("Rotation speed of the snap into the drift (degrees/s).")]
