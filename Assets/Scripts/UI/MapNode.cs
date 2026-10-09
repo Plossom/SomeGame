@@ -6,52 +6,69 @@ namespace SomeGame.UI
 {
     public enum MapNodeState { Hidden, Locked, Open, Won }
 
-    /// <summary>One race on the map: a round button with its number, earned stars and lock.</summary>
+    /// <summary>
+    /// One race on the map: a diamond with its number, earned stars, lock, and a pulsing ring
+    /// when it is the selected race.
+    /// </summary>
     public class MapNode : MonoBehaviour
     {
         [SerializeField] UnityEngine.UI.Button button;
-        [SerializeField] UnityEngine.UI.Image circle;
-        [Tooltip("White ring and drop shadow; faded out for hidden races.")]
-        [SerializeField] UnityEngine.UI.Image[] frame;
+        [SerializeField] UnityEngine.UI.Image fill;
+        [SerializeField] UnityEngine.UI.Image outline;
+        [SerializeField] UnityEngine.UI.Image glow;
+        [Tooltip("Pulsing ring shown on the selected race.")]
+        [SerializeField] GameObject selectionRing;
         [SerializeField] TMP_Text number;
+        [SerializeField] UnityEngine.UI.Image lockIcon;
         [SerializeField] UnityEngine.UI.Image[] stars;
-        [SerializeField] GameObject lockGroup;
-        [SerializeField] TMP_Text lockText;
+        [Tooltip("Pill above a locked race showing the total stars it needs.")]
+        [SerializeField] GameObject requirement;
+        [SerializeField] TMP_Text requirementText;
 
-        [SerializeField] Color hiddenColor = new(1f, 1f, 1f, 0.18f);
-        [SerializeField] Color lockedColor = new(0.55f, 0.57f, 0.6f);
-        [SerializeField] Color openColor = new(1f, 0.8f, 0.2f);
-        [SerializeField] Color wonColor = new(0.3f, 0.75f, 0.35f);
-        [SerializeField] Color starOn = new(1f, 0.82f, 0.2f);
-        [SerializeField] Color starOff = new(0f, 0f, 0f, 0.25f);
-
-        public void Bind(int index, MapNodeState state, int earnedStars, int starsRequired, Action onClick)
+        public void Bind(int index, MapNodeState state, int earnedStars, int starsRequired, bool selected, Action onClick)
         {
             bool hidden = state == MapNodeState.Hidden;
-            circle.color = state switch
+            Color accent = state switch
             {
-                MapNodeState.Hidden => hiddenColor,
-                MapNodeState.Locked => lockedColor,
-                MapNodeState.Won => wonColor,
-                _ => openColor,
+                MapNodeState.Won => NeonTheme.Lime,
+                MapNodeState.Open => NeonTheme.Magenta,
+                _ => NeonTheme.Faint,
             };
-            foreach (var image in frame)
+
+            fill.color = state switch
             {
-                var c = image.color;
-                c.a = hidden ? 0.15f : (image.name == "Shadow" ? 0.3f : 1f);
-                image.color = c;
-            }
+                MapNodeState.Open => NeonTheme.Magenta,
+                MapNodeState.Won => NeonTheme.Panel,
+                MapNodeState.Locked => NeonTheme.PanelRaised,
+                _ => NeonTheme.WithAlpha(NeonTheme.Panel, 0.6f),
+            };
+            outline.color = hidden ? NeonTheme.WithAlpha(NeonTheme.Faint, 0.6f) : accent;
+            glow.gameObject.SetActive(state is MapNodeState.Won or MapNodeState.Open);
+            glow.color = NeonTheme.WithAlpha(accent, state == MapNodeState.Open ? 0.75f : 0.45f);
+
+            number.gameObject.SetActive(state != MapNodeState.Locked);
             number.text = hidden ? "?" : (index + 1).ToString();
-            number.alpha = hidden ? 0.5f : 1f;
+            number.color = state switch
+            {
+                MapNodeState.Open => NeonTheme.Background,
+                MapNodeState.Won => NeonTheme.Lime,
+                _ => NeonTheme.Faint,
+            };
+            lockIcon.gameObject.SetActive(state == MapNodeState.Locked);
+            lockIcon.color = NeonTheme.Dim;
 
             for (int i = 0; i < stars.Length; i++)
             {
-                stars[i].gameObject.SetActive(!hidden);
-                stars[i].color = i < earnedStars ? starOn : starOff;
+                stars[i].gameObject.SetActive(state is MapNodeState.Won or MapNodeState.Open);
+                stars[i].color = i < earnedStars ? NeonTheme.Lime : NeonTheme.Faint;
             }
 
-            lockGroup.SetActive(state == MapNodeState.Locked);
-            lockText.text = starsRequired.ToString();
+            requirement.SetActive(state == MapNodeState.Locked);
+            requirementText.text = starsRequired.ToString();
+
+            selectionRing.SetActive(selected && !hidden);
+            var ringImage = selectionRing.GetComponent<UnityEngine.UI.Graphic>();
+            if (ringImage != null) ringImage.color = state == MapNodeState.Locked ? NeonTheme.Dim : NeonTheme.Magenta;
 
             button.interactable = !hidden;
             button.onClick.RemoveAllListeners();

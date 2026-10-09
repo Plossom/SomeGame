@@ -21,6 +21,8 @@ namespace SomeGame.UI
         [SerializeField] GameObject panel;
         [Tooltip("Full-screen dimmer behind the panel; tapping it closes the menu (resumes).")]
         [SerializeField] UnityEngine.UI.Button closeArea;
+        [Tooltip("Optional explicit close (X) button.")]
+        [SerializeField] UnityEngine.UI.Button closeButton;
         [SerializeField] TMP_Text title;
 
         [Header("Race only")]
@@ -42,6 +44,7 @@ namespace SomeGame.UI
             bool inRace = race != null;
             openButton.onClick.AddListener(Open);
             closeArea.onClick.AddListener(Close);
+            if (closeButton != null) closeButton.onClick.AddListener(Close);
             resumeButton.onClick.AddListener(Close);
             restartButton.onClick.AddListener(() => { Unpause(); race.Restart(); });
             mainMenuButton.onClick.AddListener(() => { Unpause(); GameSession.ReturnToMap(); });
@@ -98,7 +101,9 @@ namespace SomeGame.UI
         void RefreshSettings()
         {
             volumeSlider.SetValueWithoutNotify(SoundSettings.Volume);
-            joystickLabel.text = ControlSettings.InvisibleJoystick ? "Joystick: Invisible" : "Joystick: Visible";
+            joystickLabel.text = ControlSettings.InvisibleJoystick
+                ? $"JOYSTICK   <color={NeonTheme.Html(NeonTheme.Dim)}>HIDDEN</color>"
+                : $"JOYSTICK   <color={NeonTheme.Html(NeonTheme.Lime)}>VISIBLE</color>";
         }
     }
 }

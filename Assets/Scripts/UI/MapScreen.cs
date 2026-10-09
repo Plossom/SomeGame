@@ -7,7 +7,7 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// The level map (start screen): a vertical path of race nodes, first race at the bottom.
-    /// Nodes are created from the <see cref="LevelCatalog"/> using a node template.
+    /// Tapping a race selects it; its details show at the top and START at the bottom enters it.
     /// </summary>
     public class MapScreen : MonoBehaviour
     {
@@ -17,38 +17,64 @@ namespace SomeGame.UI
         [SerializeField] RectTransform content;
         [Tooltip("Inactive node used as a template.")]
         [SerializeField] MapNode nodeTemplate;
-        [SerializeField] LevelCard card;
         [SerializeField] TMP_Text totalStars;
 
+        [Header("Selected race")]
+        [SerializeField] TMP_Text chapterLabel;
+        [SerializeField] TMP_Text titleLabel;
+        [SerializeField] TMP_Text lapsChip;
+        [SerializeField] TMP_Text rivalsChip;
+        [SerializeField] TMP_Text bestChip;
+        [Tooltip("Times for 1, 2 and 3 stars.")]
+        [SerializeField] TMP_Text[] starTimes;
+        [SerializeField] TMP_Text hint;
+        [SerializeField] UnityEngine.UI.Button startButton;
+        [SerializeField] UnityEngine.UI.Image startFill;
+        [SerializeField] TMP_Text startLabel;
+        [SerializeField] GameObject startRing;
+
         [Header("Layout (canvas units)")]
-        [SerializeField, Min(50f)] float nodeSpacing = 360f;
-        [SerializeField] float sideSwing = 280f;
-        [SerializeField] float bottomPadding = 450f;
-        [SerializeField] float topPadding = 600f;
-        [SerializeField, Min(1f)] float pathWidth = 64f;
-        [SerializeField] Color pathColor = new(0.48f, 0.49f, 0.52f);
-        [SerializeField] Color hiddenPathColor = new(0.48f, 0.49f, 0.52f, 0.3f);
+        [SerializeField, Min(50f)] float nodeSpacing = 330f;
+        [SerializeField] float sideSwing = 260f;
+        [SerializeField] float bottomPadding = 520f;
+        [SerializeField] float topPadding = 820f;
+        [SerializeField, Min(1f)] float pathWidth = 34f;
+        [SerializeField] Sprite pathSprite;
+        [SerializeField] Sprite glowSprite;
 
         readonly List<MapNode> _nodes = new();
+        int _selected;
 
         void Start()
         {
+            startButton.onClick.AddListener(StartSelected);
+            _selected = LatestVisible();
             Build();
             Refresh();
-            ScrollToLatest();
+            ScrollTo(_selected);
         }
 
         Vector2 NodePosition(int index) =>
-            new(Mathf.Sin(index * 1.3f) * sideSwing, bottomPadding + index * nodeSpacing);
+            new(Mathf.Sin(index * 1.25f + 0.6f) * sideSwing, bottomPadding + index * nodeSpacing);
+
+        int LatestVisible()
+        {
+            int latest = 0;
+            for (int i = 0; i < catalog.Count; i++)
+                if (ProgressStore.IsVisible(catalog, i)) latest = i;
+            return latest;
+        }
 
         void Build()
         {
             content.sizeDelta = new Vector2(content.sizeDelta.x, bottomPadding + (catalog.Count - 1) * nodeSpacing + topPadding);
             nodeTemplate.gameObject.SetActive(false);
 
+            for (int i = 1; i < catalog.Count; i++)
+                CreatePath(NodePosition(i - 1), NodePosition(i), ProgressStore.HasWon(catalog[i - 1]));
+
             for (int i = 0; i < catalog.Count; i++)
             {
-                if (i > 0) CreatePath(NodePosition(i - 1), NodePosition(i), ProgressStore.IsVisible(catalog, i));
                 var node = Instantiate(nodeTemplate, content);
                 node.name = $"Node{i + 1}";
                 var rect = (RectTransform)node.transform;
@@ -59,20 +85,49 @@ namespace SomeGame.UI
             }
         }
 
-        void CreatePath(Vector2 from, Vector2 to, bool visible)
+        // Completed stretches are a glowing magenta line; the road ahead is a faint dashed line.
+        void CreatePath(Vector2 from, Vector2 to, bool completed)
         {
-            var piece = new GameObject("Path", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+            Vector2 delta = to - from;
+            float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg - 90f;
+            Vector2 middle = (from + to) * 0.5f;
+            CreateSegment("PathBase", middle, new Vector2(pathWidth, delta.magnitude + pathWidth), angle,
+                NeonTheme.WithAlpha(NeonTheme.Panel, 0.9f), pathSprite);
+            if (completed)
+            {
+                CreateSegment("PathGlow", middle, new Vector2(pathWidth * 3f, delta.magnitude + pathWidth * 2f), angle,
+                    NeonTheme.WithAlpha(NeonTheme.Magenta, 0.4f), glowSprite);
+                CreateSegment("PathLine", middle, new Vector2(pathWidth * 0.42f, delta.magnitude + pathWidth * 0.4f), angle,
+                    NeonTheme.Magenta, pathSprite);
+                return;
+            }
+            int dashes = Mathf.Max(1, Mathf.FloorToInt(delta.magnitude / 46f));
+            for (int k = 1; k < dashes; k++)
+                CreateSegment("PathDash", Vector2.Lerp(from, to, k / (float)dashes), new Vector2(pathWidth * 0.18f, 18f), angle,
+                    NeonTheme.WithAlpha(NeonTheme.Cyan, 0.45f), pathSprite);
+        }
+
+        void CreateSegment(string name, Vector2 position, Vector2 size, float angle, Color color, Sprite sprite)
+        {
+            var piece = new GameObject(name, typeof(RectTransform), typeof(UnityEngine.UI.Image));
             var rect = (RectTransform)piece.transform;
             rect.SetParent(content, false);
             rect.SetAsFirstSibling(); // behind the nodes
             rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0f);
-            Vector2 delta = to - from;
-            rect.anchoredPosition = (from + to) * 0.5f;
-            rect.sizeDelta = new Vector2(pathWidth, delta.magnitude);
-            rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg - 90f);
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
+            rect.localRotation = Quaternion.Euler(0f, 0f, angle);
             var image = piece.GetComponent<UnityEngine.UI.Image>();
-            image.color = visible ? pathColor : hiddenPathColor;
+            image.sprite = sprite;
+            image.type = sprite != null && sprite.border != Vector4.zero ? UnityEngine.UI.Image.Type.Sliced : UnityEngine.UI.Image.Type.Simple;
+            image.color = color;
             image.raycastTarget = false;
+        }
+
+        void Select(int index)
+        {
+            _selected = index;
+            Refresh();
         }
 
         void Refresh()
@@ -86,20 +141,55 @@ namespace SomeGame.UI
                     : ProgressStore.CanEnter(catalog, i) ? MapNodeState.Open
                     : MapNodeState.Locked;
                 int index = i;
-                _nodes[i].Bind(i, state, ProgressStore.StarsOf(level), level.starsRequired, () => card.Show(catalog, index));
+                _nodes[i].Bind(i, state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, () => Select(index));
             }
+            ShowSelected();
         }
 
-        // Start with the furthest visible race in view.
-        void ScrollToLatest()
+        void ShowSelected()
         {
-            int latest = 0;
-            for (int i = 0; i < catalog.Count; i++)
-                if (ProgressStore.IsVisible(catalog, i)) latest = i;
+            var level = catalog[_selected];
+            chapterLabel.text = level.chapter;
+            titleLabel.text = AccentLastWord(level.displayName.ToUpperInvariant());
+            lapsChip.text = $"{level.laps} LAPS";
+            rivalsChip.text = $"{level.rivalCount} RIVALS";
+            var best = ProgressStore.BestTimeOf(level);
+            bestChip.text = best.HasValue ? $"BEST {TimeFormat.Race(best.Value)}" : "BEST —";
+            for (int i = 0; i < starTimes.Length; i++)
+                starTimes[i].text = i < level.starTimes.Length ? TimeFormat.Race(level.starTimes[i]) : "-";
+
+            bool canEnter = ProgressStore.CanEnter(catalog, _selected);
+            int missing = Mathf.Max(0, level.starsRequired - ProgressStore.TotalStars);
+            startButton.interactable = canEnter;
+            startFill.color = canEnter ? NeonTheme.Magenta : NeonTheme.PanelRaised;
+            startLabel.text = canEnter ? "START" : "LOCKED";
+            startLabel.color = canEnter ? NeonTheme.Background : NeonTheme.Dim;
+            startRing.SetActive(canEnter);
+            hint.text = canEnter
+                ? "WIN TO EARN STARS"
+                : $"NEED {missing} MORE STAR{(missing == 1 ? "" : "S")}";
+            hint.color = canEnter ? NeonTheme.Dim : NeonTheme.Magenta;
+        }
+
+        static string AccentLastWord(string title)
+        {
+            int split = title.LastIndexOf(' ');
+            return split <= 0
+                ? $"<color={NeonTheme.Html(NeonTheme.Magenta)}>{title}</color>"
+                : $"{title.Substring(0, split)}<color={NeonTheme.Html(NeonTheme.Magenta)}>{title.Substring(split)}</color>";
+        }
+
+        void StartSelected()
+        {
+            if (ProgressStore.CanEnter(catalog, _selected)) GameSession.StartRace(catalog[_selected]);
+        }
+
+        void ScrollTo(int index)
+        {
             Canvas.ForceUpdateCanvases();
             float viewport = scroll.viewport != null ? scroll.viewport.rect.height : ((RectTransform)scroll.transform).rect.height;
             float scrollable = Mathf.Max(1f, content.rect.height - viewport);
-            float target = NodePosition(latest).y - viewport * 0.4f;
+            float target = NodePosition(index).y - viewport * 0.45f;
             scroll.verticalNormalizedPosition = Mathf.Clamp01(target / scrollable);
         }
     }

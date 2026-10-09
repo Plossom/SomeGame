@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Level01
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Warm-up
+  chapter: CHAPTER 01 // NEON GRID
   track: {fileID: 11400000, guid: 546c27345ae2748229da7e06f2dcaddb, type: 2}
   laps: 2
   rivalCount: 3

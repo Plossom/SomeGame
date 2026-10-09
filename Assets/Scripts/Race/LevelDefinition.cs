@@ -11,6 +11,8 @@ namespace SomeGame.Race
     public class LevelDefinition : ScriptableObject
     {
         public string displayName = "Race";
+        [Tooltip("Shown above the race name on the map, e.g. CHAPTER 01 // NEON GRID.")]
+        public string chapter = "CHAPTER 01";
         public TrackLayout track;
         [Min(1)] public int laps = 3;
 

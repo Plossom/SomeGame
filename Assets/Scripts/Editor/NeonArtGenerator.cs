@@ -33,7 +33,12 @@ namespace SomeGame.EditorTools
             Ui("Circle", 256, 256, (x, y) => Fill(Circle(x, y, 128, 128, 126)), 0);
             Ui("Ring", 256, 256, (x, y) => Stroke(Circle(x, y, 128, 128, 122), 6f), 0);
             Ui("RingThin", 256, 256, (x, y) => Stroke(Circle(x, y, 128, 128, 124), 3f), 0);
-            Ui("Glow", 256, 256, (x, y) => White(Gauss(Dist(x, y, 128, 128), 46f)), 0);
+            Ui("Glow", 256, 256, (x, y) =>
+            {
+                float d = Dist(x, y, 128, 128);
+                return White(Gauss(d, 44f) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(96f, 127f, d))));
+            }, 0);
+            Ui("FadeV", 8, 128, (x, y) => y / 128f, 0); // transparent at the bottom, opaque at the top
             Ui("Diamond", 192, 192, (x, y) => Fill(Diamond(x, y, 96, 96, 84, 16)), 0);
             Ui("DiamondOutline", 192, 192, (x, y) => Stroke(Diamond(x, y, 96, 96, 82, 14), 5f), 0);
 

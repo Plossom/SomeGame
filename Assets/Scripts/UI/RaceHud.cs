@@ -32,10 +32,11 @@ namespace SomeGame.UI
         void Update()
         {
             var player = race.Player;
-            lapLabel.text = $"LAP {player.CurrentLap}/{race.Laps}";
+            lapLabel.text = $"{player.CurrentLap}<size=55%><color={NeonTheme.Html(NeonTheme.Dim)}>/{race.Laps}</color></size>";
             timeLabel.text = TimeFormat.Race(race.RaceTime);
             int position = race.PositionOf(player);
-            positionLabel.text = $"{TimeFormat.Ordinal(position)}<size=60%>/{race.Standings.Count}</size>";
+            positionLabel.text = $"P{position}<size=50%><color={NeonTheme.Html(NeonTheme.Dim)}>/{race.Standings.Count}</color></size>";
+            positionLabel.color = position == 1 ? NeonTheme.Lime : NeonTheme.Text;
 
             if (warningLabel != null)
             {
@@ -58,8 +59,8 @@ namespace SomeGame.UI
 
         void FlashLap(float lapTime, bool newBest)
         {
-            lapFlashLabel.text = $"Lap {TimeFormat.Race(lapTime)}{(newBest ? "  BEST!" : "")}";
-            lapFlashLabel.color = newBest ? new Color(1f, 0.85f, 0.3f) : Color.white;
+            lapFlashLabel.text = $"LAP  {TimeFormat.Race(lapTime)}{(newBest ? "  //  BEST" : "")}";
+            lapFlashLabel.color = newBest ? NeonTheme.Lime : NeonTheme.Cyan;
             lapFlashLabel.gameObject.SetActive(true);
             _hideFlashAt = Time.time + lapFlashSeconds;
         }
