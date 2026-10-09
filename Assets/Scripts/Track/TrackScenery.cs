@@ -5,13 +5,15 @@ using UnityEngine;
 namespace SomeGame.Track
 {
     /// <summary>
-    /// Scatters scenery (trees, bushes, chalets, fields, tyre walls...) around the track, keeping clear of
-    /// the road and of the sandy run-off on the outside of corners.
-    /// Each kind takes its picture from a cell of one atlas texture, so everything is a single mesh.
-    /// Pure scenery, no colliders.
+    /// Scatters scenery (trees, bushes, chalets, fields, tyre piles...) around the track, keeping clear of
+    /// the road and of the sandy run-off in the corners. Each kind takes its picture from a cell of one
+    /// atlas texture, so everything is a single mesh. Solid kinds also get a collider in Play mode, so
+    /// cars bump into them instead of driving through.
     /// </summary>
     public class TrackScenery : TrackDerivedBehaviour
     {
+        public enum Solid { None, Circle, Box }
+
         [Serializable]
         public class Kind
         {
@@ -30,6 +32,10 @@ namespace SomeGame.Track
             public bool cornerOnly;
             [Tooltip("Turned to a multiple of 90 degrees instead of a random angle (fields, barns).")]
             public bool squareAngle;
+            [Tooltip("Collider shape in Play mode (None = cars drive over it).")]
+            public Solid solid;
+            [Tooltip("Collider size as a fraction of the item size: circle radius in x, or box half width / half length.")]
+            public Vector2 solidSize = new(0.35f, 0.35f);
             [Tooltip("Each item picks one of these tints at random.")]
             public Color[] tints = { Color.white };
         }
@@ -64,6 +70,7 @@ namespace SomeGame.Track
             var tints = new List<Color32>();
             var placed = new List<(Vector2 p, float r)>();
             var items = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint)>();
+            var solids = new List<Vector2[]>();
 
             foreach (var kind in kinds)
             {
@@ -94,6 +101,7 @@ namespace SomeGame.Track
                     var right = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (size * 0.5f);
                     Color32 tint = kind.tints is { Length: > 0 } ? kind.tints[random.Next(kind.tints.Length)] : Color.white;
                     items.Add((p, right, kind.uv, tint));
+                    if (kind.solid != Solid.None) solids.Add(Outline(kind, p, right, size));
                 }
             }
 
@@ -109,6 +117,43 @@ namespace SomeGame.Track
             }
 
             Assign(trees, TrackMeshes.Quads("Scenery", vertices, uvs, triangles, tints));
+            if (Application.isPlaying) BuildColliders(solids);
+        }
+
+        // A collider outline in world space: an octagon for round things, a rotated box for buildings.
+        static Vector2[] Outline(Kind kind, Vector2 p, Vector2 right, float size)
+        {
+            Vector2 x = right.normalized, y = new(-x.y, x.x);
+            if (kind.solid == Solid.Box)
+            {
+                Vector2 hx = x * (kind.solidSize.x * size), hy = y * (kind.solidSize.y * size);
+                return new[] { p - hx - hy, p + hx - hy, p + hx + hy, p - hx + hy };
+            }
+            float r = kind.solidSize.x * size;
+            var points = new Vector2[8];
+            for (int i = 0; i < 8; i++)
+            {
+                float a = i * Mathf.PI / 4f;
+                points[i] = p + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
+            }
+            return points;
+        }
+
+        // All solid props share one static polygon collider (one path each) on a child object.
+        void BuildColliders(List<Vector2[]> solids)
+        {
+            var child = transform.Find("Obstacles");
+            if (child == null)
+            {
+                child = new GameObject("Obstacles").transform;
+                child.SetParent(transform, false);
+            }
+            child.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            child.localScale = Vector3.one;
+            var polygon = child.GetComponent<PolygonCollider2D>();
+            if (polygon == null) polygon = child.gameObject.AddComponent<PolygonCollider2D>();
+            polygon.pathCount = solids.Count;
+            for (int i = 0; i < solids.Count; i++) polygon.SetPath(i, solids[i]);
         }
     }
 }

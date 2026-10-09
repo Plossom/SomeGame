@@ -5862,6 +5862,8 @@ MonoBehaviour:
     clustered: 0
     cornerOnly: 1
     squareAngle: 0
+    solid: 1
+    solidSize: {x: 0.38, y: 0}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
   - name: Field
@@ -5873,11 +5875,13 @@ MonoBehaviour:
       height: 0.5
     count: 9
     sizeRange: {x: 9, y: 13}
-    clearance: {x: 6, y: 40}
+    clearance: {x: 3, y: 30}
     alignToRoad: 0
     clustered: 0
     cornerOnly: 0
     squareAngle: 1
+    solid: 0
+    solidSize: {x: 0, y: 0}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 0.85, g: 1, b: 0.75, a: 1}
@@ -5891,11 +5895,13 @@ MonoBehaviour:
       height: 0.5
     count: 5
     sizeRange: {x: 6, y: 7.5}
-    clearance: {x: 5, y: 30}
+    clearance: {x: 2.5, y: 25}
     alignToRoad: 0
     clustered: 0
     cornerOnly: 0
     squareAngle: 1
+    solid: 2
+    solidSize: {x: 0.37, y: 0.27}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
   - name: Chalet
@@ -5907,11 +5913,13 @@ MonoBehaviour:
       height: 0.5
     count: 10
     sizeRange: {x: 4.4, y: 5.4}
-    clearance: {x: 2.2, y: 6}
+    clearance: {x: 1.2, y: 5}
     alignToRoad: 1
     clustered: 0
     cornerOnly: 0
     squareAngle: 0
+    solid: 2
+    solidSize: {x: 0.41, y: 0.29}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 0.92, g: 0.9, b: 0.86, a: 1}
@@ -5924,11 +5932,13 @@ MonoBehaviour:
       height: 0.5
     count: 420
     sizeRange: {x: 5, y: 7.5}
-    clearance: {x: 2.2, y: 0}
+    clearance: {x: 0.9, y: 0}
     alignToRoad: 0
     clustered: 1
     cornerOnly: 0
     squareAngle: 0
+    solid: 1
+    solidSize: {x: 0.36, y: 0}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 0.92, g: 1, b: 0.9, a: 1}
@@ -5942,11 +5952,13 @@ MonoBehaviour:
       height: 0.5
     count: 220
     sizeRange: {x: 2.6, y: 3.8}
-    clearance: {x: 1.8, y: 0}
+    clearance: {x: 0.7, y: 0}
     alignToRoad: 0
     clustered: 0
     cornerOnly: 0
     squareAngle: 0
+    solid: 1
+    solidSize: {x: 0.3, y: 0}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 0.94, g: 1, b: 0.9, a: 1}
@@ -5959,11 +5971,13 @@ MonoBehaviour:
       height: 0.5
     count: 140
     sizeRange: {x: 3, y: 4.6}
-    clearance: {x: 2.4, y: 0}
+    clearance: {x: 1, y: 0}
     alignToRoad: 0
     clustered: 1
     cornerOnly: 0
     squareAngle: 0
+    solid: 1
+    solidSize: {x: 0.33, y: 0}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 0.9, g: 0.96, b: 0.9, a: 1}
@@ -5976,11 +5990,13 @@ MonoBehaviour:
       height: 0.5
     count: 30
     sizeRange: {x: 0.9, y: 1.9}
-    clearance: {x: 0.8, y: 12}
+    clearance: {x: 0.4, y: 10}
     alignToRoad: 0
     clustered: 0
     cornerOnly: 0
     squareAngle: 0
+    solid: 1
+    solidSize: {x: 0.36, y: 0}
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 0.92, g: 0.9, b: 0.86, a: 1}

@@ -268,6 +268,8 @@ namespace SomeGame.Car
             float impact = collision.relativeVelocity.magnitude;
             Collided?.Invoke(impact);
 
+            // A hard knock against scenery (trees, houses, tyres) also ends a drift.
+            if (collision.rigidbody == null && impact > 4f) EndDrift();
             if (collision.rigidbody == null || !collision.rigidbody.TryGetComponent(out CarMovement other)) return;
             Vector2 toOther = (other._body.position - _body.position).normalized;
             float closingSpeed = Vector2.Dot(_body.linearVelocity - other._body.linearVelocity, toOther);

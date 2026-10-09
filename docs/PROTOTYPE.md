@@ -67,7 +67,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 | Rival handling (top speed 16.6 / 17.0 / 17.4 vs player 18) | `Assets/Data/Cars/Rival1-3.asset` |
 | Track shape (waypoints), road width, kerb width, checkpoint count, grass margin | `Assets/Data/Tracks/Circuit01.asset` (`TrackLayout`): the single source for road, off-road, checkpoints, laps and AI line |
 | Texture tiling of road, grass and kerbs; which stretches count as corners (`kerbTurn`: red-and-white kerbs there, a white edge line elsewhere); sand run-off width in corners (`runoffCorner` outside, `runoffInside`); meadow patch tints; number of starting-grid boxes (`gridSlots`) | `Track` object, `TrackRenderer` component |
-| Scenery: one entry per kind (tyre piles, fields, barns, chalets, bushes, trees, pines, rocks) with count, size, distance from the kerb, clustering, corner-only, angle and tints | `Track` object, `TrackScenery` component (`kinds`; pictures from `Assets/Art/Rally/Scenery.png`) |
+| Scenery: one entry per kind (tyre piles, fields, barns, chalets, bushes, trees, pines, rocks) with count, size, distance from the kerb, clustering, corner-only, angle, tints and collider (`solid`: circle or box, `solidSize`; fields have none) | `Track` object, `TrackScenery` component (`kinds`; pictures from `Assets/Art/Rally/Scenery.png`) |
 | Camera zoom (`orthographicSize`, now 16), follow smoothing, look-ahead (max 4.5, sideways × `horizontalLookAheadFactor` 0.7), framing offset, lowest car screen position (`minCarScreenHeight`, 0.44) | `Main Camera`, `FollowCamera` |
 | Camera shake thresholds and strength | `Main Camera`, `CameraShake` |
 | Joystick radius and dead zone | `UI/JoystickArea`, `FloatingJoystick` |
@@ -137,8 +137,8 @@ have at most 3 such apps installed at once.
   pass next glows yellow. Skipping one shows **MISSED CHECKPOINT / GO BACK** until you return; the
   lap does not count until you do. Driving backwards shows **WRONG WAY**. Values: `RaceProgress` on
   the car prefab (`gateMargin`, `missedCheckpointMargin`, `wrongWayDelay`).
-- **Kerbs run along the whole circuit**, not just the corners. Trees are scenery only (no
-  colliders). The map edge is an invisible wall.
+- **Props are solid:** trees, bushes, pines, rocks, chalets, barns and tyre piles block the car (a
+  hard knock also ends a drift); fields can be driven over. The map edge is an invisible wall.
 - **Ram force applies to every car-to-car hit**, AI vs AI included. With the joystick only the
   first touch is used. Touches that start on a button never create the joystick.
 - **Keyboard steering is 8-directional only** (it is meant for testing).
