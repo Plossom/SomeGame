@@ -16,7 +16,9 @@ namespace SomeGame.CameraRig
         [SerializeField, Min(0f)] float followSmoothTime = 0.12f;
         [Tooltip("Look this many seconds ahead along the velocity.")]
         [SerializeField, Min(0f)] float lookAheadTime = 0.35f;
-        [SerializeField, Min(0f)] float maxLookAhead = 6f;
+        [SerializeField, Min(0f)] float maxLookAhead = 4f;
+        [Tooltip("Constant camera offset from the car. Negative Y keeps the car above the thumb zone.")]
+        [SerializeField] Vector2 framingOffset = new(0f, -3f);
         [SerializeField, Min(0f)] float lookAheadSmoothTime = 0.5f;
 
         Camera _camera;
@@ -73,7 +75,7 @@ namespace SomeGame.CameraRig
 
         void Apply()
         {
-            Vector2 p = _focus + _lookAhead + Offset;
+            Vector2 p = _focus + _lookAhead + framingOffset + Offset;
             transform.SetPositionAndRotation(new Vector3(p.x, p.y, transform.position.z), Quaternion.identity);
             _camera.orthographicSize = orthographicSize;
         }
