@@ -17,10 +17,10 @@ MonoBehaviour:
   track: {fileID: 11400000, guid: 3ce33ba26a9dc4a698942ef4b84bf3ca, type: 2}
   laps: 2
   rivalCount: 7
-  rivalSpeedScale: 0.94
-  rivalCornerScale: 0.92
+  rivalSpeedScale: 1
+  rivalCornerScale: 1
   starsRequired: 1
   starTimes:
-  - 53
-  - 49.7
-  - 46.8
+  - 46
+  - 36.5
+  - 34

@@ -113,12 +113,10 @@ namespace SomeGame.Car
         [Range(0.5f, 1f)] public float landingSpeedKeep = 0.94f;
         [Tooltip("Impact reported on landing (drives the camera shake).")]
         public float landingImpact = 7f;
-        [Tooltip("Grip left at the start of an oil slide (fraction).")]
-        [Range(0f, 1f)] public float oilGrip = 0.08f;
-        [Tooltip("Steering left while sliding on oil (fraction).")]
-        [Range(0f, 1f)] public float oilSteering = 0.35f;
-        public float oilSlideSeconds = 1.2f;
-        [Tooltip("Spin kick (degrees per second) when hitting oil.")]
-        public float oilSpin = 160f;
+        [Tooltip("Oil: how far the car spins round (degrees) and how long that takes.")]
+        public float oilSpinDegrees = 360f;
+        [Min(0.1f)] public float oilSpinSeconds = 0.9f;
+        [Tooltip("Speed left after the oil spin (fraction).")]
+        [Range(0f, 1f)] public float oilSpeedKeep = 0.4f;
     }
 }

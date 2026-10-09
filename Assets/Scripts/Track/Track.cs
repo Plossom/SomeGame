@@ -40,6 +40,47 @@ namespace SomeGame.Track
         }
 
         List<Jump> _jumps;
+        List<ShortcutRamp> _shortcuts;
+
+        /// <summary>A big shortcut ramp beside the road, pointing across a corner at a landing spot.</summary>
+        public struct ShortcutRamp
+        {
+            public Vector2 Centre, Direction;
+            public float Length, Width;
+            /// <summary>Lap distances of the ramp and of the landing spot.</summary>
+            public float From, To;
+            /// <summary>Time in the air at the ramp's design speed.</summary>
+            public float AirTime;
+            public Vector2 Lip => Centre + Direction * (Length * 0.5f);
+
+            /// <summary>Position in the ramp's frame: x across (0 = centre line), y along (0 = middle, + toward the lip).</summary>
+            public Vector2 Local(Vector2 p)
+            {
+                Vector2 d = p - Centre;
+                return new Vector2(Vector2.Dot(d, new Vector2(Direction.y, -Direction.x)), Vector2.Dot(d, Direction));
+            }
+        }
+
+        public IReadOnlyList<ShortcutRamp> Shortcuts => _shortcuts ??= FindShortcuts();
+
+        List<ShortcutRamp> FindShortcuts()
+        {
+            var list = new List<ShortcutRamp>();
+            foreach (var s in layout.shortcuts)
+            {
+                Vector2 roadEdge = Path.PointAt(s.from) + Path.NormalAt(s.from) * (Mathf.Sign(s.side) * (layout.OffRoadDistance + 0.6f));
+                Vector2 target = Path.PointAt(s.to);
+                Vector2 dir = (target - roadEdge).normalized;
+                Vector2 centre = roadEdge + dir * (s.length * 0.5f);
+                Vector2 lip = centre + dir * (s.length * 0.5f);
+                list.Add(new ShortcutRamp
+                {
+                    Centre = centre, Direction = dir, Length = s.length, Width = s.width,
+                    From = s.from, To = s.to, AirTime = Vector2.Distance(lip, target) / s.designSpeed,
+                });
+            }
+            return list;
+        }
 
         /// <summary>Every river crossing, in lap order (derived from the rivers and the centre line).</summary>
         public IReadOnlyList<Jump> Jumps => _jumps ??= FindJumps();
@@ -130,16 +171,18 @@ namespace SomeGame.Track
             return Vector2.Distance(p, a + ab * t);
         }
 
-        /// <summary>A safe place to put a car back on the road: on the centre line, some way before a lap distance.</summary>
-        public Pose RespawnBefore(float distance, float back = 8f)
+        /// <summary>
+        /// A safe place to put a car back on the road: on the centre line, some way before a lap distance,
+        /// not in water or oil, and with enough run-up before the next ramp to reach take-off speed.
+        /// </summary>
+        public Pose RespawnBefore(float distance, float back = 10f, float runUp = 30f)
         {
             float d = distance - back;
-            // Not on a ramp or in water: keep stepping back.
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 40; i++)
             {
                 bool blocked = IsWater(Path.PointAt(d)) || IsOil(Path.PointAt(d));
                 foreach (var jump in Jumps)
-                    if (Path.DeltaDistance(jump.RampStart - 3f, d) >= 0f && Path.DeltaDistance(d, jump.FarBank) >= 0f) blocked = true;
+                    if (Path.DeltaDistance(jump.RampStart - runUp, d) >= 0f && Path.DeltaDistance(d, jump.FarBank) >= 0f) blocked = true;
                 if (!blocked) break;
                 d -= 2f;
             }
@@ -185,6 +228,7 @@ namespace SomeGame.Track
         {
             _path = null;
             _jumps = null;
+            _shortcuts = null;
             Rebuilt?.Invoke();
         }
 

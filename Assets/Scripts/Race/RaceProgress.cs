@@ -108,6 +108,25 @@ namespace SomeGame.Race
             _lastDistance = distance;
         }
 
+        /// <summary>
+        /// After a shortcut jump: counts the checkpoints between the take-off and the landing spot (the
+        /// car flew over them), so cutting the corner this way is allowed.
+        /// </summary>
+        public void CreditFlight(float from, float to)
+        {
+            if (!_tracking || IsFinished) return;
+            var path = Circuit.Path;
+            float span = path.DeltaDistance(from, to);
+            for (int guard = 0; guard < CheckpointCount && !IsFinished; guard++)
+            {
+                float toCheckpoint = path.DeltaDistance(from, Circuit.CheckpointDistance(NextCheckpoint));
+                if (toCheckpoint <= 0f || toCheckpoint > span) break;
+                PassCheckpoint();
+            }
+            _sensor.Sample();
+            _lastDistance = _sensor.Current.Distance;
+        }
+
         void UpdateWrongWay(Vector2 trackDirection, float dt)
         {
             Vector2 velocity = _body.linearVelocity;

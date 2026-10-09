@@ -104,3 +104,16 @@ MonoBehaviour:
     radius: 1.2
   rampLength: 3
   rampWidth: 2.8
+  shortcuts:
+  - from: 128
+    to: 182
+    side: -1
+    length: 5
+    width: 4.5
+    designSpeed: 16
+  - from: 262
+    to: 308
+    side: -1
+    length: 5
+    width: 4.5
+    designSpeed: 16

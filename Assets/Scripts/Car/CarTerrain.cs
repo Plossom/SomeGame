@@ -7,9 +7,11 @@ namespace SomeGame.Car
 {
     /// <summary>
     /// What the ground under the car does: a kicker ramp before a river launches the car into the
-    /// air, water (missing the ramp, landing short, driving into a lake) means a splash and a restart a
-    /// little way back, and an oil puddle makes the car slide. Also plays the splash and landing dust.
+    /// air, a big shortcut ramp beside the road flies it across a corner (the checkpoints it flies over
+    /// count), water (missing the ramp, landing short, driving into a lake) means a splash and a restart a
+    /// little way back, and an oil puddle spins the car round once. Also plays the splash and landing dust.
     /// </summary>
+    [DefaultExecutionOrder(-10)] // after the TrackSensor, before CarMovement reads OnRamp
     [RequireComponent(typeof(CarMovement), typeof(TrackSensor))]
     public class CarTerrain : MonoBehaviour
     {
@@ -17,13 +19,15 @@ namespace SomeGame.Car
         [Tooltip("Cars slower than this along the road just roll off the ramp into the water.")]
         [SerializeField, Min(0f)] float minLaunchSpeed = 4f;
         [Tooltip("How far back along the road a car restarts after a splash.")]
-        [SerializeField, Min(0f)] float respawnBack = 6f;
+        [SerializeField, Min(0f)] float respawnBack = 10f;
         [Tooltip("Seconds the car blinks after a restart.")]
         [SerializeField, Min(0f)] float blinkSeconds = 1.2f;
         [SerializeField] int sortingOrder = 13;
 
         CarMovement _car;
         TrackSensor _sensor;
+        SomeGame.Race.RaceProgress _progress;
+        float? _shortcutFrom;
         ParticleSystem _splash, _dust;
         SpriteRenderer[] _sprites;
 
@@ -34,6 +38,7 @@ namespace SomeGame.Car
         {
             _car = GetComponent<CarMovement>();
             _sensor = GetComponent<TrackSensor>();
+            _progress = GetComponent<SomeGame.Race.RaceProgress>();
             _sprites = GetComponentsInChildren<SpriteRenderer>();
             _splash = CreateBurst("Splash", new Color(0.85f, 0.95f, 1f, 0.9f), new Vector2(3f, 7f), new Vector2(0.25f, 0.55f), 0.7f);
             _dust = CreateBurst("LandingDust", new Color(0.93f, 0.86f, 0.7f, 0.7f), new Vector2(1.5f, 4f), new Vector2(0.4f, 0.8f), 0.6f);
@@ -48,6 +53,22 @@ namespace SomeGame.Car
             if (track == null || _car.IsAirborne) return;
             Vector2 position = _car.Body.position;
             var point = _sensor.Current;
+
+            // Shortcut ramps: the ramp (and a little approach) counts as road; take off at the lip.
+            _car.OnRamp = false;
+            foreach (var shortcut in track.Shortcuts)
+            {
+                Vector2 local = shortcut.Local(position);
+                if (Mathf.Abs(local.x) > shortcut.Width * 0.5f || local.y < -shortcut.Length * 0.5f - 2.5f || local.y > shortcut.Length * 0.5f) continue;
+                _car.OnRamp = true;
+                float speedAlong = Vector2.Dot(_car.Body.linearVelocity, shortcut.Direction);
+                if (local.y > shortcut.Length * 0.5f - 0.8f && speedAlong > minLaunchSpeed)
+                {
+                    _shortcutFrom = shortcut.From;
+                    _car.Launch(shortcut.AirTime, shortcut.Direction);
+                    return;
+                }
+            }
 
             // Take-off: at the end of a ramp, moving forward along the road.
             var ramp = track.RampAt(point.Distance, point.Lateral);
@@ -69,13 +90,16 @@ namespace SomeGame.Car
                 return;
             }
             if (!_car.IsSlipping && track.IsOil(position))
-                _car.Slip(_car.Stats.oilSlideSeconds, (UnityEngine.Random.value < 0.5f ? -1f : 1f) * _car.Stats.oilSpin);
+                _car.Slip(UnityEngine.Random.value < 0.5f ? -1 : 1);
         }
 
         void OnLanded()
         {
             var track = _sensor.Track;
             _sensor.Sample();
+            if (_shortcutFrom.HasValue && _progress != null && track != null && !track.IsWater(_car.Body.position))
+                _progress.CreditFlight(_shortcutFrom.Value, _sensor.Current.Distance);
+            _shortcutFrom = null;
             if (track != null && track.IsWater(_car.Body.position)) Splash(track);
             else _dust.Emit(18);
         }

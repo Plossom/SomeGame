@@ -90,6 +90,7 @@ namespace SomeGame.Track
                     if (fromKerb < kind.clearance.x) continue;
                     if (kind.clearance.y > 0f && fromKerb > kind.clearance.y) continue;
                     if (track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
+                    if (InShortcutPath(p, size)) continue;
                     float r = size * 0.45f;
                     if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;
 
@@ -119,6 +120,19 @@ namespace SomeGame.Track
 
             Assign(trees, TrackMeshes.Quads("Scenery", vertices, uvs, triangles, tints));
             if (Application.isPlaying) BuildColliders(solids);
+        }
+
+        // The corridor a shortcut jump flies through stays clear, so a short landing is never inside a tree.
+        bool InShortcutPath(Vector2 p, float size)
+        {
+            foreach (var ramp in track.Shortcuts)
+            {
+                Vector2 a = ramp.Centre - ramp.Direction * (ramp.Length * 0.5f + 3.5f), b = track.Path.PointAt(ramp.To);
+                Vector2 ab = b - a;
+                float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / ab.sqrMagnitude);
+                if (Vector2.Distance(p, a + ab * t) < ramp.Width * 0.5f + 2f + size * 0.5f) return true;
+            }
+            return false;
         }
 
         // A collider outline in world space: an octagon for round things, a rotated box for buildings.

@@ -27,7 +27,7 @@ namespace SomeGame.Car
         float _driftTightness; // 0 = widest drift, 1 = tightest, smoothed
         float _laggedHeading;  // where the car was pointing a moment ago (smoothed), for steering intent
         float _airTimer, _airDuration;
-        float _slipTimer, _slipDuration;
+        float _slipTimer, _slipDuration, _slipDirection, _slipStartSpeed;
         Collider2D _collider;
 
         /// <summary>Raised on every collision with the closing speed of the impact.</summary>
@@ -58,7 +58,9 @@ namespace SomeGame.Car
         public float ForwardSpeed { get; private set; }
         public float SidewaysSpeed { get; private set; }
         public bool IsSliding => Mathf.Abs(SidewaysSpeed) > stats.slideThreshold;
-        public bool IsOffRoad => sensor != null && sensor.IsOffRoad;
+        public bool IsOffRoad => sensor != null && sensor.IsOffRoad && !OnRamp;
+        /// <summary>Set while the car is on a shortcut ramp beside the road: the ramp counts as road.</summary>
+        public bool OnRamp { get; set; }
 
         public bool IsDrifting => _driftDirection != 0;
         /// <summary>+1 drifting to the left, -1 to the right, 0 when not drifting.</summary>
@@ -106,6 +108,11 @@ namespace SomeGame.Car
             if (IsAirborne)
             {
                 Fly(dt);
+                return;
+            }
+            if (IsSlipping)
+            {
+                SpinOut(dt);
                 return;
             }
             Vector2 forward = transform.up, right = transform.right;
@@ -163,12 +170,6 @@ namespace SomeGame.Car
             // Lateral: grip bleeds off sideways velocity; less grip at speed lets the car slide in fast corners.
             float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(0.01f, stats.topSpeed));
             float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f);
-            if (IsSlipping)
-            {
-                // On oil the tyres barely hold: the car keeps sliding the way it was going.
-                _slipTimer -= dt;
-                grip *= Mathf.Lerp(1f, stats.oilGrip, Mathf.Clamp01(_slipTimer / (_slipDuration * 0.4f)));
-            }
             sidewaysSpeed *= Mathf.Exp(-grip * dt);
 
             _body.linearVelocity = forward * forwardSpeed + right * sidewaysSpeed;
@@ -188,7 +189,7 @@ namespace SomeGame.Car
             float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(direction));
             float speedFactor = Mathf.Lerp(stats.standstillTurnFactor, 1f,
                 Mathf.Clamp01(Mathf.Abs(forwardSpeed) / stats.fullTurnSpeed));
-            float recovery = _hitTimer > 0f ? 0.3f : IsSlipping ? stats.oilSteering : 1f;
+            float recovery = _hitTimer > 0f ? 0.3f : 1f;
             float maxStep = stats.turnRate * speedFactor * recovery * dt;
             _body.angularVelocity = Mathf.Clamp(delta, -maxStep, maxStep) / dt;
         }
@@ -287,11 +288,21 @@ namespace SomeGame.Car
             _driftCharge = 0f;
         }
 
-        /// <summary>Sends the car into the air (off a ramp) for <paramref name="duration"/> seconds.</summary>
-        public void Launch(float duration)
+        /// <summary>
+        /// Sends the car into the air (off a ramp) for <paramref name="duration"/> seconds. With a
+        /// direction, the car is turned to fly that way (big shortcut ramps).
+        /// </summary>
+        public void Launch(float duration, Vector2? direction = null)
         {
             if (IsAirborne || duration <= 0f) return;
             EndDrift();
+            if (direction.HasValue)
+            {
+                Vector2 dir = direction.Value.normalized;
+                _body.rotation = HeadingOf(dir);
+                transform.rotation = Quaternion.Euler(0f, 0f, _body.rotation);
+                _body.linearVelocity = dir * _body.linearVelocity.magnitude;
+            }
             _airDuration = _airTimer = duration;
             _body.angularVelocity = 0f;
             if (_collider != null) _collider.enabled = false; // flies over cars and scenery
@@ -322,15 +333,38 @@ namespace SomeGame.Car
             Landed?.Invoke();
         }
 
-        /// <summary>Makes the car lose grip for a moment (oil), with a small kick into a spin.</summary>
-        public void Slip(float duration, float spin)
+        /// <summary>
+        /// Oil: the car spins once all the way round (like a banana peel) while it slides on in the
+        /// direction it was going and loses speed; the controls do nothing until the spin is over.
+        /// </summary>
+        public void Slip(int direction)
         {
             if (IsAirborne || IsSlipping) return;
             EndDrift();
-            _slipDuration = _slipTimer = duration;
-            _body.angularVelocity += spin;
-            _hitTimer = Mathf.Max(_hitTimer, duration * 0.5f);
+            _boostTimer = 0f;
+            _slipDuration = _slipTimer = stats.oilSpinSeconds;
+            _slipDirection = direction >= 0 ? 1f : -1f;
+            _slipStartSpeed = _body.linearVelocity.magnitude;
             Slipped?.Invoke();
+        }
+
+        void SpinOut(float dt)
+        {
+            _slipTimer -= dt;
+            float t = 1f - Mathf.Clamp01(_slipTimer / _slipDuration);
+            // Fast at first, easing out at the end of the turn.
+            float rate = stats.oilSpinDegrees / _slipDuration * 2f * (1f - t);
+            _body.angularVelocity = _slipDirection * rate;
+            Vector2 velocity = _body.linearVelocity;
+            float speed = Mathf.Lerp(_slipStartSpeed, _slipStartSpeed * stats.oilSpeedKeep, t);
+            _body.linearVelocity = velocity.sqrMagnitude > 0.01f ? velocity.normalized * speed : Vector2.zero;
+            ForwardSpeed = Vector2.Dot(_body.linearVelocity, transform.up);
+            SidewaysSpeed = Vector2.Dot(_body.linearVelocity, transform.right);
+            if (_slipTimer <= 0f)
+            {
+                _slipTimer = 0f;
+                _body.angularVelocity = 0f;
+            }
         }
 
         /// <summary>Puts the car back on the road (after a splash), standing still.</summary>

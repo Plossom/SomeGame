@@ -231,7 +231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.CarTerrain
   particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
   minLaunchSpeed: 4
-  respawnBack: 6
+  respawnBack: 10
   blinkSeconds: 1.2
   sortingOrder: 13
 --- !u!1 &3861201061229663733

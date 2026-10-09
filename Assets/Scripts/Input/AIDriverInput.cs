@@ -27,6 +27,8 @@ namespace SomeGame.Input
 
         [Tooltip("Distance before a jump at which the car is lined up with the kicker ramp.")]
         [SerializeField, Min(1f)] float rampLineUp = 20f;
+        [Tooltip("Distance ahead at which the car starts steering around an oil puddle.")]
+        [SerializeField, Min(1f)] float oilLookAhead = 22f;
 
         TrackSensor _sensor;
         CarMovement _car;
@@ -68,7 +70,7 @@ namespace SomeGame.Input
             Throttle = speed < targetSpeed - 0.3f ? 1f : speed > targetSpeed + 1.5f ? -1f : 0f;
         }
 
-        // The car's own lane, except before a jump: then it lines up with the kicker ramp.
+        // The car's own lane, except before a jump (it lines up with the kicker ramp) and near oil (it goes round).
         float LateralFor(TrackPath path, float distance)
         {
             float lateral = laneOffset;
@@ -78,6 +80,19 @@ namespace SomeGame.Input
                 if (toLip < -1f || toLip > rampLineUp * 1.6f) continue;
                 float blend = Mathf.InverseLerp(rampLineUp * 1.6f, rampLineUp, toLip);
                 lateral = Mathf.Lerp(laneOffset, jump.Lateral, blend);
+            }
+            // Steer around oil puddles ahead: pass on whichever side needs the smaller move.
+            var layout = _sensor.Track.Layout;
+            foreach (var spot in layout.oil)
+            {
+                float to = path.DeltaDistance(distance, spot.distance);
+                if (to < -1f || to > oilLookAhead) continue;
+                float clear = spot.radius + 1.5f;
+                if (Mathf.Abs(lateral - spot.lateral) >= clear) continue;
+                float limit = layout.HalfWidth - 0.9f;
+                float left = spot.lateral + clear, right = spot.lateral - clear;
+                float dodge = left > limit ? right : right < -limit ? left : (Mathf.Abs(left - lateral) < Mathf.Abs(right - lateral) ? left : right);
+                lateral = Mathf.Lerp(lateral, Mathf.Clamp(dodge, -limit, limit), Mathf.InverseLerp(oilLookAhead, oilLookAhead * 0.4f, to));
             }
             return lateral;
         }

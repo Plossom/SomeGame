@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Rival3
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.CarStats
   topSpeed: 18
-  acceleration: 10.5
+  acceleration: 10.8
   drag: 5
   brakeDeceleration: 18
   turnRate: 220
@@ -51,3 +51,11 @@ MonoBehaviour:
   ramForce: 0.7
   hitRecoveryTime: 0.35
   mass: 1
+  airTimeBase: 0.28
+  airTimePerSpeed: 0.03
+  airSteering: 0.15
+  landingSpeedKeep: 0.94
+  landingImpact: 7
+  oilSpinDegrees: 360
+  oilSpinSeconds: 0.9
+  oilSpeedKeep: 0.4

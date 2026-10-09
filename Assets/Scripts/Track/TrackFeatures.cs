@@ -5,7 +5,8 @@ namespace SomeGame.Track
 {
     /// <summary>
     /// Draws the special ground from the track data: rivers and lakes with sandy banks (drawn over the
-    /// road where a river crosses it), the kicker ramps before each crossing and the oil puddles.
+    /// road where a river crosses it), the kicker ramps before each crossing, the big shortcut ramps
+    /// with their sandy approach, and the oil puddles.
     /// </summary>
     public class TrackFeatures : TrackDerivedBehaviour
     {
@@ -24,9 +25,9 @@ namespace SomeGame.Track
             foreach (var river in layout.rivers) River(river, w, b);
             foreach (var lake in layout.lakes) Lake(lake, w, b);
             Assign(water, w.ToMesh("Water"));
-            Assign(banks, b.ToMesh("Banks"));
 
             var r = new MeshData();
+            var pads = b;
             foreach (var jump in track.Jumps)
             {
                 float length = path.DeltaDistance(jump.RampStart, jump.Lip);
@@ -35,7 +36,18 @@ namespace SomeGame.Track
                 Vector2 centre = path.PointAt(mid) + side * jump.Lateral;
                 r.Quad(centre, side * (layout.rampWidth * 0.5f), forward * (length * 0.5f), new Rect(0f, 0f, 1f, 1f));
             }
+            foreach (var ramp in track.Shortcuts)
+            {
+                Vector2 across = new Vector2(ramp.Direction.y, -ramp.Direction.x);
+                r.Quad(ramp.Centre, across * (ramp.Width * 0.5f), ramp.Direction * (ramp.Length * 0.5f), new Rect(0f, 0f, 1f, 1f));
+                // Sandy approach from the road to the ramp.
+                Vector2 padCentre = ramp.Centre - ramp.Direction * (ramp.Length * 0.5f + 1.4f);
+                Vector2 hx = across * (ramp.Width * 0.5f + 0.6f), hy = ramp.Direction * 2f;
+                pads.QuadPoints(padCentre - hx - hy, padCentre + hx - hy, padCentre + hx + hy, padCentre - hx + hy,
+                    new Vector2(0.2f, 0f), new Vector2(0.2f, 1f), new Vector2(0.2f, 1f), new Vector2(0.2f, 0f));
+            }
             Assign(ramps, r.ToMesh("Ramps"));
+            Assign(banks, b.ToMesh("Banks"));
 
             var o = new MeshData();
             foreach (var spot in layout.oil)
