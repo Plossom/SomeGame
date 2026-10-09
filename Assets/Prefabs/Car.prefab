@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 4003634913073525109}
   - component: {fileID: 6502800385224107047}
   - component: {fileID: 4904072248561120939}
+  - component: {fileID: 283424342220873423}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -234,6 +235,23 @@ MonoBehaviour:
   respawnBack: 10
   blinkSeconds: 1.2
   sortingOrder: 13
+--- !u!114 &283424342220873423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026754258347199695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdc4f8f9549bb4c09b07099a98a4520f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.CarAudio
+  enginePitch: {x: 0.7, y: 2.1}
+  playerEngineVolume: 0.45
+  rivalEngineVolume: 0.5
+  screechVolume: 0.35
+  rivalHearing: {x: 12, y: 34}
 --- !u!1 &3861201061229663733
 GameObject:
   m_ObjectHideFlags: 0

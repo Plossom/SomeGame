@@ -329,9 +329,6 @@ namespace SomeGame.EditorTools
             // A blob or two of drips near the edge.
             c = Over(c, new Color(0.05f, 0.05f, 0.07f, 0.92f), Fill(Circle(x, y, 112f, 40f, 7f)));
             c = Over(c, new Color(0.05f, 0.05f, 0.07f, 0.92f), Fill(Circle(x, y, 20f, 96f, 5f)));
-            // A soft glossy highlight, no colour.
-            c = Over(c, new Color(1f, 1f, 1f, 0.18f), Fill(Circle(x, y, 50f, 78f, 18f)) * Fill(d + 8f));
-            c = Over(c, new Color(1f, 1f, 1f, 0.6f), Fill(Capsule(x, y, 40f, 82f, 52f, 88f, 2.5f)) * Fill(d + 4f));
             return c;
         }
 

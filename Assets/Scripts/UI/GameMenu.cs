@@ -80,6 +80,7 @@ namespace SomeGame.UI
             if (race == null) return;
 
             Time.timeScale = 0f;
+            AudioListener.pause = true; // car sounds stop; music and menu clicks go on
             if (joystick != null)
             {
                 _joystickWasInteractable = joystick.Interactable;
@@ -96,7 +97,11 @@ namespace SomeGame.UI
             if (joystick != null) joystick.Interactable = _joystickWasInteractable && race.State != RaceState.Finished;
         }
 
-        static void Unpause() => Time.timeScale = 1f;
+        static void Unpause()
+        {
+            Time.timeScale = 1f;
+            AudioListener.pause = false;
+        }
 
         void RefreshSettings()
         {

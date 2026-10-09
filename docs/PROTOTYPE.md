@@ -52,12 +52,12 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
      arrows: hit it at speed and you fly over the water (the car grows and its shadow drops away).
      Miss it, or come in too slow, and you splash into the river and restart a little way back.
      Lakes beside the track work the same way.
-   - **Oil puddles** on both tracks: drive through one and the car spins round once (like a banana
-     peel) and loses speed. Rivals steer around puddles they see coming.
-   - **Shortcut ramps** (two per track): big ramps on the grass beside the road on the inside of a
-     corner. Leave the road onto one at full speed and you fly across the corner and land further
-     along the track; the checkpoints you fly over count. Too slow and you land short on the grass.
-     Rivals never use them: they are your way to beat the fast ones.
+   - **Oil puddles** (six per track): plain black; drive through one and the car spins round once
+     (like a banana peel) and loses speed. Rivals steer around puddles they see coming.
+   - **Corner-cut ramps** (two per track): small ramps with white arrows on the grass on the inside of
+     a corner. Drive straight onto one at speed (along the arrows) and you hop across the corner and
+     land on the road after it, roughly in its direction. The car keeps its own heading in the air, so
+     hit the ramp at an angle and you fly at that angle. Rivals never use them.
    - Rivals are spread out: Rival 1 (front of the grid) is the fastest, each one after it a bit slower. Pass the checkpoints in order (cutting across the grass does
    not count). Grass slows you down hard. You can push and ram the rivals.
 7. The HUD at the top shows lap, race time and position. When you finish, the results
@@ -94,6 +94,8 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 | Tyre mark width, fade, colour | `Assets/Prefabs/Car.prefab`, `TyreMarks` |
 | Rivers (polyline, width, kicker position per crossing), lakes, oil puddles, ramp length/width, shortcut ramps (`shortcuts`: from/to lap distance, side, size, design speed) | The track's `TrackLayout` (`rivers`, `lakes`, `oil`, `rampLength`, `rampWidth`). Jumps are found where a river crosses the road |
 | Jump air time (`airTimeBase` + `airTimePerSpeed` × speed), air steering, landing speed and shake, oil spin (degrees, seconds, speed kept) | `PlayerCar.asset` / `Rival*.asset`, *Jumps and oil* |
+| Sounds: synthesized by `SomeGame > Generate Sounds` (`Assets/Scripts/Editor/AudioGenerator.cs`) into `Assets/Audio/Sfx`; clip list and music volumes in `Assets/Resources/AudioLibrary.asset`; engine pitch range, engine/screech volumes and how far rivals are heard on the car prefab (`CarAudio`) |
+| Music: map "Good Morning" by Cakeflaps, race "Pure Raceway" by MintoDog (both CC0, see `Assets/Audio/Music/CREDITS.txt`) | `Assets/Audio/Music` |
 | Splash restart distance (at least 30 units of run-up before a ramp), minimum take-off speed, blink time | `Assets/Prefabs/Car.prefab`, `CarTerrain` |
 | Water texture tiling, bank width | `Track` object, `TrackFeatures` |
 | Drift hop size (`peakScale`, 1.08) and jump size (`jumpScale`, 1.3) | `Assets/Prefabs/Car.prefab`, `CarHop` |
@@ -171,7 +173,11 @@ have at most 3 such apps installed at once.
 - **Older star-time notes:** star times were calibrated from an autopilot run without drifting: 1 star = 10% slower,
   2 stars = 3% slower, 3 stars = 3% faster than the autopilot. The Grand Prix finales cannot be won
   by the autopilot, so they need drifting.
-- **No audio yet** (the volume setting is ready for it). The map is the main menu.
+- **Audio:** music on the map and in races (fades over between them), engine, tyre screech, boost,
+  jump, landing, splash, oil spin, crashes, countdown beeps, button clicks, lap chime, star dings and
+  win/lose jingles. All follow the volume slider; pausing a race silences the cars but not the music.
+  The sounds were only checked to be playing in the Editor, not listened to on a device. The map is
+  the main menu.
 - **Two races for now.** Progress moved to a new save slot (`Progress.v2`) when the map was rebuilt,
   so earlier stars from the 10-race city version are not carried over.
 - **The countdown text outline doesn't render** (TMP outline needs its own material); the text is

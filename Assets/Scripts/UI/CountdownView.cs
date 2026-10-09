@@ -21,6 +21,7 @@ namespace SomeGame.UI
         void Show(int n)
         {
             label.gameObject.SetActive(true);
+            SomeGame.Audio.GameAudio.Countdown(n <= 0);
             label.text = n > 0 ? n.ToString() : "GO!";
             label.color = n > 0 ? Theme.White : Theme.Orange;
             if (glow != null) glow.color = n > 0 ? Theme.Ink : Theme.White;

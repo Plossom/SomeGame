@@ -48,24 +48,36 @@ MonoBehaviour:
   rivers: []
   lakes: []
   oil:
-  - distance: 113.16373
-    lateral: 1.4
-    radius: 1.3
-  - distance: 251.08202
-    lateral: -1.2
-    radius: 1.3
+  - distance: 32.416695
+    lateral: 0.9398831
+    radius: 1.4205151
+  - distance: 111.35614
+    lateral: -1.478588
+    radius: 1.3808519
+  - distance: 150.29558
+    lateral: 1.1309547
+    radius: 1.3480973
+  - distance: 209.23502
+    lateral: -0.8502426
+    radius: 1.4771751
+  - distance: 284.17447
+    lateral: 1.160526
+    radius: 1.4209555
+  - distance: 327.11392
+    lateral: -1.7968373
+    radius: 1.4254938
   rampLength: 3
   rampWidth: 2.8
   shortcuts:
-  - from: 158
-    to: 220
+  - from: 79
+    to: 100
     side: -1
-    length: 5
-    width: 4.5
-    designSpeed: 16
-  - from: 278
-    to: 344
-    side: -1
-    length: 5
-    width: 4.5
-    designSpeed: 16
+    length: 3.5
+    width: 3.2
+    designSpeed: 15
+  - from: 249
+    to: 273
+    side: 1
+    length: 3.5
+    width: 3.2
+    designSpeed: 15

@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace SomeGame.UI
 {
-    /// <summary>Squashes a button slightly while it is pressed. Unscaled time, works while paused.</summary>
+    /// <summary>Squashes a button slightly while it is pressed and clicks. Unscaled time, works while paused.</summary>
     public class ButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
     {
         [SerializeField, Range(0.5f, 1f)] float pressedScale = 0.92f;
@@ -14,7 +14,11 @@ namespace SomeGame.UI
 
         void Awake() => _baseScale = transform.localScale;
 
-        public void OnPointerDown(PointerEventData eventData) => _target = pressedScale;
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            _target = pressedScale;
+            SomeGame.Audio.GameAudio.Click();
+        }
         public void OnPointerUp(PointerEventData eventData) => _target = 1f;
         public void OnPointerExit(PointerEventData eventData) => _target = 1f;
 

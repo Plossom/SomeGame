@@ -65,7 +65,7 @@ namespace SomeGame.Car
                 if (local.y > shortcut.Length * 0.5f - 0.8f && speedAlong > minLaunchSpeed)
                 {
                     _shortcutFrom = shortcut.From;
-                    _car.Launch(shortcut.AirTime, shortcut.Direction);
+                    _car.Launch(shortcut.AirTime); // the car keeps its own heading: aim at the arrows
                     return;
                 }
             }

@@ -47,6 +47,19 @@ namespace SomeGame.UI
             race.PlayerLapCompleted -= OnLap;
         }
 
+        // The jingle, then a ding as each earned star pops in (same timing as the star animation).
+        System.Collections.IEnumerator PlaySounds(bool won, int earnedStars)
+        {
+            var library = SomeGame.Audio.AudioLibrary.Instance;
+            if (library == null) yield break;
+            SomeGame.Audio.GameAudio.Play(won ? library.win : library.lose, 0.8f);
+            for (int i = 0; i < earnedStars; i++)
+            {
+                yield return new WaitForSecondsRealtime(i == 0 ? 0.35f : 0.18f);
+                SomeGame.Audio.GameAudio.Play(library.star, 0.7f);
+            }
+        }
+
         void OnLap(float lapTime, bool newBest) => _newBest |= newBest;
 
         void Show()
@@ -96,6 +109,7 @@ namespace SomeGame.UI
 
             continueButton.gameObject.SetActive(level != null);
             panel.SetActive(true);
+            StartCoroutine(PlaySounds(won, level != null ? earned : 0));
         }
     }
 }

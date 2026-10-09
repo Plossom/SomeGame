@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fec9a978e2ca64c92bb5ce694ee3b1b4, type: 3}
+  m_Name: AudioLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Audio.AudioLibrary
+  mapMusic: {fileID: 8300000, guid: 6df9296fa4dbc499888b35944bb6001a, type: 3}
+  raceMusic: {fileID: 8300000, guid: 2dbe14e4ec7ae4019966c893f278998d, type: 3}
+  mapMusicVolume: 0.55
+  raceMusicVolume: 0.35
+  engineLoop: {fileID: 8300000, guid: 3f377affaf5384783833af1febb053f7, type: 3}
+  screechLoop: {fileID: 8300000, guid: c5936b14a5aa74b96be6501e61087c1d, type: 3}
+  boost: {fileID: 8300000, guid: 2bca4ab3a7a804ae8a07eace62c0d7ca, type: 3}
+  jump: {fileID: 8300000, guid: 402e967871e384747b8d41b87e95a1b3, type: 3}
+  land: {fileID: 8300000, guid: 3fb9d4600f3ac44949bf03700331a3be, type: 3}
+  splash: {fileID: 8300000, guid: ac2bfff7ec0354d50b212cff2082a438, type: 3}
+  oilSpin: {fileID: 8300000, guid: df126fccbbee14c54940f18e02ba3667, type: 3}
+  crash: {fileID: 8300000, guid: bc83499e2573d420cbf67db3fdd6afd3, type: 3}
+  beepLow: {fileID: 8300000, guid: 4e4883f31ecee4b1b972bc0603f3e9c9, type: 3}
+  beepHigh: {fileID: 8300000, guid: 3918bfe11a5c34d568b00746af002200, type: 3}
+  click: {fileID: 8300000, guid: 471a45547b54f40e7ad5010b5f678918, type: 3}
+  lap: {fileID: 8300000, guid: 8fcac5bb9ae424059a21b00f135f2bbb, type: 3}
+  star: {fileID: 8300000, guid: f348b613ee59e4a1ea6fcb5141dcfd97, type: 3}
+  win: {fileID: 8300000, guid: b01479a874cce461d97350a832935549, type: 3}
+  lose: {fileID: 8300000, guid: 072722279745e4b13892bfa106a02104, type: 3}

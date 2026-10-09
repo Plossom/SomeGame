@@ -45,6 +45,8 @@ namespace SomeGame.EditorTools
             cam.orthographic = true;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = Theme.Cream;
+            camGo.AddComponent<AudioListener>();
+            new GameObject("Music").AddComponent<SomeGame.Audio.MusicPlayer>(); // plays the map theme
             var es = new GameObject("EventSystem");
             es.AddComponent<UnityEngine.EventSystems.EventSystem>();
             es.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();

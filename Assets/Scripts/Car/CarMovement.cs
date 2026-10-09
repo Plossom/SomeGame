@@ -30,8 +30,10 @@ namespace SomeGame.Car
         float _slipTimer, _slipDuration, _slipDirection, _slipStartSpeed;
         Collider2D _collider;
 
-        /// <summary>Raised on every collision with the closing speed of the impact.</summary>
+        /// <summary>Raised on every collision (and on landing a jump) with the strength of the impact; drives the camera shake.</summary>
         public event Action<float> Collided;
+        /// <summary>Raised on real collisions only (cars, scenery), with the closing speed.</summary>
+        public event Action<float> Crashed;
         public event Action DriftStarted;
         /// <summary>The drift button was pressed. The car always hops; a drift follows only if conditions allow.</summary>
         public event Action Hopped;
@@ -391,6 +393,7 @@ namespace SomeGame.Car
         {
             float impact = collision.relativeVelocity.magnitude;
             Collided?.Invoke(impact);
+            Crashed?.Invoke(impact);
 
             // A hard knock against scenery (trees, houses, tyres) also ends a drift.
             if (collision.rigidbody == null && impact > 4f) EndDrift();

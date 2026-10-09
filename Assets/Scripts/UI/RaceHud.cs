@@ -68,6 +68,7 @@ namespace SomeGame.UI
             lapFlashLabel.text = $"LAP  {TimeFormat.Race(lapTime)}{(newBest ? "  ·  BEST" : "")}";
             lapFlashLabel.color = newBest ? Theme.Orange : Theme.Ink;
             LapFlash.SetActive(true);
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.lap, 0.7f);
             _hideFlashAt = Time.time + lapFlashSeconds;
         }
     }

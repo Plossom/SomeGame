@@ -93,27 +93,36 @@ MonoBehaviour:
     radii: {x: 8, y: 5}
     angle: -20
   oil:
-  - distance: 117.877594
-    lateral: 1.3
-    radius: 1.3
-  - distance: 251.47218
-    lateral: -1.5
-    radius: 1.4
-  - distance: 337.91577
-    lateral: 0.9
-    radius: 1.2
+  - distance: 44.018154
+    lateral: 0.9398831
+    radius: 1.4205151
+  - distance: 145.5057
+    lateral: -1.478588
+    radius: 1.3808519
+  - distance: 166.99326
+    lateral: 1.1309547
+    radius: 1.3480973
+  - distance: 232.4808
+    lateral: -0.8502426
+    radius: 1.4771751
+  - distance: 297.96835
+    lateral: 1.160526
+    radius: 1.4209555
+  - distance: 363.4559
+    lateral: -1.7968373
+    radius: 1.4254938
   rampLength: 3
   rampWidth: 2.8
   shortcuts:
-  - from: 128
-    to: 182
-    side: -1
-    length: 5
-    width: 4.5
-    designSpeed: 16
-  - from: 262
-    to: 308
-    side: -1
-    length: 5
-    width: 4.5
-    designSpeed: 16
+  - from: 319
+    to: 341
+    side: 1
+    length: 3.5
+    width: 3.2
+    designSpeed: 15
+  - from: 110
+    to: 132
+    side: 1
+    length: 3.5
+    width: 3.2
+    designSpeed: 15

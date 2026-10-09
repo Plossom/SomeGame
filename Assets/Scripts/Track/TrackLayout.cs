@@ -40,7 +40,7 @@ namespace SomeGame.Track
         [Tooltip("Width of the kicker. Only cars that hit it fly over the river.")]
         [Min(1f)] public float rampWidth = 2.8f;
 
-        [Tooltip("Big ramps beside the road on the inside of a corner: at full speed they fly a car across the corner.")]
+        [Tooltip("Small ramps beside the road on the inside of a corner: driven straight at speed, they hop a car across the corner.")]
         public List<Shortcut> shortcuts = new();
 
         [Serializable]
@@ -48,14 +48,14 @@ namespace SomeGame.Track
         {
             [Tooltip("Lap distance where the ramp stands beside the road.")]
             public float from;
-            [Tooltip("Lap distance where the jump lands (the ramp points there).")]
+            [Tooltip("Lap distance where the jump lands (the ramp points there, along the road's direction at the landing).")]
             public float to;
             [Tooltip("Which side of the road the ramp is on: +1 left, -1 right (the inside of the corner).")]
             public float side = 1f;
-            [Min(1f)] public float length = 5f;
-            [Min(1f)] public float width = 4.5f;
+            [Min(1f)] public float length = 3.5f;
+            [Min(1f)] public float width = 3.2f;
             [Tooltip("Speed at which the jump lands exactly on target; slower cars land short.")]
-            [Min(1f)] public float designSpeed = 16f;
+            [Min(1f)] public float designSpeed = 15f;
         }
 
         [Serializable]

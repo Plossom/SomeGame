@@ -1,0 +1,11 @@
+Music (both CC0 / public domain, credit not required but appreciated):
+
+MapTheme_GoodMorning.ogg
+  "Good Morning" by Cakeflaps @ You're Perfect Studio
+  https://opengameart.org/node/86566  (offered under CC0, CC-BY 4.0 and OGA-BY 3.0; used under CC0)
+
+RaceTheme_PureRaceway.ogg
+  "Pure Raceway" (160 BPM) by MintoDog
+  https://opengameart.org/content/pure-raceway  (CC0)
+
+Sound effects in ../Sfx are synthesized by Assets/Scripts/Editor/AudioGenerator.cs.
