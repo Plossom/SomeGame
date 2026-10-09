@@ -22,11 +22,16 @@ namespace SomeGame.Car
 
         CarMovement _car;
         float _time = -1f;
+        Vector3 _visualScale = Vector3.one;
 
         /// <summary>True while the car is in the air (visually).</summary>
         public bool IsHopping => _time >= 0f;
 
-        void Awake() => _car = GetComponent<CarMovement>();
+        void Awake()
+        {
+            _car = GetComponent<CarMovement>();
+            if (visual != null) _visualScale = visual.localScale;
+        }
         void OnEnable() => _car.Hopped += Hop;
 
         void OnDisable()
@@ -54,7 +59,7 @@ namespace SomeGame.Car
 
         void Apply(float height)
         {
-            if (visual != null) visual.localScale = Vector3.one * Mathf.Lerp(1f, peakScale, height);
+            if (visual != null) visual.localScale = _visualScale * Mathf.Lerp(1f, peakScale, height);
             if (shadow != null) shadow.localPosition = shadowOffset + shadowLift * height;
         }
     }

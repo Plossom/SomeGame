@@ -26,6 +26,8 @@ namespace SomeGame.City
         [Tooltip("Centre of the garage lot (world X, Z). The garage faces south (toward the camera).")]
         [SerializeField] Vector2 garagePosition = new(-14f, -54f);
         [SerializeField] Sprite carSprite;
+        [Tooltip("Untinted details layer drawn over the car body (glass, lights, stripes).")]
+        [SerializeField] Sprite carDetailsSprite;
         [SerializeField] Sprite glowSprite;
         [SerializeField] TMP_FontAsset signFont;
 
@@ -309,7 +311,7 @@ namespace SomeGame.City
             Crown(new Vector3(lm.x, h, lm.y), 4.6f, ctx.Accent);
             _flat.Box(new Vector3(lm.x - 0.25f, h, lm.y - 0.25f), new Vector3(lm.x + 0.25f, h + 14f, lm.y + 0.25f), new Color(0.2f, 0.22f, 0.26f), Roof);
             _beacons.Add(new Vector3(lm.x, h + 14.3f, lm.y));
-            ctx.Zone.LabelHeight = h + 18f;
+            ctx.Zone.LabelHeight = h + 6f;
         }
 
         void Plaza(ZoneContext ctx, Rect block)
@@ -369,7 +371,7 @@ namespace SomeGame.City
             // Lighthouse landmark.
             Vector2 lm = ctx.Zone.Landmark;
             Lighthouse(ctx, new Vector3(lm.x, 0f, lm.y));
-            ctx.Zone.LabelHeight = 32f;
+            ctx.Zone.LabelHeight = 20f;
         }
 
         Color ContainerColor(ZoneContext ctx)
@@ -433,13 +435,13 @@ namespace SomeGame.City
             Vector2 lm = ctx.Zone.Landmark;
             Vector3 top = new(lm.x, 22f, lm.y + 10f), bottom = new(lm.x, 2f, lm.y - 16f);
             Ramp(top, bottom, 3.2f, new Color(0.85f, 0.9f, 1f) * Mathf.Max(ctx.Dim, 0.5f), ctx.Accent);
-            ctx.Zone.LabelHeight = 34f;
+            ctx.Zone.LabelHeight = 26f;
         }
 
         void Mountain(ZoneContext ctx, Vector3 c, float r, float h, int sides, float rot)
         {
             Color rock = new(0.1f, 0.1f, 0.2f), snow = new(0.82f, 0.86f, 0.95f);
-            float lit = Mathf.Max(ctx.Dim, 0.55f);
+            float lit = ctx.Locked ? 0.3f : 1f;
             // Lower rock band, upper snow cap.
             _flat.Prism(c, r, r * 0.42f, h * 0.58f, sides, (f, facing) => rock * Mathf.Lerp(0.5f, 1.3f, (facing + 1f) * 0.5f) * lit, rock, rot);
             _flat.Prism(c + Vector3.up * h * 0.58f, r * 0.42f, 0f, h * 0.42f, sides, (f, facing) => snow * Mathf.Lerp(0.55f, 1f, (facing + 1f) * 0.5f) * lit, snow, rot);
@@ -489,7 +491,7 @@ namespace SomeGame.City
                 Vector3 p1 = c + new Vector3(Mathf.Cos(a1) * 6.5f, Mathf.Sin(a1) * 6.5f, -1f);
                 _neon.Quad(p0, p1, p1 + (p1 - c).normalized * 0.5f, p0 + (p0 - c).normalized * 0.5f, ctx.Accent);
             }
-            ctx.Zone.LabelHeight = 22f;
+            ctx.Zone.LabelHeight = 12f;
         }
 
         void Skyline(ZoneContext ctx)
@@ -513,7 +515,7 @@ namespace SomeGame.City
             _walls.Box(new Vector3(lm.x - 4f, 0f, lm.y - 4f), new Vector3(lm.x + 4f, h * 0.7f, lm.y + 4f), Color.white * ctx.Dim, Roof, 12f, 0f, false);
             _walls.Box(new Vector3(lm.x - 2.6f, h * 0.7f, lm.y - 2.6f), new Vector3(lm.x + 2.6f, h, lm.y + 2.6f), Color.white * ctx.Dim, Roof, 12f, 3f, false);
             Crown(new Vector3(lm.x, h, lm.y), 3.4f, ctx.Accent);
-            ctx.Zone.LabelHeight = h + 12f;
+            ctx.Zone.LabelHeight = h + 4f;
         }
 
         void Highway(ZoneContext ctx, Vector3 from, Vector3 to)
@@ -617,6 +619,15 @@ namespace SomeGame.City
                 var sr = car.AddComponent<SpriteRenderer>();
                 sr.sprite = carSprite;
                 sr.color = cyan;
+                if (carDetailsSprite != null)
+                {
+                    var details = new GameObject("Details");
+                    details.transform.SetParent(car.transform, false);
+                    details.transform.localPosition = new Vector3(0f, 0f, -0.01f);
+                    var dsr = details.AddComponent<SpriteRenderer>();
+                    dsr.sprite = carDetailsSprite;
+                    dsr.sortingOrder = 1;
+                }
                 if (glowSprite != null)
                 {
                     var glow = new GameObject("Underglow");

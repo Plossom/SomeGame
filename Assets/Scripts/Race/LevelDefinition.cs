@@ -4,8 +4,8 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>
-    /// One race on the map: which track, how many laps, how strong the rivals are, the star times and
-    /// how many total stars are needed to enter it.
+    /// One race of a district's Grand Prix: which track, how many laps, how strong the rivals are and
+    /// the star times. Unlocking is handled by the district (<see cref="DistrictDefinition"/>).
     /// </summary>
     [CreateAssetMenu(menuName = "SomeGame/Level", fileName = "Level")]
     public class LevelDefinition : ScriptableObject
@@ -26,10 +26,6 @@ namespace SomeGame.Race
         [Header("Stars (only when you win)")]
         [Tooltip("Total race time (including penalties) for 1, 2 and 3 stars, in seconds. Must decrease.")]
         public float[] starTimes = { 75f, 68f, 63f };
-
-        [Header("Map")]
-        [Tooltip("Total stars needed to enter this race (it also only appears once the previous race is won).")]
-        [Min(0)] public int starsRequired;
 
         /// <summary>Stars for a finished race: 0 unless won, then by total time.</summary>
         public int StarsFor(bool won, float totalTime)

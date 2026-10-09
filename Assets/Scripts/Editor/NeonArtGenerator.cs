@@ -70,7 +70,8 @@ namespace SomeGame.EditorTools
             }, 0);
 
             // World.
-            World("Car", 128, 224, CarPixel, 128, tiled: false);
+            World("Car", 192, 336, CarBodyPixel, 192, tiled: false);
+            World("CarDetails", 192, 336, CarDetailsPixel, 192, tiled: false);
             World("Ground", 128, 128, GroundPixel, 32, tiled: true);
             World("AsphaltTile", 128, 128, AsphaltPixel, 32, tiled: true);
             World("Edge", 64, 8, (x, y) => EdgePixel(x / 64f), 32, tiled: true);
@@ -96,37 +97,83 @@ namespace SomeGame.EditorTools
 
         // ---------- world pixels ----------
 
-        static Color CarPixel(float x, float y)
+        // 192 x 336 top-down sports car, nose up, in two layers: the body (white/grey, tinted with the
+        // team colour by the SpriteRenderer) and the details on top in their own colours.
+
+        static float CarBodySdf(float x, float y)
         {
-            // 128 x 224, nose at the top. White body so the SpriteRenderer colour tints it.
+            // Tapered core: narrow nose, wide rear.
+            float taper = Mathf.Lerp(58f, 44f, Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(70f, 320f, y)));
+            float core = RoundRect(96f + (x - 96f) * 50f / taper, y, 96, 168, 50, 158, 30);
+            float frontFlare = RoundRect(x, y, 96, 262, 64, 32, 22);
+            float rearFlare = RoundRect(x, y, 96, 86, 72, 40, 26);
+            return SMin(core, Mathf.Min(frontFlare, rearFlare), 10f);
+        }
+
+        static float CarRoofSdf(float x, float y) => RoundRect(x, y, 96, 160, 30, 26, 12);
+        static float CarGlassSdf(float x, float y) =>
+            Mathf.Max(RoundRect(x, y, 96, 172, 36, 52, 18), -Triangle(x, y, new Vector2(54, 232), new Vector2(64, 232), new Vector2(54, 200)));
+
+        static Color CarBodyPixel(float x, float y)
+        {
             Color c = new(0, 0, 0, 0);
-            float wheel = Min(RoundRect(x, y, 24, 52, 12, 22, 6), RoundRect(x, y, 104, 52, 12, 22, 6),
-                              RoundRect(x, y, 24, 168, 12, 22, 6), RoundRect(x, y, 104, 168, 12, 22, 6));
-            c = Over(c, Hex("16191F"), Fill(wheel));
+            float tyres = Min(RoundRect(x, y, 34, 262, 11, 25, 7), RoundRect(x, y, 158, 262, 11, 25, 7),
+                              RoundRect(x, y, 27, 86, 13, 28, 7), RoundRect(x, y, 165, 86, 13, 28, 7));
+            c = Over(c, Hex("0E1013"), Fill(tyres));
 
-            float body = RoundRect(x, y, 64, 112, 42, 104, 34);
-            float bodyCov = Fill(body);
-            // Shading: brighter along the centre, darker towards the sides.
-            float side = Mathf.Abs(x - 64f) / 42f;
-            float shade = Mathf.Lerp(1f, 0.62f, side * side);
-            c = Over(c, new Color(shade, shade, shade), bodyCov);
+            float body = CarBodySdf(x, y);
+            float inside = Mathf.Clamp01(-body / 20f);
+            float shade = Mathf.Lerp(0.4f, 1f, Mathf.Pow(inside, 0.6f));
+            float highlight = Mathf.Exp(-Mathf.Pow((x - 76f) / 14f, 2f)) * 0.16f * inside;
+            // Darker sills along the sides give the body a waist.
+            float sill = Mathf.Exp(-Mathf.Pow((Mathf.Abs(x - 96f) - 40f) / 6f, 2f)) * 0.18f * Mathf.Clamp01((y - 110f) / 40f) * Mathf.Clamp01((230f - y) / 40f);
+            float v = Mathf.Clamp01(shade + highlight - sill);
+            c = Over(c, new Color(v, v, v), Fill(body));
 
-            // Cockpit and windows.
-            float cabin = RoundRect(x, y, 64, 122, 28, 42, 18);
-            c = Over(c, Hex("1C222B"), Fill(cabin));
-            float glass = RoundRect(x, y, 64, 148, 22, 12, 8); // windscreen
-            c = Over(c, Hex("3C4A5C"), Fill(glass));
-            // Centre racing stripe.
-            float stripe = Mathf.Max(RoundRect(x, y, 64, 112, 6, 100, 3), -body);
-            c = Over(c, new Color(1f, 1f, 1f), Fill(stripe) * 0.9f);
-            // Rear spoiler and lights.
-            c = Over(c, Hex("1C222B"), Fill(RoundRect(x, y, 64, 18, 44, 7, 3)));
-            c = Over(c, Hex("FF2E55"), Fill(Min(RoundRect(x, y, 40, 12, 12, 3, 2), RoundRect(x, y, 88, 12, 12, 3, 2))));
-            // Headlights.
-            c = Over(c, Hex("E8FBFF"), Fill(Min(RoundRect(x, y, 40, 208, 11, 4, 3), RoundRect(x, y, 88, 208, 11, 4, 3))));
-            // Outline for definition.
-            c = Over(c, Hex("0C0E12"), Stroke(body, 3f) * 0.8f);
+            float roof = CarRoofSdf(x, y);
+            float roofShade = Mathf.Lerp(0.8f, 0.97f, Mathf.Clamp01(1f - Mathf.Abs(x - 96f) / 30f));
+            c = Over(c, new Color(roofShade, roofShade, roofShade), Fill(roof));
+            float mirrors = Min(RoundRect(x, y, 48, 210, 9, 5, 4), RoundRect(x, y, 144, 210, 9, 5, 4));
+            c = Over(c, new Color(0.75f, 0.75f, 0.75f), Fill(mirrors));
+            c = Over(c, Hex("08090C"), Stroke(body, 3f) * 0.9f);
             return c;
+        }
+
+        static Color CarDetailsPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float body = CarBodySdf(x, y);
+
+            // Glass around the roof, with a diagonal reflection.
+            float glass = Mathf.Max(CarGlassSdf(x, y), -CarRoofSdf(x, y) + 1.5f);
+            float reflection = Mathf.Clamp01(1f - Mathf.Abs((x - 74f) - (y - 205f) * 0.55f) / 9f) * 0.5f;
+            Color glassColor = Color.Lerp(Hex("080C12"), Hex("6F8FAA"), Mathf.Clamp01((y - 140f) / 100f) * 0.3f + reflection);
+            c = Over(c, glassColor, Fill(glass));
+
+            // Thin twin stripes over hood, roof and tail.
+            float stripes = Min(RoundRect(x, y, 89, 172, 2.6f, 146, 1.3f), RoundRect(x, y, 103, 172, 2.6f, 146, 1.3f));
+            stripes = Mathf.Max(stripes, body + 8f);
+            stripes = Mathf.Max(stripes, -Mathf.Max(CarGlassSdf(x, y), -CarRoofSdf(x, y)));
+            c = Over(c, new Color(1f, 1f, 1f, 0.75f), Fill(stripes));
+
+            float vents = Min(Capsule(x, y, 76, 280, 70, 300, 2.2f), Capsule(x, y, 116, 280, 122, 300, 2.2f));
+            c = Over(c, Hex("12151A"), Fill(vents));
+            float intakes = Min(Capsule(x, y, 44, 112, 50, 146, 3.5f), Capsule(x, y, 148, 112, 142, 146, 3.5f));
+            c = Over(c, Hex("0B0D10"), Fill(intakes));
+
+            float heads = Min(Capsule(x, y, 60, 306, 78, 318, 3.6f), Capsule(x, y, 132, 306, 114, 318, 3.6f));
+            c = Over(c, Hex("F2FDFF"), Fill(heads));
+            float tail = Capsule(x, y, 50, 18, 142, 18, 4f);
+            c = Over(c, Hex("FF2449"), Fill(tail));
+            c = Over(c, Hex("0B0D10"), Fill(RoundRect(x, y, 96, 8, 30, 3.5f, 2)));
+            return c;
+        }
+
+        // Polynomial smooth minimum: blends two distance fields with a rounded seam of size k.
+        static float SMin(float a, float b, float k)
+        {
+            float h = Mathf.Clamp01(0.5f + 0.5f * (b - a) / k);
+            return Mathf.Lerp(b, a, h) - k * h * (1f - h);
         }
 
         static Color GroundPixel(float x, float y)

@@ -97,6 +97,7 @@ namespace SomeGame.EditorTools
                 ("neonMaterial", Mat("CityNeon")), ("waterMaterial", Mat("CityWater")), ("glowMaterial", Mat("CityGlow")),
                 ("fogMaterial", Mat("CityFog")), ("garagePosition", new Vector2(-8f, -60f)),
                 ("carSprite", AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Neon/Car.png")),
+                ("carDetailsSprite", AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Neon/CarDetails.png")),
                 ("glowSprite", AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Neon/Glow.png")),
                 ("signFont", AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Art/Fonts/ChakraPetch/ChakraPetch-BoldItalic SDF.asset")),
                 ("traffic", traffic));

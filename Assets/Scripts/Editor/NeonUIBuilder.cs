@@ -21,165 +21,276 @@ namespace SomeGame.EditorTools
 
         static TMP_FontAsset _medium, _semi, _bold, _italic;
 
-        [MenuItem("SomeGame/Rebuild Neon UI (Map + Race)")]
+        [MenuItem("SomeGame/Rebuild Neon UI (Race)")]
         public static void RebuildAll()
         {
             EditorSceneManager.SaveOpenScenes();
-            BuildMap();
             BuildRace();
         }
 
         // ================================================================== CITY
 
+        /// <summary>Builds the city overlay UI into the open City scene.</summary>
         public static void BuildCityUI()
         {
-            // Filled in with the city overlay (markers, district sheet, garage) in the next step.
-        }
-
-        // ================================================================== MAP
-
-        public static void BuildMap()
-        {
-            var scene = EditorSceneManager.OpenScene("Assets/Scenes/Map.unity");
             LoadFonts();
             var old = GameObject.Find("UI");
             if (old != null) Object.DestroyImmediate(old);
-            Camera.main.backgroundColor = NeonTheme.Background;
-
+            if (Object.FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                var es = new GameObject("EventSystem");
+                es.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                es.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+            }
             var canvas = CreateCanvas();
 
-            // Background: grid ground plus a dark landmass at the bottom.
-            var bg = Stretch("Background", canvas);
-            var bgImage = Img(bg, "Ground", Color.white);
-            bgImage.type = Image.Type.Tiled;
-            bgImage.pixelsPerUnitMultiplier = 3.3f;
-            var land = At("Land", canvas, new Vector2(0.5f, 0f), new Vector2(0f, -380f), new Vector2(2000f, 1300f));
-            Img(land, "Circle", NeonTheme.Panel);
-
-            // Scrolling map.
-            var scrollRect = Stretch("Map", canvas);
-            var scroll = scrollRect.gameObject.AddComponent<ScrollRect>();
-            var viewport = Stretch("Viewport", scrollRect);
-            viewport.gameObject.AddComponent<RectMask2D>();
-            Img(viewport, null, new Color(0, 0, 0, 0), raycast: true);
-            var content = Rt("Content", viewport);
-            content.anchorMin = new Vector2(0f, 0f);
-            content.anchorMax = new Vector2(1f, 0f);
-            content.pivot = new Vector2(0.5f, 0f);
-            content.sizeDelta = new Vector2(0f, 3000f);
-            scroll.viewport = viewport;
-            scroll.content = content;
-            scroll.horizontal = false;
-            scroll.movementType = ScrollRect.MovementType.Elastic;
-            scroll.scrollSensitivity = 30f;
-
-            var node = BuildNodeTemplate(content);
-
-            // Readability scrims behind the fixed top and bottom areas.
-            var topScrim = Rt("TopScrim", canvas);
-            topScrim.anchorMin = new Vector2(0f, 1f); topScrim.anchorMax = new Vector2(1f, 1f); topScrim.pivot = new Vector2(0.5f, 1f);
-            topScrim.sizeDelta = new Vector2(0f, 1050f);
-            Img(topScrim, "FadeV", NeonTheme.Background);
-            var bottomScrim = Rt("BottomScrim", canvas);
-            bottomScrim.anchorMin = new Vector2(0f, 0f); bottomScrim.anchorMax = new Vector2(1f, 0f); bottomScrim.pivot = new Vector2(0.5f, 0f);
-            bottomScrim.sizeDelta = new Vector2(0f, 700f);
-            bottomScrim.localRotation = Quaternion.Euler(0f, 0f, 180f);
-            bottomScrim.anchoredPosition = new Vector2(0f, 700f);
-            Img(bottomScrim, "FadeV", NeonTheme.Background);
+            // Floating labels.
+            var markers = Stretch("Markers", canvas);
+            var template = BuildMarker(markers, "MarkerTemplate", 470f);
+            var garageMarker = BuildMarker(markers, "GarageMarker", 300f);
 
             var safe = SafeArea(canvas);
-            var menuButton = SquareIconButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -60f), "IconMenu", NeonTheme.Text, NeonTheme.Border);
-
-            // Total stars pill (top right).
-            var pill = At("Stars", safe, new Vector2(1f, 1f), new Vector2(-60f, -60f), new Vector2(250f, 138f));
+            var menuButton = SquareIconButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(48f, -48f), "IconMenu", NeonTheme.Text, NeonTheme.Border);
+            var titleRt = At("Title", safe, new Vector2(0f, 1f), new Vector2(220f, -40f), new Vector2(600f, 160f));
+            Txt(At("Name", titleRt, new Vector2(0f, 1f), Vector2.zero, new Vector2(600f, 90f)), "NEON <color=#FF3D7F>CITY</color>", 76, NeonTheme.Text, _italic, TextAlignmentOptions.Left);
+            var sub = Txt(At("Sub", titleRt, new Vector2(0f, 1f), new Vector2(4f, -92f), new Vector2(600f, 50f)), "TAP A DISTRICT", 28, NeonTheme.Dim, _semi, TextAlignmentOptions.Left);
+            sub.characterSpacing = 12f;
+            var pill = At("Stars", safe, new Vector2(1f, 1f), new Vector2(-48f, -48f), new Vector2(250f, 138f));
             Img(pill, "Chip", NeonTheme.Panel, sliced: true);
             Img(Stretch("Outline", pill), "ChipOutline", NeonTheme.Lime, sliced: true);
             Img(At("Icon", pill, new Vector2(0f, 0.5f), new Vector2(38f, 0f), new Vector2(66f, 66f)), "IconStar", NeonTheme.Lime);
             var total = Txt(At("Count", pill, new Vector2(1f, 0.5f), new Vector2(-34f, 0f), new Vector2(130f, 110f)), "0", 66, NeonTheme.Lime, _bold, TextAlignmentOptions.Right);
 
-            // Selected race info.
-            var info = At("Info", safe, new Vector2(0f, 1f), new Vector2(72f, -270f), new Vector2(1030f, 520f));
-            var chapter = Txt(At("Chapter", info, new Vector2(0f, 1f), Vector2.zero, new Vector2(1030f, 60f)), "CHAPTER 01 // NEON GRID", 39, NeonTheme.Cyan, _bold, TextAlignmentOptions.Left);
-            chapter.characterSpacing = 12f;
-            var title = Txt(At("Title", info, new Vector2(0f, 1f), new Vector2(0f, -60f), new Vector2(1030f, 190f)), "GRAND <color=#FF3D7F>PRIX</color>", 150, NeonTheme.Text, _italic, TextAlignmentOptions.Left);
-            title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 150;
-            var chips = At("Chips", info, new Vector2(0f, 1f), new Vector2(0f, -270f), new Vector2(1030f, 84f));
-            var row = chips.gameObject.AddComponent<HorizontalLayoutGroup>();
-            row.spacing = 24f; row.childControlWidth = true; row.childControlHeight = true; row.childForceExpandWidth = false;
-            row.childAlignment = TextAnchor.MiddleLeft;
-            var laps = Chip(chips, "3 LAPS");
-            var rivals = Chip(chips, "3 RIVALS");
-            var best = Chip(chips, "BEST —");
-
-            // Bottom: hint, star times, START.
-            var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 460f));
-            var hint = Txt(At("Hint", bottom, new Vector2(0f, 0f), new Vector2(0f, 250f), new Vector2(620f, 60f)), "WIN TO EARN STARS", 36, NeonTheme.Dim, _semi, TextAlignmentOptions.Left);
-            hint.characterSpacing = 8f;
-            var timesRow = At("StarTimes", bottom, new Vector2(0f, 0f), new Vector2(0f, 150f), new Vector2(640f, 80f));
-            var times = new TMP_Text[3];
-            for (int i = 0; i < 3; i++)
-            {
-                var group = At($"Star{i + 1}", timesRow, new Vector2(0f, 0.5f), new Vector2(i * 215f, 0f), new Vector2(205f, 80f));
-                for (int k = 0; k <= i; k++)
-                    Img(At($"S{k}", group, new Vector2(0f, 0.5f), new Vector2(k * 40f, 26f), new Vector2(40f, 40f)), "IconStar", NeonTheme.Lime);
-                times[i] = Txt(At("Time", group, new Vector2(0f, 0.5f), new Vector2(0f, -22f), new Vector2(205f, 50f)), "1:00.00", 42, NeonTheme.Muted, _bold, TextAlignmentOptions.Left);
-            }
-            var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 0f), 380f, "START", out var startFill, out var startLabel, out var startRing);
-
-            var map = canvas.gameObject.AddComponent<MapScreen>();
-            var so = new SerializedObject(map);
-            Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
-            Set(so, "scroll", scroll); Set(so, "content", content); Set(so, "nodeTemplate", node);
-            Set(so, "totalStars", total); Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
-            Set(so, "lapsChip", laps); Set(so, "rivalsChip", rivals); Set(so, "bestChip", best);
-            SetArray(so, "starTimes", times);
-            Set(so, "hint", hint); Set(so, "startButton", start); Set(so, "startFill", startFill);
-            Set(so, "startLabel", startLabel); Set(so, "startRing", startRing.gameObject);
-            Set(so, "pathSprite", Sprite("Chip")); Set(so, "glowSprite", Sprite("Glow"));
-            so.ApplyModifiedPropertiesWithoutUndo();
-
+            var sheet = BuildDistrictSheet(canvas);
+            var garage = BuildGarage(canvas);
             BuildMenu(canvas, menuButton, null, null);
 
+            var screen = canvas.gameObject.AddComponent<CityScreen>();
+            var so = new SerializedObject(screen);
+            Set(so, "city", Object.FindAnyObjectByType<SomeGame.City.CityGenerator>());
+            Set(so, "cityCamera", Object.FindAnyObjectByType<SomeGame.City.CityCamera>());
+            Set(so, "markersParent", markers); Set(so, "markerTemplate", template); Set(so, "garageMarker", garageMarker);
+            Set(so, "sheet", sheet); Set(so, "garage", garage); Set(so, "totalStars", total);
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var scene = canvas.gameObject.scene;
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
 
-        static MapNode BuildNodeTemplate(RectTransform content)
+        static DistrictMarker BuildMarker(RectTransform parent, string name, float width)
         {
-            var node = At("NodeTemplate", content, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(240f, 240f));
-            var hit = Img(node, null, new Color(0, 0, 0, 0), raycast: true);
-            var glow = Img(At("Glow", node, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(420f, 420f)), "Glow", NeonTheme.Lime);
-            var ring = At("SelectionRing", node, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(300f, 300f));
-            var ringImage = Img(ring, "RingThin", NeonTheme.Magenta);
-            var pulse = ring.gameObject.AddComponent<UIPulse>();
-            Configure(pulse, ("speed", 0.9f), ("ripple", true), ("fade", ringImage), ("scale", new Vector2(0.85f, 1.35f)), ("alpha", new Vector2(0f, 0.9f)));
-            var fill = Img(At("Fill", node, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(190f, 190f)), "Diamond", NeonTheme.Panel);
-            var outline = Img(At("Outline", node, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(190f, 190f)), "DiamondOutline", NeonTheme.Lime);
-            var number = Txt(At("Number", node, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(160f, 120f)), "1", 78, NeonTheme.Lime, _bold);
-            var lockIcon = Img(At("Lock", node, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(70f, 70f)), "IconLock", NeonTheme.Dim);
-            var starsRow = At("Stars", node, new Vector2(0.5f, 0.5f), new Vector2(0f, -150f), new Vector2(210f, 64f));
+            var root = At(name, parent, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(width, 270f));
+            root.pivot = new Vector2(0.5f, 0f);
+            root.gameObject.AddComponent<CanvasGroup>();
+            var pin = Img(At("Pin", root, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(6f, 120f)), null, NeonTheme.Magenta);
+            Img(At("Dot", root, new Vector2(0.5f, 0f), new Vector2(0f, -10f), new Vector2(28f, 28f)), "Circle", NeonTheme.Text);
+            var chip = At("Chip", root, new Vector2(0.5f, 0f), new Vector2(0f, 118f), new Vector2(width, 150f));
+            var bg = Img(chip, "Chip", NeonTheme.WithAlpha(NeonTheme.Panel, 0.94f), sliced: true, raycast: true);
+            var outline = Img(Stretch("Outline", chip), "ChipOutline", NeonTheme.Magenta, sliced: true);
+            var dot = Img(At("Accent", chip, new Vector2(0f, 0.5f), new Vector2(34f, 22f), new Vector2(26f, 26f)), "Diamond", NeonTheme.Magenta);
+            var title = Txt(At("Title", chip, new Vector2(0f, 0.5f), new Vector2(76f, 22f), new Vector2(width - 100f, 66f)), "DISTRICT", 44, NeonTheme.Text, _bold, TextAlignmentOptions.Left);
+            title.enableAutoSizing = true; title.fontSizeMin = 26; title.fontSizeMax = 44;
+            var icon = Img(At("Icon", chip, new Vector2(0f, 0.5f), new Vector2(76f, -36f), new Vector2(38f, 38f)), "IconStar", NeonTheme.Lime);
+            var detail = Txt(At("Detail", chip, new Vector2(0f, 0.5f), new Vector2(126f, -36f), new Vector2(width - 150f, 50f)), "0/15", 36, NeonTheme.Lime, _bold, TextAlignmentOptions.Left);
+            var button = chip.gameObject.AddComponent<Button>();
+            button.targetGraphic = bg;
+            button.transition = Selectable.Transition.None;
+            chip.gameObject.AddComponent<ButtonFeedback>();
+            var marker = root.gameObject.AddComponent<DistrictMarker>();
+            var so = new SerializedObject(marker);
+            Set(so, "button", button); Set(so, "title", title); Set(so, "detail", detail); Set(so, "accentDot", dot);
+            Set(so, "outline", outline); Set(so, "detailIcon", icon); Set(so, "starIcon", Sprite("IconStar"));
+            Set(so, "lockIcon", Sprite("IconLock")); Set(so, "pin", pin);
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return marker;
+        }
+
+        static DistrictSheet BuildDistrictSheet(RectTransform canvas)
+        {
+            var root = Stretch("DistrictSheet", canvas);
+            var panel = Rt("Panel", root);
+            panel.anchorMin = new Vector2(0f, 0f); panel.anchorMax = new Vector2(1f, 0f); panel.pivot = new Vector2(0.5f, 0f);
+            panel.sizeDelta = new Vector2(0f, 1320f);
+            Img(panel, "Panel", NeonTheme.WithAlpha(NeonTheme.Panel, 0.97f), sliced: true, raycast: true);
+            Img(Stretch("Outline", panel), "PanelOutline", NeonTheme.Border, sliced: true);
+            var accent = Img(At("Accent", panel, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(320f, 12f)), "Chip", NeonTheme.Magenta, sliced: true);
+
+            var closeRt = At("Close", panel, new Vector2(1f, 1f), new Vector2(-40f, -40f), new Vector2(120f, 120f));
+            var closeImage = Img(closeRt, null, new Color(0, 0, 0, 0), raycast: true);
+            Img(At("Icon", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(62f, 62f)), "IconClose", NeonTheme.Dim);
+            var close = closeRt.gameObject.AddComponent<Button>();
+            close.targetGraphic = closeImage;
+            closeRt.gameObject.AddComponent<ButtonFeedback>();
+
+            var title = Txt(At("Title", panel, new Vector2(0f, 1f), new Vector2(64f, -66f), new Vector2(900f, 150f)), "DOWNTOWN", 124, NeonTheme.Text, _italic, TextAlignmentOptions.Left);
+            title.enableAutoSizing = true; title.fontSizeMin = 70; title.fontSizeMax = 124;
+            var tagline = Txt(At("Tagline", panel, new Vector2(0f, 1f), new Vector2(66f, -218f), new Vector2(1040f, 110f)), "Tagline", 38, NeonTheme.Muted, _medium, TextAlignmentOptions.TopLeft);
+            tagline.textWrappingMode = TextWrappingModes.Normal;
+            var featureRt = At("Feature", panel, new Vector2(0f, 1f), new Vector2(64f, -350f), new Vector2(720f, 86f));
+            var featureFill = Img(featureRt, "Chip", NeonTheme.WithAlpha(NeonTheme.Magenta, 0.12f), sliced: true);
+            var featureOutline = Img(Stretch("Outline", featureRt), "ChipOutline", NeonTheme.Magenta, sliced: true);
+            var feature = Txt(Stretch("Label", featureRt), "NEW // FEATURE", 34, NeonTheme.Magenta, _bold);
+            feature.characterSpacing = 6f;
+            var progRt = At("Progress", panel, new Vector2(1f, 1f), new Vector2(-64f, -352f), new Vector2(300f, 86f));
+            Img(At("Icon", progRt, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(64f, 64f)), "IconStar", NeonTheme.Lime).rectTransform.pivot = new Vector2(0f, 0.5f);
+            var progress = Txt(At("Value", progRt, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(220f, 86f)), "0 / 15", 64, NeonTheme.Lime, _bold, TextAlignmentOptions.Right);
+
+            // Races.
+            var races = Stretch("Races", panel);
+            races.offsetMax = new Vector2(0f, -470f);
+            var scrollRt = At("Cards", races, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(1170f, 400f));
+            scrollRt.anchorMin = new Vector2(0f, 1f); scrollRt.anchorMax = new Vector2(1f, 1f); scrollRt.sizeDelta = new Vector2(0f, 400f);
+            var scroll = scrollRt.gameObject.AddComponent<ScrollRect>();
+            var viewport = Stretch("Viewport", scrollRt);
+            viewport.gameObject.AddComponent<RectMask2D>();
+            Img(viewport, null, new Color(0, 0, 0, 0), raycast: true);
+            var content = Rt("Content", viewport);
+            content.anchorMin = new Vector2(0f, 0f); content.anchorMax = new Vector2(0f, 1f); content.pivot = new Vector2(0f, 0.5f);
+            content.sizeDelta = new Vector2(1600f, 0f);
+            var row = content.gameObject.AddComponent<HorizontalLayoutGroup>();
+            row.padding = new RectOffset(64, 64, 20, 20); row.spacing = 28f;
+            row.childControlWidth = false; row.childControlHeight = false; row.childForceExpandWidth = false; row.childForceExpandHeight = false;
+            row.childAlignment = TextAnchor.MiddleLeft;
+            var fit = content.gameObject.AddComponent<ContentSizeFitter>();
+            fit.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            scroll.viewport = viewport; scroll.content = content; scroll.vertical = false; scroll.horizontal = true;
+            scroll.movementType = ScrollRect.MovementType.Elastic;
+            var card = BuildRaceCard(content);
+
+            var info = Txt(At("RaceInfo", races, new Vector2(0f, 0f), new Vector2(64f, 300f), new Vector2(620f, 120f)), "RACE\n3 LAPS", 34, NeonTheme.Dim, _semi, TextAlignmentOptions.BottomLeft);
+            info.textWrappingMode = TextWrappingModes.Normal;
+            info.lineSpacing = 10f;
+            var timesRow = At("StarTimes", races, new Vector2(0f, 0f), new Vector2(64f, 160f), new Vector2(640f, 90f));
+            var times = new TMP_Text[3];
+            for (int i = 0; i < 3; i++)
+            {
+                var group = At($"Star{i + 1}", timesRow, new Vector2(0f, 0.5f), new Vector2(i * 215f, 0f), new Vector2(205f, 90f));
+                for (int k = 0; k <= i; k++)
+                    Img(At($"S{k}", group, new Vector2(0f, 0.5f), new Vector2(k * 40f, 26f), new Vector2(38f, 38f)), "IconStar", NeonTheme.Lime);
+                times[i] = Txt(At("Time", group, new Vector2(0f, 0.5f), new Vector2(0f, -22f), new Vector2(205f, 50f)), "1:00.00", 40, NeonTheme.Muted, _bold, TextAlignmentOptions.Left);
+            }
+            var start = BigRoundButton(races, "StartButton", new Vector2(1f, 0f), new Vector2(-40f, 40f), 330f, "START", out var startFill, out var startLabel, out var startRing);
+
+            // Locked.
+            var locked = Stretch("Locked", panel);
+            locked.offsetMax = new Vector2(0f, -470f);
+            Img(At("Lock", locked, new Vector2(0.5f, 1f), new Vector2(0f, -40f), new Vector2(150f, 150f)), "IconLock", NeonTheme.Dim);
+            var lockedTitle = Txt(At("Title", locked, new Vector2(0.5f, 1f), new Vector2(0f, -210f), new Vector2(1000f, 120f)), "LOCKED", 96, NeonTheme.Text, _italic);
+            var lockedText = Txt(At("Text", locked, new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(1000f, 100f)), "Collect 21 stars", 40, NeonTheme.Muted, _medium);
+            lockedText.textWrappingMode = TextWrappingModes.Normal;
+            var barBg = At("Bar", locked, new Vector2(0.5f, 1f), new Vector2(0f, -480f), new Vector2(900f, 30f));
+            Img(barBg, "Chip", NeonTheme.PanelRaised, sliced: true);
+            var barFill = Img(Stretch("Fill", barBg), "Chip", NeonTheme.Magenta);
+            barFill.type = Image.Type.Filled; barFill.fillMethod = Image.FillMethod.Horizontal; barFill.fillAmount = 0.4f;
+            barFill.preserveAspect = false;
+
+            var sheet = root.gameObject.AddComponent<DistrictSheet>();
+            var so = new SerializedObject(sheet);
+            Set(so, "panel", panel); Set(so, "closeButton", close); Set(so, "accentBar", accent);
+            Set(so, "title", title); Set(so, "tagline", tagline); Set(so, "feature", feature);
+            Set(so, "featureFill", featureFill); Set(so, "featureOutline", featureOutline); Set(so, "progress", progress);
+            Set(so, "racesGroup", races.gameObject); Set(so, "cardsContent", content); Set(so, "cardTemplate", card);
+            Set(so, "raceInfo", info); SetArray(so, "starTimes", times);
+            Set(so, "startButton", start); Set(so, "startFill", startFill); Set(so, "startLabel", startLabel); Set(so, "startRing", startRing.gameObject);
+            Set(so, "lockedGroup", locked.gameObject); Set(so, "lockedTitle", lockedTitle); Set(so, "lockedText", lockedText); Set(so, "lockedBarFill", barFill);
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return sheet;
+        }
+
+        static RaceCard BuildRaceCard(RectTransform parent)
+        {
+            var root = Rt("CardTemplate", parent);
+            root.sizeDelta = new Vector2(300f, 360f);
+            var glow = Img(At("Glow", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(560f, 600f)), "Glow", NeonTheme.Magenta);
+            var fill = Img(Stretch("Fill", root), "Chip", NeonTheme.Panel, sliced: true, raycast: true);
+            var outline = Img(Stretch("Outline", root), "ChipOutline", NeonTheme.Border, sliced: true);
+            var number = Txt(At("Number", root, new Vector2(0.5f, 1f), new Vector2(0f, -24f), new Vector2(260f, 130f)), "01", 110, NeonTheme.Text, _italic);
+            var title = Txt(At("Title", root, new Vector2(0.5f, 1f), new Vector2(0f, -160f), new Vector2(260f, 100f)), "RACE NAME", 30, NeonTheme.Muted, _bold, TextAlignmentOptions.Top);
+            title.textWrappingMode = TextWrappingModes.Normal;
+            var starsRow = At("Stars", root, new Vector2(0.5f, 0f), new Vector2(0f, 34f), new Vector2(240f, 60f));
             var stars = new Image[3];
             for (int i = 0; i < 3; i++)
-                stars[i] = Img(At($"Star{i + 1}", starsRow, new Vector2(0.5f, 0.5f), new Vector2((i - 1) * 64f, 0f), new Vector2(56f, 56f)), "IconStar", NeonTheme.Lime);
-            var req = At("Requirement", node, new Vector2(0.5f, 0.5f), new Vector2(0f, 150f), new Vector2(150f, 66f));
-            Img(req, "Chip", NeonTheme.Background, sliced: true);
-            Img(Stretch("Outline", req), "ChipOutline", NeonTheme.Cyan, sliced: true);
-            var reqText = Txt(At("Count", req, new Vector2(0.5f, 0.5f), new Vector2(-18f, 0f), new Vector2(70f, 60f)), "5", 40, NeonTheme.Cyan, _bold, TextAlignmentOptions.Right);
-            Img(At("Star", req, new Vector2(0.5f, 0.5f), new Vector2(34f, 0f), new Vector2(36f, 36f)), "IconStar", NeonTheme.Cyan);
-
-            var button = node.gameObject.AddComponent<Button>();
-            button.targetGraphic = hit;
+                stars[i] = Img(At($"Star{i + 1}", starsRow, new Vector2(0.5f, 0.5f), new Vector2((i - 1) * 64f, 0f), new Vector2(52f, 52f)), "IconStar", NeonTheme.Lime);
+            var lockIcon = Img(At("Lock", root, new Vector2(0.5f, 0f), new Vector2(0f, 34f), new Vector2(64f, 64f)), "IconLock", NeonTheme.Faint);
+            var button = root.gameObject.AddComponent<Button>();
+            button.targetGraphic = fill;
             button.transition = Selectable.Transition.None;
-            node.gameObject.AddComponent<ButtonFeedback>();
-
-            var mapNode = node.gameObject.AddComponent<MapNode>();
-            var so = new SerializedObject(mapNode);
+            root.gameObject.AddComponent<ButtonFeedback>();
+            var card = root.gameObject.AddComponent<RaceCard>();
+            var so = new SerializedObject(card);
             Set(so, "button", button); Set(so, "fill", fill); Set(so, "outline", outline); Set(so, "glow", glow);
-            Set(so, "selectionRing", ring.gameObject); Set(so, "number", number); Set(so, "lockIcon", lockIcon);
-            SetArray(so, "stars", stars); Set(so, "requirement", req.gameObject); Set(so, "requirementText", reqText);
+            Set(so, "number", number); Set(so, "title", title); SetArray(so, "stars", stars); Set(so, "lockIcon", lockIcon);
             so.ApplyModifiedPropertiesWithoutUndo();
-            node.gameObject.SetActive(false);
-            return mapNode;
+            return card;
+        }
+
+        static GarageScreen BuildGarage(RectTransform canvas)
+        {
+            var root = Stretch("GarageScreen", canvas);
+            var panel = Stretch("Panel", root);
+            Img(panel, null, NeonTheme.WithAlpha(NeonTheme.Background, 0.97f), raycast: true);
+            var grid = Img(Stretch("Grid", panel), "Ground", NeonTheme.WithAlpha(Color.white, 0.7f));
+            grid.type = Image.Type.Tiled; grid.pixelsPerUnitMultiplier = 3.3f;
+            var safe = SafeArea(panel);
+            var back = SquareIconButton(safe, "BackButton", new Vector2(0f, 1f), new Vector2(48f, -48f), "IconBack", NeonTheme.Text, NeonTheme.Border);
+            var title = Txt(At("Title", safe, new Vector2(0.5f, 1f), new Vector2(0f, -200f), new Vector2(1000f, 170f)), "<color=#FF3D7F>GA</color>RAGE", 150, NeonTheme.Text, _italic);
+            var sub = Txt(At("Sub", safe, new Vector2(0.5f, 1f), new Vector2(0f, -370f), new Vector2(1000f, 50f)), "YOUR RIDE  //  UPGRADES COMING SOON", 30, NeonTheme.Dim, _semi);
+            sub.characterSpacing = 10f;
+
+            var stage = At("Stage", safe, new Vector2(0.5f, 1f), new Vector2(0f, -860f), new Vector2(900f, 760f));
+            var glowRt = At("Glow", stage, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(860f, 860f));
+            var glowImage = Img(glowRt, "Glow", NeonTheme.WithAlpha(NeonTheme.Cyan, 0.55f));
+            var pulse = glowRt.gameObject.AddComponent<UIPulse>();
+            Configure(pulse, ("speed", 0.35f), ("fade", glowImage), ("scale", new Vector2(0.92f, 1.04f)), ("alpha", new Vector2(0.35f, 0.6f)));
+            Img(At("Ring", stage, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(640f, 640f)), "RingThin", NeonTheme.WithAlpha(NeonTheme.Cyan, 0.35f));
+            var car = At("Car", stage, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(270f, 472f));
+            car.localRotation = Quaternion.Euler(0f, 0f, -24f);
+            var carSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Neon/Car.png");
+            var carImage = car.gameObject.AddComponent<Image>();
+            carImage.sprite = carSprite; carImage.color = NeonTheme.Cyan; carImage.raycastTarget = false; carImage.preserveAspect = true;
+            var details = Img(Stretch("Details", car), "CarDetails", Color.white);
+            details.preserveAspect = true;
+
+            string[] labels = { "TOP SPEED", "ACCELERATION", "GRIP", "BOOST" };
+            var bars = new Image[4];
+            var values = new TMP_Text[4];
+            var stats = At("Stats", safe, new Vector2(0.5f, 0f), new Vector2(0f, 400f), new Vector2(1030f, 400f));
+            for (int i = 0; i < 4; i++)
+            {
+                var row = At(labels[i], stats, new Vector2(0.5f, 1f), new Vector2(0f, -i * 100f), new Vector2(1030f, 90f));
+                Txt(At("Label", row, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(330f, 60f)), labels[i], 32, NeonTheme.Muted, _semi, TextAlignmentOptions.Left).rectTransform.pivot = new Vector2(0f, 0.5f);
+                var barBg = At("Bar", row, new Vector2(0f, 0.5f), new Vector2(340f, 0f), new Vector2(520f, 24f));
+                barBg.pivot = new Vector2(0f, 0.5f);
+                Img(barBg, "Chip", NeonTheme.PanelRaised, sliced: true);
+                bars[i] = Img(Stretch("Fill", barBg), "Chip", NeonTheme.Cyan);
+                bars[i].type = Image.Type.Filled; bars[i].fillMethod = Image.FillMethod.Horizontal; bars[i].fillAmount = 0.6f;
+                bars[i].preserveAspect = false;
+                values[i] = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(150f, 60f)), "180", 40, NeonTheme.Text, _bold, TextAlignmentOptions.Right);
+                values[i].rectTransform.pivot = new Vector2(1f, 0.5f);
+            }
+
+            string[] slots = { "ENGINE", "TIRES", "NITRO", "PAINT" };
+            var slotRow = At("Slots", safe, new Vector2(0.5f, 0f), new Vector2(0f, 80f), new Vector2(1030f, 230f));
+            for (int i = 0; i < 4; i++)
+            {
+                var slot = At(slots[i], slotRow, new Vector2(0f, 0.5f), new Vector2(i * 262f, 0f), new Vector2(244f, 230f));
+                slot.pivot = new Vector2(0f, 0.5f);
+                Img(slot, "Chip", NeonTheme.Panel, sliced: true);
+                Img(Stretch("Outline", slot), "ChipOutline", NeonTheme.Border, sliced: true);
+                Img(At("Lock", slot, new Vector2(0.5f, 1f), new Vector2(0f, -36f), new Vector2(64f, 64f)), "IconLock", NeonTheme.Faint);
+                Txt(At("Label", slot, new Vector2(0.5f, 0f), new Vector2(0f, 74f), new Vector2(230f, 50f)), slots[i], 32, NeonTheme.Text, _bold);
+                var soon = Txt(At("Soon", slot, new Vector2(0.5f, 0f), new Vector2(0f, 28f), new Vector2(230f, 40f)), "SOON", 24, NeonTheme.Dim, _semi);
+                soon.characterSpacing = 10f;
+            }
+
+            var garage = root.gameObject.AddComponent<GarageScreen>();
+            var so = new SerializedObject(garage);
+            Set(so, "panel", panel.gameObject); Set(so, "closeButton", back);
+            Set(so, "playerStats", AssetDatabase.LoadAssetAtPath<SomeGame.Car.CarStats>("Assets/Data/Cars/PlayerCar.asset"));
+            SetArray(so, "statBars", bars); SetArray(so, "statValues", values);
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return garage;
         }
 
         // ================================================================== RACE
