@@ -60,7 +60,7 @@ namespace SomeGame.Track
             {
                 point = path.Project(position, _hint, searchWindow);
                 // Lost the local match (cut across grass to another section): re-acquire globally.
-                if (Mathf.Abs(point.Lateral) > track.Layout.roadWidth)
+                if (Mathf.Abs(point.Lateral) > track.WidthAt(point.Distance))
                 {
                     var global = path.Project(position);
                     if (Mathf.Abs(global.Lateral) < Mathf.Abs(point.Lateral) - 0.5f)
@@ -73,7 +73,7 @@ namespace SomeGame.Track
 
             _hint = point.Segment;
             Current = point;
-            IsOffRoad = track.IsOffRoad(point.Lateral);
+            IsOffRoad = track.IsOffRoad(point.Distance, point.Lateral);
         }
     }
 }

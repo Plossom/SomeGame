@@ -74,7 +74,10 @@ namespace SomeGame.Input
         float LateralFor(TrackPath path, float distance)
         {
             // On a water track the edge of the road is the water: stay nearer the middle.
-            float lane = _sensor.Track.Layout.waterWorld ? laneOffset * 0.4f : laneOffset;
+            // Narrow road: shrink the lane with it.
+            var track = _sensor.Track;
+            float narrow = Mathf.Clamp01(track.HalfWidthAt(distance + 6f) / track.Layout.HalfWidth);
+            float lane = (track.Layout.waterWorld ? laneOffset * 0.4f : laneOffset) * narrow;
             float lateral = lane;
             foreach (var jump in _sensor.Track.Jumps)
             {
@@ -91,7 +94,7 @@ namespace SomeGame.Input
                 if (to < -1f || to > oilLookAhead) continue;
                 float clear = spot.radius + 1.5f;
                 if (Mathf.Abs(lateral - spot.lateral) >= clear) continue;
-                float limit = layout.HalfWidth - 0.9f;
+                float limit = _sensor.Track.HalfWidthAt(spot.distance) - 0.9f;
                 float left = spot.lateral + clear, right = spot.lateral - clear;
                 float dodge = left > limit ? right : right < -limit ? left : (Mathf.Abs(left - lateral) < Mathf.Abs(right - lateral) ? left : right);
                 lateral = Mathf.Lerp(lateral, Mathf.Clamp(dodge, -limit, limit), Mathf.InverseLerp(oilLookAhead, oilLookAhead * 0.4f, to));

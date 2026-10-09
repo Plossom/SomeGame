@@ -14,6 +14,12 @@ namespace SomeGame.Track
         [SerializeField] MeshFilter banks;
         [SerializeField] MeshFilter ramps;
         [SerializeField] MeshFilter oil;
+        [Tooltip("Lakes are drawn under the road (it crosses them on causeways); rivers over it.")]
+        [SerializeField] MeshFilter lakeWater;
+        [SerializeField] MeshFilter lakeBanks;
+        [Tooltip("White arrows on the road shortly before every ramp.")]
+        [SerializeField] MeshFilter arrows;
+        [SerializeField, Min(0.5f)] float arrowSize = 1.8f;
         [Tooltip("World units per repeat of the water texture.")]
         [SerializeField, Min(0.1f)] float waterTile = 8f;
         [SerializeField, Min(0f)] float bankWidth = 1.6f;
@@ -23,8 +29,35 @@ namespace SomeGame.Track
             var w = new MeshData();
             var b = new MeshData();
             foreach (var river in layout.rivers) River(river, w, b);
-            foreach (var lake in layout.lakes) Lake(lake, w, b);
+            var lw = new MeshData();
+            var lb = new MeshData();
+            foreach (var lake in layout.lakes) Lake(lake, lw, lb);
             Assign(water, w.ToMesh("Water"));
+            if (lakeWater != null) Assign(lakeWater, lw.ToMesh("LakeWater"));
+            if (lakeBanks != null) Assign(lakeBanks, lb.ToMesh("LakeBanks"));
+
+            // Approach arrows: in line with each kicker, and leading off the road onto each corner-cut ramp.
+            var a = new MeshData();
+            foreach (var jump in track.Jumps)
+                foreach (float back in new[] { 8f, 15f })
+                {
+                    float d = jump.RampStart - back;
+                    Vector2 fwd = path.TangentAt(d);
+                    Arrow(a, path.PointAt(d) + path.NormalAt(d) * jump.Lateral, fwd, arrowSize);
+                }
+            foreach (var cut in track.Shortcuts)
+            {
+                Vector2 roadPoint = path.PointAt(cut.From);
+                float side = Mathf.Sign(Vector2.Dot(path.NormalAt(cut.From), cut.Centre - roadPoint));
+                for (int k = 0; k < 2; k++)
+                {
+                    float d = cut.From - 5f - k * 6f;
+                    float lateral = side * Mathf.Max(0f, track.HalfWidthAt(d) - 1.6f - k * 0.8f);
+                    Vector2 fwd = Vector2.Lerp(cut.Direction, path.TangentAt(d), k * 0.5f).normalized;
+                    Arrow(a, path.PointAt(d) + path.NormalAt(d) * lateral, fwd, arrowSize);
+                }
+            }
+            if (arrows != null) Assign(arrows, a.ToMesh("Arrows"));
 
             var r = new MeshData();
             var pads = b;
@@ -58,6 +91,12 @@ namespace SomeGame.Track
                 o.Quad(centre, x, new Vector2(-x.y, x.x), new Rect(0f, 0f, 1f, 1f));
             }
             Assign(oil, o.ToMesh("Oil"));
+        }
+
+        static void Arrow(MeshData mesh, Vector2 centre, Vector2 forward, float size)
+        {
+            Vector2 right = new Vector2(forward.y, -forward.x);
+            mesh.Quad(centre, right * (size * 0.5f), forward * (size * 0.5f), new Rect(0f, 0f, 1f, 1f));
         }
 
         void River(TrackLayout.River river, MeshData waterMesh, MeshData bankMesh)

@@ -83,7 +83,7 @@ namespace SomeGame.Track
                     if (kind.clustered && Mathf.PerlinNoise(p.x * 0.045f + seed % 100, p.y * 0.045f) < 0.45f) continue;
                     float size = Range(kind.sizeRange.x, kind.sizeRange.y);
                     var projection = path.Project(p);
-                    float fromKerb = Mathf.Abs(projection.Lateral) - layout.OffRoadDistance - size * 0.5f;
+                    float fromKerb = Mathf.Abs(projection.Lateral) - track.OffRoadAt(projection.Distance) - size * 0.5f;
                     float turn = path.TurnAtDistance(projection.Distance, runoffSpan);
                     bool outside = turn * projection.Lateral < 0f; // left turn: the right side is outside
                     if (kind.cornerOnly && Mathf.Abs(turn) < cornerTurn) continue;

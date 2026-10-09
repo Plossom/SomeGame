@@ -47,11 +47,14 @@ namespace SomeGame.Race
             }
         }
 
+        /// <summary>All races are open from the start (the unlock rules below are kept for later).</summary>
+        public const bool UnlockAll = true;
+
         public static bool IsVisible(LevelCatalog catalog, int index) =>
-            index == 0 || (index > 0 && index < catalog.Count && HasWon(catalog[index - 1]));
+            index >= 0 && index < catalog.Count && (UnlockAll || index == 0 || HasWon(catalog[index - 1]));
 
         public static bool CanEnter(LevelCatalog catalog, int index) =>
-            IsVisible(catalog, index) && TotalStars >= catalog[index].starsRequired;
+            IsVisible(catalog, index) && (UnlockAll || TotalStars >= catalog[index].starsRequired);
 
         /// <summary>Stores a finished race; keeps the best stars and time. Returns the stars for this run.</summary>
         public static int Record(LevelDefinition level, bool won, float totalTime)

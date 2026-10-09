@@ -15,61 +15,141 @@ MonoBehaviour:
   waypoints:
   - {x: 0, y: -30}
   - {x: 0, y: -10}
-  - {x: 0, y: 10}
-  - {x: 5, y: 22}
-  - {x: -3, y: 34}
-  - {x: 5, y: 46}
-  - {x: -3, y: 58}
-  - {x: 2, y: 70}
-  - {x: 14, y: 78}
-  - {x: 28, y: 76}
-  - {x: 36, y: 68}
-  - {x: 44, y: 60}
-  - {x: 52, y: 52}
-  - {x: 60, y: 44}
-  - {x: 66, y: 34}
-  - {x: 62, y: 22}
-  - {x: 70, y: 10}
-  - {x: 64, y: -2}
-  - {x: 70, y: -14}
-  - {x: 66, y: -28}
-  - {x: 58, y: -38}
-  - {x: 48, y: -40}
-  - {x: 36, y: -40}
-  - {x: 24, y: -40}
-  - {x: 12, y: -40}
-  - {x: 4, y: -36}
+  - {x: 0, y: 8}
+  - {x: 6, y: 18}
+  - {x: 0, y: 26}
+  - {x: 6, y: 34}
+  - {x: 0, y: 42}
+  - {x: 2, y: 54}
+  - {x: 12, y: 61}
+  - {x: 22, y: 55}
+  - {x: 22, y: 44}
+  - {x: 22, y: 34}
+  - {x: 22, y: 24}
+  - {x: 22, y: 12}
+  - {x: 27, y: 1}
+  - {x: 36, y: -4}
+  - {x: 46, y: 0}
+  - {x: 50, y: 10}
+  - {x: 44, y: 20}
+  - {x: 50, y: 30}
+  - {x: 44, y: 40}
+  - {x: 48, y: 48}
+  - {x: 56, y: 56}
+  - {x: 64, y: 64}
+  - {x: 73, y: 70}
+  - {x: 84, y: 68}
+  - {x: 89, y: 58}
+  - {x: 85, y: 47}
+  - {x: 84, y: 36}
+  - {x: 84, y: 26}
+  - {x: 84, y: 16}
+  - {x: 84, y: 4}
+  - {x: 88, y: -8}
+  - {x: 80, y: -17}
+  - {x: 88, y: -26}
+  - {x: 80, y: -35}
+  - {x: 76, y: -46}
+  - {x: 64, y: -52}
+  - {x: 52, y: -48}
+  - {x: 44, y: -46}
+  - {x: 34, y: -46}
+  - {x: 24, y: -46}
+  - {x: 14, y: -46}
+  - {x: 6, y: -42}
   roadWidth: 6
+  widths:
+  - distance: 38.124935
+    width: 6
+  - distance: 49.96684
+    width: 3.8
+  - distance: 80.64298
+    width: 3.8
+  - distance: 105.63663
+    width: 6
+  - distance: 194.64668
+    width: 6
+  - distance: 205.69246
+    width: 4.4
+  - distance: 241.333
+    width: 4.4
+  - distance: 250.44142
+    width: 6
+  - distance: 361.82315
+    width: 6
+  - distance: 374.62946
+    width: 3.6
+  - distance: 411.599
+    width: 3.6
+  - distance: 430.696
+    width: 6
   kerbWidth: 0.6
   sampleSpacing: 1
-  checkpointCount: 5
+  checkpointCount: 6
   boundaryMargin: 25
   waterWorld: 1
   gaps:
-  - from: 162.46335
-    to: 173.06996
-    rampLateral: 0.9
-  - from: 299.68585
-    to: 310.18558
-    rampLateral: -0.9
+  - from: 136.85756
+    to: 146.85757
+    rampLateral: 0.8
+  - from: 251.85152
+    to: 271.6803
+    rampLateral: 0
+  - from: 335.80328
+    to: 345.80295
+    rampLateral: -0.8
+  - from: 462.11243
+    to: 472.1114
+    rampLateral: 0.8
+  elevatedRoad: 1
+  bouncers:
+  - position: {x: 56, y: 56}
+    radius: 2.4
+    airTime: 0.8
+    speedBoost: 1.05
+  geysers:
+  - distance: 183.61609
+    side: -1
+    period: 2.6
+    active: 0.9
+    offset: 0
+  - distance: 284.02036
+    side: 1
+    period: 3
+    active: 1
+    offset: 1.2
+  sweepers: []
+  skyLife: 0.5
   rivers: []
   lakes: []
   oil:
-  - distance: 75.25469
-    lateral: 1
-    radius: 1.1
-  - distance: 177.87471
+  - distance: 105.63663
     lateral: -1
-    radius: 1.1
-  - distance: 225.76408
+    radius: 1.15
+  - distance: 194.64668
     lateral: 1
-    radius: 1.1
-  - distance: 307.86008
-    lateral: -0.9
-    radius: 1.1
+    radius: 1.15
+  - distance: 437.08984
+    lateral: -1
+    radius: 1.15
+  - distance: 380.4535
+    lateral: 0.6
+    radius: 1.15
   rampLength: 3
   rampWidth: 3.2
-  shortcuts: []
+  shortcuts:
+  - from: 376
+    to: 400
+    side: 1
+    length: 4
+    width: 4.2
+    designSpeed: 15
+  - from: 63
+    to: 84
+    side: 1
+    length: 4
+    width: 4.2
+    designSpeed: 15
   scenery:
   - name: Island
     uv:

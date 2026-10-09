@@ -41,7 +41,12 @@ namespace SomeGame.Track
         /// stretches where <paramref name="keep"/> is true for the distance (e.g. leaving out gaps in the road).
         /// </summary>
         public static Mesh Strip(TrackPath path, float lateralA, float lateralB, float uMax, float vLength, string name, Color color,
-            System.Func<float, bool> keep, Vector2 offset = default)
+            System.Func<float, bool> keep, Vector2 offset = default) =>
+            Strip(path, _ => lateralA, _ => lateralB, uMax, vLength, name, color, keep, offset);
+
+        /// <summary>A strip whose two edges may change their sideways offset along the lap (road width changes).</summary>
+        public static Mesh Strip(TrackPath path, System.Func<float, float> lateralA, System.Func<float, float> lateralB, float uMax, float vLength,
+            string name, Color color, System.Func<float, bool> keep, Vector2 offset = default)
         {
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
@@ -54,9 +59,10 @@ namespace SomeGame.Track
                 for (int k = 0; k <= 1; k++)
                 {
                     Vector2 p = path[i + k], normal = path.SampleNormal(i + k);
-                    float v = (k == 0 ? d0 : d1) / vLength;
-                    vertices.Add(p + normal * lateralA + offset);
-                    vertices.Add(p + normal * lateralB + offset);
+                    float d = k == 0 ? d0 : d1;
+                    float v = d / vLength;
+                    vertices.Add(p + normal * lateralA(d) + offset);
+                    vertices.Add(p + normal * lateralB(d) + offset);
                     uvs.Add(new Vector2(0f, v));
                     uvs.Add(new Vector2(uMax, v));
                 }

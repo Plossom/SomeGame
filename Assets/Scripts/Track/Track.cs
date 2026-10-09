@@ -26,7 +26,28 @@ namespace SomeGame.Track
         public float CheckpointDistance(int index) =>
             Mathf.Repeat(index, layout.checkpointCount) * Path.Length / layout.checkpointCount;
 
-        public bool IsOffRoad(float lateral) => Mathf.Abs(lateral) > layout.OffRoadDistance;
+        public bool IsOffRoad(float distance, float lateral) => Mathf.Abs(lateral) > OffRoadAt(distance);
+
+        /// <summary>Road width at a lap distance (follows the layout's width keys, smoothly blended).</summary>
+        public float WidthAt(float distance)
+        {
+            var keys = layout.widths;
+            if (keys == null || keys.Count == 0) return layout.roadWidth;
+            if (keys.Count == 1) return keys[0].width;
+            float d = Path.WrapDistance(distance);
+            // Find the keys around d (keys are in lap order; wrap around the start line).
+            int next = keys.FindIndex(k => k.distance > d);
+            if (next < 0) next = 0;
+            int prev = (next - 1 + keys.Count) % keys.Count;
+            float span = Mathf.Repeat(keys[next].distance - keys[prev].distance, Path.Length);
+            float t = span <= 0.01f ? 1f : Mathf.Repeat(d - keys[prev].distance, Path.Length) / span;
+            return Mathf.Lerp(keys[prev].width, keys[next].width, Mathf.SmoothStep(0f, 1f, t));
+        }
+
+        public float HalfWidthAt(float distance) => WidthAt(distance) * 0.5f;
+
+        /// <summary>Distance from the centre line beyond which a car is off the road (road plus kerb).</summary>
+        public float OffRoadAt(float distance) => HalfWidthAt(distance) + layout.kerbWidth;
 
         /// <summary>A river crossing: a kicker ramp on the road right before the water.</summary>
         public struct Jump
@@ -69,7 +90,7 @@ namespace SomeGame.Track
             foreach (var s in layout.shortcuts)
             {
                 // The ramp starts on the kerb, so a car can drive straight off the road onto it.
-                Vector2 roadEdge = Path.PointAt(s.from) + Path.NormalAt(s.from) * (Mathf.Sign(s.side) * (layout.OffRoadDistance - 0.4f));
+                Vector2 roadEdge = Path.PointAt(s.from) + Path.NormalAt(s.from) * (Mathf.Sign(s.side) * (OffRoadAt(s.from) - 0.4f));
                 Vector2 target = Path.PointAt(s.to);
                 Vector2 dir = (target - roadEdge).normalized;
                 Vector2 centre = roadEdge + dir * (s.length * 0.5f);
@@ -86,8 +107,10 @@ namespace SomeGame.Track
         /// <summary>Every river crossing, in lap order (derived from the rivers and the centre line).</summary>
         public IReadOnlyList<Jump> Jumps => _jumps ??= FindJumps();
 
-        /// <summary>Distance from a point to the nearest water edge (negative inside water).</summary>
-        public float WaterDistance(Vector2 p)
+        /// <summary>Distance from a point to the nearest water edge, rivers and lakes (negative inside water).</summary>
+        public float WaterDistance(Vector2 p) => Mathf.Min(RiverDistance(p), LakeDistance(p));
+
+        public float RiverDistance(Vector2 p)
         {
             float d = float.MaxValue;
             foreach (var river in layout.rivers)
@@ -96,6 +119,12 @@ namespace SomeGame.Track
                 for (int i = 1; i < pts.Length; i++)
                     d = Mathf.Min(d, DistanceToSegment(p, pts[i - 1], pts[i]) - river.width * 0.5f);
             }
+            return d;
+        }
+
+        public float LakeDistance(Vector2 p)
+        {
+            float d = float.MaxValue;
             foreach (var lake in layout.lakes)
             {
                 Vector2 local = Quaternion.Euler(0f, 0f, -lake.angle) * (p - lake.center);
@@ -105,13 +134,55 @@ namespace SomeGame.Track
             return d;
         }
 
+        /// <summary>
+        /// Water under a point: rivers always cover the road (they are jumped); lakes and the water of a
+        /// water track only count off the road, so the road can cross them on a causeway. Gaps in the road
+        /// are water too.
+        /// </summary>
         public bool IsWater(Vector2 p)
         {
-            if (WaterDistance(p) < 0f) return true;
-            if (!layout.waterWorld) return false;
-            // Water world: off the road, or over a gap in it, is water.
+            if (RiverDistance(p) < 0f) return true;
+            bool lake = LakeDistance(p) < 0f;
+            if (!lake && !layout.waterWorld && layout.gaps.Count == 0) return false;
             var point = Path.Project(p);
-            return Mathf.Abs(point.Lateral) > layout.OffRoadDistance + 0.15f || InGap(point.Distance);
+            bool onRoad = Mathf.Abs(point.Lateral) <= OffRoadAt(point.Distance) + 0.15f && !InGap(point.Distance);
+            if (onRoad) return false;
+            return lake || layout.waterWorld || InGap(point.Distance) && Mathf.Abs(point.Lateral) <= OffRoadAt(point.Distance) + 0.15f;
+        }
+
+        /// <summary>The gummiboat under a point, if any.</summary>
+        public TrackLayout.Bouncer BouncerAt(Vector2 p)
+        {
+            foreach (var b in layout.bouncers)
+                if ((p - b.position).sqrMagnitude < b.radius * b.radius) return b;
+            return null;
+        }
+
+        /// <summary>
+        /// Where a jumping fish is at a time: its point over the ground and its height (0..1), or null
+        /// while it is under water. It leaps from beside the road on one side to the other side.
+        /// </summary>
+        public (Vector2 ground, float height, Vector2 direction)? FishAt(TrackLayout.Geyser fish, float time)
+        {
+            float t = Mathf.Repeat(time + fish.offset, fish.period);
+            if (t >= fish.active) return null;
+            float u = t / fish.active;
+            float reach = OffRoadAt(fish.distance) + 2.2f;
+            Vector2 normal = Path.NormalAt(fish.distance) * Mathf.Sign(fish.side);
+            Vector2 centre = Path.PointAt(fish.distance);
+            Vector2 ground = centre + normal * Mathf.Lerp(reach, -reach, u);
+            return (ground, Mathf.Sin(u * Mathf.PI), -normal);
+        }
+
+        /// <summary>True if a jumping fish hits a car at this point now.</summary>
+        public bool FishHit(Vector2 p, float time, float radius = 1.5f)
+        {
+            foreach (var fish in layout.geysers)
+            {
+                var at = FishAt(fish, time);
+                if (at.HasValue && (at.Value.ground - p).sqrMagnitude < radius * radius) return true;
+            }
+            return false;
         }
 
         /// <summary>True where the road is missing (a gap over water).</summary>
@@ -196,6 +267,20 @@ namespace SomeGame.Track
             return Vector2.Distance(p, a + ab * t);
         }
 
+        /// <summary>A place on the road just past the water ahead of a lap distance (to unstick rivals).</summary>
+        public Pose RespawnAfterWater(float distance)
+        {
+            float d = distance;
+            foreach (var jump in Jumps)
+            {
+                float to = Path.DeltaDistance(distance, jump.RampStart);
+                if (to > -25f && to < 40f) { d = jump.FarBank + 3f; break; }
+            }
+            for (int i = 0; i < 40 && (IsWater(Path.PointAt(d)) || InGap(d)); i++) d += 2f;
+            Vector2 forward = Path.TangentAt(d);
+            return new Pose(Path.PointAt(d), Quaternion.Euler(0f, 0f, Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg - 90f));
+        }
+
         /// <summary>
         /// A safe place to put a car back on the road: on the centre line, some way before a lap distance,
         /// not in water or oil, and with enough run-up before the next ramp to reach take-off speed.
@@ -276,7 +361,7 @@ namespace SomeGame.Track
             for (int k = 0; k < layout.checkpointCount; k++)
             {
                 float d = CheckpointDistance(k);
-                Vector2 p = path.PointAt(d), n = path.NormalAt(d) * layout.OffRoadDistance;
+                Vector2 p = path.PointAt(d), n = path.NormalAt(d) * OffRoadAt(d);
                 Gizmos.DrawLine(p - n, p + n);
             }
 

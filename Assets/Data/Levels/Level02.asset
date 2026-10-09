@@ -15,12 +15,12 @@ MonoBehaviour:
   displayName: River Jump
   chapter: "ALPINE CUP \xB7 RACE 2"
   track: {fileID: 11400000, guid: 3ce33ba26a9dc4a698942ef4b84bf3ca, type: 2}
-  laps: 2
+  laps: 3
   rivalCount: 7
   rivalSpeedScale: 1
   rivalCornerScale: 1
   starsRequired: 1
   starTimes:
-  - 46
-  - 36.5
-  - 34
+  - 85
+  - 66
+  - 60

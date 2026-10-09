@@ -73,17 +73,18 @@ namespace SomeGame.Track
 
             bool water = layout.waterWorld;
             Func<float, bool> keep = d => !track.InGap(d);
-            Assign(road, TrackMeshes.Strip(path, -outer - 0.02f, outer + 0.02f, outer * 2f / roadTile, roadTile, "Road", Color.white, keep));
+            Func<float, float> edge = d => track.OffRoadAt(d);
+            Assign(road, TrackMeshes.Strip(path, d => -edge(d) - 0.02f, d => edge(d) + 0.02f, outer * 2f / roadTile, roadTile, "Road", Color.white, keep));
             // On a water track the road stands above the water and casts a soft shadow onto it.
             if (roadShadow != null)
-                Assign(roadShadow, water
-                    ? TrackMeshes.Strip(path, -outer - 0.1f, outer + 0.1f, 1f, 4f, "RoadShadow", new Color(0f, 0.05f, 0.1f, 0.3f), keep, roadShadowOffset)
+                Assign(roadShadow, water || layout.elevatedRoad
+                    ? TrackMeshes.Strip(path, d => -edge(d) - 0.1f, d => edge(d) + 0.1f, 1f, 4f, "RoadShadow", new Color(0f, 0.05f, 0.1f, 0.3f), keep, roadShadowOffset)
                     : new Mesh { name = "RoadShadow", hideFlags = HideFlags.DontSave });
-            Assign(kerbs, BuildKerbs(path, hw, outer));
-            if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path, outer));
+            Assign(kerbs, BuildKerbs(path));
+            if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path));
             Assign(startLine, BuildStartLine(path, hw));
             if (gridLines != null) Assign(gridLines, BuildGrid(path, layout));
-            if (runoff != null) Assign(runoff, water ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path, outer));
+            if (runoff != null) Assign(runoff, water ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path));
             if (centerLine != null)
             {
                 float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / centerLineCycle));
@@ -109,7 +110,7 @@ namespace SomeGame.Track
         }
 
         // Red-and-white kerbs on both sides, only where the road turns enough.
-        Mesh BuildKerbs(TrackPath path, float inner, float outer)
+        Mesh BuildKerbs(TrackPath path)
         {
             int n = path.Count;
             float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / kerbCycle));
@@ -130,8 +131,8 @@ namespace SomeGame.Track
                         Vector2 p = path[i + k], normal = path.SampleNormal(i + k) * sign;
                         float d = path.DistanceAt(i);
                         if (k == 1) d += path.SegmentLength(i);
-                        vertices.Add(p + normal * inner);
-                        vertices.Add(p + normal * outer);
+                        vertices.Add(p + normal * track.HalfWidthAt(d));
+                        vertices.Add(p + normal * track.OffRoadAt(d));
                         uvs.Add(new Vector2(0f, d / cycle));
                         uvs.Add(new Vector2(1f, d / cycle));
                     }
@@ -142,12 +143,12 @@ namespace SomeGame.Track
             return TrackMeshes.Quads("Kerbs", vertices, uvs, triangles);
         }
 
-        Mesh BuildEdgeLines(TrackPath path, float outer)
+        Mesh BuildEdgeLines(TrackPath path)
         {
-            float inner = outer - edgeLineWidth;
             Func<float, bool> keep = d => !track.InGap(d);
+            Func<float, float> outer = d => track.OffRoadAt(d), inner = d => track.OffRoadAt(d) - edgeLineWidth;
             var left = TrackMeshes.Strip(path, inner, outer, 1f, 4f, "EdgeLeft", Color.white, keep);
-            var right = TrackMeshes.Strip(path, -inner, -outer, 1f, 4f, "EdgeRight", Color.white, keep);
+            var right = TrackMeshes.Strip(path, d => -inner(d), d => -outer(d), 1f, 4f, "EdgeRight", Color.white, keep);
             var combined = new Mesh { name = "EdgeLines", hideFlags = HideFlags.DontSave };
             combined.CombineMeshes(new[]
             {
@@ -161,7 +162,7 @@ namespace SomeGame.Track
 
         // Sand strips from the kerb outwards in the corners: wide on the outside (where a car that runs wide
         // ends up), narrower on the inside, none on straights. U runs 0 at the kerb to 1 at the outer edge.
-        Mesh BuildRunoff(TrackPath path, float kerbEdge)
+        Mesh BuildRunoff(TrackPath path)
         {
             int n = path.Count;
             var widths = new float[2, n];
@@ -189,6 +190,7 @@ namespace SomeGame.Track
                     if (w < 0.05f) w = 0f;
                     Vector2 p = path[i], normal = path.SampleNormal(i) * sign;
                     float v = (i == n ? path.Length : path.DistanceAt(i)) / runoffTile;
+                    float kerbEdge = track.OffRoadAt(i == n ? path.Length : path.DistanceAt(i));
                     vertices.Add(p + normal * (kerbEdge - 0.05f));
                     vertices.Add(p + normal * (kerbEdge + w));
                     uvs.Add(new Vector2(0f, v));

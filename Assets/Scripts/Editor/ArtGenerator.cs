@@ -96,6 +96,14 @@ namespace SomeGame.EditorTools
             World("Water", 128, 128, WaterPixel, 32, true);
             World("Ramp", 128, 160, RampPixel, 64, false);
             World("Oil", 128, 128, OilPixel, 64, false);
+            World("Arrow", 128, 128, ArrowPixel, 64, false);
+            World("Gummiboat", 256, 256, GummiboatPixel, 128, false);
+            World("Geyser", 128, 128, GeyserPixel, 128, false);
+            World("Fish", 96, 192, FishPixel, 64, false);
+            World("Log", 256, 64, LogPixel, 64, false);
+            World("HayBale", 128, 128, HayBalePixel, 64, false);
+            World("Bird", 64, 64, BirdPixel, 64, false);
+            World("Balloon", 256, 256, BalloonPixel, 64, false);
             World("Smoke", 64, 64, (x, y) =>
             {
                 // A soft, slightly lumpy puff: white, tinted by the particle colour.
@@ -119,6 +127,7 @@ namespace SomeGame.EditorTools
             Material("Water", "Water");
             Material("Ramp", "Ramp");
             Material("Oil", "Oil");
+            Material("Arrow", "Arrow");
             Material("Smoke", "Smoke");
         }
 
@@ -316,6 +325,129 @@ namespace SomeGame.EditorTools
             // Lip.
             c = Over(c, Hex("F2C230"), Fill(RoundRect(x, y, 64, 152, 56, 4, 2)));
             c = Over(c, Hex("14231E"), Stroke(plate, 4f));
+            return c;
+        }
+
+        // Approach arrow painted on the road: a bold white arrow pointing up (+y), a little worn.
+        static Color ArrowPixel(float x, float y)
+        {
+            float shaft = RoundRect(x, y, 64, 44, 13, 34, 3);
+            float head = Triangle(x, y, new Vector2(24, 72), new Vector2(104, 72), new Vector2(64, 118));
+            float arrow = Mathf.Min(shaft, head);
+            float wear = 0.8f + Hash((int)x / 3, (int)y / 3) * 0.2f;
+            return new Color(1f, 1f, 1f, Fill(arrow) * 0.85f * wear);
+        }
+
+        // An inflatable gummiboat seen from above: a fat orange tube ring with yellow highlights,
+        // a dark floor with a white cross (where to land) and a rope round the side.
+        static Color GummiboatPixel(float x, float y)
+        {
+            Color c = Ripple(new Color(0, 0, 0, 0), x, y, 118f);
+            float outer = Circle(x, y, 128, 128, 108), inner = Circle(x, y, 128, 128, 70);
+            c = Over(c, Shadow, Soft(Circle(x, y, 140, 116, 108), 8f));
+            float tube = Mathf.Max(outer, -inner);
+            float shade = Mathf.Clamp01((Dist(x, y, 108, 148) - 20f) / 120f);
+            c = Over(c, Color.Lerp(Hex("FF9A3D"), Hex("D8541A"), shade), Fill(tube));
+            c = Over(c, Hex("FFD27A"), Fill(Shell(Circle(x, y, 122, 134, 90), 5f)) * Fill(tube + 6f) * 0.8f);
+            c = Over(c, Hex("2A3640"), Fill(inner));
+            float cross = Mathf.Min(RoundRect(x, y, 128, 128, 34, 7, 3), RoundRect(x, y, 128, 128, 7, 34, 3));
+            c = Over(c, new Color(1f, 1f, 1f, 0.9f), Fill(cross));
+            for (int k = 0; k < 12; k++)
+            {
+                float a = k * Mathf.PI / 6f;
+                c = Over(c, Hex("F7F0DC"), Fill(Circle(x, y, 128 + Mathf.Cos(a) * 108, 128 + Mathf.Sin(a) * 108, 5)));
+            }
+            c = Over(c, Outline, Stroke(outer, 5f));
+            c = Over(c, Outline, Stroke(inner, 4f));
+            return c;
+        }
+
+        // A geyser nozzle beside the road: a round stone basin with a dark spout and blue water.
+        static Color GeyserPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            c = Over(c, Shadow, Soft(Circle(x, y, 72, 56, 50), 6f));
+            float rim = Circle(x, y, 64, 64, 50);
+            c = Over(c, Hex("A8A49A"), Fill(rim));
+            c = Over(c, Hex("5FB3D6"), Fill(Circle(x, y, 64, 64, 34)));
+            c = Over(c, Hex("A9DCEE"), Fill(Shell(Circle(x, y, 64, 64, 24), 3f)) * 0.7f);
+            c = Over(c, Hex("2A3640"), Fill(Circle(x, y, 64, 64, 10)));
+            c = Over(c, Outline, Stroke(rim, 5f));
+            return c;
+        }
+
+        // A big jumping trout seen from above, nose up (+y): golden body with spots, fins and a tail.
+        static Color FishPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float body = Ellipse(x, y, 48, 104, 26, 70);
+            float tail = Polygon(x, y, new[] { new Vector2(48, 40), new Vector2(18, 6), new Vector2(48, 22), new Vector2(78, 6) });
+            float fins = Mathf.Min(Ellipse(x, y, 22, 116, 12, 7), Ellipse(x, y, 74, 116, 12, 7));
+            float all = Mathf.Min(Mathf.Min(body, tail), fins);
+            c = Over(c, Hex("E07A2E"), Fill(Mathf.Min(tail, fins)));
+            float shade = Mathf.Clamp01(Mathf.Abs(x - 44f) / 26f);
+            c = Over(c, Color.Lerp(Hex("FFD27A"), Hex("E89A3C"), shade), Fill(body));
+            c = Over(c, Hex("6FA36A"), Fill(Ellipse(x, y, 48, 108, 8, 54)) * Fill(body + 3f));
+            if (Hash((int)(x / 7), (int)(y / 7)) > 0.82f) c = Over(c, Hex("7A3A1E"), Fill(Circle(x, y, Mathf.Floor(x / 7) * 7 + 3.5f, Mathf.Floor(y / 7) * 7 + 3.5f, 2f)) * Fill(body + 4f));
+            c = Over(c, Hex("1E2428"), Fill(Mathf.Min(Circle(x, y, 38, 160, 3.5f), Circle(x, y, 58, 160, 3.5f))));
+            c = Over(c, Outline, Stroke(all, 4f));
+            return c;
+        }
+
+        // A log lying across (along x) with bark lines and cut ends.
+        static Color LogPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float log = RoundRect(x, y, 128, 32, 120, 24, 22);
+            c = Over(c, Shadow, Soft(RoundRect(x, y, 134, 26, 120, 24, 22), 6f));
+            float shade = Mathf.Clamp01((40f - y) / 30f);
+            c = Over(c, Color.Lerp(Hex("8A5A36"), Hex("5E3A22"), shade), Fill(log));
+            if (Mathf.Repeat(x * 0.6f + Mathf.Sin(y * 0.3f) * 4f, 18f) < 2.5f) c = Over(c, Hex("4E2F1B"), Fill(log + 3f) * 0.7f);
+            foreach (float ex in new[] { 14f, 242f })
+            {
+                float end = Ellipse(x, y, ex, 32, 9, 23);
+                c = Over(c, Hex("D9B07A"), Fill(end));
+                c = Over(c, Hex("B88A55"), Stroke(Ellipse(x, y, ex, 32, 5, 13), 2f));
+            }
+            c = Over(c, Outline, Stroke(log, 4f));
+            return c;
+        }
+
+        // A round hay bale seen from above, with its spiral.
+        static Color HayBalePixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            c = Over(c, Shadow, Soft(Circle(x, y, 72, 56, 50), 6f));
+            float bale = Circle(x, y, 64, 64, 50);
+            c = Over(c, Hex("E3BF5E"), Fill(bale));
+            float r = Dist(x, y, 64, 64), a = Mathf.Atan2(y - 64, x - 64);
+            float spiral = Mathf.Abs(Mathf.Repeat(r - a / (Mathf.PI * 2f) * 9f, 9f) - 4.5f);
+            c = Over(c, Hex("B8902E"), Mathf.Clamp01(1.6f - spiral) * Fill(bale + 2f));
+            c = Over(c, Outline, Stroke(bale, 4f));
+            return c;
+        }
+
+        // A bird seen from above: a dark V of wings with a small body (scaled to flap).
+        static Color BirdPixel(float x, float y)
+        {
+            float wings = Mathf.Min(Capsule(x, y, 32, 30, 6, 44, 4f), Capsule(x, y, 32, 30, 58, 44, 4f));
+            float body = Ellipse(x, y, 32, 30, 5, 11);
+            return Over(new Color(0, 0, 0, 0), Hex("2A2F33"), Fill(Mathf.Min(wings, body)));
+        }
+
+        // A hot-air balloon from above: a big striped round envelope with a basket in the middle.
+        static Color BalloonPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float env = Circle(x, y, 128, 128, 116);
+            float a = Mathf.Atan2(y - 128, x - 128);
+            int stripe = Mathf.FloorToInt(Mathf.Repeat(a / (Mathf.PI * 2f) * 12f, 12f));
+            Color[] cols = { Hex("D8382E"), Hex("F7F0DC"), Hex("F2C230"), Hex("F7F0DC"), Hex("3D7DD8"), Hex("F7F0DC") };
+            Color col = cols[stripe % cols.Length];
+            float lit = Mathf.Clamp01(1f - Dist(x, y, 100, 156) / 200f);
+            c = Over(c, Color.Lerp(Shade(col, 0.8f), col, lit), Fill(env));
+            c = Over(c, Hex("8A5A36"), Fill(RoundRect(x, y, 128, 128, 14, 14, 3)));
+            c = Over(c, Outline, Stroke(env, 5f));
             return c;
         }
 

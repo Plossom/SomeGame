@@ -17,15 +17,13 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 1. Pick **iPhone Portrait (1170x2532)** in the Game view and press Play: the game always starts on the
    map, whichever scene is open. To test the open scene directly (e.g. `Race.unity` on its own, which
    uses the scene's setup and gives no stars), untick `SomeGame > Play Starts On Map`.
-2. **Map:** a road winds up through the forest past the race stops (for now **Meadow Run** and
-   **River Jump**). After them comes a "?" stop (**MORE SOON**), and the road disappears into the forest
-   on the horizon. Your car waits on the road before the latest race you have reached, and the
+2. **Map:** a road winds up through the forest past the four race stops (**Meadow Run**,
+   **River Jump**, **Lagoon Leap**, **Chaos Canyon**) and disappears into the forest on the horizon. Your car waits on the road before the latest race you have reached, and the
    road behind you is orange. Tap a stop to select it. The top shows its name, laps, rivals and
    best time; the bottom shows the star times and **START**.
    Rules:
-   - A race appears (instead of "?") once you have **won the previous race**.
-   - To enter it you also need enough **total stars** (shown with a lock and the stars needed);
-     River Jump needs 1 star.
+   - **All races are open from the start** (`ProgressStore.UnlockAll`; set it to false to bring back
+     the rules: a race appears once the previous one is won and needs enough total stars).
    - Stars per race (0-3) depend **only on your total time**, and only if you **win**; otherwise 0.
      Your best result per race is kept.
    - There is no garage: you drive one car, the orange buggy.
@@ -58,7 +56,27 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
      a corner. Drive straight onto one at speed (along the arrows) and you hop across the corner and
      land on the road after it, roughly in its direction. The car keeps its own heading in the air, so
      hit the ramp at an angle and you fly at that angle. Rivals never use them.
-   - Rivals are spread out: Rival 1 (front of the grid) is the fastest, each one after it a bit slower. Pass the checkpoints in order (cutting across the grass does
+   - Rivals are spread out: Rival 1 (front of the grid) is the fastest, each one after it a bit slower;
+     Rival 7 is clearly slow and easy to pass.
+   - Every race has **3 laps**. White **arrows** on the road shortly before every ramp show where to
+     line up.
+   - **Lagoon Leap** (race 3) is a causeway over water: leave the road anywhere and you splash. Tight
+     zigzags, narrow passages (the road narrows and widens again), four gaps to jump (one through a
+     gummiboat), floating corner cuts, jumping fish and oil.
+   - **Chaos Canyon** (race 4) mixes grass, lakes and rivers and is meant to be brutal: a river jump
+     on the start straight, a narrow zigzag, a lake causeway with a gap and a left-right jump-pad hop,
+     a wide river crossed on two jump pads, rolling hay bales and logs crossing the road, jumping fish,
+     a three-pad hop over the bottom lake, oil everywhere and a busy sky.
+   - **Jump pads (gummiboats):** land on one and it throws you to the next pad (the white arrow shows
+     where), then onto the road. It keeps how far off-centre you landed, so a sloppy first jump drifts
+     further off each hop until you miss a pad. Steer a little in the air to correct.
+   - **Jumping fish:** the water bubbles, then a big fish leaps across the road (from a pond on dry
+     ground); if it hits you, you spin round once. Dodge it by timing: rush past before it jumps or
+     brake and let it pass.
+   - **Kickers:** hit one at a decent speed and it carries you across its gap (or onto the first pad
+     in it); too slow and you fall short. Missing the kicker means the water.
+   - Rivals that splash at the same spot three times are put down past the water, so they never get
+     stuck for good. Pass the checkpoints in order (cutting across the grass does
    not count). Grass slows you down hard. You can push and ram the rivals.
 7. The HUD at the top shows lap, race time and position. When you finish, the results
    screen shows your place, the stars earned and the star times, lap times and best lap,
@@ -84,7 +102,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 | Joystick radius and dead zone | `UI/JoystickArea`, `FloatingJoystick` |
 | AI lane offset, look-ahead, corner slowdown | `Rival1-7` in the scene, `AIDriverInput` |
 | Lap count, countdown step | `RaceManager` (the lap count is overridden by the level when started from the map) |
-| Races: name, chapter, track, laps, rival count and strength, star times, stars required | `Assets/Data/Levels/Level01-02.asset` (`LevelDefinition`), order in `LevelCatalog.asset`. Tracks: `Circuit01` (Meadow Run), `Circuit03` (River Jump); `Circuit02` and the reversed `Circuit01R`, `Circuit02R` are unused for now |
+| Races: name, chapter, track, laps, rival count and strength, star times, stars required | `Assets/Data/Levels/Level01-02.asset` (`LevelDefinition`), order in `LevelCatalog.asset`. Tracks: `Circuit01` (Meadow Run), `Circuit03` (River Jump), `Lagoon` (Lagoon Leap), `ChaosCanyon` (Chaos Canyon); `Circuit02` and the reversed `Circuit01R`, `Circuit02R` are unused for now. Levels 3 and 4 were built by an editor script from waypoints plus features placed by world position |
 | Map road, race stop positions, road width | `Assets/Scripts/UI/MapLayout.cs` (then `SomeGame > Generate Map Art`, since the road is painted into the picture) |
 | Map landscape (forest horizon, hills, lake, village, trees) | `Assets/Scripts/Editor/MapArtGenerator.cs` |
 | Colours of the whole UI | `Assets/Scripts/UI/Theme.cs` (then rebuild the UI from the menu) |
@@ -92,14 +110,17 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 | Car look | The car is an off-road buggy in two layers: `Car.png` (bodywork and roll cage, tinted with the car colour; dark cockpit, seats and wheels) and `CarDetails.png` (belts, steering wheel, lights, spare wheel; untinted). Both are generated by `ArtGenerator`. Colours: `PlayerCar.prefab` (orange) and `Rival1-7` in the scene (blue, yellow, purple, teal, pink, white, lime), sprite colour of `Visual`. `Shadow` is a soft drop shadow. Size: `Visual` scale (1.35) |
 | Checkpoint posts (size, idle/next colours, pulse) | `CheckpointGates` object; number of checkpoints in `Circuit01.asset` (`checkpointCount`, 6) |
 | Tyre mark width, fade, colour | `Assets/Prefabs/Car.prefab`, `TyreMarks` |
-| Rivers (polyline, width, kicker position per crossing), lakes, oil puddles, ramp length/width, shortcut ramps (`shortcuts`: from/to lap distance, side, size, design speed) | The track's `TrackLayout` (`rivers`, `lakes`, `oil`, `rampLength`, `rampWidth`). Jumps are found where a river crosses the road |
+| Road width changes (`widths`: lap distance, width), water track (`waterWorld`), raised road with shadow (`elevatedRoad`), gaps (`gaps`), rivers (polyline, width, kicker position per crossing), lakes (the road crosses them on causeways), oil puddles, ramp length/width, corner cuts (`shortcuts`), jump pads (`bouncers`, with `target`), jumping fish (`geysers`: distance, side, rhythm), rolling obstacles (`sweepers`), sky life, per-track scenery | The track's `TrackLayout` (`rivers`, `lakes`, `oil`, `rampLength`, `rampWidth`). Jumps are found where a river crosses the road |
 | Jump air time (`airTimeBase` + `airTimePerSpeed` × speed), air steering, landing speed and shake, oil spin (degrees, seconds, speed kept) | `PlayerCar.asset` / `Rival*.asset`, *Jumps and oil* |
 | Sounds: synthesized by `SomeGame > Generate Sounds` (`Assets/Scripts/Editor/AudioGenerator.cs`) into `Assets/Audio/Sfx`; clip list and music volumes in `Assets/Resources/AudioLibrary.asset`; engine pitch range, engine/screech volumes and how far rivals are heard on the car prefab (`CarAudio`) |
 | Music: map "Good Morning" by Cakeflaps, race "Pure Raceway" by MintoDog (both CC0, see `Assets/Audio/Music/CREDITS.txt`) | `Assets/Audio/Music` |
 | Splash restart distance (at least 30 units of run-up before a ramp), minimum take-off speed, blink time | `Assets/Prefabs/Car.prefab`, `CarTerrain` |
-| Water texture tiling, bank width | `Track` object, `TrackFeatures` |
+| Water texture tiling, bank width, arrow size | `Track` object, `TrackFeatures` |
 | Drift hop size (`peakScale`, 1.08) and jump size (`jumpScale`, 1.3) | `Assets/Prefabs/Car.prefab`, `CarHop` |
 | Car collision shape (capsule 1.32 × 2.3, matches the buggy) | `Assets/Prefabs/Car.prefab`, `CapsuleCollider2D` |
+| Jump pads, jumping fish (fish size, warning time), rolling obstacles | `Hazards` object, `TrackHazards` |
+| Birds and balloons | `Main Camera`, `SkyLife` (how many: the track's `skyLife`) |
+| Kicker minimum clearing speed, rival unstick after repeated splashes, corner-cut boost | `Assets/Prefabs/Car.prefab`, `CarTerrain` |
 | Exhaust smoke: amount (`maxRate`, `fadeOutSpeed` = speed where it stops, `ratePerUnit`, `boostIntensity`), colours light/heavy, size and growth, pipe positions | `Assets/Prefabs/Car.prefab`, `EngineSmoke` |
 
 Edits to `Circuit01` waypoints update the track in the Scene view right away. Select the
@@ -167,9 +188,9 @@ have at most 3 such apps installed at once.
 - **Best lap** is stored in PlayerPrefs under the track asset name (`BestLap.Circuit01`).
   Race progress is stored in PlayerPrefs (`Progress.v1`); there is no reset button yet
   (`ProgressStore.ResetAll()` clears it). Retry reloads the race with the same level.
-- **Star times** (Meadow Run 45 / 35 / 32 s, River Jump 46 / 36.5 / 34 s) are set against the fast
-  rivals: winning at all gives one star, three stars need shortcuts and drift boosts. They were set
-  from autopilot races without a human driver, so they may need adjusting.
+- **Star times** (3 laps; Meadow Run 80 / 62 / 57 s, River Jump 85 / 66 / 60 s, Lagoon Leap 140 /
+  110 / 100 s, Chaos Canyon 130 / 95 / 85 s) are rough estimates from 2-lap autopilot races and
+  need a proper calibration.
 - **Older star-time notes:** star times were calibrated from an autopilot run without drifting: 1 star = 10% slower,
   2 stars = 3% slower, 3 stars = 3% faster than the autopilot. The Grand Prix finales cannot be won
   by the autopilot, so they need drifting.

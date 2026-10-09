@@ -23,11 +23,10 @@ namespace SomeGame.Race
 
         void Start()
         {
-            var layout = track.Layout;
-            float halfSpan = layout.OffRoadDistance; // posts sit on the outer kerb edge
             for (int k = 0; k < track.CheckpointCount; k++)
             {
                 float d = track.CheckpointDistance(k);
+                float halfSpan = track.OffRoadAt(d); // posts sit on the outer kerb edge
                 Vector2 centre = track.Path.PointAt(d), normal = track.Path.NormalAt(d);
                 var gate = new GameObject($"Checkpoint{k}").transform;
                 gate.SetParent(transform, false);

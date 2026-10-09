@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1157046518bc491eabfa6e6ea03de2e, type: 3}
   m_Name: Rival4
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.CarStats
-  topSpeed: 17.6
-  acceleration: 10.6
+  topSpeed: 17.3
+  acceleration: 10.5
   drag: 5
   brakeDeceleration: 18
   turnRate: 220

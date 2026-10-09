@@ -1,0 +1,244 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: ChaosCanyon
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: -40}
+  - {x: 0, y: -24}
+  - {x: 0, y: -8}
+  - {x: 0, y: 8}
+  - {x: 5, y: 18}
+  - {x: -1, y: 27}
+  - {x: 5, y: 36}
+  - {x: -1, y: 45}
+  - {x: 4, y: 54}
+  - {x: 12, y: 63}
+  - {x: 24, y: 69}
+  - {x: 36, y: 72}
+  - {x: 48, y: 72}
+  - {x: 60, y: 72}
+  - {x: 72, y: 72}
+  - {x: 84, y: 70}
+  - {x: 93, y: 62}
+  - {x: 95, y: 50}
+  - {x: 93, y: 38}
+  - {x: 95, y: 26}
+  - {x: 93, y: 14}
+  - {x: 93, y: 2}
+  - {x: 93, y: -10}
+  - {x: 91, y: -22}
+  - {x: 85, y: -33}
+  - {x: 74, y: -39}
+  - {x: 62, y: -40}
+  - {x: 50, y: -40}
+  - {x: 38, y: -40}
+  - {x: 26, y: -40}
+  - {x: 16, y: -46}
+  - {x: 8, y: -54}
+  - {x: 2, y: -52}
+  roadWidth: 6
+  widths:
+  - distance: 49.886173
+    width: 6
+  - distance: 59.383198
+    width: 3.4
+  - distance: 92.52589
+    width: 3.4
+  - distance: 115.08733
+    width: 6
+  - distance: 201.41931
+    width: 6
+  - distance: 213.7089
+    width: 4.2
+  - distance: 250.28876
+    width: 4.2
+  - distance: 258.2953
+    width: 6
+  - distance: 311.77975
+    width: 6
+  - distance: 359.91345
+    width: 6
+  - distance: 371.6514
+    width: 3.8
+  - distance: 389.68762
+    width: 5
+  kerbWidth: 0.6
+  sampleSpacing: 1
+  checkpointCount: 6
+  boundaryMargin: 25
+  waterWorld: 0
+  gaps:
+  - from: 142.95029
+    to: 150.9612
+    rampLateral: 0
+  - from: 155.96071
+    to: 174.96547
+    rampLateral: 0
+  - from: 327.86066
+    to: 362.82806
+    rampLateral: 0
+  elevatedRoad: 1
+  bouncers:
+  - position: {x: 56.5, y: 72}
+    radius: 2.8
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 64, y: 70.2}
+  - position: {x: 64, y: 70.2}
+    radius: 2.6
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 72.49793, y: 71.96185}
+  - position: {x: 51, y: -40}
+    radius: 2.8
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 43, y: -42.2}
+  - position: {x: 43, y: -42.2}
+    radius: 2.6
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 34, y: -37.8}
+  - position: {x: 34, y: -37.8}
+    radius: 2.6
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 21.110044, y: -42.28068}
+  - position: {x: 93, y: -3.5}
+    radius: 2.8
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 91.4, y: -9.5}
+  - position: {x: 91.4, y: -9.5}
+    radius: 2.6
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 93, y: -16.5}
+  geysers:
+  - distance: 20.006401
+    side: 1
+    period: 2.8
+    active: 0.8
+    offset: 1
+  - distance: 115.08733
+    side: -1
+    period: 2.4
+    active: 0.8
+    offset: 0
+  - distance: 231.76187
+    side: -1
+    period: 2.2
+    active: 0.8
+    offset: 0.5
+  - distance: 311.77975
+    side: 1
+    period: 3
+    active: 1
+    offset: 1.5
+  sweepers:
+  - kind: 1
+    distance: 217.63583
+    period: 3.2
+    offset: 0
+  - kind: 0
+    distance: 244.42981
+    period: 4
+    offset: 1
+  - kind: 1
+    distance: 355.86694
+    period: 2.8
+    offset: 0.7
+  - kind: 0
+    distance: 8.007936
+    period: 3.6
+    offset: 2
+  skyLife: 1
+  rivers:
+  - points:
+    - {x: -45, y: 3.8767729}
+    - {x: -40, y: 3.8929515}
+    - {x: -35, y: 3.0389738}
+    - {x: -30, y: 1.5717037}
+    - {x: -25, y: -0.06752625}
+    - {x: -20, y: -1.38566}
+    - {x: -15, y: -1.9862238}
+    - {x: -10, y: -1.6885767}
+    - {x: -5, y: -0.5822462}
+    - {x: 0, y: 1}
+    - {x: 5, y: 2.5822463}
+    - {x: 10, y: 3.6885767}
+    - {x: 15, y: 3.9862237}
+    - {x: 20, y: 3.3856602}
+    - {x: 25, y: 2.0675263}
+    - {x: 30, y: 0.42829636}
+    - {x: 35, y: -1.0389738}
+    - {x: 40, y: -1.8929516}
+    width: 6
+    rampLaterals:
+    - 0
+  - points:
+    - {x: 60, y: -5.093}
+    - {x: 65, y: -5.054752}
+    - {x: 70, y: -5.562914}
+    - {x: 75, y: -6.425364}
+    - {x: 80, y: -7.3160315}
+    - {x: 85, y: -7.8981795}
+    - {x: 90, y: -7.951712}
+    - {x: 95, y: -7.4563904}
+    - {x: 100, y: -6.599483}
+    - {x: 105, y: -5.704963}
+    - {x: 110, y: -5.1110263}
+    - {x: 115, y: -5.042224}
+    - {x: 120, y: -5.524568}
+    - {x: 125, y: -6.3756976}
+    - {x: 130, y: -7.273823}
+    - {x: 135, y: -7.8793855}
+    width: 13
+    rampLaterals:
+    - 0
+  lakes:
+  - center: {x: 48, y: 72}
+    radii: {x: 36, y: 13}
+    angle: 0
+  - center: {x: 40, y: -40}
+    radii: {x: 21, y: 9}
+    angle: 0
+  oil:
+  - distance: 102.99991
+    lateral: 0
+    radius: 1.15
+  - distance: 189.204
+    lateral: -1
+    radius: 1.15
+  - distance: 256.29556
+    lateral: 1
+    radius: 1.15
+  - distance: 299.13092
+    lateral: -1
+    radius: 1.15
+  - distance: 371.6514
+    lateral: 0.6
+    radius: 1.15
+  - distance: 88.67845
+    lateral: 0.5
+    radius: 1.15
+  rampLength: 3
+  rampWidth: 4.2
+  shortcuts:
+  - from: 73
+    to: 93
+    side: 1
+    length: 4
+    width: 4.2
+    designSpeed: 15
+  scenery: []
