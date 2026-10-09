@@ -19,7 +19,7 @@ MonoBehaviour:
   rivalSpeedScale: 0.94
   rivalCornerScale: 0.92
   starTimes:
-  - 75
-  - 68
-  - 63
+  - 73
+  - 68.5
+  - 64.5
   starsRequired: 1

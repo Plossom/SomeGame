@@ -21,6 +21,8 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text startLabel;
         [SerializeField] Color starOn = new(1f, 0.82f, 0.2f);
         [SerializeField] Color starOff = new(1f, 1f, 1f, 0.15f);
+        [SerializeField] Color startColor = new(0.2f, 0.7f, 0.3f);
+        [SerializeField] Color lockedStartColor = new(0.35f, 0.37f, 0.42f);
 
         LevelDefinition _level;
 
@@ -48,6 +50,7 @@ namespace SomeGame.UI
 
             bool canEnter = ProgressStore.CanEnter(catalog, index);
             startButton.interactable = canEnter;
+            startButton.image.color = canEnter ? startColor : lockedStartColor;
             int missing = _level.starsRequired - ProgressStore.TotalStars;
             startLabel.text = canEnter ? "START" : $"NEED {missing} MORE STAR{(missing == 1 ? "" : "S")}";
             startLabel.fontSize = canEnter ? 84 : 52;
