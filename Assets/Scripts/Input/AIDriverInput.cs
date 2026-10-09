@@ -32,6 +32,12 @@ namespace SomeGame.Input
         public float Throttle { get; private set; }
         public bool DriftHeld => false;
 
+        public float CornerGrip
+        {
+            get => cornerGrip;
+            set => cornerGrip = value;
+        }
+
         public float LaneOffset
         {
             get => laneOffset;

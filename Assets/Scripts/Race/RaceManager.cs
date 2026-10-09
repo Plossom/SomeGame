@@ -57,16 +57,50 @@ namespace SomeGame.Race
         /// <summary>The player's final place, including penalties. Valid once PlayerFinished fired.</summary>
         public int FinalPosition { get; private set; }
 
+        /// <summary>The race from the map, or null when the scene was opened directly.</summary>
+        public LevelDefinition Level { get; private set; }
+
+        /// <summary>Stars earned in this race (0 unless won). Valid once PlayerFinished fired.</summary>
+        public int StarsEarned { get; private set; }
+
         /// <summary>1-based position of a car in the current standings.</summary>
         public int PositionOf(RaceProgress car) => _standings.IndexOf(car) + 1;
 
         void Awake()
         {
+            Level = GameSession.CurrentLevel;
+            int rivalCount = rivals.Count;
+            if (Level != null)
+            {
+                track.SetLayout(Level.track);
+                laps = Level.laps;
+                rivalCount = Mathf.Min(Level.rivalCount, rivals.Count);
+            }
+
             // Grid: rivals in front, the player at the back.
             int slot = 0;
-            foreach (var rival in rivals) Register(rival, slot++, $"Rival {slot}");
+            for (int i = 0; i < rivals.Count; i++)
+            {
+                if (i >= rivalCount)
+                {
+                    rivals[i].gameObject.SetActive(false);
+                    continue;
+                }
+                if (Level != null) ScaleRival(rivals[i]);
+                Register(rivals[i], slot++, $"Rival {i + 1}");
+            }
             Player = Register(player, slot, "You");
             Player.DetectCuts = true;
+        }
+
+        // Rivals share their CarStats assets, so each gets a scaled runtime copy.
+        void ScaleRival(CarMovement rival)
+        {
+            var stats = Instantiate(rival.Stats);
+            stats.topSpeed *= Level.rivalSpeedScale;
+            stats.acceleration *= Level.rivalSpeedScale;
+            rival.Stats = stats;
+            if (rival.TryGetComponent(out AIDriverInput ai)) ai.CornerGrip *= Level.rivalCornerScale;
         }
 
         RaceProgress Register(CarMovement car, int gridSlot, string displayName)
@@ -153,6 +187,10 @@ namespace SomeGame.Race
             foreach (var car in _cars)
                 if (car != Player && car.IsFinished && car.FinishTime < adjusted) ahead++;
             FinalPosition = ahead + 1;
+            bool won = FinalPosition == 1;
+            StarsEarned = Level != null
+                ? ProgressStore.Record(Level, won, PlayerTotalTime)
+                : 0;
             PlayerFinished?.Invoke();
         }
 

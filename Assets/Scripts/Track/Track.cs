@@ -38,6 +38,16 @@ namespace SomeGame.Track
             return new Pose(position, Quaternion.Euler(0f, 0f, angle));
         }
 
+        /// <summary>Switches to another layout at runtime (level loading) and rebuilds everything derived from it.</summary>
+        public void SetLayout(TrackLayout value)
+        {
+            if (value == null || value == layout) return;
+            if (layout != null) layout.Changed -= Invalidate;
+            layout = value;
+            if (isActiveAndEnabled) layout.Changed += Invalidate;
+            Invalidate();
+        }
+
         void OnEnable()
         {
             if (layout != null) layout.Changed += Invalidate;

@@ -32,6 +32,11 @@ namespace SomeGame.Track
 
         void ScheduleRebuild()
         {
+            if (Application.isPlaying)
+            {
+                Rebuild(); // runtime layout switch (level loading): rebuild right away
+                return;
+            }
 #if UNITY_EDITOR
             // Layout edits arrive from OnValidate, where rebuilding directly is not allowed.
             UnityEditor.EditorApplication.delayCall += () => { if (this != null && isActiveAndEnabled) Rebuild(); };

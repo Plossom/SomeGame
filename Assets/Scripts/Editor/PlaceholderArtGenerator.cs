@@ -39,6 +39,8 @@ namespace SomeGame.EditorTools
             Write("JoystickBase", 256, 256, (x, y) => Ring(x, y, 256, 120, 112, 0.45f), tiled: false);
             Write("JoystickKnob", 128, 128, (x, y) => Disc(x, y, 128, 60, 0.8f), tiled: false);
             Write("Circle", 64, 64, (x, y) => Disc(x, y, 64, 31, 1f), tiled: false);
+            Write("Star", 128, 128, (x, y) => InStar(x + 0.5f, y + 0.5f, 64f, 64f, 60f, 25f) ? Color.white : Clear, tiled: false);
+            Write("Lock", 64, 64, Lock, tiled: false);
 
             // Track meshes and tyre marks are not sprites, so they need unlit sprite materials.
             WriteMaterial("Road", "RoadSurface");
@@ -73,6 +75,35 @@ namespace SomeGame.EditorTools
             float hx = x - 52f, hy = y - 76f;
             if (hx * hx + hy * hy < 26 * 26) return TreeLight;
             return d > 56 ? TreeDark * 0.85f + new Color(0, 0, 0, 0.15f) : TreeDark;
+        }
+
+        // Five-pointed star, point up: even-odd test against its 10-vertex outline.
+        static bool InStar(float x, float y, float cx, float cy, float outer, float inner)
+        {
+            var points = new Vector2[10];
+            for (int i = 0; i < 10; i++)
+            {
+                float angle = Mathf.PI / 2f + i * Mathf.PI / 5f;
+                float r = i % 2 == 0 ? outer : inner;
+                points[i] = new Vector2(cx + Mathf.Cos(angle) * r, cy + Mathf.Sin(angle) * r);
+            }
+            bool inside = false;
+            for (int i = 0, j = 9; i < 10; j = i++)
+            {
+                if ((points[i].y > y) != (points[j].y > y) &&
+                    x < (points[j].x - points[i].x) * (y - points[i].y) / (points[j].y - points[i].y) + points[i].x)
+                    inside = !inside;
+            }
+            return inside;
+        }
+
+        static Color Lock(int x, int y)
+        {
+            bool body = x >= 12 && x < 52 && y >= 6 && y < 36;
+            float dx = x - 31.5f, dy = y - 36f, d = Mathf.Sqrt(dx * dx + dy * dy);
+            bool shackle = y >= 36 && d >= 11f && d <= 18f;
+            bool keyhole = Mathf.Abs(x - 31.5f) < 3f && y >= 14 && y < 26;
+            return (body && !keyhole) || shackle ? Color.white : Clear;
         }
 
         static bool Corner(int x, int y, int w, int h, int r)
