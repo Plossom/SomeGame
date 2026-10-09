@@ -39,6 +39,7 @@ namespace SomeGame.EditorTools
             Write("JoystickBase", 256, 256, (x, y) => Ring(x, y, 256, 120, 112, 0.45f), tiled: false);
             Write("JoystickKnob", 128, 128, (x, y) => Disc(x, y, 128, 60, 0.8f), tiled: false);
             Write("Circle", 64, 64, (x, y) => Disc(x, y, 64, 31, 1f), tiled: false);
+            Write("Pixel", 4, 4, (x, y) => Color.white, tiled: true); // stretchable white rectangle
 
             // Track meshes and tyre marks are not sprites, so they need unlit sprite materials.
             WriteMaterial("Road", "RoadSurface");
