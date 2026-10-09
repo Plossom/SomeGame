@@ -169,7 +169,7 @@ namespace SomeGame.EditorTools
                 times[i] = Txt(At("Time", group, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(186f, 58f)), "1:00.00", 48, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
                 times[i].rectTransform.pivot = new Vector2(0f, 0f);
             }
-            var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 10f), 380f, "START",
+            var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 10f), 340f, "START",
                 out var startFace, out var startShadow, out var startLabel, out var startRing);
 
             BuildMenu(canvas, menuButton, null, null);
@@ -373,7 +373,7 @@ namespace SomeGame.EditorTools
 
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 460f));
             var retry = SquareButton(bottom, "RetryButton", new Vector2(0f, 0f), new Vector2(0f, 80f), "IconRetry", 200f, white: true);
-            var next = BigRoundButton(bottom, "NextButton", new Vector2(1f, 0f), new Vector2(0f, 0f), 400f, "NEXT", out _, out _, out _, out _);
+            var next = BigRoundButton(bottom, "NextButton", new Vector2(1f, 0f), new Vector2(0f, 0f), 350f, "MAP", out _, out _, out _, out _);
 
             panel.gameObject.SetActive(false);
             var finish = root.gameObject.AddComponent<FinishScreen>();

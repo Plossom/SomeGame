@@ -81,7 +81,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 7. The HUD at the top shows lap, race time (minutes and seconds; hundredths only on the results
    screen) and position. When you finish, the results
    screen shows your place, the stars earned and the star times, lap times and best lap,
-   **NEXT** (back to the map) and **RETRY**.
+   **MAP** (back to the map) and **RETRY**.
 8. **Menu (☰, top left)** on the map and in races. In a race it **pauses** the game (timer, cars,
    countdown all freeze) with **RESUME**, **RESTART** and **MAP**. On both screens it has the
    settings: **sound volume** slider (saved, applied to all game audio) and **joystick visible/invisible**.
