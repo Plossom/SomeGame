@@ -341,16 +341,16 @@ namespace SomeGame.EditorTools
             Img(At("HillBack", panel, new Vector2(0.5f, 0f), new Vector2(-300f, -700f), new Vector2(2000f, 1500f)), "Circle", Hex("9CC383")).preserveAspect = false;
             Img(At("HillFront", panel, new Vector2(0.5f, 0f), new Vector2(260f, -900f), new Vector2(2200f, 1600f)), "Circle", Hex("7FB06C")).preserveAspect = false;
             var safe = SafeArea(panel);
-            var band = At("Checker", safe, new Vector2(0.5f, 1f), new Vector2(0f, -230f), new Vector2(1400f, 104f));
+            var band = At("Checker", safe, new Vector2(0.5f, 1f), new Vector2(0f, -170f), new Vector2(1400f, 90f));
             var checker = Img(band, "Checker", Color.white);
             checker.type = Image.Type.Tiled; checker.preserveAspect = false; checker.pixelsPerUnitMultiplier = 1.2f;
 
             var raceLabel = Txt(At("Race", safe, new Vector2(1f, 1f), new Vector2(-60f, -90f), new Vector2(800f, 60f)), "ALPINE CUP · RACE 1", 42, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
             raceLabel.characterSpacing = 8f;
-            var position = Txt(At("Position", safe, new Vector2(0.5f, 1f), new Vector2(0f, -360f), new Vector2(1100f, 420f)), "1ST", 400, Theme.Orange, _black);
+            var position = Txt(At("Position", safe, new Vector2(0.5f, 1f), new Vector2(0f, -280f), new Vector2(1100f, 360f)), "1ST", 340, Theme.Orange, _black);
             position.fontSharedMaterial = _blackShadow;
             Pop(position.rectTransform, 0.05f);
-            var subtitle = Txt(At("Subtitle", safe, new Vector2(0.5f, 1f), new Vector2(0f, -770f), new Vector2(1000f, 110f)), "PLACE", 100, Theme.Ink, _black);
+            var subtitle = Txt(At("Subtitle", safe, new Vector2(0.5f, 1f), new Vector2(0f, -630f), new Vector2(1000f, 100f)), "PLACE", 88, Theme.Ink, _black);
             subtitle.characterSpacing = 10f;
             var tag = At("NewBest", safe, new Vector2(1f, 1f), new Vector2(-80f, -420f), new Vector2(330f, 90f));
             tag.localRotation = Quaternion.Euler(0f, 0f, 8f);
@@ -358,10 +358,10 @@ namespace SomeGame.EditorTools
             Txt(Stretch("Label", tag), "NEW BEST LAP", 40, Theme.Amber, _condItalic);
             Pop(tag, 0.5f);
 
-            var starsRow = At("Stars", safe, new Vector2(0.5f, 1f), new Vector2(0f, -1000f), new Vector2(900f, 330f));
+            var starsRow = At("Stars", safe, new Vector2(0.5f, 1f), new Vector2(0f, -800f), new Vector2(900f, 280f));
             var stars = new Image[3];
-            float[] sizes = { 230f, 300f, 230f };
-            float[] xs = { -280f, 0f, 280f };
+            float[] sizes = { 190f, 250f, 190f };
+            float[] xs = { -240f, 0f, 240f };
             for (int i = 0; i < 3; i++)
             {
                 var s = At($"Star{i + 1}", starsRow, new Vector2(0.5f, 0.5f), new Vector2(xs[i], i == 1 ? 34f : 0f), new Vector2(sizes[i], sizes[i]));
@@ -370,7 +370,7 @@ namespace SomeGame.EditorTools
                 Pop(s, 0.25f + i * 0.18f);
             }
 
-            var card = At("Card", safe, new Vector2(0.5f, 1f), new Vector2(0f, -1300f), new Vector2(1030f, 580f));
+            var card = At("Card", safe, new Vector2(0.5f, 1f), new Vector2(0f, -1110f), new Vector2(1030f, 580f));
             Img(card, "Round", Theme.Ink, sliced: true);
             var totalValue = ResultRow(card, "Total", -22f, "Total time", 96, Color.white, out _);
             Img(At("Divider", card, new Vector2(0.5f, 1f), new Vector2(0f, -172f), new Vector2(950f, 4f)), null, Theme.WithAlpha(Theme.Cream, 0.15f));
