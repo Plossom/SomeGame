@@ -153,15 +153,16 @@ namespace SomeGame.EditorTools
             var chapter = Txt(At("Cup", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(400f, 90f)), "ALPINE CUP", 66, Theme.Amber, _black);
             chapter.characterSpacing = 3f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 40; chapter.fontSizeMax = 66;
-            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(72f, -215f), new Vector2(1030f, 360f));
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, 0f), new Vector2(760f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
+            // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
+            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -215f), new Vector2(1050f, 360f));
+            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(770f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 136; // keeps clear of the trophy counter
             // Your records for the race, beside the star times: best time over best lap.
-            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(624f, -192f), new Vector2(406f, 130f));
+            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(630f, -192f), new Vector2(420f, 130f));
             Img(records, "Round", Theme.Ink, sliced: true);
             TMP_Text Record(string name, float y, string caption)
             {
-                var row = At(name, records, new Vector2(0f, 1f), new Vector2(24f, y), new Vector2(360f, 56f));
+                var row = At(name, records, new Vector2(0f, 1f), new Vector2(26f, y), new Vector2(368f, 56f));
                 Txt(At("Caption", row, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(150f, 56f)), caption, 32, Theme.Stone, _semi, TextAlignmentOptions.Left).rectTransform.pivot = new Vector2(0f, 0.5f);
                 var value = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(220f, 56f)), "—", 44, Theme.Cream, _cond, TextAlignmentOptions.Right);
                 value.rectTransform.pivot = new Vector2(1f, 0.5f);
@@ -173,7 +174,7 @@ namespace SomeGame.EditorTools
             // Bottom: star times, START.
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 480f));
             // Star times sit in the header, right under the race info.
-            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -192f), new Vector2(604f, 130f));
+            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -192f), new Vector2(610f, 130f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
@@ -225,7 +226,7 @@ namespace SomeGame.EditorTools
             var closeImg = Img(closeRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             var close = closeRt.gameObject.AddComponent<Button>(); close.targetGraphic = closeImg; close.transition = Selectable.Transition.None;
 
-            var box = At("Box", panel, new Vector2(0f, 1f), new Vector2(196f, -546f), new Vector2(712f, 330f));
+            var box = At("Box", panel, new Vector2(0f, 1f), new Vector2(196f, -546f), new Vector2(712f, 364f));
             var boxShadow = Stretch("Shadow", box); boxShadow.offsetMin = boxShadow.offsetMax = new Vector2(0f, -14f);
             Img(boxShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Face", box), "Round", Theme.Ink, sliced: true, raycast: true);
@@ -235,7 +236,7 @@ namespace SomeGame.EditorTools
             layout.spacing = 22f; layout.childAlignment = TextAnchor.MiddleLeft;
             layout.childControlWidth = false; layout.childControlHeight = false; layout.childForceExpandWidth = false; layout.childForceExpandHeight = false;
 
-            var tile = Rt("TileTemplate", row); tile.sizeDelta = new Vector2(200f, 282f);
+            var tile = Rt("TileTemplate", row); tile.sizeDelta = new Vector2(200f, 316f);
             var face = Img(Stretch("Face", tile), "Round", Color.white, sliced: true, raycast: true);
             var ring = Img(Stretch("Ring", tile), "Round", Theme.Orange, sliced: true);
             ring.rectTransform.offsetMin = new Vector2(-8f, -8f); ring.rectTransform.offsetMax = new Vector2(8f, 8f);
@@ -244,15 +245,19 @@ namespace SomeGame.EditorTools
             var lockIcon = Img(At("Lock", tile, new Vector2(0.5f, 1f), new Vector2(0f, -56f), new Vector2(60f, 60f)), "IconLock", Theme.Ink);
             var title = Txt(At("Title", tile, new Vector2(0.5f, 1f), new Vector2(0f, -160f), new Vector2(190f, 56f)), "ALPINE", 44, Theme.Ink, _condItalic);
             title.enableAutoSizing = true; title.fontSizeMin = 28; title.fontSizeMax = 44;
-            var req = At("Needs", tile, new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(190f, 52f));
-            var stars = Txt(At("Stars", req, new Vector2(0f, 0.5f), new Vector2(0f, 0f), new Vector2(62f, 52f)), "20", 34, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
-            stars.enableAutoSizing = true; stars.fontSizeMin = 22; stars.fontSizeMax = 34;
-            stars.rectTransform.pivot = new Vector2(0f, 0.5f);
-            Img(At("StarIcon", req, new Vector2(0f, 0.5f), new Vector2(64f, 0f), new Vector2(28f, 28f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
-            var trophies = Txt(At("Trophies", req, new Vector2(0f, 0.5f), new Vector2(98f, 0f), new Vector2(56f, 52f)), "5", 34, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
-            trophies.enableAutoSizing = true; trophies.fontSizeMin = 22; trophies.fontSizeMax = 34;
-            trophies.rectTransform.pivot = new Vector2(0f, 0.5f);
-            Img(At("TrophyIcon", req, new Vector2(0f, 0.5f), new Vector2(156f, 0f), new Vector2(28f, 28f)), "IconTrophy", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
+            // Two short rows: stars (count + star) over trophies (count + trophy), centred.
+            var req = At("Needs", tile, new Vector2(0.5f, 0f), new Vector2(0f, 14f), new Vector2(190f, 92f));
+            TMP_Text Counter(string name, float y, string iconName)
+            {
+                var text = Txt(At(name, req, new Vector2(0.5f, 0f), new Vector2(-10f, y), new Vector2(120f, 44f)), "0", 38, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+                text.rectTransform.pivot = new Vector2(1f, 0f);
+                text.rectTransform.anchoredPosition = new Vector2(12f, y);
+                var icon = Img(At(name + "Icon", req, new Vector2(0.5f, 0f), new Vector2(18f, y + 6f), new Vector2(32f, 32f)), iconName, Theme.Amber);
+                icon.rectTransform.pivot = new Vector2(0f, 0f);
+                return text;
+            }
+            var stars = Counter("Stars", 46f, "IconStar");
+            var trophies = Counter("Trophies", 2f, "IconTrophy");
             var soon = Txt(At("Soon", tile, new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(190f, 52f)), "SOON", 40, Theme.StoneDark, _condItalic);
             soon.characterSpacing = 8f;
             var button = tile.gameObject.AddComponent<Button>(); button.targetGraphic = face; button.transition = Selectable.Transition.None;
