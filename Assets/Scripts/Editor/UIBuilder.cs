@@ -145,15 +145,10 @@ namespace SomeGame.EditorTools
             var total = CounterRow("Stars", -8f, "IconStar");
             var trophies = CounterRow("Trophies", -98f, "IconTrophy");
 
-            // The cup's round badge and name, straight on the sky beside the menu button: a heading for the
-            // valley rather than another button.
-            var cupRt = At("Cup", safe, new Vector2(0f, 1f), new Vector2(224f, -50f), new Vector2(640f, 140f));
-            var cupIcon = Img(At("Badge", cupRt, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(116f, 116f)), "CupAlpine", Color.white);
-            cupIcon.rectTransform.pivot = new Vector2(0f, 0.5f);
-            var chapter = Txt(At("Name", cupRt, new Vector2(0f, 0.5f), new Vector2(140f, -2f), new Vector2(500f, 120f)), "VALLEY CUP", 66, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
-            chapter.rectTransform.pivot = new Vector2(0f, 0.5f);
+            // The cup name, big, centred at the top of the screen and level with the menu button.
+            var chapter = Txt(At("Cup", safe, new Vector2(0.5f, 1f), new Vector2(0f, -50f), new Vector2(600f, 140f)), "VALLEY CUP", 96, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
-            chapter.enableAutoSizing = true; chapter.fontSizeMin = 44; chapter.fontSizeMax = 66;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 96;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -215f), new Vector2(1050f, 360f));
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(770f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
@@ -199,7 +194,7 @@ namespace SomeGame.EditorTools
             var so = new SerializedObject(screen);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
-            Set(so, "chapterLabel", chapter); Set(so, "cupIcon", cupIcon); Set(so, "titleLabel", title);
+            Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
             Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
             Set(so, "startButton", start); Set(so, "startFace", startFace); Set(so, "startShadow", startShadow);
