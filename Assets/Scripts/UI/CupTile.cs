@@ -31,9 +31,24 @@ namespace SomeGame.UI
             face.color = state == State.Current ? Theme.Cream : locked || soon ? Theme.Stone : Color.white;
             ring.gameObject.SetActive(state == State.Current);
             lockIcon.gameObject.SetActive(locked);
-            requirementRow.SetActive(locked);
-            starsNeeded.text = cup.starsRequired.ToString();
-            trophiesNeeded.text = cup.trophiesRequired.ToString();
+            // Locked: what it takes to unlock. Unlocked: what you have collected in this cup.
+            requirementRow.SetActive(locked || (!soon && cup.HasRaces));
+            if (locked)
+            {
+                starsNeeded.text = cup.starsRequired.ToString();
+                trophiesNeeded.text = cup.trophiesRequired.ToString();
+            }
+            else if (cup.HasRaces)
+            {
+                int stars = 0, wins = 0;
+                foreach (var level in cup.races.levels)
+                {
+                    stars += ProgressStore.StarsOf(level);
+                    if (ProgressStore.HasWon(level)) wins++;
+                }
+                starsNeeded.text = $"{stars}/{cup.races.Count * 3}";
+                trophiesNeeded.text = $"{wins}/{cup.races.Count}";
+            }
             soonLabel.gameObject.SetActive(soon);
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => onClick());

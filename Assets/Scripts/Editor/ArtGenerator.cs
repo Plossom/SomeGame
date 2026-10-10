@@ -81,8 +81,7 @@ namespace SomeGame.EditorTools
                 float axis = Mathf.Max(Shell(x - 64f, 4f), Circle(x, y, 64, 64, 50));
                 return Fill(Min(outline, equator, lat1, lat2, meridian, axis));
             });
-            Ui("IconQuestion", 128, 128, (x, y) =>
-                Fill(Min(Mathf.Max(Shell(Circle(x, y, 64, 80, 24), 8f), -(Mathf.Min(y - 80f, x - 64f))), Capsule(x, y, 64, 56, 64, 44, 8f), Circle(x, y, 64, 22, 9f))));
+            Ui("IconQuestion", 128, 128, (x, y) => Fill(QuestionMark(x, y)));
             Ui("IconFlag", 128, 128, (x, y) =>
             {
                 float pole = Capsule(x, y, 30, 14, 30, 114, 6);
@@ -123,6 +122,7 @@ namespace SomeGame.EditorTools
             World("Arrow", 128, 128, ArrowPixel, 64, false);
             World("Gummiboat", 256, 256, GummiboatPixel, 128, false);
             World("CupAlpine", 128, 128, CupAlpinePixel, 100, false);
+            World("CupBanner", 512, 128, CupBannerPixel, 100, false);
             World("CupWinter", 128, 128, CupWinterPixel, 100, false);
             World("CupSoon", 128, 128, CupSoonPixel, 100, false);
             World("Geyser", 128, 128, GeyserPixel, 128, false);
@@ -366,14 +366,30 @@ namespace SomeGame.EditorTools
         }
 
         // Cup badges for the world menu: a round scene in the cup's colours.
+        // A waving checkered race flag: black and white squares bent by a wave, darker in the folds.
+        static Color CupBannerPixel(float x, float y)
+        {
+            float wave = Mathf.Sin(x / 512f * Mathf.PI * 3f) * 9f;
+            float top = 120f + wave, bottom = 8f + wave;
+            if (y > top + 1f || y < bottom - 1f) return new Color(0, 0, 0, 0);
+            float v = (y - bottom) / (top - bottom) * 4f; // 4 rows
+            int col = Mathf.FloorToInt(x / 32f), row = Mathf.FloorToInt(v);
+            Color c = (col + row) % 2 == 0 ? Hex("1E2428") : Hex("F7F5EE");
+            float fold = 0.85f + 0.15f * Mathf.Cos(x / 512f * Mathf.PI * 3f);
+            c = Shade(c, fold);
+            float edge = Mathf.Min(y - bottom, top - y);
+            c.a = Mathf.Clamp01(edge + 0.5f) * Mathf.Clamp01(Mathf.Min(x, 512f - x) + 0.5f);
+            return c;
+        }
+
         static Color CupAlpinePixel(float x, float y)
         {
             float disc = Circle(x, y, 64, 64, 58);
             Color c = Color.Lerp(Hex("F8EBCF"), Hex("F3C98E"), y / 128f);
-            c = Over(c, Hex("A9B6C2"), Fill(Triangle(x, y, new Vector2(6, 52), new Vector2(122, 52), new Vector2(70, 108))));
-            c = Over(c, Hex("FFFBF2"), Fill(Triangle(x, y, new Vector2(56, 92), new Vector2(84, 92), new Vector2(70, 108))));
-            c = Over(c, Hex("7BB066"), Fill(y - (44f + 6f * Mathf.Sin(x / 14f))));
-            for (int i = 0; i < 3; i++) { float px = 30 + i * 34; c = Over(c, Hex("2F6A4A"), Fill(Triangle(x, y, new Vector2(px - 10, 30), new Vector2(px + 10, 30), new Vector2(px, 58)))); }
+            c = Over(c, Hex("FFB347"), Fill(Circle(x, y, 86, 90, 15)));
+            c = Over(c, Hex("A5C987"), Fill(y - (66f + 7f * Mathf.Sin(x / 18f + 1f))));
+            c = Over(c, Hex("7BB066"), Fill(y - (46f + 6f * Mathf.Sin(x / 14f))));
+            for (int i = 0; i < 3; i++) { float px = 30 + i * 34; c = Over(c, Hex("2F6A4A"), Fill(Triangle(x, y, new Vector2(px - 11, 28), new Vector2(px + 11, 28), new Vector2(px, 62)))); }
             c.a = Fill(disc);
             return Over(c, Hex("14231E"), Stroke(disc, 5f));
         }
@@ -401,10 +417,18 @@ namespace SomeGame.EditorTools
         {
             float disc = Circle(x, y, 64, 64, 58);
             Color c = Hex("D9D2BF");
-            float q = Min(Mathf.Max(Shell(Circle(x, y, 64, 76, 20), 7f), -Mathf.Min(y - 76f, x - 64f)), Capsule(x, y, 64, 54, 64, 44, 7f), Circle(x, y, 64, 28, 8f));
-            c = Over(c, Hex("8C8676"), Fill(q));
+            c = Over(c, Hex("8C8676"), Fill(QuestionMark(x, y)));
             c.a = Fill(disc);
             return Over(c, Hex("14231E"), Stroke(disc, 5f));
+        }
+
+        // A question mark: an arc over the top that curls down into a short stem, and a dot.
+        static float QuestionMark(float x, float y)
+        {
+            float hook = Shell(ArcBand(x, y, 64, 80, 18, -90f, 180f), 7f);
+            float stem = Capsule(x, y, 64, 62, 64, 50, 7f);
+            float dot = Circle(x, y, 64, 32, 8f);
+            return Min(hook, stem, dot);
         }
 
         // An inflatable gummiboat seen from above: a fat orange tube ring with yellow highlights,

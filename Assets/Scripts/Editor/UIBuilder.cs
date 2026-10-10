@@ -144,9 +144,15 @@ namespace SomeGame.EditorTools
             var trophies = Txt(At("Count", trophyPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(150f, 96f)), "0/8", 58, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
 
             // The cup name sits big in the top bar, between the menu button (ends at x 200) and the stars (from x 860).
-            var chapter = Txt(At("Cup", safe, new Vector2(0.5f, 1f), new Vector2(-55f, -50f), new Vector2(620f, 140f)), "ALPINE CUP", 96, Theme.Rust, _black);
-            chapter.characterSpacing = 4f;
-            chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 96;
+            // A waving checkered flag behind the cup name, with the name on a dark plate in the middle.
+            var banner = At("CupBanner", safe, new Vector2(0.5f, 1f), new Vector2(-55f, -44f), new Vector2(620f, 152f));
+            Img(banner, "CupBanner", Color.white).preserveAspect = false;
+            var plateShadow = At("PlateShadow", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, -8f), new Vector2(430f, 96f));
+            Img(plateShadow, "Round", Shade(Theme.Ink, 0.55f), sliced: true);
+            Img(At("Plate", banner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(430f, 96f)), "Round", Theme.Ink, sliced: true);
+            var chapter = Txt(At("Cup", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(400f, 90f)), "ALPINE CUP", 66, Theme.Amber, _black);
+            chapter.characterSpacing = 3f;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 40; chapter.fontSizeMax = 66;
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(72f, -215f), new Vector2(1030f, 360f));
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, 0f), new Vector2(760f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 136; // keeps clear of the trophy counter
@@ -211,14 +217,15 @@ namespace SomeGame.EditorTools
         {
             var root = Stretch("CupMenu", canvas);
             var rootSafe = SafeArea(root);
-            var tab = SquareButton(rootSafe, "WorldButton", new Vector2(0f, 1f), new Vector2(24f, -600f), "IconGlobe", 112f);
+            // Left edge in line with the menu button and the race info, just under the star times.
+            var tab = SquareButton(rootSafe, "WorldButton", new Vector2(0f, 1f), new Vector2(60f, -566f), "IconGlobe", 112f);
 
             var panel = Stretch("Panel", rootSafe);
             var closeRt = Stretch("Close", panel);
             var closeImg = Img(closeRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             var close = closeRt.gameObject.AddComponent<Button>(); close.targetGraphic = closeImg; close.transition = Selectable.Transition.None;
 
-            var box = At("Box", panel, new Vector2(0f, 1f), new Vector2(160f, -560f), new Vector2(700f, 330f));
+            var box = At("Box", panel, new Vector2(0f, 1f), new Vector2(196f, -546f), new Vector2(712f, 330f));
             var boxShadow = Stretch("Shadow", box); boxShadow.offsetMin = boxShadow.offsetMax = new Vector2(0f, -14f);
             Img(boxShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Face", box), "Round", Theme.Ink, sliced: true, raycast: true);
@@ -238,12 +245,14 @@ namespace SomeGame.EditorTools
             var title = Txt(At("Title", tile, new Vector2(0.5f, 1f), new Vector2(0f, -160f), new Vector2(190f, 56f)), "ALPINE", 44, Theme.Ink, _condItalic);
             title.enableAutoSizing = true; title.fontSizeMin = 28; title.fontSizeMax = 44;
             var req = At("Needs", tile, new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(190f, 52f));
-            var stars = Txt(At("Stars", req, new Vector2(0f, 0.5f), new Vector2(6f, 0f), new Vector2(46f, 52f)), "20", 38, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            var stars = Txt(At("Stars", req, new Vector2(0f, 0.5f), new Vector2(0f, 0f), new Vector2(62f, 52f)), "20", 34, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            stars.enableAutoSizing = true; stars.fontSizeMin = 22; stars.fontSizeMax = 34;
             stars.rectTransform.pivot = new Vector2(0f, 0.5f);
-            Img(At("StarIcon", req, new Vector2(0f, 0.5f), new Vector2(54f, 0f), new Vector2(34f, 34f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
-            var trophies = Txt(At("Trophies", req, new Vector2(0f, 0.5f), new Vector2(98f, 0f), new Vector2(40f, 52f)), "5", 38, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            Img(At("StarIcon", req, new Vector2(0f, 0.5f), new Vector2(64f, 0f), new Vector2(28f, 28f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
+            var trophies = Txt(At("Trophies", req, new Vector2(0f, 0.5f), new Vector2(98f, 0f), new Vector2(56f, 52f)), "5", 34, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            trophies.enableAutoSizing = true; trophies.fontSizeMin = 22; trophies.fontSizeMax = 34;
             trophies.rectTransform.pivot = new Vector2(0f, 0.5f);
-            Img(At("TrophyIcon", req, new Vector2(0f, 0.5f), new Vector2(142f, 0f), new Vector2(34f, 34f)), "IconTrophy", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
+            Img(At("TrophyIcon", req, new Vector2(0f, 0.5f), new Vector2(156f, 0f), new Vector2(28f, 28f)), "IconTrophy", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
             var soon = Txt(At("Soon", tile, new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(190f, 52f)), "SOON", 40, Theme.StoneDark, _condItalic);
             soon.characterSpacing = 8f;
             var button = tile.gameObject.AddComponent<Button>(); button.targetGraphic = face; button.transition = Selectable.Transition.None;
