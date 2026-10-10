@@ -641,11 +641,11 @@ namespace SomeGame.EditorTools
         static TMP_Text Chip(RectTransform parent, string text)
         {
             var rt = Rt("Chip", parent);
-            Img(rt, "Round", Color.white, sliced: true);
+            Img(rt, "Round", Theme.Ink, sliced: true); // same pine green as the star-times panel
             var fit = rt.gameObject.AddComponent<HorizontalLayoutGroup>();
             fit.padding = new RectOffset(30, 30, 8, 8);
             fit.childControlWidth = true; fit.childControlHeight = true;
-            var label = Txt(Rt("Label", rt), text, 40, Theme.Ink, _bold);
+            var label = Txt(Rt("Label", rt), text, 40, Theme.Cream, _bold);
             return label;
         }
 
