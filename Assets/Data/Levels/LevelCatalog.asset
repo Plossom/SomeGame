@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelCatalog
   levels:
   - {fileID: 11400000, guid: fb60f36a4755347d7ab78bbaa4b5588d, type: 2}
+  - {fileID: 11400000, guid: 5a067f9ab43f7447eb2fef039d5475de, type: 2}
   - {fileID: 11400000, guid: ac524c4c026cf418b9d57aca283a3b56, type: 2}
   - {fileID: 11400000, guid: af779ca27878b4e2cb328bc63cf40c34, type: 2}
   - {fileID: 11400000, guid: 8a59a8f0bcd4e4f908fcaea09a66e07e, type: 2}

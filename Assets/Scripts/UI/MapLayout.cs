@@ -16,12 +16,12 @@ namespace SomeGame.UI
         // (The landscape picture is stretched upward by MapArtGenerator.Stretch; these points include it.)
         static readonly Vector2[] Points =
         {
-            new(40f, -184f), new(190f, 345f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
+            new(40f, -184f), new(190f, 345f), new(255f, 590f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
             new(800f, 1346f), new(500f, 1483f), new(410f, 1656f), new(540f, 1681f), new(600f, 1700f),
         };
 
-        /// <summary>Index into the control points of each stop: races 1-5 (a last stop past the races shows "more soon").</summary>
-        static readonly int[] StopPoints = { 1, 2, 3, 5, 7 };
+        /// <summary>Index into the control points of each stop: races 1-6 (a last stop past the races shows "more soon").</summary>
+        static readonly int[] StopPoints = { 1, 2, 3, 4, 6, 8 };
 
         public static int StopCount => StopPoints.Length;
 
