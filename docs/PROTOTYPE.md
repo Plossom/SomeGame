@@ -17,7 +17,12 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 1. Pick **iPhone Portrait (1170x2532)** in the Game view and press Play: the game always starts on the
    map, whichever scene is open. To test the open scene directly (e.g. `Race.unity` on its own, which
    uses the scene's setup and gives no stars), untick `SomeGame > Play Starts On Map`.
-2. **Map:** a road winds up through the forest past the eight race stops (**Sunday Loop**, **Valley Sprint**, **Meadow Run**,
+2. **Tutorial:** on the very first launch (and after **RESET GAME**) the game starts with a practice
+   drive on a quiet Sunday Loop with one ramp. A card at the top shows one step at a time and moves on
+   when you have done it: steer, hop, drift, charge (spark colours), boost, jump. **SKIP** ends it;
+   "You're ready!" leads to the map. It can be played any time via **TUTORIAL** in the map's menu.
+   (Level: `Assets/Resources/Tutorial.asset`, track `TutorialOval`; hints in `TutorialGuide.cs`.)
+3. **Map:** a road winds up through the forest past the eight race stops (**Sunday Loop**, **Valley Sprint**, **Meadow Run**,
    **River Jump**, **Hopscotch**, **Chaos Canyon**, **Lake Gauntlet**, **Lagoon Leap**) and disappears
    into the forest on the horizon. Race 1 is selected when the game starts; your car waits on the road
    before the selected race, with the road behind it in orange. The top shows the race name, its star

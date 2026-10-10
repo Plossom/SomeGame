@@ -321,10 +321,54 @@ namespace SomeGame.EditorTools
             cso.ApplyModifiedPropertiesWithoutUndo();
 
             BuildResults(canvas, race);
+            BuildTutorial(safe, race, hud.gameObject);
             BuildMenu(canvas, menuButton, race, joystick);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+        }
+
+        // The practice-drive hint card (top) and the "you're ready" card (centre).
+        static void BuildTutorial(RectTransform safe, RaceManager race, GameObject hud)
+        {
+            var root = Stretch("Tutorial", safe);
+            var card = Rt("Card", root);
+            card.anchorMin = new Vector2(0f, 1f); card.anchorMax = new Vector2(1f, 1f); card.pivot = new Vector2(0.5f, 1f);
+            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 330f);
+            var shadow = Stretch("Shadow", card); shadow.offsetMin = shadow.offsetMax = new Vector2(0f, -14f);
+            Img(shadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
+            Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true);
+            var step = Txt(At("Step", card, new Vector2(0f, 1f), new Vector2(40f, -24f), new Vector2(600f, 44f)), "PRACTICE · 1/6", 34, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            step.rectTransform.pivot = new Vector2(0f, 1f); step.characterSpacing = 6f;
+            var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(38f, -66f), new Vector2(820f, 100f)), "STEER", 84, Theme.Ink, _black, TextAlignmentOptions.Left);
+            title.rectTransform.pivot = new Vector2(0f, 1f);
+            var body = Txt(At("Body", card, new Vector2(0f, 1f), new Vector2(40f, -170f), new Vector2(820f, 140f)), "Hint", 38, Theme.InkSoft, _semi, TextAlignmentOptions.TopLeft);
+            body.rectTransform.pivot = new Vector2(0f, 1f); body.textWrappingMode = TextWrappingModes.Normal;
+            var skipRt = At("Skip", card, new Vector2(1f, 1f), new Vector2(-24f, -18f), new Vector2(150f, 64f));
+            skipRt.pivot = new Vector2(1f, 1f);
+            var skipBg = Img(skipRt, "Pill", Theme.Ink, sliced: true, raycast: true);
+            Txt(Stretch("Label", skipRt), "SKIP", 34, Theme.Cream, _condItalic);
+            var skip = skipRt.gameObject.AddComponent<Button>(); skip.targetGraphic = skipBg; skip.transition = Selectable.Transition.None;
+            skipRt.gameObject.AddComponent<ButtonFeedback>();
+
+            var done = Stretch("Done", root);
+            Img(done, null, Theme.WithAlpha(Theme.Ink, 0.55f), raycast: true);
+            var panel = At("Panel", done, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(900f, 760f));
+            var pShadow = Stretch("Shadow", panel); pShadow.offsetMin = pShadow.offsetMax = new Vector2(0f, -20f);
+            Img(pShadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
+            Img(Stretch("Face", panel), "Round", Theme.Cream, sliced: true);
+            Txt(At("Title", panel, new Vector2(0.5f, 1f), new Vector2(0f, -70f), new Vector2(820f, 170f)), "YOU'RE READY!", 120, Theme.Orange, _black).fontSharedMaterial = _blackShadow;
+            var text = Txt(At("Body", panel, new Vector2(0.5f, 1f), new Vector2(0f, -270f), new Vector2(760f, 200f)),
+                "Win races and beat the star times to collect stars and trophies.", 44, Theme.Ink, _semi);
+            text.textWrappingMode = TextWrappingModes.Normal;
+            var go = BigRoundButton(panel, "MapButton", new Vector2(0.5f, 0f), new Vector2(0f, 40f), 250f, "MAP", out _, out _, out _, out _);
+
+            var guide = root.gameObject.AddComponent<TutorialGuide>();
+            var so = new SerializedObject(guide);
+            Set(so, "race", race); Set(so, "card", card.gameObject); Set(so, "stepLabel", step); Set(so, "titleLabel", title); Set(so, "bodyLabel", body);
+            Set(so, "skipButton", skip); Set(so, "doneCard", done.gameObject); Set(so, "doneButton", go);
+            SetArray(so, "hideInTutorial", new[] { hud });
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static TMP_Text HudColumn(RectTransform hud, string name, float from, float to, string caption, string value, float size, TMP_FontAsset font)
@@ -463,6 +507,7 @@ namespace SomeGame.EditorTools
             var slider = BuildSlider(sound);
 
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
+            var tutorialButton = MenuButton(card, "TutorialButton", "TUTORIAL", Color.white, Theme.Ink, Theme.Ink, 130f, out _, 46);
             var resetButton = MenuButton(card, "ResetButton", "RESET GAME", Color.white, Theme.Rust, Theme.Rust, 130f, out var resetLabel, 46);
 
             var menu = host.gameObject.AddComponent<GameMenu>();
@@ -472,7 +517,7 @@ namespace SomeGame.EditorTools
             Set(so, "closeButton", close); Set(so, "title", title);
             Set(so, "resumeButton", resume); Set(so, "restartButton", restart); Set(so, "mainMenuButton", mainMenu);
             Set(so, "volumeSlider", slider); Set(so, "joystickButton", joystickButton); Set(so, "joystickLabel", joystickLabel);
-            Set(so, "resetButton", resetButton); Set(so, "resetLabel", resetLabel);
+            Set(so, "resetButton", resetButton); Set(so, "resetLabel", resetLabel); Set(so, "tutorialButton", tutorialButton);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             so.ApplyModifiedPropertiesWithoutUndo();
             panel.gameObject.SetActive(false);

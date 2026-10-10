@@ -37,6 +37,7 @@ namespace SomeGame.UI
 
         [Header("Map only")]
         [Tooltip("Resets all progress (asks for a second tap first).")]
+        [SerializeField] UnityEngine.UI.Button tutorialButton;
         [SerializeField] UnityEngine.UI.Button resetButton;
         [SerializeField] TMP_Text resetLabel;
         [SerializeField] LevelCatalog catalog;
@@ -57,6 +58,11 @@ namespace SomeGame.UI
             restartButton.onClick.AddListener(() => { Unpause(); race.Restart(); });
             mainMenuButton.onClick.AddListener(() => { Unpause(); GameSession.ReturnToMap(); });
             joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
+            if (tutorialButton != null)
+            {
+                tutorialButton.gameObject.SetActive(!inRace);
+                tutorialButton.onClick.AddListener(GameSession.StartTutorial);
+            }
             if (resetButton != null)
             {
                 resetButton.gameObject.SetActive(!inRace);

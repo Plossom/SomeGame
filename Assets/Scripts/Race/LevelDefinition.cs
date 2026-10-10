@@ -14,6 +14,8 @@ namespace SomeGame.Race
         [Tooltip("Shown above the race name on the map, e.g. ALPINE CUP · RACE 1.")]
         public string chapter = "CHAPTER 01";
         public TrackLayout track;
+        [Tooltip("The practice drive: no rivals, no finish, the tutorial hints guide the player.")]
+        public bool isTutorial;
         [Tooltip("Picture of the whole track from above, shown while the race loads (SomeGame > Generate Track Previews).")]
         public Sprite preview;
         [Min(1)] public int laps = 3;

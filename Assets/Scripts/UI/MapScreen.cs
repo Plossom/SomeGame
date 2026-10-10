@@ -52,6 +52,12 @@ namespace SomeGame.UI
 
         void Start()
         {
+            // First launch (or after a reset): straight into the practice drive.
+            if (GameSession.TutorialPending)
+            {
+                GameSession.StartTutorial();
+                return;
+            }
             startButton.onClick.AddListener(StartSelected);
             _selected = InitialSelection();
             Build();
