@@ -13,10 +13,11 @@ namespace SomeGame.UI
         public static readonly Vector2 Size = new(1170f, 2532f);
 
         // The road winds up from the bottom of the screen, past the race stops, into the forest.
+        // (The landscape picture is stretched upward by MapArtGenerator.Stretch; these points include it.)
         static readonly Vector2[] Points =
         {
-            new(40f, -160f), new(190f, 300f), new(330f, 720f), new(640f, 880f), new(890f, 960f),
-            new(800f, 1170f), new(500f, 1290f), new(410f, 1440f), new(540f, 1462f), new(600f, 1478f),
+            new(40f, -184f), new(190f, 345f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
+            new(800f, 1346f), new(500f, 1483f), new(410f, 1656f), new(540f, 1681f), new(600f, 1700f),
         };
 
         /// <summary>Index into the control points of each stop: races 1-5 (a last stop past the races shows "more soon").</summary>
@@ -42,7 +43,7 @@ namespace SomeGame.UI
         public static Vector2 StopPosition(int index) => Points[StopPoints[index]];
 
         /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
-        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(800f, 1478f, y));
+        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(920f, 1700f, y));
 
         public static Vector2 PointAt(float distance, out Vector2 tangent)
         {

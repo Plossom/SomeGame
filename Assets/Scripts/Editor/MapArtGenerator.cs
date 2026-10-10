@@ -17,6 +17,17 @@ namespace SomeGame.EditorTools
     {
         const float Scale = 2f / 3f;
 
+        /// <summary>
+        /// The landscape is painted in an unstretched space and stretched upward by this much when written
+        /// out, so the land reaches higher up the screen (the horizon sits just below the header).
+        /// <see cref="MapLayout"/>'s road is in the stretched (canvas) space.
+        /// </summary>
+        public const float Stretch = 1.15f;
+
+        // The road in painting space.
+        static Vector2 Unstretch(Vector2 canvas) => new(canvas.x, canvas.y / Stretch);
+        static float RoadWidth(float paintY) => MapLayout.WidthAt(paintY * Stretch);
+
         static int _w, _h;
         static Color[] _px;
 
@@ -31,7 +42,7 @@ namespace SomeGame.EditorTools
 
             for (int py = 0; py < _h; py++)
                 for (int px = 0; px < _w; px++)
-                    _px[py * _w + px] = Landscape((px + 0.5f) / Scale, (py + 0.5f) / Scale);
+                    _px[py * _w + px] = Landscape((px + 0.5f) / Scale, (py + 0.5f) / Scale / Stretch);
 
             Road();
             Objects();
@@ -67,7 +78,8 @@ namespace SomeGame.EditorTools
             // Sky: warm gradient and the sun.
             float t = Mathf.InverseLerp(1500f, 2532f, y);
             Color c = Color.Lerp(Hex("F8EBCF"), Hex("F3CF9C"), t * t);
-            float sun = Circle(x, y, 870f, 2010f, 105f);
+            // A small sun low on the right, half behind the distant forest (clear of the header text).
+            float sun = Circle(x, y, 1045f, 1585f, 46f);
             c = Over(c, Hex("FFE2AE"), Gauss(Mathf.Max(0f, sun), 90f) * 0.6f);
             c = Over(c, Hex("FFB347"), Cov(sun));
             c = Clouds(c, x, y);
@@ -116,7 +128,7 @@ namespace SomeGame.EditorTools
             float Cloud(float cx, float cy, float s) =>
                 Min(Circle(x, y, cx, cy, 40f * s), Circle(x, y, cx + 52f * s, cy + 22f * s, 54f * s),
                     Circle(x, y, cx + 112f * s, cy + 2f * s, 40f * s), RoundRect(x, y, cx + 56f * s, cy - 14f * s, 106f * s, 28f * s, 28f * s));
-            float d = Min(Cloud(150f, 2160f, 1f), Cloud(560f, 2330f, 0.8f), Cloud(920f, 1880f, 0.75f));
+            float d = Min(Cloud(905f, 1945f, 0.42f), Cloud(60f, 2110f, 0.36f));
             return Over(c, Hex("FFF7E8"), Cov(d) * 0.95f);
         }
 
@@ -126,7 +138,8 @@ namespace SomeGame.EditorTools
 
         static void Road()
         {
-            var samples = MapLayout.Samples;
+            var samples = new List<Vector2>();
+            foreach (var p in MapLayout.Samples) samples.Add(Unstretch(p));
             // Densify, then stamp: dark edge, asphalt, dashed centre line.
             var points = new List<(Vector2 p, float dist)>();
             float acc = 0f;
@@ -138,11 +151,11 @@ namespace SomeGame.EditorTools
                 for (int k = 0; k < n; k++) points.Add((Vector2.Lerp(a, b, k / (float)n), acc + len * k / n));
                 acc += len;
             }
-            foreach (var (p, _) in points) Disc(p, MapLayout.WidthAt(p.y) * 0.5f + 5f, Hex("4A4D4B"));
-            foreach (var (p, _) in points) Disc(p, MapLayout.WidthAt(p.y) * 0.5f, Hex("606462"));
+            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f + 5f, Hex("4A4D4B"));
+            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f, Hex("606462"));
             foreach (var (p, dist) in points)
             {
-                float w = MapLayout.WidthAt(p.y);
+                float w = RoadWidth(p.y);
                 float period = Mathf.Max(18f, w * 0.75f);
                 if (Mathf.Repeat(dist, period) < period * 0.5f) Disc(p, Mathf.Max(1.6f, w * 0.045f), new Color(1f, 0.98f, 0.92f, 0.85f));
             }
@@ -157,7 +170,7 @@ namespace SomeGame.EditorTools
         {
             float d = float.MaxValue;
             var s = MapLayout.Samples;
-            for (int i = 1; i < s.Count; i++) d = Mathf.Min(d, SegDist(p, s[i - 1], s[i]));
+            for (int i = 1; i < s.Count; i++) d = Mathf.Min(d, SegDist(p, Unstretch(s[i - 1]), Unstretch(s[i])));
             return d;
         }
 
@@ -169,7 +182,7 @@ namespace SomeGame.EditorTools
             {
                 var q = p + new Vector2(0f, h * k / 4f);
                 float r = k == 0 ? hw * 0.6f : hw;
-                if (RoadDistance(q) < MapLayout.WidthAt(q.y) * 0.5f + 8f + r) return true;
+                if (RoadDistance(q) < RoadWidth(q.y) * 0.5f + 8f + r) return true;
                 if (Sdf.Ellipse(q.x, q.y, LakeCenter.x, LakeCenter.y, LakeRx + 14f, LakeRy + 14f) < r) return true;
             }
             return false;
@@ -189,7 +202,7 @@ namespace SomeGame.EditorTools
             }
 
             // Stops on the road stay clear.
-            for (int i = 0; i < MapLayout.StopCount; i++) occupied.Add((MapLayout.StopPosition(i), 120f));
+            for (int i = 0; i < MapLayout.StopCount; i++) occupied.Add((Unstretch(MapLayout.StopPosition(i)), 120f));
 
             // Village by the lake and a farm by the first race.
             var houses = new (Vector2 p, bool church)[]
@@ -243,7 +256,7 @@ namespace SomeGame.EditorTools
             for (float x = -20f; x < 1200f; x += 24f + (float)rng.NextDouble() * 10f)
                 trees.Add(new Vector2(x, Hill(0, x) - 26f - (float)rng.NextDouble() * 14f));
             // A few extra right where the road ends.
-            Vector2 end = MapLayout.Samples[^1];
+            Vector2 end = Unstretch(MapLayout.Samples[^1]);
             for (int i = -2; i <= 2; i++) trees.Add(new Vector2(end.x + i * 15f, end.y - 4f - Mathf.Abs(i) * 3f));
             trees.Sort((a, b) => b.y.CompareTo(a.y));
             foreach (var t in trees) Pine(t, 0.42f + (float)rng.NextDouble() * 0.08f);
@@ -333,11 +346,11 @@ namespace SomeGame.EditorTools
         static void Shape(Rect box, Func<float, float, float> sdf, Color color)
         {
             int x0 = Mathf.Max(0, Mathf.FloorToInt(box.xMin * Scale)), x1 = Mathf.Min(_w - 1, Mathf.CeilToInt(box.xMax * Scale));
-            int y0 = Mathf.Max(0, Mathf.FloorToInt(box.yMin * Scale)), y1 = Mathf.Min(_h - 1, Mathf.CeilToInt(box.yMax * Scale));
+            int y0 = Mathf.Max(0, Mathf.FloorToInt(box.yMin * Scale * Stretch)), y1 = Mathf.Min(_h - 1, Mathf.CeilToInt(box.yMax * Scale * Stretch));
             for (int py = y0; py <= y1; py++)
                 for (int px = x0; px <= x1; px++)
                 {
-                    float cov = Cov(sdf((px + 0.5f) / Scale, (py + 0.5f) / Scale));
+                    float cov = Cov(sdf((px + 0.5f) / Scale, (py + 0.5f) / Scale / Stretch));
                     if (cov <= 0f) continue;
                     int i = py * _w + px;
                     _px[i] = Over(_px[i], color, cov);
