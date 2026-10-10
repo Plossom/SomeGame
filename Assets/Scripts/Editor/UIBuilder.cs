@@ -148,8 +148,8 @@ namespace SomeGame.EditorTools
             chapter.characterSpacing = 4f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 96;
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(72f, -215f), new Vector2(1030f, 360f));
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, 0f), new Vector2(1030f, 170f)), "MEADOW RUN", 150, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
-            title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 150;
+            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, 0f), new Vector2(760f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
+            title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 136; // keeps clear of the trophy counter
             // Your records for the race, beside the star times: best time over best lap.
             var records = At("Records", header, new Vector2(0f, 1f), new Vector2(624f, -192f), new Vector2(406f, 130f));
             Img(records, "Round", Theme.Ink, sliced: true);
