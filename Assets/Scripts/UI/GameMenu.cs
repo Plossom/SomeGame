@@ -35,6 +35,14 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Button joystickButton;
         [SerializeField] TMP_Text joystickLabel;
 
+        [Header("Map only")]
+        [Tooltip("Resets all progress (asks for a second tap first).")]
+        [SerializeField] UnityEngine.UI.Button resetButton;
+        [SerializeField] TMP_Text resetLabel;
+        [SerializeField] LevelCatalog catalog;
+
+        bool _confirmReset;
+
         bool _joystickWasInteractable;
 
         public bool IsOpen => panel.activeSelf;
@@ -49,6 +57,11 @@ namespace SomeGame.UI
             restartButton.onClick.AddListener(() => { Unpause(); race.Restart(); });
             mainMenuButton.onClick.AddListener(() => { Unpause(); GameSession.ReturnToMap(); });
             joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
+            if (resetButton != null)
+            {
+                resetButton.gameObject.SetActive(!inRace);
+                resetButton.onClick.AddListener(OnReset);
+            }
             volumeSlider.onValueChanged.AddListener(v => SoundSettings.Volume = v);
 
             resumeButton.gameObject.SetActive(inRace);
@@ -72,9 +85,24 @@ namespace SomeGame.UI
 
         void OnDestroy() => Unpause();
 
+        // First tap asks, second tap resets and reloads the map.
+        void OnReset()
+        {
+            if (!_confirmReset)
+            {
+                _confirmReset = true;
+                resetLabel.text = "TAP AGAIN TO RESET";
+                return;
+            }
+            GameReset.ResetAll(catalog);
+            GameSession.ReturnToMap();
+        }
+
         public void Open()
         {
             if (IsOpen) return;
+            _confirmReset = false;
+            if (resetLabel != null) resetLabel.text = "RESET GAME";
             RefreshSettings();
             panel.SetActive(true);
             if (race == null) return;

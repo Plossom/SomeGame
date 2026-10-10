@@ -7,6 +7,8 @@ namespace SomeGame.Race
     {
         static string Key(string trackId) => $"BestLap.{trackId}";
 
+        public static void Clear(string trackId) => PlayerPrefs.DeleteKey(Key(trackId));
+
         /// <summary>Best lap in seconds, or null if none has been set.</summary>
         public static float? Get(string trackId)
         {

@@ -463,6 +463,7 @@ namespace SomeGame.EditorTools
             var slider = BuildSlider(sound);
 
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
+            var resetButton = MenuButton(card, "ResetButton", "RESET GAME", Color.white, Theme.Rust, Theme.Rust, 130f, out var resetLabel, 46);
 
             var menu = host.gameObject.AddComponent<GameMenu>();
             var so = new SerializedObject(menu);
@@ -471,6 +472,8 @@ namespace SomeGame.EditorTools
             Set(so, "closeButton", close); Set(so, "title", title);
             Set(so, "resumeButton", resume); Set(so, "restartButton", restart); Set(so, "mainMenuButton", mainMenu);
             Set(so, "volumeSlider", slider); Set(so, "joystickButton", joystickButton); Set(so, "joystickLabel", joystickLabel);
+            Set(so, "resetButton", resetButton); Set(so, "resetLabel", resetLabel);
+            Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             so.ApplyModifiedPropertiesWithoutUndo();
             panel.gameObject.SetActive(false);
         }

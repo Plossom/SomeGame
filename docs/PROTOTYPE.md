@@ -93,7 +93,9 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
    **MAP** (back to the map) and **RETRY**.
 8. **Menu (☰, top left)** on the map and in races. In a race it **pauses** the game (timer, cars,
    countdown all freeze) with **RESUME**, **RESTART** and **MAP**. On both screens it has the
-   settings: **sound volume** slider (saved, applied to all game audio) and **joystick visible/invisible**.
+   settings: **sound volume** slider (saved, applied to all game audio) and **joystick visible/invisible**. On the map
+   the menu also has **RESET GAME** (tap twice): it clears all stars, wins, best times and best laps
+   and the tutorial flag (`Tutorial.Done`, for the coming tutorial); settings are kept.
 
 ## Where the tunable values live
 
