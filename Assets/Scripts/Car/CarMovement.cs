@@ -256,7 +256,8 @@ namespace SomeGame.Car
             // Entry: the car tilts quickly into the corner (slightly past the drift angle) while its
             // path stays almost straight; the curve fades in as the entry settles.
             float entry = 1f - Mathf.Clamp01(_driftCharge / stats.driftEntryTime);
-            float curve = Mathf.Lerp(stats.driftWideTurnRate, stats.driftTightTurnRate, _driftTightness) * (1f - entry);
+            // The curve eases in (slow start, then builds), so starting a drift barely bends the path.
+            float curve = Mathf.Lerp(stats.driftWideTurnRate, stats.driftTightTurnRate, _driftTightness) * Mathf.SmoothStep(0f, 1f, 1f - entry);
             travel += _driftDirection * curve * dt;
             float rad = (travel + 90f) * Mathf.Deg2Rad;
             _body.linearVelocity = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * speed;
@@ -264,7 +265,7 @@ namespace SomeGame.Car
             float angle = Mathf.Lerp(stats.driftAngleWide, stats.driftAngleTight, _driftTightness)
                         + stats.driftEntryKick * entry * entry;
             float bodyStep = Mathf.DeltaAngle(_body.rotation, travel + _driftDirection * angle);
-            float bodyRate = stats.driftEntryRotationSpeed * (entry > 0f ? 1f : 0.5f);
+            float bodyRate = stats.driftEntryRotationSpeed * (entry > 0f ? 1f : 0.6f);
             _body.angularVelocity = Mathf.Clamp(bodyStep, -bodyRate * dt, bodyRate * dt) / dt;
 
             ForwardSpeed = Vector2.Dot(_body.linearVelocity, transform.up);
