@@ -74,7 +74,7 @@ namespace SomeGame.UI
             positionLabel.text = TimeFormat.Ordinal(position).ToUpperInvariant();
             positionLabel.color = won ? Theme.Orange : Theme.Ink;
             subtitle.text = won ? "PLACE · WINNER" : "PLACE";
-            newBestTag.SetActive(_newBest);
+            newBestTag.SetActive(false); // the best-lap row says NEW BEST instead
 
             int earned = race.StarsEarned;
             for (int i = 0; i < stars.Length; i++)
@@ -86,7 +86,10 @@ namespace SomeGame.UI
             totalValue.text = TimeFormat.Race(race.RaceTime);
             float bestLap = float.MaxValue;
             foreach (var lap in race.Player.LapTimes) bestLap = Mathf.Min(bestLap, lap);
-            bestLapValue.text = bestLap < float.MaxValue ? TimeFormat.Race(bestLap) : "-";
+            bestLapValue.text = bestLap >= float.MaxValue ? "-"
+                : _newBest ? $"<size=60%>NEW BEST  </size>{TimeFormat.Race(bestLap)}"
+                : TimeFormat.Race(bestLap);
+            bestLapValue.color = _newBest ? Theme.Amber : Theme.White;
             if (bestTimeValue != null)
             {
                 var best = level != null ? ProgressStore.BestTimeOf(level) : null;
