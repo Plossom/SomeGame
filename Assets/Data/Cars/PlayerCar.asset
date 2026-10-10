@@ -36,7 +36,7 @@ MonoBehaviour:
   driftTightnessResponse: 5
   driftAngleWide: 22
   driftAngleTight: 45
-  driftEntryKick: 12
+  driftEntryKick: 10
   driftEntryTime: 0.3
   driftEntryRotationSpeed: 900
   driftSpeedFactor: 0.92
