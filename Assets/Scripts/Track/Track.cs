@@ -211,7 +211,7 @@ namespace SomeGame.Track
         /// True if an oil puddle is under or just ahead of a car standing on the centre line at this lap
         /// distance (the car is wide and drives off forward, so its whole footprint and the next metres count).
         /// </summary>
-        public bool OilNear(float distance, float ahead = 6f, float carHalfWidth = 1.4f)
+        public bool OilNear(float distance, float ahead = 2f, float carHalfWidth = 1.4f)
         {
             foreach (var spot in layout.oil)
             {

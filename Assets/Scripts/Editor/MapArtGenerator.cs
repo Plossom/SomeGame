@@ -247,17 +247,13 @@ namespace SomeGame.EditorTools
             foreach (var (_, draw) in items) draw();
         }
 
-        // A row of small pines along the near forest edge; it also hides the end of the road, so the road
-        // seems to run on into the forest.
+        // A row of small pines along the near forest edge.
         static void HorizonTrees()
         {
             var rng = new System.Random(5);
             var trees = new List<Vector2>();
             for (float x = -20f; x < 1200f; x += 24f + (float)rng.NextDouble() * 10f)
                 trees.Add(new Vector2(x, Hill(0, x) - 26f - (float)rng.NextDouble() * 14f));
-            // A few extra right where the road ends.
-            Vector2 end = Unstretch(MapLayout.Samples[^1]);
-            for (int i = -2; i <= 2; i++) trees.Add(new Vector2(end.x + i * 15f, end.y - 4f - Mathf.Abs(i) * 3f));
             trees.Sort((a, b) => b.y.CompareTo(a.y));
             foreach (var t in trees) Pine(t, 0.42f + (float)rng.NextDouble() * 0.08f);
         }
