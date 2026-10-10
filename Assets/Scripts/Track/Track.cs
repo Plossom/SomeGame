@@ -207,6 +207,21 @@ namespace SomeGame.Track
             return false;
         }
 
+        /// <summary>
+        /// True if an oil puddle is under or just ahead of a car standing on the centre line at this lap
+        /// distance (the car is wide and drives off forward, so its whole footprint and the next metres count).
+        /// </summary>
+        public bool OilNear(float distance, float ahead = 6f, float carHalfWidth = 1.4f)
+        {
+            foreach (var spot in layout.oil)
+            {
+                float along = Path.DeltaDistance(distance, spot.distance);
+                if (along < -2.5f - spot.radius || along > ahead + spot.radius) continue;
+                if (Mathf.Abs(spot.lateral) < carHalfWidth + spot.radius + 0.3f) return true;
+            }
+            return false;
+        }
+
         /// <summary>The jump whose ramp contains this lap distance and sideways offset, or null.</summary>
         public Jump? RampAt(float distance, float lateral)
         {
@@ -276,7 +291,7 @@ namespace SomeGame.Track
                 float to = Path.DeltaDistance(distance, jump.RampStart);
                 if (to > -25f && to < 40f) { d = jump.FarBank + 3f; break; }
             }
-            for (int i = 0; i < 40 && (IsWater(Path.PointAt(d)) || InGap(d)); i++) d += 2f;
+            for (int i = 0; i < 40 && (IsWater(Path.PointAt(d)) || InGap(d) || OilNear(d)); i++) d += 2f;
             Vector2 forward = Path.TangentAt(d);
             return new Pose(Path.PointAt(d), Quaternion.Euler(0f, 0f, Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg - 90f));
         }
@@ -290,7 +305,7 @@ namespace SomeGame.Track
             float d = distance - back;
             for (int i = 0; i < 40; i++)
             {
-                bool blocked = IsWater(Path.PointAt(d)) || IsOil(Path.PointAt(d));
+                bool blocked = IsWater(Path.PointAt(d)) || OilNear(d);
                 foreach (var jump in Jumps)
                     if (Path.DeltaDistance(jump.RampStart - runUp, d) >= 0f && Path.DeltaDistance(d, jump.FarBank) >= 0f) blocked = true;
                 if (!blocked) break;
