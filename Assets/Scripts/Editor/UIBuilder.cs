@@ -153,17 +153,18 @@ namespace SomeGame.EditorTools
 
             // Bottom: star times, START.
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 480f));
-            var timesRt = At("StarTimes", bottom, new Vector2(0f, 0f), new Vector2(0f, 190f), new Vector2(600f, 110f));
+            // Star times sit in the header, right under the race info.
+            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -362f), new Vector2(660f, 130f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(22f + i * 194f, 0f), new Vector2(190f, 100f));
+                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(24f + i * 212f, 0f), new Vector2(208f, 120f));
                 groups[i] = group;
                 group.pivot = new Vector2(0f, 0.5f);
                 for (int k = 0; k <= i; k++)
-                    Img(At($"S{k}", group, new Vector2(0f, 1f), new Vector2(6f + k * 30f, -12f), new Vector2(30f, 30f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 1f);
+                    Img(At($"S{k}", group, new Vector2(0f, 1f), new Vector2(4f + k * 44f, -8f), new Vector2(44f, 44f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 1f);
                 times[i] = Txt(At("Time", group, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(186f, 58f)), "1:00.00", 48, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
                 times[i].rectTransform.pivot = new Vector2(0f, 0f);
             }
