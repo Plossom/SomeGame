@@ -59,7 +59,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
      hit the ramp at an angle and you fly at that angle. Rivals never use them.
    - Rivals are spread out: Rival 1 (front of the grid) is the fastest, each one after it a bit slower;
      Rival 7 is clearly slow and easy to pass.
-   - **Sunday Loop** (race 1) is the easy warm-up: a wide oval (road 10 wide) with two long straights
+   - **Sunday Loop** (race 1) is the easy warm-up: a wide oval (road 8 wide) with two long straights
      and two big curves, no oil or ramps, slower rivals.
    - **Valley Sprint** (race 2) is the next step: a sweeping loop (road 8.5 wide), two oil puddles.
    - **Hopscotch** (race 5) is all about jumping: four streams in a row across the right straight
@@ -202,9 +202,9 @@ have at most 3 such apps installed at once.
 - **Best lap** is stored in PlayerPrefs under the track asset name (`BestLap.Circuit01`).
   Race progress is stored in PlayerPrefs (`Progress.v1`); there is no reset button yet
   (`ProgressStore.ResetAll()` clears it). Retry reloads the race with the same level.
-- **Star times** (3 laps; Meadow Run 80 / 62 / 57 s, River Jump 85 / 66 / 60 s, Lagoon Leap 140 /
-  110 / 100 s, Chaos Canyon 130 / 95 / 85 s) are rough estimates from 2-lap autopilot races and
-  need a proper calibration.
+- **Star times:** 2 stars = the time Rival 1 (the fastest rival) finishes in, so 2 stars usually means
+  you won; 1 star is about 20% slower, 3 stars about 10% faster (needs drifting). Measured with all
+  rivals racing; the rivals' speed per race is the level's `rivalSpeedScale`.
 - **Older star-time notes:** star times were calibrated from an autopilot run without drifting: 1 star = 10% slower,
   2 stars = 3% slower, 3 stars = 3% faster than the autopilot. The Grand Prix finales cannot be won
   by the autopilot, so they need drifting.

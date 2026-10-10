@@ -18,7 +18,7 @@ MonoBehaviour:
   preview: {fileID: 21300000, guid: 30d5d541bb1f547cfb3ed3a4ce3d5243, type: 3}
   laps: 3
   rivalCount: 7
-  rivalSpeedScale: 0.95
+  rivalSpeedScale: 0.8871774
   rivalCornerScale: 1
   starsRequired: 0
   starTimes:

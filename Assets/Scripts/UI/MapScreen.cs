@@ -156,7 +156,7 @@ namespace SomeGame.UI
             {
                 int won = 0;
                 for (int i = 0; i < catalog.Count; i++) if (ProgressStore.HasWon(catalog[i])) won++;
-                totalTrophies.text = $"{won}/{catalog.Count}";
+                totalTrophies.text = won.ToString();
             }
             for (int i = 0; i < _nodes.Count; i++)
             {
