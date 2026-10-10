@@ -67,11 +67,10 @@ namespace SomeGame.UI
             skipButton.onClick.AddListener(Finish);
             doneButton.onClick.AddListener(GameSession.ReturnToMap);
 
-            bool editor = Application.isEditor;
-            string second = editor ? "Hold <b>SPACE</b> (or the right mouse button)" : "Tap a <b>second finger</b> anywhere";
+            const string second = "Tap a <b>second finger</b> anywhere";
             _steps = new[]
             {
-                new Step { title = "STEER", body = editor ? "Click and drag (or use <b>WASD</b>): the car drives where you point." : "Touch the screen and drag: the car drives where you point. Lift your thumb to roll.",
+                new Step { title = "STEER", body = "Touch the screen and drag: the car drives where you point. Lift your thumb to roll.",
                     done = () => _steerTime > 2f },
                 new Step { title = "HOP", body = second + " while you steer: the car hops.", done = () => _hopped },
                 new Step { title = "DRIFT", body = "Steer a little into the curve, then hop again and <b>keep holding</b>: you drift round the corner.",

@@ -334,20 +334,20 @@ namespace SomeGame.EditorTools
             var root = Stretch("Tutorial", safe);
             var card = Rt("Card", root);
             card.anchorMin = new Vector2(0f, 1f); card.anchorMax = new Vector2(1f, 1f); card.pivot = new Vector2(0.5f, 1f);
-            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 330f);
+            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 400f);
             var shadow = Stretch("Shadow", card); shadow.offsetMin = shadow.offsetMax = new Vector2(0f, -14f);
             Img(shadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
             Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true);
-            var step = Txt(At("Step", card, new Vector2(0f, 1f), new Vector2(40f, -24f), new Vector2(600f, 44f)), "PRACTICE · 1/6", 34, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            var step = Txt(At("Step", card, new Vector2(0f, 1f), new Vector2(40f, -24f), new Vector2(600f, 50f)), "PRACTICE · 1/6", 40, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
             step.rectTransform.pivot = new Vector2(0f, 1f); step.characterSpacing = 6f;
-            var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(38f, -66f), new Vector2(820f, 100f)), "STEER", 84, Theme.Ink, _black, TextAlignmentOptions.Left);
+            var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(38f, -72f), new Vector2(820f, 116f)), "STEER", 100, Theme.Ink, _black, TextAlignmentOptions.Left);
             title.rectTransform.pivot = new Vector2(0f, 1f);
-            var body = Txt(At("Body", card, new Vector2(0f, 1f), new Vector2(40f, -170f), new Vector2(820f, 140f)), "Hint", 38, Theme.InkSoft, _semi, TextAlignmentOptions.TopLeft);
+            var body = Txt(At("Body", card, new Vector2(0f, 1f), new Vector2(40f, -190f), new Vector2(820f, 200f)), "Hint", 48, Theme.InkSoft, _semi, TextAlignmentOptions.TopLeft);
             body.rectTransform.pivot = new Vector2(0f, 1f); body.textWrappingMode = TextWrappingModes.Normal;
-            var skipRt = At("Skip", card, new Vector2(1f, 1f), new Vector2(-24f, -18f), new Vector2(150f, 64f));
+            var skipRt = At("Skip", card, new Vector2(1f, 1f), new Vector2(-24f, -18f), new Vector2(170f, 72f));
             skipRt.pivot = new Vector2(1f, 1f);
             var skipBg = Img(skipRt, "Pill", Theme.Ink, sliced: true, raycast: true);
-            Txt(Stretch("Label", skipRt), "SKIP", 34, Theme.Cream, _condItalic);
+            Txt(Stretch("Label", skipRt), "SKIP", 40, Theme.Cream, _condItalic);
             var skip = skipRt.gameObject.AddComponent<Button>(); skip.targetGraphic = skipBg; skip.transition = Selectable.Transition.None;
             skipRt.gameObject.AddComponent<ButtonFeedback>();
 
@@ -361,7 +361,7 @@ namespace SomeGame.EditorTools
             var text = Txt(At("Body", panel, new Vector2(0.5f, 1f), new Vector2(0f, -270f), new Vector2(760f, 200f)),
                 "Win races and beat the star times to collect stars and trophies.", 44, Theme.Ink, _semi);
             text.textWrappingMode = TextWrappingModes.Normal;
-            var go = BigRoundButton(panel, "MapButton", new Vector2(0.5f, 0f), new Vector2(0f, 40f), 250f, "MAP", out _, out _, out _, out _);
+            var go = BigRoundButton(panel, "MapButton", new Vector2(0.5f, 0f), new Vector2(0f, 50f), 190f, "MAP", out _, out _, out _, out _);
 
             var guide = root.gameObject.AddComponent<TutorialGuide>();
             var so = new SerializedObject(guide);
