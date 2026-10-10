@@ -143,24 +143,30 @@ namespace SomeGame.EditorTools
             chapter.characterSpacing = 8f;
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, -66f), new Vector2(1030f, 170f)), "MEADOW RUN", 150, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 150;
-            var chips = At("Chips", header, new Vector2(0f, 1f), new Vector2(0f, -258f), new Vector2(1030f, 82f));
-            var chipRow = chips.gameObject.AddComponent<HorizontalLayoutGroup>();
-            chipRow.spacing = 22f; chipRow.childControlWidth = true; chipRow.childControlHeight = true;
-            chipRow.childForceExpandWidth = false; chipRow.childForceExpandHeight = true; chipRow.childAlignment = TextAnchor.MiddleLeft;
-            var laps = Chip(chips, "2 laps");
-            var rivals = Chip(chips, "3 rivals");
-            var best = Chip(chips, "Best —");
+            // Your records for the race, beside the star times: best time over best lap.
+            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(624f, -262f), new Vector2(406f, 130f));
+            Img(records, "Round", Theme.Ink, sliced: true);
+            TMP_Text Record(string name, float y, string caption)
+            {
+                var row = At(name, records, new Vector2(0f, 1f), new Vector2(24f, y), new Vector2(360f, 56f));
+                Txt(At("Caption", row, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(150f, 56f)), caption, 32, Theme.Stone, _semi, TextAlignmentOptions.Left).rectTransform.pivot = new Vector2(0f, 0.5f);
+                var value = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(220f, 56f)), "—", 44, Theme.Cream, _cond, TextAlignmentOptions.Right);
+                value.rectTransform.pivot = new Vector2(1f, 0.5f);
+                return value;
+            }
+            var best = Record("BestTime", -10f, "Best");
+            var bestLap = Record("BestLap", -64f, "Best lap");
 
             // Bottom: star times, START.
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 480f));
             // Star times sit in the header, right under the race info.
-            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -362f), new Vector2(660f, 130f));
+            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -262f), new Vector2(604f, 130f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(24f + i * 212f, 0f), new Vector2(208f, 120f));
+                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(20f + i * 194f, 0f), new Vector2(190f, 120f));
                 groups[i] = group;
                 group.pivot = new Vector2(0f, 0.5f);
                 for (int k = 0; k <= i; k++)
@@ -178,7 +184,7 @@ namespace SomeGame.EditorTools
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "totalStars", total);
             Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
-            Set(so, "lapsChip", laps); Set(so, "rivalsChip", rivals); Set(so, "bestChip", best);
+            Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
             Set(so, "startButton", start); Set(so, "startFace", startFace); Set(so, "startShadow", startShadow);
             Set(so, "startLabel", startLabel); Set(so, "startRing", startRing.gameObject);

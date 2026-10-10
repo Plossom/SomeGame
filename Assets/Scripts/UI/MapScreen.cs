@@ -24,9 +24,10 @@ namespace SomeGame.UI
         [Header("Selected race")]
         [SerializeField] TMP_Text chapterLabel;
         [SerializeField] TMP_Text titleLabel;
-        [SerializeField] TMP_Text lapsChip;
-        [SerializeField] TMP_Text rivalsChip;
+        [Tooltip("Your best total time for the selected race.")]
         [SerializeField] TMP_Text bestChip;
+        [Tooltip("Your best lap on the selected race's track.")]
+        [SerializeField] TMP_Text bestLapLabel;
         [Tooltip("Times for 1, 2 and 3 stars.")]
         [SerializeField] TMP_Text[] starTimes;
         [Tooltip("The three star-time groups (star icons + time): grey until your best time beats them.")]
@@ -172,10 +173,10 @@ namespace SomeGame.UI
             var level = catalog[_selected];
             chapterLabel.text = level.chapter;
             titleLabel.text = level.displayName.ToUpperInvariant();
-            lapsChip.text = $"{level.laps} laps";
-            rivalsChip.text = $"{level.rivalCount} rivals";
             var best = ProgressStore.BestTimeOf(level);
-            bestChip.text = best.HasValue ? $"Best {TimeFormat.Race(best.Value)}" : "Best —";
+            bestChip.text = best.HasValue ? TimeFormat.Race(best.Value) : "—";
+            var bestLap = level.track != null ? BestLapStore.Get(level.track.name) : null;
+            bestLapLabel.text = bestLap.HasValue ? TimeFormat.Race(bestLap.Value) : "—";
             for (int i = 0; i < starTimes.Length; i++)
             {
                 starTimes[i].text = i < level.starTimes.Length ? TimeFormat.Race(level.starTimes[i]) : "-";
