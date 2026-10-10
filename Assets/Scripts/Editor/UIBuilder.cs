@@ -139,10 +139,10 @@ namespace SomeGame.EditorTools
             var total = Txt(At("Count", starPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
 
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(72f, -250f), new Vector2(1030f, 420f));
-            var chapter = Txt(At("Chapter", header, new Vector2(0f, 1f), Vector2.zero, new Vector2(1030f, 60f)), "ALPINE CUP · RACE 1", 44, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            var chapter = Txt(At("Chapter", header, new Vector2(0f, 1f), Vector2.zero, new Vector2(1030f, 70f)), "ALPINE CUP · RACE 1", 56, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
             chapter.characterSpacing = 8f;
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, -52f), new Vector2(1030f, 190f)), "MEADOW RUN", 176, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
-            title.enableAutoSizing = true; title.fontSizeMin = 100; title.fontSizeMax = 176;
+            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, -66f), new Vector2(1030f, 170f)), "MEADOW RUN", 150, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
+            title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 150;
             var chips = At("Chips", header, new Vector2(0f, 1f), new Vector2(0f, -258f), new Vector2(1030f, 82f));
             var chipRow = chips.gameObject.AddComponent<HorizontalLayoutGroup>();
             chipRow.spacing = 22f; chipRow.childControlWidth = true; chipRow.childControlHeight = true;
