@@ -124,6 +124,9 @@ MonoBehaviour:
   rivers: []
   lakes: []
   oil:
+  - distance: 30
+    lateral: 0.8
+    radius: 0.9775
   - distance: 105.63663
     lateral: -1
     radius: 0.9775

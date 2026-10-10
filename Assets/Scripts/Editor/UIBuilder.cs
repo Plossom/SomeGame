@@ -362,12 +362,13 @@ namespace SomeGame.EditorTools
                 Pop(s, 0.25f + i * 0.18f);
             }
 
-            var card = At("Card", safe, new Vector2(0.5f, 1f), new Vector2(0f, -1330f), new Vector2(1030f, 480f));
+            var card = At("Card", safe, new Vector2(0.5f, 1f), new Vector2(0f, -1300f), new Vector2(1030f, 580f));
             Img(card, "Round", Theme.Ink, sliced: true);
-            var totalValue = ResultRow(card, "Total", -26f, "Total time", 96, Color.white, out _);
-            Img(At("Divider", card, new Vector2(0.5f, 1f), new Vector2(0f, -180f), new Vector2(950f, 4f)), null, Theme.WithAlpha(Theme.Cream, 0.15f));
-            var bestValue = ResultRow(card, "BestLap", -200f, "Best lap", 66, Theme.Amber, out _);
-            var nextValue = ResultRow(card, "NextStar", -330f, "2nd star at", 66, Color.white, out var nextLabel);
+            var totalValue = ResultRow(card, "Total", -22f, "Total time", 96, Color.white, out _);
+            Img(At("Divider", card, new Vector2(0.5f, 1f), new Vector2(0f, -172f), new Vector2(950f, 4f)), null, Theme.WithAlpha(Theme.Cream, 0.15f));
+            var bestTime = ResultRow(card, "BestTime", -190f, "Best time", 66, Color.white, out _);
+            var bestValue = ResultRow(card, "BestLap", -310f, "Best lap", 66, Theme.Amber, out _);
+            var nextValue = ResultRow(card, "NextStar", -430f, "2nd star at", 66, Color.white, out var nextLabel);
             Pop(card, 0.15f);
 
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 460f));
@@ -379,7 +380,7 @@ namespace SomeGame.EditorTools
             var so = new SerializedObject(finish);
             Set(so, "race", race); Set(so, "panel", panel.gameObject); Set(so, "raceLabel", raceLabel);
             Set(so, "positionLabel", position); Set(so, "subtitle", subtitle); Set(so, "newBestTag", tag.gameObject);
-            SetArray(so, "stars", stars); Set(so, "totalValue", totalValue); Set(so, "bestLapValue", bestValue);
+            SetArray(so, "stars", stars); Set(so, "totalValue", totalValue); Set(so, "bestLapValue", bestValue); Set(so, "bestTimeValue", bestTime);
             Set(so, "nextStarLabel", nextLabel); Set(so, "nextStarValue", nextValue);
             Set(so, "continueButton", next); Set(so, "retryButton", retry);
             so.ApplyModifiedPropertiesWithoutUndo();

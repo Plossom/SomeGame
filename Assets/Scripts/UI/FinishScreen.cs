@@ -20,6 +20,8 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image[] stars;
         [SerializeField] TMP_Text totalValue;
         [SerializeField] TMP_Text bestLapValue;
+        [Tooltip("Your all-time best total time for this race (marked NEW when this run set it).")]
+        [SerializeField] TMP_Text bestTimeValue;
         [SerializeField] TMP_Text nextStarLabel;
         [SerializeField] TMP_Text nextStarValue;
         [Tooltip("Back to the map. Hidden when the race scene was opened directly.")]
@@ -85,6 +87,15 @@ namespace SomeGame.UI
             float bestLap = float.MaxValue;
             foreach (var lap in race.Player.LapTimes) bestLap = Mathf.Min(bestLap, lap);
             bestLapValue.text = bestLap < float.MaxValue ? TimeFormat.Race(bestLap) : "-";
+            if (bestTimeValue != null)
+            {
+                var best = level != null ? ProgressStore.BestTimeOf(level) : null;
+                bool isNew = race.IsNewBestTime;
+                bestTimeValue.text = !best.HasValue ? "-"
+                    : isNew ? $"<size=60%>NEW BEST  </size>{TimeFormat.Race(best.Value)}"
+                    : TimeFormat.Race(best.Value);
+                bestTimeValue.color = isNew ? Theme.Amber : Theme.White;
+            }
 
             if (level == null)
             {

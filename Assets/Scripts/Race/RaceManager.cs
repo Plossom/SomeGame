@@ -57,8 +57,11 @@ namespace SomeGame.Race
         /// <summary>The race from the map, or null when the scene was opened directly.</summary>
         public LevelDefinition Level { get; private set; }
 
-        /// <summary>Stars earned in this race (0 unless won). Valid once PlayerFinished fired.</summary>
+        /// <summary>Stars earned in this race (by time). Valid once PlayerFinished fired.</summary>
         public int StarsEarned { get; private set; }
+
+        /// <summary>True if this run beat the best total time for this race. Valid once PlayerFinished fired.</summary>
+        public bool IsNewBestTime { get; private set; }
 
         /// <summary>1-based position of a car in the current standings.</summary>
         public int PositionOf(RaceProgress car) => _standings.IndexOf(car) + 1;
@@ -168,6 +171,8 @@ namespace SomeGame.Race
             player.ControlsEnabled = false;
             if (joystick != null) joystick.Interactable = false;
             FinalPosition = _finishOrder.IndexOf(Player) + 1;
+            float? previous = Level != null ? ProgressStore.BestTimeOf(Level) : null;
+            IsNewBestTime = Level != null && (!previous.HasValue || RaceTime < previous.Value);
             StarsEarned = Level != null
                 ? ProgressStore.Record(Level, FinalPosition == 1, RaceTime)
                 : 0;
