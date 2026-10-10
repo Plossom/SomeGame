@@ -133,29 +133,27 @@ namespace SomeGame.EditorTools
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
 
-            // Stars and trophies (races won) on one plate: the stars row lines up with the menu button and
-            // the cup name, the trophies row sits under it; the plate ends level with the race title.
-            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(250f, 296f));
+            // Stars and trophies (races won) on one small plate, its top level with the menu button.
+            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(196f, 196f));
             Img(counters, "Round", Theme.Ink, sliced: true);
             TMP_Text CounterRow(string name, float y, string icon)
             {
-                var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(250f, 140f));
-                Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), icon, Theme.Amber);
-                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+                var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(196f, 90f));
+                Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(28f, 0f), new Vector2(52f, 52f)), icon, Theme.Amber);
+                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-28f, -2f), new Vector2(100f, 90f)), "0", 60, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             }
             var total = CounterRow("Stars", -8f, "IconStar");
-            var trophies = CounterRow("Trophies", -148f, "IconTrophy");
-            Img(At("Divider", counters, new Vector2(0.5f, 1f), new Vector2(0f, -146f), new Vector2(190f, 4f)), null, Theme.WithAlpha(Theme.Cream, 0.18f));
+            var trophies = CounterRow("Trophies", -98f, "IconTrophy");
 
-            // The cup name sits big in the top bar, between the menu button (ends at x 200) and the stars (from x 860).
-            // The cup name on a dark plate filling the gap between the menu button (ends at x 200) and the
-            // stars counter (starts at x 860), same height and top as both, same font size as the counters.
-            var banner = At("CupBanner", safe, new Vector2(0.5f, 1f), new Vector2(-55f, -50f), new Vector2(616f, 140f));
-            Img(banner, "Round", Theme.Ink, sliced: true);
-            var chapter = Txt(Stretch("Cup", banner), "VALLEY CUP", 78, Theme.Amber, _condItalic);
-            chapter.rectTransform.offsetMin = new Vector2(24f, 0f); chapter.rectTransform.offsetMax = new Vector2(-24f, -2f);
-            chapter.characterSpacing = 4f;
-            chapter.enableAutoSizing = true; chapter.fontSizeMin = 50; chapter.fontSizeMax = 78;
+            // The cup's round badge and name, straight on the sky beside the menu button: a heading for the
+            // valley rather than another button.
+            var cupRt = At("Cup", safe, new Vector2(0f, 1f), new Vector2(224f, -50f), new Vector2(640f, 140f));
+            var cupIcon = Img(At("Badge", cupRt, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(116f, 116f)), "CupAlpine", Color.white);
+            cupIcon.rectTransform.pivot = new Vector2(0f, 0.5f);
+            var chapter = Txt(At("Name", cupRt, new Vector2(0f, 0.5f), new Vector2(140f, -2f), new Vector2(500f, 120f)), "VALLEY CUP", 66, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            chapter.rectTransform.pivot = new Vector2(0f, 0.5f);
+            chapter.characterSpacing = 6f;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 44; chapter.fontSizeMax = 66;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -215f), new Vector2(1050f, 360f));
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(770f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
@@ -201,7 +199,7 @@ namespace SomeGame.EditorTools
             var so = new SerializedObject(screen);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
-            Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
+            Set(so, "chapterLabel", chapter); Set(so, "cupIcon", cupIcon); Set(so, "titleLabel", title);
             Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
             Set(so, "startButton", start); Set(so, "startFace", startFace); Set(so, "startShadow", startShadow);
@@ -282,7 +280,7 @@ namespace SomeGame.EditorTools
         {
             var root = At("NodeTemplate", world, Vector2.zero, Vector2.zero, new Vector2(170f, 170f));
             root.pivot = new Vector2(0.5f, 0.5f);
-            var selection = At("Selection", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(250f, 250f));
+            var selection = At("Selection", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(214f, 214f));
             var selImage = Img(selection, "RingDashed", Color.white);
             Configure(selection.gameObject.AddComponent<UIPulse>(), ("speed", 0.6f), ("fade", selImage), ("scale", new Vector2(0.94f, 1.08f)), ("alpha", new Vector2(0.55f, 1f)));
             var shadow = Img(At("Shadow", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -14f), new Vector2(150f, 150f)), "Circle", Theme.Ink);

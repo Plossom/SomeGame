@@ -25,6 +25,8 @@ namespace SomeGame.UI
 
         [Header("Selected race")]
         [SerializeField] TMP_Text chapterLabel;
+        [Tooltip("The selected cup's round badge beside its name.")]
+        [SerializeField] UnityEngine.UI.Image cupIcon;
         [SerializeField] TMP_Text titleLabel;
         [Tooltip("Your best total time for the selected race.")]
         [SerializeField] TMP_Text bestChip;
@@ -54,6 +56,7 @@ namespace SomeGame.UI
         {
             // The map shows the selected cup's races.
             var cup = CupList.Selected;
+            if (cup != null && cupIcon != null && cup.icon != null) cupIcon.sprite = cup.icon;
             if (cup != null) catalog = cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
         }
 
