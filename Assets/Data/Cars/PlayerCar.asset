@@ -33,12 +33,12 @@ MonoBehaviour:
   driftWideTurnRate: 30
   driftTightTurnRate: 170
   driftFullInsideAngle: 70
-  driftTightnessResponse: 3.5
-  driftAngleWide: 18
+  driftTightnessResponse: 5
+  driftAngleWide: 22
   driftAngleTight: 45
-  driftEntryKick: 4
-  driftEntryTime: 0.5
-  driftEntryRotationSpeed: 360
+  driftEntryKick: 12
+  driftEntryTime: 0.3
+  driftEntryRotationSpeed: 900
   driftSpeedFactor: 0.92
   driftMinCharge: 0.6
   driftMaxCharge: 2.4
