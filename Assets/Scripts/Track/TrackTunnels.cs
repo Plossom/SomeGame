@@ -27,10 +27,16 @@ namespace SomeGame.Track
         [Tooltip("Hill opacity while the player is in a tunnel.")]
         [SerializeField, Range(0f, 1f)] float insideAlpha = 0.22f;
         [SerializeField, Min(0.1f)] float fadeSpeed = 4f;
+        [Tooltip("Darkens the screen edges while the player is in a tunnel.")]
+        [SerializeField] Sprite vignetteSprite;
+        [SerializeField, Range(0f, 1f)] float flicker = 0.25f;
 
         Mesh _hillMesh;
         readonly List<(Mesh mesh, Color32[] colors, byte[] alpha)> _faders = new();
         float _alpha = 1f;
+        Mesh _lampMesh;
+        Color32[] _lampColors;
+        SpriteRenderer _vignette;
         SomeGame.Car.CarLevel _player;
 
         protected override void Build(TrackPath path, TrackLayout layout)
@@ -69,7 +75,9 @@ namespace SomeGame.Track
                     }
                 }
             }
-            Assign(lamps, TrackMeshes.Quads("TunnelLamps", lv, luv, lt, lc));
+            _lampMesh = TrackMeshes.Quads("TunnelLamps", lv, luv, lt, lc);
+            _lampColors = _lampMesh.colors32;
+            Assign(lamps, _lampMesh);
 
             // Portals: a stone arch across the road at each tunnel mouth, facing out.
             var pv = new List<Vector3>(); var puv = new List<Vector2>(); var pt = new List<int>();
@@ -89,11 +97,17 @@ namespace SomeGame.Track
             // Bridges over the hills.
             Func<float, bool> onBridge = d => track.OnBridge(d) && !track.InTunnel(d);
             Func<float, float> roadEdge = d => track.OffRoadAt(d);
+            // The bridge only casts its shadow where it is actually over the hill (not on the road beyond).
+            Func<float, bool> overHill = d => onBridge(d) &&
+                track.TunnelDistance(path.PointAt(d), out var tun, d, 30f) < layout.roadWidth * 0.5f + layout.kerbWidth + (tun?.hillMargin ?? 0f);
             Assign(bridgeShadow, TrackMeshes.Strip(path, d => -roadEdge(d) - 0.5f, d => roadEdge(d) + 0.5f, 1f, 4f, "BridgeShadow",
-                new Color(0f, 0.05f, 0.02f, 0.35f), onBridge, new Vector2(0.9f, -1.2f)));
-            Assign(bridgeRoad, TrackMeshes.Strip(path, d => -roadEdge(d) - 0.35f, d => roadEdge(d) + 0.35f, layout.roadWidth / roadTile, roadTile, "BridgeRoad", Color.white, onBridge));
-            var leftRail = TrackMeshes.Strip(path, d => roadEdge(d) - 0.05f, d => roadEdge(d) + 0.35f, 1f, 4f, "RailL", new Color(0.92f, 0.9f, 0.84f), onBridge);
-            var rightRail = TrackMeshes.Strip(path, d => -roadEdge(d) + 0.05f, d => -roadEdge(d) - 0.35f, 1f, 4f, "RailR", new Color(0.92f, 0.9f, 0.84f), onBridge);
+                new Color(0f, 0.05f, 0.02f, 0.35f), overHill, new Vector2(0.9f, -1.2f)));
+            Assign(bridgeRoad, TrackMeshes.Strip(path, d => -roadEdge(d) - 0.02f, d => roadEdge(d) + 0.02f, (layout.roadWidth * 0.5f + layout.kerbWidth) * 2f / roadTile, roadTile, "BridgeRoad", Color.white, onBridge));
+            // Edge lines on the bridge: same place and colour as the road's own edge lines, so they continue
+            // seamlessly where the bridge starts and ends.
+            const float edgeLine = 0.28f;
+            var leftRail = TrackMeshes.Strip(path, d => roadEdge(d) - edgeLine, d => roadEdge(d), 1f, 4f, "RailL", new Color(0.97f, 0.96f, 0.93f), onBridge);
+            var rightRail = TrackMeshes.Strip(path, d => -roadEdge(d) + edgeLine, d => -roadEdge(d), 1f, 4f, "RailR", new Color(0.97f, 0.96f, 0.93f), onBridge);
             var lines = new Mesh { name = "BridgeLines", hideFlags = HideFlags.DontSave };
             lines.CombineMeshes(new[] { new CombineInstance { mesh = leftRail, transform = Matrix4x4.identity }, new CombineInstance { mesh = rightRail, transform = Matrix4x4.identity } });
             if (Application.isPlaying) { Destroy(leftRail); Destroy(rightRail); } else { DestroyImmediate(leftRail); DestroyImmediate(rightRail); }
@@ -190,6 +204,42 @@ namespace SomeGame.Track
             return mesh;
         }
 
+        void Flicker()
+        {
+            if (_lampMesh == null || _lampColors == null) return;
+            float time = Time.time;
+            for (int q = 0; q < _lampColors.Length / 4; q++)
+            {
+                // Mostly a gentle shimmer; now and then a lamp stutters.
+                float n = Mathf.PerlinNoise(q * 3.1f, time * 2.2f);
+                float stutter = Mathf.PerlinNoise(q * 7.7f, time * 0.6f) > 0.78f && Mathf.Repeat(time * 17f + q, 1f) < 0.5f ? 0.35f : 1f;
+                byte a = (byte)(255 * Mathf.Clamp01((1f - flicker + flicker * n) * stutter));
+                for (int k = 0; k < 4; k++) _lampColors[q * 4 + k].a = a;
+            }
+            _lampMesh.colors32 = _lampColors;
+        }
+
+        void UpdateVignette()
+        {
+            var cam = Camera.main;
+            if (cam == null || vignetteSprite == null) return;
+            if (_vignette == null)
+            {
+                var go = new GameObject("TunnelVignette");
+                _vignette = go.AddComponent<SpriteRenderer>();
+                _vignette.sprite = vignetteSprite;
+                _vignette.sortingOrder = 38; // over everything in the world, under birds and balloons
+            }
+            // Cover the whole view.
+            float h = cam.orthographicSize * 2.4f, w = h * cam.aspect;
+            Vector2 size = vignetteSprite.bounds.size;
+            _vignette.transform.SetPositionAndRotation(new Vector3(cam.transform.position.x, cam.transform.position.y, 0f), Quaternion.identity);
+            _vignette.transform.localScale = new Vector3(w / size.x, h / size.y, 1f);
+            float a = Mathf.MoveTowards(_vignette.color.a, _player.InTunnel ? 1f : 0f, Time.deltaTime * 3f);
+            _vignette.color = new Color(1f, 1f, 1f, a);
+            _vignette.enabled = a > 0.01f;
+        }
+
         static float DistanceToTunnel(TrackPath path, TrackLayout.Tunnel t, float span, Vector2 p)
         {
             // The hill ends square at the two tunnel mouths.
@@ -208,7 +258,8 @@ namespace SomeGame.Track
             return best;
         }
 
-        // While the player is underground the hill turns see-through, so the car stays visible.
+        // While the player is underground the hill turns see-through, so the car stays visible, the screen
+        // edges darken and the lamps flicker.
         void Update()
         {
             if (!Application.isPlaying || _hillMesh == null) return;
@@ -218,6 +269,8 @@ namespace SomeGame.Track
                 if (input != null) _player = input.GetComponent<SomeGame.Car.CarLevel>();
                 if (_player == null) return;
             }
+            Flicker();
+            UpdateVignette();
             float target = _player.InTunnel ? insideAlpha : 1f;
             if (Mathf.Approximately(_alpha, target)) return;
             _alpha = Mathf.MoveTowards(_alpha, target, fadeSpeed * Time.deltaTime);

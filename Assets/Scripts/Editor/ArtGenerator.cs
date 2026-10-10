@@ -99,6 +99,24 @@ namespace SomeGame.EditorTools
             World("Arrow", 128, 128, ArrowPixel, 64, false);
             World("Hill", 128, 128, HillPixel, 32, true);
             World("Portal", 128, 96, PortalPixel, 64, false);
+            World("Headlights", 128, 256, (x, y) =>
+            {
+                // Two soft cones of light from the front of the car (bottom edge) reaching up.
+                float t = y / 256f;
+                float a = 0f;
+                foreach (float cx in new[] { 46f, 82f })
+                {
+                    float spread = Mathf.Lerp(6f, 46f, t);
+                    a += Mathf.Exp(-Mathf.Pow((x - Mathf.Lerp(cx, 64f + (cx - 64f) * 1.6f, t)) / spread, 2f));
+                }
+                a *= (1f - t) * Mathf.Clamp01(t * 12f) * 0.75f;
+                return new Color(1f, 0.95f, 0.78f, Mathf.Clamp01(a));
+            }, 64, false);
+            World("Vignette", 256, 256, (x, y) =>
+            {
+                float d = Dist(x, y, 128, 128) / 128f;
+                return new Color(0.02f, 0.03f, 0.05f, Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 1.1f, d)) * 0.85f);
+            }, 64, false);
             World("Lamp", 64, 64, (x, y) =>
             {
                 float d = Dist(x, y, 32, 32);

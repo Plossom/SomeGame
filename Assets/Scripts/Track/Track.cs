@@ -244,7 +244,9 @@ namespace SomeGame.Track
                 if (!InTunnel(d))
                 {
                     float dist = TunnelDistance(Path.PointAt(d), out var t, d, 30f);
-                    over = t != null && dist < OffRoadAt(d) + t.hillMargin;
+                    // Bridge wherever any part of this road (its full width) could be under the hill,
+                    // including the hill's uneven, soft rim.
+                    over = t != null && dist < layout.roadWidth * 0.5f + layout.kerbWidth + t.hillMargin + OffRoadAt(d) + 3.5f;
                 }
                 if (over && start < 0f) start = d;
                 if (!over && start >= 0f) { list.Add(new Vector2(start - 1f, d + 1f)); start = -1f; }

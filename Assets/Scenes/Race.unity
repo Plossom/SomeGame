@@ -8610,6 +8610,8 @@ MonoBehaviour:
   lampSpacing: 5
   insideAlpha: 0.22
   fadeSpeed: 4
+  vignetteSprite: {fileID: 21300000, guid: 46fe1d6be85634e6aa2adcd86f0d4b0c, type: 3}
+  flicker: 0.25
 --- !u!1 &1302346565
 GameObject:
   m_ObjectHideFlags: 0
@@ -11092,7 +11094,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4d09e3a992272422e8bdf7e5aa03b8f5, type: 2}
+  - {fileID: 2100000, guid: 2c8acfd720c1d4e56afc2cfdc96fc42b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
