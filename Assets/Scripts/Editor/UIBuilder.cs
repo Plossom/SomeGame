@@ -145,8 +145,12 @@ namespace SomeGame.EditorTools
             var total = CounterRow("Stars", -8f, "IconStar");
             var trophies = CounterRow("Trophies", -98f, "IconTrophy");
 
-            // The cup name, big, centred at the top of the screen and level with the menu button.
-            var chapter = Txt(At("Cup", safe, new Vector2(0.5f, 1f), new Vector2(0f, -50f), new Vector2(600f, 140f)), "VALLEY CUP", 96, Theme.Rust, _condItalic);
+            // The cup name, big, centred in the gap between the menu button (ends 200 from the left) and the
+            // stars and trophies counter (starts 256 from the right), level with the menu button.
+            var cupRt = Rt("Cup", safe);
+            cupRt.anchorMin = new Vector2(0f, 1f); cupRt.anchorMax = new Vector2(1f, 1f); cupRt.pivot = new Vector2(0.5f, 1f);
+            cupRt.offsetMin = new Vector2(216f, -202f); cupRt.offsetMax = new Vector2(-272f, -50f);
+            var chapter = Txt(cupRt, "VALLEY CUP", 96, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 96;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
