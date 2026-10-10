@@ -18,9 +18,10 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
    map, whichever scene is open. To test the open scene directly (e.g. `Race.unity` on its own, which
    uses the scene's setup and gives no stars), untick `SomeGame > Play Starts On Map`.
 2. **Map:** a road winds up through the forest past the eight race stops (**Sunday Loop**, **Valley Sprint**, **Meadow Run**,
-   **River Jump**, **Hopscotch**, **Lagoon Leap**, **Chaos Canyon**) and disappears into the forest on the horizon. Your car waits on the road before the latest race you have reached, and the
-   road behind you is orange. Tap a stop to select it. The top shows its name, laps, rivals and
-   best time; the bottom shows the star times and **START**.
+   **River Jump**, **Hopscotch**, **Chaos Canyon**, **Lake Gauntlet**, **Lagoon Leap**) and disappears
+   into the forest on the horizon. Race 1 is selected when the game starts; your car waits on the road
+   before the selected race, with the road behind it in orange. The top shows the race name, its star
+   times (grey until your best beats them) and your best time and best lap; **START** at the bottom.
    Rules:
    - **All races are open from the start** (`ProgressStore.UnlockAll`; set it to false to bring back
      the rules: a race appears once the previous one is won and needs enough total stars).
@@ -68,10 +69,10 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
      the land half has a slalom, oil and a rolling log.
    - Every race has **3 laps**. White **arrows** on the road shortly before every ramp show where to
      line up.
-   - **Lagoon Leap** (race 3) is a causeway over water: leave the road anywhere and you splash. Tight
+   - **Lagoon Leap** (race 8) is a causeway over water: leave the road anywhere and you splash. Tight
      zigzags, narrow passages (the road narrows and widens again), four gaps to jump (one through a
      gummiboat), floating corner cuts, jumping fish and oil.
-   - **Chaos Canyon** (race 4) mixes grass, lakes and rivers and is meant to be brutal: a river jump
+   - **Chaos Canyon** (race 6) mixes grass, lakes and rivers and is meant to be brutal: a river jump
      on the start straight, a narrow zigzag, a lake causeway with a gap and a left-right jump-pad hop,
      a wide river crossed on two jump pads, rolling hay bales and logs crossing the road, jumping fish,
      a three-pad hop over the bottom lake, oil everywhere and a busy sky.
