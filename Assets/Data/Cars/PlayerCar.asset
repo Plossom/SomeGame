@@ -28,7 +28,7 @@ MonoBehaviour:
   driftMinSpeed: 10
   driftKeepSpeedFactor: 0.6
   driftHopTime: 0.4
-  driftNeutralAngle: 6
+  driftNeutralAngle: 8
   driftSteerMemory: 0.6
   driftWideTurnRate: 30
   driftTightTurnRate: 170

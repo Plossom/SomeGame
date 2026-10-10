@@ -52,7 +52,7 @@ namespace SomeGame.Car
         [Min(0f)] public float driftHopTime = 0.4f;
         [Tooltip("Steering intent within this many degrees counts as straight: the car only hops, no drift. " +
                  "Intent = stick direction compared with where the car was heading a moment ago (driftSteerMemory).")]
-        [Range(0f, 90f)] public float driftNeutralAngle = 6f;
+        [Range(0f, 90f)] public float driftNeutralAngle = 8f;
         [Tooltip("How long a recent steering movement still counts as intent when picking the drift side (seconds, " +
                  "time constant of the lagging heading). Lets you press just after turning in, when the car has " +
                  "already caught up with the stick.")]

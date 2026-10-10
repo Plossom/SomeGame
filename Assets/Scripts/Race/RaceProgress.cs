@@ -23,6 +23,7 @@ namespace SomeGame.Race
 
         TrackSensor _sensor;
         Rigidbody2D _body;
+        SomeGame.Car.CarMovement _car;
         float _wrongWayTimer;
         float _lastDistance;
         float _lapStartTime;
@@ -40,7 +41,7 @@ namespace SomeGame.Race
         public IReadOnlyList<float> LapTimes => _lapTimes;
         /// <summary>True when the car is clearly beyond the checkpoint it still has to pass (took a shortcut).</summary>
         public bool MissedCheckpoint =>
-            _tracking && !IsFinished &&
+            _tracking && !IsFinished && !(_car != null && _car.IsAirborne) && // mid-jump: the landing credits what was flown over
             Circuit.Path.DeltaDistance(Circuit.CheckpointDistance(NextCheckpoint), _sensor.Current.Distance) > missedCheckpointMargin;
 
         /// <summary>True while the car has been driving against the track direction for a moment.</summary>
@@ -69,6 +70,7 @@ namespace SomeGame.Race
         {
             _sensor = GetComponent<TrackSensor>();
             _body = GetComponent<Rigidbody2D>();
+            _car = GetComponent<SomeGame.Car.CarMovement>();
         }
 
         /// <summary>Starts counting from the current position. Call at GO.</summary>

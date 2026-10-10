@@ -53,7 +53,7 @@ namespace SomeGame.UI
             number.color = state == MapNodeState.Open ? Theme.White : hidden ? Theme.StoneDark : Theme.Ink;
             lockIcon.gameObject.SetActive(state == MapNodeState.Locked);
 
-            starsPill.SetActive(state == MapNodeState.Won);
+            starsPill.SetActive(state == MapNodeState.Won || (!hidden && earnedStars > 0)); // stars count even without a win
             for (int i = 0; i < stars.Length; i++) stars[i].color = i < earnedStars ? Theme.Amber : Theme.InkSoft;
 
             requirement.SetActive(state == MapNodeState.Locked);
