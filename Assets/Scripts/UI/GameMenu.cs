@@ -38,6 +38,9 @@ namespace SomeGame.UI
         [Header("Map only")]
         [Tooltip("Resets all progress (asks for a second tap first).")]
         [SerializeField] UnityEngine.UI.Button tutorialButton;
+        [Tooltip("Development: unlocks or locks the cups that need stars and trophies.")]
+        [SerializeField] UnityEngine.UI.Button cupsButton;
+        [SerializeField] TMP_Text cupsLabel;
         [SerializeField] UnityEngine.UI.Button resetButton;
         [SerializeField] TMP_Text resetLabel;
         [SerializeField] LevelCatalog catalog;
@@ -62,6 +65,11 @@ namespace SomeGame.UI
             {
                 tutorialButton.gameObject.SetActive(!inRace);
                 tutorialButton.onClick.AddListener(GameSession.StartTutorial);
+            }
+            if (cupsButton != null)
+            {
+                cupsButton.gameObject.SetActive(!inRace);
+                cupsButton.onClick.AddListener(ToggleCups);
             }
             if (resetButton != null)
             {
@@ -104,6 +112,16 @@ namespace SomeGame.UI
             GameSession.ReturnToMap();
         }
 
+        // Development: opens or locks the cups behind stars and trophies. If that changes the cup on the
+        // map (locking the one shown), the map reloads with the first cup.
+        void ToggleCups()
+        {
+            var before = CupList.Selected;
+            CupList.DevUnlockAll = !CupList.DevUnlockAll;
+            RefreshSettings();
+            if (CupList.Selected != before) GameSession.ReturnToMap();
+        }
+
         public void Open()
         {
             if (IsOpen) return;
@@ -143,6 +161,10 @@ namespace SomeGame.UI
             joystickLabel.text = ControlSettings.InvisibleJoystick
                 ? $"JOYSTICK   <color={Theme.Html(Theme.StoneDark)}>HIDDEN</color>"
                 : $"JOYSTICK   <color={Theme.Html(Theme.Orange)}>VISIBLE</color>";
+            if (cupsLabel != null)
+                cupsLabel.text = CupList.DevUnlockAll
+                    ? $"WINTER CUP   <color={Theme.Html(Theme.Orange)}>UNLOCKED</color>"
+                    : $"WINTER CUP   <color={Theme.Html(Theme.StoneDark)}>LOCKED</color>";
         }
     }
 }

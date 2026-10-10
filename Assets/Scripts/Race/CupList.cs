@@ -14,8 +14,21 @@ namespace SomeGame.Race
 
         const string SelectedKey = "Cup.Selected";
 
-        /// <summary>Development: every cup with requirements is open (and selectable even without races). Set to false for release.</summary>
-        public const bool DevUnlockAll = true;
+        const string DevUnlockKey = "Dev.UnlockCups";
+
+        /// <summary>
+        /// Development switch (in the map menu): every cup with requirements is open, and selectable even
+        /// without races. Off by default, so cups unlock with stars and trophies. Kept by a game reset.
+        /// </summary>
+        public static bool DevUnlockAll
+        {
+            get => PlayerPrefs.GetInt(DevUnlockKey, 0) == 1;
+            set
+            {
+                PlayerPrefs.SetInt(DevUnlockKey, value ? 1 : 0);
+                PlayerPrefs.Save();
+            }
+        }
 
         /// <summary>A "coming soon" placeholder: no races and nothing to unlock it.</summary>
         public static bool IsComingSoon(CupDefinition cup) => !cup.HasRaces && cup.starsRequired == 0 && cup.trophiesRequired == 0;

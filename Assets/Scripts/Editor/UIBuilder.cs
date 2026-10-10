@@ -133,16 +133,19 @@ namespace SomeGame.EditorTools
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
 
-            var starPill = At("Stars", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(250f, 140f));
-            Img(starPill, "Round", Theme.Ink, sliced: true);
-            Img(At("Icon", starPill, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), "IconStar", Theme.Amber);
-            var total = Txt(At("Count", starPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
-            // Trophies (races won) under the stars.
-            // Same size and layout as the stars counter above it.
-            var trophyPill = At("Trophies", safe, new Vector2(1f, 1f), new Vector2(-60f, -206f), new Vector2(250f, 140f));
-            Img(trophyPill, "Round", Theme.Ink, sliced: true);
-            Img(At("Icon", trophyPill, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), "IconTrophy", Theme.Amber);
-            var trophies = Txt(At("Count", trophyPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+            // Stars and trophies (races won) on one plate: the stars row lines up with the menu button and
+            // the cup name, the trophies row sits under it; the plate ends level with the race title.
+            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(250f, 296f));
+            Img(counters, "Round", Theme.Ink, sliced: true);
+            TMP_Text CounterRow(string name, float y, string icon)
+            {
+                var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(250f, 140f));
+                Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), icon, Theme.Amber);
+                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+            }
+            var total = CounterRow("Stars", -8f, "IconStar");
+            var trophies = CounterRow("Trophies", -148f, "IconTrophy");
+            Img(At("Divider", counters, new Vector2(0.5f, 1f), new Vector2(0f, -146f), new Vector2(190f, 4f)), null, Theme.WithAlpha(Theme.Cream, 0.18f));
 
             // The cup name sits big in the top bar, between the menu button (ends at x 200) and the stars (from x 860).
             // The cup name on a dark plate filling the gap between the menu button (ends at x 200) and the
@@ -578,6 +581,7 @@ namespace SomeGame.EditorTools
 
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
             var tutorialButton = MenuButton(card, "TutorialButton", "TUTORIAL", Color.white, Theme.Ink, Theme.Ink, 130f, out _, 46);
+            var cupsButton = MenuButton(card, "CupsButton", "WINTER CUP   LOCKED", Color.white, Theme.Ink, Theme.Ink, 130f, out var cupsLabel, 46);
             var resetButton = MenuButton(card, "ResetButton", "RESET GAME", Color.white, Theme.Rust, Theme.Rust, 130f, out var resetLabel, 46);
 
             var menu = host.gameObject.AddComponent<GameMenu>();
@@ -588,6 +592,7 @@ namespace SomeGame.EditorTools
             Set(so, "resumeButton", resume); Set(so, "restartButton", restart); Set(so, "mainMenuButton", mainMenu);
             Set(so, "volumeSlider", slider); Set(so, "joystickButton", joystickButton); Set(so, "joystickLabel", joystickLabel);
             Set(so, "resetButton", resetButton); Set(so, "resetLabel", resetLabel); Set(so, "tutorialButton", tutorialButton);
+            Set(so, "cupsButton", cupsButton); Set(so, "cupsLabel", cupsLabel);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             so.ApplyModifiedPropertiesWithoutUndo();
             panel.gameObject.SetActive(false);

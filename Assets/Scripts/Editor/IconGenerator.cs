@@ -7,8 +7,9 @@ using static SomeGame.EditorTools.Sdf;
 namespace SomeGame.EditorTools
 {
     /// <summary>
-    /// Paints the app icon (1024 x 1024) in the game's style: a warm sky, rolling green hills and a
-    /// winding road, with the orange buggy flying over it (big, tilted, with its shadow on the road).
+    /// Paints the app icon (1024 x 1024) the way the game looks: seen from above, the orange buggy drifts
+    /// through a sweeping corner on bright grass, with skid marks and purple drift sparks behind its rear
+    /// wheels, a kerb on the inside of the bend and the game's pines and round trees around it.
     /// Saves it to Assets/Art/AppIcon.png and sets it as the app icon for iOS and as the default icon.
     /// iOS rounds the corners itself, so the picture fills the square.
     /// </summary>
@@ -17,22 +18,43 @@ namespace SomeGame.EditorTools
         const int Size = 1024;
         const string IconPath = "Assets/Art/AppIcon.png";
 
+        // The bend: a circle around C (bottom right), from the bottom edge to the right edge.
+        static readonly Vector2 C = new(1094f, 11f);
+        const float R = 760f, HalfWidth = 200f;
+        // The buggy sits on the bend at this angle (degrees around C), its nose turned into the corner.
+        const float CarAt = 140f, DriftAngle = 24f, CarScale = 1.45f;
+
+        static readonly Color Outline = Hex("14231E");
+        static readonly Color TreeShadow = new(0.05f, 0.12f, 0.08f, 0.32f);
+
         [MenuItem("SomeGame/Generate App Icon")]
         public static void Generate()
         {
             var car = LoadPixels(ArtGenerator.Folder + "/Car.png", out int cw, out int ch);
             var details = LoadPixels(ArtGenerator.Folder + "/CarDetails.png", out _, out _);
+
+            float t = CarAt * Mathf.Deg2Rad;
+            Vector2 centre = C + R * new Vector2(Mathf.Cos(t), Mathf.Sin(t));
+            // Driving clockwise round C; the nose points into the bend by the drift angle.
+            float heading = Mathf.Atan2(-Mathf.Cos(t), Mathf.Sin(t)) * Mathf.Rad2Deg - DriftAngle;
+            float angle = (heading - 90f) * Mathf.Deg2Rad; // the sprite's nose points up
+            Vector2 Local(float x, float y) => centre + CarScale * new Vector2(x * Mathf.Cos(angle) - y * Mathf.Sin(angle), x * Mathf.Sin(angle) + y * Mathf.Cos(angle));
+            Vector2 rearLeft = Local(-70f, -112f), rearRight = Local(70f, -112f);
+
             var px = new Color[Size * Size];
             for (int y = 0; y < Size; y++)
                 for (int x = 0; x < Size; x++)
-                    px[y * Size + x] = Background(x + 0.5f, y + 0.5f);
+                    px[y * Size + x] = Background(x + 0.5f, y + 0.5f, rearLeft, rearRight);
 
-            // The buggy: big, tilted, high above its shadow on the road.
             Color orange = Hex("FF7A1A");
-            const float angle = -28f * Mathf.Deg2Rad, scale = 1.75f;
-            Vector2 centre = new(540f, 590f), shadowCentre = new(590f, 500f);
-            Stamp(px, car, details, cw, ch, shadowCentre, angle, scale * 0.92f, orange, shadow: true);
-            Stamp(px, car, details, cw, ch, centre, angle, scale, orange, shadow: false);
+            Stamp(px, car, details, cw, ch, centre + new Vector2(16f, -22f), angle, CarScale, orange, shadow: true);
+            Stamp(px, car, details, cw, ch, centre, angle, CarScale, orange, shadow: false);
+            for (int y = 0; y < Size; y++)
+                for (int x = 0; x < Size; x++)
+                {
+                    int i = y * Size + x;
+                    px[i] = Sparks(px[i], x + 0.5f, y + 0.5f, rearLeft, rearRight, heading + 180f);
+                }
 
             var tex = new Texture2D(Size, Size, TextureFormat.RGBA32, false);
             for (int i = 0; i < px.Length; i++) px[i].a = 1f; // app icons must be opaque
@@ -63,39 +85,116 @@ namespace SomeGame.EditorTools
             Debug.Log("App icon generated and set");
         }
 
-        static Color Background(float x, float y)
+        static Color Background(float x, float y, Vector2 rearLeft, Vector2 rearRight)
         {
-            // Sky with the sun.
-            Color c = Color.Lerp(Hex("F8EBCF"), Hex("F3C98E"), Mathf.InverseLerp(560f, 1024f, y));
-            float sun = Circle(x, y, 820f, 860f, 95f);
-            c = Over(c, Hex("FFE2AE"), Gauss(Mathf.Max(0f, sun), 70f) * 0.6f);
-            c = Over(c, Hex("FFB347"), Fill(sun));
-            // Hills, back to front.
-            float h1 = 600f + 40f * Mathf.Sin(x / 150f + 1f), h2 = 470f + 55f * Mathf.Sin(x / 190f + 2.4f), h3 = 300f + 50f * Mathf.Sin(x / 170f + 0.3f);
-            c = Over(c, Hex("4F7F57"), Fill(y - h1 - 12f * Mathf.Abs(Mathf.Sin(x / 14f))));
-            c = Over(c, Hex("A5C987"), Fill(y - h2));
-            c = Over(c, Hex("7BB066"), Fill(y - h3));
-            // The road: a wide curve sweeping from the bottom left up to the right.
-            float RoadX(float yy) => 300f + 420f * Mathf.SmoothStep(0f, 1f, yy / 760f) + 60f * Mathf.Sin(yy / 160f);
-            float width = Mathf.Lerp(230f, 60f, Mathf.InverseLerp(0f, 640f, y));
-            if (y < 640f)
+            float r = Dist(x, y, C.x, C.y);
+            float theta = Mathf.Atan2(y - C.y, x - C.x) * Mathf.Rad2Deg;
+            float off = r - R; // across the road: negative is the inside of the bend
+
+            // Grass with soft patches and speckles, as on the tracks.
+            float patch = Noise(x / 90f, y / 90f, 64);
+            Color c = Color.Lerp(Hex("58A535"), Hex("6DBA43"), patch);
+            float speck = Hash((int)(x / 7f), (int)(y / 7f));
+            if (speck > 0.993f) c = Over(c, Hex("F2D46B"), 0.8f);
+            else if (speck < 0.01f) c = Over(c, Hex("9AD164"), 0.8f);
+
+            // Asphalt with white edge lines; an orange and cream kerb on the inside of the bend.
+            float road = Mathf.Abs(off) - HalfWidth;
+            c = Over(c, Hex("3F4A3E"), Fill(road - 10f) * 0.35f);
+            Color asphalt = Color.Lerp(Hex("55595A"), Hex("616566"), Noise(x / 7f, y / 7f, 256));
+            c = Over(c, asphalt, Fill(road));
+            c = Over(c, Hex("F4EEDC"), Fill(Shell(Mathf.Abs(off) - (HalfWidth - 22f), 8f)));
+            float kerb = Shell(off + HalfWidth + 20f, 20f);
+            bool stripe = Mathf.Repeat(theta * Mathf.Deg2Rad * (R - HalfWidth) / 46f, 2f) < 1f;
+            c = Over(c, stripe ? Hex("FF7A1A") : Hex("F4EEDC"), Fill(kerb));
+            c = Over(c, Outline, Stroke(kerb, 3f) * 0.35f);
+
+            // Skid marks from the rear wheels, back along the bend and fading out.
+            c = Skid(c, x, y, r, theta, rearLeft);
+            c = Skid(c, x, y, r, theta, rearRight);
+
+            // Trees: pines and round crowns off the road, outside the bend and in the inside corner.
+            foreach (var (tx, ty, s, pine) in Trees)
             {
-                float dx = Mathf.Abs(x - RoadX(y));
-                c = Over(c, Hex("4A4D4B"), Fill(dx - width * 0.5f - 10f));
-                c = Over(c, Hex("606462"), Fill(dx - width * 0.5f));
-                bool dash = Mathf.Repeat(y, Mathf.Lerp(90f, 40f, y / 640f)) < Mathf.Lerp(48f, 20f, y / 640f);
-                if (dash) c = Over(c, new Color(1f, 0.98f, 0.92f, 0.9f), Fill(dx - width * 0.04f));
-            }
-            // A few pines on the hills.
-            foreach (var (px, py, s) in new[] { (90f, 330f, 1.4f), (180f, 300f, 1.1f), (940f, 330f, 1.5f), (870f, 290f, 1.1f), (60f, 520f, 0.8f), (980f, 520f, 0.8f) })
-            {
-                float tri1 = Triangle(x, y, new Vector2(px - 50 * s, py), new Vector2(px + 50 * s, py), new Vector2(px, py + 120 * s));
-                float tri2 = Triangle(x, y, new Vector2(px - 38 * s, py + 50 * s), new Vector2(px + 38 * s, py + 50 * s), new Vector2(px, py + 150 * s));
-                float tree = Mathf.Min(tri1, tri2);
-                c = Over(c, x < px ? Hex("3F7E59") : Hex("2C6247"), Fill(tree));
-                c = Over(c, Hex("1E3A30"), Stroke(tree, 4f));
+                if (Mathf.Abs(x - tx) > 160f * s || Mathf.Abs(y - ty) > 160f * s) continue;
+                c = pine ? Pine(c, x, y, tx, ty, s) : RoundTree(c, x, y, tx, ty, s);
             }
             return c;
+        }
+
+        static readonly (float x, float y, float s, bool pine)[] Trees =
+        {
+            (70f, 960f, 1.25f, true), (250f, 1010f, 1f, false), (80f, 740f, 1f, false), (300f, 860f, 0.85f, true),
+            (470f, 1000f, 0.8f, true), (1060f, 1060f, 0.9f, true), (30f, 40f, 1f, true),
+            (960f, 330f, 1.2f, false), (800f, 120f, 0.95f, true), (1010f, 80f, 0.9f, false),
+        };
+
+        static Color Skid(Color c, float x, float y, float r, float theta, Vector2 wheel)
+        {
+            float wr = Dist(wheel.x, wheel.y, C.x, C.y);
+            float wt = Mathf.Atan2(wheel.y - C.y, wheel.x - C.x) * Mathf.Rad2Deg;
+            float behind = theta - wt; // the car drives clockwise, so the marks lie at larger angles
+            if (behind < -1f || behind > 40f) return c;
+            float fade = Mathf.Clamp01(1.3f - behind / 32f) * Mathf.Clamp01((behind + 1f) / 3f);
+            float width = Mathf.Lerp(26f, 20f, behind / 40f);
+            return Over(c, Hex("262A2A"), Fill(Mathf.Abs(r - wr) - width * 0.5f) * 0.85f * fade);
+        }
+
+        // Purple drift sparks spraying back from the rear wheels, with a glow (the top drift tier).
+        static Color Sparks(Color c, float x, float y, Vector2 rearLeft, Vector2 rearRight, float back)
+        {
+            Color purple = Hex("B66BFF"), light = Hex("E9D4FF");
+            foreach (var w in new[] { rearLeft, rearRight })
+            {
+                float d = Dist(x, y, w.x, w.y);
+                if (d > 170f) continue;
+                c = Over(c, purple, Gauss(d, 52f) * 0.7f);
+                c = Over(c, light, Gauss(d, 16f) * 0.9f);
+                // A few sparks thrown backwards and outwards.
+                for (int k = 0; k < 5; k++)
+                {
+                    float a = (back - 50f + k * 25f + (w == rearLeft ? -8f : 8f)) * Mathf.Deg2Rad;
+                    float len = 70f + 30f * Hash(k, w == rearLeft ? 1 : 2);
+                    Vector2 a0 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 26f, a1 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * len;
+                    float seg = SegDist(new Vector2(x, y), a0, a1) - 5f;
+                    c = Over(c, purple, Fill(seg - 3f));
+                    c = Over(c, Color.white, Fill(seg + 1f));
+                }
+            }
+            return c;
+        }
+
+        static Color Pine(Color c, float x, float y, float cx, float cy, float s)
+        {
+            float lx = (x - cx) / s, ly = (y - cy) / s;
+            c = Over(c, TreeShadow, Mathf.Clamp01(0.5f - Star(lx, ly, 18f, -22f, 104f, 80f, 11, 0.2f) / 10f));
+            float outer = Star(lx, ly, 0f, 0f, 104f, 80f, 11, 0.2f);
+            c = Over(c, Hex("2F6A4A"), Fill(outer * s));
+            c = Over(c, Hex("3E7A57"), Fill(Star(lx, ly, -4f, 5f, 74f, 56f, 10, 0.5f) * s));
+            c = Over(c, Hex("4F8F62"), Fill(Star(lx, ly, -7f, 9f, 44f, 33f, 8, 0.1f) * s));
+            c = Over(c, Hex("6FAE74"), Fill(Circle(lx, ly, -9f, 12f, 11f) * s));
+            return Over(c, Outline, Stroke(outer * s, 5f) * 0.8f);
+        }
+
+        static Color RoundTree(Color c, float x, float y, float cx, float cy, float s)
+        {
+            float lx = (x - cx) / s, ly = (y - cy) / s;
+            float Blob(float ox, float oy)
+            {
+                float d = Circle(lx, ly, ox, oy, 62f);
+                for (int i = 0; i < 7; i++)
+                {
+                    float a = i * Mathf.PI * 2f / 7f + 0.4f;
+                    d = SMin(d, Circle(lx, ly, ox + Mathf.Cos(a) * 60f, oy + Mathf.Sin(a) * 60f, 40f), 14f);
+                }
+                return d;
+            }
+            c = Over(c, TreeShadow, Mathf.Clamp01(0.5f - Blob(18f, -18f) / 10f));
+            float crown = Blob(0f, 0f);
+            c = Over(c, Hex("3E8A35"), Fill(crown * s));
+            c = Over(c, Hex("5BAA3F"), Fill(Circle(lx, ly, -16f, 16f, 70f) * s) * Fill((crown + 10f) * s));
+            c = Over(c, Hex("8ACB52"), Fill(Circle(lx, ly, -28f, 30f, 30f) * s) * Fill((crown + 20f) * s));
+            return Over(c, Outline, Stroke(crown * s, 5f) * 0.8f);
         }
 
         static Color[] LoadPixels(string path, out int w, out int h)
