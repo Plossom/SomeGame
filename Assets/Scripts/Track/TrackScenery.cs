@@ -75,7 +75,7 @@ namespace SomeGame.Track
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
                 margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps,
-                shortcuts = layout.shortcuts, waterWorld = layout.waterWorld,
+                shortcuts = layout.shortcuts, tunnels = layout.tunnels, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
             };
@@ -95,6 +95,7 @@ namespace SomeGame.Track
             public List<TrackLayout.Lake> lakes;
             public List<TrackLayout.Gap> gaps;
             public List<TrackLayout.Shortcut> shortcuts;
+            public List<TrackLayout.Tunnel> tunnels;
             public bool waterWorld;
             public List<Kind> kinds;
             public int seed, span;
@@ -153,6 +154,8 @@ namespace SomeGame.Track
                     if (kind.clearance.y > 0f && fromKerb > kind.clearance.y) continue;
                     if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     if (InShortcutPath(p, size)) continue;
+                    // Nothing grows on (under) a tunnel hill.
+                    if (layout.tunnels.Count > 0 && track.TunnelDistance(p, out var tunnel) < layout.roadWidth * 0.5f + (tunnel?.hillMargin ?? 0f) + size * 0.5f + 3f) continue;
                     float r = size * 0.45f;
                     if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;
 

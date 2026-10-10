@@ -42,6 +42,17 @@ namespace SomeGame.Track
         public bool waterWorld;
         [Tooltip("Gaps in the road over water (lap distances), each with a kicker ramp just before it.")]
         public List<Gap> gaps = new();
+        [Tooltip("Stretches where the road runs underground (lap distances). A hill covers them; other road crossing over a tunnel becomes a bridge.")]
+        public List<Tunnel> tunnels = new();
+
+        [Serializable]
+        public class Tunnel
+        {
+            public float from;
+            public float to;
+            [Tooltip("How far the hill reaches beyond the road on each side.")]
+            [Min(1f)] public float hillMargin = 7f;
+        }
         [Tooltip("The road stands a little above the ground and casts a shadow (always on water tracks).")]
         public bool elevatedRoad;
 

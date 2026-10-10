@@ -101,6 +101,7 @@ MonoBehaviour:
   - from: 462.11243
     to: 472.1114
     rampLateral: 0.8
+  tunnels: []
   elevatedRoad: 1
   bouncers:
   - position: {x: 56, y: 56}
@@ -1900,4 +1901,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 4ed558c52706b405
+  bakedSignature: a68b9293831bd3e2

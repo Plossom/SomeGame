@@ -48,6 +48,7 @@ MonoBehaviour:
   boundaryMargin: 25
   waterWorld: 0
   gaps: []
+  tunnels: []
   elevatedRoad: 0
   bouncers: []
   geysers: []
@@ -7367,4 +7368,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4293328875
-  bakedSignature: 65997ceada9245de
+  bakedSignature: fd59a342e2b12f01

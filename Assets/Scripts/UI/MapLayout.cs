@@ -20,8 +20,8 @@ namespace SomeGame.UI
             new(800f, 1346f), new(500f, 1483f), new(410f, 1656f), new(540f, 1681f), new(600f, 1700f),
         };
 
-        /// <summary>Index into the control points of each stop: races 1-6 (a last stop past the races shows "more soon").</summary>
-        static readonly int[] StopPoints = { 1, 2, 3, 4, 6, 8 };
+        /// <summary>Index into the control points of each stop: races 1-7 (a last stop past the races shows "more soon").</summary>
+        static readonly int[] StopPoints = { 1, 2, 3, 4, 5, 6, 8 };
 
         public static int StopCount => StopPoints.Length;
 

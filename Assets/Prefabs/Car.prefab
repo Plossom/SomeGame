@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 6502800385224107047}
   - component: {fileID: 4904072248561120939}
   - component: {fileID: 283424342220873423}
+  - component: {fileID: 4436592110963344645}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -234,6 +235,7 @@ MonoBehaviour:
   minLaunchSpeed: 4
   shortcutBoost: 0.6
   shortcutMaxAngle: 50
+  minClearSpeed: 9
   respawnBack: 10
   blinkSeconds: 1.2
   sortingOrder: 13
@@ -254,6 +256,19 @@ MonoBehaviour:
   rivalEngineVolume: 0.5
   screechVolume: 0.35
   rivalHearing: {x: 12, y: 34}
+--- !u!114 &4436592110963344645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026754258347199695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7d6544f976846559f7b50888da7adf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Car.CarLevel
+  bridgeSortingOffset: 30
 --- !u!1 &3861201061229663733
 GameObject:
   m_ObjectHideFlags: 0
