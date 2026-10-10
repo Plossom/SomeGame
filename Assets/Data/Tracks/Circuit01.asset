@@ -62,18 +62,12 @@ MonoBehaviour:
   - distance: 111.35614
     lateral: -1.478588
     radius: 1.1737242
-  - distance: 150.29558
-    lateral: 1.1309547
-    radius: 1.1458827
   - distance: 209.23502
     lateral: -0.8502426
     radius: 1.2555989
   - distance: 284.17447
     lateral: 1.160526
     radius: 1.2078122
-  - distance: 327.11392
-    lateral: -1.7968373
-    radius: 1.2116698
   rampLength: 3
   rampWidth: 2.8
   shortcuts:

@@ -50,7 +50,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
      arrows: hit it at speed and you fly over the water (the car grows and its shadow drops away).
      Miss it, or come in too slow, and you splash into the river and restart a little way back.
      Lakes beside the track work the same way.
-   - **Oil puddles** (six per track): plain black; drive through one and the car spins round once
+   - **Oil puddles** (three to four per track): plain black; drive through one and the car spins round once
      (like a banana peel) and loses speed. Rivals steer around puddles they see coming.
    - **Corner-cut ramps** (two per track): small ramps with white arrows on the grass on the inside of
      a corner. Drive straight onto one at speed (along the arrows) and you hop across the corner and

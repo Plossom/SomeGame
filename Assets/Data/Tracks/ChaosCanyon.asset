@@ -220,17 +220,11 @@ MonoBehaviour:
   - distance: 189.204
     lateral: -1
     radius: 0.9775
-  - distance: 256.29556
-    lateral: 1
-    radius: 0.9775
   - distance: 299.13092
     lateral: -1
     radius: 0.9775
   - distance: 371.6514
     lateral: 0.6
-    radius: 0.9775
-  - distance: 88.67845
-    lateral: 0.5
     radius: 0.9775
   rampLength: 3
   rampWidth: 4.2

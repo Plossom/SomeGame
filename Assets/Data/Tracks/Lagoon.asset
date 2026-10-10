@@ -130,9 +130,6 @@ MonoBehaviour:
   - distance: 194.64668
     lateral: 1
     radius: 0.9775
-  - distance: 437.08984
-    lateral: -1
-    radius: 0.9775
   - distance: 380.4535
     lateral: 0.6
     radius: 0.9775
