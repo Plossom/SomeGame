@@ -39,13 +39,13 @@ MonoBehaviour:
   driftEntryKick: 10
   driftEntryTime: 0.3
   driftEntryRotationSpeed: 900
-  driftSpeedFactor: 1
-  driftMinCharge: 0.45
-  driftMaxCharge: 1.6
-  boostMinDuration: 0.6
-  boostMaxDuration: 1.8
-  boostMinSpeedBonus: 0.2
-  boostMaxSpeedBonus: 0.5
+  driftSpeedFactor: 0.95
+  driftMinCharge: 0.6
+  driftMaxCharge: 2.4
+  boostMinDuration: 0.5
+  boostMaxDuration: 1.5
+  boostMinSpeedBonus: 0.15
+  boostMaxSpeedBonus: 0.45
   boostAcceleration: 30
   boostKick: 4
   ramForce: 0.7
