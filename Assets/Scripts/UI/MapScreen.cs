@@ -54,7 +54,7 @@ namespace SomeGame.UI
         {
             // The map shows the selected cup's races.
             var cup = CupList.Selected;
-            if (cup != null && cup.HasRaces) catalog = cup.races;
+            if (cup != null) catalog = cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
         }
 
         void Start()
@@ -191,6 +191,19 @@ namespace SomeGame.UI
 
         void ShowSelected()
         {
+            if (catalog.Count == 0)
+            {
+                // A cup without races yet (development).
+                chapterLabel.text = CupList.Selected != null ? CupList.Selected.displayName : "";
+                titleLabel.text = "COMING SOON";
+                bestChip.text = bestLapLabel.text = "—";
+                foreach (var t in starTimes) t.text = "-";
+                startButton.interactable = false;
+                startFace.color = Theme.Stone; startShadow.color = Theme.StoneDark;
+                startLabel.text = "SOON"; startLabel.color = Theme.StoneDark;
+                startRing.SetActive(false);
+                return;
+            }
             var level = catalog[_selected];
             // Just the cup name; the map shows which race of it this is.
             var cup = CupList.Selected;
@@ -223,7 +236,7 @@ namespace SomeGame.UI
 
         void StartSelected()
         {
-            if (!ProgressStore.CanEnter(catalog, _selected) || GameSession.Loading) return;
+            if (catalog.Count == 0 || !ProgressStore.CanEnter(catalog, _selected) || GameSession.Loading) return;
             startLabel.text = "LOADING";
             startLabel.fontSize *= 0.7f;
             startRing.SetActive(false);

@@ -145,15 +145,14 @@ namespace SomeGame.EditorTools
             var trophies = Txt(At("Count", trophyPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
 
             // The cup name sits big in the top bar, between the menu button (ends at x 200) and the stars (from x 860).
-            // A waving checkered flag behind the cup name, with the name on a dark plate in the middle.
-            var banner = At("CupBanner", safe, new Vector2(0.5f, 1f), new Vector2(-55f, -44f), new Vector2(620f, 152f));
-            Img(banner, "CupBanner", Color.white).preserveAspect = false;
-            var plateShadow = At("PlateShadow", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, -8f), new Vector2(430f, 96f));
-            Img(plateShadow, "Round", Shade(Theme.Ink, 0.55f), sliced: true);
-            Img(At("Plate", banner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(430f, 96f)), "Round", Theme.Ink, sliced: true);
-            var chapter = Txt(At("Cup", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(400f, 90f)), "VALLEY CUP", 66, Theme.Amber, _black);
-            chapter.characterSpacing = 3f;
-            chapter.enableAutoSizing = true; chapter.fontSizeMin = 40; chapter.fontSizeMax = 66;
+            // The cup name on a dark plate filling the gap between the menu button (ends at x 200) and the
+            // stars counter (starts at x 860), same height and top as both, same font size as the counters.
+            var banner = At("CupBanner", safe, new Vector2(0.5f, 1f), new Vector2(-55f, -50f), new Vector2(616f, 140f));
+            Img(banner, "Round", Theme.Ink, sliced: true);
+            var chapter = Txt(Stretch("Cup", banner), "VALLEY CUP", 78, Theme.Amber, _condItalic);
+            chapter.rectTransform.offsetMin = new Vector2(24f, 0f); chapter.rectTransform.offsetMax = new Vector2(-24f, -2f);
+            chapter.characterSpacing = 4f;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 50; chapter.fontSizeMax = 78;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -215f), new Vector2(1050f, 360f));
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(770f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);

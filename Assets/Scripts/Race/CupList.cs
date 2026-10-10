@@ -14,6 +14,15 @@ namespace SomeGame.Race
 
         const string SelectedKey = "Cup.Selected";
 
+        /// <summary>Development: every cup with requirements is open (and selectable even without races). Set to false for release.</summary>
+        public const bool DevUnlockAll = true;
+
+        /// <summary>A "coming soon" placeholder: no races and nothing to unlock it.</summary>
+        public static bool IsComingSoon(CupDefinition cup) => !cup.HasRaces && cup.starsRequired == 0 && cup.trophiesRequired == 0;
+
+        /// <summary>Whether the cup can be shown on the map.</summary>
+        public static bool IsPlayable(CupDefinition cup) => IsUnlocked(cup) && !IsComingSoon(cup) && (cup.HasRaces || DevUnlockAll);
+
         /// <summary>The cup shown on the map (always an unlocked one with races).</summary>
         public static CupDefinition Selected
         {
@@ -23,7 +32,7 @@ namespace SomeGame.Race
                 if (list == null || list.cups.Count == 0) return null;
                 int i = Mathf.Clamp(PlayerPrefs.GetInt(SelectedKey, 0), 0, list.cups.Count - 1);
                 var cup = list.cups[i];
-                return IsUnlocked(cup) && cup.HasRaces ? cup : list.cups[0];
+                return IsPlayable(cup) ? cup : list.cups[0];
             }
             set
             {
@@ -35,6 +44,6 @@ namespace SomeGame.Race
         }
 
         public static bool IsUnlocked(CupDefinition cup) =>
-            ProgressStore.TotalStars >= cup.starsRequired && ProgressStore.TotalWins >= cup.trophiesRequired;
+            DevUnlockAll || (ProgressStore.TotalStars >= cup.starsRequired && ProgressStore.TotalWins >= cup.trophiesRequired);
     }
 }

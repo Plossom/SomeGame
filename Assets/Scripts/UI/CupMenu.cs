@@ -48,10 +48,9 @@ namespace SomeGame.UI
                 var tile = Instantiate(tileTemplate, tilesParent);
                 tile.gameObject.SetActive(true);
                 // A cup marked "coming soon" (no races and no requirement) stays soon; otherwise locked until earned.
-                bool comingSoon = !cup.HasRaces && cup.starsRequired == 0 && cup.trophiesRequired == 0;
-                var state = comingSoon ? CupTile.State.Soon
+                var state = CupList.IsComingSoon(cup) ? CupTile.State.Soon
                     : !CupList.IsUnlocked(cup) ? CupTile.State.Locked
-                    : !cup.HasRaces ? CupTile.State.Soon
+                    : !CupList.IsPlayable(cup) ? CupTile.State.Soon
                     : cup == selected ? CupTile.State.Current : CupTile.State.Open;
                 var c = cup;
                 tile.Bind(cup, state, () => Pick(c));
@@ -61,7 +60,7 @@ namespace SomeGame.UI
 
         void Pick(CupDefinition cup)
         {
-            if (!CupList.IsUnlocked(cup) || !cup.HasRaces) return;
+            if (!CupList.IsPlayable(cup)) return;
             if (cup == CupList.Selected) { Close(); return; }
             CupList.Selected = cup;
             GameSession.ReturnToMap(); // reload the map with the other cup
