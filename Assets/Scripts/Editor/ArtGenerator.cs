@@ -59,6 +59,18 @@ namespace SomeGame.EditorTools
                 Triangle(x, y, new Vector2(40, 50), new Vector2(40, 78), new Vector2(72, 104)),
                 Triangle(x, y, new Vector2(40, 50), new Vector2(72, 104), new Vector2(72, 24)),
                 Shell(ArcBand(x, y, 72, 64, 18, -50f, 50f), 6f), Shell(ArcBand(x, y, 72, 64, 34, -50f, 50f), 6f))));
+            Ui("IconTrophy", 128, 128, (x, y) =>
+            {
+                // Cup with two handles on a short stem and a base.
+                float bowl = Mathf.Max(Polygon(x, y, new[] { new Vector2(30, 112), new Vector2(98, 112), new Vector2(88, 66), new Vector2(40, 66) }),
+                                       -Polygon(x, y, new[] { new Vector2(30, 140), new Vector2(98, 140), new Vector2(98, 112), new Vector2(30, 112) }));
+                float bowlRound = SMin(bowl, Circle(x, y, 64, 70, 24), 6f);
+                float handles = Mathf.Min(Shell(Circle(x, y, 30, 92, 14), 4.5f), Shell(Circle(x, y, 98, 92, 14), 4.5f));
+                handles = Mathf.Max(handles, -Polygon(x, y, new[] { new Vector2(30, 120), new Vector2(98, 120), new Vector2(88, 60), new Vector2(40, 60) }) - 1f);
+                float stem = RoundRect(x, y, 64, 40, 7, 14, 2);
+                float plinth = RoundRect(x, y, 64, 20, 28, 8, 3);
+                return Fill(Min(bowlRound, handles, stem, plinth));
+            });
             Ui("IconFlag", 128, 128, (x, y) =>
             {
                 float pole = Capsule(x, y, 30, 14, 30, 114, 6);

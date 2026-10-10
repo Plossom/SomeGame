@@ -23,6 +23,8 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image lockIcon;
         [SerializeField] GameObject starsPill;
         [SerializeField] UnityEngine.UI.Image[] stars;
+        [Tooltip("Trophy slot after the stars, filled once the race is won.")]
+        [SerializeField] UnityEngine.UI.Image trophy;
         [Tooltip("Tag above a locked race showing the total stars it needs.")]
         [SerializeField] GameObject requirement;
         [SerializeField] TMP_Text requirementText;
@@ -35,6 +37,9 @@ namespace SomeGame.UI
         public void Bind(string label, MapNodeState state, int earnedStars, int starsRequired, bool selected, string captionText, Action onClick)
         {
             bool hidden = state == MapNodeState.Hidden;
+            bool won = state == MapNodeState.Won;
+            // A won race looks like any open race; its stars and trophy show the result.
+            if (won) state = MapNodeState.Open;
             face.color = state switch
             {
                 MapNodeState.Open => Theme.Orange,
@@ -53,8 +58,11 @@ namespace SomeGame.UI
             number.color = state == MapNodeState.Open ? Theme.White : hidden ? Theme.StoneDark : Theme.Ink;
             lockIcon.gameObject.SetActive(state == MapNodeState.Locked);
 
-            starsPill.SetActive(state == MapNodeState.Won || (!hidden && earnedStars > 0)); // stars count even without a win
-            for (int i = 0; i < stars.Length; i++) stars[i].color = i < earnedStars ? Theme.Amber : Theme.InkSoft;
+            // Always show the slots: empty stars and trophy as faint outlines, filled once earned.
+            starsPill.SetActive(!hidden);
+            var empty = Theme.WithAlpha(Theme.Stone, 0.3f);
+            for (int i = 0; i < stars.Length; i++) stars[i].color = i < earnedStars ? Theme.Amber : empty;
+            if (trophy != null) trophy.color = won ? Theme.Amber : empty;
 
             requirement.SetActive(state == MapNodeState.Locked);
             requirementText.text = starsRequired.ToString();

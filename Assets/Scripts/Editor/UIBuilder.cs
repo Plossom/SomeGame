@@ -137,6 +137,11 @@ namespace SomeGame.EditorTools
             Img(starPill, "Round", Theme.Ink, sliced: true);
             Img(At("Icon", starPill, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), "IconStar", Theme.Amber);
             var total = Txt(At("Count", starPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+            // Trophies (races won) under the stars.
+            var trophyPill = At("Trophies", safe, new Vector2(1f, 1f), new Vector2(-60f, -208f), new Vector2(250f, 104f));
+            Img(trophyPill, "Round", Theme.Ink, sliced: true);
+            Img(At("Icon", trophyPill, new Vector2(0f, 0.5f), new Vector2(36f, 0f), new Vector2(58f, 58f)), "IconTrophy", Theme.Amber);
+            var trophies = Txt(At("Count", trophyPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(150f, 96f)), "0/8", 58, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
 
             // The cup name sits big in the top bar, between the menu button (ends at x 200) and the stars (from x 860).
             var chapter = Txt(At("Cup", safe, new Vector2(0.5f, 1f), new Vector2(-55f, -50f), new Vector2(620f, 140f)), "ALPINE CUP", 96, Theme.Rust, _black);
@@ -184,7 +189,7 @@ namespace SomeGame.EditorTools
             var screen = canvas.gameObject.AddComponent<MapScreen>();
             var so = new SerializedObject(screen);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
-            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "totalStars", total);
+            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
             Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
             Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
@@ -214,11 +219,13 @@ namespace SomeGame.EditorTools
             var number = Txt(At("Number", root, new Vector2(0.5f, 0.5f), new Vector2(-2f, 0f), new Vector2(150f, 150f)), "1", 92, Theme.Ink, _black);
             var lockIcon = Img(At("Lock", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(66f, 66f)), "IconLock", Theme.StoneDark);
 
-            var starsPill = At("Stars", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -122f), new Vector2(170f, 60f));
+            var starsPill = At("Stars", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -122f), new Vector2(222f, 60f));
             Img(starsPill, "Pill", Theme.Ink, sliced: true);
             var stars = new Image[3];
             for (int i = 0; i < 3; i++)
-                stars[i] = Img(At($"Star{i + 1}", starsPill, new Vector2(0.5f, 0.5f), new Vector2((i - 1) * 46f, 0f), new Vector2(40f, 40f)), "IconStar", Theme.Amber);
+                stars[i] = Img(At($"Star{i + 1}", starsPill, new Vector2(0.5f, 0.5f), new Vector2(-72f + i * 44f, 0f), new Vector2(40f, 40f)), "IconStar", Theme.Amber);
+            Img(At("Divider", starsPill, new Vector2(0.5f, 0.5f), new Vector2(42f, 0f), new Vector2(3f, 36f)), null, Theme.WithAlpha(Theme.Cream, 0.2f));
+            var trophy = Img(At("Trophy", starsPill, new Vector2(0.5f, 0.5f), new Vector2(76f, 1f), new Vector2(40f, 40f)), "IconTrophy", Theme.Amber);
 
             var req = At("Requirement", root, new Vector2(0.5f, 0.5f), new Vector2(0f, 128f), new Vector2(140f, 64f));
             Img(req, "Pill", Theme.Ink, sliced: true);
@@ -239,7 +246,7 @@ namespace SomeGame.EditorTools
             var so = new SerializedObject(mapNode);
             Set(so, "button", button); Set(so, "shadow", shadow); Set(so, "face", face); Set(so, "ring", ring);
             Set(so, "dashedRing", dashed); Set(so, "number", number); Set(so, "lockIcon", lockIcon);
-            Set(so, "starsPill", starsPill.gameObject); SetArray(so, "stars", stars);
+            Set(so, "starsPill", starsPill.gameObject); SetArray(so, "stars", stars); Set(so, "trophy", trophy);
             Set(so, "requirement", req.gameObject); Set(so, "requirementText", reqText);
             Set(so, "selection", selection.gameObject); Set(so, "caption", caption); Set(so, "captionRoot", capRt.gameObject);
             so.ApplyModifiedPropertiesWithoutUndo();

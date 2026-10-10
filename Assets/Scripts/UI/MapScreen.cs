@@ -20,6 +20,8 @@ namespace SomeGame.UI
         [SerializeField] MapNode nodeTemplate;
         [SerializeField] RectTransform car;
         [SerializeField] TMP_Text totalStars;
+        [Tooltip("Races won out of all races.")]
+        [SerializeField] TMP_Text totalTrophies;
 
         [Header("Selected race")]
         [SerializeField] TMP_Text chapterLabel;
@@ -150,6 +152,12 @@ namespace SomeGame.UI
         void Refresh()
         {
             totalStars.text = ProgressStore.TotalStars.ToString();
+            if (totalTrophies != null)
+            {
+                int won = 0;
+                for (int i = 0; i < catalog.Count; i++) if (ProgressStore.HasWon(catalog[i])) won++;
+                totalTrophies.text = $"{won}/{catalog.Count}";
+            }
             for (int i = 0; i < _nodes.Count; i++)
             {
                 int index = i;
