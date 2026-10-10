@@ -218,15 +218,17 @@ namespace SomeGame.EditorTools
         {
             var root = Stretch("CupMenu", canvas);
             var rootSafe = SafeArea(root);
-            // Left edge in line with the menu button and the race info, just under the star times.
-            var tab = SquareButton(rootSafe, "WorldButton", new Vector2(0f, 1f), new Vector2(60f, -566f), "IconGlobe", 112f);
+            // On the right, in line with the stars and trophies counter, halfway between it (ends at y -246)
+            // and the records box (starts at y -407).
+            var tab = SquareButton(rootSafe, "WorldButton", new Vector2(1f, 1f), new Vector2(-60f, -264f), "IconGlobe", 112f);
 
             var panel = Stretch("Panel", rootSafe);
             var closeRt = Stretch("Close", panel);
             var closeImg = Img(closeRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             var close = closeRt.gameObject.AddComponent<Button>(); close.targetGraphic = closeImg; close.transition = Selectable.Transition.None;
 
-            var box = At("Box", panel, new Vector2(0f, 1f), new Vector2(196f, -546f), new Vector2(712f, 364f));
+            // Opens to the left of the world button, top edges level.
+            var box = At("Box", panel, new Vector2(1f, 1f), new Vector2(-196f, -254f), new Vector2(712f, 364f));
             var boxShadow = Stretch("Shadow", box); boxShadow.offsetMin = boxShadow.offsetMax = new Vector2(0f, -14f);
             Img(boxShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Face", box), "Round", Theme.Ink, sliced: true, raycast: true);
