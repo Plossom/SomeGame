@@ -138,13 +138,15 @@ namespace SomeGame.EditorTools
             Img(At("Icon", starPill, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), "IconStar", Theme.Amber);
             var total = Txt(At("Count", starPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
 
-            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(72f, -250f), new Vector2(1030f, 420f));
-            var chapter = Txt(At("Chapter", header, new Vector2(0f, 1f), Vector2.zero, new Vector2(1030f, 70f)), "ALPINE CUP · RACE 1", 56, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
-            chapter.characterSpacing = 8f;
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, -66f), new Vector2(1030f, 170f)), "MEADOW RUN", 150, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
+            // The cup name sits big in the top bar, between the menu button (ends at x 200) and the stars (from x 860).
+            var chapter = Txt(At("Cup", safe, new Vector2(0.5f, 1f), new Vector2(-55f, -50f), new Vector2(620f, 140f)), "ALPINE CUP", 96, Theme.Rust, _black);
+            chapter.characterSpacing = 4f;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 96;
+            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(72f, -215f), new Vector2(1030f, 360f));
+            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-6f, 0f), new Vector2(1030f, 170f)), "MEADOW RUN", 150, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 150;
             // Your records for the race, beside the star times: best time over best lap.
-            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(624f, -262f), new Vector2(406f, 130f));
+            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(624f, -192f), new Vector2(406f, 130f));
             Img(records, "Round", Theme.Ink, sliced: true);
             TMP_Text Record(string name, float y, string caption)
             {
@@ -160,7 +162,7 @@ namespace SomeGame.EditorTools
             // Bottom: star times, START.
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 480f));
             // Star times sit in the header, right under the race info.
-            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -262f), new Vector2(604f, 130f));
+            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -192f), new Vector2(604f, 130f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];

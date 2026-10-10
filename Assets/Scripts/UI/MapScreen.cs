@@ -171,7 +171,9 @@ namespace SomeGame.UI
         void ShowSelected()
         {
             var level = catalog[_selected];
-            chapterLabel.text = level.chapter;
+            // Just the cup name; the map shows which race of it this is.
+            int dot = level.chapter.IndexOf('·');
+            chapterLabel.text = (dot > 0 ? level.chapter.Substring(0, dot) : level.chapter).Trim();
             titleLabel.text = level.displayName.ToUpperInvariant();
             var best = ProgressStore.BestTimeOf(level);
             bestChip.text = best.HasValue ? TimeFormat.Race(best.Value) : "—";
