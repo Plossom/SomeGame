@@ -17,7 +17,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 1. Pick **iPhone Portrait (1170x2532)** in the Game view and press Play: the game always starts on the
    map, whichever scene is open. To test the open scene directly (e.g. `Race.unity` on its own, which
    uses the scene's setup and gives no stars), untick `SomeGame > Play Starts On Map`.
-2. **Map:** a road winds up through the forest past the seven race stops (**Sunday Loop**, **Valley Sprint**, **Meadow Run**,
+2. **Map:** a road winds up through the forest past the eight race stops (**Sunday Loop**, **Valley Sprint**, **Meadow Run**,
    **River Jump**, **Hopscotch**, **Lagoon Leap**, **Chaos Canyon**) and disappears into the forest on the horizon. Your car waits on the road before the latest race you have reached, and the
    road behind you is orange. Tap a stop to select it. The top shows its name, laps, rivals and
    best time; the bottom shows the star times and **START**.
@@ -63,6 +63,9 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
    - **Valley Sprint** (race 2) is the next step: a sweeping loop (road 8.5 wide), two oil puddles.
    - **Hopscotch** (race 5) is all about jumping: four streams in a row across the right straight
      (hop, hop, hop, hop) and a left-right slalom of two kickers on the left straight.
+   - **Lake Gauntlet** (race 7) runs half on a narrow causeway across a big lake: a kicker jump, a long
+     gap hopped on three jump pads (centre, left, right), a kicker in the bottom curve, jumping fish;
+     the land half has a slalom, oil and a rolling log.
    - Every race has **3 laps**. White **arrows** on the road shortly before every ramp show where to
      line up.
    - **Lagoon Leap** (race 3) is a causeway over water: leave the road anywhere and you splash. Tight
@@ -108,7 +111,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
 | Joystick radius and dead zone | `UI/JoystickArea`, `FloatingJoystick` |
 | AI lane offset, look-ahead, corner slowdown | `Rival1-7` in the scene, `AIDriverInput` |
 | Lap count, countdown step | `RaceManager` (the lap count is overridden by the level when started from the map) |
-| Races: name, chapter, track, laps, rival count and strength, star times, stars required | `Assets/Data/Levels/Level01-02.asset` (`LevelDefinition`), order in `LevelCatalog.asset`. Tracks: `Oval` (Sunday Loop), `Valley` (Valley Sprint), `Hopscotch` (Hopscotch); tunnel support (`tunnels`, `TrackTunnels`, `CarLevel`) is still in the code but unused, `Circuit01` (Meadow Run), `Circuit03` (River Jump), `Lagoon` (Lagoon Leap), `ChaosCanyon` (Chaos Canyon); `Circuit02` and the reversed `Circuit01R`, `Circuit02R` are unused for now. Levels 3 and 4 were built by an editor script from waypoints plus features placed by world position |
+| Races: name, chapter, track, laps, rival count and strength, star times, stars required | `Assets/Data/Levels/Level01-02.asset` (`LevelDefinition`), order in `LevelCatalog.asset`. Tracks: `Oval` (Sunday Loop), `Valley` (Valley Sprint), `Hopscotch` (Hopscotch), `LakeGauntlet` (Lake Gauntlet); tunnel support (`tunnels`, `TrackTunnels`, `CarLevel`) is still in the code but unused, `Circuit01` (Meadow Run), `Circuit03` (River Jump), `Lagoon` (Lagoon Leap), `ChaosCanyon` (Chaos Canyon); `Circuit02` and the reversed `Circuit01R`, `Circuit02R` are unused for now. Levels 3 and 4 were built by an editor script from waypoints plus features placed by world position |
 | Map road, race stop positions, road width | `Assets/Scripts/UI/MapLayout.cs` (then `SomeGame > Generate Map Art`, since the road is painted into the picture) |
 | Map landscape (forest horizon, hills, lake, village, trees) | `Assets/Scripts/Editor/MapArtGenerator.cs` |
 | Colours of the whole UI | `Assets/Scripts/UI/Theme.cs` (then rebuild the UI from the menu) |

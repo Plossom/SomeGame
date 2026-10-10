@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
-  m_Name: Level03
+  m_Name: Level07
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Lagoon Leap
-  chapter: "ALPINE CUP \xB7 RACE 8"
-  track: {fileID: 11400000, guid: d10fbe840b2d747f3b9654b1fa74e871, type: 2}
-  preview: {fileID: 21300000, guid: a665fd7474f784f928ce99590824de32, type: 3}
+  displayName: Lake Gauntlet
+  chapter: "ALPINE CUP \xB7 RACE 7"
+  track: {fileID: 11400000, guid: 44c290866a24b4f89961e0e633d1f523, type: 2}
+  preview: {fileID: 21300000, guid: c538f98dc1d2b44e8bcafac96ccd3110, type: 3}
   laps: 3
   rivalCount: 7
-  rivalSpeedScale: 0.95
+  rivalSpeedScale: 0.93
   rivalCornerScale: 1
-  starsRequired: 3
+  starsRequired: 0
   starTimes:
-  - 140
-  - 110
+  - 125
   - 100
+  - 88
