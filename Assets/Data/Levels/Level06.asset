@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Level06
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Tunnel Run
+  displayName: Hopscotch
   chapter: "ALPINE CUP \xB7 RACE 5"
-  track: {fileID: 11400000, guid: ef5e190dd5c684eecb9ca83275fd62df, type: 2}
+  track: {fileID: 11400000, guid: ec44b3ff42d4f4b75ace5200d8c1901f, type: 2}
   preview: {fileID: 21300000, guid: 30d5d541bb1f547cfb3ed3a4ce3d5243, type: 3}
   laps: 3
   rivalCount: 7
@@ -22,6 +22,6 @@ MonoBehaviour:
   rivalCornerScale: 1
   starsRequired: 0
   starTimes:
-  - 120
-  - 98
-  - 88
+  - 75
+  - 62
+  - 55
