@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
-  m_Name: Level03
+  m_Name: Level00
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Lagoon Leap
-  chapter: "ALPINE CUP \xB7 RACE 4"
-  track: {fileID: 11400000, guid: d10fbe840b2d747f3b9654b1fa74e871, type: 2}
-  preview: {fileID: 21300000, guid: a665fd7474f784f928ce99590824de32, type: 3}
+  displayName: Sunday Loop
+  chapter: "ALPINE CUP \xB7 RACE 1"
+  track: {fileID: 11400000, guid: 2ccb82fac6e354b739e299e48d3d0441, type: 2}
+  preview: {fileID: 21300000, guid: 83a1e992f4c0a4777aaeb5218883d9bd, type: 3}
   laps: 3
   rivalCount: 7
-  rivalSpeedScale: 0.95
-  rivalCornerScale: 1
-  starsRequired: 3
+  rivalSpeedScale: 0.8
+  rivalCornerScale: 0.85
+  starsRequired: 0
   starTimes:
-  - 140
-  - 110
-  - 100
+  - 75
+  - 62
+  - 55

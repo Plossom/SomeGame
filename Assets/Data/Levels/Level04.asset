@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level04
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Chaos Canyon
-  chapter: "ALPINE CUP \xB7 RACE 4"
+  chapter: "ALPINE CUP \xB7 RACE 5"
   track: {fileID: 11400000, guid: 69c3b63f26b0747ea8e6673463c9a40d, type: 2}
   preview: {fileID: 21300000, guid: c2f49000c683a493d9f6b060255d2ec2, type: 3}
   laps: 3
