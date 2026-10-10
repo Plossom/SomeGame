@@ -37,6 +37,17 @@ namespace SomeGame.Race
         public static bool HasWon(LevelDefinition level) => Find(level)?.won ?? false;
         public static float? BestTimeOf(LevelDefinition level) => Find(level) is { bestTime: > 0f } e ? e.bestTime : null;
 
+        /// <summary>Races won (trophies), over all cups.</summary>
+        public static int TotalWins
+        {
+            get
+            {
+                int total = 0;
+                foreach (var e in Saved.entries) if (e.won) total++;
+                return total;
+            }
+        }
+
         public static int TotalStars
         {
             get

@@ -71,6 +71,18 @@ namespace SomeGame.EditorTools
                 float plinth = RoundRect(x, y, 64, 20, 28, 8, 3);
                 return Fill(Min(bowlRound, handles, stem, plinth));
             });
+            Ui("IconGlobe", 128, 128, (x, y) =>
+            {
+                // A globe: circle outline, equator, two meridian arcs.
+                float outline = Shell(Circle(x, y, 64, 64, 50), 5f);
+                float equator = Mathf.Max(Shell(y - 64f, 4f), Circle(x, y, 64, 64, 50));
+                float lat1 = Mathf.Max(Shell(y - 88f, 3.5f), Circle(x, y, 64, 64, 50)), lat2 = Mathf.Max(Shell(y - 40f, 3.5f), Circle(x, y, 64, 64, 50));
+                float meridian = Mathf.Max(Shell(Ellipse(x, y, 64, 64, 22, 50), 4f), Circle(x, y, 64, 64, 52));
+                float axis = Mathf.Max(Shell(x - 64f, 4f), Circle(x, y, 64, 64, 50));
+                return Fill(Min(outline, equator, lat1, lat2, meridian, axis));
+            });
+            Ui("IconQuestion", 128, 128, (x, y) =>
+                Fill(Min(Mathf.Max(Shell(Circle(x, y, 64, 80, 24), 8f), -(Mathf.Min(y - 80f, x - 64f))), Capsule(x, y, 64, 56, 64, 44, 8f), Circle(x, y, 64, 22, 9f))));
             Ui("IconFlag", 128, 128, (x, y) =>
             {
                 float pole = Capsule(x, y, 30, 14, 30, 114, 6);
@@ -110,6 +122,9 @@ namespace SomeGame.EditorTools
             World("Oil", 128, 128, OilPixel, 64, false);
             World("Arrow", 128, 128, ArrowPixel, 64, false);
             World("Gummiboat", 256, 256, GummiboatPixel, 128, false);
+            World("CupAlpine", 128, 128, CupAlpinePixel, 100, false);
+            World("CupWinter", 128, 128, CupWinterPixel, 100, false);
+            World("CupSoon", 128, 128, CupSoonPixel, 100, false);
             World("Geyser", 128, 128, GeyserPixel, 128, false);
             World("Fish", 96, 192, FishPixel, 64, false);
             World("Log", 256, 64, LogPixel, 64, false);
@@ -348,6 +363,48 @@ namespace SomeGame.EditorTools
             float arrow = Mathf.Min(shaft, head);
             float wear = 0.8f + Hash((int)x / 3, (int)y / 3) * 0.2f;
             return new Color(1f, 1f, 1f, Fill(arrow) * 0.85f * wear);
+        }
+
+        // Cup badges for the world menu: a round scene in the cup's colours.
+        static Color CupAlpinePixel(float x, float y)
+        {
+            float disc = Circle(x, y, 64, 64, 58);
+            Color c = Color.Lerp(Hex("F8EBCF"), Hex("F3C98E"), y / 128f);
+            c = Over(c, Hex("A9B6C2"), Fill(Triangle(x, y, new Vector2(6, 52), new Vector2(122, 52), new Vector2(70, 108))));
+            c = Over(c, Hex("FFFBF2"), Fill(Triangle(x, y, new Vector2(56, 92), new Vector2(84, 92), new Vector2(70, 108))));
+            c = Over(c, Hex("7BB066"), Fill(y - (44f + 6f * Mathf.Sin(x / 14f))));
+            for (int i = 0; i < 3; i++) { float px = 30 + i * 34; c = Over(c, Hex("2F6A4A"), Fill(Triangle(x, y, new Vector2(px - 10, 30), new Vector2(px + 10, 30), new Vector2(px, 58)))); }
+            c.a = Fill(disc);
+            return Over(c, Hex("14231E"), Stroke(disc, 5f));
+        }
+
+        static Color CupWinterPixel(float x, float y)
+        {
+            float disc = Circle(x, y, 64, 64, 58);
+            Color c = Color.Lerp(Hex("E4F0F8"), Hex("A9CBE3"), y / 128f);
+            c = Over(c, Hex("C8D8E6"), Fill(Triangle(x, y, new Vector2(0, 48), new Vector2(110, 48), new Vector2(50, 106))));
+            c = Over(c, Hex("B4C8DA"), Fill(Triangle(x, y, new Vector2(40, 48), new Vector2(128, 48), new Vector2(92, 96))));
+            c = Over(c, Hex("FFFFFF"), Fill(y - (46f + 5f * Mathf.Sin(x / 13f))));
+            for (int i = 0; i < 3; i++)
+            {
+                float px = 28 + i * 36;
+                c = Over(c, Hex("2F6A4A"), Fill(Triangle(x, y, new Vector2(px - 11, 26), new Vector2(px + 11, 26), new Vector2(px, 58))));
+                c = Over(c, Hex("F4FAFF"), Fill(Triangle(x, y, new Vector2(px - 6, 44), new Vector2(px + 6, 44), new Vector2(px, 58))));
+            }
+            foreach (var (fx, fy) in new[] { (30f, 96f), (62f, 112f), (98f, 104f), (82f, 80f), (20f, 70f) })
+                c = Over(c, Color.white, Fill(Min(Capsule(x, y, fx - 5, fy, fx + 5, fy, 1.4f), Capsule(x, y, fx, fy - 5, fx, fy + 5, 1.4f))));
+            c.a = Fill(disc);
+            return Over(c, Hex("14231E"), Stroke(disc, 5f));
+        }
+
+        static Color CupSoonPixel(float x, float y)
+        {
+            float disc = Circle(x, y, 64, 64, 58);
+            Color c = Hex("D9D2BF");
+            float q = Min(Mathf.Max(Shell(Circle(x, y, 64, 76, 20), 7f), -Mathf.Min(y - 76f, x - 64f)), Capsule(x, y, 64, 54, 64, 44, 7f), Circle(x, y, 64, 28, 8f));
+            c = Over(c, Hex("8C8676"), Fill(q));
+            c.a = Fill(disc);
+            return Over(c, Hex("14231E"), Stroke(disc, 5f));
         }
 
         // An inflatable gummiboat seen from above: a fat orange tube ring with yellow highlights,

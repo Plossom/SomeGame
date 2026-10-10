@@ -184,6 +184,7 @@ namespace SomeGame.EditorTools
             var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 10f), 300f, "START",
                 out var startFace, out var startShadow, out var startLabel, out var startRing);
 
+            BuildCupMenu(canvas, safe);
             BuildMenu(canvas, menuButton, null, null);
 
             var screen = canvas.gameObject.AddComponent<MapScreen>();
@@ -203,6 +204,61 @@ namespace SomeGame.EditorTools
                 new EditorBuildSettingsScene(MapScenePath, true),
                 new EditorBuildSettingsScene(RaceScenePath, true),
             };
+        }
+
+        // The small world tab on the left edge and the row of cup tiles it opens.
+        static void BuildCupMenu(RectTransform canvas, RectTransform safe)
+        {
+            var root = Stretch("CupMenu", canvas);
+            var rootSafe = SafeArea(root);
+            var tab = SquareButton(rootSafe, "WorldButton", new Vector2(0f, 1f), new Vector2(24f, -600f), "IconGlobe", 112f);
+
+            var panel = Stretch("Panel", rootSafe);
+            var closeRt = Stretch("Close", panel);
+            var closeImg = Img(closeRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            var close = closeRt.gameObject.AddComponent<Button>(); close.targetGraphic = closeImg; close.transition = Selectable.Transition.None;
+
+            var box = At("Box", panel, new Vector2(0f, 1f), new Vector2(160f, -560f), new Vector2(700f, 330f));
+            var boxShadow = Stretch("Shadow", box); boxShadow.offsetMin = boxShadow.offsetMax = new Vector2(0f, -14f);
+            Img(boxShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
+            Img(Stretch("Face", box), "Round", Theme.Ink, sliced: true, raycast: true);
+            var row = Stretch("Tiles", box);
+            row.offsetMin = new Vector2(24f, 24f); row.offsetMax = new Vector2(-24f, -24f);
+            var layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 22f; layout.childAlignment = TextAnchor.MiddleLeft;
+            layout.childControlWidth = false; layout.childControlHeight = false; layout.childForceExpandWidth = false; layout.childForceExpandHeight = false;
+
+            var tile = Rt("TileTemplate", row); tile.sizeDelta = new Vector2(200f, 282f);
+            var face = Img(Stretch("Face", tile), "Round", Color.white, sliced: true, raycast: true);
+            var ring = Img(Stretch("Ring", tile), "Round", Theme.Orange, sliced: true);
+            ring.rectTransform.offsetMin = new Vector2(-8f, -8f); ring.rectTransform.offsetMax = new Vector2(8f, 8f);
+            ring.transform.SetAsFirstSibling();
+            var icon = Img(At("Icon", tile, new Vector2(0.5f, 1f), new Vector2(0f, -16f), new Vector2(140f, 140f)), null, Color.white);
+            var lockIcon = Img(At("Lock", tile, new Vector2(0.5f, 1f), new Vector2(0f, -56f), new Vector2(60f, 60f)), "IconLock", Theme.Ink);
+            var title = Txt(At("Title", tile, new Vector2(0.5f, 1f), new Vector2(0f, -160f), new Vector2(190f, 56f)), "ALPINE", 44, Theme.Ink, _condItalic);
+            title.enableAutoSizing = true; title.fontSizeMin = 28; title.fontSizeMax = 44;
+            var req = At("Needs", tile, new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(190f, 52f));
+            var stars = Txt(At("Stars", req, new Vector2(0f, 0.5f), new Vector2(6f, 0f), new Vector2(46f, 52f)), "20", 38, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            stars.rectTransform.pivot = new Vector2(0f, 0.5f);
+            Img(At("StarIcon", req, new Vector2(0f, 0.5f), new Vector2(54f, 0f), new Vector2(34f, 34f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
+            var trophies = Txt(At("Trophies", req, new Vector2(0f, 0.5f), new Vector2(98f, 0f), new Vector2(40f, 52f)), "5", 38, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            trophies.rectTransform.pivot = new Vector2(0f, 0.5f);
+            Img(At("TrophyIcon", req, new Vector2(0f, 0.5f), new Vector2(142f, 0f), new Vector2(34f, 34f)), "IconTrophy", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
+            var soon = Txt(At("Soon", tile, new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(190f, 52f)), "SOON", 40, Theme.StoneDark, _condItalic);
+            soon.characterSpacing = 8f;
+            var button = tile.gameObject.AddComponent<Button>(); button.targetGraphic = face; button.transition = Selectable.Transition.None;
+            tile.gameObject.AddComponent<ButtonFeedback>();
+            var cupTile = tile.gameObject.AddComponent<CupTile>();
+            var tso = new SerializedObject(cupTile);
+            Set(tso, "button", button); Set(tso, "face", face); Set(tso, "ring", ring); Set(tso, "icon", icon); Set(tso, "lockIcon", lockIcon);
+            Set(tso, "title", title); Set(tso, "requirementRow", req.gameObject); Set(tso, "starsNeeded", stars); Set(tso, "trophiesNeeded", trophies); Set(tso, "soonLabel", soon);
+            tso.ApplyModifiedPropertiesWithoutUndo();
+
+            var menu = root.gameObject.AddComponent<CupMenu>();
+            var so = new SerializedObject(menu);
+            Set(so, "worldButton", tab); Set(so, "panel", panel.gameObject); Set(so, "closeArea", close);
+            Set(so, "tileTemplate", cupTile); Set(so, "tilesParent", row);
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static MapNode BuildNode(RectTransform world)

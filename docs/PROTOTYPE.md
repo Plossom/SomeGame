@@ -22,7 +22,11 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
    when you have done it: steer, hop, drift, charge (spark colours), boost, jump. **SKIP** ends it;
    "You're ready!" leads to the map. It can be played any time via **TUTORIAL** in the map's menu.
    (Level: `Assets/Resources/Tutorial.asset`, track `TutorialOval`; hints in `TutorialGuide.cs`.)
-3. **Map:** a road winds up through the forest past the eight race stops (**Sunday Loop**, **Valley Sprint**, **Meadow Run**,
+3. **Cups (worlds):** the small globe tab on the left of the map opens the cups: **Alpine** (current,
+   ringed), **Winter** (locked: needs 20 stars and 5 trophies; no races yet) and a coming-soon cup.
+   Tapping an unlocked cup with races switches the map to it. (`Assets/Data/Cups`, list in
+   `Assets/Resources/Cups.asset`.)
+4. **Map:** a road winds up through the forest past the eight race stops (**Sunday Loop**, **Valley Sprint**, **Meadow Run**,
    **River Jump**, **Hopscotch**, **Chaos Canyon**, **Lake Gauntlet**, **Lagoon Leap**) and disappears
    into the forest on the horizon. Race 1 is selected when the game starts; your car waits on the road
    before the selected race, with the road behind it in orange. The top shows the race name, its star

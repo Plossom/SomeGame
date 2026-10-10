@@ -50,6 +50,13 @@ namespace SomeGame.UI
         int _selected;
         Vector2 _lastParentSize;
 
+        void Awake()
+        {
+            // The map shows the selected cup's races.
+            var cup = CupList.Selected;
+            if (cup != null && cup.HasRaces) catalog = cup.races;
+        }
+
         void Start()
         {
             // First launch (or after a reset): straight into the practice drive.
@@ -186,8 +193,9 @@ namespace SomeGame.UI
         {
             var level = catalog[_selected];
             // Just the cup name; the map shows which race of it this is.
+            var cup = CupList.Selected;
             int dot = level.chapter.IndexOf('·');
-            chapterLabel.text = (dot > 0 ? level.chapter.Substring(0, dot) : level.chapter).Trim();
+            chapterLabel.text = cup != null ? cup.displayName : (dot > 0 ? level.chapter.Substring(0, dot) : level.chapter).Trim();
             titleLabel.text = level.displayName.ToUpperInvariant();
             var best = ProgressStore.BestTimeOf(level);
             bestChip.text = best.HasValue ? TimeFormat.Race(best.Value) : "—";
