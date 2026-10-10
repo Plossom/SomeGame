@@ -7,7 +7,7 @@ namespace SomeGame.Race
     [CreateAssetMenu(menuName = "SomeGame/Cup", fileName = "Cup")]
     public class CupDefinition : ScriptableObject
     {
-        public string displayName = "ALPINE CUP";
+        public string displayName = "VALLEY CUP";
         [Tooltip("Races of this cup, in map order. Empty = coming soon.")]
         public LevelCatalog races;
         [Tooltip("Small picture for the world menu.")]

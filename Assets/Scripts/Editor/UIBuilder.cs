@@ -54,7 +54,7 @@ namespace SomeGame.EditorTools
             var checker = Img(band, "Checker", Color.white);
             checker.type = Image.Type.Tiled; checker.preserveAspect = false; checker.pixelsPerUnitMultiplier = 1.6f;
 
-            var chapter = Txt(At("Chapter", safe, new Vector2(0.5f, 1f), new Vector2(0f, -190f), new Vector2(1000f, 60f)), "ALPINE CUP · RACE 1", 44, Theme.Rust, _condItalic);
+            var chapter = Txt(At("Chapter", safe, new Vector2(0.5f, 1f), new Vector2(0f, -190f), new Vector2(1000f, 60f)), "VALLEY CUP · RACE 1", 44, Theme.Rust, _condItalic);
             chapter.characterSpacing = 8f;
             var title = Txt(At("Title", safe, new Vector2(0.5f, 1f), new Vector2(0f, -250f), new Vector2(1050f, 190f)), "MEADOW RUN", 170, Theme.Ink, _black);
             title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 170;
@@ -138,10 +138,11 @@ namespace SomeGame.EditorTools
             Img(At("Icon", starPill, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), "IconStar", Theme.Amber);
             var total = Txt(At("Count", starPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             // Trophies (races won) under the stars.
-            var trophyPill = At("Trophies", safe, new Vector2(1f, 1f), new Vector2(-60f, -208f), new Vector2(250f, 104f));
+            // Same size and layout as the stars counter above it.
+            var trophyPill = At("Trophies", safe, new Vector2(1f, 1f), new Vector2(-60f, -206f), new Vector2(250f, 140f));
             Img(trophyPill, "Round", Theme.Ink, sliced: true);
-            Img(At("Icon", trophyPill, new Vector2(0f, 0.5f), new Vector2(36f, 0f), new Vector2(58f, 58f)), "IconTrophy", Theme.Amber);
-            var trophies = Txt(At("Count", trophyPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(150f, 96f)), "0/8", 58, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+            Img(At("Icon", trophyPill, new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(70f, 70f)), "IconTrophy", Theme.Amber);
+            var trophies = Txt(At("Count", trophyPill, new Vector2(1f, 0.5f), new Vector2(-36f, -2f), new Vector2(130f, 120f)), "0", 78, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
 
             // The cup name sits big in the top bar, between the menu button (ends at x 200) and the stars (from x 860).
             // A waving checkered flag behind the cup name, with the name on a dark plate in the middle.
@@ -150,7 +151,7 @@ namespace SomeGame.EditorTools
             var plateShadow = At("PlateShadow", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, -8f), new Vector2(430f, 96f));
             Img(plateShadow, "Round", Shade(Theme.Ink, 0.55f), sliced: true);
             Img(At("Plate", banner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(430f, 96f)), "Round", Theme.Ink, sliced: true);
-            var chapter = Txt(At("Cup", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(400f, 90f)), "ALPINE CUP", 66, Theme.Amber, _black);
+            var chapter = Txt(At("Cup", banner, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(400f, 90f)), "VALLEY CUP", 66, Theme.Amber, _black);
             chapter.characterSpacing = 3f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 40; chapter.fontSizeMax = 66;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
@@ -243,7 +244,7 @@ namespace SomeGame.EditorTools
             ring.transform.SetAsFirstSibling();
             var icon = Img(At("Icon", tile, new Vector2(0.5f, 1f), new Vector2(0f, -16f), new Vector2(140f, 140f)), null, Color.white);
             var lockIcon = Img(At("Lock", tile, new Vector2(0.5f, 1f), new Vector2(0f, -56f), new Vector2(60f, 60f)), "IconLock", Theme.Ink);
-            var title = Txt(At("Title", tile, new Vector2(0.5f, 1f), new Vector2(0f, -160f), new Vector2(190f, 56f)), "ALPINE", 44, Theme.Ink, _condItalic);
+            var title = Txt(At("Title", tile, new Vector2(0.5f, 1f), new Vector2(0f, -160f), new Vector2(190f, 56f)), "VALLEY", 44, Theme.Ink, _condItalic);
             title.enableAutoSizing = true; title.fontSizeMin = 28; title.fontSizeMax = 44;
             // Two short rows: stars (count + star) over trophies (count + trophy), centred.
             var req = At("Needs", tile, new Vector2(0.5f, 0f), new Vector2(0f, 14f), new Vector2(190f, 92f));
@@ -466,7 +467,7 @@ namespace SomeGame.EditorTools
             var checker = Img(band, "Checker", Color.white);
             checker.type = Image.Type.Tiled; checker.preserveAspect = false; checker.pixelsPerUnitMultiplier = 1.2f;
 
-            var raceLabel = Txt(At("Race", safe, new Vector2(1f, 1f), new Vector2(-60f, -90f), new Vector2(800f, 60f)), "ALPINE CUP · RACE 1", 42, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
+            var raceLabel = Txt(At("Race", safe, new Vector2(1f, 1f), new Vector2(-60f, -90f), new Vector2(800f, 60f)), "VALLEY CUP · RACE 1", 42, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
             raceLabel.characterSpacing = 8f;
             var position = Txt(At("Position", safe, new Vector2(0.5f, 1f), new Vector2(0f, -280f), new Vector2(1100f, 360f)), "1ST", 340, Theme.Orange, _black);
             position.fontSharedMaterial = _blackShadow;

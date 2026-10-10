@@ -22,7 +22,7 @@ Fonts: Barlow and Barlow Condensed (SIL Open Font License, `Assets/Art/Fonts/Bar
    when you have done it: steer, hop, drift, charge (spark colours), boost, jump. **SKIP** ends it;
    "You're ready!" leads to the map. It can be played any time via **TUTORIAL** in the map's menu.
    (Level: `Assets/Resources/Tutorial.asset`, track `TutorialOval`; hints in `TutorialGuide.cs`.)
-3. **Cups (worlds):** the small globe tab on the left of the map opens the cups: **Alpine** (current,
+3. **Cups (worlds):** the small globe tab on the left of the map opens the cups: **Valley** (current,
    ringed), **Winter** (locked: needs 20 stars and 5 trophies; no races yet) and a coming-soon cup.
    Tapping an unlocked cup with races switches the map to it. (`Assets/Data/Cups`, list in
    `Assets/Resources/Cups.asset`.)

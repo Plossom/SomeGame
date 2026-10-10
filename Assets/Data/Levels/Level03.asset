@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Level03
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Lagoon Leap
-  chapter: "ALPINE CUP \xB7 RACE 8"
+  chapter: "VALLEY CUP \xB7 RACE 8"
   track: {fileID: 11400000, guid: d10fbe840b2d747f3b9654b1fa74e871, type: 2}
+  isTutorial: 0
   preview: {fileID: 21300000, guid: a665fd7474f784f928ce99590824de32, type: 3}
   laps: 3
   rivalCount: 7

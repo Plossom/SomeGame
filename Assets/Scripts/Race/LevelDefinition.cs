@@ -11,7 +11,7 @@ namespace SomeGame.Race
     public class LevelDefinition : ScriptableObject
     {
         public string displayName = "Race";
-        [Tooltip("Shown above the race name on the map, e.g. ALPINE CUP · RACE 1.")]
+        [Tooltip("Shown above the race name on the map, e.g. VALLEY CUP · RACE 1.")]
         public string chapter = "CHAPTER 01";
         public TrackLayout track;
         [Tooltip("The practice drive: no rivals, no finish, the tutorial hints guide the player.")]

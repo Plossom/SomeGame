@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Level07
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Lake Gauntlet
-  chapter: "ALPINE CUP \xB7 RACE 7"
+  chapter: "VALLEY CUP \xB7 RACE 7"
   track: {fileID: 11400000, guid: 44c290866a24b4f89961e0e633d1f523, type: 2}
+  isTutorial: 0
   preview: {fileID: 21300000, guid: c538f98dc1d2b44e8bcafac96ccd3110, type: 3}
   laps: 3
   rivalCount: 7

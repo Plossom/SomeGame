@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Level06
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Hopscotch
-  chapter: "ALPINE CUP \xB7 RACE 5"
+  chapter: "VALLEY CUP \xB7 RACE 5"
   track: {fileID: 11400000, guid: ec44b3ff42d4f4b75ace5200d8c1901f, type: 2}
+  isTutorial: 0
   preview: {fileID: 21300000, guid: 30d5d541bb1f547cfb3ed3a4ce3d5243, type: 3}
   laps: 3
   rivalCount: 7

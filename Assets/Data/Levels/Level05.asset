@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Level05
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Valley Sprint
-  chapter: "ALPINE CUP \xB7 RACE 2"
+  chapter: "VALLEY CUP \xB7 RACE 2"
   track: {fileID: 11400000, guid: 7cc2f7170c1e548e68acbe83708e67a1, type: 2}
+  isTutorial: 0
   preview: {fileID: 21300000, guid: d9cf4e9e035b94586a6c27494d38b1b9, type: 3}
   laps: 3
   rivalCount: 7
