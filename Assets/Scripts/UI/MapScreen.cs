@@ -29,7 +29,8 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text bestChip;
         [Tooltip("Times for 1, 2 and 3 stars.")]
         [SerializeField] TMP_Text[] starTimes;
-        [SerializeField] TMP_Text hint;
+        [Tooltip("The three star-time groups (star icons + time): grey until your best time beats them.")]
+        [SerializeField] RectTransform[] starGroups;
         [SerializeField] UnityEngine.UI.Button startButton;
         [SerializeField] UnityEngine.UI.Image startFace;
         [SerializeField] UnityEngine.UI.Image startShadow;
@@ -176,20 +177,23 @@ namespace SomeGame.UI
             var best = ProgressStore.BestTimeOf(level);
             bestChip.text = best.HasValue ? $"Best {TimeFormat.Race(best.Value)}" : "Best —";
             for (int i = 0; i < starTimes.Length; i++)
+            {
                 starTimes[i].text = i < level.starTimes.Length ? TimeFormat.Race(level.starTimes[i]) : "-";
+                // Earned (your best beats it): yellow stars and a white time; otherwise grey.
+                bool earned = best.HasValue && i < level.starTimes.Length && best.Value <= level.starTimes[i];
+                starTimes[i].color = earned ? Theme.White : Theme.WithAlpha(Theme.Stone, 0.45f);
+                if (starGroups != null && i < starGroups.Length && starGroups[i] != null)
+                    foreach (var icon in starGroups[i].GetComponentsInChildren<UnityEngine.UI.Image>())
+                        icon.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.Stone, 0.35f);
+            }
 
             bool canEnter = ProgressStore.CanEnter(catalog, _selected);
-            int missing = Mathf.Max(0, level.starsRequired - ProgressStore.TotalStars);
             startButton.interactable = canEnter;
             startFace.color = canEnter ? Theme.Orange : Theme.Stone;
             startShadow.color = canEnter ? Theme.OrangeDeep : Theme.StoneDark;
             startLabel.text = canEnter ? "START" : "LOCKED";
             startLabel.color = canEnter ? Theme.White : Theme.StoneDark;
             startRing.SetActive(canEnter);
-            bool last = _selected == catalog.Count - 1;
-            hint.text = !canEnter ? $"Collect {missing} more star{(missing == 1 ? "" : "s")}"
-                : ProgressStore.HasWon(level) ? "Beat your time for more stars"
-                : last || ProgressStore.UnlockAll ? "Beat the star times" : "Win to open the next race";
         }
 
         void StartSelected()
