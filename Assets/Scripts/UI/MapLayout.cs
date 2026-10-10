@@ -21,9 +21,11 @@ namespace SomeGame.UI
         };
 
         /// <summary>Index into the control points of each stop: races 1-8 (a last stop past the races shows "more soon").</summary>
-        static readonly int[] StopPoints = { 1, 2, 3, 4, 5, 6, 7, 8 };
+        /// <summary>The first and last race sit on these control points; the others are spaced evenly along the road between them.</summary>
+        const int FirstStopPoint = 1, LastStopPoint = 8;
+        const int Stops = 8;
 
-        public static int StopCount => StopPoints.Length;
+        public static int StopCount => Stops;
 
         static List<Vector2> _samples;
         static List<float> _distances;
@@ -37,10 +39,11 @@ namespace SomeGame.UI
         public static float StopDistance(int index)
         {
             Build();
-            return _distances[StopPoints[index] * Steps];
+            float first = _distances[FirstStopPoint * Steps], last = _distances[LastStopPoint * Steps];
+            return Mathf.Lerp(first, last, Stops > 1 ? index / (float)(Stops - 1) : 0f);
         }
 
-        public static Vector2 StopPosition(int index) => Points[StopPoints[index]];
+        public static Vector2 StopPosition(int index) => PointAt(StopDistance(index), out _);
 
         /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
         public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(920f, 1700f, y));
