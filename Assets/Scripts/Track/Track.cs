@@ -185,76 +185,6 @@ namespace SomeGame.Track
             return false;
         }
 
-        /// <summary>True on the stretches where the road runs underground.</summary>
-        public bool InTunnel(float distance)
-        {
-            foreach (var t in layout.tunnels)
-            {
-                float into = Path.DeltaDistance(t.from, distance);
-                if (into >= 0f && into <= Path.DeltaDistance(t.from, t.to)) return true;
-            }
-            return false;
-        }
-
-        List<Vector2> _bridges;
-
-        /// <summary>Lap-distance ranges where the road passes over a tunnel's hill (a bridge).</summary>
-        public IReadOnlyList<Vector2> Bridges => _bridges ??= FindBridges();
-
-        public bool OnBridge(float distance)
-        {
-            foreach (var b in Bridges)
-            {
-                float into = Path.DeltaDistance(b.x, distance);
-                if (into >= 0f && into <= Path.DeltaDistance(b.x, b.y)) return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Distance from a point to the nearest tunnel's road centre line (for the hill outline). With a
-        /// lap distance, tunnel road within <paramref name="ignoreWithin"/> along the lap is skipped (so
-        /// the road leading into a tunnel does not count as passing over it).
-        /// </summary>
-        public float TunnelDistance(Vector2 p, out TrackLayout.Tunnel tunnel, float lapDistance = float.NaN, float ignoreWithin = 0f)
-        {
-            float best = float.MaxValue;
-            tunnel = null;
-            foreach (var t in layout.tunnels)
-            {
-                float span = Path.DeltaDistance(t.from, t.to);
-                for (float d = 0f; d <= span; d += 1f)
-                {
-                    if (!float.IsNaN(lapDistance) && Mathf.Abs(Path.DeltaDistance(t.from + d, lapDistance)) < ignoreWithin) continue;
-                    float dist = Vector2.Distance(p, Path.PointAt(t.from + d));
-                    if (dist < best) { best = dist; tunnel = t; }
-                }
-            }
-            return best;
-        }
-
-        List<Vector2> FindBridges()
-        {
-            var list = new List<Vector2>();
-            if (layout.tunnels.Count == 0) return list;
-            float start = -1f;
-            for (float d = 0f; d <= Path.Length; d += 0.5f)
-            {
-                bool over = false;
-                if (!InTunnel(d))
-                {
-                    float dist = TunnelDistance(Path.PointAt(d), out var t, d, 30f);
-                    // Bridge wherever any part of this road (its full width) could be under the hill,
-                    // including the hill's uneven, soft rim.
-                    over = t != null && dist < layout.roadWidth * 0.5f + layout.kerbWidth + t.hillMargin + OffRoadAt(d) + 3.5f;
-                }
-                if (over && start < 0f) start = d;
-                if (!over && start >= 0f) { list.Add(new Vector2(start - 1f, d + 1f)); start = -1f; }
-            }
-            if (start >= 0f) list.Add(new Vector2(start - 1f, Path.Length + 1f));
-            return list;
-        }
-
         /// <summary>True where the road is missing (a gap over water).</summary>
         public bool InGap(float distance)
         {
@@ -409,7 +339,6 @@ namespace SomeGame.Track
             _path = null;
             _jumps = null;
             _shortcuts = null;
-            _bridges = null;
             Rebuilt?.Invoke();
         }
 

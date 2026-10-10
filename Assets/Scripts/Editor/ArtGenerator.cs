@@ -97,32 +97,6 @@ namespace SomeGame.EditorTools
             World("Ramp", 128, 160, RampPixel, 64, false);
             World("Oil", 128, 128, OilPixel, 64, false);
             World("Arrow", 128, 128, ArrowPixel, 64, false);
-            World("Hill", 128, 128, HillPixel, 32, true);
-            World("Portal", 128, 96, PortalPixel, 64, false);
-            World("Headlights", 128, 256, (x, y) =>
-            {
-                // Two soft cones of light from the front of the car (bottom edge) reaching up.
-                float t = y / 256f;
-                float a = 0f;
-                foreach (float cx in new[] { 46f, 82f })
-                {
-                    float spread = Mathf.Lerp(6f, 46f, t);
-                    a += Mathf.Exp(-Mathf.Pow((x - Mathf.Lerp(cx, 64f + (cx - 64f) * 1.6f, t)) / spread, 2f));
-                }
-                a *= (1f - t) * Mathf.Clamp01(t * 12f) * 0.75f;
-                return new Color(1f, 0.95f, 0.78f, Mathf.Clamp01(a));
-            }, 64, false);
-            World("Vignette", 256, 256, (x, y) =>
-            {
-                float d = Dist(x, y, 128, 128) / 128f;
-                return new Color(0.02f, 0.03f, 0.05f, Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 1.1f, d)) * 0.85f);
-            }, 64, false);
-            World("Lamp", 64, 64, (x, y) =>
-            {
-                float d = Dist(x, y, 32, 32);
-                Color c = new(1f, 0.85f, 0.55f, Mathf.Clamp01(Gauss(d, 9f) * 0.9f));
-                return Over(c, new Color(1f, 0.97f, 0.85f, 1f), Fill(d - 5f));
-            }, 64, false);
             World("Gummiboat", 256, 256, GummiboatPixel, 128, false);
             World("Geyser", 128, 128, GeyserPixel, 128, false);
             World("Fish", 96, 192, FishPixel, 64, false);
@@ -154,9 +128,6 @@ namespace SomeGame.EditorTools
             Material("Ramp", "Ramp");
             Material("Oil", "Oil");
             Material("Arrow", "Arrow");
-            Material("Hill", "Hill");
-            Material("Portal", "Portal");
-            Material("Lamp", "Lamp");
             Material("Smoke", "Smoke");
         }
 
@@ -365,40 +336,6 @@ namespace SomeGame.EditorTools
             float arrow = Mathf.Min(shaft, head);
             float wear = 0.8f + Hash((int)x / 3, (int)y / 3) * 0.2f;
             return new Color(1f, 1f, 1f, Fill(arrow) * 0.85f * wear);
-        }
-
-        // The grassy top of a tunnel hill (tiles): darker, lusher grass than the meadow, with tufts and stones.
-        static Color HillPixel(float x, float y)
-        {
-            float n = Noise(x / 14f, y / 14f, 9) * 0.6f + Noise(x / 5f, y / 5f, 26) * 0.4f;
-            Color c = Color.Lerp(Hex("3F6E3A"), Hex("568A45"), n);
-            if (Hash((int)(x / 3), (int)(y / 2)) > 0.88f) c = Shade(c, 0.82f);
-            int cx = (int)(x / 32), cy = (int)(y / 32);
-            float h = Hash(cx * 5 + 2, cy * 11 + 3);
-            if (h > 0.45f)
-            {
-                float sx = cx * 32 + 8 + Hash(cx, cy) * 16, sy = cy * 32 + 8 + Hash(cy, cx) * 16;
-                float stone = Ellipse(x, y, sx, sy, 5f, 3.5f);
-                c = Over(c, Hex("9C9A90"), Fill(stone));
-                c = Over(c, Hex("6E6C66"), Stroke(stone, 1.5f) * 0.8f);
-            }
-            return c;
-        }
-
-        // A tunnel mouth seen from above: a stone arch across the road (u), the dark opening at the
-        // bottom edge (v = 0, facing out of the tunnel), stone blocks around it.
-        static Color PortalPixel(float x, float y)
-        {
-            Color c = new(0, 0, 0, 0);
-            float wall = RoundRect(x, y, 64, 44, 64, 44, 6);
-            Color stone = Color.Lerp(Hex("A8A39A"), Hex("C4BFB4"), Noise(x / 8f, y / 8f, 16));
-            if (Mathf.Repeat(y, 16f) < 1.5f || Mathf.Repeat(x + (Mathf.Floor(y / 16f) % 2) * 12f, 24f) < 1.5f) stone = Shade(stone, 0.75f);
-            c = Over(c, stone, Fill(wall));
-            float mouth = Ellipse(x, y, 64, 0, 46, 58);
-            c = Over(c, Hex("12171A"), Fill(mouth));
-            c = Over(c, Hex("3A3F42"), Stroke(mouth, 4f) * Fill(wall));
-            c = Over(c, Hex("14231E"), Stroke(wall, 5f));
-            return c;
         }
 
         // An inflatable gummiboat seen from above: a fat orange tube ring with yellow highlights,
