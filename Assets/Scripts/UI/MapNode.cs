@@ -59,7 +59,7 @@ namespace SomeGame.UI
             lockIcon.gameObject.SetActive(state == MapNodeState.Locked);
 
             // Always show the slots: empty stars and trophy as faint outlines, filled once earned.
-            starsPill.SetActive(!hidden);
+            starsPill.SetActive(!hidden && state != MapNodeState.Locked); // a locked race shows the stars it needs instead
             var empty = Theme.WithAlpha(Theme.Stone, 0.3f);
             for (int i = 0; i < stars.Length; i++) stars[i].color = i < earnedStars ? Theme.Amber : empty;
             if (trophy != null) trophy.color = won ? Theme.Amber : empty;

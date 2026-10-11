@@ -112,12 +112,16 @@ namespace SomeGame.UI
             return true;
         }
 
-        // On game start race 1 is selected; back from a race, the race just played.
+        // Back from a race: the race just played (if still open). Otherwise the furthest race you can enter.
         int InitialSelection()
         {
             var last = GameSession.CurrentLevel;
             int index = last != null ? catalog.IndexOf(last) : -1;
-            return index >= 0 && ProgressStore.IsVisible(catalog, index) ? index : 0;
+            if (index >= 0 && ProgressStore.CanEnter(catalog, index)) return index;
+            int open = 0;
+            for (int i = 0; i < catalog.Count; i++)
+                if (ProgressStore.CanEnter(catalog, i)) open = i;
+            return open;
         }
 
         int LatestVisible()

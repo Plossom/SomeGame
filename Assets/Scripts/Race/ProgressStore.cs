@@ -58,12 +58,13 @@ namespace SomeGame.Race
             }
         }
 
-        /// <summary>All races are open from the start (the unlock rules below are kept for later).</summary>
-        public const bool UnlockAll = true;
+        /// <summary>Development: every race open (UNLOCK ALL in the map menu).</summary>
+        public static bool UnlockAll => CupList.DevUnlockAll;
 
-        public static bool IsVisible(LevelCatalog catalog, int index) =>
-            index >= 0 && index < catalog.Count && (UnlockAll || index == 0 || HasWon(catalog[index - 1]));
+        /// <summary>Every race shows on the map; the locked ones with the stars they need.</summary>
+        public static bool IsVisible(LevelCatalog catalog, int index) => index >= 0 && index < catalog.Count;
 
+        /// <summary>A race opens with enough stars in total (2 for race 2, 4 for race 3, ...).</summary>
         public static bool CanEnter(LevelCatalog catalog, int index) =>
             IsVisible(catalog, index) && (UnlockAll || TotalStars >= catalog[index].starsRequired);
 

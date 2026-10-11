@@ -17,8 +17,8 @@ namespace SomeGame.Race
         const string DevUnlockKey = "Dev.UnlockCups";
 
         /// <summary>
-        /// Development switch (in the map menu): every cup with requirements is open, and selectable even
-        /// without races. Off by default, so cups unlock with stars and trophies. Kept by a game reset.
+        /// Development switch (UNLOCK ALL in the map menu): every cup and every race is open (cups even
+        /// without races). Off by default, so cups and races unlock with stars and trophies. Kept by a game reset.
         /// </summary>
         public static bool DevUnlockAll
         {

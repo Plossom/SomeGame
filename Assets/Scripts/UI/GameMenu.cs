@@ -38,7 +38,7 @@ namespace SomeGame.UI
         [Header("Map only")]
         [Tooltip("Resets all progress (asks for a second tap first).")]
         [SerializeField] UnityEngine.UI.Button tutorialButton;
-        [Tooltip("Development: unlocks or locks the cups that need stars and trophies.")]
+        [Tooltip("Development: unlocks or locks the Winter Cup and all races.")]
         [SerializeField] UnityEngine.UI.Button cupsButton;
         [SerializeField] TMP_Text cupsLabel;
         [SerializeField] UnityEngine.UI.Button resetButton;
@@ -112,14 +112,13 @@ namespace SomeGame.UI
             GameSession.ReturnToMap();
         }
 
-        // Development: opens or locks the cups behind stars and trophies. If that changes the cup on the
-        // map (locking the one shown), the map reloads with the first cup.
+        // Development: opens (or locks again) the Winter Cup and every race of the Valley Cup; the map
+        // reloads to show it.
         void ToggleCups()
         {
-            var before = CupList.Selected;
             CupList.DevUnlockAll = !CupList.DevUnlockAll;
             RefreshSettings();
-            if (CupList.Selected != before) GameSession.ReturnToMap();
+            GameSession.ReturnToMap();
         }
 
         public void Open()
@@ -163,8 +162,8 @@ namespace SomeGame.UI
                 : $"JOYSTICK   <color={Theme.Html(Theme.Orange)}>VISIBLE</color>";
             if (cupsLabel != null)
                 cupsLabel.text = CupList.DevUnlockAll
-                    ? $"WINTER CUP   <color={Theme.Html(Theme.Orange)}>UNLOCKED</color>"
-                    : $"WINTER CUP   <color={Theme.Html(Theme.StoneDark)}>LOCKED</color>";
+                    ? $"UNLOCK ALL   <color={Theme.Html(Theme.Orange)}>ON</color>"
+                    : $"UNLOCK ALL   <color={Theme.Html(Theme.StoneDark)}>OFF</color>";
         }
     }
 }

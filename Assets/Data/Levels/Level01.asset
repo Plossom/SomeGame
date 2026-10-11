@@ -21,10 +21,10 @@ MonoBehaviour:
   description: A twisty run across the meadows on a narrower road, with more oil and two hidden shortcuts for the brave.
   difficulty: 2
   rivalCount: 7
-  rivalSpeedScale: 0.95
+  rivalSpeedScale: 0.92
   rivalCornerScale: 1
-  starsRequired: 0
+  starsRequired: 4
   starTimes:
-  - 80
-  - 62
-  - 57
+  - 86
+  - 78
+  - 74

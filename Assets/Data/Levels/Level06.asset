@@ -21,10 +21,10 @@ MonoBehaviour:
   description: 'Six streams in a row: jump, land, jump again. Keep your speed up for every single ramp.'
   difficulty: 3
   rivalCount: 7
-  rivalSpeedScale: 0.8871774
+  rivalSpeedScale: 0.86
   rivalCornerScale: 1
-  starsRequired: 0
+  starsRequired: 8
   starTimes:
-  - 75
-  - 62
-  - 55
+  - 77
+  - 68
+  - 64

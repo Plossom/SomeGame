@@ -25,15 +25,14 @@ namespace SomeGame.EditorTools
             Debug.Log("Map ambience art generated");
         }
 
-        /// <summary>The car in the race HUD's track view: a slim navigation arrow pointing up, white with a dark outline.</summary>
+        /// <summary>The car in the race HUD's track view: a slim navigation arrow pointing up (white, tinted orange in the HUD).</summary>
         [MenuItem("SomeGame/Generate Nav Arrow")]
         public static void GenerateNavArrow() => Write(ArtGenerator.Folder, "NavArrow", 64, 96, NavArrowPixel, 100, false);
 
         static Color NavArrowPixel(float x, float y)
         {
             float d = Polygon(x, y, new[] { new Vector2(32f, 90f), new Vector2(57f, 8f), new Vector2(32f, 26f), new Vector2(7f, 8f) });
-            Color c = Over(new Color(0f, 0f, 0f, 0f), Color.white, Cover(d));
-            return Over(c, Hex("173D33"), Stroke(d, 7f));
+            return White(Cover(d));
         }
 
         static float Cover(float d) => Mathf.Clamp01(0.5f - d);

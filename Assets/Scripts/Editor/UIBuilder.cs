@@ -495,8 +495,21 @@ namespace SomeGame.EditorTools
             var aheadRoad = Line(Stretch("Road", aheadRt));
             aheadRoad.color = Theme.WithAlpha(Theme.Cream, 0.9f);
             aheadRoad.raycastTarget = false;
-            var aheadArrow = Img(At("Car", aheadRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(44f, 66f)), "NavArrow", Color.white).rectTransform;
+            var aheadArrow = Img(At("Car", aheadRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(44f, 66f)), "NavArrow", Theme.Orange).rectTransform;
             Configure(aheadRt.gameObject.AddComponent<TrackAheadView>(), ("race", race), ("road", aheadRoad), ("arrow", aheadArrow));
+
+            // Tricks and combos, big above the car (the car sits in the middle of the screen).
+            var combo = Stretch("Combo", canvas);
+            var trickRoot = At("Trick", combo, new Vector2(0.5f, 0.5f), new Vector2(0f, 620f), new Vector2(1000f, 240f));
+            var burst = Img(At("Burst", trickRoot, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(560f, 560f)), "Sparkle", Theme.Amber);
+            var trickLabel = Txt(Stretch("Label", trickRoot), "ULTRA DRIFT!", 156, Color.white, _black);
+            trickLabel.fontSharedMaterial = _blackOutline;
+            var comboRoot = At("Chain", combo, new Vector2(0.5f, 0.5f), new Vector2(0f, 450f), new Vector2(800f, 130f));
+            var comboLabel = Txt(Stretch("Label", comboRoot), "COMBO x2", 80, Color.white, _black);
+            comboLabel.fontSharedMaterial = _blackOutline;
+            comboLabel.characterSpacing = 4f;
+            Configure(combo.gameObject.AddComponent<ComboDisplay>(), ("race", race), ("trickRoot", trickRoot), ("trickLabel", trickLabel),
+                ("burst", burst), ("comboRoot", comboRoot), ("comboLabel", comboLabel));
 
             // Countdown.
             var cd = Stretch("Countdown", canvas);
@@ -703,7 +716,7 @@ namespace SomeGame.EditorTools
 
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
             var tutorialButton = MenuButton(card, "TutorialButton", "TUTORIAL", Color.white, Theme.Ink, Theme.Ink, 130f, out _, 46);
-            var cupsButton = MenuButton(card, "CupsButton", "WINTER CUP   LOCKED", Color.white, Theme.Ink, Theme.Ink, 130f, out var cupsLabel, 46);
+            var cupsButton = MenuButton(card, "CupsButton", "UNLOCK ALL   OFF", Color.white, Theme.Ink, Theme.Ink, 130f, out var cupsLabel, 46);
             var resetButton = MenuButton(card, "ResetButton", "RESET GAME", Color.white, Theme.Rust, Theme.Rust, 130f, out var resetLabel, 46);
 
             var menu = host.gameObject.AddComponent<GameMenu>();
