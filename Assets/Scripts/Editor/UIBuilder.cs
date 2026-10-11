@@ -443,6 +443,12 @@ namespace SomeGame.EditorTools
 
             var canvas = CreateCanvas();
 
+            // Snowfall over the race on snow tracks (switched on by the track renderer), under the HUD.
+            var raceSnow = Stretch("Snow", canvas);
+            Configure(raceSnow.gameObject.AddComponent<SnowFall>(), ("flake", Sprite("Circle")), ("count", 90));
+            raceSnow.gameObject.SetActive(false);
+            WireSnowBiome(raceSnow.gameObject);
+
             // Floating joystick (whole screen is the touch area).
             var area = Stretch("JoystickArea", canvas);
             var baseRt = At("JoystickBase", area, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(360f, 360f));
@@ -961,6 +967,19 @@ namespace SomeGame.EditorTools
             return rt;
         }
 
+        // The track renderer's snow materials (Winter Cup), the scenery mesh it re-skins and the snowfall.
+        static void WireSnowBiome(GameObject snowfall)
+        {
+            var renderer = Object.FindAnyObjectByType<SomeGame.Track.TrackRenderer>();
+            if (renderer == null) return;
+            Material Mat(string name) => AssetDatabase.LoadAssetAtPath<Material>(ArtGenerator.Folder + "/" + name + ".mat");
+            var scenery = Object.FindAnyObjectByType<SomeGame.Track.TrackScenery>();
+            var sceneryMesh = scenery != null ? new SerializedObject(scenery).FindProperty("trees").objectReferenceValue as MeshFilter : null;
+            var sceneryRenderer = sceneryMesh != null ? sceneryMesh.GetComponent<MeshRenderer>() : null;
+            Configure(renderer, ("snowGround", Mat("SnowGround")), ("snowRoad", Mat("WinterRoad")), ("snowKerbs", Mat("SnowKerb")),
+                ("snowRunoff", Mat("SnowRunoff")), ("snowScenery", Mat("SceneryWinter")), ("scenery", sceneryRenderer), ("snowfall", snowfall));
+        }
+
         static TrackLine Line(RectTransform rt)
         {
             rt.gameObject.AddComponent<CanvasRenderer>();
@@ -1017,6 +1036,7 @@ namespace SomeGame.EditorTools
                 switch (value)
                 {
                     case float f: p.floatValue = f; break;
+                    case int i: p.intValue = i; break;
                     case bool b: p.boolValue = b; break;
                     case Vector2 v: p.vector2Value = v; break;
                     case Object o: p.objectReferenceValue = o; break;

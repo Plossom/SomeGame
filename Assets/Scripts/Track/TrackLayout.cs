@@ -40,6 +40,8 @@ namespace SomeGame.Track
         [Header("Water, jumps and oil")]
         [Tooltip("The whole world is water: the road is a causeway, and anything off the road is a splash.")]
         public bool waterWorld;
+        [Tooltip("Look of the land around the road: green meadows (Valley Cup) or snow (Winter Cup).")]
+        public Biome biome;
         [Tooltip("Gaps in the road over water (lap distances), each with a kicker ramp just before it.")]
         public List<Gap> gaps = new();
         [Tooltip("The road stands a little above the ground and casts a shadow (always on water tracks).")]
@@ -83,6 +85,8 @@ namespace SomeGame.Track
             [Tooltip("Shifts its rhythm (seconds).")]
             public float offset;
         }
+
+        public enum Biome { Meadow, Snow }
 
         public enum SweeperKind { Log, HayBale }
 

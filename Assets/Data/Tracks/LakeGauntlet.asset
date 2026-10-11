@@ -63,6 +63,7 @@ MonoBehaviour:
   checkpointCount: 6
   boundaryMargin: 25
   waterWorld: 0
+  biome: 0
   gaps:
   - from: 157.8236
     to: 166.8236

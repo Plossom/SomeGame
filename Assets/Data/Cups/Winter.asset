@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Winter
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.CupDefinition
   displayName: WINTER CUP
-  races: {fileID: 0}
+  races: {fileID: 11400000, guid: 37e6ef8d8e3004c53ba54b76b2a37031, type: 2}
   icon: {fileID: 21300000, guid: 89951fc28a91d4b12a1835c864a56905, type: 3}
   accent: {r: 1, g: 0.48, b: 0.1, a: 1}
   look: 1

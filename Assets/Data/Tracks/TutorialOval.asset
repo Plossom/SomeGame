@@ -40,6 +40,7 @@ MonoBehaviour:
   checkpointCount: 6
   boundaryMargin: 25
   waterWorld: 0
+  biome: 0
   gaps: []
   elevatedRoad: 0
   bouncers: []

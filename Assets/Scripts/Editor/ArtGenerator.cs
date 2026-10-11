@@ -832,7 +832,7 @@ namespace SomeGame.EditorTools
 
         // ---------- materials ----------
 
-        static void Material(string name, string textureName)
+        internal static void Material(string name, string textureName)
         {
             string path = $"{Folder}/{name}.mat";
             var mat = AssetDatabase.LoadAssetAtPath<Material>(path);

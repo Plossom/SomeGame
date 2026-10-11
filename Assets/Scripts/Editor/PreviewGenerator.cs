@@ -32,10 +32,14 @@ namespace SomeGame.EditorTools
             // Cars and their effects stay out of the picture.
             foreach (var car in Object.FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None)) car.gameObject.SetActive(false);
 
-            var catalog = AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset");
+            // Every cup's races.
+            var levels = new System.Collections.Generic.List<LevelDefinition>();
+            foreach (var guid in AssetDatabase.FindAssets("t:LevelCatalog"))
+                foreach (var l in AssetDatabase.LoadAssetAtPath<LevelCatalog>(AssetDatabase.GUIDToAssetPath(guid)).levels)
+                    if (l != null && !levels.Contains(l)) levels.Add(l);
             var log = new System.Text.StringBuilder();
             var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
-            foreach (var level in catalog.levels)
+            foreach (var level in levels)
             {
                 var layout = level.track;
                 layoutField.SetValue(track, layout);
@@ -46,7 +50,8 @@ namespace SomeGame.EditorTools
                 float margin = 10f, aspect = (float)Width / Height;
                 cam.transform.position = new Vector3(b.center.x, b.center.y, -10f);
                 cam.orthographicSize = Mathf.Max(b.height * 0.5f + margin, (b.width * 0.5f + margin) / aspect);
-                cam.backgroundColor = layout.waterWorld ? new Color(0.25f, 0.58f, 0.74f) : new Color(0.373f, 0.627f, 0.247f);
+                cam.backgroundColor = layout.waterWorld ? new Color(0.25f, 0.58f, 0.74f)
+                    : layout.biome == SomeGame.Track.TrackLayout.Biome.Snow ? new Color(0.9f, 0.94f, 0.98f) : new Color(0.373f, 0.627f, 0.247f);
                 cam.targetTexture = rt;
                 cam.Render();
                 cam.targetTexture = null;

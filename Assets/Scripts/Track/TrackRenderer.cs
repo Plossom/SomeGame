@@ -63,6 +63,18 @@ namespace SomeGame.Track
         [SerializeField] MeshFilter roadShadow;
         [SerializeField] Vector2 roadShadowOffset = new(0.35f, -0.5f);
 
+        [Header("Snow biome (Winter Cup)")]
+        [SerializeField] Material snowGround;
+        [SerializeField] Material snowRoad;
+        [SerializeField] Material snowKerbs;
+        [SerializeField] Material snowRunoff;
+        [SerializeField] Material snowScenery;
+        [Tooltip("The scenery mesh, which takes the winter atlas on a snow track.")]
+        [SerializeField] MeshRenderer scenery;
+        [SerializeField] Color snowBackground = new(0.9f, 0.94f, 0.98f);
+        [Tooltip("Snowfall over the race, shown on snow tracks.")]
+        [SerializeField] GameObject snowfall;
+
         [Tooltip("Grass tint range for the large meadow patches.")]
         [SerializeField] Color meadowDark = new(0.8f, 0.88f, 0.8f);
         [SerializeField] Color meadowLight = Color.white;
@@ -91,12 +103,14 @@ namespace SomeGame.Track
                 Assign(centerLine, TrackMeshes.Strip(path, -centerLineWidth * 0.5f, centerLineWidth * 0.5f, 1f, cycle, "CenterLine"));
             }
 
+            bool snow = layout.biome == TrackLayout.Biome.Snow && !water;
             Rect area = Expand(path.Bounds(), layout.boundaryMargin);
-            Assign(grass, BuildGrass(Expand(area, grassOverscan), water));
-            if (Application.isPlaying && Camera.main != null) Camera.main.backgroundColor = water ? waterBackground : grassBackground;
+            Assign(grass, BuildGrass(Expand(area, grassOverscan), water, snow));
+            if (Application.isPlaying && Camera.main != null) Camera.main.backgroundColor = water ? waterBackground : snow ? snowBackground : grassBackground;
             var groundRenderer = grass != null ? grass.GetComponent<MeshRenderer>() : null;
             if (groundRenderer != null && grassMaterial != null && waterMaterial != null)
-                groundRenderer.sharedMaterial = water ? waterMaterial : grassMaterial;
+                groundRenderer.sharedMaterial = water ? waterMaterial : snow && snowGround != null ? snowGround : grassMaterial;
+            ApplyBiome(snow);
             if (boundary != null && Application.isPlaying)
             {
                 Rect wall = Expand(area, -1f);
@@ -107,6 +121,29 @@ namespace SomeGame.Track
                     new Vector2(wall.xMin, wall.yMin),
                 };
             }
+        }
+
+        // The snow biome swaps the road, kerb, run-off and scenery materials (the meadow ones are remembered
+        // so a meadow track gets them back) and switches the snowfall on.
+        readonly System.Collections.Generic.Dictionary<Renderer, Material> _meadow = new();
+
+        void ApplyBiome(bool snow)
+        {
+            Swap(road, snowRoad, snow);
+            Swap(kerbs, snowKerbs, snow);
+            Swap(runoff, snowRunoff, snow);
+            Swap(scenery, snowScenery, snow);
+            if (snowfall != null && Application.isPlaying) snowfall.SetActive(snow);
+        }
+
+        void Swap(Component target, Material snowMaterial, bool snow)
+        {
+            if (target == null || snowMaterial == null) return;
+            var renderer = target.GetComponent<Renderer>();
+            if (renderer == null) return;
+            if (!_meadow.ContainsKey(renderer)) _meadow[renderer] = renderer.sharedMaterial == snowMaterial ? null : renderer.sharedMaterial;
+            var meadow = _meadow[renderer];
+            renderer.sharedMaterial = snow ? snowMaterial : meadow != null ? meadow : renderer.sharedMaterial;
         }
 
         // Red-and-white kerbs on both sides, only where the road turns enough.
@@ -241,7 +278,7 @@ namespace SomeGame.Track
         }
 
         // A grid so the grass can carry large, soft light and dark meadow patches in its vertex colours.
-        Mesh BuildGrass(Rect area, bool water)
+        Mesh BuildGrass(Rect area, bool water, bool snow)
         {
             const float cell = 3f;
             int nx = Mathf.CeilToInt(area.width / cell), ny = Mathf.CeilToInt(area.height / cell);
@@ -257,7 +294,9 @@ namespace SomeGame.Track
                     float tile = water ? waterTile : grassTile;
                     uvs.Add(new Vector2(p.x / tile, p.y / tile));
                     float t = Mathf.PerlinNoise(p.x * 0.035f + 100f, p.y * 0.035f) * 0.7f + Mathf.PerlinNoise(p.x * 0.11f, p.y * 0.11f + 50f) * 0.3f;
-                    colors.Add(water ? Color.Lerp(new Color(0.9f, 0.95f, 1f), Color.white, t) : Color.Lerp(meadowDark, meadowLight, Mathf.SmoothStep(0f, 1f, t)));
+                    colors.Add(water ? Color.Lerp(new Color(0.9f, 0.95f, 1f), Color.white, t)
+                        : snow ? Color.Lerp(new Color(0.88f, 0.92f, 0.98f), Color.white, Mathf.SmoothStep(0f, 1f, t)) // soft blue drifts
+                        : Color.Lerp(meadowDark, meadowLight, Mathf.SmoothStep(0f, 1f, t)));
                 }
             for (int j = 0; j < ny; j++)
                 for (int i = 0; i < nx; i++)
