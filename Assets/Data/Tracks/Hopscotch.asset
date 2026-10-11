@@ -133,6 +133,8 @@ MonoBehaviour:
   shortcuts: []
   branches: []
   banks: []
+  penguins: []
+  dashPanels: []
   scenery: []
   bakedScenery:
   - position: {x: 33.548935, y: 108.95374}

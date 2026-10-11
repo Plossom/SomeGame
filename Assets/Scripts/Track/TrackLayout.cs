@@ -88,7 +88,33 @@ namespace SomeGame.Track
 
         public enum Biome { Meadow, Snow }
 
-        public enum SweeperKind { Log, HayBale }
+        public enum SweeperKind { Log, HayBale, Snowball }
+
+        /// <summary>A little line of penguins that waddles across the road, waits, and waddles back.</summary>
+        [Serializable]
+        public class Penguins
+        {
+            [Tooltip("Lap distance where they cross.")]
+            public float distance;
+            [Min(1)] public int count = 3;
+            [Tooltip("Seconds for one crossing there and back, waits included.")]
+            [Min(1f)] public float period = 8f;
+            [Tooltip("Seconds one crossing takes.")]
+            [Min(0.5f)] public float crossing = 3f;
+            [Tooltip("Shifts their rhythm (seconds).")]
+            public float offset;
+        }
+
+        /// <summary>A dash panel on the road: drive over it for a boost.</summary>
+        [Serializable]
+        public class DashPanel
+        {
+            public float distance;
+            [Tooltip("Sideways position (positive = left of the centre line).")]
+            public float lateral;
+            [Min(1f)] public float length = 4f;
+            [Min(1f)] public float width = 3.2f;
+        }
 
         [Serializable]
         public class Sweeper
@@ -119,6 +145,10 @@ namespace SomeGame.Track
         public List<Branch> branches = new();
         [Tooltip("Banked walls on the outside of corners: ride them fast to keep full speed through the corner.")]
         public List<Bank> banks = new();
+        [Tooltip("Penguins crossing the road (bump one and you spin).")]
+        public List<Penguins> penguins = new();
+        [Tooltip("Dash panels on the road: a boost for driving over them.")]
+        public List<DashPanel> dashPanels = new();
 
         [Tooltip("Scenery for this track. Empty = the scene's default scenery.")]
         public List<TrackScenery.Kind> scenery = new();

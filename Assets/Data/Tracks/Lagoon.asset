@@ -154,6 +154,8 @@ MonoBehaviour:
     designSpeed: 15
   branches: []
   banks: []
+  penguins: []
+  dashPanels: []
   scenery:
   - name: Island
     uv:

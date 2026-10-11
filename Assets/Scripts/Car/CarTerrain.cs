@@ -31,6 +31,8 @@ namespace SomeGame.Car
         [Tooltip("Seconds the car blinks after a restart.")]
         [SerializeField, Min(0f)] float blinkSeconds = 1.2f;
         [SerializeField] int sortingOrder = 13;
+        [Tooltip("Boost strength (0-1) from a dash panel.")]
+        [SerializeField, Range(0f, 1f)] float dashBoost = 0.85f;
         [Tooltip("Metres of riding a banked wall that earn a boost when the car comes off it.")]
         [SerializeField, Min(1f)] float wallRideReward = 14f;
         [SerializeField, Range(0f, 1f)] float wallRideBoost = 0.55f;
@@ -47,6 +49,7 @@ namespace SomeGame.Car
         bool _fromCornerCut;
         bool _roofExit;
         float _wallRide;
+        float _dashAt = -10f;
         ParticleSystem _splash, _dust;
         SpriteRenderer[] _sprites;
 
@@ -166,8 +169,14 @@ namespace SomeGame.Car
                 Splash(track);
                 return;
             }
-            if (!_car.IsSlipping && (track.IsOil(position) || track.FishHit(position, Time.time)))
+            if (!_car.IsSlipping && (track.IsOil(position) || track.FishHit(position, Time.time) || track.PenguinHit(position, Time.time)))
                 _car.Slip(UnityEngine.Random.value < 0.5f ? -1 : 1);
+            // Dash panel: a boost (once per panel).
+            if (Time.time - _dashAt > 0.6f && _sensor.Branch < 0 && track.DashPanelAt(point.Distance, point.Lateral) != null)
+            {
+                _dashAt = Time.time;
+                _car.GiveBoost(dashBoost);
+            }
         }
 
         // Up on the roofs: off an edge the car drops to the street; at the end of the row it jumps back

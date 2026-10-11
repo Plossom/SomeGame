@@ -7,7 +7,8 @@ namespace SomeGame.Track
     /// Brings the layout's hazards to life in Play mode: gummiboats (squash when a car bounces off),
     /// jumping fish (the water bubbles as a warning, then a big fish leaps across the road with its
     /// shadow; where there is no water beside the road it jumps between two little ponds) and obstacles
-    /// that roll back and forth across the road (solid: they block and push cars).
+    /// that roll back and forth across the road (solid: they block and push cars). Winter: spring pads on dry
+    /// ground, penguins waddling across, rolling snowballs and glowing dash panels on the road.
     /// </summary>
     public class TrackHazards : MonoBehaviour
     {
@@ -21,6 +22,12 @@ namespace SomeGame.Track
         [SerializeField, Min(0.5f)] float fishLength = 3.2f;
         [SerializeField] Sprite logSprite;
         [SerializeField] Sprite hayBaleSprite;
+        [SerializeField] Sprite snowballSprite;
+        [Tooltip("Jump pad on dry ground (a gummiboat is used on water).")]
+        [SerializeField] Sprite jumpPadSprite;
+        [SerializeField] Sprite penguinSprite;
+        [SerializeField, Min(0.3f)] float penguinSize = 2f;
+        [SerializeField] Sprite dashPanelSprite;
         [SerializeField] Material particleMaterial;
         [Tooltip("Seconds of bubbling before a fish leaps.")]
         [SerializeField, Min(0f)] float geyserWarning = 0.7f;
@@ -31,6 +38,8 @@ namespace SomeGame.Track
         readonly List<(TrackLayout.Geyser data, Transform fish, Transform shadow, ParticleSystem splash, ParticleSystem bubbles, bool wasUp)> _fish = new();
         readonly List<(TrackLayout.Sweeper data, Rigidbody2D body, Transform visual, float span)> _sweepers = new();
         readonly Dictionary<Transform, float> _squash = new();
+        readonly List<(TrackLayout.Penguins data, Transform[] birds)> _penguins = new();
+        readonly List<(Vector2 position, Vector2 heading)> _penguinSpots = new();
 
         void Start()
         {
@@ -48,13 +57,14 @@ namespace SomeGame.Track
         void Build()
         {
             foreach (var go in _spawned) if (go != null) Destroy(go);
-            _spawned.Clear(); _boats.Clear(); _fish.Clear(); _sweepers.Clear(); _squash.Clear();
+            _spawned.Clear(); _boats.Clear(); _fish.Clear(); _sweepers.Clear(); _squash.Clear(); _penguins.Clear();
             var layout = track.Layout;
             var path = track.Path;
 
             foreach (var b in layout.bouncers)
             {
-                var sr = Sprite("Gummiboat", gummiboatSprite, b.position, b.radius * 2.15f, 0f, sortingOrder - 2);
+                bool dry = jumpPadSprite != null && !track.IsWater(b.position);
+                var sr = Sprite(dry ? "JumpPad" : "Gummiboat", dry ? jumpPadSprite : gummiboatSprite, b.position, b.radius * 2.15f, 0f, sortingOrder - 2);
                 _boats.Add((sr.transform, b.position, sr.transform.localScale.x));
                 if (b.HasTarget && arrowSprite != null)
                 {
@@ -100,6 +110,11 @@ namespace SomeGame.Track
                     go.AddComponent<BoxCollider2D>().size = new Vector2(4f, 0.9f);
                     visual = Sprite("Log", logSprite, Vector2.zero, 4.2f, 0f, sortingOrder, go.transform).transform;
                 }
+                else if (s.kind == TrackLayout.SweeperKind.Snowball && snowballSprite != null)
+                {
+                    go.AddComponent<CircleCollider2D>().radius = 1.35f;
+                    visual = Sprite("Snowball", snowballSprite, Vector2.zero, 2.9f, 0f, sortingOrder, go.transform).transform;
+                }
                 else
                 {
                     go.AddComponent<CircleCollider2D>().radius = 1.05f;
@@ -107,6 +122,25 @@ namespace SomeGame.Track
                 }
                 _sweepers.Add((s, body, visual, track.OffRoadAt(s.distance) + 2.6f));
             }
+
+            if (penguinSprite != null)
+                foreach (var line in layout.penguins)
+                {
+                    var birds = new Transform[line.count];
+                    for (int k = 0; k < line.count; k++) birds[k] = Sprite("Penguin", penguinSprite, path.PointAt(line.distance), penguinSize, 0f, sortingOrder + 1).transform;
+                    _penguins.Add((line, birds));
+                }
+
+            // Dash panels lie flat on the road, under the cars, pointing along it.
+            if (dashPanelSprite != null)
+                foreach (var panel in layout.dashPanels)
+                {
+                    Vector2 tangent = path.TangentAt(panel.distance);
+                    var sr = Sprite("DashPanel", dashPanelSprite, path.PointAt(panel.distance) + path.NormalAt(panel.distance) * panel.lateral, 1f,
+                        Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f, -45);
+                    Vector2 size = dashPanelSprite.bounds.size;
+                    sr.transform.localScale = new Vector3(panel.width / size.x, panel.length / size.y, 1f);
+                }
         }
 
         void FixedUpdate()
@@ -119,8 +153,8 @@ namespace SomeGame.Track
                 Vector2 target = path.PointAt(s.distance) + path.NormalAt(s.distance) * lateral;
                 Vector2 step = target - body.position;
                 body.MovePosition(target);
-                // Hay bales roll as they move.
-                if (s.kind == TrackLayout.SweeperKind.HayBale) visual.Rotate(0f, 0f, -step.magnitude * 50f * Mathf.Sign(Mathf.Cos(phase * Mathf.PI * 2f)));
+                // Hay bales and snowballs roll as they move.
+                if (s.kind != TrackLayout.SweeperKind.Log) visual.Rotate(0f, 0f, -step.magnitude * 50f * Mathf.Sign(Mathf.Cos(phase * Mathf.PI * 2f)));
             }
         }
 
@@ -156,6 +190,17 @@ namespace SomeGame.Track
                     splash.Emit(24);
                 }
                 _fish[i] = (g, fish, shadow, splash, bubbles, up);
+            }
+            // Penguins waddle: tilting from side to side as they walk.
+            foreach (var (line, birds) in _penguins)
+            {
+                track.PenguinPositions(line, Time.time, _penguinSpots);
+                for (int k = 0; k < birds.Length && k < _penguinSpots.Count; k++)
+                {
+                    var (position, heading) = _penguinSpots[k];
+                    float angle = Mathf.Atan2(heading.y, heading.x) * Mathf.Rad2Deg - 90f + Mathf.Sin(Time.time * 11f + k * 1.7f) * 12f;
+                    birds[k].SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, angle));
+                }
             }
             // Gummiboat squash after a bounce.
             var keys = new List<Transform>(_squash.Keys);

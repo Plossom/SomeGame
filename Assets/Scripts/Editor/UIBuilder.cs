@@ -1006,6 +1006,11 @@ namespace SomeGame.EditorTools
             var ice = Layer("BranchIce", "Ice", -56);
             var roofShadows = Layer("RoofShadows", "Trail", -45);
             var roofs = Layer("Roofs", "RoofRow", -41);
+            // The winter surprises' sprites on the hazards.
+            var hazards = Object.FindAnyObjectByType<SomeGame.Track.TrackHazards>();
+            if (hazards != null)
+                Configure(hazards, ("snowballSprite", Sprite("Snowball")), ("jumpPadSprite", Sprite("JumpPad")), ("penguinSprite", Sprite("Penguin")),
+                    ("dashPanelSprite", Sprite("DashPanel")));
             var bankLayer = Layer("Banks", "IceWall", -47);
             var banks = track.GetComponent<SomeGame.Track.TrackBanks>();
             if (banks == null) banks = track.gameObject.AddComponent<SomeGame.Track.TrackBanks>();

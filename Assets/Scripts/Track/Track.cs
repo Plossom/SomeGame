@@ -107,6 +107,52 @@ namespace SomeGame.Track
         /// <summary>Every river crossing, in lap order (derived from the rivers and the centre line).</summary>
         public IReadOnlyList<Jump> Jumps => _jumps ??= FindJumps();
 
+        /// <summary>Where each penguin of a crossing is at a time (on or beside the road), and which way it walks.</summary>
+        public void PenguinPositions(TrackLayout.Penguins line, float time, List<(Vector2 position, Vector2 heading)> into)
+        {
+            into.Clear();
+            float t = Mathf.Repeat(time + line.offset, line.period), half = line.period * 0.5f;
+            bool back = t >= half;
+            float walk = Mathf.Clamp01((back ? t - half : t) / line.crossing);
+            float reach = OffRoadAt(line.distance) + 2.5f;
+            Vector2 centre = Path.PointAt(line.distance), across = Path.NormalAt(line.distance) * (back ? 1f : -1f);
+            const float spacing = 1.6f;
+            for (int k = 0; k < line.count; k++)
+            {
+                // The leader walks the whole way; the others follow in a row behind it.
+                float lateral = Mathf.Lerp(-reach, reach + spacing * (line.count - 1), walk) - k * spacing;
+                lateral = Mathf.Clamp(lateral, -reach - spacing * k, reach);
+                Vector2 along = Path.TangentAt(line.distance) * ((k % 2 == 0 ? 0.35f : -0.35f));
+                into.Add((centre + across * lateral + along, across));
+            }
+        }
+
+        readonly List<(Vector2 position, Vector2 heading)> _penguinScratch = new();
+
+        /// <summary>True if a car at <paramref name="p"/> bumps into a penguin.</summary>
+        public bool PenguinHit(Vector2 p, float time, float radius = 1.3f)
+        {
+            if (layout == null || layout.penguins == null) return false;
+            foreach (var line in layout.penguins)
+            {
+                if ((Path.PointAt(line.distance) - p).sqrMagnitude > 400f) continue;
+                PenguinPositions(line, time, _penguinScratch);
+                foreach (var (position, _) in _penguinScratch)
+                    if ((position - p).sqrMagnitude < radius * radius) return true;
+            }
+            return false;
+        }
+
+        /// <summary>The dash panel under a lap distance and sideways offset, if any.</summary>
+        public TrackLayout.DashPanel DashPanelAt(float distance, float lateral)
+        {
+            if (layout == null || layout.dashPanels == null) return null;
+            foreach (var panel in layout.dashPanels)
+                if (Mathf.Abs(Path.DeltaDistance(panel.distance, distance)) <= panel.length * 0.5f && Mathf.Abs(lateral - panel.lateral) <= panel.width * 0.5f)
+                    return panel;
+            return null;
+        }
+
         /// <summary>
         /// The banked wall at a lap distance and sideways offset, if the car is on one; <paramref name="height"/>
         /// is how far up the wall it is (0 at the kerb, 1 at the top).

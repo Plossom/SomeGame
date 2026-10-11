@@ -86,6 +86,8 @@ MonoBehaviour:
     designSpeed: 15
   branches: []
   banks: []
+  penguins: []
+  dashPanels: []
   scenery: []
   bakedScenery:
   - position: {x: 91.62334, y: 91.7702}
