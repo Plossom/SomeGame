@@ -488,15 +488,15 @@ namespace SomeGame.EditorTools
             Set(hso, "lapFlashLabel", flash); Set(hso, "lapFlashRoot", flashRt.gameObject); Set(hso, "warningLabel", warning);
             hso.ApplyModifiedPropertiesWithoutUndo();
 
-            // The road ahead, top right under the HUD bar: a fading ribbon that turns with the car.
-            var aheadRt = At("TrackAhead", safe, new Vector2(1f, 1f), new Vector2(-48f, -222f), new Vector2(250f, 330f));
+            // The road around the car, top right under the HUD bar: fixed like the screen, the car in the middle.
+            var aheadRt = At("TrackAhead", safe, new Vector2(1f, 1f), new Vector2(-48f, -222f), new Vector2(300f, 300f));
             Img(aheadRt, "Round", Theme.WithAlpha(Theme.Ink, 0.9f), sliced: true);
             aheadRt.gameObject.AddComponent<RectMask2D>();
             var aheadRoad = Line(Stretch("Road", aheadRt));
             aheadRoad.color = Theme.WithAlpha(Theme.Cream, 0.9f);
             aheadRoad.raycastTarget = false;
             var aheadArrow = Img(At("Car", aheadRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(70f, 70f)), "IconPlay", Theme.Orange).rectTransform;
-            aheadArrow.localRotation = Quaternion.Euler(0f, 0f, 90f); // the play triangle points right; turn it to point up
+            aheadArrow.localRotation = Quaternion.Euler(0f, 0f, 90f); // the play triangle points right; turned with the car at runtime
             Configure(aheadRt.gameObject.AddComponent<TrackAheadView>(), ("race", race), ("road", aheadRoad), ("arrow", aheadArrow));
 
             // Countdown.

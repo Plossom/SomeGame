@@ -5,22 +5,23 @@ using UnityEngine;
 namespace SomeGame.UI
 {
     /// <summary>
-    /// A small, minimal view of the road just ahead in the race HUD: the centre line as a soft ribbon
-    /// that fades out behind and far ahead, and an arrow for the car. It turns with the car (the arrow
-    /// always points up), so the next bend shows the way you will have to steer. The turning follows
-    /// the direction the car is moving and is smoothed, so it stays calm while drifting.
+    /// A small, minimal view of the road around the car in the race HUD: the centre line as a soft
+    /// ribbon, bright ahead and fading out behind and in the distance, with the car as an arrow in the
+    /// middle. It is fixed the same way up as the screen (like the race camera), so the next bend points
+    /// exactly where you drag your thumb to steer (the car drives where you point). The arrow turns with
+    /// the direction the car is moving, smoothed so it stays calm while drifting.
     /// </summary>
     public class TrackAheadView : MonoBehaviour
     {
         [SerializeField] RaceManager race;
         [SerializeField] TrackLine road;
         [SerializeField] RectTransform arrow;
-        [Tooltip("Track units shown ahead of the car and behind it.")]
-        [SerializeField] float ahead = 85f, behind = 12f;
-        [Tooltip("Where the car sits, as a fraction of the panel height from the bottom.")]
-        [SerializeField, Range(0f, 1f)] float carHeight = 0.24f;
-        [Tooltip("How quickly the view turns after the car (higher = snappier).")]
-        [SerializeField, Min(0.1f)] float turnRate = 6f;
+        [Tooltip("Track units drawn ahead of the car and behind it.")]
+        [SerializeField] float ahead = 90f, behind = 25f;
+        [Tooltip("Track units from the car to the panel's edge (half the panel's shorter side).")]
+        [SerializeField, Min(5f)] float viewRadius = 48f;
+        [Tooltip("How quickly the arrow turns after the car (higher = snappier).")]
+        [SerializeField, Min(0.1f)] float turnRate = 8f;
         [SerializeField, Min(0.2f)] float step = 1.5f;
 
         readonly System.Collections.Generic.List<Vector2> _points = new();
@@ -37,31 +38,29 @@ namespace SomeGame.UI
             var path = track.Path;
             Vector2 car = _body.position;
 
-            // Heading: where the car is going (not where its nose points mid-drift), smoothed.
+            // The arrow: where the car is going (not where its nose points mid-drift), smoothed.
             Vector2 velocity = _body.linearVelocity;
             Vector2 dir = velocity.sqrMagnitude > 9f ? velocity : (Vector2)_body.transform.up;
             float target = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             _heading = _hasHeading ? Mathf.LerpAngle(_heading, target, 1f - Mathf.Exp(-turnRate * Time.deltaTime)) : target;
             _hasHeading = true;
+            arrow.anchoredPosition = Vector2.zero;
+            arrow.localRotation = Quaternion.Euler(0f, 0f, _heading); // the play triangle points along +x
 
             var rect = ((RectTransform)transform).rect;
-            float scale = rect.height * (1f - carHeight) / ahead; // panel units per track unit
-            // The road and arrow sit centred in the panel (their anchors), whatever the panel's pivot.
-            Vector2 origin = new(0f, rect.height * (carHeight - 0.5f));
-            arrow.anchoredPosition = origin;
-            Quaternion toView = Quaternion.Euler(0f, 0f, 90f - _heading); // heading -> straight up
+            float scale = Mathf.Min(rect.width, rect.height) * 0.5f / viewRadius; // panel units per track unit
 
             float from = _sensor.Current.Distance;
             _points.Clear();
             _alphas.Clear();
             for (float d = -behind; d <= ahead; d += step)
             {
-                Vector2 local = toView * (path.PointAt(path.WrapDistance(from + d)) - car);
-                _points.Add(origin + local * scale);
-                float fadeIn = Mathf.InverseLerp(-behind, 0f, d), fadeOut = 1f - Mathf.InverseLerp(ahead * 0.55f, ahead, d);
-                _alphas.Add(Mathf.Min(fadeIn, fadeOut));
+                _points.Add((path.PointAt(path.WrapDistance(from + d)) - car) * scale);
+                // Behind the car: dim and fading out. Ahead: bright, fading only in the distance.
+                float a = d < 0f ? 0.35f * Mathf.InverseLerp(-behind, 0f, d) : 1f - Mathf.InverseLerp(ahead * 0.6f, ahead, d);
+                _alphas.Add(a);
             }
-            road.Width = Mathf.Clamp(track.Layout.roadWidth * scale * 1.5f, 26f, 40f);
+            road.Width = Mathf.Clamp(track.Layout.roadWidth * scale * 1.2f, 22f, 40f);
             road.SetPoints(_points, _alphas);
         }
 
