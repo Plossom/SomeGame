@@ -1006,6 +1006,10 @@ namespace SomeGame.EditorTools
             var ice = Layer("BranchIce", "Ice", -56);
             var roofShadows = Layer("RoofShadows", "Trail", -45);
             var roofs = Layer("Roofs", "RoofRow", -41);
+            var bankLayer = Layer("Banks", "IceWall", -47);
+            var banks = track.GetComponent<SomeGame.Track.TrackBanks>();
+            if (banks == null) banks = track.gameObject.AddComponent<SomeGame.Track.TrackBanks>();
+            Configure(banks, ("track", track), ("walls", bankLayer));
             var branches = track.GetComponent<SomeGame.Track.TrackBranches>();
             if (branches == null) branches = track.gameObject.AddComponent<SomeGame.Track.TrackBranches>(); // Unity's null: no ?? here
             Configure(branches, ("track", track), ("roads", roads), ("edges", edges), ("ice", ice), ("roofs", roofs), ("roofShadows", roofShadows), ("meadowRoad", Mat("Road")), ("snowRoad", Mat("WinterRoad")));

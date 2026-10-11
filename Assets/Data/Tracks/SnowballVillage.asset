@@ -87,6 +87,11 @@ MonoBehaviour:
     - {x: 101, y: 112}
     - {x: 113, y: 106}
     width: 9
+  banks:
+  - from: 346.41983
+    to: 402.29498
+    side: 1
+    width: 4.5
   scenery:
   - name: Cabin
     uv:
@@ -4384,6 +4389,17 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
+  - position: {x: 13.125912, y: 34.623283}
+    right: {x: -0.11236637, y: 0.7242369}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6666667
+      width: 0.25
+      height: 0.33333334
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
   - position: {x: -42.856007, y: 34.51865}
     right: {x: 0.8953503, y: 2.4961293}
     uv:
@@ -6309,17 +6325,6 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  - position: {x: 139.78809, y: -22.004435}
-    right: {x: 0.5951691, y: 1.0956194}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.33333334
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
   - position: {x: 77.83775, y: -22.219501}
     right: {x: 1.2498146, y: 1.1096015}
     uv:
@@ -6590,17 +6595,6 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0.5
       y: 0
-      width: 0.25
-      height: 0.33333334
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-  - position: {x: 139.51831, y: -28.457039}
-    right: {x: -0.2014213, y: 1.3332137}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
       width: 0.25
       height: 0.33333334
     tint:
@@ -7079,17 +7073,6 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  - position: {x: 104.843864, y: -39.26105}
-    right: {x: -0.3388361, y: -1.2570535}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.33333334
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
   - position: {x: -26.376286, y: -39.349716}
     right: {x: 1.8749884, y: 0.051560692}
     uv:
@@ -7293,17 +7276,6 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.33333334
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-  - position: {x: 131.96687, y: -43.549236}
-    right: {x: -0.8516379, y: 0.44332698}
-    uv:
-      serializedVersion: 2
-      x: 0.25
       y: 0.6666667
       width: 0.25
       height: 0.33333334
@@ -7514,17 +7486,6 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0.25
       y: 0
-      width: 0.25
-      height: 0.33333334
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-  - position: {x: 118.31148, y: -51.069206}
-    right: {x: -1.2241093, y: 0.03435474}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
       width: 0.25
       height: 0.33333334
     tint:
@@ -9730,4 +9691,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 72e240906392a648
+  bakedSignature: 217a5fabb6471d14

@@ -30,6 +30,9 @@ namespace SomeGame.Track
         public bool Elevated { get; set; }
         /// <summary>On a roof branch (up on the roofs).</summary>
         public bool OnRoof => Branch >= 0 && track.Branches[Branch].Kind == TrackLayout.BranchKind.Roof;
+        /// <summary>On a banked wall: how far up it (0 = not on a wall, up to 1 at the top).</summary>
+        public float BankHeight { get; private set; }
+        public bool OnBank => BankHeight > 0f;
         /// <summary>True on an ice branch (frozen lake): little grip.</summary>
         public bool OnIce => Branch >= 0 && track.Branches[Branch].Kind == TrackLayout.BranchKind.Ice;
 
@@ -103,7 +106,10 @@ namespace SomeGame.Track
 
             _hint = point.Segment;
             Current = point;
-            IsOffRoad = Branch < 0 && track.IsOffRoad(point.Distance, point.Lateral);
+            float bankHeight = 0f;
+            bool onBank = Branch < 0 && !Elevated && track.BankAt(point.Distance, point.Lateral, out bankHeight) != null;
+            BankHeight = onBank ? Mathf.Max(0.01f, bankHeight) : 0f;
+            IsOffRoad = Branch < 0 && !onBank && track.IsOffRoad(point.Distance, point.Lateral);
         }
     }
 }

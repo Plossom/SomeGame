@@ -31,6 +31,9 @@ namespace SomeGame.Car
         [Tooltip("Seconds the car blinks after a restart.")]
         [SerializeField, Min(0f)] float blinkSeconds = 1.2f;
         [SerializeField] int sortingOrder = 13;
+        [Tooltip("Metres of riding a banked wall that earn a boost when the car comes off it.")]
+        [SerializeField, Min(1f)] float wallRideReward = 14f;
+        [SerializeField, Range(0f, 1f)] float wallRideBoost = 0.55f;
         [Tooltip("Seconds in the air when a car drives off the edge of a roof.")]
         [SerializeField, Min(0.1f)] float roofDrop = 0.3f;
 
@@ -43,6 +46,7 @@ namespace SomeGame.Car
         bool _isRival;
         bool _fromCornerCut;
         bool _roofExit;
+        float _wallRide;
         ParticleSystem _splash, _dust;
         SpriteRenderer[] _sprites;
 
@@ -50,6 +54,8 @@ namespace SomeGame.Car
         public event Action Splashed;
         /// <summary>The car rode the whole row of roofs and landed back on the road.</summary>
         public event Action RoofRun;
+        /// <summary>The car rode a banked wall far enough and came off it with a boost.</summary>
+        public event Action WallRide;
 
         void Awake()
         {
@@ -76,6 +82,17 @@ namespace SomeGame.Car
             {
                 OnTheRoofs(track);
                 return;
+            }
+            // Banked walls: a good ride ends with a boost.
+            if (_car.IsWallRiding) _wallRide += _car.Body.linearVelocity.magnitude * Time.fixedDeltaTime;
+            else if (!_sensor.OnBank && _wallRide > 0f)
+            {
+                if (_wallRide >= wallRideReward)
+                {
+                    _car.GiveBoost(wallRideBoost);
+                    WallRide?.Invoke();
+                }
+                _wallRide = 0f;
             }
             // From the street, a house is a wall: bounce off it.
             int house = track.BranchAt(position, out float houseAlong, out float houseLateral, roofs: true, ground: false);

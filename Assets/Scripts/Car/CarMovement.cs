@@ -61,6 +61,8 @@ namespace SomeGame.Car
         public float SidewaysSpeed { get; private set; }
         public bool IsSliding => Mathf.Abs(SidewaysSpeed) > stats.slideThreshold;
         public bool IsOffRoad => sensor != null && sensor.IsOffRoad && !OnRamp;
+        /// <summary>Riding a banked wall fast enough to stay up on it.</summary>
+        public bool IsWallRiding => sensor != null && sensor.OnBank && !IsAirborne && _body.linearVelocity.magnitude >= stats.wallRideSpeed;
         /// <summary>On an ice branch (frozen lake): little grip, the car slides.</summary>
         public bool OnIce => sensor != null && sensor.OnIce && !IsAirborne;
         /// <summary>Set while the car is on a shortcut ramp beside the road: the ramp counts as road.</summary>
@@ -173,10 +175,17 @@ namespace SomeGame.Car
 
             // Lateral: grip bleeds off sideways velocity; less grip at speed lets the car slide in fast corners.
             float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(0.01f, stats.topSpeed));
-            float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f) * (OnIce ? stats.iceGrip : 1f);
+            float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f) * (OnIce ? stats.iceGrip : 1f)
+                         * (IsWallRiding ? stats.wallGrip : 1f);
             sidewaysSpeed *= Mathf.Exp(-grip * dt);
 
             _body.linearVelocity = forward * forwardSpeed + right * sidewaysSpeed;
+            // Too slow on a banked wall: the car slides back down towards the road.
+            if (sensor != null && sensor.OnBank && !IsWallRiding)
+            {
+                Vector2 road = sensor.RoadDirection, left = new(-road.y, road.x);
+                _body.linearVelocity += -left * Mathf.Sign(sensor.Current.Lateral) * stats.wallSlide * dt;
+            }
             ForwardSpeed = forwardSpeed;
             SidewaysSpeed = sidewaysSpeed;
         }

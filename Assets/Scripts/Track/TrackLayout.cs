@@ -117,6 +117,8 @@ namespace SomeGame.Track
 
         [Tooltip("Other ways round: pieces of road (or ice, or rooftops) that leave the main road and rejoin it further on.")]
         public List<Branch> branches = new();
+        [Tooltip("Banked walls on the outside of corners: ride them fast to keep full speed through the corner.")]
+        public List<Bank> banks = new();
 
         [Tooltip("Scenery for this track. Empty = the scene's default scenery.")]
         public List<TrackScenery.Kind> scenery = new();
@@ -158,6 +160,20 @@ namespace SomeGame.Track
             [Min(1f)] public float width = 4.2f;
             [Tooltip("Speed at which the jump lands exactly on target; slower cars land short.")]
             [Min(1f)] public float designSpeed = 15f;
+        }
+
+        /// <summary>
+        /// A banked wall on the outside of a corner, from the kerb outwards: driven fast it is road with extra
+        /// grip (ride the wall round the corner at full speed); too slow, the car slides back down.
+        /// </summary>
+        [Serializable]
+        public class Bank
+        {
+            [Tooltip("Lap distances where the wall starts and ends.")]
+            public float from, to;
+            [Tooltip("Which side of the road: +1 left, -1 right (the outside of the corner).")]
+            public float side = 1f;
+            [Min(1f)] public float width = 4.5f;
         }
 
         public enum BranchKind { Road, Ice, Roof }

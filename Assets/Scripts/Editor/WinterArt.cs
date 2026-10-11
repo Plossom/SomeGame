@@ -28,6 +28,7 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "SnowRunoff", 64, 64, SnowRunoffPixel, 32, true);
             Write(ArtGenerator.Folder, "Ice", 128, 128, IcePixel, 32, true);
             Write(ArtGenerator.Folder, "RoofRow", 128, 256, RoofRowPixel, 32, true);
+            Write(ArtGenerator.Folder, "IceWall", 64, 64, IceWallPixel, 32, true);
             Write(ArtGenerator.Folder, "SceneryWinter", 1024, 768, SceneryPixel, 128, false);
             ArtGenerator.Material("SnowGround", "SnowGround");
             ArtGenerator.Material("WinterRoad", "WinterRoad");
@@ -35,6 +36,7 @@ namespace SomeGame.EditorTools
             ArtGenerator.Material("SnowRunoff", "SnowRunoff");
             ArtGenerator.Material("Ice", "Ice");
             ArtGenerator.Material("RoofRow", "RoofRow");
+            ArtGenerator.Material("IceWall", "IceWall");
             ArtGenerator.Material("SceneryWinter", "SceneryWinter");
             AssetDatabase.SaveAssets();
             Debug.Log("Winter art generated");
@@ -131,6 +133,22 @@ namespace SomeGame.EditorTools
             c = Over(c, Hex("9A9AA6"), Fill(chimney));
             c = Over(c, Hex("3A3532"), Fill(RoundRect(x, y, 104f, 190f, 4f, 4f, 1f)));
             c = Over(c, Hex("2B2320"), Stroke(chimney, 2f));
+            return c;
+        }
+
+        // A banked wall of packed snow and ice (u across: base at the kerb → crest; v along, tiles): darker
+        // and bluer at the base, bright towards the white crest, with a dark outline on top and white
+        // chevrons pointing along the wall (ride it!).
+        static Color IceWallPixel(float x, float y)
+        {
+            float u = x / 64f;
+            if (u > 0.93f) return Hex("2B4057");
+            if (u > 0.82f) return Snow;
+            Color c = Color.Lerp(Hex("6E9CC4"), Hex("D4E6F4"), Mathf.SmoothStep(0f, 1f, u / 0.82f));
+            c = Color.Lerp(c, Shade(c, 0.93f), Noise(x / 8f, y / 8f, 8) * 0.6f);
+            // Chevron: a "^" pointing along the wall (towards +v).
+            float cx = 32f, chevron = Mathf.Abs(Mathf.Abs(x - cx) * 0.9f + (y - 40f)) - 4f;
+            if (Mathf.Abs(x - cx) < 18f && chevron < 0f) c = Color.Lerp(c, Color.white, 0.75f);
             return c;
         }
 

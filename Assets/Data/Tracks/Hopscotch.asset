@@ -132,6 +132,7 @@ MonoBehaviour:
   rampWidth: 4
   shortcuts: []
   branches: []
+  banks: []
   scenery: []
   bakedScenery:
   - position: {x: 33.548935, y: 108.95374}
@@ -7306,4 +7307,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 739a736e3185def9
+  bakedSignature: e13a4fe35145fcdc

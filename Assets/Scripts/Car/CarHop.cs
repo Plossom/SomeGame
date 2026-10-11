@@ -27,11 +27,14 @@ namespace SomeGame.Car
         [Tooltip("Sprite scale and extra shadow offset while up on the roofs.")]
         [SerializeField, Min(1f)] float roofScale = 1.14f;
         [SerializeField] Vector2 roofShadowLift = new(0.6f, -0.75f);
+        [Tooltip("How much narrower the car looks riding a banked wall (tilted on its side).")]
+        [SerializeField, Range(0f, 0.6f)] float wallSquash = 0.3f;
 
         CarMovement _car;
         SomeGame.Track.TrackSensor _sensor;
         float _time = -1f;
         float _elevation;
+        float _tilt;
         Vector3 _visualScale = Vector3.one;
 
         /// <summary>True while the car is in the air (visually).</summary>
@@ -55,13 +58,16 @@ namespace SomeGame.Car
         void Hop() => _time = 0f;
 
         // Up on the roofs the car is a bit bigger (closer to the camera) and its shadow falls further away.
-        Vector3 BaseScale => _visualScale * Mathf.Lerp(1f, roofScale, _elevation);
+        Vector3 BaseScale => Vector3.Scale(_visualScale * Mathf.Lerp(1f, roofScale, _elevation), new Vector3(1f - wallSquash * _tilt, 1f, 1f));
         Vector2 BaseShadow => shadowOffset + roofShadowLift * _elevation;
 
         void Update()
         {
             bool up = _sensor != null && _sensor.Elevated;
             _elevation = Mathf.MoveTowards(_elevation, up ? 1f : 0f, Time.deltaTime * 4f);
+            // On a banked wall the car leans on its side, more the higher up it rides.
+            float lean = _sensor != null && _sensor.OnBank ? Mathf.Lerp(0.5f, 1f, _sensor.BankHeight) : 0f;
+            _tilt = Mathf.MoveTowards(_tilt, lean, Time.deltaTime * 5f);
             if (_car.IsAirborne)
             {
                 float h = _car.AirHeight;

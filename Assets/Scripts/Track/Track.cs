@@ -107,6 +107,26 @@ namespace SomeGame.Track
         /// <summary>Every river crossing, in lap order (derived from the rivers and the centre line).</summary>
         public IReadOnlyList<Jump> Jumps => _jumps ??= FindJumps();
 
+        /// <summary>
+        /// The banked wall at a lap distance and sideways offset, if the car is on one; <paramref name="height"/>
+        /// is how far up the wall it is (0 at the kerb, 1 at the top).
+        /// </summary>
+        public TrackLayout.Bank BankAt(float distance, float lateral, out float height)
+        {
+            height = 0f;
+            if (layout == null || layout.banks == null) return null;
+            foreach (var bank in layout.banks)
+            {
+                if (Path.DeltaDistance(bank.from, distance) < 0f || Path.DeltaDistance(distance, bank.to) < 0f) continue;
+                if (lateral * bank.side <= 0f) continue;
+                float up = Mathf.Abs(lateral) - OffRoadAt(distance) + 0.3f;
+                if (up < 0f || up > bank.width) continue;
+                height = Mathf.Clamp01(up / bank.width);
+                return bank;
+            }
+            return null;
+        }
+
         /// <summary>The other ways round (<see cref="TrackLayout.branches"/>) as drivable lines.</summary>
         public IReadOnlyList<BranchRoute> Branches => _branches ??= BuildBranches();
         List<BranchRoute> _branches;

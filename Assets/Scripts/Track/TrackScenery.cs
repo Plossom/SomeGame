@@ -75,7 +75,7 @@ namespace SomeGame.Track
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
                 margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps,
-                shortcuts = layout.shortcuts, branches = layout.branches, waterWorld = layout.waterWorld,
+                shortcuts = layout.shortcuts, branches = layout.branches, banks = layout.banks, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
             };
@@ -96,6 +96,7 @@ namespace SomeGame.Track
             public List<TrackLayout.Gap> gaps;
             public List<TrackLayout.Shortcut> shortcuts;
             public List<TrackLayout.Branch> branches;
+            public List<TrackLayout.Bank> banks;
             public bool waterWorld;
             public List<Kind> kinds;
             public int seed, span;
@@ -155,6 +156,7 @@ namespace SomeGame.Track
                     if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     if (InShortcutPath(p, size)) continue;
                     if (OnBranch(p, size)) continue;
+                    if (track.BankAt(projection.Distance, projection.Lateral - Mathf.Sign(projection.Lateral) * (size * 0.5f + 1f), out _) != null) continue; // banked walls stay clear
                     float r = size * 0.45f;
                     if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;
 
