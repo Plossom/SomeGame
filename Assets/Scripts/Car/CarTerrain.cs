@@ -178,7 +178,8 @@ namespace SomeGame.Car
         {
             var track = _sensor.Track;
             // Landed on a roof (from a jump pad): the car is up there now, turned to run along the row.
-            int roof = track != null ? track.BranchAt(_car.Body.position, out float roofAlong, out _, roofs: true, ground: false) : -1;
+            float roofAlong = 0f;
+            int roof = track != null ? track.BranchAt(_car.Body.position, out roofAlong, out _, roofs: true, ground: false) : -1;
             if (roof >= 0)
             {
                 Vector2 along = track.Branches[roof].TangentAt(roofAlong);
