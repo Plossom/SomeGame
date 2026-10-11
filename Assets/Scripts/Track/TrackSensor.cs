@@ -20,6 +20,14 @@ namespace SomeGame.Track
         public Track Track => track;
         public TrackPoint Current { get; private set; }
         public bool IsOffRoad { get; private set; }
+        /// <summary>The branch (other way round) the car is on, or -1 on the main road.</summary>
+        public int Branch { get; private set; } = -1;
+        /// <summary>Distance along the branch the car is on.</summary>
+        public float BranchAlong { get; private set; }
+        /// <summary>Direction of the road under the car (the branch's on a branch).</summary>
+        public Vector2 RoadDirection { get; private set; } = Vector2.up;
+        /// <summary>True on an ice branch (frozen lake): little grip.</summary>
+        public bool OnIce => Branch >= 0 && track.Branches[Branch].Kind == TrackLayout.BranchKind.Ice;
 
         /// <summary>
         /// True for the step in which the car was re-located on a different part of the circuit
@@ -71,9 +79,27 @@ namespace SomeGame.Track
                 }
             }
 
+            // Off the main road but on a branch: the branch is the road, and progress runs along it.
+            Branch = -1;
+            RoadDirection = path.TangentAt(point.Distance);
+            if (track.Branches.Count > 0 && Mathf.Abs(point.Lateral) > track.HalfWidthAt(point.Distance))
+            {
+                int branch = track.BranchAt(position, out float along, out float lateral);
+                if (branch >= 0)
+                {
+                    var route = track.Branches[branch];
+                    Branch = branch;
+                    BranchAlong = along;
+                    float distance = route.MainDistance(along);
+                    point = new TrackPoint { Segment = path.SegmentAt(distance), Distance = distance, Lateral = lateral, Position = route.PointAt(along) };
+                    RoadDirection = route.TangentAt(along);
+                    Jumped = false;
+                }
+            }
+
             _hint = point.Segment;
             Current = point;
-            IsOffRoad = track.IsOffRoad(point.Distance, point.Lateral);
+            IsOffRoad = Branch < 0 && track.IsOffRoad(point.Distance, point.Lateral);
         }
     }
 }

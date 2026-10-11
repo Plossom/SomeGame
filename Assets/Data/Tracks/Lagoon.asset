@@ -152,6 +152,7 @@ MonoBehaviour:
     length: 4
     width: 4.2
     designSpeed: 15
+  branches: []
   scenery:
   - name: Island
     uv:
@@ -1901,4 +1902,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 4ed558c52706b405
+  bakedSignature: 87f0d0afa6ec911b

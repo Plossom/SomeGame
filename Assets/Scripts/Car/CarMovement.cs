@@ -61,6 +61,8 @@ namespace SomeGame.Car
         public float SidewaysSpeed { get; private set; }
         public bool IsSliding => Mathf.Abs(SidewaysSpeed) > stats.slideThreshold;
         public bool IsOffRoad => sensor != null && sensor.IsOffRoad && !OnRamp;
+        /// <summary>On an ice branch (frozen lake): little grip, the car slides.</summary>
+        public bool OnIce => sensor != null && sensor.OnIce && !IsAirborne;
         /// <summary>Set while the car is on a shortcut ramp beside the road: the ramp counts as road.</summary>
         public bool OnRamp { get; set; }
 
@@ -171,7 +173,7 @@ namespace SomeGame.Car
 
             // Lateral: grip bleeds off sideways velocity; less grip at speed lets the car slide in fast corners.
             float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(0.01f, stats.topSpeed));
-            float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f);
+            float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f) * (OnIce ? stats.iceGrip : 1f);
             sidewaysSpeed *= Mathf.Exp(-grip * dt);
 
             _body.linearVelocity = forward * forwardSpeed + right * sidewaysSpeed;

@@ -42,6 +42,8 @@ namespace SomeGame.Car
         [Min(0f)] public float offRoadDeceleration = 22f;
         [Tooltip("Grip multiplier on grass.")]
         [Range(0f, 1f)] public float offRoadGrip = 0.6f;
+        [Tooltip("Grip on ice (frozen lake), as a fraction of the normal grip: the car slides and keeps its momentum.")]
+        [Range(0.02f, 1f)] public float iceGrip = 0.22f;
 
         [Header("Drift (second finger while steering)")]
         [Tooltip("Minimum speed to start a drift (units/s). Drifting only works on the road, never on grass.")]

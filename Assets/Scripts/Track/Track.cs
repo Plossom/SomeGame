@@ -107,6 +107,41 @@ namespace SomeGame.Track
         /// <summary>Every river crossing, in lap order (derived from the rivers and the centre line).</summary>
         public IReadOnlyList<Jump> Jumps => _jumps ??= FindJumps();
 
+        /// <summary>The other ways round (<see cref="TrackLayout.branches"/>) as drivable lines.</summary>
+        public IReadOnlyList<BranchRoute> Branches => _branches ??= BuildBranches();
+        List<BranchRoute> _branches;
+
+        List<BranchRoute> BuildBranches()
+        {
+            var list = new List<BranchRoute>();
+            if (layout != null && layout.branches != null)
+                foreach (var branch in layout.branches) list.Add(new BranchRoute(branch, Path, layout.sampleSpacing));
+            return list;
+        }
+
+        /// <summary>
+        /// The branch a position is on (within its width plus the kerb), or -1: index, distance along it
+        /// and sideways offset. If several overlap, the nearest centre line wins.
+        /// </summary>
+        public int BranchAt(Vector2 position, out float along, out float lateral)
+        {
+            int found = -1;
+            along = 0f;
+            lateral = 0f;
+            float best = float.MaxValue;
+            var branches = Branches;
+            for (int i = 0; i < branches.Count; i++)
+            {
+                branches[i].Project(position, out float a, out float l);
+                if (Mathf.Abs(l) > branches[i].HalfWidth + layout.kerbWidth || Mathf.Abs(l) >= best) continue;
+                best = Mathf.Abs(l);
+                found = i;
+                along = a;
+                lateral = l;
+            }
+            return found;
+        }
+
         /// <summary>Distance from a point to the nearest water edge, rivers and lakes (negative inside water).</summary>
         public float WaterDistance(Vector2 p) => Mathf.Min(RiverDistance(p), LakeDistance(p));
 
@@ -354,6 +389,7 @@ namespace SomeGame.Track
             _path = null;
             _jumps = null;
             _shortcuts = null;
+            _branches = null;
             Rebuilt?.Invoke();
         }
 

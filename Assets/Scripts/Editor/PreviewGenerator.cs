@@ -47,6 +47,8 @@ namespace SomeGame.EditorTools
                 foreach (var part in parts) build.Invoke(part, new object[] { track.Path, layout });
 
                 Rect b = track.Path.Bounds();
+                foreach (var branch in track.Branches) // the other ways round are in the picture too
+                    foreach (var p in branch.Points) b = Rect.MinMaxRect(Mathf.Min(b.xMin, p.x), Mathf.Min(b.yMin, p.y), Mathf.Max(b.xMax, p.x), Mathf.Max(b.yMax, p.y));
                 float margin = 10f, aspect = (float)Width / Height;
                 cam.transform.position = new Vector3(b.center.x, b.center.y, -10f);
                 cam.orthographicSize = Mathf.Max(b.height * 0.5f + margin, (b.width * 0.5f + margin) / aspect);

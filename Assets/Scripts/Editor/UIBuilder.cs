@@ -448,6 +448,7 @@ namespace SomeGame.EditorTools
             Configure(raceSnow.gameObject.AddComponent<SnowFall>(), ("flake", Sprite("Circle")), ("count", 90));
             raceSnow.gameObject.SetActive(false);
             WireSnowBiome(raceSnow.gameObject);
+            EnsureBranchRenderers();
 
             // Floating joystick (whole screen is the touch area).
             var area = Stretch("JoystickArea", canvas);
@@ -498,11 +499,14 @@ namespace SomeGame.EditorTools
             var aheadRt = At("TrackAhead", safe, new Vector2(1f, 1f), new Vector2(-48f, -222f), new Vector2(300f, 300f));
             Img(aheadRt, "Round", Theme.WithAlpha(Theme.Ink, 0.9f), sliced: true);
             aheadRt.gameObject.AddComponent<RectMask2D>();
+            var aheadOther = Line(Stretch("OtherWay", aheadRt));
+            aheadOther.color = Theme.WithAlpha(Theme.Cream, 0.35f);
+            aheadOther.raycastTarget = false;
             var aheadRoad = Line(Stretch("Road", aheadRt));
             aheadRoad.color = Theme.WithAlpha(Theme.Cream, 0.9f);
             aheadRoad.raycastTarget = false;
             var aheadArrow = Img(At("Car", aheadRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(44f, 66f)), "NavArrow", Theme.Orange).rectTransform;
-            Configure(aheadRt.gameObject.AddComponent<TrackAheadView>(), ("race", race), ("road", aheadRoad), ("arrow", aheadArrow));
+            Configure(aheadRt.gameObject.AddComponent<TrackAheadView>(), ("race", race), ("road", aheadRoad), ("otherWay", aheadOther), ("arrow", aheadArrow));
 
             // Tricks and combos, big above the car (the car sits in the middle of the screen).
             var combo = Stretch("Combo", canvas);
@@ -978,6 +982,31 @@ namespace SomeGame.EditorTools
             var sceneryRenderer = sceneryMesh != null ? sceneryMesh.GetComponent<MeshRenderer>() : null;
             Configure(renderer, ("snowGround", Mat("SnowGround")), ("snowRoad", Mat("WinterRoad")), ("snowKerbs", Mat("SnowKerb")),
                 ("snowRunoff", Mat("SnowRunoff")), ("snowScenery", Mat("SceneryWinter")), ("scenery", sceneryRenderer), ("snowfall", snowfall));
+        }
+
+        // Renderers for the other ways round (TrackBranches) under the track: road branches just under the
+        // main road (junctions blend into it), their edge lines, and ice under the road but over the scenery.
+        static void EnsureBranchRenderers()
+        {
+            var track = Object.FindAnyObjectByType<SomeGame.Track.Track>();
+            if (track == null) return;
+            Material Mat(string name) => AssetDatabase.LoadAssetAtPath<Material>(ArtGenerator.Folder + "/" + name + ".mat");
+            MeshFilter Layer(string name, string material, int order)
+            {
+                var t = track.transform.Find(name);
+                var go = t != null ? t.gameObject : new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+                go.transform.SetParent(track.transform, false);
+                var renderer = go.GetComponent<MeshRenderer>();
+                renderer.sharedMaterial = Mat(material);
+                renderer.sortingOrder = order;
+                return go.GetComponent<MeshFilter>();
+            }
+            var roads = Layer("BranchRoads", "Road", -52);
+            var edges = Layer("BranchEdges", "Line", -51);
+            var ice = Layer("BranchIce", "Ice", -56);
+            var branches = track.GetComponent<SomeGame.Track.TrackBranches>();
+            if (branches == null) branches = track.gameObject.AddComponent<SomeGame.Track.TrackBranches>(); // Unity's null: no ?? here
+            Configure(branches, ("track", track), ("roads", roads), ("edges", edges), ("ice", ice), ("meadowRoad", Mat("Road")), ("snowRoad", Mat("WinterRoad")));
         }
 
         static TrackLine Line(RectTransform rt)

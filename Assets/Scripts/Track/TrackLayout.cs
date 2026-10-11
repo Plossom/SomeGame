@@ -115,6 +115,9 @@ namespace SomeGame.Track
         [Tooltip("Small ramps beside the road on the inside of a corner: driven straight at speed, they hop a car across the corner.")]
         public List<Shortcut> shortcuts = new();
 
+        [Tooltip("Other ways round: pieces of road (or ice, or rooftops) that leave the main road and rejoin it further on.")]
+        public List<Branch> branches = new();
+
         [Tooltip("Scenery for this track. Empty = the scene's default scenery.")]
         public List<TrackScenery.Kind> scenery = new();
 
@@ -155,6 +158,27 @@ namespace SomeGame.Track
             [Min(1f)] public float width = 4.2f;
             [Tooltip("Speed at which the jump lands exactly on target; slower cars land short.")]
             [Min(1f)] public float designSpeed = 15f;
+        }
+
+        public enum BranchKind { Road, Ice, Roof }
+
+        /// <summary>
+        /// Another way round: leaves the main road at lap distance <see cref="from"/>, runs through
+        /// <see cref="points"/> and rejoins at <see cref="to"/>. Driving on it counts as road (with its own
+        /// surface) and as progress from <see cref="from"/> to <see cref="to"/>, so checkpoints and
+        /// positions keep working whichever way a car takes.
+        /// </summary>
+        [Serializable]
+        public class Branch
+        {
+            public BranchKind kind;
+            [Tooltip("Lap distance where it leaves the main road.")]
+            public float from;
+            [Tooltip("Lap distance where it rejoins the main road (further on).")]
+            public float to;
+            [Tooltip("Points the branch runs through between leaving and rejoining (world positions).")]
+            public Vector2[] points = { };
+            [Min(2f)] public float width = 7f;
         }
 
         [Serializable]

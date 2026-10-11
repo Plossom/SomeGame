@@ -26,11 +26,13 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "WinterRoad", 128, 128, WinterRoadPixel, 32, true);
             Write(ArtGenerator.Folder, "SnowKerb", 64, 64, SnowKerbPixel, 32, true);
             Write(ArtGenerator.Folder, "SnowRunoff", 64, 64, SnowRunoffPixel, 32, true);
+            Write(ArtGenerator.Folder, "Ice", 128, 128, IcePixel, 32, true);
             Write(ArtGenerator.Folder, "SceneryWinter", 1024, 768, SceneryPixel, 128, false);
             ArtGenerator.Material("SnowGround", "SnowGround");
             ArtGenerator.Material("WinterRoad", "WinterRoad");
             ArtGenerator.Material("SnowKerb", "SnowKerb");
             ArtGenerator.Material("SnowRunoff", "SnowRunoff");
+            ArtGenerator.Material("Ice", "Ice");
             ArtGenerator.Material("SceneryWinter", "SceneryWinter");
             AssetDatabase.SaveAssets();
             Debug.Log("Winter art generated");
@@ -83,6 +85,28 @@ namespace SomeGame.EditorTools
             if (Mathf.Abs(u - 0.32f) < 0.05f || Mathf.Abs(u - 0.55f) < 0.04f) c = Color.Lerp(c, Hex("BBCCDF"), 0.6f); // ruts
             float edge = 0.8f + (Noise(y / 7f, 3.5f, 9) - 0.5f) * 0.3f;
             c.a = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(edge - 0.08f, edge + 0.08f, u));
+            return c;
+        }
+
+        // Frozen lake strip (u across, v along, tiles along): pale blue ice with white cracks and glints,
+        // a snowy rim and a ragged edge fading into the snow at both sides.
+        static Color IcePixel(float x, float y)
+        {
+            float u = x / 128f;
+            float n = Noise(x / 16f, y / 16f, 8) * 0.6f + Noise(x / 8f, y / 8f, 16) * 0.4f; // periods of 128 px: tiles along
+            Color c = Color.Lerp(Hex("7DBDE6"), Hex("B5DDF3"), n);
+            // Cracks: thin wandering lines.
+            float crack = Mathf.Abs(Mathf.Sin((x + Noise(x / 16f, y / 16f, 8) * 40f) * 0.09f + y * 0.0491f));
+            if (crack < 0.035f) c = Color.Lerp(c, Color.white, 0.8f);
+            float crack2 = Mathf.Abs(Mathf.Sin((y + Noise(y / 16f, x / 16f, 8) * 30f) * 0.0982f - x * 0.03f));
+            if (crack2 < 0.025f) c = Color.Lerp(c, Color.white, 0.6f);
+            if (Hash((int)(x / 2), (int)(y / 2)) > 0.993f) c = Color.white;
+            // Snowy rim, then fade out with a ragged edge.
+            float edgeA = 0.1f + (Noise(y / 8f, 1.5f, 16) - 0.5f) * 0.08f, edgeB = 0.9f + (Noise(y / 8f, 7.5f, 16) - 0.5f) * 0.08f;
+            float rim = Mathf.Min(u - edgeA, edgeB - u);
+            if (rim < 0.06f) c = Color.Lerp(c, Hex("5D9CC8"), Mathf.InverseLerp(0.06f, 0.035f, rim)); // darker blue edge of the ice
+            if (rim < 0.035f) c = Color.Lerp(c, Snow, Mathf.InverseLerp(0.035f, 0f, rim));
+            c.a = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(-0.03f, 0.02f, rim));
             return c;
         }
 

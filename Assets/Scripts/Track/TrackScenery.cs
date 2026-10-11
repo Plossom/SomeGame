@@ -75,7 +75,7 @@ namespace SomeGame.Track
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
                 margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps,
-                shortcuts = layout.shortcuts, waterWorld = layout.waterWorld,
+                shortcuts = layout.shortcuts, branches = layout.branches, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
             };
@@ -95,6 +95,7 @@ namespace SomeGame.Track
             public List<TrackLayout.Lake> lakes;
             public List<TrackLayout.Gap> gaps;
             public List<TrackLayout.Shortcut> shortcuts;
+            public List<TrackLayout.Branch> branches;
             public bool waterWorld;
             public List<Kind> kinds;
             public int seed, span;
@@ -153,6 +154,7 @@ namespace SomeGame.Track
                     if (kind.clearance.y > 0f && fromKerb > kind.clearance.y) continue;
                     if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     if (InShortcutPath(p, size)) continue;
+                    if (OnBranch(p, size)) continue;
                     float r = size * 0.45f;
                     if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;
 
@@ -171,6 +173,18 @@ namespace SomeGame.Track
             // Draw top-down from the back so overlapping crowns read naturally.
             items.Sort((a, b) => b.p.y.CompareTo(a.p.y));
             return items.ConvertAll(i => new TrackLayout.SceneryItem { position = i.p, right = i.right, uv = i.uv, tint = i.tint });
+        }
+
+        // The other ways round stay clear too (ice: also its frozen margin).
+        bool OnBranch(Vector2 p, float size)
+        {
+            foreach (var branch in track.Branches)
+            {
+                branch.Project(p, out _, out float lateral);
+                float margin = branch.Kind == TrackLayout.BranchKind.Ice ? 3.5f : track.Layout.kerbWidth + 1.5f;
+                if (Mathf.Abs(lateral) < branch.HalfWidth + margin + size * 0.5f) return true;
+            }
+            return false;
         }
 
         // The corridor a shortcut jump flies through stays clear, so a short landing is never inside a tree.

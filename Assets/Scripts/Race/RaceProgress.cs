@@ -95,7 +95,7 @@ namespace SomeGame.Race
             }
             var path = Circuit.Path;
             float distance = _sensor.Current.Distance;
-            UpdateWrongWay(path.TangentAt(distance), Time.fixedDeltaTime);
+            UpdateWrongWay(_sensor.RoadDirection, Time.fixedDeltaTime); // the branch's direction on a branch
 
             float moved = path.DeltaDistance(_lastDistance, distance);
 

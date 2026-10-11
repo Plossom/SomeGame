@@ -129,6 +129,7 @@ MonoBehaviour:
     length: 4
     width: 4.2
     designSpeed: 15
+  branches: []
   scenery: []
   bakedScenery:
   - position: {x: 17.563126, y: 116.05133}
@@ -8018,4 +8019,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4293656575
-  bakedSignature: a4aea1d428e3d1bb
+  bakedSignature: a9e59d83d57a9115

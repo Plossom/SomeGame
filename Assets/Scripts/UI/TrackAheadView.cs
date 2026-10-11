@@ -15,6 +15,8 @@ namespace SomeGame.UI
     {
         [SerializeField] RaceManager race;
         [SerializeField] TrackLine road;
+        [Tooltip("Fainter line for another way round coming up (or the main road while on a branch).")]
+        [SerializeField] TrackLine otherWay;
         [SerializeField] RectTransform arrow;
         [Tooltip("Track units drawn ahead of the car and behind it.")]
         [SerializeField] float ahead = 90f, behind = 25f;
@@ -26,6 +28,8 @@ namespace SomeGame.UI
 
         readonly System.Collections.Generic.List<Vector2> _points = new();
         readonly System.Collections.Generic.List<float> _alphas = new();
+        readonly System.Collections.Generic.List<Vector2> _otherPoints = new();
+        readonly System.Collections.Generic.List<float> _otherAlphas = new();
         TrackSensor _sensor;
         Rigidbody2D _body;
         float _heading;
@@ -53,15 +57,50 @@ namespace SomeGame.UI
             float from = _sensor.Current.Distance;
             _points.Clear();
             _alphas.Clear();
-            for (float d = -behind; d <= ahead; d += step)
+            _otherPoints.Clear();
+            _otherAlphas.Clear();
+            int branch = _sensor.Branch;
+            if (branch >= 0)
             {
-                _points.Add((path.PointAt(path.WrapDistance(from + d)) - car) * scale);
-                // Behind the car: dim and fading out. Ahead: bright, fading only in the distance.
-                float a = d < 0f ? 0.35f * Mathf.InverseLerp(-behind, 0f, d) : 1f - Mathf.InverseLerp(ahead * 0.6f, ahead, d);
-                _alphas.Add(a);
+                // On a branch: the road ahead is the branch, then the main road after it rejoins.
+                var route = track.Branches[branch];
+                float along = _sensor.BranchAlong;
+                for (float d = -behind; d <= ahead; d += step)
+                {
+                    float at = along + d;
+                    Vector2 p = at <= route.Length ? route.PointAt(Mathf.Max(0f, at)) : path.PointAt(path.WrapDistance(route.To + at - route.Length));
+                    Add(_points, _alphas, (p - car) * scale, d);
+                }
+                // The main road it bypasses, faint.
+                for (float d = 0f; d <= route.Span; d += step) Add(_otherPoints, _otherAlphas, (path.PointAt(path.WrapDistance(route.From + d)) - car) * scale, 10f);
+            }
+            else
+            {
+                for (float d = -behind; d <= ahead; d += step)
+                    Add(_points, _alphas, (path.PointAt(path.WrapDistance(from + d)) - car) * scale, d);
+                // Another way round coming up: drawn faint, so you can spot it in time.
+                foreach (var route in track.Branches)
+                {
+                    float toBranch = path.WrapDistance(route.From - from);
+                    if (toBranch > ahead) continue;
+                    for (float d = 0f; d <= route.Length; d += step) Add(_otherPoints, _otherAlphas, (route.PointAt(d) - car) * scale, toBranch + d);
+                    break;
+                }
             }
             road.Width = Mathf.Clamp(track.Layout.roadWidth * scale * 1.2f, 22f, 40f);
             road.SetPoints(_points, _alphas);
+            if (otherWay != null)
+            {
+                otherWay.Width = road.Width * 0.8f;
+                otherWay.SetPoints(_otherPoints, _otherAlphas);
+            }
+        }
+
+        // Behind the car: dim and fading out. Ahead: bright, fading only in the distance.
+        void Add(System.Collections.Generic.List<Vector2> points, System.Collections.Generic.List<float> alphas, Vector2 p, float d)
+        {
+            points.Add(p);
+            alphas.Add(d < 0f ? 0.35f * Mathf.InverseLerp(-behind, 0f, d) : 1f - Mathf.InverseLerp(ahead * 0.6f, ahead, d));
         }
 
         bool Bind()
