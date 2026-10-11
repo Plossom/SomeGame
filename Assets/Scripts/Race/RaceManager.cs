@@ -87,6 +87,12 @@ namespace SomeGame.Race
                     continue;
                 }
                 if (Level != null) ScaleRival(rivals[i]);
+                // Each rival its own taste for the other ways round, from cautious to daring.
+                if (rivals[i].TryGetComponent(out AIDriverInput routeAi))
+                {
+                    routeAi.Adventurous = Mathf.Lerp(0.2f, 0.85f, rivals.Count > 1 ? i / (rivals.Count - 1f) : 0.5f);
+                    routeAi.Seed = i * 7919 + 13;
+                }
                 Register(rivals[i], slot++, $"Rival {i + 1}");
             }
             Player = Register(player, slot, "You");

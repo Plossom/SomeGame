@@ -50,6 +50,8 @@ namespace SomeGame.Car
         bool _roofExit;
         float _wallRide;
         float _dashAt = -10f;
+        int _lastBranch = -1;
+        float _lastAlong;
         ParticleSystem _splash, _dust;
         SpriteRenderer[] _sprites;
 
@@ -59,6 +61,8 @@ namespace SomeGame.Car
         public event Action RoofRun;
         /// <summary>The car rode a banked wall far enough and came off it with a boost.</summary>
         public event Action WallRide;
+        /// <summary>The car crossed a whole ice branch (frozen lake) and came off its far end.</summary>
+        public event Action IceRun;
 
         void Awake()
         {
@@ -86,6 +90,14 @@ namespace SomeGame.Car
                 OnTheRoofs(track);
                 return;
             }
+            // Off the far end of an ice branch: the lake was crossed.
+            if (_sensor.Branch < 0 && _lastBranch >= 0 && _lastBranch < track.Branches.Count)
+            {
+                var crossed = track.Branches[_lastBranch];
+                if (crossed.Kind == SomeGame.Track.TrackLayout.BranchKind.Ice && _lastAlong > crossed.Length - 8f) IceRun?.Invoke();
+            }
+            _lastBranch = _sensor.Branch;
+            _lastAlong = _sensor.BranchAlong;
             // Banked walls: a good ride ends with a boost.
             if (_car.IsWallRiding) _wallRide += _car.Body.linearVelocity.magnitude * Time.fixedDeltaTime;
             else if (!_sensor.OnBank && _wallRide > 0f)
@@ -197,7 +209,7 @@ namespace SomeGame.Car
             _car.Body.linearVelocity = (land - position).normalized * speed;
             _shortcutFrom = route.MainDistance(_sensor.BranchAlong);
             _roofExit = true;
-            _car.Launch(Mathf.Clamp(Vector2.Distance(position, land) / speed, 0.5f, 1.8f), land - position);
+            _car.Launch(Mathf.Clamp(Vector2.Distance(position, land) / speed, 0.5f, 1.8f), land - position, locked: true);
         }
 
         void OnLanded()
@@ -272,7 +284,9 @@ namespace SomeGame.Car
                 _car.Body.linearVelocity = dir * padSpeed;
                 _car.Body.rotation = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
                 transform.rotation = Quaternion.Euler(0f, 0f, _car.Body.rotation);
-                _car.Launch(Vector2.Distance(bouncer.position, bouncer.target) / padSpeed);
+                // Onto a roof: an aimed flight that lands exactly on it.
+                bool ontoRoof = _sensor.Track.BranchAt(bouncer.target, out _, out _, roofs: true, ground: false) >= 0;
+                _car.Launch(Vector2.Distance(bouncer.position, bouncer.target) / padSpeed, null, ontoRoof);
                 AnyBounce?.Invoke(bouncer.position);
                 return;
             }

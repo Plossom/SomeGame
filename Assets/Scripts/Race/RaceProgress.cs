@@ -103,7 +103,8 @@ namespace SomeGame.Race
             if (!_sensor.Jumped)
             {
                 float toCheckpoint = path.DeltaDistance(_lastDistance, Circuit.CheckpointDistance(NextCheckpoint));
-                bool betweenPosts = Mathf.Abs(_sensor.Current.Lateral) <= Circuit.OffRoadAt(distance) + gateMargin;
+                // Riding a banked wall or taking another way round counts as passing between the posts.
+                bool betweenPosts = Mathf.Abs(_sensor.Current.Lateral) <= Circuit.OffRoadAt(distance) + gateMargin || _sensor.OnBank || _sensor.Branch >= 0;
                 if (moved > 0f && toCheckpoint > 0f && toCheckpoint <= moved && betweenPosts)
                     PassCheckpoint();
             }

@@ -8,7 +8,7 @@ namespace SomeGame.UI
     /// <summary>
     /// Shows the player's tricks big on screen and chains them into combos: a drift released into a boost
     /// (DRIFT, SUPER DRIFT, ULTRA DRIFT by its charge), a jump (JUMP, BIG AIR, MEGA AIR by its air time),
-    /// a landed shortcut, a rooftop run and a wall ride. Another trick within <see cref="comboWindow"/> seconds raises the combo
+    /// a landed shortcut, a rooftop run, a wall ride and an ice crossing. Another trick within <see cref="comboWindow"/> seconds raises the combo
     /// (x2, x3...); spinning on oil, crashing or splashing into water breaks it. Each trick pops in
     /// tilted with a starburst, then floats up and fades; the combo counter punches on every step.
     /// </summary>
@@ -31,6 +31,7 @@ namespace SomeGame.UI
         static readonly Color ShortcutColor = Hex("7EE07A");
         static readonly Color RoofColor = Hex("FF7EB6");
         static readonly Color WallColor = Hex("5FD0FF");
+        static readonly Color IceColor = Hex("A8E8FF");
 
         CarMovement _car;
         CarTerrain _terrain;
@@ -58,7 +59,7 @@ namespace SomeGame.UI
             _car.Landed -= OnLand;
             _car.Slipped -= Break;
             _car.Crashed -= OnCrash;
-            if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; }
+            if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; _terrain.IceRun -= OnIceRun; }
         }
 
         bool Bind()
@@ -74,7 +75,7 @@ namespace SomeGame.UI
             _car.Slipped += Break;
             _car.Crashed += OnCrash;
             _terrain = race.Player.GetComponent<CarTerrain>();
-            if (_terrain != null) { _terrain.RoofRun += OnRoofRun; _terrain.WallRide += OnWallRide; }
+            if (_terrain != null) { _terrain.RoofRun += OnRoofRun; _terrain.WallRide += OnWallRide; _terrain.IceRun += OnIceRun; }
             return true;
         }
 
@@ -128,6 +129,11 @@ namespace SomeGame.UI
         void OnWallRide()
         {
             if (race.State == RaceState.Racing) Trick("WALL RIDE!", WallColor);
+        }
+
+        void OnIceRun()
+        {
+            if (race.State == RaceState.Racing) Trick("ICE SLIDE!", IceColor);
         }
 
         void Break()

@@ -74,16 +74,24 @@ namespace SomeGame.UI
             if (track == null) return "";
             var lines = new List<string>();
             void Add(bool has, string text) { if (has) lines.Add("•  " + text); }
+            bool Has(SomeGame.Track.TrackLayout.BranchKind kind) => track.branches.Exists(b => b.kind == kind);
+            Add(Has(SomeGame.Track.TrackLayout.BranchKind.Roof), "Rooftop run");
+            Add(track.banks.Count > 0, "Ice wall to ride");
+            Add(Has(SomeGame.Track.TrackLayout.BranchKind.Ice), "Frozen lake shortcut");
+            Add(track.penguins.Count > 0, "Penguins crossing");
+            Add(track.dashPanels.Count > 0, "Dash panels");
             Add(track.waterWorld, "Islands in a lagoon");
             Add(track.rivers.Count == 1, "A river to jump");
             Add(track.rivers.Count > 1, $"{track.rivers.Count} streams to jump");
             Add(track.lakes.Count > 0, "Lake crossings");
             Add(track.gaps.Count > 0, "Gaps in the road");
-            Add(track.bouncers.Count > 0, "Jump pads");
+            Add(track.bouncers.Count > 0 && !Has(SomeGame.Track.TrackLayout.BranchKind.Roof), "Jump pads");
             Add(track.geysers.Count > 0, "Leaping fish");
-            Add(track.sweepers.Count > 0, "Rolling logs and bales");
+            bool snowballs = track.sweepers.Exists(w => w.kind == SomeGame.Track.TrackLayout.SweeperKind.Snowball);
+            Add(snowballs, "Rolling snowballs");
+            Add(track.sweepers.Exists(w => w.kind != SomeGame.Track.TrackLayout.SweeperKind.Snowball), "Rolling logs and bales");
             Add(track.oil.Count > 0, "Oil slicks");
-            Add(track.shortcuts.Count > 0, "Hidden shortcuts");
+            Add(track.shortcuts.Count > 0, track.biome == SomeGame.Track.TrackLayout.Biome.Snow ? "Ski jump" : "Hidden shortcuts");
             if (lines.Count == 0) lines.Add("•  Just road: drive and drift!");
             return string.Join("\n", lines);
         }

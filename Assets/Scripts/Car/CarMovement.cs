@@ -88,6 +88,7 @@ namespace SomeGame.Car
         public bool IsBoosting => _boostTimer > 0f;
         public bool IsAirborne => _airTimer > 0f;
         /// <summary>0 at take-off and landing, 1 at the top of the jump.</summary>
+        bool _airLocked;
         public float AirHeight => IsAirborne ? Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration)) : 0f;
         public bool IsSlipping => _slipTimer > 0f;
         /// <summary>Strength (0..1) of the boost currently running.</summary>
@@ -305,10 +306,11 @@ namespace SomeGame.Car
         /// Sends the car into the air (off a ramp) for <paramref name="duration"/> seconds. With a
         /// direction, the car is turned to fly that way (big shortcut ramps).
         /// </summary>
-        public void Launch(float duration, Vector2? direction = null)
+        public void Launch(float duration, Vector2? direction = null, bool locked = false)
         {
             if (IsAirborne || duration <= 0f) return;
             EndDrift();
+            _airLocked = locked;
             if (direction.HasValue)
             {
                 Vector2 dir = direction.Value.normalized;
@@ -322,11 +324,12 @@ namespace SomeGame.Car
             Launched?.Invoke(duration);
         }
 
-        // In the air the car keeps its speed and heading; the stick only nudges it a little.
+        // In the air the car keeps its speed and heading; the stick only nudges it a little (not at all on
+        // an aimed flight, e.g. a pad onto the roofs, so it lands where it was thrown).
         void Fly(float dt)
         {
             _airTimer -= dt;
-            Vector2 steer = ControlsEnabled && _input != null ? _input.SteerDirection : Vector2.zero;
+            Vector2 steer = ControlsEnabled && _input != null && !_airLocked ? _input.SteerDirection : Vector2.zero;
             if (steer.sqrMagnitude > 0.0001f)
             {
                 float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(steer));

@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 12598919c42c64f7d921ff00d10a4f14, type: 3}
   laps: 3
-  description: 'Race through a snowy village: bounce onto the rooftops, ride the ice wall and slide across the frozen lake. Watch out for penguins!'
+  description: 'Race through a snowy village: bounce onto the rooftops, ride the ice wall and slide across the frozen lake. Watch out for the penguins!'
   difficulty: 1
   rivalCount: 7
   rivalSpeedScale: 0.9
   rivalCornerScale: 1
   starsRequired: 0
   starTimes:
-  - 110
+  - 154
+  - 117
   - 100
-  - 92
