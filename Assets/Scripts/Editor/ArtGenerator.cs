@@ -32,6 +32,11 @@ namespace SomeGame.EditorTools
         static void Ui(string name, int w, int h, System.Func<float, float, float> coverage, int border = 0) =>
             Write(Folder, name, w, h, (x, y) => White(coverage(x, y)), 100, false, border);
 
+        /// <summary>The "i" of the race info button: a dot over a rounded stem.</summary>
+        [MenuItem("SomeGame/Generate Info Icon")]
+        public static void GenerateInfoIcon() =>
+            Ui("IconInfo", 128, 128, (x, y) => Fill(Mathf.Min(Circle(x, y, 64f, 99f, 13f), Capsule(x, y, 64f, 24f, 64f, 70f, 11f))));
+
         static void GenerateUi()
         {
             Ui("Round", 128, 128, (x, y) => Fill(RoundRect(x, y, 64, 64, 64, 64, 40)), 44);
@@ -82,6 +87,7 @@ namespace SomeGame.EditorTools
                 return Fill(Min(outline, equator, lat1, lat2, meridian, axis));
             });
             Ui("IconQuestion", 128, 128, (x, y) => Fill(QuestionMark(x, y)));
+            GenerateInfoIcon();
             Ui("IconFlag", 128, 128, (x, y) =>
             {
                 float pole = Capsule(x, y, 30, 14, 30, 114, 6);

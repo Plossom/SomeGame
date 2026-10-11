@@ -18,6 +18,8 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: c6e382da33f42453b97c85bd7473962f, type: 3}
   laps: 3
+  description: A twisty run across the meadows on a narrower road, with more oil and two hidden shortcuts for the brave.
+  difficulty: 2
   rivalCount: 7
   rivalSpeedScale: 0.95
   rivalCornerScale: 1

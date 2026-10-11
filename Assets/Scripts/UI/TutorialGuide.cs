@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using SomeGame.Car;
 using SomeGame.Race;
 using TMPro;
@@ -25,11 +27,19 @@ namespace SomeGame.UI
         [SerializeField] GameObject[] hideInTutorial;
         [Tooltip("Seconds a finished step stays ticked before the next one shows.")]
         [SerializeField, Min(0f)] float stepPause = 0.9f;
+        [Tooltip("Full-screen cover faded in while the car is moved to the spot for the next step.")]
+        [SerializeField] CanvasGroup fade;
+        [Tooltip("Road before a curve (drift step) and before the ramp (jump step) the car is put at.")]
+        [SerializeField, Min(5f)] float curveLead = 34f, rampLead = 50f;
+
+        // Where a step is best practised: the car is moved there when the step starts.
+        enum Spot { Anywhere, BeforeCurve, BeforeRamp }
 
         struct Step
         {
             public string title, body;
             public Func<bool> done;
+            public Spot spot;
         }
 
         Step[] _steps;
@@ -38,6 +48,9 @@ namespace SomeGame.UI
         bool _hopped, _drifted, _boosted, _jumped;
         CarMovement _car;
         SomeGame.Input.PlayerCarInput _input;
+        SomeGame.Track.TrackSensor _sensor;
+        RaceProgress _progress;
+        List<float> _curves;
 
         void Start()
         {
@@ -60,6 +73,9 @@ namespace SomeGame.UI
             }
             _car = race.Player.GetComponent<CarMovement>();
             _input = race.Player.GetComponent<SomeGame.Input.PlayerCarInput>();
+            _sensor = race.Player.GetComponent<SomeGame.Track.TrackSensor>();
+            _progress = race.Player;
+            if (fade != null) { fade.alpha = 0f; fade.blocksRaycasts = false; }
             _car.Hopped += () => _hopped = true;
             _car.DriftStarted += () => _drifted = true;
             _car.BoostStarted += _ => _boosted = true;
@@ -74,12 +90,12 @@ namespace SomeGame.UI
                     done = () => _steerTime > 2f },
                 new Step { title = "HOP", body = second + " while you steer: the car hops.", done = () => _hopped },
                 new Step { title = "DRIFT", body = "Steer a little into the curve, then hop again and <b>keep holding</b>: you drift round the corner.",
-                    done = () => _drifted },
+                    done = () => _drifted, spot = Spot.BeforeCurve },
                 new Step { title = "CHARGE", body = "Keep drifting: the sparks turn <color=#4FA3FF>blue</color>, <color=#FF9A3D>orange</color>, then <color=#B66BFF>purple</color>.",
                     done = () => _car.IsDrifting && _car.DriftTier >= 1 },
                 new Step { title = "BOOST!", body = "Now let go: the longer the drift, the bigger the boost.", done = () => _boosted },
                 new Step { title = "JUMP", body = "Drive straight over the <b>ramp with the white arrows</b> at full speed to fly across the stream.",
-                    done = () => _jumped },
+                    done = () => _jumped, spot = Spot.BeforeRamp },
             };
         }
 
@@ -119,6 +135,76 @@ namespace SomeGame.UI
             stepLabel.text = $"PRACTICE  ·  {index + 1}/{_steps.Length}";
             titleLabel.text = _steps[index].title;
             bodyLabel.text = _steps[index].body;
+            if (_steps[index].spot != Spot.Anywhere) StartCoroutine(MoveTo(_steps[index].spot));
+        }
+
+        // Puts the car on the road just before the next curve or ramp (behind a quick fade), unless it is
+        // already heading into one, so the step can be tried straight away.
+        IEnumerator MoveTo(Spot spot)
+        {
+            if (_sensor == null || _sensor.Track == null) yield break;
+            var track = _sensor.Track;
+            var path = track.Path;
+            float lead = spot == Spot.BeforeRamp ? rampLead : curveLead;
+            var targets = new List<float>();
+            if (spot == Spot.BeforeRamp) foreach (var jump in track.Jumps) targets.Add(jump.RampStart);
+            else targets.AddRange(Curves(path));
+            if (targets.Count == 0) yield break;
+
+            float current = _sensor.Current.Distance;
+            foreach (float t in targets)
+            {
+                float ahead = path.WrapDistance(t - current);
+                if (ahead >= lead * 0.6f && ahead <= lead * 1.8f) yield break; // already on the way in
+            }
+            // The next spot ahead whose run-up is clear (not blocked by water or a ramp in between).
+            Pose? best = null;
+            float bestAhead = float.MaxValue;
+            foreach (float t in targets)
+            {
+                var pose = track.RespawnBefore(t, lead, 30f);
+                float at = path.Project(pose.position).Distance;
+                if (path.WrapDistance(t - at) > lead + 8f) continue;
+                float ahead = path.WrapDistance(at - current);
+                if (ahead < bestAhead) { bestAhead = ahead; best = pose; }
+            }
+            if (best == null) yield break;
+
+            yield return Fade(1f, 0.15f);
+            float from = _sensor.Current.Distance;
+            _car.Respawn(best.Value);
+            _sensor.Sample();
+            _progress.CreditFlight(from, _sensor.Current.Distance); // moved ahead: counts the checkpoints skipped
+            var follow = Camera.main != null ? Camera.main.GetComponent<SomeGame.CameraRig.FollowCamera>() : null;
+            if (follow != null) follow.Snap();
+            yield return Fade(0f, 0.3f);
+        }
+
+        // Where the curves begin: the road starts to turn after running straight.
+        List<float> Curves(SomeGame.Track.TrackPath path)
+        {
+            if (_curves != null) return _curves;
+            _curves = new List<float>();
+            bool wasTurning = true;
+            for (float d = 0f; d < path.Length; d += 1f)
+            {
+                bool turning = Mathf.Abs(path.TurnAtDistance(d, 4)) > 10f;
+                if (turning && !wasTurning) _curves.Add(d);
+                wasTurning = turning;
+            }
+            return _curves;
+        }
+
+        IEnumerator Fade(float to, float duration)
+        {
+            if (fade == null) yield break;
+            float start = fade.alpha;
+            for (float t = 0f; t < duration; t += Time.unscaledDeltaTime)
+            {
+                fade.alpha = Mathf.Lerp(start, to, t / duration);
+                yield return null;
+            }
+            fade.alpha = to;
         }
 
         void Finish()

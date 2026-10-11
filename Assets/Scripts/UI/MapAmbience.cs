@@ -143,7 +143,9 @@ namespace SomeGame.UI
                     if (p > 1f) { rt.anchoredPosition = new Vector2(-400f, 0f); return; }
                     float x = Mathf.Lerp(-120f, MapLayout.Size.x + 120f, p);
                     rt.anchoredPosition = new Vector2(x, 1905f + Mathf.Sin(p * 5f) * 18f) + offset;
-                    rt.localScale = new Vector3(1f, Mathf.Sin(t * 9f + flapShift) * 0.9f + 0.1f, 1f);
+                    // Flap by squashing the wings between full height and a third (never through zero:
+                    // that made the birds vanish for a moment and blink).
+                    rt.localScale = new Vector3(1f, Mathf.Lerp(0.35f, 1f, 0.5f + 0.5f * Mathf.Sin(t * 7f + flapShift)), 1f);
                 });
             }
         }

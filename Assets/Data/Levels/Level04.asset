@@ -18,6 +18,8 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: c2f49000c683a493d9f6b060255d2ec2, type: 3}
   laps: 3
+  description: 'Everything at once on a narrow canyon road: jump pads, gaps, leaping fish and rolling logs.'
+  difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.92
   rivalCornerScale: 1

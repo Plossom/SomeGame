@@ -20,6 +20,12 @@ namespace SomeGame.Race
         public Sprite preview;
         [Min(1)] public int laps = 3;
 
+        [Header("Race info (map)")]
+        [Tooltip("One or two sentences about the race, shown in the race info window.")]
+        [TextArea(2, 4)] public string description;
+        [Tooltip("1 = easy, 5 = very hard.")]
+        [Range(1, 5)] public int difficulty = 1;
+
         [Header("Rivals")]
         [Range(0, 7)] public int rivalCount = 7;
         [Tooltip("Multiplies each rival's top speed (and acceleration).")]

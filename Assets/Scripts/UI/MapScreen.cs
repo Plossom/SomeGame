@@ -23,6 +23,9 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image background;
         [Tooltip("Animated life on the landscape: clouds, chimney smoke, glints, birds, the lift.")]
         [SerializeField] MapAmbience ambience;
+        [Tooltip("Opens the race info window for the selected race.")]
+        [SerializeField] UnityEngine.UI.Button infoButton;
+        [SerializeField] RaceInfoWindow infoWindow;
         [Tooltip("Snowfall over the map, shown on the winter map.")]
         [SerializeField] GameObject snow;
         [SerializeField] TMP_Text totalStars;
@@ -87,6 +90,7 @@ namespace SomeGame.UI
                 return;
             }
             startButton.onClick.AddListener(StartSelected);
+            if (infoButton != null) infoButton.onClick.AddListener(ShowInfo);
             _selected = InitialSelection();
             Build();
             Refresh();
@@ -96,14 +100,16 @@ namespace SomeGame.UI
         void LateUpdate() => FitWorld();
 
         // Scale the fixed-size map so it covers the screen, keeping its centre.
-        void FitWorld()
+        // Returns true when the screen size changed.
+        bool FitWorld()
         {
             var parent = (RectTransform)world.parent;
             Vector2 size = parent.rect.size;
-            if (size == _lastParentSize) return;
+            if (size == _lastParentSize) return false;
             _lastParentSize = size;
             float scale = Mathf.Max(size.x / MapLayout.Size.x, size.y / MapLayout.Size.y);
             world.localScale = Vector3.one * scale;
+            return true;
         }
 
         // On game start race 1 is selected; back from a race, the race just played.
@@ -223,6 +229,7 @@ namespace SomeGame.UI
                 startFace.color = Theme.Stone; startShadow.color = Theme.StoneDark;
                 startLabel.text = "SOON"; startLabel.color = Theme.StoneDark;
                 startRing.SetActive(false);
+                if (infoButton != null) infoButton.interactable = false;
                 return;
             }
             var level = catalog[_selected];
@@ -253,6 +260,12 @@ namespace SomeGame.UI
             startLabel.text = canEnter ? "START" : "LOCKED";
             startLabel.color = canEnter ? Theme.White : Theme.StoneDark;
             startRing.SetActive(canEnter);
+        }
+
+        void ShowInfo()
+        {
+            if (infoWindow == null || catalog.Count == 0) return;
+            infoWindow.Show(catalog[_selected], ProgressStore.CanEnter(catalog, _selected), StartSelected);
         }
 
         void StartSelected()

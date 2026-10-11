@@ -169,34 +169,37 @@ namespace SomeGame.EditorTools
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(770f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 136; // keeps clear of the trophy counter
             // Your records for the race, beside the star times: best time over best lap.
-            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(630f, -192f), new Vector2(420f, 130f));
+            // Star times | records | info button, sharing the header width (1050).
+            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(556f, -192f), new Vector2(358f, 130f));
             Img(records, "Round", Theme.Ink, sliced: true);
             TMP_Text Record(string name, float y, string caption)
             {
-                var row = At(name, records, new Vector2(0f, 1f), new Vector2(26f, y), new Vector2(368f, 56f));
-                Txt(At("Caption", row, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(150f, 56f)), caption, 32, Theme.Stone, _semi, TextAlignmentOptions.Left).rectTransform.pivot = new Vector2(0f, 0.5f);
-                var value = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(220f, 56f)), "—", 44, Theme.Cream, _cond, TextAlignmentOptions.Right);
+                var row = At(name, records, new Vector2(0f, 1f), new Vector2(22f, y), new Vector2(314f, 56f));
+                Txt(At("Caption", row, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(130f, 56f)), caption, 32, Theme.Stone, _semi, TextAlignmentOptions.Left).rectTransform.pivot = new Vector2(0f, 0.5f);
+                var value = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(184f, 56f)), "—", 44, Theme.Cream, _cond, TextAlignmentOptions.Right);
                 value.rectTransform.pivot = new Vector2(1f, 0.5f);
                 return value;
             }
             var best = Record("BestTime", -10f, "Best");
             var bestLap = Record("BestLap", -64f, "Best lap");
+            // Opens the race info window: same height as the panels beside it (button + shadow = 130).
+            var infoButton = SquareButton(header, "InfoButton", new Vector2(0f, 1f), new Vector2(932f, -192f), "IconInfo", 118f);
 
             // Bottom: star times, START.
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 480f));
             // Star times sit in the header, right under the race info.
-            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -192f), new Vector2(610f, 130f));
+            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -192f), new Vector2(540f, 130f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(20f + i * 194f, 0f), new Vector2(190f, 120f));
+                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(18f + i * 172f, 0f), new Vector2(168f, 120f));
                 groups[i] = group;
                 group.pivot = new Vector2(0f, 0.5f);
                 for (int k = 0; k <= i; k++)
                     Img(At($"S{k}", group, new Vector2(0f, 1f), new Vector2(4f + k * 44f, -8f), new Vector2(44f, 44f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 1f);
-                times[i] = Txt(At("Time", group, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(186f, 58f)), "1:00.00", 48, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
+                times[i] = Txt(At("Time", group, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(164f, 58f)), "1:00.00", 48, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
                 times[i].rectTransform.pivot = new Vector2(0f, 0f);
             }
             var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 10f), 300f, "START",
@@ -204,6 +207,8 @@ namespace SomeGame.EditorTools
 
             BuildCupMenu(canvas, safe);
             BuildMenu(canvas, menuButton, null, null);
+
+            var infoWindow = BuildRaceInfo(canvas);
 
             var screen = canvas.gameObject.AddComponent<MapScreen>();
             var so = new SerializedObject(screen);
@@ -214,6 +219,7 @@ namespace SomeGame.EditorTools
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
             Set(so, "startButton", start); Set(so, "startFace", startFace); Set(so, "startShadow", startShadow);
             Set(so, "startLabel", startLabel); Set(so, "startRing", startRing.gameObject);
+            Set(so, "infoButton", infoButton); Set(so, "infoWindow", infoWindow);
             so.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.SaveScene(scene, MapScenePath);
@@ -222,6 +228,97 @@ namespace SomeGame.EditorTools
                 new EditorBuildSettingsScene(MapScenePath, true),
                 new EditorBuildSettingsScene(RaceScenePath, true),
             };
+        }
+
+        // The race info window: a big cream card over the map with the track from above (as on the loading
+        // screen) beside the difficulty, laps, rivals and what is on the track; the description below; START.
+        static RaceInfoWindow BuildRaceInfo(RectTransform canvas)
+        {
+            var host = Stretch("RaceInfo", canvas);
+            var panel = Stretch("Panel", host);
+            var dimRt = Stretch("Dim", panel);
+            var dimImage = Img(dimRt, null, Theme.WithAlpha(Theme.Ink, 0.7f), raycast: true);
+            var dim = dimRt.gameObject.AddComponent<Button>();
+            dim.targetGraphic = dimImage;
+            dim.transition = Selectable.Transition.None;
+            var safe = SafeArea(panel);
+
+            var card = At("Card", safe, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1050f, 1780f));
+            var cardShadow = Stretch("Shadow", card);
+            cardShadow.offsetMin = cardShadow.offsetMax = new Vector2(0f, -20f);
+            Img(cardShadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
+            Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true, raycast: true);
+
+            var closeRt = At("Close", card, new Vector2(1f, 1f), new Vector2(-30f, -30f), new Vector2(110f, 110f));
+            var closeImage = Img(closeRt, null, new Color(0, 0, 0, 0), raycast: true);
+            Img(At("Icon", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(58f, 58f)), "IconClose", Theme.Ink);
+            var close = closeRt.gameObject.AddComponent<Button>();
+            close.targetGraphic = closeImage;
+            closeRt.gameObject.AddComponent<ButtonFeedback>();
+
+            var chapter = Txt(At("Chapter", card, new Vector2(0f, 1f), new Vector2(60f, -60f), new Vector2(820f, 50f)), "VALLEY CUP · RACE 1", 40, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            chapter.characterSpacing = 6f;
+            var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(56f, -110f), new Vector2(840f, 140f)), "SUNDAY LOOP", 120, Theme.Ink, _black, TextAlignmentOptions.Left);
+            title.enableAutoSizing = true; title.fontSizeMin = 70; title.fontSizeMax = 120;
+
+            // The track from above in a dark frame (the picture is portrait, 560 x 1000).
+            var frame = At("Track", card, new Vector2(0f, 1f), new Vector2(60f, -280f), new Vector2(540f, 960f));
+            Img(frame, "Round", Theme.Ink, sliced: true);
+            var picture = Img(Stretch("Picture", frame), null, Color.white);
+            picture.rectTransform.offsetMin = new Vector2(12f, 12f); picture.rectTransform.offsetMax = new Vector2(-12f, -12f);
+            picture.preserveAspect = true;
+
+            // Facts beside the picture.
+            var facts = At("Facts", card, new Vector2(0f, 1f), new Vector2(636f, -280f), new Vector2(360f, 960f));
+            TMP_Text Caption(string name, float y, string text)
+            {
+                var label = Txt(At(name, facts, new Vector2(0f, 1f), new Vector2(0f, y), new Vector2(360f, 46f)), text, 36, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+                label.characterSpacing = 6f;
+                return label;
+            }
+            TMP_Text Value(string name, float y, string text) =>
+                Txt(At(name, facts, new Vector2(0f, 1f), new Vector2(0f, y), new Vector2(360f, 84f)), text, 76, Theme.Ink, _black, TextAlignmentOptions.Left);
+            Caption("DifficultyCaption", 0f, "DIFFICULTY");
+            var pips = new Image[5];
+            for (int i = 0; i < pips.Length; i++)
+                pips[i] = Img(At($"Pip{i + 1}", facts, new Vector2(0f, 1f), new Vector2(i * 70f, -62f), new Vector2(58f, 30f)), "Pill", Theme.Orange, sliced: true);
+            Caption("LapsCaption", -150f, "LAPS");
+            var laps = Value("Laps", -194f, "3");
+            Caption("RivalsCaption", -320f, "RIVALS");
+            var rivals = Value("Rivals", -364f, "7");
+            Caption("FeaturesCaption", -490f, "ON THE TRACK");
+            var features = Txt(At("Features", facts, new Vector2(0f, 1f), new Vector2(0f, -544f), new Vector2(360f, 416f)), "•  Oil slicks", 34, Theme.Ink, _semi, TextAlignmentOptions.TopLeft);
+            features.enableAutoSizing = true; features.fontSizeMin = 24; features.fontSizeMax = 34; // up to eight lines
+
+            var description = Txt(At("Description", card, new Vector2(0f, 1f), new Vector2(60f, -1276f), new Vector2(930f, 260f)),
+                "A short description of the race.", 42, Theme.Ink, _semi, TextAlignmentOptions.TopLeft);
+            description.textWrappingMode = TextWrappingModes.Normal;
+            description.lineSpacing = 10f;
+
+            // START along the bottom of the card.
+            var startRt = At("StartButton", card, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(930f, 164f));
+            var startShadowRt = Stretch("Shadow", startRt);
+            startShadowRt.offsetMax = new Vector2(0f, -14f);
+            var startShadow = Img(startShadowRt, "Round", Theme.OrangeDeep, sliced: true);
+            var startFaceRt = Stretch("Face", startRt);
+            startFaceRt.offsetMin = new Vector2(0f, 14f);
+            var startFace = Img(startFaceRt, "Round", Theme.Orange, sliced: true, raycast: true);
+            var startLabel = Txt(Stretch("Label", startFaceRt), "START", 72, Color.white, _black);
+            startLabel.characterSpacing = 6f;
+            var start = startRt.gameObject.AddComponent<Button>();
+            start.targetGraphic = startFace;
+            start.transition = Selectable.Transition.None;
+            startRt.gameObject.AddComponent<ButtonFeedback>();
+
+            var window = host.gameObject.AddComponent<RaceInfoWindow>();
+            Configure(window, ("panel", panel.gameObject), ("closeArea", dim), ("closeButton", close), ("chapterLabel", chapter), ("titleLabel", title),
+                ("trackPicture", picture), ("descriptionLabel", description), ("lapsLabel", laps), ("rivalsLabel", rivals), ("featuresLabel", features),
+                ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel));
+            var wso = new SerializedObject(window);
+            SetArray(wso, "difficultyPips", pips);
+            wso.ApplyModifiedPropertiesWithoutUndo();
+            panel.gameObject.SetActive(false);
+            return window;
         }
 
         // The small world tab on the left edge and the row of cup tiles it opens.
@@ -364,11 +461,6 @@ namespace SomeGame.EditorTools
             Set(rso, "joystick", joystick);
             rso.ApplyModifiedPropertiesWithoutUndo();
 
-            // Snowfall over the landscape (under the header), switched on by the winter map.
-            var snow = Stretch("Snow", canvas);
-            Configure(snow.gameObject.AddComponent<SnowFall>(), ("flake", Sprite("Circle")));
-            snow.gameObject.SetActive(false);
-
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(48f, -48f), "IconMenu", 138f);
 
@@ -396,6 +488,17 @@ namespace SomeGame.EditorTools
             Set(hso, "lapFlashLabel", flash); Set(hso, "lapFlashRoot", flashRt.gameObject); Set(hso, "warningLabel", warning);
             hso.ApplyModifiedPropertiesWithoutUndo();
 
+            // The road ahead, top right under the HUD bar: a fading ribbon that turns with the car.
+            var aheadRt = At("TrackAhead", safe, new Vector2(1f, 1f), new Vector2(-48f, -222f), new Vector2(250f, 330f));
+            Img(aheadRt, "Round", Theme.WithAlpha(Theme.Ink, 0.9f), sliced: true);
+            aheadRt.gameObject.AddComponent<RectMask2D>();
+            var aheadRoad = Line(Stretch("Road", aheadRt));
+            aheadRoad.color = Theme.WithAlpha(Theme.Cream, 0.9f);
+            aheadRoad.raycastTarget = false;
+            var aheadArrow = Img(At("Car", aheadRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(70f, 70f)), "IconPlay", Theme.Orange).rectTransform;
+            aheadArrow.localRotation = Quaternion.Euler(0f, 0f, 90f); // the play triangle points right; turn it to point up
+            Configure(aheadRt.gameObject.AddComponent<TrackAheadView>(), ("race", race), ("road", aheadRoad), ("arrow", aheadArrow));
+
             // Countdown.
             var cd = Stretch("Countdown", canvas);
             var cdLabel = Txt(At("Number", cd, new Vector2(0.5f, 0.5f), new Vector2(0f, 330f), new Vector2(1000f, 520f)), "3", 440, Color.white, _black);
@@ -407,7 +510,7 @@ namespace SomeGame.EditorTools
             cso.ApplyModifiedPropertiesWithoutUndo();
 
             BuildResults(canvas, race);
-            BuildTutorial(safe, race, hud.gameObject);
+            BuildTutorial(safe, race, hud.gameObject, aheadRt.gameObject);
             BuildMenu(canvas, menuButton, race, joystick);
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -415,7 +518,7 @@ namespace SomeGame.EditorTools
         }
 
         // The practice-drive hint card (top) and the "you're ready" card (centre).
-        static void BuildTutorial(RectTransform safe, RaceManager race, GameObject hud)
+        static void BuildTutorial(RectTransform safe, RaceManager race, params GameObject[] hideInTutorial)
         {
             var root = Stretch("Tutorial", safe);
             var card = Rt("Card", root);
@@ -449,11 +552,18 @@ namespace SomeGame.EditorTools
             text.textWrappingMode = TextWrappingModes.Normal;
             var go = BigRoundButton(panel, "MapButton", new Vector2(0.5f, 0f), new Vector2(0f, 50f), 190f, "MAP", out _, out _, out _, out _);
 
+            // Covers the whole screen for a moment while the car is moved to the next step's spot.
+            var fadeRt = Stretch("TutorialFade", (RectTransform)safe.parent);
+            Img(fadeRt, null, Theme.Ink);
+            var fade = fadeRt.gameObject.AddComponent<CanvasGroup>();
+            fade.alpha = 0f; fade.blocksRaycasts = false; fade.interactable = false;
+
             var guide = root.gameObject.AddComponent<TutorialGuide>();
             var so = new SerializedObject(guide);
+            Set(so, "fade", fade);
             Set(so, "race", race); Set(so, "card", card.gameObject); Set(so, "stepLabel", step); Set(so, "titleLabel", title); Set(so, "bodyLabel", body);
             Set(so, "skipButton", skip); Set(so, "doneCard", done.gameObject); Set(so, "doneButton", go);
-            SetArray(so, "hideInTutorial", new[] { hud });
+            SetArray(so, "hideInTutorial", hideInTutorial);
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -837,6 +947,12 @@ namespace SomeGame.EditorTools
             rt.anchoredPosition = position;
             rt.sizeDelta = size;
             return rt;
+        }
+
+        static TrackLine Line(RectTransform rt)
+        {
+            rt.gameObject.AddComponent<CanvasRenderer>();
+            return rt.gameObject.AddComponent<TrackLine>();
         }
 
         static Sprite Sprite(string name) => AssetDatabase.LoadAssetAtPath<Sprite>(Art + name + ".png");

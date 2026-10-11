@@ -18,6 +18,8 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: a665fd7474f784f928ce99590824de32, type: 3}
   laps: 3
+  description: 'The grand finale on the water: leap from island to island across the lagoon. One mistake and you splash!'
+  difficulty: 5
   rivalCount: 7
   rivalSpeedScale: 0.95
   rivalCornerScale: 1

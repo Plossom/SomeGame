@@ -18,6 +18,8 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: d9cf4e9e035b94586a6c27494d38b1b9, type: 3}
   laps: 3
+  description: A quick spin through the valley with a few fast bends. Watch out for the oil on the racing line.
+  difficulty: 1
   rivalCount: 7
   rivalSpeedScale: 0.83737504
   rivalCornerScale: 0.92
