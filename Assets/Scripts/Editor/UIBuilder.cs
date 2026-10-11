@@ -122,13 +122,19 @@ namespace SomeGame.EditorTools
             // The painted valley; stops, road progress and the car live in the same fixed-size space.
             var map = Stretch("Map", canvas);
             var world = At("World", map, new Vector2(0.5f, 0.5f), Vector2.zero, MapLayout.Size);
-            Img(Stretch("Background", world), "MapBackground", Color.white).preserveAspect = false;
+            var background = Img(Stretch("Background", world), "MapBackground", Color.white);
+            background.preserveAspect = false;
             var node = BuildNode(world);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));
             car.pivot = new Vector2(0.5f, 0.5f);
             Img(At("Shadow", car, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(70f, 120f)), "CarShadow", new Color(0f, 0f, 0f, 0.45f)).preserveAspect = false;
             Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
             Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
+
+            // Snowfall over the landscape (under the header), switched on by the winter map.
+            var snow = Stretch("Snow", canvas);
+            Configure(snow.gameObject.AddComponent<SnowFall>(), ("flake", Sprite("Circle")));
+            snow.gameObject.SetActive(false);
 
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
@@ -197,7 +203,7 @@ namespace SomeGame.EditorTools
             var screen = canvas.gameObject.AddComponent<MapScreen>();
             var so = new SerializedObject(screen);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
-            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
+            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
             Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
             Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
@@ -352,6 +358,11 @@ namespace SomeGame.EditorTools
             var rso = new SerializedObject(race);
             Set(rso, "joystick", joystick);
             rso.ApplyModifiedPropertiesWithoutUndo();
+
+            // Snowfall over the landscape (under the header), switched on by the winter map.
+            var snow = Stretch("Snow", canvas);
+            Configure(snow.gameObject.AddComponent<SnowFall>(), ("flake", Sprite("Circle")));
+            snow.gameObject.SetActive(false);
 
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(48f, -48f), "IconMenu", 138f);
@@ -646,6 +657,8 @@ namespace SomeGame.EditorTools
 
         static void LoadFonts()
         {
+            Theme.Use(Theme.Valley); // screens are built in the Valley colours; other cups recolour them at runtime
+            MapLayout.Current = MapLayout.Valley;
             _semi = Font("Barlow-SemiBold");
             _bold = Font("Barlow-Bold");
             _cond = Font("BarlowCondensed-ExtraBold");

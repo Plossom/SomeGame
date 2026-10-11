@@ -19,6 +19,10 @@ namespace SomeGame.UI
         [Tooltip("Inactive node used as a template.")]
         [SerializeField] MapNode nodeTemplate;
         [SerializeField] RectTransform car;
+        [Tooltip("The painted landscape; replaced by the selected cup's picture.")]
+        [SerializeField] UnityEngine.UI.Image background;
+        [Tooltip("Snowfall over the map, shown on the winter map.")]
+        [SerializeField] GameObject snow;
         [SerializeField] TMP_Text totalStars;
         [Tooltip("Races won out of all races.")]
         [SerializeField] TMP_Text totalTrophies;
@@ -55,6 +59,20 @@ namespace SomeGame.UI
             // The map shows the selected cup's races.
             var cup = CupList.Selected;
             if (cup != null) catalog = cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
+            ApplyLook(cup != null ? cup.look : CupLook.Valley, cup != null ? cup.mapBackground : null);
+        }
+
+        // The cup's map: its road and landscape, and its colours on every image and text of the screen
+        // (built in the Valley colours). Layout, fonts and shapes stay the same.
+        void ApplyLook(CupLook look, Sprite landscape)
+        {
+            MapLayout.Current = MapLayout.Of(look);
+            Theme.Use(Theme.Of(look));
+            Theme.Recolor(transform, Theme.Valley);
+            var cam = Camera.main;
+            if (cam != null && Theme.TryMap(cam.backgroundColor, Theme.Valley, out var sky)) cam.backgroundColor = sky;
+            if (landscape != null && background != null) background.sprite = landscape;
+            if (snow != null) snow.SetActive(look == CupLook.Winter);
         }
 
         void Start()

@@ -1,54 +1,47 @@
 using System.Collections.Generic;
+using SomeGame.Race;
 using UnityEngine;
 
 namespace SomeGame.UI
 {
     /// <summary>
-    /// The forest road on the map screen, in canvas units of the 1170 x 2532 map picture (origin at
-    /// the bottom left). Shared by the painter that bakes the landscape and by <see cref="MapScreen"/>,
-    /// which places the race stops, the progress line and the car on the same road.
+    /// One map road, in canvas units of the 1170 x 2532 map picture (origin at the bottom left): a smooth
+    /// curve through control points, with the race stops spaced evenly between two of them.
     /// </summary>
-    public static class MapLayout
+    public sealed class MapRoad
     {
-        public static readonly Vector2 Size = new(1170f, 2532f);
+        readonly Vector2[] _points;
+        readonly int _firstStopPoint, _lastStopPoint;
+        List<Vector2> _samples;
+        List<float> _distances;
 
-        // The road winds up from the bottom of the screen past the race stops and ends at the last one.
-        // (The landscape picture is stretched upward by MapArtGenerator.Stretch; these points include it.)
-        static readonly Vector2[] Points =
+        /// <param name="points">The road from the bottom of the screen; it ends at the last stop.</param>
+        /// <param name="firstStopPoint">Control point of race 1.</param>
+        /// <param name="lastStopPoint">Control point of the last stop.</param>
+        public MapRoad(Vector2[] points, int firstStopPoint, int lastStopPoint)
         {
-            new(40f, -184f), new(190f, 345f), new(255f, 590f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
-            new(800f, 1346f), new(500f, 1483f), new(410f, 1656f),
-        };
-
-        /// <summary>Index into the control points of each stop: races 1-8 (a last stop past the races shows "more soon").</summary>
-        /// <summary>The first and last race sit on these control points; the others are spaced evenly along the road between them.</summary>
-        const int FirstStopPoint = 1, LastStopPoint = 8;
-        const int Stops = 8;
-
-        public static int StopCount => Stops;
-
-        static List<Vector2> _samples;
-        static List<float> _distances;
-
-        /// <summary>The road as a dense polyline.</summary>
-        public static IReadOnlyList<Vector2> Samples { get { Build(); return _samples; } }
-
-        public static float Length { get { Build(); return _distances[^1]; } }
-
-        /// <summary>Road distance from the start to stop <paramref name="index"/>.</summary>
-        public static float StopDistance(int index)
-        {
-            Build();
-            float first = _distances[FirstStopPoint * Steps], last = _distances[LastStopPoint * Steps];
-            return Mathf.Lerp(first, last, Stops > 1 ? index / (float)(Stops - 1) : 0f);
+            _points = points;
+            _firstStopPoint = firstStopPoint;
+            _lastStopPoint = lastStopPoint;
         }
 
-        public static Vector2 StopPosition(int index) => PointAt(StopDistance(index), out _);
+        /// <summary>The road as a dense polyline.</summary>
+        public IReadOnlyList<Vector2> Samples { get { Build(); return _samples; } }
 
-        /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
-        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(920f, 1700f, y));
+        public float Length { get { Build(); return _distances[^1]; } }
 
-        public static Vector2 PointAt(float distance, out Vector2 tangent)
+        /// <summary>Road distance from the start to stop <paramref name="index"/>.</summary>
+        public float StopDistance(int index)
+        {
+            Build();
+            float first = _distances[_firstStopPoint * Steps], last = _distances[_lastStopPoint * Steps];
+            int stops = MapLayout.StopCount;
+            return Mathf.Lerp(first, last, stops > 1 ? index / (float)(stops - 1) : 0f);
+        }
+
+        public Vector2 StopPosition(int index) => PointAt(StopDistance(index), out _);
+
+        public Vector2 PointAt(float distance, out Vector2 tangent)
         {
             Build();
             distance = Mathf.Clamp(distance, 0f, Length);
@@ -62,20 +55,20 @@ namespace SomeGame.UI
 
         const int Steps = 24;
 
-        static void Build()
+        void Build()
         {
             if (_samples != null) return;
             _samples = new List<Vector2>();
             _distances = new List<float>();
-            for (int i = 0; i < Points.Length - 1; i++)
+            for (int i = 0; i < _points.Length - 1; i++)
             {
-                Vector2 p0 = Points[Mathf.Max(0, i - 1)], p1 = Points[i], p2 = Points[i + 1], p3 = Points[Mathf.Min(Points.Length - 1, i + 2)];
+                Vector2 p0 = _points[Mathf.Max(0, i - 1)], p1 = _points[i], p2 = _points[i + 1], p3 = _points[Mathf.Min(_points.Length - 1, i + 2)];
                 for (int k = 0; k < Steps; k++) Add(CatmullRom(p0, p1, p2, p3, k / (float)Steps));
             }
-            Add(Points[^1]);
+            Add(_points[^1]);
         }
 
-        static void Add(Vector2 p)
+        void Add(Vector2 p)
         {
             _distances.Add(_samples.Count == 0 ? 0f : _distances[^1] + Vector2.Distance(_samples[^1], p));
             _samples.Add(p);
@@ -86,5 +79,52 @@ namespace SomeGame.UI
             float t2 = t * t, t3 = t2 * t;
             return 0.5f * (2f * p1 + (p2 - p0) * t + (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 + (3f * p1 - p0 - 3f * p2 + p3) * t3);
         }
+    }
+
+    /// <summary>
+    /// The map roads of the cups. Shared by the painters that bake the landscapes and by
+    /// <see cref="MapScreen"/>, which places the race stops, the progress line and the car on the road of
+    /// the cup it shows (<see cref="Current"/>).
+    /// </summary>
+    public static class MapLayout
+    {
+        public static readonly Vector2 Size = new(1170f, 2532f);
+
+        // The landscape pictures are stretched upward by MapArtGenerator.Stretch; these points include it.
+
+        /// <summary>The forest road: winds up from the bottom past the lake and ends at the last race.</summary>
+        public static readonly MapRoad Valley = new(new Vector2[]
+        {
+            new(40f, -184f), new(190f, 345f), new(255f, 590f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
+            new(800f, 1346f), new(500f, 1483f), new(410f, 1656f),
+        }, 1, 8);
+
+        /// <summary>The mountain road: comes in from the bottom left and climbs in switchbacks towards the peaks.</summary>
+        public static readonly MapRoad Winter = new(new Vector2[]
+        {
+            new(50f, -160f), new(270f, 300f), new(690f, 430f), new(920f, 620f), new(690f, 800f), new(290f, 900f),
+            new(210f, 1060f), new(490f, 1190f), new(840f, 1290f), new(870f, 1450f), new(530f, 1560f),
+        }, 1, 10);
+
+        public static MapRoad Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
+
+        /// <summary>The road of the map being shown (or painted).</summary>
+        public static MapRoad Current { get; set; } = Valley;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetOnPlay() => Current = Valley;
+
+        const int Stops = 8;
+
+        public static int StopCount => Stops;
+
+        public static IReadOnlyList<Vector2> Samples => Current.Samples;
+        public static float Length => Current.Length;
+        public static float StopDistance(int index) => Current.StopDistance(index);
+        public static Vector2 StopPosition(int index) => Current.StopPosition(index);
+        public static Vector2 PointAt(float distance, out Vector2 tangent) => Current.PointAt(distance, out tangent);
+
+        /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
+        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(920f, 1700f, y));
     }
 }

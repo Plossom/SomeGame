@@ -18,6 +18,7 @@ namespace SomeGame.Race
         {
             if (Loading) return;
             CurrentLevel = level;
+            SomeGame.UI.Theme.Use(SomeGame.UI.Theme.Valley); // the race screens use the Valley colours
             // The loading screen shows the track and the progress, then hands over to the race.
             Loading = true;
             SomeGame.UI.LoadingScreen.Show(level, RaceScene, () => Loading = false);

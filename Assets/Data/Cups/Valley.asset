@@ -16,5 +16,7 @@ MonoBehaviour:
   races: {fileID: 11400000, guid: 32d1f815e7faf40858b2a76a80102e06, type: 2}
   icon: {fileID: 21300000, guid: 41ff5483fda524187b87a1e8e0aa2eb7, type: 3}
   accent: {r: 1, g: 0.48, b: 0.1, a: 1}
+  look: 0
+  mapBackground: {fileID: 21300000, guid: 48e0a8395403349a1bf893f61d3b62d3, type: 3}
   starsRequired: 0
   trophiesRequired: 0

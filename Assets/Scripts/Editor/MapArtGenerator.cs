@@ -10,10 +10,10 @@ namespace SomeGame.EditorTools
     /// <summary>
     /// Paints the map screen's landscape into Assets/Art/Rally/MapBackground.png: warm sky and sun,
     /// hazy forest bands on the horizon, rolling meadows, a lake with a village, pine forests and the
-    /// winding forest road of <see cref="MapLayout"/>, which disappears behind the trees on the horizon. Works in map canvas units (1170 x 2532, origin bottom
+    /// winding forest road of <see cref="MapLayout.Valley"/>, which disappears behind the trees on the horizon. Works in map canvas units (1170 x 2532, origin bottom
     /// left) and renders at <see cref="Scale"/> of that size.
     /// </summary>
-    public static class MapArtGenerator
+    public static partial class MapArtGenerator
     {
         const float Scale = 2f / 3f;
 
@@ -36,6 +36,7 @@ namespace SomeGame.EditorTools
         [MenuItem("SomeGame/Generate Map Art")]
         public static void Generate()
         {
+            MapLayout.Current = MapLayout.Valley;
             _w = Mathf.RoundToInt(MapLayout.Size.x * Scale);
             _h = Mathf.RoundToInt(MapLayout.Size.y * Scale);
             _px = new Color[_w * _h];
