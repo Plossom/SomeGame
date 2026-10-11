@@ -34,11 +34,16 @@ namespace SomeGame.Track
             Span = main.WrapDistance(To - From);
 
             // Leave and rejoin along the main road's direction: the end tangents come from extra points
-            // a little before the start and after the end.
-            var control = new List<Vector2> { main.PointAt(From) };
+            // a little before the start and after the end. A roof is only the row of roofs itself: cars
+            // get up by a jump pad and fly back down to the road at its end.
+            var control = new List<Vector2>();
+            bool roof = Kind == TrackLayout.BranchKind.Roof;
+            if (!roof) control.Add(main.PointAt(From));
             if (branch.points != null) control.AddRange(branch.points);
-            control.Add(main.PointAt(To));
-            Vector2 before = control[0] - main.TangentAt(From) * 12f, after = control[^1] + main.TangentAt(To) * 12f;
+            if (!roof) control.Add(main.PointAt(To));
+            if (control.Count < 2) control.Add(control.Count == 1 ? control[0] + Vector2.up : main.PointAt(To));
+            Vector2 before = roof ? control[0] * 2f - control[1] : control[0] - main.TangentAt(From) * 12f;
+            Vector2 after = roof ? control[^1] * 2f - control[^2] : control[^1] + main.TangentAt(To) * 12f;
             for (int i = 0; i < control.Count - 1; i++)
             {
                 Vector2 p0 = i == 0 ? before : control[i - 1], p1 = control[i], p2 = control[i + 1];

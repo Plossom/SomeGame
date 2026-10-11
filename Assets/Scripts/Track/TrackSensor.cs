@@ -26,6 +26,10 @@ namespace SomeGame.Track
         public float BranchAlong { get; private set; }
         /// <summary>Direction of the road under the car (the branch's on a branch).</summary>
         public Vector2 RoadDirection { get; private set; } = Vector2.up;
+        /// <summary>Up on the roofs (set by CarTerrain when the car lands on one): only roofs count as road.</summary>
+        public bool Elevated { get; set; }
+        /// <summary>On a roof branch (up on the roofs).</summary>
+        public bool OnRoof => Branch >= 0 && track.Branches[Branch].Kind == TrackLayout.BranchKind.Roof;
         /// <summary>True on an ice branch (frozen lake): little grip.</summary>
         public bool OnIce => Branch >= 0 && track.Branches[Branch].Kind == TrackLayout.BranchKind.Ice;
 
@@ -82,9 +86,9 @@ namespace SomeGame.Track
             // Off the main road but on a branch: the branch is the road, and progress runs along it.
             Branch = -1;
             RoadDirection = path.TangentAt(point.Distance);
-            if (track.Branches.Count > 0 && Mathf.Abs(point.Lateral) > track.HalfWidthAt(point.Distance))
+            if (track.Branches.Count > 0 && (Elevated || Mathf.Abs(point.Lateral) > track.HalfWidthAt(point.Distance)))
             {
-                int branch = track.BranchAt(position, out float along, out float lateral);
+                int branch = track.BranchAt(position, out float along, out float lateral, roofs: Elevated, ground: !Elevated);
                 if (branch >= 0)
                 {
                     var route = track.Branches[branch];

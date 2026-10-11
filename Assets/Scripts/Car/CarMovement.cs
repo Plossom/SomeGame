@@ -380,6 +380,22 @@ namespace SomeGame.Car
             BoostStarted?.Invoke(BoostStrength);
         }
 
+        /// <summary>
+        /// Knocks the car back off something it drove into (a house wall): it bounces away along
+        /// <paramref name="normal"/> (pointing out of the wall) and loses half its speed.
+        /// </summary>
+        public void Bump(Vector2 normal, float impact = 6f)
+        {
+            Vector2 v = _body.linearVelocity;
+            float into = Vector2.Dot(v, normal);
+            if (into < 0f) v -= normal * (into * 1.6f);
+            _body.linearVelocity = v * 0.5f;
+            EndDrift();
+            _boostTimer = 0f;
+            Collided?.Invoke(impact);
+            Crashed?.Invoke(impact);
+        }
+
         /// <summary>Puts the car back on the road (after a splash), standing still.</summary>
         public void Respawn(Pose pose)
         {

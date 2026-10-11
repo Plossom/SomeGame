@@ -7,8 +7,8 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// Shows the player's tricks big on screen and chains them into combos: a drift released into a boost
-    /// (DRIFT, SUPER DRIFT, ULTRA DRIFT by its charge), a jump (JUMP, BIG AIR, MEGA AIR by its air time)
-    /// and a landed shortcut. Another trick within <see cref="comboWindow"/> seconds raises the combo
+    /// (DRIFT, SUPER DRIFT, ULTRA DRIFT by its charge), a jump (JUMP, BIG AIR, MEGA AIR by its air time),
+    /// a landed shortcut and a rooftop run. Another trick within <see cref="comboWindow"/> seconds raises the combo
     /// (x2, x3...); spinning on oil, crashing or splashing into water breaks it. Each trick pops in
     /// tilted with a starburst, then floats up and fades; the combo counter punches on every step.
     /// </summary>
@@ -29,8 +29,10 @@ namespace SomeGame.UI
         static readonly Color[] DriftColors = { Hex("4FA3FF"), Hex("4FA3FF"), Hex("FF9A3D"), Hex("B66BFF") };
         static readonly Color AirColor = Hex("FFD447");
         static readonly Color ShortcutColor = Hex("7EE07A");
+        static readonly Color RoofColor = Hex("FF7EB6");
 
         CarMovement _car;
+        CarTerrain _terrain;
         SomeGame.Track.TrackSensor _sensor;
         int _tierSeen;
         float _driftSeenAt = -10f;
@@ -55,6 +57,7 @@ namespace SomeGame.UI
             _car.Landed -= OnLand;
             _car.Slipped -= Break;
             _car.Crashed -= OnCrash;
+            if (_terrain != null) _terrain.RoofRun -= OnRoofRun;
         }
 
         bool Bind()
@@ -69,6 +72,8 @@ namespace SomeGame.UI
             _car.Landed += OnLand;
             _car.Slipped += Break;
             _car.Crashed += OnCrash;
+            _terrain = race.Player.GetComponent<CarTerrain>();
+            if (_terrain != null) _terrain.RoofRun += OnRoofRun;
             return true;
         }
 
@@ -113,6 +118,11 @@ namespace SomeGame.UI
         }
 
         void OnCrash(float impact) => Break();
+
+        void OnRoofRun()
+        {
+            if (race.State == RaceState.Racing) Trick("ROOFTOP!", RoofColor);
+        }
 
         void Break()
         {

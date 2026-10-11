@@ -121,9 +121,10 @@ namespace SomeGame.Track
 
         /// <summary>
         /// The branch a position is on (within its width plus the kerb), or -1: index, distance along it
-        /// and sideways offset. If several overlap, the nearest centre line wins.
+        /// and sideways offset. If several overlap, the nearest centre line wins. <paramref name="roofs"/> and
+        /// <paramref name="ground"/> choose which branches count (a car on the street is not on a roof).
         /// </summary>
-        public int BranchAt(Vector2 position, out float along, out float lateral)
+        public int BranchAt(Vector2 position, out float along, out float lateral, bool roofs = true, bool ground = true)
         {
             int found = -1;
             along = 0f;
@@ -132,6 +133,8 @@ namespace SomeGame.Track
             var branches = Branches;
             for (int i = 0; i < branches.Count; i++)
             {
+                bool roof = branches[i].Kind == TrackLayout.BranchKind.Roof;
+                if (roof ? !roofs : !ground) continue;
                 branches[i].Project(position, out float a, out float l);
                 if (Mathf.Abs(l) > branches[i].HalfWidth + layout.kerbWidth || Mathf.Abs(l) >= best) continue;
                 best = Mathf.Abs(l);

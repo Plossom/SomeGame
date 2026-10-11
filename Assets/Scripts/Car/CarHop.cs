@@ -24,9 +24,14 @@ namespace SomeGame.Car
         [SerializeField] Vector2 shadowOffset = new(0.08f, -0.1f);
         [Tooltip("Extra shadow offset at the top of the hop.")]
         [SerializeField] Vector2 shadowLift = new(0.25f, -0.3f);
+        [Tooltip("Sprite scale and extra shadow offset while up on the roofs.")]
+        [SerializeField, Min(1f)] float roofScale = 1.14f;
+        [SerializeField] Vector2 roofShadowLift = new(0.6f, -0.75f);
 
         CarMovement _car;
+        SomeGame.Track.TrackSensor _sensor;
         float _time = -1f;
+        float _elevation;
         Vector3 _visualScale = Vector3.one;
 
         /// <summary>True while the car is in the air (visually).</summary>
@@ -35,6 +40,7 @@ namespace SomeGame.Car
         void Awake()
         {
             _car = GetComponent<CarMovement>();
+            _sensor = GetComponent<SomeGame.Track.TrackSensor>();
             if (visual != null) _visualScale = visual.localScale;
         }
         void OnEnable() => _car.Hopped += Hop;
@@ -48,13 +54,19 @@ namespace SomeGame.Car
 
         void Hop() => _time = 0f;
 
+        // Up on the roofs the car is a bit bigger (closer to the camera) and its shadow falls further away.
+        Vector3 BaseScale => _visualScale * Mathf.Lerp(1f, roofScale, _elevation);
+        Vector2 BaseShadow => shadowOffset + roofShadowLift * _elevation;
+
         void Update()
         {
+            bool up = _sensor != null && _sensor.Elevated;
+            _elevation = Mathf.MoveTowards(_elevation, up ? 1f : 0f, Time.deltaTime * 4f);
             if (_car.IsAirborne)
             {
                 float h = _car.AirHeight;
-                if (visual != null) visual.localScale = _visualScale * Mathf.Lerp(1f, jumpScale, h);
-                if (shadow != null) shadow.localPosition = shadowOffset + jumpShadowLift * h;
+                if (visual != null) visual.localScale = BaseScale * Mathf.Lerp(1f, jumpScale, h);
+                if (shadow != null) shadow.localPosition = BaseShadow + jumpShadowLift * h;
                 _time = -1f;
                 return;
             }
@@ -76,8 +88,8 @@ namespace SomeGame.Car
 
         void Apply(float height)
         {
-            if (visual != null) visual.localScale = _visualScale * Mathf.Lerp(1f, peakScale, height);
-            if (shadow != null) shadow.localPosition = shadowOffset + shadowLift * height;
+            if (visual != null) visual.localScale = BaseScale * Mathf.Lerp(1f, peakScale, height);
+            if (shadow != null) shadow.localPosition = BaseShadow + shadowLift * height;
         }
     }
 }

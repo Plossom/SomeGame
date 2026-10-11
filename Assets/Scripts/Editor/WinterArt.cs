@@ -27,12 +27,14 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "SnowKerb", 64, 64, SnowKerbPixel, 32, true);
             Write(ArtGenerator.Folder, "SnowRunoff", 64, 64, SnowRunoffPixel, 32, true);
             Write(ArtGenerator.Folder, "Ice", 128, 128, IcePixel, 32, true);
+            Write(ArtGenerator.Folder, "RoofRow", 128, 256, RoofRowPixel, 32, true);
             Write(ArtGenerator.Folder, "SceneryWinter", 1024, 768, SceneryPixel, 128, false);
             ArtGenerator.Material("SnowGround", "SnowGround");
             ArtGenerator.Material("WinterRoad", "WinterRoad");
             ArtGenerator.Material("SnowKerb", "SnowKerb");
             ArtGenerator.Material("SnowRunoff", "SnowRunoff");
             ArtGenerator.Material("Ice", "Ice");
+            ArtGenerator.Material("RoofRow", "RoofRow");
             ArtGenerator.Material("SceneryWinter", "SceneryWinter");
             AssetDatabase.SaveAssets();
             Debug.Log("Winter art generated");
@@ -107,6 +109,28 @@ namespace SomeGame.EditorTools
             if (rim < 0.06f) c = Color.Lerp(c, Hex("5D9CC8"), Mathf.InverseLerp(0.06f, 0.035f, rim)); // darker blue edge of the ice
             if (rim < 0.035f) c = Color.Lerp(c, Snow, Mathf.InverseLerp(0.035f, 0f, rim));
             c.a = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(-0.03f, 0.02f, rim));
+            return c;
+        }
+
+        // One house of a roof row, seen from above (u across, v along; tiles along the row): wooden eaves
+        // at both sides, the snowy roof lit on the left and in shade on the right of the ridge, faint
+        // shingle lines, a dark gap to the next house and a chimney near the edge.
+        static Color RoofRowPixel(float x, float y)
+        {
+            float u = x / 128f;
+            if (u < 0.035f || u > 0.965f) return Hex("2B2320");
+            if (u < 0.08f || u > 0.92f) return Hex("8E5C3B");
+            if (y < 5f || y > 251f) return Hex("4A3A30"); // gap between two houses
+            if (y < 9f || y > 247f) return Hex("B9CBDD");
+            Color c = u < 0.5f ? Snow : SnowShade;
+            if (Mathf.Abs(u - 0.5f) < 0.012f) c = Hex("A9BDD2"); // ridge
+            if (Mathf.Repeat(y, 24f) < 1.6f) c = Shade(c, 0.96f);
+            if (Hash((int)x / 2, (int)y / 2) > 0.994f) c = Color.white;
+            // Chimney with a snow cap.
+            float chimney = RoundRect(x, y, 104f, 190f, 9f, 9f, 2f);
+            c = Over(c, Hex("9A9AA6"), Fill(chimney));
+            c = Over(c, Hex("3A3532"), Fill(RoundRect(x, y, 104f, 190f, 4f, 4f, 1f)));
+            c = Over(c, Hex("2B2320"), Stroke(chimney, 2f));
             return c;
         }
 

@@ -9,7 +9,9 @@ namespace SomeGame.Car
     /// What the ground under the car does: a kicker ramp before a river launches the car into the
     /// air, a big shortcut ramp beside the road flies it across a corner (the checkpoints it flies over
     /// count), water (missing the ramp, landing short, driving into a lake) means a splash and a restart a
-    /// little way back, and an oil puddle spins the car round once. Also plays the splash and landing dust.
+    /// little way back, and an oil puddle spins the car round once. Rooftops: a car that lands on a roof
+    /// row drives on up there; off an edge it drops to the street, at the end it jumps back down onto the
+    /// road, and from the street a house is a wall it bumps off. Also plays the splash and landing dust.
     /// </summary>
     [DefaultExecutionOrder(-10)] // after the TrackSensor, before CarMovement reads OnRamp
     [RequireComponent(typeof(CarMovement), typeof(TrackSensor))]
@@ -29,6 +31,8 @@ namespace SomeGame.Car
         [Tooltip("Seconds the car blinks after a restart.")]
         [SerializeField, Min(0f)] float blinkSeconds = 1.2f;
         [SerializeField] int sortingOrder = 13;
+        [Tooltip("Seconds in the air when a car drives off the edge of a roof.")]
+        [SerializeField, Min(0.1f)] float roofDrop = 0.3f;
 
         CarMovement _car;
         TrackSensor _sensor;
@@ -38,11 +42,14 @@ namespace SomeGame.Car
         int _repeatSplashes;
         bool _isRival;
         bool _fromCornerCut;
+        bool _roofExit;
         ParticleSystem _splash, _dust;
         SpriteRenderer[] _sprites;
 
         /// <summary>The car fell into water and is being put back on the road.</summary>
         public event Action Splashed;
+        /// <summary>The car rode the whole row of roofs and landed back on the road.</summary>
+        public event Action RoofRun;
 
         void Awake()
         {
@@ -64,6 +71,23 @@ namespace SomeGame.Car
             if (track == null || _car.IsAirborne) return;
             Vector2 position = _car.Body.position;
             var point = _sensor.Current;
+
+            if (_sensor.Elevated)
+            {
+                OnTheRoofs(track);
+                return;
+            }
+            // From the street, a house is a wall: bounce off it.
+            int house = track.BranchAt(position, out float houseAlong, out float houseLateral, roofs: true, ground: false);
+            if (house >= 0)
+            {
+                var route = track.Branches[house];
+                Vector2 tangent = route.TangentAt(houseAlong);
+                Vector2 normal = new Vector2(-tangent.y, tangent.x) * (houseLateral < 0f ? -1f : 1f);
+                _car.Body.position = route.PointAt(houseAlong) + normal * (route.HalfWidth + track.Layout.kerbWidth + 0.4f);
+                _car.Bump(normal);
+                return;
+            }
 
             // Shortcut ramps: the ramp (and a little approach) counts as road; take off at the lip.
             _car.OnRamp = false;
@@ -129,9 +153,43 @@ namespace SomeGame.Car
                 _car.Slip(UnityEngine.Random.value < 0.5f ? -1 : 1);
         }
 
+        // Up on the roofs: off an edge the car drops to the street; at the end of the row it jumps back
+        // down onto the road (the checkpoints it flies over count on landing).
+        void OnTheRoofs(SomeGame.Track.Track track)
+        {
+            if (!_sensor.OnRoof)
+            {
+                _sensor.Elevated = false;
+                _car.Launch(roofDrop);
+                return;
+            }
+            var route = track.Branches[_sensor.Branch];
+            if (_sensor.BranchAlong < route.Length - 1.2f) return;
+            _sensor.Elevated = false;
+            Vector2 position = _car.Body.position, land = track.Path.PointAt(route.To);
+            float speed = Mathf.Max(_car.Body.linearVelocity.magnitude, 12f);
+            _car.Body.linearVelocity = (land - position).normalized * speed;
+            _shortcutFrom = route.MainDistance(_sensor.BranchAlong);
+            _roofExit = true;
+            _car.Launch(Mathf.Clamp(Vector2.Distance(position, land) / speed, 0.5f, 1.8f), land - position);
+        }
+
         void OnLanded()
         {
             var track = _sensor.Track;
+            // Landed on a roof (from a jump pad): the car is up there now, turned to run along the row.
+            int roof = track != null ? track.BranchAt(_car.Body.position, out float roofAlong, out _, roofs: true, ground: false) : -1;
+            if (roof >= 0)
+            {
+                Vector2 along = track.Branches[roof].TangentAt(roofAlong);
+                _car.Body.rotation = Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f;
+                transform.rotation = Quaternion.Euler(0f, 0f, _car.Body.rotation);
+                _car.Body.linearVelocity = along * _car.Body.linearVelocity.magnitude;
+                _sensor.Elevated = true;
+                _sensor.Sample();
+                _dust.Emit(12);
+                return;
+            }
             _sensor.Sample();
             var bouncer = track != null ? track.BouncerAt(_car.Body.position) : null;
             if (bouncer != null)
@@ -147,6 +205,11 @@ namespace SomeGame.Car
             }
             _fromCornerCut = false;
             _shortcutFrom = null;
+            if (_roofExit)
+            {
+                _roofExit = false;
+                if (dry) RoofRun?.Invoke();
+            }
             if (track != null && track.IsWater(_car.Body.position)) Splash(track);
             else _dust.Emit(18);
         }
