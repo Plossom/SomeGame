@@ -21,6 +21,8 @@ namespace SomeGame.UI
         [SerializeField] RectTransform car;
         [Tooltip("The painted landscape; replaced by the selected cup's picture.")]
         [SerializeField] UnityEngine.UI.Image background;
+        [Tooltip("Animated life on the landscape: clouds, chimney smoke, glints, birds, the lift.")]
+        [SerializeField] MapAmbience ambience;
         [Tooltip("Snowfall over the map, shown on the winter map.")]
         [SerializeField] GameObject snow;
         [SerializeField] TMP_Text totalStars;
@@ -73,6 +75,7 @@ namespace SomeGame.UI
             if (cam != null && Theme.TryMap(cam.backgroundColor, Theme.Valley, out var sky)) cam.backgroundColor = sky;
             if (landscape != null && background != null) background.sprite = landscape;
             if (snow != null) snow.SetActive(look == CupLook.Winter);
+            if (ambience != null) ambience.Play(look);
         }
 
         void Start()

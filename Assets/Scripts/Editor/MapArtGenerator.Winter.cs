@@ -10,7 +10,7 @@ namespace SomeGame.EditorTools
     /// <summary>
     /// The Winter Cup's landscape (Assets/Art/Rally/MapWinter.png): a cold blue sky with a pale sun,
     /// two ranges of snowy peaks, rolling snowfields, a frozen lake, a village of log cabins with lit
-    /// windows, a ski lift, snowy pines, snowmen, and the mountain road of <see cref="MapLayout.Winter"/>
+    /// windows, a ski lift (its chairs and the chimney smoke are animated by MapAmbience), snowy pines, snowmen, and the mountain road of <see cref="MapLayout.Winter"/>
     /// climbing in switchbacks between snow banks and red marker poles.
     /// Same canvas, scale and stretch as the valley picture.
     /// </summary>
@@ -20,8 +20,8 @@ namespace SomeGame.EditorTools
         static readonly Color SnowWhite = Hex("F8FBFE");
         static readonly Color SnowShade = Hex("C9D9EA");
 
-        static readonly Vector2 IceCenter = new(290f, 478f);
-        const float IceRx = 205f, IceRy = 60f;
+        static readonly Vector2 IceCenter = MapScenery.IceLake;
+        static readonly float IceRx = MapScenery.IceLakeRadii.x, IceRy = MapScenery.IceLakeRadii.y;
 
         [MenuItem("SomeGame/Generate Winter Map Art")]
         public static void GenerateWinter()
@@ -246,10 +246,9 @@ namespace SomeGame.EditorTools
             }
 
             // The village of log cabins on the right; a couple more up the hill.
-            var cabins = new[] { new Vector2(1100, 700), new Vector2(990, 730), new Vector2(1075, 830), new Vector2(955, 860), new Vector2(230, 1095), new Vector2(100, 1110), new Vector2(550, 600) };
-            foreach (var p in cabins)
+            foreach (var p in MapScenery.Cabins)
             {
-                float s = SizeAt(p.y) * 1.6f;
+                float s = MapScenery.CabinScale(p);
                 if (WinterBlocked(p, 34f * s, 80f * s)) continue;
                 occupied.Add((p + new Vector2(0, 30 * s), 70f * s));
                 items.Add((p.y, () => Cabin(p, s)));
@@ -265,7 +264,7 @@ namespace SomeGame.EditorTools
             }
 
             // The ski lift up the hill on the left.
-            Vector2 liftLow = new(20f, 1150f), liftHigh = new(160f, 1370f);
+            Vector2 liftLow = MapScenery.LiftLow, liftHigh = MapScenery.LiftHigh;
             items.Add((liftHigh.y, () => SkiLift(liftLow, liftHigh)));
             occupied.Add(((liftLow + liftHigh) * 0.5f, 90f));
 
@@ -375,14 +374,9 @@ namespace SomeGame.EditorTools
                 Rect(win, 6 * s, 5.5f * s, Hex("FFFFFF"));
                 Rect(win, 4.5f * s, 4f * s, Hex("FFD27A"));
             }
-            // Chimney with a curl of smoke.
+            // Chimney (its smoke is animated on the map: MapAmbience).
             Vector2 chim = p + new Vector2(w * 0.25f, wall + roofH * 0.65f);
             Rect(chim, 4.5f * s, 9 * s, Hex("8C8C96"));
-            for (int k = 0; k < 3; k++)
-            {
-                Vector2 puff = chim + new Vector2((6 + k * 7) * s, (14 + k * 11) * s);
-                Shape(Box(puff, 9 * s), (x, y) => Circle(x, y, puff.x, puff.y, (4.5f + k * 1.6f) * s), new Color(0.93f, 0.95f, 0.98f, 0.85f - k * 0.2f));
-            }
             // A thick snowy roof with blue shade on the right half.
             Vector2 l = new(p.x - w * 0.66f, p.y + wall - 2 * s), r = new(p.x + w * 0.66f, p.y + wall - 2 * s), top = new(p.x, p.y + wall + roofH);
             Poly(new[] { l, top, new Vector2(p.x, p.y + wall - 2 * s) }, SnowWhite);
@@ -419,9 +413,9 @@ namespace SomeGame.EditorTools
 
         static void SkiLift(Vector2 low, Vector2 high)
         {
-            float s = SizeAt(low.y) * 1.2f;
+            float s = MapScenery.LiftScale;
             Vector2 up = new(0f, 46f * s);
-            // Two pylons, the cable between them and three chairs hanging from it.
+            // Two pylons and the cable between them (the chairs ride it on the map: MapAmbience).
             foreach (var basePos in new[] { low, Vector2.Lerp(low, high, 0.55f) })
             {
                 Rect(basePos + up * 0.5f, 2.6f * s, up.y * 0.5f, Hex("5D6B7E"));
@@ -429,12 +423,6 @@ namespace SomeGame.EditorTools
             }
             Vector2 a = low + up, b = high + up;
             Shape(UnityEngine.Rect.MinMaxRect(a.x - 4, a.y - 4, b.x + 4, b.y + 4), (x, y) => Capsule(x, y, a.x, a.y, b.x, b.y, 1f), Frost);
-            for (int k = 1; k <= 3; k++)
-            {
-                Vector2 hang = Vector2.Lerp(a, b, k / 4f);
-                Rect(hang - new Vector2(0, 6 * s), 0.8f * s, 6 * s, Frost);
-                Rect(hang - new Vector2(0, 13 * s), 6 * s, 2.4f * s, k == 2 ? Hex("E2483A") : Hex("2A93E8"));
-            }
         }
     }
 }

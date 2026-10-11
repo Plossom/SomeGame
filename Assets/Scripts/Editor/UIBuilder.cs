@@ -124,6 +124,11 @@ namespace SomeGame.EditorTools
             var world = At("World", map, new Vector2(0.5f, 0.5f), Vector2.zero, MapLayout.Size);
             var background = Img(Stretch("Background", world), "MapBackground", Color.white);
             background.preserveAspect = false;
+            // Animated life on the landscape (clouds, smoke, glints...), under the road progress, stops and car.
+            var ambience = Stretch("Ambience", world);
+            var ambienceComp = ambience.gameObject.AddComponent<MapAmbience>();
+            Configure(ambienceComp, ("cloud", Sprite("MapCloud")), ("bird", Sprite("MapBird")), ("balloon", Sprite("MapBalloon")),
+                ("sparkle", Sprite("Sparkle")), ("puff", Sprite("Smoke")), ("chair", Sprite("LiftChair")));
             var node = BuildNode(world);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));
             car.pivot = new Vector2(0.5f, 0.5f);
@@ -203,7 +208,7 @@ namespace SomeGame.EditorTools
             var screen = canvas.gameObject.AddComponent<MapScreen>();
             var so = new SerializedObject(screen);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
-            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
+            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
             Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
             Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);

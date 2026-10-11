@@ -22,7 +22,7 @@ namespace SomeGame.EditorTools
         /// out, so the land reaches higher up the screen (the horizon sits just below the header).
         /// <see cref="MapLayout"/>'s road is in the stretched (canvas) space.
         /// </summary>
-        public const float Stretch = 1.15f;
+        public const float Stretch = MapScenery.Stretch;
 
         // The road in painting space.
         static Vector2 Unstretch(Vector2 canvas) => new(canvas.x, canvas.y / Stretch);
@@ -71,8 +71,8 @@ namespace SomeGame.EditorTools
             Hex("4F7F57"), Hex("B9D39A"), Hex("A5C987"), Hex("8FBD76"), Hex("7BB066"), Hex("67A057"),
         };
 
-        static readonly Vector2 LakeCenter = new(240f, 1110f);
-        const float LakeRx = 210f, LakeRy = 62f;
+        static readonly Vector2 LakeCenter = MapScenery.ValleyLake;
+        static readonly float LakeRx = MapScenery.ValleyLakeRadii.x, LakeRy = MapScenery.ValleyLakeRadii.y;
 
         static Color Landscape(float x, float y)
         {
@@ -190,7 +190,7 @@ namespace SomeGame.EditorTools
         }
 
         // Things get smaller further up the screen (further away).
-        static float SizeAt(float y) => Mathf.Lerp(1.15f, 0.42f, Mathf.InverseLerp(200f, 1480f, y));
+        static float SizeAt(float y) => MapScenery.SizeAt(y);
 
         static void Objects()
         {
@@ -206,15 +206,9 @@ namespace SomeGame.EditorTools
             for (int i = 0; i < MapLayout.StopCount; i++) occupied.Add((Unstretch(MapLayout.StopPosition(i)), 120f));
 
             // Village by the lake and a farm by the first race.
-            var houses = new (Vector2 p, bool church)[]
+            foreach (var (p, church) in MapScenery.ValleyHouses)
             {
-                (new(90, 1215), false), (new(200, 1236), false), (new(330, 1222), true), (new(90, 990), false),
-                (new(190, 985), false), (new(560, 690), false), (new(1000, 560), false), (new(1080, 600), false),
-                (new(980, 1290), false), (new(860, 1355), false), (new(470, 960), false),
-            };
-            foreach (var (p, church) in houses)
-            {
-                float s = SizeAt(p.y) * 1.6f;
+                float s = MapScenery.ValleyHouseScale(p);
                 if (Blocked(p, 34f * s, 70f * s)) continue;
                 occupied.Add((p + new Vector2(0, 30 * s), 70f * s));
                 items.Add((p.y, () => { if (church) Church(p, s); else Chalet(p, s); }));
