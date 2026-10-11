@@ -6,7 +6,7 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// A small, minimal view of the road around the car in the race HUD: the centre line as a soft
-    /// ribbon, bright ahead and fading out behind and in the distance, with the car as an arrow in the
+    /// ribbon, bright ahead and fading out behind and in the distance, with the car as a slim arrow in the
     /// middle. It is fixed the same way up as the screen (like the race camera), so the next bend points
     /// exactly where you drag your thumb to steer (the car drives where you point). The arrow turns with
     /// the direction the car is moving, smoothed so it stays calm while drifting.
@@ -45,7 +45,7 @@ namespace SomeGame.UI
             _heading = _hasHeading ? Mathf.LerpAngle(_heading, target, 1f - Mathf.Exp(-turnRate * Time.deltaTime)) : target;
             _hasHeading = true;
             arrow.anchoredPosition = Vector2.zero;
-            arrow.localRotation = Quaternion.Euler(0f, 0f, _heading); // the play triangle points along +x
+            arrow.localRotation = Quaternion.Euler(0f, 0f, _heading - 90f); // the arrow sprite points up
 
             var rect = ((RectTransform)transform).rect;
             float scale = Mathf.Min(rect.width, rect.height) * 0.5f / viewRadius; // panel units per track unit

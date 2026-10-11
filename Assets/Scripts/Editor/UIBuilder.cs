@@ -495,8 +495,7 @@ namespace SomeGame.EditorTools
             var aheadRoad = Line(Stretch("Road", aheadRt));
             aheadRoad.color = Theme.WithAlpha(Theme.Cream, 0.9f);
             aheadRoad.raycastTarget = false;
-            var aheadArrow = Img(At("Car", aheadRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(70f, 70f)), "IconPlay", Theme.Orange).rectTransform;
-            aheadArrow.localRotation = Quaternion.Euler(0f, 0f, 90f); // the play triangle points right; turned with the car at runtime
+            var aheadArrow = Img(At("Car", aheadRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(44f, 66f)), "NavArrow", Color.white).rectTransform;
             Configure(aheadRt.gameObject.AddComponent<TrackAheadView>(), ("race", race), ("road", aheadRoad), ("arrow", aheadArrow));
 
             // Countdown.
