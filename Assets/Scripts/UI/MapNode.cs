@@ -38,8 +38,45 @@ namespace SomeGame.UI
         /// The race opens: the lock shakes, bursts away in a flash of sparkles, and the stop pops up in its
         /// open colours (<paramref name="open"/> rebinds it). Takes about a second.
         /// </summary>
+        // Size: springs towards its target (bigger when selected, with a little bounce when it gets
+        // selected) and pops in when the map opens.
+        float _targetScale = 1f, _scale = 1f, _scaleVelocity, _appearAt = -1f;
+        bool _scaled, _wasSelected, _manual;
+
+        /// <summary>Pops the stop in (from nothing, with an overshoot) after <paramref name="delay"/> seconds.</summary>
+        public void Appear(float delay)
+        {
+            _appearAt = Time.unscaledTime + delay;
+            transform.localScale = Vector3.zero;
+        }
+
+        void Update()
+        {
+            if (_manual) return;
+            float dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            _scaleVelocity += (_targetScale - _scale) * 320f * dt;
+            _scaleVelocity *= Mathf.Exp(-16f * dt);
+            _scale += _scaleVelocity * dt;
+            float appear = 1f;
+            if (_appearAt >= 0f)
+            {
+                float t = (Time.unscaledTime - _appearAt) / 0.38f;
+                if (t >= 1f) _appearAt = -1f;
+                appear = t <= 0f ? 0f : EaseOutBack(t);
+            }
+            transform.localScale = Vector3.one * (_scale * appear);
+        }
+
+        static float EaseOutBack(float t)
+        {
+            const float s = 2f;
+            t = Mathf.Clamp01(t) - 1f;
+            return 1f + t * t * ((s + 1f) * t + s);
+        }
+
         public System.Collections.IEnumerator PlayUnlock(Sprite sparkle, Action open)
         {
+            _manual = true;
             var lockT = lockIcon.rectTransform;
             Vector3 baseScale = transform.localScale;
             for (float t = 0f; t < 0.5f; t += Time.unscaledDeltaTime)
@@ -90,6 +127,9 @@ namespace SomeGame.UI
             if (!opened) open?.Invoke();
             Destroy(burst);
             transform.localScale = baseScale;
+            _scale = baseScale.x;
+            _scaleVelocity = 0f;
+            _manual = false;
             // Put the lock back as it was (hidden now; used again if the race locks after a reset).
             lockT.localRotation = Quaternion.identity;
             lockT.localScale = Vector3.one;
@@ -138,7 +178,10 @@ namespace SomeGame.UI
             caption.text = captionText;
 
             selection.SetActive(selected && !hidden);
-            transform.localScale = Vector3.one * (selected ? 1.15f : hidden ? 0.8f : 1f);
+            _targetScale = selected ? 1.15f : hidden ? 0.8f : 1f;
+            if (!_scaled) { _scale = _targetScale; _scaled = true; if (!_manual && _appearAt < 0f) transform.localScale = Vector3.one * _scale; }
+            else if (selected && !_wasSelected) _scaleVelocity += 3.2f; // a springy bounce when it gets selected
+            _wasSelected = selected;
 
             button.interactable = !hidden;
             button.onClick.RemoveAllListeners();

@@ -119,6 +119,7 @@ namespace SomeGame.UI
 
         void Awake()
         {
+            if (titleLabel != null) _titleHome = titleLabel.rectTransform.localPosition;
             // The map shows the selected cup's races.
             var cup = CupList.Selected;
             _cup = cup;
@@ -166,7 +167,107 @@ namespace SomeGame.UI
             }
             SetLockedView(false, _cup);
             BuildDots();
-            StartCoroutine(Celebrate(newRaces, true));
+            StartCoroutine(OpenSequence(newRaces));
+        }
+
+        // Opening the map: everything pops in, the counters count up to what the last race earned, then
+        // any unlocks play.
+        System.Collections.IEnumerator OpenSequence(List<int> newRaces)
+        {
+            _celebrating = true;
+            yield return Entrance();
+            yield return CountUp();
+            yield return Celebrate(newRaces, true);
+        }
+
+        // The race stops pop up one after another along the road; the header and START pop in with them.
+        System.Collections.IEnumerator Entrance()
+        {
+            for (int i = 0; i < _nodes.Count; i++) _nodes[i].Appear(0.08f + i * 0.055f);
+            var popped = new List<RectTransform>();
+            foreach (var part in racePageParts) if (part != null) popped.Add((RectTransform)part.transform);
+            var groups = new List<CanvasGroup>();
+            foreach (var rt in popped)
+            {
+                var g = rt.GetComponent<CanvasGroup>();
+                if (g == null) g = rt.gameObject.AddComponent<CanvasGroup>();
+                groups.Add(g);
+            }
+            float total = 0.45f + _nodes.Count * 0.055f;
+            for (float t = 0f; t < total; t += Time.unscaledDeltaTime)
+            {
+                float k = Mathf.Clamp01(t / 0.35f);
+                foreach (var g in groups) g.alpha = k;
+                if (titleLabel != null) titleLabel.rectTransform.localPosition = _titleHome + new Vector3(0f, 26f * (1f - Ease(k)), 0f);
+                startButton.transform.localScale = Vector3.one * PopCurve(Mathf.Clamp01((t - 0.15f) / 0.4f));
+                yield return null;
+            }
+            foreach (var g in groups) g.alpha = 1f;
+            if (titleLabel != null) titleLabel.rectTransform.localPosition = _titleHome;
+            startButton.transform.localScale = Vector3.one;
+        }
+
+        static float Ease(float t) => 1f - (1f - t) * (1f - t) * (1f - t);
+
+        static float PopCurve(float t)
+        {
+            const float s = 1.8f;
+            if (t <= 0f) return 0f;
+            float u = Mathf.Clamp01(t) - 1f;
+            return 1f + u * u * ((s + 1f) * u + s);
+        }
+
+        // ------------------------------------------------------------------ counters
+
+        const string ShownStarsKey = "Shown.Stars", ShownWinsKey = "Shown.Wins.";
+        int? _starsShown, _winsShown;
+
+        int CupWins()
+        {
+            int won = 0;
+            for (int i = 0; i < catalog.Count; i++) if (ProgressStore.HasWon(catalog[i])) won++;
+            return won;
+        }
+
+        // Stars and trophies earned since the map was last shown count up, the counter popping with each step.
+        System.Collections.IEnumerator CountUp()
+        {
+            int stars = ProgressStore.TotalStars, wins = CupWins();
+            string winsKey = ShownWinsKey + catalog.name;
+            int fromStars = Mathf.Min(PlayerPrefs.GetInt(ShownStarsKey, stars), stars);
+            int fromWins = Mathf.Min(PlayerPrefs.GetInt(winsKey, wins), wins);
+            PlayerPrefs.SetInt(ShownStarsKey, stars);
+            PlayerPrefs.SetInt(winsKey, wins);
+            PlayerPrefs.Save();
+            if (fromStars >= stars && fromWins >= wins) yield break;
+            _starsShown = fromStars;
+            _winsShown = fromWins;
+            WriteCounters();
+            var plate = totalStars.transform.parent.parent;
+            yield return new WaitForSecondsRealtime(0.2f);
+            int steps = Mathf.Max(stars - fromStars, wins - fromWins);
+            float step = Mathf.Clamp(0.9f / steps, 0.06f, 0.2f);
+            for (int i = 1; i <= steps; i++)
+            {
+                _starsShown = Mathf.Min(stars, fromStars + i);
+                _winsShown = Mathf.Min(wins, fromWins + i);
+                WriteCounters();
+                SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.5f);
+                for (float t = 0f; t < step; t += Time.unscaledDeltaTime)
+                {
+                    plate.localScale = Vector3.one * (1f + 0.14f * Mathf.Sin(Mathf.Clamp01(t / step) * Mathf.PI));
+                    yield return null;
+                }
+            }
+            plate.localScale = Vector3.one;
+            _starsShown = _winsShown = null;
+            WriteCounters();
+        }
+
+        void WriteCounters()
+        {
+            totalStars.text = (_starsShown ?? ProgressStore.TotalStars).ToString();
+            if (totalTrophies != null) totalTrophies.text = (_winsShown ?? CupWins()).ToString();
         }
 
         // ------------------------------------------------------------------ unlocks
@@ -772,61 +873,143 @@ namespace SomeGame.UI
             PlaceCar();
         }
 
-        // The car waits on the road just before the selected race; the road behind it is orange.
+        // The car waits on the road just before the selected race; the road behind it is orange. Selecting
+        // another race drives it there along the road (the orange line follows).
+        float _carDistance = -1f;
+        Coroutine _drive;
+
+        float CarTarget(int index) => Mathf.Max(0f, MapLayout.StopDistance(index) - carOffset);
+
         void PlaceCar()
         {
-            foreach (var piece in _progress) if (piece != null) Destroy(piece);
-            _progress.Clear();
-            float carDistance = Mathf.Max(0f, MapLayout.StopDistance(_selected) - carOffset);
-            DrawProgress(carDistance);
-            Vector2 carPos = MapLayout.PointAt(carDistance, out var tangent);
-            car.anchoredPosition = carPos;
-            car.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f);
+            if (_drive != null) { StopCoroutine(_drive); _drive = null; }
+            BuildProgress();
+            SetCar(CarTarget(_selected), 1f);
             car.SetAsLastSibling();
             foreach (var node in _nodes) node.transform.SetAsLastSibling(); // stops stay on top of the line
         }
 
-        void DrawProgress(float until)
+        void DriveTo(int index)
         {
-            const float step = 10f;
-            for (float d = 0f; d < until; d += step)
+            float to = CarTarget(index);
+            if (_carDistance < 0f || _progress.Count == 0) { PlaceCar(); return; }
+            if (_drive != null) StopCoroutine(_drive);
+            _drive = StartCoroutine(Drive(_carDistance, to));
+        }
+
+        System.Collections.IEnumerator Drive(float from, float to)
+        {
+            float duration = Mathf.Clamp(Mathf.Abs(to - from) / 1500f, 0.3f, 0.95f);
+            float dir = Mathf.Sign(to - from);
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / duration)
             {
-                Vector2 a = MapLayout.PointAt(d, out _), b = MapLayout.PointAt(Mathf.Min(until, d + step), out _);
+                SetCar(Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, t)), dir);
+                yield return null;
+            }
+            SetCar(to, dir);
+            // A little settle at the stop.
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.25f)
+            {
+                car.localScale = Vector3.one * (1f + 0.08f * Mathf.Sin(t * Mathf.PI));
+                yield return null;
+            }
+            car.localScale = Vector3.one;
+            if (dir < 0f) SetCar(to, 1f); // face up the road again
+            _drive = null;
+        }
+
+        // Puts the car at a road distance, facing the way it is driving, and fills the orange line up to it.
+        void SetCar(float distance, float direction)
+        {
+            _carDistance = distance;
+            Vector2 at = MapLayout.PointAt(distance, out var tangent);
+            if (direction < 0f) tangent = -tangent;
+            car.anchoredPosition = at;
+            car.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f);
+            const float step = 10f;
+            for (int i = 0; i < _progress.Count; i++)
+            {
+                float d0 = i * step;
+                var piece = _progress[i];
+                bool on = d0 < distance;
+                if (piece.activeSelf != on) piece.SetActive(on);
+                if (!on) continue;
+                float d1 = Mathf.Min(distance, d0 + step);
+                Vector2 a = MapLayout.PointAt(d0, out _), b = MapLayout.PointAt(d1, out _);
                 Vector2 delta = b - a;
-                if (delta.sqrMagnitude < 0.01f) continue;
+                var rect = (RectTransform)piece.transform;
+                rect.anchoredPosition = (a + b) * 0.5f;
+                rect.sizeDelta = new Vector2(delta.magnitude + 2f, progressWidth);
+                rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+            }
+        }
+
+        // The orange line as short pieces along the whole road (shown up to the car).
+        void BuildProgress()
+        {
+            if (_progress.Count > 0 && _progressRoad == MapLayout.Current) return;
+            foreach (var piece in _progress) if (piece != null) Destroy(piece);
+            _progress.Clear();
+            _progressRoad = MapLayout.Current;
+            const float step = 10f;
+            for (float d = 0f; d < MapLayout.Length; d += step)
+            {
                 var piece = new GameObject("Progress", typeof(RectTransform), typeof(UnityEngine.UI.Image));
                 var rect = (RectTransform)piece.transform;
                 rect.SetParent(world, false);
                 rect.anchorMin = rect.anchorMax = Vector2.zero;
-                rect.anchoredPosition = (a + b) * 0.5f;
-                rect.sizeDelta = new Vector2(delta.magnitude + 2f, progressWidth);
-                rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
                 var image = piece.GetComponent<UnityEngine.UI.Image>();
                 image.color = Theme.Orange;
                 image.raycastTarget = false;
                 rect.SetSiblingIndex(1); // just above the map picture
+                piece.SetActive(false);
                 _progress.Add(piece);
             }
         }
+
+        MapRoad _progressRoad;
 
         void Select(int index)
         {
             CollapseCups();
             if (_celebrating && _hideFrom != int.MaxValue) return; // not while races unlock
+            bool changed = index != _selected;
             _selected = index;
-            PlaceCar();
+            DriveTo(index);
+            if (changed && isActiveAndEnabled) { if (_flip != null) StopCoroutine(_flip); _flip = StartCoroutine(FlipHeader()); }
+            else Refresh();
+        }
+
+        // The race header changes with a quick flip: out (fading, sliding up), new race, in (from below).
+        Coroutine _flip;
+        Vector3 _titleHome;
+
+        System.Collections.IEnumerator FlipHeader()
+        {
+            var header = racePageParts != null && racePageParts.Length > 0 && racePageParts[0] != null ? racePageParts[0] : null;
+            var group = header != null ? header.GetComponent<CanvasGroup>() : null;
+            if (header != null && group == null) group = header.AddComponent<CanvasGroup>();
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.1f)
+            {
+                if (group != null) group.alpha = 1f - t;
+                titleLabel.rectTransform.localPosition = _titleHome + new Vector3(0f, 18f * t, 0f);
+                yield return null;
+            }
             Refresh();
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.2f)
+            {
+                if (group != null) group.alpha = t;
+                titleLabel.rectTransform.localPosition = _titleHome + new Vector3(0f, -18f * (1f - Ease(t)), 0f);
+                yield return null;
+            }
+            if (group != null) group.alpha = 1f;
+            titleLabel.rectTransform.localPosition = _titleHome;
+            _flip = null;
         }
 
         void Refresh()
         {
-            totalStars.text = ProgressStore.TotalStars.ToString();
-            if (totalTrophies != null)
-            {
-                int won = 0;
-                for (int i = 0; i < catalog.Count; i++) if (ProgressStore.HasWon(catalog[i])) won++;
-                totalTrophies.text = won.ToString();
-            }
+            WriteCounters();
             for (int i = 0; i < _nodes.Count; i++)
             {
                 int index = i;

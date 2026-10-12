@@ -19,6 +19,11 @@ namespace SomeGame.Race
                     if (level != null && level.track != null) BestLapStore.Clear(level.track.name);
             PlayerPrefs.DeleteKey(TutorialDoneKey);
             UnlockLog.Clear();
+            // The map counters count up from what they last showed: start again from zero.
+            PlayerPrefs.DeleteKey("Shown.Stars");
+            if (CupList.Instance != null)
+                foreach (var cup in CupList.Instance.cups)
+                    if (cup.races != null) PlayerPrefs.DeleteKey("Shown.Wins." + cup.races.name);
             PlayerPrefs.DeleteKey("Cup.Selected");
             PlayerPrefs.Save();
         }

@@ -150,7 +150,10 @@ namespace SomeGame.EditorTools
             // Stars and trophies (races won) on one small plate, its top level with the menu button.
             // Same size as the menu button.
             var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(140f, 140f));
-            Img(counters, "Round", Theme.Ink, sliced: true);
+            // A hard shadow under it like the menu button's (which makes that one 12 units taller).
+            var countersShadow = At("Shadow", counters, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(140f, 140f));
+            Img(countersShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
+            Img(Stretch("Face", counters), "Round", Theme.Ink, sliced: true);
             TMP_Text CounterRow(string name, float y, string icon)
             {
                 var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(140f, 64f));
@@ -470,6 +473,7 @@ namespace SomeGame.EditorTools
             start.transition = Selectable.Transition.None;
             startRt.gameObject.AddComponent<ButtonFeedback>();
 
+            Configure(panel.gameObject.AddComponent<PopIn>(), ("card", card), ("backdrop", dimImage));
             var window = host.gameObject.AddComponent<RaceInfoWindow>();
             Configure(window, ("panel", panel.gameObject), ("closeArea", dim), ("closeButton", close), ("chapterLabel", chapter), ("titleLabel", title),
                 ("trackPicture", picture), ("featureRow", row), ("featureTemplate", badge), ("previousButton", prevRace), ("nextButton", nextRace),
@@ -906,6 +910,7 @@ namespace SomeGame.EditorTools
             var cupsButton = MenuButton(card, "CupsButton", "UNLOCK ALL   OFF", Color.white, Theme.Ink, Theme.Ink, 130f, out var cupsLabel, 46);
             var resetButton = MenuButton(card, "ResetButton", "RESET GAME", Color.white, Theme.Rust, Theme.Rust, 130f, out var resetLabel, 46);
 
+            Configure(panel.gameObject.AddComponent<PopIn>(), ("card", card), ("backdrop", dimImage));
             var menu = host.gameObject.AddComponent<GameMenu>();
             var so = new SerializedObject(menu);
             Set(so, "race", race); Set(so, "joystick", joystick);
