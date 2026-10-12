@@ -45,6 +45,8 @@ namespace SomeGame.UI
         [Tooltip("Blurred copy of the frozen picture and a dark veil: the old cup blurs and dims away as the new one comes in.")]
         [SerializeField] UnityEngine.UI.RawImage wipeBlur;
         [SerializeField] UnityEngine.UI.Image wipeDim;
+        [Tooltip("Blurred picture of the new cup over its page (under the old one): it sharpens as the new cup slides in.")]
+        [SerializeField] UnityEngine.UI.RawImage incomingBlur;
 
         [Header("Locked and coming-soon cups")]
         [Tooltip("Shown instead of the map for a cup that is locked or still coming.")]
@@ -238,7 +240,52 @@ namespace SomeGame.UI
         bool _wipeReady, _wipeStarting;
         float _reveal;
         float? _pendingRelease;
-        Texture2D _snapshot, _blurred;
+        Texture2D _snapshot, _blurred, _incoming;
+
+        // Renders the page as it is now into a texture without showing anything on screen: the canvas is
+        // drawn once by a hidden camera (the frozen picture left out), then goes back to normal.
+        Texture2D RenderPage()
+        {
+            var canvas = GetComponent<Canvas>();
+            if (canvas == null) return null;
+            int w = Screen.width, h = Screen.height;
+            var rt = RenderTexture.GetTemporary(w, h, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var go = new GameObject("PageCamera");
+            var cam = go.AddComponent<Camera>();
+            cam.enabled = false;
+            cam.orthographic = true;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = Camera.main != null ? Camera.main.backgroundColor : Color.black;
+            cam.cullingMask = 1 << canvas.gameObject.layer;
+            cam.nearClipPlane = 0.1f; cam.farClipPlane = 100f;
+            cam.targetTexture = rt;
+            bool wipeShown = wipe.gameObject.activeSelf, blurShown = incomingBlur != null && incomingBlur.gameObject.activeSelf;
+            wipe.gameObject.SetActive(false);
+            if (incomingBlur != null) incomingBlur.gameObject.SetActive(false);
+            var mode = canvas.renderMode;
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = cam;
+            canvas.planeDistance = 10f;
+            Canvas.ForceUpdateCanvases();
+            var request = new UnityEngine.Rendering.Universal.UniversalRenderPipeline.SingleCameraRequest { destination = rt };
+            if (UnityEngine.Rendering.RenderPipeline.SupportsRenderRequest(cam, request)) UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(cam, request);
+            else cam.Render();
+            canvas.renderMode = mode;
+            canvas.worldCamera = null;
+            wipe.gameObject.SetActive(wipeShown);
+            if (incomingBlur != null) incomingBlur.gameObject.SetActive(blurShown);
+            Canvas.ForceUpdateCanvases();
+
+            var previous = RenderTexture.active;
+            RenderTexture.active = rt;
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false, false);
+            tex.ReadPixels(new Rect(0, 0, w, h), 0, 0, false);
+            tex.Apply(false);
+            RenderTexture.active = previous;
+            RenderTexture.ReleaseTemporary(rt);
+            Destroy(go);
+            return tex;
+        }
 
         // A soft, blurred copy: block-averaged down to 1/factor size, box-blurred twice, shown smoothed.
         static Texture2D Blurred(Texture2D source, int factor)
@@ -374,6 +421,20 @@ namespace SomeGame.UI
             wipe.gameObject.SetActive(true);
             SetWipe(0f);
             ShowCup(next, fadeAbove: true);
+            // A blurred picture of the new cup, which sharpens as it slides in.
+            if (incomingBlur != null)
+            {
+                SetPage(0f);
+                var page = RenderPage();
+                if (page != null)
+                {
+                    if (_incoming != null) Destroy(_incoming);
+                    _incoming = Blurred(page, 10);
+                    Destroy(page);
+                    incomingBlur.texture = _incoming;
+                    incomingBlur.gameObject.SetActive(true);
+                }
+            }
             _wipeReady = true;
             SetWipe(_reveal);
             if (_pendingRelease.HasValue)
@@ -406,7 +467,7 @@ namespace SomeGame.UI
                 image.anchorMin = image.anchorMax = image.pivot = new Vector2(side, 0.5f);
                 image.anchoredPosition = Vector2.zero;
                 image.sizeDelta = new Vector2(w, h);
-                image.localScale = Vector3.one * (1f - 0.04f * covering);
+                image.localScale = Vector3.one; // the old page stays exactly in place (no gaps at its edges)
             }
             if (wipeBlur != null) wipeBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(covering * 2.2f));
             if (wipeDim != null) wipeDim.color = new Color(0f, 0f, 0f, 0.35f * covering);
@@ -421,7 +482,16 @@ namespace SomeGame.UI
                 wipeEdge.color = new Color(0f, 0f, 0f, 0.35f * Mathf.Clamp01(_reveal / 40f) * Mathf.Clamp01(covered / 40f));
             }
             // The new page glides in and settles from a slight zoom as it is uncovered (it seems to slide in on top).
-            SetPage(_wipeDirection * covered * 0.25f, 1f + 0.05f * covered / w);
+            float offset = _wipeDirection * covered * 0.25f, zoom = 1f + 0.05f * covered / w;
+            SetPage(offset, zoom);
+            if (incomingBlur != null && incomingBlur.gameObject.activeSelf)
+            {
+                // The blurred new page moves with it and fades out as it comes in: it sharpens.
+                var blurRt = incomingBlur.rectTransform;
+                blurRt.anchoredPosition = new Vector2(offset, 0f);
+                blurRt.localScale = Vector3.one * zoom;
+                incomingBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(1f - covering * 1.15f));
+            }
             if (_fadePlan != null)
             {
                 float c = _reveal / w;
@@ -447,6 +517,8 @@ namespace SomeGame.UI
             wipe.gameObject.SetActive(false);
             wipeImage.texture = null;
             if (wipeBlur != null) wipeBlur.texture = null;
+            if (incomingBlur != null) { incomingBlur.texture = null; incomingBlur.gameObject.SetActive(false); }
+            if (_incoming != null) { Destroy(_incoming); _incoming = null; }
             if (_snapshot != null) { Destroy(_snapshot); _snapshot = null; }
             if (_blurred != null) { Destroy(_blurred); _blurred = null; }
             SetPage(0f);

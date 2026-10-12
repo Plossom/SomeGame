@@ -208,7 +208,11 @@ namespace SomeGame.EditorTools
             var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 10f), 300f, "START",
                 out var startFace, out var startShadow, out var startLabel, out var startRing);
 
-            // Switching cups: the old page frozen as a picture that the new cup slides in over (MapScreen).
+            // Switching cups: a blurred picture of the incoming cup over its page, sharpening as it comes in...
+            var incoming = Stretch("IncomingBlur", canvas).gameObject.AddComponent<RawImage>();
+            incoming.raycastTarget = false;
+            incoming.gameObject.SetActive(false);
+            // ...and the old page frozen as a picture that the new cup slides in over (MapScreen).
             var wipe = Stretch("CupWipe", canvas);
             wipe.gameObject.AddComponent<RectMask2D>();
             var wipeImage = Rt("Old", wipe).gameObject.AddComponent<RawImage>();
@@ -248,7 +252,7 @@ namespace SomeGame.EditorTools
             var dot = Img(At("Dot", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(24f, 24f)), "Pill", Theme.Amber, sliced: true);
             Set(so, "dots", dots); Set(so, "dotTemplate", dot);
             Set(so, "wipe", wipe); Set(so, "wipeImage", wipeImage); Set(so, "wipeEdge", wipeEdge);
-            Set(so, "wipeBlur", wipeBlur); Set(so, "wipeDim", wipeDim);
+            Set(so, "wipeBlur", wipeBlur); Set(so, "wipeDim", wipeDim); Set(so, "incomingBlur", incoming);
             Set(so, "lockedPage", lockedPage.gameObject);
             Set(so, "lockedIcon", lockedPage.Find("Plate/Icon").GetComponent<Image>());
             Set(so, "lockSprite", Sprite("IconLock")); Set(so, "soonSprite", Sprite("IconQuestion"));
