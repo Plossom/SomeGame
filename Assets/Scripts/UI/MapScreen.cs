@@ -378,20 +378,22 @@ namespace SomeGame.UI
 
         float[] _dotWidth;
 
-        // The current cup's dot is a long pill, the others small dots; they ease between the two.
+        // The current cup's mark is a long amber pill, the others round cream dots; they ease between the
+        // two. The dark plate behind them fits its marks.
         void UpdateDots(bool target)
         {
             if (_dots.Count == 0) return;
             _dotWidth ??= new float[_dots.Count];
             int current = Switchable().IndexOf(_cup);
-            float size = dotTemplate.rectTransform.sizeDelta.y, gap = size * 0.7f;
+            float size = dotTemplate.rectTransform.sizeDelta.y, gap = size * 0.6f;
             float total = 0f;
             for (int i = 0; i < _dots.Count; i++)
             {
-                float want = i == current ? size * 3f : size;
+                float want = i == current ? size * 2.6f : size;
                 _dotWidth[i] = target && _dotWidth[i] > 0f ? Mathf.Lerp(_dotWidth[i], want, 1f - Mathf.Exp(-12f * Time.unscaledDeltaTime)) : want;
                 total += _dotWidth[i] + (i > 0 ? gap : 0f);
             }
+            dots.sizeDelta = new Vector2(total + size * 1.5f, size * 1.8f);
             float x = -total * 0.5f;
             for (int i = 0; i < _dots.Count; i++)
             {
@@ -399,7 +401,7 @@ namespace SomeGame.UI
                 rt.sizeDelta = new Vector2(_dotWidth[i], size);
                 rt.anchoredPosition = new Vector2(x + _dotWidth[i] * 0.5f, 0f);
                 x += _dotWidth[i] + gap;
-                _dots[i].color = i == current ? Theme.Rust : Theme.WithAlpha(Theme.Ink, 0.3f);
+                _dots[i].color = i == current ? Theme.Amber : Theme.WithAlpha(Theme.Cream, 0.55f);
             }
         }
 
@@ -577,7 +579,9 @@ namespace SomeGame.UI
         void ShowInfo()
         {
             if (infoWindow == null || catalog.Count == 0) return;
-            infoWindow.Show(catalog[_selected], ProgressStore.CanEnter(catalog, _selected), StartSelected);
+            System.Action previous = _selected > 0 ? () => { Select(_selected - 1); ShowInfo(); } : null;
+            System.Action next = _selected < catalog.Count - 1 ? () => { Select(_selected + 1); ShowInfo(); } : null;
+            infoWindow.Show(catalog[_selected], ProgressStore.CanEnter(catalog, _selected), StartSelected, previous, next);
         }
 
         void StartSelected()

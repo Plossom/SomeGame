@@ -20,6 +20,10 @@ namespace SomeGame.UI
         [SerializeField] Sprite sparkle;
         [SerializeField] Sprite puff;
         [SerializeField] Sprite chair;
+        [SerializeField] Sprite fisher;
+        [SerializeField] Sprite rowboat;
+        [SerializeField] Sprite ring;
+        [SerializeField] Sprite fish;
 
         readonly List<Action<float>> _animations = new();
 
@@ -45,6 +49,7 @@ namespace SomeGame.UI
                 Glints(MapScenery.ValleyLake, MapScenery.ValleyLakeRadii, 6);
                 Birds();
                 Balloon();
+                Fishers();
             }
         }
 
@@ -190,6 +195,80 @@ namespace SomeGame.UI
                     image.color = new Color(1f, 1f, 1f, Mathf.Clamp01(Mathf.Min(p, 1f - p) / 0.06f));
                 });
             }
+        }
+
+        // Two anglers at the valley lake: one on a rock on the shore, one in a rowing boat bobbing on the
+        // water. Their floats bob and ripple; now and then the rod jerks up and a fish leaps out on the line.
+        void Fishers()
+        {
+            if (fisher == null || rowboat == null) return;
+            // Positions in canvas units (the lake is painted around (240, 1110), stretched upward by 1.15).
+            Angler(fisher, new Vector2(26f, 32.5f), new Vector2(0.5f, 0f), new Vector2(336f, 1158f), new Vector2(-4.1f, 16.3f), new Vector2(262f, 1214f), false, 0f, 13f);
+            Angler(rowboat, new Vector2(60f, 37.5f), new Vector2(0.5f, 0.175f), new Vector2(180f, 1276f), new Vector2(-3.8f, 18.8f), new Vector2(128f, 1270f), true, 6.5f, 11f);
+        }
+
+        void Angler(Sprite sprite, Vector2 size, Vector2 pivot, Vector2 at, Vector2 hands, Vector2 bobberAt, bool boat, float phase, float period)
+        {
+            var ripple = Make("Ripple", ring, Vector2.one * 4f, Color.white, new Vector2(0.5f, 0.5f));
+            var line = Make("Line", null, new Vector2(0.5f, 1f), new Color(1f, 1f, 1f, 0.75f), new Vector2(0.5f, 1f));
+            var body = Make("Angler", sprite, size, Color.white, pivot);
+            var rod = Make("Rod", null, new Vector2(1.3f, 22f), Hex("5A3A22"), new Vector2(0.5f, 0f));
+            var bobber = Make("Float", puff, Vector2.one * 4.5f, Hex("E2483A"), new Vector2(0.5f, 0.5f));
+            var catchFish = fish != null ? Make("Catch", fish, new Vector2(4.5f, 9f), Color.white, new Vector2(0.5f, 0.5f)) : null;
+            var rippleImage = ImageOf(ripple);
+            var fishImage = catchFish != null ? ImageOf(catchFish) : null;
+            const float rest = 55f, rodLength = 22f;
+            _animations.Add(t =>
+            {
+                float tilt = boat ? Mathf.Sin(t * 1.1f + phase) * 3f : 0f;
+                Vector2 bodyAt = at + (boat ? new Vector2(0f, Mathf.Sin(t * 1.3f + phase) * 1.2f) : Vector2.zero);
+                body.anchoredPosition = bodyAt;
+                body.localRotation = Quaternion.Euler(0f, 0f, tilt);
+                Vector2 grip = bodyAt + (Vector2)(Quaternion.Euler(0f, 0f, tilt) * hands);
+
+                // The catch: the rod jerks up, the fish leaps from the float to the angler.
+                float c = Mathf.Repeat(t + phase, period);
+                float lift = c < 0.5f ? Mathf.Sin(c / 0.5f * Mathf.PI * 0.5f) : c < 1.4f ? 1f - (c - 0.5f) / 0.9f : 0f;
+                float angle = rest - 32f * lift + tilt;
+                rod.anchoredPosition = grip;
+                rod.localRotation = Quaternion.Euler(0f, 0f, angle);
+                Vector2 tip = grip + (Vector2)(Quaternion.Euler(0f, 0f, angle) * new Vector2(0f, rodLength));
+
+                bool flying = c > 0.1f && c < 1.1f;
+                float dip = c > period - 2.6f && c < period - 2.2f ? -1.3f : 0f; // a nibble before the bite
+                Vector2 floatAt = bobberAt + new Vector2(0f, Mathf.Sin(t * 2.2f + phase) * 0.6f + dip);
+                Vector2 end = floatAt;
+                if (catchFish != null)
+                {
+                    catchFish.gameObject.SetActive(flying);
+                    if (flying)
+                    {
+                        float u = (c - 0.1f) / 1f;
+                        Vector2 from = bobberAt, to = grip + new Vector2(0f, 4f);
+                        Vector2 p = Vector2.Lerp(from, to, u) + new Vector2(0f, Mathf.Sin(u * Mathf.PI) * 16f);
+                        Vector2 v = (to - from) + new Vector2(0f, Mathf.Cos(u * Mathf.PI) * 16f * Mathf.PI);
+                        catchFish.anchoredPosition = p;
+                        catchFish.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg - 90f + Mathf.Sin(t * 30f) * 15f);
+                        fishImage.color = new Color(1f, 1f, 1f, Mathf.Clamp01((1.1f - c) / 0.15f));
+                        end = p;
+                    }
+                }
+                bobber.gameObject.SetActive(!flying);
+                bobber.anchoredPosition = floatAt;
+
+                // The line from the rod tip to the float (or the fish).
+                Vector2 span = end - tip;
+                line.anchoredPosition = tip;
+                line.sizeDelta = new Vector2(0.5f, span.magnitude);
+                line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(span.y, span.x) * Mathf.Rad2Deg + 90f);
+
+                // Ripples round the float, and a splash when the fish comes out.
+                float r = c < 0.8f ? c / 0.8f : Mathf.Repeat((t + phase) / 2.4f, 1f);
+                float big = c < 0.8f ? 2f : 1f;
+                ripple.anchoredPosition = bobberAt;
+                ripple.sizeDelta = new Vector2(Mathf.Lerp(3f, 14f * big, r), Mathf.Lerp(3f, 14f * big, r) * 0.45f);
+                rippleImage.color = new Color(1f, 1f, 1f, 0.6f * (1f - r));
+            });
         }
 
         static Color Hex(string hex)

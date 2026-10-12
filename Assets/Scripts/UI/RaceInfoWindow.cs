@@ -36,12 +36,17 @@ namespace SomeGame.UI
         [SerializeField] RectTransform featureRow;
         [SerializeField] RectTransform featureTemplate;
         [SerializeField] FeatureIcon[] icons;
+        [Tooltip("Arrows either side of START: the previous / next race (hidden at the first / last).")]
+        [SerializeField] UnityEngine.UI.Button previousButton;
+        [SerializeField] UnityEngine.UI.Button nextButton;
         [SerializeField] UnityEngine.UI.Button startButton;
         [SerializeField] UnityEngine.UI.Image startFace;
         [SerializeField] UnityEngine.UI.Image startShadow;
         [SerializeField] TMP_Text startLabel;
 
-        Action _onStart;
+        Action _onStart, _onPrevious, _onNext;
+        float _shownAt = -10f;
+        int _slide;
         readonly List<GameObject> _badges = new();
 
         public bool IsOpen => panel.activeSelf;
@@ -51,14 +56,23 @@ namespace SomeGame.UI
             closeArea.onClick.AddListener(Close);
             if (closeButton != null) closeButton.onClick.AddListener(Close);
             startButton.onClick.AddListener(() => { Close(); _onStart?.Invoke(); });
+            if (previousButton != null) previousButton.onClick.AddListener(() => { _slide = -1; _onPrevious?.Invoke(); });
+            if (nextButton != null) nextButton.onClick.AddListener(() => { _slide = 1; _onNext?.Invoke(); });
             if (featureTemplate != null) featureTemplate.gameObject.SetActive(false);
             panel.SetActive(false);
         }
 
-        public void Show(LevelDefinition level, bool canEnter, Action onStart)
+        /// <param name="onPrevious">Shows the previous race (null at the first: the arrow is hidden).</param>
+        /// <param name="onNext">Shows the next race (null at the last).</param>
+        public void Show(LevelDefinition level, bool canEnter, Action onStart, Action onPrevious = null, Action onNext = null)
         {
             if (level == null) return;
             _onStart = onStart;
+            _onPrevious = onPrevious;
+            _onNext = onNext;
+            if (previousButton != null) previousButton.gameObject.SetActive(onPrevious != null);
+            if (nextButton != null) nextButton.gameObject.SetActive(onNext != null);
+            _shownAt = Time.unscaledTime;
             chapterLabel.text = level.chapter;
             titleLabel.text = level.displayName.ToUpperInvariant();
             trackPicture.sprite = level.preview;
@@ -75,7 +89,25 @@ namespace SomeGame.UI
             panel.SetActive(true);
         }
 
-        public void Close() => panel.SetActive(false);
+        public void Close()
+        {
+            panel.SetActive(false);
+            _slide = 0;
+        }
+
+        // Paging to another race: the picture slides in from the side of the arrow and fades up.
+        void Update()
+        {
+            if (_slide == 0 || trackPicture == null) return;
+            float t = Mathf.Clamp01((Time.unscaledTime - _shownAt) / 0.25f);
+            float e = 1f - Mathf.Pow(1f - t, 3f);
+            var rt = trackPicture.rectTransform;
+            rt.anchoredPosition = new Vector2(_slide * 60f * (1f - e), 0f);
+            var c = trackPicture.color;
+            c.a = e;
+            trackPicture.color = c;
+            if (t >= 1f) _slide = 0;
+        }
 
         void ShowFeatures(TrackLayout track)
         {

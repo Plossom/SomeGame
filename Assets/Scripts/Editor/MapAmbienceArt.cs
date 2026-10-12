@@ -22,6 +22,8 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "LiftChair", 48, 64, ChairPixel, 100, false);
             GenerateNavArrow();
             GenerateEdgeShade();
+            Write(ArtGenerator.Folder, "MapFisher", 64, 80, (x, y) => FisherPixel(x, y, Vector2.zero, new Color(0f, 0f, 0f, 0f), true), 100, false);
+            Write(ArtGenerator.Folder, "MapRowboat", 128, 80, RowboatPixel, 100, false);
             AssetDatabase.SaveAssets();
             Debug.Log("Map ambience art generated");
         }
@@ -39,6 +41,48 @@ namespace SomeGame.EditorTools
         {
             float d = Polygon(x, y, new[] { new Vector2(32f, 90f), new Vector2(57f, 8f), new Vector2(32f, 26f), new Vector2(7f, 8f) });
             return White(Cover(d));
+        }
+
+        // A little angler seen from the side, facing left, sitting (on a rock when on the shore); the hands
+        // (where the rod goes) are at (22, 40) plus the offset.
+        internal static Color FisherPixel(float x, float y, Vector2 o, Color c, bool rock)
+        {
+            x -= o.x; y -= o.y;
+            if (rock)
+            {
+                float stone = Sdf.Ellipse(x, y, 40f, 10f, 17f, 9f);
+                c = Over(c, Hex("8F918A"), Cover(stone));
+                c = Over(c, Hex("B6B7AE"), Cover(Sdf.Ellipse(x, y, 36f, 13f, 10f, 4f)));
+                c = Over(c, Outline, Stroke(stone, 2.4f));
+            }
+            float legs = Mathf.Min(Capsule(x, y, 40f, 22f, 22f, 22f, 4.5f), Capsule(x, y, 22f, 22f, 18f, 9f, 4f));
+            c = Over(c, Hex("2E4A6B"), Cover(legs));
+            c = Over(c, Hex("3A2A20"), Cover(Sdf.Ellipse(x, y, 15f, 7f, 6f, 3.5f))); // boot
+            float body = RoundRect(x, y, 39f, 36f, 9f, 14f, 5f);
+            c = Over(c, Hex("D9433A"), Cover(body));
+            float arm = Capsule(x, y, 36f, 45f, 23f, 40f, 3.6f);
+            c = Over(c, Hex("B8352D"), Cover(arm));
+            c = Over(c, Hex("F2C29B"), Cover(Circle(x, y, 22f, 40f, 3.4f))); // hands
+            float head = Circle(x, y, 37f, 58f, 8.5f);
+            c = Over(c, Hex("F2C29B"), Cover(head));
+            float hat = Mathf.Min(Sdf.Ellipse(x, y, 36f, 64f, 13f, 2.8f), RoundRect(x, y, 38f, 69f, 7.5f, 5f, 3f));
+            c = Over(c, Hex("E8B44A"), Cover(hat));
+            c = Over(c, Outline, Stroke(Mathf.Min(Mathf.Min(body, head), Mathf.Min(legs, Mathf.Min(arm, hat))), 2.2f));
+            return c;
+        }
+
+        // A small wooden rowing boat on the water with an angler in it (hands at (56, 54)).
+        static Color RowboatPixel(float x, float y)
+        {
+            Color c = new(0f, 0f, 0f, 0f);
+            c = FisherPixel(x, y, new Vector2(34f, 14f), c, false);
+            var hull = new[] { new Vector2(6f, 26f), new Vector2(122f, 26f), new Vector2(108f, 6f), new Vector2(20f, 6f) };
+            float d = Polygon(x, y, hull);
+            c = Over(c, Hex("A0703F"), Cover(d));
+            c = Over(c, Hex("7A5230"), Cover(Mathf.Max(d, Mathf.Abs(y - 15f) - 1.4f)));
+            c = Over(c, Hex("E9D8B4"), Cover(Mathf.Max(d, -(y - 23f)))); // gunwale
+            c = Over(c, Outline, Stroke(d, 2.4f));
+            return c;
         }
 
         static float Cover(float d) => Mathf.Clamp01(0.5f - d);

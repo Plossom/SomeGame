@@ -129,7 +129,8 @@ namespace SomeGame.EditorTools
             var ambience = Stretch("Ambience", world);
             var ambienceComp = ambience.gameObject.AddComponent<MapAmbience>();
             Configure(ambienceComp, ("cloud", Sprite("MapCloud")), ("bird", Sprite("MapBird")), ("balloon", Sprite("MapBalloon")),
-                ("sparkle", Sprite("Sparkle")), ("puff", Sprite("Smoke")), ("chair", Sprite("LiftChair")));
+                ("sparkle", Sprite("Sparkle")), ("puff", Sprite("Smoke")), ("chair", Sprite("LiftChair")),
+                ("fisher", Sprite("MapFisher")), ("rowboat", Sprite("MapRowboat")), ("ring", Sprite("Ring")), ("fish", Sprite("Fish")));
             var node = BuildNode(world);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));
             car.pivot = new Vector2(0.5f, 0.5f);
@@ -236,8 +237,11 @@ namespace SomeGame.EditorTools
             float[] depth = { 1f, 1.15f, 1.3f, 1f };
             parallax.arraySize = depth.Length;
             for (int i = 0; i < depth.Length; i++) parallax.GetArrayElementAtIndex(i).floatValue = depth[i];
-            var dots = At("CupDots", safe, new Vector2(0.5f, 1f), new Vector2(-28f, -194f), new Vector2(300f, 16f));
-            var dot = Img(At("Dot", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(16f, 16f)), "Pill", Theme.Rust, sliced: true);
+            // Page marks (one per cup) on a small dark plate under the cup name; the plate fits its marks.
+            var dots = At("CupDots", safe, new Vector2(0.5f, 1f), new Vector2(-28f, -169f), new Vector2(120f, 44f));
+            dots.pivot = new Vector2(0.5f, 1f);
+            Img(dots, "Pill", Theme.Ink, sliced: true);
+            var dot = Img(At("Dot", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(24f, 24f)), "Pill", Theme.Amber, sliced: true);
             Set(so, "dots", dots); Set(so, "dotTemplate", dot);
             Set(so, "wipe", wipe); Set(so, "wipeImage", wipeImage); Set(so, "wipeEdge", wipeEdge);
             SetArray(so, "fadeRoots", new[] { canvas.Find("CupMenu") });
@@ -313,7 +317,17 @@ namespace SomeGame.EditorTools
             Img(At("Icon", mask, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), null, Color.white).preserveAspect = true;
 
             // START along the bottom of the card.
-            var startRt = At("StartButton", card, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(930f, 164f));
+            var startRt = At("StartButton", card, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(600f, 164f));
+            // Previous / next race either side of START (same height, square, dark with a light arrow).
+            var prevRace = SquareButton(card, "PrevRace", new Vector2(0f, 0f), new Vector2(60f, 60f), "IconPlay", 152f);
+            prevRace.transform.Find("Face/Icon").localScale = new Vector3(-1f, 1f, 1f);
+            var nextRace = SquareButton(card, "NextRace", new Vector2(1f, 0f), new Vector2(-60f, 60f), "IconPlay", 152f);
+            foreach (var arrow in new[] { prevRace, nextRace }) // orange like START
+            {
+                arrow.transform.Find("Shadow").GetComponent<Image>().color = Theme.OrangeDeep;
+                arrow.transform.Find("Face").GetComponent<Image>().color = Theme.Orange;
+                arrow.transform.Find("Face/Icon").GetComponent<Image>().color = Color.white;
+            }
             var startShadowRt = Stretch("Shadow", startRt);
             startShadowRt.offsetMax = new Vector2(0f, -14f);
             var startShadow = Img(startShadowRt, "Round", Theme.OrangeDeep, sliced: true);
@@ -329,7 +343,7 @@ namespace SomeGame.EditorTools
 
             var window = host.gameObject.AddComponent<RaceInfoWindow>();
             Configure(window, ("panel", panel.gameObject), ("closeArea", dim), ("closeButton", close), ("chapterLabel", chapter), ("titleLabel", title),
-                ("trackPicture", picture), ("featureRow", row), ("featureTemplate", badge),
+                ("trackPicture", picture), ("featureRow", row), ("featureTemplate", badge), ("previousButton", prevRace), ("nextButton", nextRace),
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel));
             var wso = new SerializedObject(window);
             SetArray(wso, "difficultyPips", pips);
