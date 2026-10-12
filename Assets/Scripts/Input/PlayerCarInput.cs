@@ -54,7 +54,8 @@ namespace SomeGame.Input
             if (level == ControlSettings.Assist.Off || _sensor == null || _car == null || _sensor.Track == null || _car.IsAirborne) return aim;
             var track = _sensor.Track;
             var path = track.Path;
-            float strength = level == ControlSettings.Assist.Light ? 0.45f : 0.75f;
+            float strength = level == ControlSettings.Assist.Light ? 0.38f : 0.65f;
+            float peak = level == ControlSettings.Assist.Light ? 0.68f : 0.78f; // most help near ramps and oil
             float window = level == ControlSettings.Assist.Light ? 45f : 60f;
             if (_car.IsDrifting) strength *= 0.4f; // a drift is meant to point across the road
             Vector2 position = _car.Body.position;
@@ -85,8 +86,23 @@ namespace SomeGame.Input
                     if (toLip <= 0f || toLip > 24f) continue;
                     float k = Mathf.InverseLerp(24f, 8f, toLip);
                     keep = Mathf.Lerp(keep, jump.Lateral, k);
-                    strength = Mathf.Max(strength, Mathf.Lerp(strength, 0.85f, k));
+                    strength = Mathf.Max(strength, Mathf.Lerp(strength, peak, k));
                     window = Mathf.Max(window, 60f);
+                }
+                // Oil ahead on your line: aim round it, on whichever side needs the smaller move.
+                foreach (var spot in track.Layout.oil)
+                {
+                    float to = path.DeltaDistance(d, spot.distance);
+                    if (to < -1f || to > 22f) continue;
+                    float clear = spot.radius + 1.6f;
+                    if (Mathf.Abs(keep - spot.lateral) >= clear) continue;
+                    float limit = track.HalfWidthAt(spot.distance) - 0.9f;
+                    float left = spot.lateral + clear, right = spot.lateral - clear;
+                    float dodge = left > limit ? right : right < -limit ? left : (Mathf.Abs(left - keep) < Mathf.Abs(right - keep) ? left : right);
+                    float k = Mathf.InverseLerp(22f, 7f, to);
+                    keep = Mathf.Lerp(keep, Mathf.Clamp(dodge, -limit, limit), k);
+                    strength = Mathf.Max(strength, Mathf.Lerp(strength, peak, k));
+                    window = Mathf.Max(window, 55f);
                 }
                 target = path.PointAt(d + look) + path.NormalAt(d + look) * keep;
                 tangent = path.TangentAt(d);
