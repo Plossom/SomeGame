@@ -16,15 +16,19 @@ MonoBehaviour:
   acceleration: 11
   drag: 5
   brakeDeceleration: 18
-  turnRate: 220
-  fullTurnSpeed: 6
-  standstillTurnFactor: 0.35
-  grip: 7
-  highSpeedGripLoss: 0.5
+  turnRate: 240
+  fullTurnSpeed: 4.5
+  standstillTurnFactor: 0.55
+  grip: 9.5
+  highSpeedGripLoss: 0.3
   slideThreshold: 3
-  offRoadSlowdown: 0.4
-  offRoadDeceleration: 22
-  offRoadGrip: 0.6
+  offRoadSlowdown: 0.6
+  offRoadDeceleration: 14
+  offRoadGrip: 0.75
+  iceGrip: 0.22
+  wallRideSpeed: 13
+  wallGrip: 1.8
+  wallSlide: 14
   driftMinSpeed: 10
   driftKeepSpeedFactor: 0.6
   driftHopTime: 0.4

@@ -7,6 +7,22 @@ namespace SomeGame.Input
     public static class ControlSettings
     {
         const string InvisibleJoystickKey = "Controls.InvisibleJoystick";
+        const string SteerAssistKey = "Controls.SteerAssist";
+
+        public enum Assist { Off, Light, Strong }
+
+        /// <summary>Smart steering: how much the game helps you follow the road (Light by default).</summary>
+        public static Assist SteerAssist
+        {
+            get => (Assist)Mathf.Clamp(PlayerPrefs.GetInt(SteerAssistKey, (int)Assist.Light), 0, 2);
+            set
+            {
+                if (value == SteerAssist) return;
+                PlayerPrefs.SetInt(SteerAssistKey, (int)value);
+                PlayerPrefs.Save();
+                Changed?.Invoke();
+            }
+        }
 
         public static event Action Changed;
 

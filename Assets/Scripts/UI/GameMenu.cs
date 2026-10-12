@@ -34,6 +34,9 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Slider volumeSlider;
         [SerializeField] UnityEngine.UI.Button joystickButton;
         [SerializeField] TMP_Text joystickLabel;
+        [Tooltip("Smart steering: Light / Strong / Off.")]
+        [SerializeField] UnityEngine.UI.Button assistButton;
+        [SerializeField] TMP_Text assistLabel;
 
         [Header("Map only")]
         [Tooltip("Resets all progress (asks for a second tap first).")]
@@ -61,6 +64,13 @@ namespace SomeGame.UI
             restartButton.onClick.AddListener(() => { Unpause(); race.Restart(); });
             mainMenuButton.onClick.AddListener(() => { Unpause(); GameSession.ReturnToMap(); });
             joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
+            if (assistButton != null)
+                assistButton.onClick.AddListener(() => ControlSettings.SteerAssist = ControlSettings.SteerAssist switch
+                {
+                    ControlSettings.Assist.Light => ControlSettings.Assist.Strong,
+                    ControlSettings.Assist.Strong => ControlSettings.Assist.Off,
+                    _ => ControlSettings.Assist.Light,
+                });
             if (tutorialButton != null)
             {
                 tutorialButton.gameObject.SetActive(!inRace);
@@ -160,6 +170,12 @@ namespace SomeGame.UI
             joystickLabel.text = ControlSettings.InvisibleJoystick
                 ? $"JOYSTICK   <color={Theme.Html(Theme.StoneDark)}>HIDDEN</color>"
                 : $"JOYSTICK   <color={Theme.Html(Theme.Orange)}>VISIBLE</color>";
+            if (assistLabel != null)
+            {
+                var a = ControlSettings.SteerAssist;
+                string word = a == ControlSettings.Assist.Off ? "OFF" : a == ControlSettings.Assist.Strong ? "STRONG" : "LIGHT";
+                assistLabel.text = $"STEERING HELP   <color={Theme.Html(a == ControlSettings.Assist.Off ? Theme.StoneDark : Theme.Orange)}>{word}</color>";
+            }
             if (cupsLabel != null)
                 cupsLabel.text = CupList.DevUnlockAll
                     ? $"UNLOCK ALL   <color={Theme.Html(Theme.Orange)}>ON</color>"
