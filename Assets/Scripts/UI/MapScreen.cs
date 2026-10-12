@@ -26,6 +26,8 @@ namespace SomeGame.UI
         [Tooltip("Opens the race info window for the selected race.")]
         [SerializeField] UnityEngine.UI.Button infoButton;
         [SerializeField] RaceInfoWindow infoWindow;
+        [Tooltip("Small round \"i\" right after the race name (the race name opens the info).")]
+        [SerializeField] RectTransform infoChip;
         [Header("Switching cups")]
         [Tooltip("What slides when switching cups (the map, the race header, the cup name, START), with how much faster each moves (depth).")]
         [SerializeField] RectTransform[] page;
@@ -627,7 +629,7 @@ namespace SomeGame.UI
                 badge.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => OnBadge(slot));
                 _badges.Add(badge);
             }
-            if (barToggle != null) barToggle.onClick.AddListener(() => { if (_barOpen) CollapseCups(); else OpenCups(); });
+            if (barToggle != null) barToggle.onClick.AddListener(() => { if (_barOpen) CollapseCups(); else OpenCups(true); });
             _ringAt = cups.IndexOf(_cup);
             RefreshBadges();
             UpdateDots(false);
@@ -642,10 +644,11 @@ namespace SomeGame.UI
             SwitchTo(cups[slot]);
         }
 
-        public void OpenCups()
+        /// <summary>Unfolds the cup list; opened by hand it folds up again by itself after a while.</summary>
+        public void OpenCups(bool byHand = false)
         {
             _barOpen = true;
-            _collapseAt = -1f;
+            _collapseAt = byHand ? Time.unscaledTime + 10f : -1f;
         }
 
         public void CollapseCups()
@@ -837,7 +840,7 @@ namespace SomeGame.UI
                     : i >= _hideFrom || !ProgressStore.CanEnter(catalog, i) ? MapNodeState.Locked // still to unlock (with an animation)
                     : ProgressStore.HasWon(level) ? MapNodeState.Won
                     : MapNodeState.Open;
-                _nodes[i].Bind((i + 1).ToString(), state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, null, () => Select(index));
+                _nodes[i].Bind((i + 1).ToString(), state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, null, () => OnStopTapped(index));
             }
             ShowSelected();
         }
@@ -889,18 +892,26 @@ namespace SomeGame.UI
             startRing.SetActive(canEnter);
         }
 
-        // The info button greys out (like a locked START) when the selected race is locked.
+        // Tapping a race stop selects it; tapping the selected one again opens its info.
+        void OnStopTapped(int index)
+        {
+            if (index == _selected && !_celebrating) ShowInfo();
+            else Select(index);
+        }
+
+        // The race name opens the info, with a small "i" chip right after the name; neither for a locked race.
         void SetInfoAvailable(bool available)
         {
-            if (infoButton == null) return;
-            infoButton.interactable = available;
-            var face = infoButton.transform.Find("Face");
-            if (face == null) return;
-            face.GetComponent<UnityEngine.UI.Image>().color = available ? Theme.Ink : Theme.Stone;
-            var icon = face.Find("Icon");
-            if (icon != null) icon.GetComponent<UnityEngine.UI.Image>().color = available ? Theme.Cream : Theme.StoneDark;
-            var shadow = infoButton.transform.Find("Shadow");
-            if (shadow != null) shadow.GetComponent<UnityEngine.UI.Image>().color = available ? Theme.Ink * 0.6f + new Color(0, 0, 0, 0.4f) : Theme.StoneDark;
+            if (infoButton != null) infoButton.interactable = available;
+            if (infoChip == null) return;
+            infoChip.gameObject.SetActive(available);
+            if (!available) return;
+            titleLabel.ForceMeshUpdate();
+            var bounds = titleLabel.textBounds;
+            var titleRt = titleLabel.rectTransform;
+            var at = titleRt.anchoredPosition + new Vector2(bounds.max.x + 48f, bounds.center.y);
+            at.x = Mathf.Min(at.x, ((RectTransform)infoChip.parent).rect.width - 36f);
+            infoChip.anchoredPosition = at;
         }
 
         // The nearest race you can enter before / after the selected one (-1 if none).

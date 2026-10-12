@@ -148,29 +148,31 @@ namespace SomeGame.EditorTools
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
 
             // Stars and trophies (races won) on one small plate, its top level with the menu button.
-            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(196f, 196f));
+            // Same size as the menu button.
+            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(140f, 140f));
             Img(counters, "Round", Theme.Ink, sliced: true);
             TMP_Text CounterRow(string name, float y, string icon)
             {
-                var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(196f, 90f));
-                Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(28f, 0f), new Vector2(52f, 52f)), icon, Theme.Amber);
-                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-28f, -2f), new Vector2(100f, 90f)), "0", 60, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+                var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(140f, 64f));
+                Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(38f, 38f)), icon, Theme.Amber);
+                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-20f, -2f), new Vector2(76f, 64f)), "0", 46, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             }
-            var total = CounterRow("Stars", -8f, "IconStar");
-            var trophies = CounterRow("Trophies", -98f, "IconTrophy");
+            var total = CounterRow("Stars", -6f, "IconStar");
+            var trophies = CounterRow("Trophies", -70f, "IconTrophy");
 
             // The cup name, big, centred in the gap between the menu button (ends 200 from the left) and the
             // stars and trophies counter (starts 256 from the right), level with the menu button.
             var cupRt = Rt("Cup", safe);
             cupRt.anchorMin = new Vector2(0f, 1f); cupRt.anchorMax = new Vector2(1f, 1f); cupRt.pivot = new Vector2(0.5f, 1f);
-            cupRt.offsetMin = new Vector2(216f, -206f); cupRt.offsetMax = new Vector2(-272f, -40f);
+            cupRt.offsetMin = new Vector2(216f, -206f); cupRt.offsetMax = new Vector2(-216f, -40f);
             var chapter = Txt(cupRt, "VALLEY CUP", 128, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 70; chapter.fontSizeMax = 128;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
             // Right of the cup column (which starts under the menu button), out to the right edge (60).
-            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(216f, -222f), new Vector2(894f, 360f));
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, -14f), new Vector2(756f, 130f)), "MEADOW RUN", 100, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
+            // In line with the menu button on the left; the cup dropdown sits on the right under the counters.
+            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -222f), new Vector2(906f, 360f));
+            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, -14f), new Vector2(800f, 130f)), "MEADOW RUN", 100, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 64; title.fontSizeMax = 100; // keeps clear of the trophy counter
             // Your records for the race, beside the star times: best time over best lap.
             // Star times | records | info button, sharing the header width (1050).
@@ -188,7 +190,16 @@ namespace SomeGame.EditorTools
             var bestLap = Record("BestLap", -64f, "Best lap");
             // Opens the race info window: same height as the panels beside it (button + shadow = 130).
             // On the race name's line, at its right end.
-            var infoButton = SquareButton(header, "InfoButton", new Vector2(0f, 1f), new Vector2(776f, -10f), "IconInfo", 118f);
+            // Race info: the race name is the button, with a small "i" chip right after it (placed at runtime).
+            var titleHit = At("InfoButton", header, new Vector2(0f, 1f), new Vector2(-2f, -14f), new Vector2(906f, 130f));
+            var titleHitImage = Img(titleHit, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            var infoButton = titleHit.gameObject.AddComponent<Button>();
+            infoButton.targetGraphic = titleHitImage; infoButton.transition = Selectable.Transition.None;
+            titleHit.gameObject.AddComponent<ButtonFeedback>();
+            var chip = At("InfoChip", header, new Vector2(0f, 1f), new Vector2(700f, -80f), new Vector2(66f, 66f));
+            chip.pivot = new Vector2(0.5f, 0.5f);
+            Img(chip, "Circle", Theme.Ink);
+            Img(At("Icon", chip, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(36f, 36f)), "IconInfo", Theme.Cream);
 
             // Bottom: star times, START.
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 480f));
@@ -239,7 +250,7 @@ namespace SomeGame.EditorTools
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
             Set(so, "startButton", start); Set(so, "startFace", startFace); Set(so, "startShadow", startShadow);
             Set(so, "startLabel", startLabel); Set(so, "startRing", startRing.gameObject);
-            Set(so, "infoButton", infoButton); Set(so, "infoWindow", infoWindow);
+            Set(so, "infoButton", infoButton); Set(so, "infoWindow", infoWindow); Set(so, "infoChip", chip);
             // Swipe between cups: the page parts slide (the header and cup name a little faster, for depth).
             SetArray(so, "page", new[] { map, header, cupRt, bottom });
             var parallax = so.FindProperty("pageParallax");
@@ -252,7 +263,7 @@ namespace SomeGame.EditorTools
             var columnLayer = SafeArea(canvas);
             columnLayer.name = "CupColumnLayer";
             columnLayer.SetSiblingIndex(wipe.GetSiblingIndex() + 1);
-            var dots = At("CupColumn", columnLayer, new Vector2(0f, 1f), new Vector2(66f, -216f), new Vector2(128f, 64f));
+            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-66f, -206f), new Vector2(128f, 64f));
             Img(dots, "Round", Theme.Ink, sliced: true, raycast: true);
             dots.gameObject.AddComponent<RectMask2D>();
             var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(128f, 600f));
