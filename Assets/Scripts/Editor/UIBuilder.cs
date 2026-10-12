@@ -285,13 +285,15 @@ namespace SomeGame.EditorTools
             title.enableAutoSizing = true; title.fontSizeMin = 70; title.fontSizeMax = 120;
 
             // The track from above in a dark frame (the picture is portrait, 560 x 1000), big and centred.
-            var frame = At("Track", card, new Vector2(0.5f, 1f), new Vector2(0f, -272f), new Vector2(600f, 1060f));
+            var frame = At("Track", card, new Vector2(0.5f, 1f), new Vector2(0f, -272f), new Vector2(570f, 1006f));
             Img(frame, "Round", Theme.Ink, sliced: true);
             var picture = Img(Stretch("Picture", frame), null, Color.white);
             picture.rectTransform.offsetMin = new Vector2(12f, 12f); picture.rectTransform.offsetMax = new Vector2(-12f, -12f);
             picture.preserveAspect = true;
 
-            // Difficulty: five pips under the picture.
+            // Difficulty: a small caption and five pips under the picture.
+            var difficulty = Txt(At("DifficultyCaption", card, new Vector2(0.5f, 1f), new Vector2(0f, -1298f), new Vector2(600f, 44f)), "DIFFICULTY", 36, Theme.Rust, _condItalic);
+            difficulty.characterSpacing = 8f;
             var pips = new Image[5];
             for (int i = 0; i < pips.Length; i++)
                 pips[i] = Img(At($"Pip{i + 1}", card, new Vector2(0.5f, 1f), new Vector2((i - 2) * 112f, -1368f), new Vector2(96f, 38f)), "Pill", Theme.Orange, sliced: true);
