@@ -102,7 +102,10 @@ namespace SomeGame.Track
                 body.interpolation = RigidbodyInterpolation2D.Interpolate;
                 Vector2 tangent = path.TangentAt(s.distance);
                 float angle = Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg;
-                go.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+                // Start where it rolls (not at the origin: its first move would sweep through the grid).
+                Vector2 start = path.PointAt(s.distance) + path.NormalAt(s.distance) * (Mathf.Sin(Mathf.Repeat(s.offset / s.period, 1f) * Mathf.PI * 2f) * (track.OffRoadAt(s.distance) + 2.6f));
+                go.transform.SetPositionAndRotation(start, Quaternion.Euler(0f, 0f, angle));
+                body.position = start;
                 body.rotation = angle;
                 Transform visual;
                 if (s.kind == TrackLayout.SweeperKind.Log)

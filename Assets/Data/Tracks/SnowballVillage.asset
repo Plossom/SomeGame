@@ -62,7 +62,7 @@ MonoBehaviour:
   geysers: []
   sweepers:
   - kind: 2
-    distance: 498
+    distance: 290
     period: 5
     offset: 0
   - kind: 2
