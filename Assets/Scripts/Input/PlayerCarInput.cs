@@ -51,18 +51,21 @@ namespace SomeGame.Input
         }
 
         // Smart steering. Only when the aim roughly follows the road (a clear steer elsewhere always wins).
-        Vector2 Assisted(Vector2 aim)
+        // How many degrees to turn the aim (signed), before smoothing.
+        float Correction(Vector2 aim)
         {
             var level = ControlSettings.SteerAssist;
-            if (level == ControlSettings.Assist.Off || _sensor == null || _car == null || _sensor.Track == null || _car.IsAirborne) return aim;
+            if (level == ControlSettings.Assist.Off || _sensor == null || _car == null || _sensor.Track == null || _car.IsAirborne) return 0f;
             var track = _sensor.Track;
             var path = track.Path;
-            float strength = 0.28f;
+            // Very light: a small share of a small miss, a bit more at speed (where errors matter most).
+            float speedNow = Mathf.Max(0f, _car.ForwardSpeed);
+            float strength = 0.16f * Mathf.Lerp(0.35f, 1f, Mathf.Clamp01(speedNow / Mathf.Max(1f, _car.Stats.topSpeed)));
             // Just landed: no help for a moment, then it fades back in (no tug right after a jump).
             float sinceLanding = Time.time - _landedAt;
             if (sinceLanding < 1.1f) strength *= Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.5f, 1.1f, sinceLanding));
-            if (strength <= 0f) return aim;
-            float window = 45f;
+            if (strength <= 0f) return 0f;
+            float window = 32f;
             if (_car.IsDrifting) strength *= 0.4f; // a drift is meant to point across the road
             Vector2 position = _car.Body.position;
             float speed = Mathf.Max(0f, _car.ForwardSpeed);
@@ -131,34 +134,60 @@ namespace SomeGame.Input
 
             // Steering clearly at a jump pad or a ramp beside the road: that is on purpose, no help.
             foreach (var pad in track.Layout.bouncers)
-                if (Aiming(aim, position, pad.position)) return aim;
+                if (Aiming(aim, position, pad.position)) return 0f;
             foreach (var cut in track.Shortcuts)
-                if (Aiming(aim, position, cut.Centre)) return aim;
+                if (Aiming(aim, position, cut.Centre)) return 0f;
 
             Vector2 road = (target - position).normalized;
-            Vector2 result = aim;
+            float correction = 0f;
             float angle = Vector2.Angle(aim, road);
             if (angle < window)
             {
-                // Full help for small misses, fading out only towards the edge of the window.
-                float w = strength * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(window * 0.5f, window, angle)));
+                // Help fades out towards the edge of the window: bigger misses are on purpose.
+                float w = strength * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(window * 0.4f, window, angle)));
                 // Aiming further into the corner than the road (cutting it): hardly pull back.
                 if (Mathf.Abs(turn) > 10f && Mathf.Sign(Vector2.SignedAngle(road, aim)) == Mathf.Sign(turn)) w *= 0.2f;
-                result = Vector3.Slerp(aim, road, w);
+                correction = Vector2.SignedAngle(aim, road) * w;
             }
 
-            // Near the edge, steering further out is softened.
-            // The inside of a bend is free (cutting the corner); only the outside and straights are guarded.
+            // Only when the car is really about to leave the road (within about half a second), steering
+            // further out is eased off a little. The inside of a bend is free (cutting the corner).
             if (Mathf.Abs(turn) > 10f && Mathf.Sign(lateral) == Mathf.Sign(turn)) guardEdge = false;
             if (guardEdge)
             {
                 Vector2 outward = new Vector2(-tangent.y, tangent.x) * Mathf.Sign(lateral);
-                float edge = Mathf.InverseLerp(half * 0.6f, half + track.Layout.kerbWidth, Mathf.Abs(lateral));
-                float outwardPart = Vector2.Dot(result, outward);
-                if (edge > 0f && outwardPart > 0f)
-                    result -= outward * outwardPart * Mathf.Clamp01(edge * strength * 1.5f);
+                float towardEdge = Vector2.Dot(_car.Body.linearVelocity, outward);
+                float room = half + track.Layout.kerbWidth - Mathf.Abs(lateral);
+                if (towardEdge > 0.5f)
+                {
+                    float soon = 1f - Mathf.Clamp01(room / towardEdge / 0.5f); // 0 = half a second away or more
+                    Vector2 rotated = Quaternion.Euler(0f, 0f, correction) * aim;
+                    float outwardPart = Vector2.Dot(rotated, outward);
+                    if (soon > 0f && outwardPart > 0f)
+                    {
+                        Vector2 eased = (rotated - outward * outwardPart * soon * 0.35f).normalized;
+                        correction += Vector2.SignedAngle(rotated, eased);
+                    }
+                }
             }
-            return result.sqrMagnitude > 0.0001f ? result.normalized : aim;
+            return Mathf.Clamp(correction, -10f, 10f);
+        }
+
+        float _correction;
+        Vector2 _smoothAim;
+
+        // The aim after the help: thumb wobbles smoothed a touch, the correction eased in and out.
+        Vector2 Assisted(Vector2 aim)
+        {
+            if (ControlSettings.SteerAssist == ControlSettings.Assist.Off) { _correction = 0f; return aim; }
+            float dt = Time.deltaTime;
+            // Small wobbles of the thumb are smoothed; real steering moves pass straight through.
+            if (_smoothAim.sqrMagnitude > 0.5f && Vector2.Angle(_smoothAim, aim) < 20f)
+                aim = ((Vector2)Vector3.Slerp(_smoothAim, aim, 1f - Mathf.Exp(-dt / 0.045f))).normalized;
+            _smoothAim = aim;
+            float target = Correction(aim);
+            _correction = Mathf.Lerp(_correction, target, 1f - Mathf.Exp(-dt / 0.12f));
+            return Mathf.Abs(_correction) < 0.05f ? aim : (Vector2)(Quaternion.Euler(0f, 0f, _correction) * aim);
         }
 
         static bool Aiming(Vector2 aim, Vector2 from, Vector2 at)
