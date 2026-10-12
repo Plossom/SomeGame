@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SomeGame.Race;
 using UnityEngine;
 
@@ -77,6 +78,23 @@ namespace SomeGame.UI
         }
 
         public static bool TryMap(Color c, Palette from, out Color mapped) => TryMap(c, from.All, Current.All, out mapped);
+
+        public static bool TryMap(Color c, Palette from, Palette to, out Color mapped) => TryMap(c, from.All, to.All, out mapped);
+
+        /// <summary>
+        /// Every image and text under <paramref name="root"/> whose colour belongs to palette
+        /// <paramref name="from"/>, with its colour now and its counterpart in <paramref name="to"/>,
+        /// for a colour morph from one cup to another.
+        /// </summary>
+        public static List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> RecolorPlan(Transform root, Palette from, Palette to)
+        {
+            var plan = new List<(UnityEngine.UI.Graphic, Color, Color)>();
+            if (from == to) return plan;
+            Color[] a = from.All, b = to.All;
+            foreach (var graphic in root.GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
+                if (TryMap(graphic.color, a, b, out var mapped)) plan.Add((graphic, graphic.color, mapped));
+            return plan;
+        }
 
         static readonly float[] Shades = { 1f, 0.7f, 0.6f };
 

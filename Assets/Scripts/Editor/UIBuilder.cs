@@ -121,6 +121,7 @@ namespace SomeGame.EditorTools
 
             // The painted valley; stops, road progress and the car live in the same fixed-size space.
             var map = Stretch("Map", canvas);
+            Img(map, null, new Color(0f, 0f, 0f, 0f), raycast: true); // catches sideways swipes between cups
             var world = At("World", map, new Vector2(0.5f, 0.5f), Vector2.zero, MapLayout.Size);
             var background = Img(Stretch("Background", world), "MapBackground", Color.white);
             background.preserveAspect = false;
@@ -220,6 +221,17 @@ namespace SomeGame.EditorTools
             Set(so, "startButton", start); Set(so, "startFace", startFace); Set(so, "startShadow", startShadow);
             Set(so, "startLabel", startLabel); Set(so, "startRing", startRing.gameObject);
             Set(so, "infoButton", infoButton); Set(so, "infoWindow", infoWindow);
+            // Swipe between cups: the page parts slide (the header and cup name a little faster, for depth).
+            SetArray(so, "page", new[] { map, header, cupRt, bottom });
+            var parallax = so.FindProperty("pageParallax");
+            float[] depth = { 1f, 1.15f, 1.3f, 1f };
+            parallax.arraySize = depth.Length;
+            for (int i = 0; i < depth.Length; i++) parallax.GetArrayElementAtIndex(i).floatValue = depth[i];
+            var dots = At("CupDots", safe, new Vector2(0.5f, 1f), new Vector2(-28f, -194f), new Vector2(300f, 16f));
+            var dot = Img(At("Dot", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(16f, 16f)), "Pill", Theme.Rust, sliced: true);
+            Set(so, "dots", dots); Set(so, "dotTemplate", dot);
+            var swipe = map.gameObject.AddComponent<MapSwipe>();
+            Configure(swipe, ("screen", screen), ("canvas", canvas.GetComponent<Canvas>()));
             so.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.SaveScene(scene, MapScenePath);
@@ -261,39 +273,31 @@ namespace SomeGame.EditorTools
             var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(56f, -110f), new Vector2(840f, 140f)), "SUNDAY LOOP", 120, Theme.Ink, _black, TextAlignmentOptions.Left);
             title.enableAutoSizing = true; title.fontSizeMin = 70; title.fontSizeMax = 120;
 
-            // The track from above in a dark frame (the picture is portrait, 560 x 1000).
-            var frame = At("Track", card, new Vector2(0f, 1f), new Vector2(60f, -280f), new Vector2(540f, 960f));
+            // The track from above in a dark frame (the picture is portrait, 560 x 1000), big and centred.
+            var frame = At("Track", card, new Vector2(0.5f, 1f), new Vector2(0f, -272f), new Vector2(600f, 1060f));
             Img(frame, "Round", Theme.Ink, sliced: true);
             var picture = Img(Stretch("Picture", frame), null, Color.white);
             picture.rectTransform.offsetMin = new Vector2(12f, 12f); picture.rectTransform.offsetMax = new Vector2(-12f, -12f);
             picture.preserveAspect = true;
 
-            // Facts beside the picture.
-            var facts = At("Facts", card, new Vector2(0f, 1f), new Vector2(636f, -280f), new Vector2(360f, 960f));
-            TMP_Text Caption(string name, float y, string text)
-            {
-                var label = Txt(At(name, facts, new Vector2(0f, 1f), new Vector2(0f, y), new Vector2(360f, 46f)), text, 36, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
-                label.characterSpacing = 6f;
-                return label;
-            }
-            TMP_Text Value(string name, float y, string text) =>
-                Txt(At(name, facts, new Vector2(0f, 1f), new Vector2(0f, y), new Vector2(360f, 84f)), text, 76, Theme.Ink, _black, TextAlignmentOptions.Left);
-            Caption("DifficultyCaption", 0f, "DIFFICULTY");
+            // Difficulty: five pips under the picture.
             var pips = new Image[5];
             for (int i = 0; i < pips.Length; i++)
-                pips[i] = Img(At($"Pip{i + 1}", facts, new Vector2(0f, 1f), new Vector2(i * 70f, -62f), new Vector2(58f, 30f)), "Pill", Theme.Orange, sliced: true);
-            Caption("LapsCaption", -150f, "LAPS");
-            var laps = Value("Laps", -194f, "3");
-            Caption("RivalsCaption", -320f, "RIVALS");
-            var rivals = Value("Rivals", -364f, "7");
-            Caption("FeaturesCaption", -490f, "ON THE TRACK");
-            var features = Txt(At("Features", facts, new Vector2(0f, 1f), new Vector2(0f, -544f), new Vector2(360f, 416f)), "•  Oil slicks", 34, Theme.Ink, _semi, TextAlignmentOptions.TopLeft);
-            features.enableAutoSizing = true; features.fontSizeMin = 24; features.fontSizeMax = 34; // up to eight lines
+                pips[i] = Img(At($"Pip{i + 1}", card, new Vector2(0.5f, 1f), new Vector2((i - 2) * 112f, -1368f), new Vector2(96f, 38f)), "Pill", Theme.Orange, sliced: true);
 
-            var description = Txt(At("Description", card, new Vector2(0f, 1f), new Vector2(60f, -1276f), new Vector2(930f, 260f)),
-                "A short description of the race.", 42, Theme.Ink, _semi, TextAlignmentOptions.TopLeft);
-            description.textWrappingMode = TextWrappingModes.Normal;
-            description.lineSpacing = 10f;
+            // What is on the track: a row of round badges with the game's own pictures.
+            var row = At("Features", card, new Vector2(0.5f, 1f), new Vector2(0f, -1432f), new Vector2(930f, 108f));
+            var rowLayout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            rowLayout.spacing = 18f; rowLayout.childAlignment = TextAnchor.MiddleCenter;
+            rowLayout.childControlWidth = false; rowLayout.childControlHeight = false;
+            rowLayout.childForceExpandWidth = false; rowLayout.childForceExpandHeight = false;
+            var badge = Rt("Badge", row);
+            badge.sizeDelta = new Vector2(108f, 108f);
+            Img(badge, "Circle", Theme.Ink);
+            var mask = At("Mask", badge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(92f, 92f));
+            Img(mask, "Circle", Color.white);
+            mask.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            Img(At("Icon", mask, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), null, Color.white).preserveAspect = true;
 
             // START along the bottom of the card.
             var startRt = At("StartButton", card, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(930f, 164f));
@@ -312,10 +316,25 @@ namespace SomeGame.EditorTools
 
             var window = host.gameObject.AddComponent<RaceInfoWindow>();
             Configure(window, ("panel", panel.gameObject), ("closeArea", dim), ("closeButton", close), ("chapterLabel", chapter), ("titleLabel", title),
-                ("trackPicture", picture), ("descriptionLabel", description), ("lapsLabel", laps), ("rivalsLabel", rivals), ("featuresLabel", features),
+                ("trackPicture", picture), ("featureRow", row), ("featureTemplate", badge),
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel));
             var wso = new SerializedObject(window);
             SetArray(wso, "difficultyPips", pips);
+            var iconList = new (string key, string sprite)[]
+            {
+                ("roof", "RoofRow"), ("wall", "IceWall"), ("ice", "Ice"), ("ramp", "Ramp"), ("gummiboat", "Gummiboat"), ("pad", "JumpPad"),
+                ("dash", "DashPanel"), ("penguin", "Penguin"), ("fish", "Fish"), ("snowball", "Snowball"), ("log", "Log"), ("hay", "HayBale"),
+                ("oil", "Oil"), ("shortcut", "Arrow"),
+            };
+            var icons = wso.FindProperty("icons");
+            icons.arraySize = iconList.Length;
+            for (int i = 0; i < iconList.Length; i++)
+            {
+                var entry = icons.GetArrayElementAtIndex(i);
+                entry.FindPropertyRelative("key").stringValue = iconList[i].key;
+                entry.FindPropertyRelative("sprite").objectReferenceValue = Sprite(iconList[i].sprite);
+                entry.FindPropertyRelative("tint").colorValue = iconList[i].key == "shortcut" ? new Color(0.17f, 0.23f, 0.23f) : Color.clear;
+            }
             wso.ApplyModifiedPropertiesWithoutUndo();
             panel.gameObject.SetActive(false);
             return window;
@@ -395,7 +414,7 @@ namespace SomeGame.EditorTools
             var ring = Img(At("Ring", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 150f)), "Ring", Theme.Ink);
             var dashed = Img(At("Dashed", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 150f)), "RingDashed", Theme.StoneDark);
             var number = Txt(At("Number", root, new Vector2(0.5f, 0.5f), new Vector2(-2f, 0f), new Vector2(150f, 150f)), "1", 92, Theme.Ink, _black);
-            var lockIcon = Img(At("Lock", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(66f, 66f)), "IconLock", Theme.StoneDark);
+            var lockIcon = Img(At("Lock", root, new Vector2(0.5f, 0.5f), new Vector2(0f, 24f), new Vector2(50f, 50f)), "IconLock", Theme.StoneDark);
 
             var starsPill = At("Stars", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -122f), new Vector2(222f, 60f));
             Img(starsPill, "Pill", Theme.Ink, sliced: true);
@@ -405,10 +424,10 @@ namespace SomeGame.EditorTools
             Img(At("Divider", starsPill, new Vector2(0.5f, 0.5f), new Vector2(42f, 0f), new Vector2(3f, 36f)), null, Theme.WithAlpha(Theme.Cream, 0.2f));
             var trophy = Img(At("Trophy", starsPill, new Vector2(0.5f, 0.5f), new Vector2(76f, 1f), new Vector2(40f, 40f)), "IconTrophy", Theme.Amber);
 
-            var req = At("Requirement", root, new Vector2(0.5f, 0.5f), new Vector2(0f, 128f), new Vector2(140f, 64f));
-            Img(req, "Pill", Theme.Ink, sliced: true);
-            var reqText = Txt(At("Count", req, new Vector2(0.5f, 0.5f), new Vector2(-20f, 0f), new Vector2(70f, 60f)), "2", 46, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
-            Img(At("Icon", req, new Vector2(0.5f, 0.5f), new Vector2(30f, 0f), new Vector2(38f, 38f)), "IconStar", Theme.Amber);
+            // A locked race shows the stars it needs inside its badge, under the lock.
+            var req = At("Requirement", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -28f), new Vector2(130f, 52f));
+            var reqText = Txt(At("Count", req, new Vector2(0.5f, 0.5f), new Vector2(-17f, 0f), new Vector2(70f, 52f)), "2", 46, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            Img(At("Icon", req, new Vector2(0.5f, 0.5f), new Vector2(28f, 2f), new Vector2(34f, 34f)), "IconStar", Theme.Rust);
 
             var capRt = At("Caption", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -112f), new Vector2(230f, 56f));
             Img(capRt, "Pill", Theme.WithAlpha(Theme.Cream, 0.92f), sliced: true);

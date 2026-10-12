@@ -23,8 +23,16 @@ namespace SomeGame.UI
 
         readonly List<Action<float>> _animations = new();
 
+        /// <summary>Removes everything that is playing (before switching to another cup's map).</summary>
+        public void Clear()
+        {
+            _animations.Clear();
+            foreach (Transform child in transform) Destroy(child.gameObject);
+        }
+
         public void Play(CupLook look)
         {
+            Clear();
             Clouds(look);
             Smoke(look);
             if (look == CupLook.Winter)

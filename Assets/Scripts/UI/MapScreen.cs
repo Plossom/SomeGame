@@ -26,6 +26,16 @@ namespace SomeGame.UI
         [Tooltip("Opens the race info window for the selected race.")]
         [SerializeField] UnityEngine.UI.Button infoButton;
         [SerializeField] RaceInfoWindow infoWindow;
+        [Header("Switching cups")]
+        [Tooltip("What slides when switching cups (the map, the race header, the cup name, START), with how much faster each moves (depth).")]
+        [SerializeField] RectTransform[] page;
+        [SerializeField] float[] pageParallax;
+        [Tooltip("Page dots under the cup name, one per cup you can switch to.")]
+        [SerializeField] RectTransform dots;
+        [SerializeField] UnityEngine.UI.Image dotTemplate;
+        [Tooltip("Share of the screen width a drag must pass to switch cup.")]
+        [SerializeField, Range(0.05f, 0.6f)] float switchDistance = 0.2f;
+        [SerializeField, Min(0.05f)] float slideOut = 0.22f, slideIn = 0.5f;
         [Tooltip("Snowfall over the map, shown on the winter map.")]
         [SerializeField] GameObject snow;
         [SerializeField] TMP_Text totalStars;
@@ -55,6 +65,10 @@ namespace SomeGame.UI
         [SerializeField] float carOffset = 95f;
 
         readonly List<MapNode> _nodes = new();
+        readonly List<UnityEngine.UI.Image> _dots = new();
+        Vector2[] _pageHome;
+        bool _switching;
+        CupDefinition _cup;
         readonly List<GameObject> _progress = new();
         int _selected;
         Vector2 _lastParentSize;
@@ -63,9 +77,13 @@ namespace SomeGame.UI
         {
             // The map shows the selected cup's races.
             var cup = CupList.Selected;
-            if (cup != null) catalog = cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
+            _cup = cup;
+            if (cup != null) catalog = CatalogOf(cup);
             ApplyLook(cup != null ? cup.look : CupLook.Valley, cup != null ? cup.mapBackground : null);
         }
+
+        static LevelCatalog CatalogOf(CupDefinition cup) =>
+            cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
 
         // The cup's map: its road and landscape, and its colours on every image and text of the screen
         // (built in the Valley colours). Layout, fonts and shapes stay the same.
@@ -95,7 +113,201 @@ namespace SomeGame.UI
             Build();
             Refresh();
             FitWorld();
+            if (page != null)
+            {
+                _pageHome = new Vector2[page.Length];
+                for (int i = 0; i < page.Length; i++) _pageHome[i] = page[i].anchoredPosition;
+            }
+            BuildDots();
         }
+
+        // ------------------------------------------------------------------ switching cups
+
+        /// <summary>The cups you can switch between on the map (unlocked, with a map to show).</summary>
+        static List<CupDefinition> Switchable()
+        {
+            var list = new List<CupDefinition>();
+            if (CupList.Instance != null)
+                foreach (var cup in CupList.Instance.cups) if (CupList.IsPlayable(cup)) list.Add(cup);
+            return list;
+        }
+
+        CupDefinition Neighbour(int direction)
+        {
+            var cups = Switchable();
+            int i = cups.IndexOf(_cup) + direction;
+            return i >= 0 && i < cups.Count && cups.IndexOf(_cup) >= 0 ? cups[i] : null;
+        }
+
+        public bool CanSwipe => !_switching && _pageHome != null && !GameSession.Loading && Switchable().Count > 1;
+
+        float PageWidth => ((RectTransform)transform).rect.width;
+
+        // Every part of the page moves by the offset (times its depth factor) and shrinks a little.
+        void SetPage(float offset, float scale = 1f)
+        {
+            if (page == null || _pageHome == null) return;
+            for (int i = 0; i < page.Length; i++)
+            {
+                float k = pageParallax != null && i < pageParallax.Length ? pageParallax[i] : 1f;
+                page[i].anchoredPosition = _pageHome[i] + new Vector2(offset * k, 0f);
+                page[i].localScale = Vector3.one * (i == 0 ? 1f : scale); // the map itself stays full size (no empty edges)
+            }
+        }
+
+        /// <summary>The page follows the finger; past the first or last cup it only stretches a little.</summary>
+        public void DragPage(float dx)
+        {
+            if (_switching) return;
+            bool open = Neighbour(dx < 0f ? 1 : -1) != null;
+            float w = PageWidth;
+            float offset = open ? dx : Mathf.Sign(dx) * w * 0.12f * (1f - Mathf.Exp(-Mathf.Abs(dx) / (w * 0.25f)));
+            SetPage(offset, 1f - 0.05f * Mathf.Clamp01(Mathf.Abs(offset) / w));
+        }
+
+        /// <summary>Released: far or fast enough towards another cup switches to it, otherwise the page springs back.</summary>
+        public void ReleasePage(float dx, float velocity)
+        {
+            if (_switching) return;
+            int direction = dx < 0f ? 1 : -1;
+            var next = Neighbour(direction);
+            bool go = next != null && (Mathf.Abs(dx) > PageWidth * switchDistance || (Mathf.Abs(velocity) > 1600f && Mathf.Sign(velocity) == Mathf.Sign(dx)));
+            if (go) StartCoroutine(Switch(next, direction, dx));
+            else StartCoroutine(SpringBack(dx));
+        }
+
+        /// <summary>Slides over to <paramref name="cup"/> (from the cup menu).</summary>
+        public void SwitchTo(CupDefinition cup)
+        {
+            if (_switching || cup == null || cup == _cup || !CupList.IsPlayable(cup)) return;
+            var cups = Switchable();
+            int direction = cups.IndexOf(cup) >= cups.IndexOf(_cup) ? 1 : -1;
+            StartCoroutine(Switch(cup, direction, 0f));
+        }
+
+        System.Collections.IEnumerator SpringBack(float from)
+        {
+            _switching = true;
+            float start = from;
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.35f)
+            {
+                float e = 1f - Mathf.Pow(1f - t, 3f);
+                float offset = Mathf.Lerp(start, 0f, e);
+                SetPage(offset, 1f - 0.05f * Mathf.Clamp01(Mathf.Abs(offset) / PageWidth));
+                yield return null;
+            }
+            SetPage(0f);
+            _switching = false;
+        }
+
+        System.Collections.IEnumerator Switch(CupDefinition cup, int direction, float from)
+        {
+            _switching = true;
+            float w = PageWidth;
+            var oldPalette = Theme.Current;
+            var newPalette = Theme.Of(cup.look);
+            Color oldSky = Camera.main != null ? Camera.main.backgroundColor : Color.clear;
+
+            // Out: the old page speeds off to the side, shrinking a little.
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / slideOut)
+            {
+                float e = t * t;
+                SetPage(Mathf.Lerp(from, -direction * w * 1.15f, e), Mathf.Lerp(1f, 0.9f, e));
+                yield return null;
+            }
+
+            // Swap the content while it is off screen; the colours of what stays (buttons, counters) morph.
+            var plan = Theme.RecolorPlan(transform, oldPalette, newPalette);
+            ShowCup(cup);
+            Color newSky = oldSky;
+            if (Camera.main != null) Theme.TryMap(oldSky, oldPalette, newPalette, out newSky);
+
+            // In: the new page comes from the other side and settles with a little overshoot.
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / slideIn)
+            {
+                float e = EaseOutBack(t);
+                SetPage(Mathf.LerpUnclamped(direction * w * 1.15f, 0f, e), Mathf.LerpUnclamped(0.9f, 1f, e));
+                float c = Mathf.SmoothStep(0f, 1f, t);
+                foreach (var (graphic, a, b) in plan) if (graphic != null) graphic.color = Color.Lerp(a, b, c);
+                if (Camera.main != null) Camera.main.backgroundColor = Color.Lerp(oldSky, newSky, c);
+                yield return null;
+            }
+            foreach (var (graphic, a, b) in plan) if (graphic != null) graphic.color = b;
+            if (Camera.main != null) Camera.main.backgroundColor = newSky;
+            SetPage(0f);
+            Refresh(); // exact colours for everything that depends on progress
+            _switching = false;
+        }
+
+        static float EaseOutBack(float t)
+        {
+            const float s = 1.4f;
+            t = Mathf.Clamp01(t) - 1f;
+            return 1f + t * t * ((s + 1f) * t + s);
+        }
+
+        // Puts another cup on the page: its races, road, landscape, life and colours.
+        void ShowCup(CupDefinition cup)
+        {
+            _cup = cup;
+            CupList.Selected = cup;
+            catalog = CatalogOf(cup);
+            MapLayout.Current = MapLayout.Of(cup.look);
+            Theme.Use(Theme.Of(cup.look));
+            if (cup.mapBackground != null && background != null) background.sprite = cup.mapBackground;
+            if (snow != null) snow.SetActive(cup.look == CupLook.Winter);
+            if (ambience != null) ambience.Play(cup.look);
+            foreach (var node in _nodes) if (node != null) Destroy(node.gameObject);
+            _nodes.Clear();
+            _selected = InitialSelection();
+            Build();
+            Refresh();
+            UpdateDots(true);
+        }
+
+        void BuildDots()
+        {
+            if (dots == null || dotTemplate == null) return;
+            dotTemplate.gameObject.SetActive(false);
+            var cups = Switchable();
+            if (cups.Count < 2) return;
+            for (int i = 0; i < cups.Count; i++)
+            {
+                var dot = Instantiate(dotTemplate, dots);
+                dot.gameObject.SetActive(true);
+                _dots.Add(dot);
+            }
+            UpdateDots(true);
+        }
+
+        float[] _dotWidth;
+
+        // The current cup's dot is a long pill, the others small dots; they ease between the two.
+        void UpdateDots(bool target)
+        {
+            if (_dots.Count == 0) return;
+            _dotWidth ??= new float[_dots.Count];
+            int current = Switchable().IndexOf(_cup);
+            float size = dotTemplate.rectTransform.sizeDelta.y, gap = size * 0.7f;
+            float total = 0f;
+            for (int i = 0; i < _dots.Count; i++)
+            {
+                float want = i == current ? size * 3f : size;
+                _dotWidth[i] = target && _dotWidth[i] > 0f ? Mathf.Lerp(_dotWidth[i], want, 1f - Mathf.Exp(-12f * Time.unscaledDeltaTime)) : want;
+                total += _dotWidth[i] + (i > 0 ? gap : 0f);
+            }
+            float x = -total * 0.5f;
+            for (int i = 0; i < _dots.Count; i++)
+            {
+                var rt = _dots[i].rectTransform;
+                rt.sizeDelta = new Vector2(_dotWidth[i], size);
+                rt.anchoredPosition = new Vector2(x + _dotWidth[i] * 0.5f, 0f);
+                x += _dotWidth[i] + gap;
+                _dots[i].color = i == current ? Theme.Rust : Theme.WithAlpha(Theme.Ink, 0.3f);
+            }
+        }
+
+        void Update() => UpdateDots(true);
 
         void LateUpdate() => FitWorld();
 

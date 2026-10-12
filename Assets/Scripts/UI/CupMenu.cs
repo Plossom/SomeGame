@@ -62,8 +62,10 @@ namespace SomeGame.UI
         {
             if (!CupList.IsPlayable(cup)) return;
             if (cup == CupList.Selected) { Close(); return; }
-            CupList.Selected = cup;
-            GameSession.ReturnToMap(); // reload the map with the other cup
+            Close();
+            var map = FindAnyObjectByType<MapScreen>();
+            if (map != null) map.SwitchTo(cup); // slides over to the other cup's map
+            else { CupList.Selected = cup; GameSession.ReturnToMap(); }
         }
     }
 }

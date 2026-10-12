@@ -1,36 +1,48 @@
 using System;
 using System.Collections.Generic;
 using SomeGame.Race;
+using SomeGame.Track;
 using TMPro;
 using UnityEngine;
 
 namespace SomeGame.UI
 {
     /// <summary>
-    /// The race info window on the map (the ⓘ button by the records): the whole track from above, as on
-    /// the loading screen, with the race's description, its difficulty, laps and rivals, and what waits
-    /// on the track (jumps, oil, shortcuts...). START in the window enters the race.
+    /// The race info window on the map (the ⓘ button by the records), with as little text as possible:
+    /// the race name, the whole track from above (as on the loading screen), its difficulty as pips and a
+    /// row of round badges showing what waits on the track (ramps, jump pads, oil, fish, penguins...),
+    /// each with the game's own picture of it. START in the window enters the race.
     /// </summary>
     public class RaceInfoWindow : MonoBehaviour
     {
+        [Serializable]
+        public struct FeatureIcon
+        {
+            public string key;
+            public Sprite sprite;
+            [Tooltip("Tint of the picture (white pictures need a dark one). Clear = no tint.")]
+            public Color tint;
+        }
+
         [SerializeField] GameObject panel;
         [SerializeField] UnityEngine.UI.Button closeArea;
         [SerializeField] UnityEngine.UI.Button closeButton;
         [SerializeField] TMP_Text chapterLabel;
         [SerializeField] TMP_Text titleLabel;
         [SerializeField] UnityEngine.UI.Image trackPicture;
-        [SerializeField] TMP_Text descriptionLabel;
         [Tooltip("Difficulty pips, easy to hard.")]
         [SerializeField] UnityEngine.UI.Image[] difficultyPips;
-        [SerializeField] TMP_Text lapsLabel;
-        [SerializeField] TMP_Text rivalsLabel;
-        [SerializeField] TMP_Text featuresLabel;
+        [Tooltip("Row the feature badges go into, and the inactive badge to copy (its child \"Icon\" shows the picture).")]
+        [SerializeField] RectTransform featureRow;
+        [SerializeField] RectTransform featureTemplate;
+        [SerializeField] FeatureIcon[] icons;
         [SerializeField] UnityEngine.UI.Button startButton;
         [SerializeField] UnityEngine.UI.Image startFace;
         [SerializeField] UnityEngine.UI.Image startShadow;
         [SerializeField] TMP_Text startLabel;
 
         Action _onStart;
+        readonly List<GameObject> _badges = new();
 
         public bool IsOpen => panel.activeSelf;
 
@@ -39,6 +51,7 @@ namespace SomeGame.UI
             closeArea.onClick.AddListener(Close);
             if (closeButton != null) closeButton.onClick.AddListener(Close);
             startButton.onClick.AddListener(() => { Close(); _onStart?.Invoke(); });
+            if (featureTemplate != null) featureTemplate.gameObject.SetActive(false);
             panel.SetActive(false);
         }
 
@@ -50,12 +63,9 @@ namespace SomeGame.UI
             titleLabel.text = level.displayName.ToUpperInvariant();
             trackPicture.sprite = level.preview;
             trackPicture.enabled = level.preview != null;
-            descriptionLabel.text = level.description;
             for (int i = 0; i < difficultyPips.Length; i++)
                 difficultyPips[i].color = i < level.difficulty ? Theme.Orange : Theme.WithAlpha(Theme.StoneDark, 0.35f);
-            lapsLabel.text = level.laps.ToString();
-            rivalsLabel.text = level.rivalCount.ToString();
-            featuresLabel.text = Features(level);
+            ShowFeatures(level.track);
 
             startButton.interactable = canEnter;
             startFace.color = canEnter ? Theme.Orange : Theme.Stone;
@@ -67,33 +77,49 @@ namespace SomeGame.UI
 
         public void Close() => panel.SetActive(false);
 
-        // What waits on the track, from its layout: one line each.
-        static string Features(LevelDefinition level)
+        void ShowFeatures(TrackLayout track)
         {
-            var track = level.track;
-            if (track == null) return "";
-            var lines = new List<string>();
-            void Add(bool has, string text) { if (has) lines.Add("•  " + text); }
-            bool Has(SomeGame.Track.TrackLayout.BranchKind kind) => track.branches.Exists(b => b.kind == kind);
-            Add(Has(SomeGame.Track.TrackLayout.BranchKind.Roof), "Rooftop run");
-            Add(track.banks.Count > 0, "Ice wall to ride");
-            Add(Has(SomeGame.Track.TrackLayout.BranchKind.Ice), "Frozen lake shortcut");
-            Add(track.penguins.Count > 0, "Penguins crossing");
-            Add(track.dashPanels.Count > 0, "Dash panels");
-            Add(track.waterWorld, "Islands in a lagoon");
-            Add(track.rivers.Count == 1, "A river to jump");
-            Add(track.rivers.Count > 1, $"{track.rivers.Count} streams to jump");
-            Add(track.lakes.Count > 0, "Lake crossings");
-            Add(track.gaps.Count > 0, "Gaps in the road");
-            Add(track.bouncers.Count > 0 && !Has(SomeGame.Track.TrackLayout.BranchKind.Roof), "Jump pads");
-            Add(track.geysers.Count > 0, "Leaping fish");
-            bool snowballs = track.sweepers.Exists(w => w.kind == SomeGame.Track.TrackLayout.SweeperKind.Snowball);
-            Add(snowballs, "Rolling snowballs");
-            Add(track.sweepers.Exists(w => w.kind != SomeGame.Track.TrackLayout.SweeperKind.Snowball), "Rolling logs and bales");
-            Add(track.oil.Count > 0, "Oil slicks");
-            Add(track.shortcuts.Count > 0, track.biome == SomeGame.Track.TrackLayout.Biome.Snow ? "Ski jump" : "Hidden shortcuts");
-            if (lines.Count == 0) lines.Add("•  Just road: drive and drift!");
-            return string.Join("\n", lines);
+            foreach (var badge in _badges) Destroy(badge);
+            _badges.Clear();
+            if (track == null || featureRow == null || featureTemplate == null) return;
+            foreach (var key in Features(track))
+            {
+                var entry = Array.Find(icons, i => i.key == key);
+                var sprite = entry.sprite;
+                if (sprite == null) continue;
+                var badge = Instantiate(featureTemplate, featureRow);
+                badge.gameObject.SetActive(true);
+                badge.name = key;
+                var icon = badge.Find("Mask/Icon")?.GetComponent<UnityEngine.UI.Image>();
+                if (icon != null)
+                {
+                    icon.sprite = sprite;
+                    icon.color = entry.tint.a > 0f ? entry.tint : Color.white;
+                }
+                _badges.Add(badge.gameObject);
+            }
+        }
+
+        // What waits on the track, from its layout (keys of the badge pictures), at most seven.
+        static List<string> Features(TrackLayout track)
+        {
+            var keys = new List<string>();
+            void Add(bool has, string key) { if (has && keys.Count < 7) keys.Add(key); }
+            bool Has(TrackLayout.BranchKind kind) => track.branches.Exists(b => b.kind == kind);
+            Add(Has(TrackLayout.BranchKind.Roof), "roof");
+            Add(track.banks.Count > 0, "wall");
+            Add(Has(TrackLayout.BranchKind.Ice), "ice");
+            Add(track.rivers.Count > 0 || track.gaps.Count > 0, "ramp");
+            Add(track.bouncers.Count > 0, track.waterWorld || track.gaps.Count > 0 || track.rivers.Count > 0 ? "gummiboat" : "pad");
+            Add(track.dashPanels.Count > 0, "dash");
+            Add(track.penguins.Count > 0, "penguin");
+            Add(track.geysers.Count > 0, "fish");
+            Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Snowball), "snowball");
+            Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Log), "log");
+            Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.HayBale), "hay");
+            Add(track.oil.Count > 0, "oil");
+            Add(track.shortcuts.Count > 0, "shortcut");
+            return keys;
         }
     }
 }
