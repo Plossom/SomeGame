@@ -163,46 +163,48 @@ namespace SomeGame.EditorTools
             // stars and trophies counter (starts 256 from the right), level with the menu button.
             var cupRt = Rt("Cup", safe);
             cupRt.anchorMin = new Vector2(0f, 1f); cupRt.anchorMax = new Vector2(1f, 1f); cupRt.pivot = new Vector2(0.5f, 1f);
-            cupRt.offsetMin = new Vector2(216f, -148f); cupRt.offsetMax = new Vector2(-272f, -44f);
-            var chapter = Txt(cupRt, "VALLEY CUP", 84, Theme.Rust, _condItalic);
+            cupRt.offsetMin = new Vector2(216f, -202f); cupRt.offsetMax = new Vector2(-272f, -50f);
+            var chapter = Txt(cupRt, "VALLEY CUP", 100, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
-            chapter.enableAutoSizing = true; chapter.fontSizeMin = 56; chapter.fontSizeMax = 84;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 100;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
-            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -276f), new Vector2(1050f, 360f));
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(770f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
+            // Right of the cup column (which starts under the menu button), out to the right edge (60).
+            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(216f, -222f), new Vector2(894f, 360f));
+            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(756f, 150f)), "MEADOW RUN", 128, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 136; // keeps clear of the trophy counter
             // Your records for the race, beside the star times: best time over best lap.
             // Star times | records | info button, sharing the header width (1050).
-            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(556f, -192f), new Vector2(358f, 130f));
+            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(512f, -160f), new Vector2(382f, 130f));
             Img(records, "Round", Theme.Ink, sliced: true);
             TMP_Text Record(string name, float y, string caption)
             {
-                var row = At(name, records, new Vector2(0f, 1f), new Vector2(22f, y), new Vector2(314f, 56f));
+                var row = At(name, records, new Vector2(0f, 1f), new Vector2(22f, y), new Vector2(338f, 56f));
                 Txt(At("Caption", row, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(130f, 56f)), caption, 32, Theme.Stone, _semi, TextAlignmentOptions.Left).rectTransform.pivot = new Vector2(0f, 0.5f);
-                var value = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(184f, 56f)), "—", 44, Theme.Cream, _cond, TextAlignmentOptions.Right);
+                var value = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(200f, 56f)), "—", 44, Theme.Cream, _cond, TextAlignmentOptions.Right);
                 value.rectTransform.pivot = new Vector2(1f, 0.5f);
                 return value;
             }
             var best = Record("BestTime", -10f, "Best");
             var bestLap = Record("BestLap", -64f, "Best lap");
             // Opens the race info window: same height as the panels beside it (button + shadow = 130).
-            var infoButton = SquareButton(header, "InfoButton", new Vector2(0f, 1f), new Vector2(932f, -192f), "IconInfo", 118f);
+            // On the race name's line, at its right end.
+            var infoButton = SquareButton(header, "InfoButton", new Vector2(0f, 1f), new Vector2(776f, -10f), "IconInfo", 118f);
 
             // Bottom: star times, START.
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 480f));
             // Star times sit in the header, right under the race info.
-            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -192f), new Vector2(540f, 130f));
+            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -160f), new Vector2(498f, 130f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(18f + i * 172f, 0f), new Vector2(168f, 120f));
+                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(16f + i * 159f, 0f), new Vector2(156f, 120f));
                 groups[i] = group;
                 group.pivot = new Vector2(0f, 0.5f);
                 for (int k = 0; k <= i; k++)
                     Img(At($"S{k}", group, new Vector2(0f, 1f), new Vector2(4f + k * 44f, -8f), new Vector2(44f, 44f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 1f);
-                times[i] = Txt(At("Time", group, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(164f, 58f)), "1:00.00", 48, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
+                times[i] = Txt(At("Time", group, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(152f, 58f)), "1:00.00", 46, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
                 times[i].rectTransform.pivot = new Vector2(0f, 0f);
             }
             var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 10f), 300f, "START",
@@ -244,19 +246,32 @@ namespace SomeGame.EditorTools
             float[] depth = { 1f, 1.15f, 1.3f, 1f };
             parallax.arraySize = depth.Length;
             for (int i = 0; i < depth.Length; i++) parallax.GetArrayElementAtIndex(i).floatValue = depth[i];
-            // The cup bar under the cup name: a round badge per cup on a dark plate, a glowing ring on the current one.
-            var dots = At("CupBar", safe, new Vector2(0.5f, 1f), new Vector2(-28f, -150f), new Vector2(380f, 110f));
-            Img(dots, "Pill", Theme.Ink, sliced: true);
-            var ring = At("Ring", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(106f, 106f));
-            Img(At("Glow", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f)), "Circle", Theme.WithAlpha(Theme.Amber, 0.22f));
-            Img(At("Line", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(106f, 106f)), "Ring", Theme.Amber);
-            var badgeT = At("Badge", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f));
-            var badgeFace = Img(At("Face", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), "Circle", Theme.Cream, raycast: true);
-            Img(At("Icon", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(66f, 66f)), null, Color.white).preserveAspect = true;
+            // The cup column under the menu button: a dark plate (clipping) with a badge per cup in a column
+            // and a glowing ring on the current one; folded it shows just the current cup and a small arrow.
+            // Above the frozen picture of a cup switch (so it can be seen unfolding and selecting), below the menus.
+            var columnLayer = SafeArea(canvas);
+            columnLayer.name = "CupColumnLayer";
+            columnLayer.SetSiblingIndex(wipe.GetSiblingIndex() + 1);
+            var dots = At("CupColumn", columnLayer, new Vector2(0f, 1f), new Vector2(66f, -216f), new Vector2(128f, 128f));
+            Img(dots, "Round", Theme.Ink, sliced: true, raycast: true);
+            dots.gameObject.AddComponent<RectMask2D>();
+            var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(128f, 600f));
+            var ring = At("Ring", content, new Vector2(0.5f, 1f), new Vector2(0f, -64f), new Vector2(110f, 110f));
+            ring.pivot = new Vector2(0.5f, 0.5f);
+            Img(At("Glow", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(126f, 126f)), "Circle", Theme.WithAlpha(Theme.Amber, 0.22f));
+            Img(At("Line", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(110f, 110f)), "Ring", Theme.Amber);
+            var badgeT = At("Badge", content, new Vector2(0.5f, 1f), new Vector2(0f, -64f), new Vector2(92f, 92f));
+            badgeT.pivot = new Vector2(0.5f, 0.5f);
+            var badgeFace = Img(At("Face", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(92f, 92f)), "Circle", Theme.Cream, raycast: true);
+            Img(At("Icon", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), null, Color.white).preserveAspect = true;
             badgeT.gameObject.AddComponent<CanvasGroup>();
             var badgeButton = badgeT.gameObject.AddComponent<Button>();
             badgeButton.targetGraphic = badgeFace; badgeButton.transition = Selectable.Transition.None;
             badgeT.gameObject.AddComponent<ButtonFeedback>();
+            var chevron = Img(At("Chevron", dots, new Vector2(0.5f, 0f), new Vector2(0f, 4f), new Vector2(26f, 26f)), "IconPlay", Theme.Cream);
+            chevron.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -90f); // points down: there is more
+            Set(so, "barContent", content); Set(so, "barChevron", chevron);
+            SetArray(so, "fadeRoots", new Transform[] { columnLayer }); // the cup column sits above the frozen picture: its colours blend over
             Set(so, "dots", dots); Set(so, "badgeTemplate", badgeT); Set(so, "barRing", ring);
             Set(so, "wipe", wipe); Set(so, "wipeImage", wipeImage); Set(so, "wipeEdge", wipeEdge);
             Set(so, "wipeBlur", wipeBlur); Set(so, "wipeDim", wipeDim); Set(so, "incomingBlur", incoming);
@@ -270,7 +285,7 @@ namespace SomeGame.EditorTools
             Set(so, "lockedTrophies", lockedPage.Find("Needs/Trophies/Count").GetComponent<TMP_Text>());
             SetArray(so, "racePageParts", new[] { header.gameObject, bottom.gameObject });
             Set(so, "celebration", BuildCupCelebration(canvas)); Set(so, "sparkle", Sprite("Sparkle"));
-            SetArray(so, "fadeRoots", new Transform[0]); // everything sits under the frozen picture now
+            
             var swipe = map.gameObject.AddComponent<MapSwipe>();
             Configure(swipe, ("screen", screen), ("canvas", canvas.GetComponent<Canvas>()));
             so.ApplyModifiedPropertiesWithoutUndo();

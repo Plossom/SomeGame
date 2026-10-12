@@ -8,7 +8,7 @@ namespace SomeGame.UI
     /// which drags the page along and switches to the next or previous cup on release. Mostly vertical
     /// drags are ignored. Lives on the map's full-screen layer, so taps on the race stops still work.
     /// </summary>
-    public class MapSwipe : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class MapSwipe : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
     {
         [SerializeField] MapScreen screen;
         [SerializeField] Canvas canvas;
@@ -31,6 +31,12 @@ namespace SomeGame.UI
             _dx += step;
             if (Time.unscaledDeltaTime > 0f) _velocity = Mathf.Lerp(_velocity, step / Time.unscaledDeltaTime, 0.5f);
             screen.DragPage(_dx);
+        }
+
+        // A tap on the map folds the cup column up.
+        public void OnPointerClick(PointerEventData e)
+        {
+            if (!e.dragging) screen.CollapseCups();
         }
 
         public void OnEndDrag(PointerEventData e)
