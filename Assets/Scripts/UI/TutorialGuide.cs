@@ -29,6 +29,8 @@ namespace SomeGame.UI
         [SerializeField, Min(0f)] float stepPause = 0.9f;
         [Tooltip("Full-screen cover faded in while the car is moved to the spot for the next step.")]
         [SerializeField] CanvasGroup fade;
+        [Tooltip("White fingers acting out the current step under the hint card.")]
+        [SerializeField] TutorialDemo demo;
         [Tooltip("Road before a curve (drift step) and before the ramp (jump step) the car is put at.")]
         [SerializeField, Min(5f)] float curveLead = 34f, rampLead = 50f;
 
@@ -135,6 +137,7 @@ namespace SomeGame.UI
             stepLabel.text = $"PRACTICE  ·  {index + 1}/{_steps.Length}";
             titleLabel.text = _steps[index].title;
             bodyLabel.text = _steps[index].body;
+            if (demo != null) demo.Play(index);
             if (_steps[index].spot != Spot.Anywhere) StartCoroutine(MoveTo(_steps[index].spot));
         }
 
@@ -209,6 +212,7 @@ namespace SomeGame.UI
 
         void Finish()
         {
+            if (demo != null) demo.Hide();
             _index = _steps.Length;
             card.SetActive(false);
             doneCard.SetActive(true);

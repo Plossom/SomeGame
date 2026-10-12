@@ -23,11 +23,30 @@ namespace SomeGame.EditorTools
             GenerateNavArrow();
             GenerateEdgeShade();
             GenerateRays();
+            GenerateFinger();
             Write(ArtGenerator.Folder, "MapFisher", 64, 80, (x, y) => FisherPixel(x, y, Vector2.zero, new Color(0f, 0f, 0f, 0f), true), 100, false);
             Write(ArtGenerator.Folder, "MapRowboat", 128, 80, RowboatPixel, 100, false);
             AssetDatabase.SaveAssets();
             Debug.Log("Map ambience art generated");
         }
+
+        /// <summary>A white pointing hand (index finger up) with a dark outline, for the tutorial's gestures. The fingertip is at (64, 154).</summary>
+        [MenuItem("SomeGame/Generate Finger")]
+        public static void GenerateFinger() => Write(ArtGenerator.Folder, "Finger", 128, 160, (x, y) =>
+        {
+            float finger = Capsule(x, y, 64f, 62f, 64f, 140f, 14f);
+            float palm = RoundRect(x, y, 70f, 46f, 34f, 30f, 16f);
+            float knuckles = Mathf.Min(Circle(x, y, 88f, 70f, 12.5f), Circle(x, y, 102f, 58f, 11.5f));
+            float thumb = Capsule(x, y, 38f, 50f, 22f, 82f, 11f);
+            float hand = SMin(SMin(SMin(finger, palm, 6f), knuckles, 5f), thumb, 6f);
+            Color c = new(0f, 0f, 0f, 0f);
+            c = Over(c, new Color(0f, 0f, 0f, 0.25f), Mathf.Clamp01(0.5f - (hand + 3f) / 6f));
+            c = Over(c, Color.white, Cover(hand));
+            c = Over(c, new Color(0.85f, 0.88f, 0.9f, 1f), Cover(Mathf.Max(hand + 2f, -(x - 78f)))); // a soft shade on the right
+            c = Over(c, Hex("173D33"), Stroke(hand, 5f));
+            c = Over(c, Hex("C9D2D6"), Cover(RoundRect(x, y, 64f, 136f, 7f, 6f, 4f))); // nail
+            return c;
+        }, 100, false);
 
         /// <summary>Light rays for celebrations: sixteen soft wedges from the centre, fading outwards.</summary>
         [MenuItem("SomeGame/Generate Rays")]

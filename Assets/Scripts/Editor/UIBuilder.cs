@@ -761,9 +761,48 @@ namespace SomeGame.EditorTools
             var fade = fadeRt.gameObject.AddComponent<CanvasGroup>();
             fade.alpha = 0f; fade.blocksRaycasts = false; fade.interactable = false;
 
+            // The demo under the hint card: white fingers act out the step, a mini car shows what happens.
+            var demo = At("Demo", root, new Vector2(0.5f, 0f), new Vector2(0f, 260f), new Vector2(820f, 460f));
+            demo.localScale = Vector3.one * 1.6f; // big enough to read at a glance
+            var demoGroup = demo.gameObject.AddComponent<CanvasGroup>();
+            demoGroup.blocksRaycasts = false; demoGroup.interactable = false;
+            Img(demo, "Round", Theme.WithAlpha(Theme.Ink, 0.35f), sliced: true);
+            RectTransform Part(string name, string sprite, Vector2 size, Color color, Vector2 pivot)
+            {
+                var rt = At(name, demo, new Vector2(0.5f, 0.5f), Vector2.zero, size);
+                rt.pivot = pivot;
+                var image = Img(rt, sprite, color);
+                image.preserveAspect = sprite != null;
+                return rt;
+            }
+            var center = new Vector2(0.5f, 0.5f);
+            var ramp = Part("Ramp", "Ramp", new Vector2(80f, 100f), Color.white, center);
+            var carShadow = Part("CarShadow", "CarShadow", new Vector2(44f, 77f), new Color(0f, 0f, 0f, 0.4f), center);
+            var demoCar = Part("Car", "Car", new Vector2(44f, 77f), Theme.Orange, center);
+            Img(Stretch("Details", demoCar), "CarDetails", Color.white).preserveAspect = true;
+            var sparks = new Image[3];
+            for (int i = 0; i < sparks.Length; i++) sparks[i] = Part($"Spark{i}", "Circle", new Vector2(18f, 18f), Color.white, center).GetComponent<Image>();
+            var lines = new RectTransform[3];
+            for (int i = 0; i < lines.Length; i++) lines[i] = Part($"SpeedLine{i}", null, new Vector2(6f, 54f), new Color(1f, 1f, 1f, 0.7f), center);
+            var ring = Part("Ring", "Ring", new Vector2(190f, 190f), new Color(1f, 1f, 1f, 0.8f), center);
+            ring.anchoredPosition = new Vector2(-210f, -30f);
+            var knob = Part("Knob", "Circle", new Vector2(72f, 72f), new Color(1f, 1f, 1f, 0.9f), center);
+            var press = Part("Press", "Circle", new Vector2(86f, 86f), new Color(1f, 1f, 1f, 0.5f), center);
+            var ripple = Part("Ripple", "Ring", new Vector2(110f, 110f), Color.white, center);
+            var finger1 = Part("Finger1", "Finger", new Vector2(80f, 100f), Color.white, new Vector2(0.5f, 0.96f));
+            var finger2 = Part("Finger2", "Finger", new Vector2(80f, 100f), Color.white, new Vector2(0.5f, 0.96f));
+            var demoComp = demo.gameObject.AddComponent<TutorialDemo>();
+            Configure(demoComp, ("group", demoGroup), ("finger1", finger1), ("finger2", finger2), ("ring", ring), ("knob", knob), ("press", press),
+                ("ripple", ripple), ("car", demoCar), ("carShadow", carShadow), ("ramp", ramp));
+            var dso = new SerializedObject(demoComp);
+            SetArray(dso, "sparks", sparks);
+            SetArray(dso, "speedLines", lines);
+            dso.ApplyModifiedPropertiesWithoutUndo();
+            demo.gameObject.SetActive(false);
+
             var guide = root.gameObject.AddComponent<TutorialGuide>();
             var so = new SerializedObject(guide);
-            Set(so, "fade", fade);
+            Set(so, "fade", fade); Set(so, "demo", demoComp);
             Set(so, "race", race); Set(so, "card", card.gameObject); Set(so, "stepLabel", step); Set(so, "titleLabel", title); Set(so, "bodyLabel", body);
             Set(so, "skipButton", skip); Set(so, "doneCard", done.gameObject); Set(so, "doneButton", go);
             SetArray(so, "hideInTutorial", hideInTutorial);
