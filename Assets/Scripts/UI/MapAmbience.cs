@@ -203,7 +203,7 @@ namespace SomeGame.UI
         {
             if (fisher == null || rowboat == null) return;
             // Positions in canvas units (the lake is painted around (240, 1110), stretched upward by 1.15).
-            Angler(fisher, new Vector2(26f, 32.5f), new Vector2(0.5f, 0f), new Vector2(336f, 1158f), new Vector2(-4.1f, 16.3f), new Vector2(262f, 1214f), false, 0f, 13f);
+            Angler(fisher, new Vector2(26f, 32.5f), new Vector2(0.5f, 0f), new Vector2(322f, 1174f), new Vector2(-4.1f, 16.3f), new Vector2(256f, 1214f), false, 0f, 13f);
             Angler(rowboat, new Vector2(60f, 37.5f), new Vector2(0.5f, 0.175f), new Vector2(180f, 1276f), new Vector2(-3.8f, 18.8f), new Vector2(128f, 1270f), true, 6.5f, 11f);
         }
 

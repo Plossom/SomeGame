@@ -441,7 +441,7 @@ namespace SomeGame.EditorTools
             var ring = Img(At("Ring", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 150f)), "Ring", Theme.Ink);
             var dashed = Img(At("Dashed", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 150f)), "RingDashed", Theme.StoneDark);
             var number = Txt(At("Number", root, new Vector2(0.5f, 0.5f), new Vector2(-2f, 0f), new Vector2(150f, 150f)), "1", 92, Theme.Ink, _black);
-            var lockIcon = Img(At("Lock", root, new Vector2(0.5f, 0.5f), new Vector2(0f, 24f), new Vector2(50f, 50f)), "IconLock", Theme.StoneDark);
+            var lockIcon = Img(At("Lock", root, new Vector2(0.5f, 0.5f), new Vector2(0f, 22f), new Vector2(50f, 50f)), "IconLock", Theme.StoneDark);
 
             var starsPill = At("Stars", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -122f), new Vector2(222f, 60f));
             Img(starsPill, "Pill", Theme.Ink, sliced: true);
@@ -452,9 +452,11 @@ namespace SomeGame.EditorTools
             var trophy = Img(At("Trophy", starsPill, new Vector2(0.5f, 0.5f), new Vector2(76f, 1f), new Vector2(40f, 40f)), "IconTrophy", Theme.Amber);
 
             // A locked race shows the stars it needs inside its badge, under the lock.
-            var req = At("Requirement", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -28f), new Vector2(130f, 52f));
-            var reqText = Txt(At("Count", req, new Vector2(0.5f, 0.5f), new Vector2(-17f, 0f), new Vector2(70f, 52f)), "2", 46, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
-            Img(At("Icon", req, new Vector2(0.5f, 0.5f), new Vector2(28f, 2f), new Vector2(34f, 34f)), "IconStar", Theme.Rust);
+            // Centred in the space between the lock and the bottom of the badge.
+            var req = At("Requirement", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -32f), new Vector2(130f, 44f));
+            var reqText = Txt(At("Count", req, new Vector2(0.5f, 0.5f), new Vector2(-37f, -1f), new Vector2(70f, 44f)), "2", 44, Theme.Ink, _condItalic, TextAlignmentOptions.Right);
+            reqText.verticalAlignment = VerticalAlignmentOptions.Geometry; // centre the digits themselves
+            Img(At("Icon", req, new Vector2(0.5f, 0.5f), new Vector2(16f, 0f), new Vector2(34f, 34f)), "IconStar", Theme.Amber);
 
             var capRt = At("Caption", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -112f), new Vector2(230f, 56f));
             Img(capRt, "Pill", Theme.WithAlpha(Theme.Cream, 0.92f), sliced: true);

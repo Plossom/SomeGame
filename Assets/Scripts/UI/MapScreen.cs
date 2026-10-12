@@ -366,6 +366,7 @@ namespace SomeGame.UI
             if (dots == null || dotTemplate == null) return;
             dotTemplate.gameObject.SetActive(false);
             var cups = Switchable();
+            dots.gameObject.SetActive(cups.Count >= 2); // one cup: nothing to page through
             if (cups.Count < 2) return;
             for (int i = 0; i < cups.Count; i++)
             {
@@ -543,7 +544,7 @@ namespace SomeGame.UI
                 startFace.color = Theme.Stone; startShadow.color = Theme.StoneDark;
                 startLabel.text = "SOON"; startLabel.color = Theme.StoneDark;
                 startRing.SetActive(false);
-                if (infoButton != null) infoButton.interactable = false;
+                SetInfoAvailable(false);
                 return;
             }
             var level = catalog[_selected];
@@ -568,6 +569,7 @@ namespace SomeGame.UI
             }
 
             bool canEnter = ProgressStore.CanEnter(catalog, _selected);
+            SetInfoAvailable(canEnter); // no race info for a locked race
             startButton.interactable = canEnter;
             startFace.color = canEnter ? Theme.Orange : Theme.Stone;
             startShadow.color = canEnter ? Theme.OrangeDeep : Theme.StoneDark;
@@ -576,11 +578,34 @@ namespace SomeGame.UI
             startRing.SetActive(canEnter);
         }
 
+        // The info button greys out (like a locked START) when the selected race is locked.
+        void SetInfoAvailable(bool available)
+        {
+            if (infoButton == null) return;
+            infoButton.interactable = available;
+            var face = infoButton.transform.Find("Face");
+            if (face == null) return;
+            face.GetComponent<UnityEngine.UI.Image>().color = available ? Theme.Ink : Theme.Stone;
+            var icon = face.Find("Icon");
+            if (icon != null) icon.GetComponent<UnityEngine.UI.Image>().color = available ? Theme.Cream : Theme.StoneDark;
+            var shadow = infoButton.transform.Find("Shadow");
+            if (shadow != null) shadow.GetComponent<UnityEngine.UI.Image>().color = available ? Theme.Ink * 0.6f + new Color(0, 0, 0, 0.4f) : Theme.StoneDark;
+        }
+
+        // The nearest race you can enter before / after the selected one (-1 if none).
+        int OpenRace(int from, int step)
+        {
+            for (int i = from + step; i >= 0 && i < catalog.Count; i += step)
+                if (ProgressStore.CanEnter(catalog, i)) return i;
+            return -1;
+        }
+
         void ShowInfo()
         {
-            if (infoWindow == null || catalog.Count == 0) return;
-            System.Action previous = _selected > 0 ? () => { Select(_selected - 1); ShowInfo(); } : null;
-            System.Action next = _selected < catalog.Count - 1 ? () => { Select(_selected + 1); ShowInfo(); } : null;
+            if (infoWindow == null || catalog.Count == 0 || !ProgressStore.CanEnter(catalog, _selected)) return;
+            int before = OpenRace(_selected, -1), after = OpenRace(_selected, 1);
+            System.Action previous = before >= 0 ? () => { Select(before); ShowInfo(); } : null;
+            System.Action next = after >= 0 ? () => { Select(after); ShowInfo(); } : null;
             infoWindow.Show(catalog[_selected], ProgressStore.CanEnter(catalog, _selected), StartSelected, previous, next);
         }
 
