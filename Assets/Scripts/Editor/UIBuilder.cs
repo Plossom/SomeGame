@@ -163,15 +163,15 @@ namespace SomeGame.EditorTools
             // stars and trophies counter (starts 256 from the right), level with the menu button.
             var cupRt = Rt("Cup", safe);
             cupRt.anchorMin = new Vector2(0f, 1f); cupRt.anchorMax = new Vector2(1f, 1f); cupRt.pivot = new Vector2(0.5f, 1f);
-            cupRt.offsetMin = new Vector2(216f, -202f); cupRt.offsetMax = new Vector2(-272f, -50f);
-            var chapter = Txt(cupRt, "VALLEY CUP", 100, Theme.Rust, _condItalic);
+            cupRt.offsetMin = new Vector2(216f, -206f); cupRt.offsetMax = new Vector2(-272f, -40f);
+            var chapter = Txt(cupRt, "VALLEY CUP", 128, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
-            chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 100;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 70; chapter.fontSizeMax = 128;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
             // Right of the cup column (which starts under the menu button), out to the right edge (60).
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(216f, -222f), new Vector2(894f, 360f));
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(756f, 150f)), "MEADOW RUN", 128, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
-            title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 136; // keeps clear of the trophy counter
+            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, -14f), new Vector2(756f, 130f)), "MEADOW RUN", 100, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
+            title.enableAutoSizing = true; title.fontSizeMin = 64; title.fontSizeMax = 100; // keeps clear of the trophy counter
             // Your records for the race, beside the star times: best time over best lap.
             // Star times | records | info button, sharing the header width (1050).
             var records = At("Records", header, new Vector2(0f, 1f), new Vector2(512f, -160f), new Vector2(382f, 130f));
@@ -252,7 +252,7 @@ namespace SomeGame.EditorTools
             var columnLayer = SafeArea(canvas);
             columnLayer.name = "CupColumnLayer";
             columnLayer.SetSiblingIndex(wipe.GetSiblingIndex() + 1);
-            var dots = At("CupColumn", columnLayer, new Vector2(0f, 1f), new Vector2(66f, -216f), new Vector2(128f, 128f));
+            var dots = At("CupColumn", columnLayer, new Vector2(0f, 1f), new Vector2(66f, -216f), new Vector2(128f, 64f));
             Img(dots, "Round", Theme.Ink, sliced: true, raycast: true);
             dots.gameObject.AddComponent<RectMask2D>();
             var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(128f, 600f));
@@ -268,8 +268,15 @@ namespace SomeGame.EditorTools
             var badgeButton = badgeT.gameObject.AddComponent<Button>();
             badgeButton.targetGraphic = badgeFace; badgeButton.transition = Selectable.Transition.None;
             badgeT.gameObject.AddComponent<ButtonFeedback>();
-            var chevron = Img(At("Chevron", dots, new Vector2(0.5f, 0f), new Vector2(0f, 4f), new Vector2(26f, 26f)), "IconPlay", Theme.Cream);
-            chevron.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -90f); // points down: there is more
+            // The fold toggle along the bottom: a small arrow pointing down (folded) or up (unfolded).
+            var toggleRt = At("Toggle", dots, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(128f, 64f));
+            var toggleHit = Img(toggleRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            var toggle = toggleRt.gameObject.AddComponent<Button>();
+            toggle.targetGraphic = toggleHit; toggle.transition = Selectable.Transition.None;
+            toggleRt.gameObject.AddComponent<ButtonFeedback>();
+            var chevron = Img(At("Chevron", toggleRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(34f, 34f)), "IconPlay", Theme.Cream);
+            chevron.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -90f);
+            Set(so, "barToggle", toggle);
             Set(so, "barContent", content); Set(so, "barChevron", chevron);
             SetArray(so, "fadeRoots", new Transform[] { columnLayer }); // the cup column sits above the frozen picture: its colours blend over
             Set(so, "dots", dots); Set(so, "badgeTemplate", badgeT); Set(so, "barRing", ring);
