@@ -142,8 +142,8 @@ namespace SomeGame.UI
                 var s = sparks[i];
                 s.gameObject.SetActive(true);
                 float flicker = Mathf.Repeat(t * 7f + i * 0.37f, 1f);
-                Vector2 back = (Vector2)(car.localRotation * Vector3.down) * (52f + 18f * flicker);
-                Vector2 side = (Vector2)(car.localRotation * Vector3.right) * (i - (sparks.Length - 1) * 0.5f) * 22f;
+                Vector2 back = (Vector2)(car.localRotation * Vector3.down) * (78f + 22f * flicker);
+                Vector2 side = (Vector2)(car.localRotation * Vector3.right) * (i - (sparks.Length - 1) * 0.5f) * 30f;
                 s.rectTransform.anchoredPosition = car.anchoredPosition + back + side;
                 s.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.6f, 1.3f, k) * (1f - flicker * 0.5f);
                 s.color = new Color(colour.r, colour.g, colour.b, 1f - flicker);
@@ -169,7 +169,7 @@ namespace SomeGame.UI
             {
                 var line = speedLines[i];
                 line.gameObject.SetActive(dash > 0f && dash < 1f);
-                line.anchoredPosition = car.anchoredPosition + new Vector2((i - 1) * 24f, -70f - 30f * Mathf.Repeat(t * 4f + i * 0.3f, 1f));
+                line.anchoredPosition = car.anchoredPosition + new Vector2((i - 1) * 30f, -105f - 36f * Mathf.Repeat(t * 4f + i * 0.3f, 1f));
             }
         }
 

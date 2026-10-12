@@ -776,14 +776,14 @@ namespace SomeGame.EditorTools
                 return rt;
             }
             var center = new Vector2(0.5f, 0.5f);
-            var ramp = Part("Ramp", "Ramp", new Vector2(80f, 100f), Color.white, center);
-            var carShadow = Part("CarShadow", "CarShadow", new Vector2(44f, 77f), new Color(0f, 0f, 0f, 0.4f), center);
-            var demoCar = Part("Car", "Car", new Vector2(44f, 77f), Theme.Orange, center);
+            var ramp = Part("Ramp", "Ramp", new Vector2(124f, 155f), Color.white, center);
+            var carShadow = Part("CarShadow", "CarShadow", new Vector2(72f, 126f), new Color(0f, 0f, 0f, 0.4f), center);
+            var demoCar = Part("Car", "Car", new Vector2(72f, 126f), Theme.Orange, center);
             Img(Stretch("Details", demoCar), "CarDetails", Color.white).preserveAspect = true;
             var sparks = new Image[3];
-            for (int i = 0; i < sparks.Length; i++) sparks[i] = Part($"Spark{i}", "Circle", new Vector2(18f, 18f), Color.white, center).GetComponent<Image>();
+            for (int i = 0; i < sparks.Length; i++) sparks[i] = Part($"Spark{i}", "Circle", new Vector2(24f, 24f), Color.white, center).GetComponent<Image>();
             var lines = new RectTransform[3];
-            for (int i = 0; i < lines.Length; i++) lines[i] = Part($"SpeedLine{i}", null, new Vector2(6f, 54f), new Color(1f, 1f, 1f, 0.7f), center);
+            for (int i = 0; i < lines.Length; i++) lines[i] = Part($"SpeedLine{i}", null, new Vector2(8f, 72f), new Color(1f, 1f, 1f, 0.7f), center);
             var ring = Part("Ring", "Ring", new Vector2(190f, 190f), new Color(1f, 1f, 1f, 0.8f), center);
             ring.anchoredPosition = new Vector2(-210f, -30f);
             var knob = Part("Knob", "Circle", new Vector2(72f, 72f), new Color(1f, 1f, 1f, 0.9f), center);
