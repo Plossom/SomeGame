@@ -206,6 +206,15 @@ namespace SomeGame.EditorTools
             var start = BigRoundButton(bottom, "StartButton", new Vector2(1f, 0f), new Vector2(0f, 10f), 300f, "START",
                 out var startFace, out var startShadow, out var startLabel, out var startRing);
 
+            // Switching cups: the old page frozen as a picture that the new cup slides in over (MapScreen).
+            var wipe = Stretch("CupWipe", canvas);
+            wipe.gameObject.AddComponent<RectMask2D>();
+            var wipeImage = Rt("Old", wipe).gameObject.AddComponent<RawImage>();
+            wipeImage.raycastTarget = true; // blocks taps while the cups change
+            var wipeEdge = Img(Rt("Edge", wipe), "EdgeShade", new Color(0f, 0f, 0f, 0.35f));
+            wipeEdge.preserveAspect = false;
+            wipe.gameObject.SetActive(false);
+
             BuildCupMenu(canvas, safe);
             BuildMenu(canvas, menuButton, null, null);
 
@@ -230,6 +239,8 @@ namespace SomeGame.EditorTools
             var dots = At("CupDots", safe, new Vector2(0.5f, 1f), new Vector2(-28f, -194f), new Vector2(300f, 16f));
             var dot = Img(At("Dot", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(16f, 16f)), "Pill", Theme.Rust, sliced: true);
             Set(so, "dots", dots); Set(so, "dotTemplate", dot);
+            Set(so, "wipe", wipe); Set(so, "wipeImage", wipeImage); Set(so, "wipeEdge", wipeEdge);
+            SetArray(so, "fadeRoots", new[] { canvas.Find("CupMenu") });
             var swipe = map.gameObject.AddComponent<MapSwipe>();
             Configure(swipe, ("screen", screen), ("canvas", canvas.GetComponent<Canvas>()));
             so.ApplyModifiedPropertiesWithoutUndo();

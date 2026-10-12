@@ -21,9 +21,15 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "Sparkle", 64, 64, SparklePixel, 100, false);
             Write(ArtGenerator.Folder, "LiftChair", 48, 64, ChairPixel, 100, false);
             GenerateNavArrow();
+            GenerateEdgeShade();
             AssetDatabase.SaveAssets();
             Debug.Log("Map ambience art generated");
         }
+
+        /// <summary>A soft shadow strip: clear on the left, dark on the right (tinted and flipped in use).</summary>
+        [MenuItem("SomeGame/Generate Edge Shade")]
+        public static void GenerateEdgeShade() =>
+            Write(ArtGenerator.Folder, "EdgeShade", 64, 4, (x, y) => new Color(0f, 0f, 0f, Mathf.Pow(x / 64f, 2.2f)), 100, false);
 
         /// <summary>The car in the race HUD's track view: a slim navigation arrow pointing up (white, tinted orange in the HUD).</summary>
         [MenuItem("SomeGame/Generate Nav Arrow")]
