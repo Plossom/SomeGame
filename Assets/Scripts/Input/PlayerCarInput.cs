@@ -54,8 +54,8 @@ namespace SomeGame.Input
             if (level == ControlSettings.Assist.Off || _sensor == null || _car == null || _sensor.Track == null || _car.IsAirborne) return aim;
             var track = _sensor.Track;
             var path = track.Path;
-            float strength = level == ControlSettings.Assist.Light ? 0.38f : 0.65f;
-            float peak = level == ControlSettings.Assist.Light ? 0.68f : 0.78f; // most help near ramps and oil
+            float strength = level == ControlSettings.Assist.Light ? 0.28f : 0.65f;
+            float peak = level == ControlSettings.Assist.Light ? 0.55f : 0.78f; // most help near ramps and oil
             float window = level == ControlSettings.Assist.Light ? 45f : 60f;
             if (_car.IsDrifting) strength *= 0.4f; // a drift is meant to point across the road
             Vector2 position = _car.Body.position;
