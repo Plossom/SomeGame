@@ -61,6 +61,7 @@ namespace SomeGame.Input
             Vector2 position = _car.Body.position;
             float speed = Mathf.Max(0f, _car.ForwardSpeed);
             float look = 5f + speed * 0.35f;
+            float turn = 0f; // how the road bends ahead (degrees; positive = left)
             float lateral = _sensor.Current.Lateral;
             Vector2 target, tangent;
             float half;
@@ -104,7 +105,11 @@ namespace SomeGame.Input
                     strength = Mathf.Max(strength, Mathf.Lerp(strength, peak, k));
                     window = Mathf.Max(window, 55f);
                 }
-                target = path.PointAt(d + look) + path.NormalAt(d + look) * keep;
+                // In a bend, look further up the road: the aim then already lies across the inside of the
+                // corner, like a racing line, instead of hugging the road's curve.
+                turn = path.TurnAtDistance(d + look, 8);
+                float bendLook = look * Mathf.Lerp(1f, 1.8f, Mathf.InverseLerp(10f, 45f, Mathf.Abs(turn)));
+                target = path.PointAt(d + bendLook) + path.NormalAt(d + bendLook) * keep;
                 tangent = path.TangentAt(d);
                 // Leave room for the things beside the road that you are meant to drive onto.
                 float side = Mathf.Sign(lateral);
@@ -123,10 +128,14 @@ namespace SomeGame.Input
             {
                 // Full help for small misses, fading out only towards the edge of the window.
                 float w = strength * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(window * 0.5f, window, angle)));
+                // Aiming further into the corner than the road (cutting it): hardly pull back.
+                if (Mathf.Abs(turn) > 10f && Mathf.Sign(Vector2.SignedAngle(road, aim)) == Mathf.Sign(turn)) w *= 0.2f;
                 result = Vector3.Slerp(aim, road, w);
             }
 
             // Near the edge, steering further out is softened.
+            // The inside of a bend is free (cutting the corner); only the outside and straights are guarded.
+            if (Mathf.Abs(turn) > 10f && Mathf.Sign(lateral) == Mathf.Sign(turn)) guardEdge = false;
             if (guardEdge)
             {
                 Vector2 outward = new Vector2(-tangent.y, tangent.x) * Mathf.Sign(lateral);
