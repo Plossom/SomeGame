@@ -30,9 +30,9 @@ namespace SomeGame.Car
         [SerializeField, Min(0f)] float respawnBack = 10f;
         [Tooltip("Seconds the car blinks after a restart (rivals; the player only blinks briefly).")]
         [SerializeField, Min(0f)] float blinkSeconds = 1.2f;
-        [SerializeField, Min(0f)] float playerBlinkSeconds = 0.45f;
-        [Tooltip("The player is put back past the water already rolling at this speed.")]
-        [SerializeField, Min(0f)] float playerRestartSpeed = 10f;
+        [SerializeField, Min(0f)] float playerBlinkSeconds = 0.8f;
+        [Tooltip("Seconds the player has to wait before driving on after a splash (the penalty).")]
+        [SerializeField, Min(0f)] float playerWait = 0.5f;
         [SerializeField] int sortingOrder = 13;
         [Tooltip("Boost strength (0-1) from a dash panel.")]
         [SerializeField, Range(0f, 1f)] float dashBoost = 0.85f;
@@ -317,14 +317,7 @@ namespace SomeGame.Car
                 _repeatSplashes = 0;
                 _car.Respawn(track.RespawnAfterWater(d));
             }
-            else if (_isRival) _car.Respawn(track.RespawnBefore(d, respawnBack));
-            else
-            {
-                // The player goes on just past the water, already rolling (less of a setback).
-                var pose = track.RespawnAfterWater(d);
-                _car.Respawn(pose);
-                _car.Body.linearVelocity = (Vector2)(pose.rotation * Vector3.up) * playerRestartSpeed;
-            }
+            else _car.Respawn(track.RespawnBefore(d, respawnBack)); // always back before the water, never ahead
             Splashed?.Invoke();
             StopAllCoroutines();
             StartCoroutine(Blink());
@@ -333,6 +326,18 @@ namespace SomeGame.Car
         IEnumerator Blink()
         {
             float seconds = _isRival ? blinkSeconds : playerBlinkSeconds;
+            // The player waits a moment before driving on (the penalty), then blinks while getting going.
+            if (!_isRival && playerWait > 0f)
+            {
+                _car.ControlsEnabled = false;
+                for (float w = 0f; w < playerWait; w += Time.deltaTime)
+                {
+                    bool show = Mathf.Repeat(w * 8f, 1f) < 0.6f;
+                    foreach (var s in _sprites) if (s != null) s.enabled = show;
+                    yield return null;
+                }
+                if (_progress == null || !_progress.IsFinished) _car.ControlsEnabled = true;
+            }
             for (float t = 0f; t < seconds; t += Time.deltaTime)
             {
                 bool visible = Mathf.Repeat(t * 8f, 1f) < 0.6f;
