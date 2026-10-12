@@ -319,11 +319,13 @@ namespace SomeGame.UI
         /// <summary>The cups you can page through on the map: all of them (locked and coming-soon ones show their own page).</summary>
         static List<CupDefinition> Switchable() => CupList.Instance != null ? new List<CupDefinition>(CupList.Instance.cups) : new List<CupDefinition>();
 
+        // The next / previous cup, wrapping round (past the last comes the first and the other way round).
         CupDefinition Neighbour(int direction)
         {
             var cups = Switchable();
-            int i = cups.IndexOf(_cup) + direction;
-            return i >= 0 && i < cups.Count && cups.IndexOf(_cup) >= 0 ? cups[i] : null;
+            int at = cups.IndexOf(_cup);
+            if (at < 0 || cups.Count < 2) return null;
+            return cups[(at + direction + cups.Count) % cups.Count];
         }
 
         /// <summary>The cup on the page (may be a locked or coming-soon one).</summary>
@@ -691,6 +693,7 @@ namespace SomeGame.UI
                 else graphic.color = b;
             }
             if (Camera.main != null && Theme.TryMap(Camera.main.backgroundColor, oldPalette, newPalette, out var sky)) Camera.main.backgroundColor = sky;
+            Theme.Use(newPalette); // the screen is in these colours now (also the greys of a locked page)
 
             _cup = cup;
             SetLockedView(!open, cup);

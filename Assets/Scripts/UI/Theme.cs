@@ -39,7 +39,7 @@ namespace SomeGame.UI
         {
             Cream = Hex("E9EAE8"), CreamDark = Hex("CDCFCC"), Ink = Hex("3A3D3C"), InkSoft = Hex("55595A"),
             Orange = Hex("75797A"), OrangeDeep = Hex("4C504F"), Amber = Hex("D3D6D3"), Rust = Hex("2F3231"),
-            Stone = Hex("C4C7C4"), StoneDark = Hex("7D817F"), Leaf = Hex("8E928F"),
+            Stone = Hex("C4C7C4"), StoneDark = Hex("686D6B"), Leaf = Hex("9A9F9B"),
         };
 
         public static Palette Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
