@@ -61,5 +61,5 @@ MonoBehaviour:
   landingSpeedKeep: 0.94
   landingImpact: 7
   oilSpinDegrees: 360
-  oilSpinSeconds: 0.9
-  oilSpeedKeep: 0.4
+  oilSpinSeconds: 0.7
+  oilSpeedKeep: 0.6

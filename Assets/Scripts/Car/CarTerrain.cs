@@ -28,8 +28,11 @@ namespace SomeGame.Car
         [SerializeField, Min(0f)] float minClearSpeed = 9f;
         [Tooltip("How far back along the road a car restarts after a splash.")]
         [SerializeField, Min(0f)] float respawnBack = 10f;
-        [Tooltip("Seconds the car blinks after a restart.")]
+        [Tooltip("Seconds the car blinks after a restart (rivals; the player only blinks briefly).")]
         [SerializeField, Min(0f)] float blinkSeconds = 1.2f;
+        [SerializeField, Min(0f)] float playerBlinkSeconds = 0.45f;
+        [Tooltip("The player is put back past the water already rolling at this speed.")]
+        [SerializeField, Min(0f)] float playerRestartSpeed = 10f;
         [SerializeField] int sortingOrder = 13;
         [Tooltip("Boost strength (0-1) from a dash panel.")]
         [SerializeField, Range(0f, 1f)] float dashBoost = 0.85f;
@@ -314,7 +317,14 @@ namespace SomeGame.Car
                 _repeatSplashes = 0;
                 _car.Respawn(track.RespawnAfterWater(d));
             }
-            else _car.Respawn(track.RespawnBefore(d, respawnBack));
+            else if (_isRival) _car.Respawn(track.RespawnBefore(d, respawnBack));
+            else
+            {
+                // The player goes on just past the water, already rolling (less of a setback).
+                var pose = track.RespawnAfterWater(d);
+                _car.Respawn(pose);
+                _car.Body.linearVelocity = (Vector2)(pose.rotation * Vector3.up) * playerRestartSpeed;
+            }
             Splashed?.Invoke();
             StopAllCoroutines();
             StartCoroutine(Blink());
@@ -322,7 +332,8 @@ namespace SomeGame.Car
 
         IEnumerator Blink()
         {
-            for (float t = 0f; t < blinkSeconds; t += Time.deltaTime)
+            float seconds = _isRival ? blinkSeconds : playerBlinkSeconds;
+            for (float t = 0f; t < seconds; t += Time.deltaTime)
             {
                 bool visible = Mathf.Repeat(t * 8f, 1f) < 0.6f;
                 foreach (var s in _sprites) if (s != null) s.enabled = visible;
