@@ -18,6 +18,8 @@ namespace SomeGame.Race
                 foreach (var level in catalog.levels)
                     if (level != null && level.track != null) BestLapStore.Clear(level.track.name);
             PlayerPrefs.DeleteKey(TutorialDoneKey);
+            UnlockLog.Clear();
+            PlayerPrefs.DeleteKey("Cup.Selected");
             PlayerPrefs.Save();
         }
     }

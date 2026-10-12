@@ -42,6 +42,28 @@ namespace SomeGame.UI
         [Tooltip("Share of the screen width a drag must pass to switch cup.")]
         [SerializeField, Range(0.05f, 0.6f)] float switchDistance = 0.2f;
         [SerializeField, Min(0.05f)] float slideIn = 0.45f;
+        [Tooltip("Blurred copy of the frozen picture and a dark veil: the old cup blurs and dims away as the new one comes in.")]
+        [SerializeField] UnityEngine.UI.RawImage wipeBlur;
+        [SerializeField] UnityEngine.UI.Image wipeDim;
+
+        [Header("Locked and coming-soon cups")]
+        [Tooltip("Shown instead of the map for a cup that is locked or still coming.")]
+        [SerializeField] GameObject lockedPage;
+        [SerializeField] UnityEngine.UI.Image lockedIcon;
+        [SerializeField] Sprite lockSprite;
+        [SerializeField] Sprite soonSprite;
+        [SerializeField] TMP_Text lockedTitle;
+        [SerializeField] TMP_Text lockedCaption;
+        [SerializeField] GameObject lockedNeeds;
+        [SerializeField] TMP_Text lockedStars;
+        [SerializeField] TMP_Text lockedTrophies;
+        [Tooltip("Parts of the page hidden on a locked cup (the race header, START).")]
+        [SerializeField] GameObject[] racePageParts;
+
+        [Header("Unlocks")]
+        [SerializeField] CupUnlockCelebration celebration;
+        [SerializeField] Sprite sparkle;
+
         [Tooltip("Snowfall over the map, shown on the winter map.")]
         [SerializeField] GameObject snow;
         [SerializeField] TMP_Text totalStars;
@@ -75,6 +97,8 @@ namespace SomeGame.UI
         Vector2[] _pageHome;
         bool _switching;
         CupDefinition _cup;
+        bool _celebrating;
+        int _hideFrom = int.MaxValue; // races from here on still look locked (they unlock with an animation)
         readonly List<GameObject> _progress = new();
         int _selected;
         Vector2 _lastParentSize;
@@ -115,6 +139,8 @@ namespace SomeGame.UI
             }
             startButton.onClick.AddListener(StartSelected);
             if (infoButton != null) infoButton.onClick.AddListener(ShowInfo);
+            if (!CupList.DevUnlockAll) UnlockLog.EnsureInitialised();
+            var newRaces = PrepareRaceUnlocks();
             _selected = InitialSelection();
             Build();
             Refresh();
@@ -124,19 +150,58 @@ namespace SomeGame.UI
                 _pageHome = new Vector2[page.Length];
                 for (int i = 0; i < page.Length; i++) _pageHome[i] = page[i].anchoredPosition;
             }
+            SetLockedView(false, _cup);
             BuildDots();
+            StartCoroutine(Celebrate(newRaces, true));
+        }
+
+        // ------------------------------------------------------------------ unlocks
+
+        // Races of the shown cup opened since you last saw it: they stay drawn locked until they unlock
+        // with an animation. Nothing with the UNLOCK ALL switch on (that is not progress).
+        List<int> PrepareRaceUnlocks()
+        {
+            var races = CupList.DevUnlockAll ? new List<int>() : UnlockLog.NewRaces(catalog);
+            _hideFrom = races.Count > 0 ? races[0] : int.MaxValue;
+            return races;
+        }
+
+        // One after another: the new races unlock (the last one gets selected), then each newly unlocked
+        // cup gets its big moment; after the last one the map switches to it. Input waits meanwhile.
+        System.Collections.IEnumerator Celebrate(List<int> races, bool cups)
+        {
+            _celebrating = true;
+            yield return null; // let the layout settle
+            if (races.Count > 0)
+            {
+                yield return new WaitForSecondsRealtime(0.35f);
+                foreach (int index in races)
+                {
+                    if (index >= _nodes.Count) continue;
+                    int i = index;
+                    yield return _nodes[i].PlayUnlock(sparkle, () => { _hideFrom = i + 1; Refresh(); });
+                    yield return new WaitForSecondsRealtime(0.12f);
+                }
+                _hideFrom = int.MaxValue;
+                UnlockLog.SeeRaces(catalog);
+                Select(races[^1]); // drive to the newest race
+            }
+            CupDefinition newest = null;
+            if (cups && !CupList.DevUnlockAll && celebration != null)
+                foreach (var cup in UnlockLog.NewCups())
+                {
+                    yield return celebration.Play(cup);
+                    UnlockLog.SeeCup(cup);
+                    newest = cup;
+                }
+            _celebrating = false;
+            if (newest != null && newest != _cup) SwitchTo(newest);
         }
 
         // ------------------------------------------------------------------ switching cups
 
-        /// <summary>The cups you can switch between on the map (unlocked, with a map to show).</summary>
-        static List<CupDefinition> Switchable()
-        {
-            var list = new List<CupDefinition>();
-            if (CupList.Instance != null)
-                foreach (var cup in CupList.Instance.cups) if (CupList.IsPlayable(cup)) list.Add(cup);
-            return list;
-        }
+        /// <summary>The cups you can page through on the map: all of them (locked and coming-soon ones show their own page).</summary>
+        static List<CupDefinition> Switchable() => CupList.Instance != null ? new List<CupDefinition>(CupList.Instance.cups) : new List<CupDefinition>();
 
         CupDefinition Neighbour(int direction)
         {
@@ -145,7 +210,10 @@ namespace SomeGame.UI
             return i >= 0 && i < cups.Count && cups.IndexOf(_cup) >= 0 ? cups[i] : null;
         }
 
-        public bool CanSwipe => !_switching && _wipeFrom == null && _pageHome != null && !GameSession.Loading && Switchable().Count > 1;
+        /// <summary>The cup on the page (may be a locked or coming-soon one).</summary>
+        public CupDefinition ShownCup => _cup;
+
+        public bool CanSwipe => !_switching && !_celebrating && _wipeFrom == null && _pageHome != null && !GameSession.Loading && Switchable().Count > 1;
 
         float PageWidth => ((RectTransform)transform).rect.width;
 
@@ -170,7 +238,55 @@ namespace SomeGame.UI
         bool _wipeReady, _wipeStarting;
         float _reveal;
         float? _pendingRelease;
-        Texture2D _snapshot;
+        Texture2D _snapshot, _blurred;
+
+        // A soft, blurred copy: block-averaged down to 1/factor size, box-blurred twice, shown smoothed.
+        static Texture2D Blurred(Texture2D source, int factor)
+        {
+            int w = Mathf.Max(1, source.width / factor), h = Mathf.Max(1, source.height / factor);
+            var src = source.GetPixels32();
+            var small = new Color[w * h];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    float r = 0f, g = 0f, b = 0f; int n = 0;
+                    for (int dy = 0; dy < factor; dy += 2)
+                        for (int dx = 0; dx < factor; dx += 2)
+                        {
+                            int sx = x * factor + dx, sy = y * factor + dy;
+                            if (sx >= source.width || sy >= source.height) continue;
+                            var c = src[sy * source.width + sx];
+                            r += c.r; g += c.g; b += c.b; n++;
+                        }
+                    small[y * w + x] = new Color(r / n / 255f, g / n / 255f, b / n / 255f, 1f);
+                }
+            for (int pass = 0; pass < 2; pass++) small = Box(small, w, h, 2);
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false, source.isDataSRGB == false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+            tex.SetPixels(small);
+            tex.Apply(false);
+            return tex;
+        }
+
+        static Color[] Box(Color[] px, int w, int h, int r)
+        {
+            var tmp = new Color[px.Length];
+            var outp = new Color[px.Length];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    Color sum = Color.clear; int n = 0;
+                    for (int k = -r; k <= r; k++) { int xx = Mathf.Clamp(x + k, 0, w - 1); sum += px[y * w + xx]; n++; }
+                    tmp[y * w + x] = sum / n;
+                }
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    Color sum = Color.clear; int n = 0;
+                    for (int k = -r; k <= r; k++) { int yy = Mathf.Clamp(y + k, 0, h - 1); sum += tmp[yy * w + x]; n++; }
+                    outp[y * w + x] = sum / n;
+                }
+            return outp;
+        }
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _fadePlan;
 
         /// <summary>
@@ -217,7 +333,7 @@ namespace SomeGame.UI
         /// <summary>Slides <paramref name="cup"/> in over the current one (from the cup menu).</summary>
         public void SwitchTo(CupDefinition cup)
         {
-            if (_switching || _wipeFrom != null || cup == null || cup == _cup || !CupList.IsPlayable(cup)) return;
+            if (_switching || _celebrating || _wipeFrom != null || cup == null || cup == _cup) return;
             var cups = Switchable();
             int direction = cups.IndexOf(cup) >= cups.IndexOf(_cup) ? 1 : -1;
             _pendingRelease = 1f;
@@ -254,6 +370,7 @@ namespace SomeGame.UI
             _snapshot.Apply(false);
             Destroy(capture);
             wipeImage.texture = _snapshot;
+            if (wipeBlur != null) wipeBlur.texture = _blurred = Blurred(_snapshot, 10);
             wipe.gameObject.SetActive(true);
             SetWipe(0f);
             ShowCup(next, fadeAbove: true);
@@ -280,10 +397,19 @@ namespace SomeGame.UI
             wipe.pivot = new Vector2(side, 0.5f);
             wipe.anchoredPosition = Vector2.zero;
             wipe.sizeDelta = new Vector2(covered, 0f);
-            var image = wipeImage.rectTransform;
-            image.anchorMin = image.anchorMax = image.pivot = new Vector2(side, 0.5f);
-            image.anchoredPosition = Vector2.zero;
-            image.sizeDelta = new Vector2(w, h);
+            // The old page blurs, dims and sinks back a little as the new cup covers it.
+            float covering = _reveal / w;
+            foreach (var g in new UnityEngine.UI.Graphic[] { wipeImage, wipeBlur, wipeDim })
+            {
+                if (g == null) continue;
+                var image = g.rectTransform;
+                image.anchorMin = image.anchorMax = image.pivot = new Vector2(side, 0.5f);
+                image.anchoredPosition = Vector2.zero;
+                image.sizeDelta = new Vector2(w, h);
+                image.localScale = Vector3.one * (1f - 0.04f * covering);
+            }
+            if (wipeBlur != null) wipeBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(covering * 2.2f));
+            if (wipeDim != null) wipeDim.color = new Color(0f, 0f, 0f, 0.35f * covering);
             if (wipeEdge != null)
             {
                 // The new cup's edge casts a soft shadow onto the old page.
@@ -294,8 +420,8 @@ namespace SomeGame.UI
                 edge.localScale = new Vector3(fromRight ? 1f : -1f, 1f, 1f);
                 wipeEdge.color = new Color(0f, 0f, 0f, 0.35f * Mathf.Clamp01(_reveal / 40f) * Mathf.Clamp01(covered / 40f));
             }
-            // The new page glides in a little as it is uncovered (it seems to slide in on top).
-            SetPage(_wipeDirection * covered * 0.25f);
+            // The new page glides in and settles from a slight zoom as it is uncovered (it seems to slide in on top).
+            SetPage(_wipeDirection * covered * 0.25f, 1f + 0.05f * covered / w);
             if (_fadePlan != null)
             {
                 float c = _reveal / w;
@@ -320,12 +446,40 @@ namespace SomeGame.UI
             if (!go) ShowCup(_wipeFrom, fadeAbove: false);
             wipe.gameObject.SetActive(false);
             wipeImage.texture = null;
+            if (wipeBlur != null) wipeBlur.texture = null;
             if (_snapshot != null) { Destroy(_snapshot); _snapshot = null; }
+            if (_blurred != null) { Destroy(_blurred); _blurred = null; }
             SetPage(0f);
-            Refresh();
+            bool open = CupList.IsPlayable(_cup);
+            if (open) Refresh();
             _wipeFrom = null;
             _wipeReady = false;
             _switching = false;
+            // Races of this cup that opened since you last looked unlock now.
+            if (go && open && _pendingRaces != null && _pendingRaces.Count > 0) StartCoroutine(Celebrate(_pendingRaces, false));
+            _pendingRaces = null;
+        }
+
+        List<int> _pendingRaces;
+
+        // A locked or coming-soon cup shows a big grey page instead of its map (its name stays a secret).
+        void SetLockedView(bool locked, CupDefinition cup)
+        {
+            if (lockedPage == null) return;
+            lockedPage.SetActive(locked);
+            world.gameObject.SetActive(!locked);
+            if (racePageParts != null) foreach (var part in racePageParts) if (part != null) part.SetActive(!locked);
+            if (!locked || cup == null) return;
+            bool soon = CupList.IsComingSoon(cup);
+            lockedIcon.sprite = soon ? soonSprite : lockSprite;
+            lockedTitle.text = soon ? "COMING SOON" : "LOCKED";
+            chapterLabel.text = soon ? "COMING SOON" : "LOCKED CUP";
+            if (lockedCaption != null) lockedCaption.text = soon ? "MORE CUPS ARE ON THE WAY" : "TO UNLOCK";
+            lockedNeeds.SetActive(!soon);
+            lockedStars.text = $"{Mathf.Min(ProgressStore.TotalStars, cup.starsRequired)}/{cup.starsRequired}";
+            lockedTrophies.text = $"{Mathf.Min(ProgressStore.TotalWins, cup.trophiesRequired)}/{cup.trophiesRequired}";
+            if (snow != null) snow.SetActive(false);
+            if (ambience != null) ambience.Clear();
         }
 
         // Puts another cup on the page: its races, road, landscape, life and colours. Everything under the
@@ -333,8 +487,9 @@ namespace SomeGame.UI
         // button) blends over as the new cup slides in.
         void ShowCup(CupDefinition cup, bool fadeAbove)
         {
+            bool open = CupList.IsPlayable(cup);
             var oldPalette = Theme.Current;
-            var newPalette = Theme.Of(cup.look);
+            var newPalette = open ? Theme.Of(cup.look) : oldPalette; // a locked page keeps the colours
             var plan = Theme.RecolorPlan(transform, oldPalette, newPalette);
             _fadePlan = fadeAbove ? new List<(UnityEngine.UI.Graphic, Color, Color)>() : null;
             foreach (var (graphic, a, b) in plan)
@@ -346,6 +501,12 @@ namespace SomeGame.UI
             if (Camera.main != null && Theme.TryMap(Camera.main.backgroundColor, oldPalette, newPalette, out var sky)) Camera.main.backgroundColor = sky;
 
             _cup = cup;
+            SetLockedView(!open, cup);
+            if (!open)
+            {
+                UpdateDots(false);
+                return;
+            }
             CupList.Selected = cup;
             catalog = CatalogOf(cup);
             MapLayout.Current = MapLayout.Of(cup.look);
@@ -355,7 +516,8 @@ namespace SomeGame.UI
             if (ambience != null) ambience.Play(cup.look);
             foreach (var node in _nodes) if (node != null) Destroy(node.gameObject);
             _nodes.Clear();
-            _selected = InitialSelection();
+            _pendingRaces = PrepareRaceUnlocks();
+            _selected = 0; // a fresh cup always starts at its first race
             Build();
             Refresh();
             UpdateDots(false);
@@ -428,9 +590,9 @@ namespace SomeGame.UI
         {
             var last = GameSession.CurrentLevel;
             int index = last != null ? catalog.IndexOf(last) : -1;
-            if (index >= 0 && ProgressStore.CanEnter(catalog, index)) return index;
+            if (index >= 0 && index < _hideFrom && ProgressStore.CanEnter(catalog, index)) return index;
             int open = 0;
-            for (int i = 0; i < catalog.Count; i++)
+            for (int i = 0; i < catalog.Count && i < _hideFrom; i++)
                 if (ProgressStore.CanEnter(catalog, i)) open = i;
             return open;
         }
@@ -499,6 +661,7 @@ namespace SomeGame.UI
 
         void Select(int index)
         {
+            if (_celebrating && _hideFrom != int.MaxValue) return; // not while races unlock
             _selected = index;
             PlaceCar();
             Refresh();
@@ -523,9 +686,9 @@ namespace SomeGame.UI
                 }
                 var level = catalog[i];
                 var state = !ProgressStore.IsVisible(catalog, i) ? MapNodeState.Hidden
+                    : i >= _hideFrom || !ProgressStore.CanEnter(catalog, i) ? MapNodeState.Locked // still to unlock (with an animation)
                     : ProgressStore.HasWon(level) ? MapNodeState.Won
-                    : ProgressStore.CanEnter(catalog, i) ? MapNodeState.Open
-                    : MapNodeState.Locked;
+                    : MapNodeState.Open;
                 _nodes[i].Bind((i + 1).ToString(), state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, null, () => Select(index));
             }
             ShowSelected();
@@ -568,7 +731,7 @@ namespace SomeGame.UI
                         icon.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.Stone, 0.35f);
             }
 
-            bool canEnter = ProgressStore.CanEnter(catalog, _selected);
+            bool canEnter = ProgressStore.CanEnter(catalog, _selected) && _selected < _hideFrom;
             SetInfoAvailable(canEnter); // no race info for a locked race
             startButton.interactable = canEnter;
             startFace.color = canEnter ? Theme.Orange : Theme.Stone;
@@ -611,7 +774,7 @@ namespace SomeGame.UI
 
         void StartSelected()
         {
-            if (catalog.Count == 0 || !ProgressStore.CanEnter(catalog, _selected) || GameSession.Loading) return;
+            if (catalog.Count == 0 || !ProgressStore.CanEnter(catalog, _selected) || _selected >= _hideFrom || _celebrating || GameSession.Loading) return;
             startLabel.text = "LOADING";
             startLabel.fontSize *= 0.7f;
             startRing.SetActive(false);

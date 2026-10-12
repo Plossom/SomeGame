@@ -22,11 +22,22 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "LiftChair", 48, 64, ChairPixel, 100, false);
             GenerateNavArrow();
             GenerateEdgeShade();
+            GenerateRays();
             Write(ArtGenerator.Folder, "MapFisher", 64, 80, (x, y) => FisherPixel(x, y, Vector2.zero, new Color(0f, 0f, 0f, 0f), true), 100, false);
             Write(ArtGenerator.Folder, "MapRowboat", 128, 80, RowboatPixel, 100, false);
             AssetDatabase.SaveAssets();
             Debug.Log("Map ambience art generated");
         }
+
+        /// <summary>Light rays for celebrations: sixteen soft wedges from the centre, fading outwards.</summary>
+        [MenuItem("SomeGame/Generate Rays")]
+        public static void GenerateRays() => Write(ArtGenerator.Folder, "Rays", 512, 512, (x, y) =>
+        {
+            float dx = x - 256f, dy = y - 256f, r = Mathf.Sqrt(dx * dx + dy * dy) / 256f;
+            float a = Mathf.Atan2(dy, dx) / (Mathf.PI * 2f) * 16f;
+            float wedge = Mathf.SmoothStep(0f, 1f, Mathf.Abs(Mathf.Repeat(a, 1f) - 0.5f) * 2f);
+            return White(Mathf.Clamp01(1f - r) * wedge * Mathf.SmoothStep(0f, 0.15f, r));
+        }, 100, false);
 
         /// <summary>A soft shadow strip: clear on the left, dark on the right (tinted and flipped in use).</summary>
         [MenuItem("SomeGame/Generate Edge Shade")]

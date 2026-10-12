@@ -25,9 +25,10 @@ namespace SomeGame.UI
         public void Bind(CupDefinition cup, State state, Action onClick)
         {
             bool locked = state == State.Locked, soon = state == State.Soon;
-            title.text = cup.displayName.Replace(" CUP", "");
+            // A locked cup stays a secret: no name, no picture, just the lock.
+            title.text = locked ? "LOCKED" : cup.displayName.Replace(" CUP", "");
             icon.sprite = cup.icon;
-            icon.color = locked ? new Color(1f, 1f, 1f, 0.55f) : Color.white; // locked: the picture shows faintly under the lock
+            icon.enabled = !locked;
             face.color = state == State.Current ? Theme.Cream : locked || soon ? Theme.Stone : Color.white;
             ring.gameObject.SetActive(state == State.Current);
             lockIcon.gameObject.SetActive(locked);
@@ -52,7 +53,7 @@ namespace SomeGame.UI
             soonLabel.gameObject.SetActive(soon);
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => onClick());
-            button.interactable = !locked && !soon;
+            button.interactable = true; // locked and coming-soon cups open their own page on the map
         }
     }
 }

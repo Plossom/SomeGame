@@ -34,6 +34,70 @@ namespace SomeGame.UI
         [Tooltip("Background of the caption, shown with it.")]
         [SerializeField] GameObject captionRoot;
 
+        /// <summary>
+        /// The race opens: the lock shakes, bursts away in a flash of sparkles, and the stop pops up in its
+        /// open colours (<paramref name="open"/> rebinds it). Takes about a second.
+        /// </summary>
+        public System.Collections.IEnumerator PlayUnlock(Sprite sparkle, Action open)
+        {
+            var lockT = lockIcon.rectTransform;
+            Vector3 baseScale = transform.localScale;
+            for (float t = 0f; t < 0.5f; t += Time.unscaledDeltaTime)
+            {
+                float k = t / 0.5f;
+                lockT.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(t * 45f) * 16f * k);
+                transform.localScale = baseScale * (1f + 0.06f * k * Mathf.Abs(Mathf.Sin(t * 30f)));
+                yield return null;
+            }
+            // The burst: the lock flies up and fades, sparkles spray out.
+            var burst = new GameObject("Burst", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+            var burstRt = (RectTransform)burst.transform;
+            burstRt.SetParent(transform, false);
+            burstRt.sizeDelta = Vector2.one * 150f;
+            var burstImage = burst.GetComponent<UnityEngine.UI.Image>();
+            burstImage.sprite = sparkle;
+            burstImage.raycastTarget = false;
+            var requirementTexts = requirement.GetComponentsInChildren<UnityEngine.UI.Graphic>();
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.star, 0.8f);
+            bool opened = false;
+            for (float t = 0f; t < 0.55f; t += Time.unscaledDeltaTime)
+            {
+                float k = t / 0.55f;
+                if (k < 0.45f)
+                {
+                    float u = k / 0.45f;
+                    lockT.localScale = Vector3.one * (1f + 0.8f * u);
+                    lockT.anchoredPosition = new Vector2(0f, 22f + 30f * u);
+                    lockIcon.color = Theme.WithAlpha(Theme.StoneDark, 1f - u);
+                    foreach (var g in requirementTexts) { var c = g.color; c.a = 1f - u; g.color = c; }
+                }
+                else if (!opened)
+                {
+                    opened = true;
+                    open?.Invoke(); // now an open race
+                    baseScale = transform.localScale;
+                }
+                burstRt.localScale = Vector3.one * Mathf.Lerp(0.3f, 2.6f, k);
+                burstRt.localRotation = Quaternion.Euler(0f, 0f, k * 120f);
+                burstImage.color = new Color(1f, 0.92f, 0.6f, 1f - k);
+                if (opened)
+                {
+                    float u = Mathf.InverseLerp(0.45f, 1f, k);
+                    transform.localScale = baseScale * (1f + 0.35f * Mathf.Sin(u * Mathf.PI) * (1f - u * 0.5f));
+                }
+                yield return null;
+            }
+            if (!opened) open?.Invoke();
+            Destroy(burst);
+            transform.localScale = baseScale;
+            // Put the lock back as it was (hidden now; used again if the race locks after a reset).
+            lockT.localRotation = Quaternion.identity;
+            lockT.localScale = Vector3.one;
+            lockT.anchoredPosition = new Vector2(0f, 22f);
+            lockIcon.color = Theme.StoneDark;
+            foreach (var g in requirementTexts) { var c = g.color; c.a = 1f; g.color = c; }
+        }
+
         public void Bind(string label, MapNodeState state, int earnedStars, int starsRequired, bool selected, string captionText, Action onClick)
         {
             bool hidden = state == MapNodeState.Hidden;
@@ -66,6 +130,9 @@ namespace SomeGame.UI
 
             requirement.SetActive(state == MapNodeState.Locked);
             requirementText.text = starsRequired.ToString();
+            // A slightly deeper yellow than elsewhere, so it reads on the grey badge.
+            var reqStar = requirement.transform.Find("Icon");
+            if (reqStar != null) reqStar.GetComponent<UnityEngine.UI.Image>().color = Color.Lerp(Theme.Amber, Theme.Orange, 0.45f);
 
             (captionRoot != null ? captionRoot : caption.gameObject).SetActive(!string.IsNullOrEmpty(captionText));
             caption.text = captionText;

@@ -42,7 +42,8 @@ namespace SomeGame.UI
             _tiles.Clear();
             var list = CupList.Instance;
             if (list == null) return;
-            var selected = CupList.Selected;
+            var shown = FindAnyObjectByType<MapScreen>();
+            var selected = shown != null ? shown.ShownCup : CupList.Selected;
             foreach (var cup in list.cups)
             {
                 var tile = Instantiate(tileTemplate, tilesParent);
@@ -60,10 +61,9 @@ namespace SomeGame.UI
 
         void Pick(CupDefinition cup)
         {
-            if (!CupList.IsPlayable(cup)) return;
-            if (cup == CupList.Selected) { Close(); return; }
-            Close();
             var map = FindAnyObjectByType<MapScreen>();
+            if (map != null && map.ShownCup == cup) { Close(); return; }
+            Close();
             if (map != null) map.SwitchTo(cup); // slides over to the other cup's map
             else { CupList.Selected = cup; GameSession.ReturnToMap(); }
         }

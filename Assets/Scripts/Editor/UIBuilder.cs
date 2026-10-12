@@ -132,6 +132,7 @@ namespace SomeGame.EditorTools
                 ("sparkle", Sprite("Sparkle")), ("puff", Sprite("Smoke")), ("chair", Sprite("LiftChair")),
                 ("fisher", Sprite("MapFisher")), ("rowboat", Sprite("MapRowboat")), ("ring", Sprite("Ring")), ("fish", Sprite("Fish")));
             var node = BuildNode(world);
+            var lockedPage = BuildLockedPage(map);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));
             car.pivot = new Vector2(0.5f, 0.5f);
             Img(At("Shadow", car, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(70f, 120f)), "CarShadow", new Color(0f, 0f, 0f, 0.45f)).preserveAspect = false;
@@ -212,6 +213,9 @@ namespace SomeGame.EditorTools
             wipe.gameObject.AddComponent<RectMask2D>();
             var wipeImage = Rt("Old", wipe).gameObject.AddComponent<RawImage>();
             wipeImage.raycastTarget = true; // blocks taps while the cups change
+            var wipeBlur = Rt("Blur", wipe).gameObject.AddComponent<RawImage>();
+            wipeBlur.raycastTarget = false;
+            var wipeDim = Img(Rt("Dim", wipe), null, new Color(0f, 0f, 0f, 0f));
             var wipeEdge = Img(Rt("Edge", wipe), "EdgeShade", new Color(0f, 0f, 0f, 0.35f));
             wipeEdge.preserveAspect = false;
             wipe.gameObject.SetActive(false);
@@ -244,6 +248,17 @@ namespace SomeGame.EditorTools
             var dot = Img(At("Dot", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(24f, 24f)), "Pill", Theme.Amber, sliced: true);
             Set(so, "dots", dots); Set(so, "dotTemplate", dot);
             Set(so, "wipe", wipe); Set(so, "wipeImage", wipeImage); Set(so, "wipeEdge", wipeEdge);
+            Set(so, "wipeBlur", wipeBlur); Set(so, "wipeDim", wipeDim);
+            Set(so, "lockedPage", lockedPage.gameObject);
+            Set(so, "lockedIcon", lockedPage.Find("Plate/Icon").GetComponent<Image>());
+            Set(so, "lockSprite", Sprite("IconLock")); Set(so, "soonSprite", Sprite("IconQuestion"));
+            Set(so, "lockedTitle", lockedPage.Find("Title").GetComponent<TMP_Text>());
+            Set(so, "lockedCaption", lockedPage.Find("Caption").GetComponent<TMP_Text>());
+            Set(so, "lockedNeeds", lockedPage.Find("Needs").gameObject);
+            Set(so, "lockedStars", lockedPage.Find("Needs/Stars/Count").GetComponent<TMP_Text>());
+            Set(so, "lockedTrophies", lockedPage.Find("Needs/Trophies/Count").GetComponent<TMP_Text>());
+            SetArray(so, "racePageParts", new[] { header.gameObject, bottom.gameObject });
+            Set(so, "celebration", BuildCupCelebration(canvas)); Set(so, "sparkle", Sprite("Sparkle"));
             SetArray(so, "fadeRoots", new[] { canvas.Find("CupMenu") });
             var swipe = map.gameObject.AddComponent<MapSwipe>();
             Configure(swipe, ("screen", screen), ("canvas", canvas.GetComponent<Canvas>()));
@@ -255,6 +270,75 @@ namespace SomeGame.EditorTools
                 new EditorBuildSettingsScene(MapScenePath, true),
                 new EditorBuildSettingsScene(RaceScenePath, true),
             };
+        }
+
+        // The page shown instead of the map for a locked or coming-soon cup: grey, a big lock (or "?") on a
+        // round plate, LOCKED, and what it takes to unlock (stars and trophies, with your progress).
+        static RectTransform BuildLockedPage(RectTransform map)
+        {
+            var page = Stretch("LockedPage", map);
+            Img(page, null, Hex("8D918F"));
+            Img(At("Glow", page, new Vector2(0.5f, 0.5f), new Vector2(0f, 240f), new Vector2(1100f, 1100f)), "Circle", new Color(1f, 1f, 1f, 0.12f));
+            var plate = At("Plate", page, new Vector2(0.5f, 0.5f), new Vector2(0f, 240f), new Vector2(420f, 420f));
+            Img(At("Shadow", plate, new Vector2(0.5f, 0.5f), new Vector2(0f, -22f), new Vector2(420f, 420f)), "Circle", Hex("6F7371"));
+            Img(At("Face", plate, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(420f, 420f)), "Circle", Hex("C9CCCA"));
+            Img(At("Ring", plate, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(420f, 420f)), "Ring", Hex("6F7371"));
+            Img(At("Icon", plate, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(210f, 210f)), "IconLock", Hex("6F7371"));
+            var title = Txt(At("Title", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -80f), new Vector2(1000f, 190f)), "LOCKED", 170, Hex("F4F5F3"), _black);
+            title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 170;
+            var caption = Txt(At("Caption", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -205f), new Vector2(1000f, 60f)), "TO UNLOCK", 44, Hex("E3E5E2"), _condItalic);
+            caption.characterSpacing = 8f;
+            var needs = At("Needs", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -330f), new Vector2(640f, 150f));
+            Img(needs, "Round", Theme.Ink, sliced: true);
+            void Need(string name, float x, string icon)
+            {
+                var item = At(name, needs, new Vector2(0.5f, 0.5f), new Vector2(x, 0f), new Vector2(290f, 130f));
+                Img(At("Icon", item, new Vector2(0.5f, 0.5f), new Vector2(-82f, 0f), new Vector2(80f, 80f)), icon, Theme.Amber);
+                Txt(At("Count", item, new Vector2(0.5f, 0.5f), new Vector2(42f, -2f), new Vector2(190f, 120f)), "0/20", 76, Theme.Amber, _condItalic, TextAlignmentOptions.Left);
+            }
+            Need("Stars", -155f, "IconStar");
+            Need("Trophies", 155f, "IconTrophy");
+            page.gameObject.SetActive(false);
+            return page;
+        }
+
+        // The full-screen celebration when a new cup unlocks (CupUnlockCelebration).
+        static CupUnlockCelebration BuildCupCelebration(RectTransform canvas)
+        {
+            var host = Stretch("CupUnlock", canvas);
+            var panel = Stretch("Panel", host);
+            var dimRt = Stretch("Dim", panel);
+            var dim = Img(dimRt, null, new Color(0f, 0f, 0f, 0.75f), raycast: true);
+            var tap = dimRt.gameObject.AddComponent<Button>();
+            tap.targetGraphic = dim; tap.transition = Selectable.Transition.None;
+            var rays = At("Rays", panel, new Vector2(0.5f, 0.5f), new Vector2(0f, 260f), new Vector2(1500f, 1500f));
+            var raysImage = Img(rays, "Rays", new Color(1f, 0.9f, 0.55f, 0.55f));
+            var confetti = At("Confetti", panel, new Vector2(0.5f, 0.5f), new Vector2(0f, 260f), Vector2.zero);
+            var badge = At("Badge", panel, new Vector2(0.5f, 0.5f), new Vector2(0f, 260f), new Vector2(520f, 520f));
+            var badgeImage = Img(badge, "CupWinter", Color.white);
+            var lockRt = At("Lock", panel, new Vector2(0.5f, 0.5f), new Vector2(0f, 240f), new Vector2(300f, 300f));
+            var lockImage = Img(lockRt, "IconLock", Color.white);
+            var titleRt = At("Title", panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -150f), new Vector2(1100f, 200f));
+            var title = Txt(titleRt, "NEW CUP!", 190, Theme.Amber, _black);
+            title.fontSharedMaterial = _blackOutline;
+            var cupName = Txt(At("CupName", panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -300f), new Vector2(1100f, 120f)), "WINTER CUP", 96, Color.white, _condItalic);
+            cupName.characterSpacing = 8f;
+            var goRt = At("Go", panel, new Vector2(0.5f, 0.5f), new Vector2(0f, -560f), new Vector2(640f, 170f));
+            var goShadowRt = Stretch("Shadow", goRt); goShadowRt.offsetMax = new Vector2(0f, -14f);
+            Img(goShadowRt, "Round", Theme.OrangeDeep, sliced: true);
+            var goFaceRt = Stretch("Face", goRt); goFaceRt.offsetMin = new Vector2(0f, 14f);
+            var goFace = Img(goFaceRt, "Round", Theme.Orange, sliced: true, raycast: true);
+            Txt(Stretch("Label", goFaceRt), "LET'S GO!", 76, Color.white, _black).characterSpacing = 6f;
+            var go = goRt.gameObject.AddComponent<Button>();
+            go.targetGraphic = goFace; go.transition = Selectable.Transition.None;
+            goRt.gameObject.AddComponent<ButtonFeedback>();
+            var flash = Img(Stretch("Flash", panel), null, new Color(1f, 1f, 1f, 0f));
+            var celebration = host.gameObject.AddComponent<CupUnlockCelebration>();
+            Configure(celebration, ("panel", panel.gameObject), ("dim", dim), ("rays", rays), ("raysImage", raysImage), ("badge", badge),
+                ("badgeImage", badgeImage), ("lockRt", lockRt), ("lockImage", lockImage), ("flash", flash), ("titleRt", titleRt), ("title", title),
+                ("cupName", cupName), ("goButton", go), ("tapAnywhere", tap), ("confettiLayer", confetti), ("confettiSprite", Sprite("Pill")));
+            panel.gameObject.SetActive(false);
+            return celebration;
         }
 
         // The race info window: a big cream card over the map with the track from above (as on the loading
