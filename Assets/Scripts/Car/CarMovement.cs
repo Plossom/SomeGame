@@ -164,7 +164,26 @@ namespace SomeGame.Car
                 return;
             }
 
-            Steer(steer, forwardSpeed, dt);
+            // Leaving a drift: the body swings from its drift angle back to where the car is going (speed
+            // kept), so the speed does not suddenly turn into a sideways slide.
+            if (_exitTimer > 0f)
+            {
+                float speedNow = _body.linearVelocity.magnitude;
+                float travel = speedNow > 0.5f ? HeadingOf(_body.linearVelocity) : _body.rotation;
+                float rotation = Mathf.LerpAngle(_body.rotation, travel, Mathf.Clamp01(dt / _exitTimer));
+                _exitTimer -= dt;
+                _body.angularVelocity = 0f;
+                _body.MoveRotation(rotation);
+                transform.rotation = Quaternion.Euler(0f, 0f, rotation);
+                float rad = (rotation + 90f) * Mathf.Deg2Rad;
+                Vector2 heading = new(Mathf.Cos(rad), Mathf.Sin(rad));
+                forward = heading;
+                right = new Vector2(heading.y, -heading.x);
+                forwardSpeed = Mathf.Max(forwardSpeed, Vector2.Dot(_body.linearVelocity, heading));
+                sidewaysSpeed = 0f;
+            }
+            else Steer(steer, forwardSpeed, dt);
+            _calmTimer = Mathf.Max(0f, _calmTimer - dt);
             if (throttle < 0f)
                 forwardSpeed = Mathf.MoveTowards(forwardSpeed, 0f, stats.brakeDeceleration * -throttle * dt);
             else if (forwardSpeed > maxSpeed)
@@ -177,7 +196,7 @@ namespace SomeGame.Car
             // Lateral: grip bleeds off sideways velocity; less grip at speed lets the car slide in fast corners.
             float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(0.01f, stats.topSpeed));
             float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f) * (OnIce ? stats.iceGrip : 1f)
-                         * (IsWallRiding ? stats.wallGrip : 1f);
+                         * (IsWallRiding ? stats.wallGrip : 1f) * (_calmTimer > 0f ? stats.driftCalmGrip : 1f); // calm after a drift
             sidewaysSpeed *= Mathf.Exp(-grip * dt);
 
             _body.linearVelocity = forward * forwardSpeed + right * sidewaysSpeed;
@@ -205,6 +224,8 @@ namespace SomeGame.Car
                 Mathf.Clamp01(Mathf.Abs(forwardSpeed) / stats.fullTurnSpeed));
             float recovery = _hitTimer > 0f ? 0.3f : 1f;
             float maxStep = stats.turnRate * speedFactor * recovery * dt;
+            // Calm phase after a drift: turn smoothly towards the stick (no snapping, no overshoot).
+            if (_calmTimer > 0f) maxStep = Mathf.Min(maxStep, Mathf.Abs(delta) * stats.driftCalmSteer * dt);
             _body.angularVelocity = Mathf.Clamp(delta, -maxStep, maxStep) / dt;
         }
 
@@ -222,7 +243,10 @@ namespace SomeGame.Car
                 _driftCharge += dt;
                 // Lifted the steering thumb, ran onto the grass or got too slow: drift lost, no boost.
                 if (!ControlsEnabled || throttle <= 0f || offRoad || speed < stats.driftMinSpeed * stats.driftKeepSpeedFactor)
+                {
                     EndDrift();
+                    StartDriftExit(); // a lost drift settles the same way (no boost)
+                }
                 else if (!held)
                     return ReleaseDrift();      // let go of the drift finger: boost
                 return 0f;
@@ -283,10 +307,20 @@ namespace SomeGame.Car
             SidewaysSpeed = Vector2.Dot(_body.linearVelocity, transform.right);
         }
 
+        float _exitTimer, _calmTimer;
+
+        // A drift ends on the road: swing back to the travel direction, then a short calm phase.
+        void StartDriftExit()
+        {
+            _exitTimer = stats.driftExitTime;
+            _calmTimer = stats.driftExitTime + stats.driftCalmTime;
+        }
+
         float ReleaseDrift()
         {
             float charge = _driftCharge;
             EndDrift();
+            StartDriftExit();
             if (charge < stats.driftMinCharge) return 0f;
 
             BoostStrength = Mathf.InverseLerp(stats.driftMinCharge, stats.driftMaxCharge, charge);
@@ -310,6 +344,7 @@ namespace SomeGame.Car
         {
             if (IsAirborne || duration <= 0f) return;
             EndDrift();
+            _exitTimer = _calmTimer = 0f;
             _airLocked = locked;
             if (direction.HasValue)
             {
@@ -357,6 +392,7 @@ namespace SomeGame.Car
         {
             if (IsAirborne || IsSlipping) return;
             EndDrift();
+            _exitTimer = _calmTimer = 0f;
             _boostTimer = 0f;
             _slipDuration = _slipTimer = stats.oilSpinSeconds;
             _slipDirection = direction >= 0 ? 1f : -1f;
@@ -411,6 +447,7 @@ namespace SomeGame.Car
         /// <summary>Puts the car back on the road (after a splash), standing still.</summary>
         public void Respawn(Pose pose)
         {
+            _exitTimer = _calmTimer = 0f;
             _airTimer = 0f;
             _slipTimer = 0f;
             _boostTimer = 0f;

@@ -89,6 +89,13 @@ namespace SomeGame.Car
         [Min(0f)] public float driftMinCharge = 0.6f;
         [Tooltip("Seconds of drifting for the strongest boost (last spark colour).")]
         [Min(0.01f)] public float driftMaxCharge = 2.4f;
+        [Tooltip("Seconds over which the car swings from its drift angle back to its direction of travel when a drift ends.")]
+        [Min(0.01f)] public float driftExitTime = 0.2f;
+        [Tooltip("After a drift: seconds of extra grip and eased steering, so the car does not wiggle.")]
+        [Min(0f)] public float driftCalmTime = 0.5f;
+        [Min(1f)] public float driftCalmGrip = 2.2f;
+        [Tooltip("How quickly the car turns towards the stick during the calm phase (per second, per degree of difference).")]
+        [Min(0.5f)] public float driftCalmSteer = 8f;
 
         [Header("Boost (released drift)")]
         [Tooltip("Boost length for the weakest / strongest charge (seconds).")]
