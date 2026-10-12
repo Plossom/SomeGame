@@ -11,10 +11,10 @@ namespace SomeGame.Input
 
         public enum Assist { Off, Light, Strong }
 
-        /// <summary>Smart steering: how much the game helps you follow the road (Light by default).</summary>
+        /// <summary>Smart steering: Light (default) or Off. (A saved "Strong" from earlier counts as Light.)</summary>
         public static Assist SteerAssist
         {
-            get => (Assist)Mathf.Clamp(PlayerPrefs.GetInt(SteerAssistKey, (int)Assist.Light), 0, 2);
+            get => PlayerPrefs.GetInt(SteerAssistKey, (int)Assist.Light) == (int)Assist.Off ? Assist.Off : Assist.Light;
             set
             {
                 if (value == SteerAssist) return;

@@ -906,7 +906,7 @@ namespace SomeGame.EditorTools
             var slider = BuildSlider(sound);
 
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
-            var assistButton = MenuButton(card, "AssistButton", "STEERING HELP   LIGHT", Color.white, Theme.Ink, Theme.Ink, 130f, out var assistLabel, 46);
+            var assistButton = MenuButton(card, "AssistButton", "STEERING HELP   ON", Color.white, Theme.Ink, Theme.Ink, 130f, out var assistLabel, 46);
             var tutorialButton = MenuButton(card, "TutorialButton", "TUTORIAL", Color.white, Theme.Ink, Theme.Ink, 130f, out _, 46);
             var cupsButton = MenuButton(card, "CupsButton", "UNLOCK ALL   OFF", Color.white, Theme.Ink, Theme.Ink, 130f, out var cupsLabel, 46);
             var resetButton = MenuButton(card, "ResetButton", "RESET GAME", Color.white, Theme.Rust, Theme.Rust, 130f, out var resetLabel, 46);

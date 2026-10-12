@@ -24,11 +24,14 @@ namespace SomeGame.Input
         SomeGame.Track.TrackSensor _sensor;
         SomeGame.Car.CarMovement _car;
 
+        float _landedAt = -10f;
+
         void Awake()
         {
             if (joystick == null) joystick = FindAnyObjectByType<FloatingJoystick>();
             _sensor = GetComponent<SomeGame.Track.TrackSensor>();
             _car = GetComponent<SomeGame.Car.CarMovement>();
+            if (_car != null) _car.Landed += () => _landedAt = Time.time;
         }
 
         void Update()
@@ -54,9 +57,12 @@ namespace SomeGame.Input
             if (level == ControlSettings.Assist.Off || _sensor == null || _car == null || _sensor.Track == null || _car.IsAirborne) return aim;
             var track = _sensor.Track;
             var path = track.Path;
-            float strength = level == ControlSettings.Assist.Light ? 0.28f : 0.65f;
-            float peak = level == ControlSettings.Assist.Light ? 0.55f : 0.78f; // most help near ramps and oil
-            float window = level == ControlSettings.Assist.Light ? 45f : 60f;
+            float strength = 0.28f;
+            // Just landed: no help for a moment, then it fades back in (no tug right after a jump).
+            float sinceLanding = Time.time - _landedAt;
+            if (sinceLanding < 1.1f) strength *= Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.5f, 1.1f, sinceLanding));
+            if (strength <= 0f) return aim;
+            float window = 45f;
             if (_car.IsDrifting) strength *= 0.4f; // a drift is meant to point across the road
             Vector2 position = _car.Body.position;
             float speed = Mathf.Max(0f, _car.ForwardSpeed);
@@ -80,16 +86,6 @@ namespace SomeGame.Input
                 float d = _sensor.Current.Distance;
                 half = track.HalfWidthAt(d);
                 float keep = Mathf.Clamp(lateral, -half * 0.6f, half * 0.6f); // stay on your own line
-                // A ramp ahead: line up with it.
-                foreach (var jump in track.Jumps)
-                {
-                    float toLip = path.DeltaDistance(d, jump.Lip);
-                    if (toLip <= 0f || toLip > 24f) continue;
-                    float k = Mathf.InverseLerp(24f, 8f, toLip);
-                    keep = Mathf.Lerp(keep, jump.Lateral, k);
-                    strength = Mathf.Max(strength, Mathf.Lerp(strength, peak, k));
-                    window = Mathf.Max(window, 60f);
-                }
                 // Oil ahead on your line: aim round it, on whichever side needs the smaller move.
                 foreach (var spot in track.Layout.oil)
                 {
@@ -102,7 +98,7 @@ namespace SomeGame.Input
                     float dodge = left > limit ? right : right < -limit ? left : (Mathf.Abs(left - keep) < Mathf.Abs(right - keep) ? left : right);
                     float k = Mathf.InverseLerp(22f, 7f, to);
                     keep = Mathf.Lerp(keep, Mathf.Clamp(dodge, -limit, limit), k);
-                    strength = Mathf.Max(strength, Mathf.Lerp(strength, peak, k));
+
                     window = Mathf.Max(window, 55f);
                 }
                 // In a bend, look further up the road: the aim then already lies across the inside of the
@@ -110,6 +106,18 @@ namespace SomeGame.Input
                 turn = path.TurnAtDistance(d + look, 8);
                 float bendLook = look * Mathf.Lerp(1f, 1.8f, Mathf.InverseLerp(10f, 45f, Mathf.Abs(turn)));
                 target = path.PointAt(d + bendLook) + path.NormalAt(d + bendLook) * keep;
+                // A ramp ahead: the aim slides over to a line straight through the ramp and on along the road
+                // beyond it (at normal strength: guided, not yanked).
+                foreach (var jump in track.Jumps)
+                {
+                    float toLip = path.DeltaDistance(d, jump.Lip);
+                    if (toLip <= 0f || toLip > 30f) continue;
+                    float k = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(30f, 10f, toLip));
+                    Vector2 through = path.PointAt(jump.Lip + 6f) + path.NormalAt(jump.Lip + 6f) * jump.Lateral;
+                    target = Vector2.Lerp(target, through, k);
+                    turn *= 1f - k; // the line through a ramp is straight
+                    window = Mathf.Max(window, 50f);
+                }
                 tangent = path.TangentAt(d);
                 // Leave room for the things beside the road that you are meant to drive onto.
                 float side = Mathf.Sign(lateral);
@@ -120,6 +128,12 @@ namespace SomeGame.Input
                     if (to > -6f && to < 30f && Mathf.Sign(cut.side) == side) guardEdge = false;
                 }
             }
+
+            // Steering clearly at a jump pad or a ramp beside the road: that is on purpose, no help.
+            foreach (var pad in track.Layout.bouncers)
+                if (Aiming(aim, position, pad.position)) return aim;
+            foreach (var cut in track.Shortcuts)
+                if (Aiming(aim, position, cut.Centre)) return aim;
 
             Vector2 road = (target - position).normalized;
             Vector2 result = aim;
@@ -145,6 +159,13 @@ namespace SomeGame.Input
                     result -= outward * outwardPart * Mathf.Clamp01(edge * strength * 1.5f);
             }
             return result.sqrMagnitude > 0.0001f ? result.normalized : aim;
+        }
+
+        static bool Aiming(Vector2 aim, Vector2 from, Vector2 at)
+        {
+            Vector2 to = at - from;
+            float distance = to.magnitude;
+            return distance < 32f && distance > 0.5f && Vector2.Angle(aim, to) < Mathf.Lerp(28f, 14f, distance / 32f);
         }
 
         static bool SecondFingerDown()

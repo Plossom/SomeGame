@@ -34,7 +34,7 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Slider volumeSlider;
         [SerializeField] UnityEngine.UI.Button joystickButton;
         [SerializeField] TMP_Text joystickLabel;
-        [Tooltip("Smart steering: Light / Strong / Off.")]
+        [Tooltip("Smart steering: on (light) / off.")]
         [SerializeField] UnityEngine.UI.Button assistButton;
         [SerializeField] TMP_Text assistLabel;
 
@@ -65,12 +65,8 @@ namespace SomeGame.UI
             mainMenuButton.onClick.AddListener(() => { Unpause(); GameSession.ReturnToMap(); });
             joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
             if (assistButton != null)
-                assistButton.onClick.AddListener(() => ControlSettings.SteerAssist = ControlSettings.SteerAssist switch
-                {
-                    ControlSettings.Assist.Light => ControlSettings.Assist.Strong,
-                    ControlSettings.Assist.Strong => ControlSettings.Assist.Off,
-                    _ => ControlSettings.Assist.Light,
-                });
+                assistButton.onClick.AddListener(() => ControlSettings.SteerAssist =
+                    ControlSettings.SteerAssist == ControlSettings.Assist.Off ? ControlSettings.Assist.Light : ControlSettings.Assist.Off);
             if (tutorialButton != null)
             {
                 tutorialButton.gameObject.SetActive(!inRace);
@@ -173,7 +169,7 @@ namespace SomeGame.UI
             if (assistLabel != null)
             {
                 var a = ControlSettings.SteerAssist;
-                string word = a == ControlSettings.Assist.Off ? "OFF" : a == ControlSettings.Assist.Strong ? "STRONG" : "LIGHT";
+                string word = a == ControlSettings.Assist.Off ? "OFF" : "ON";
                 assistLabel.text = $"STEERING HELP   <color={Theme.Html(a == ControlSettings.Assist.Off ? Theme.StoneDark : Theme.Orange)}>{word}</color>";
             }
             if (cupsLabel != null)
