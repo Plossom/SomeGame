@@ -30,9 +30,10 @@ namespace SomeGame.UI
         [Tooltip("What slides when switching cups (the map, the race header, the cup name, START), with how much faster each moves (depth).")]
         [SerializeField] RectTransform[] page;
         [SerializeField] float[] pageParallax;
-        [Tooltip("Page dots under the cup name, one per cup you can switch to.")]
+        [Tooltip("The cup bar under the cup name: a dark plate with a round badge per cup (tap one to go there) and a glowing ring on the current cup.")]
         [SerializeField] RectTransform dots;
-        [SerializeField] UnityEngine.UI.Image dotTemplate;
+        [SerializeField] RectTransform badgeTemplate;
+        [SerializeField] RectTransform barRing;
         [Tooltip("Frozen picture of the old page while the next cup slides in over it (a clipping rect, its picture and the shadow at its edge).")]
         [SerializeField] RectTransform wipe;
         [SerializeField] UnityEngine.UI.RawImage wipeImage;
@@ -95,7 +96,11 @@ namespace SomeGame.UI
         [SerializeField] float carOffset = 95f;
 
         readonly List<MapNode> _nodes = new();
-        readonly List<UnityEngine.UI.Image> _dots = new();
+        readonly List<RectTransform> _badges = new();
+        float _ringAt;      // where the ring is (in badge slots)
+        float _ringVelocity;
+        int _wipeTargetSlot = -1;
+        float _wipeCovering;
         Vector2[] _pageHome;
         bool _switching;
         CupDefinition _cup;
@@ -197,6 +202,7 @@ namespace SomeGame.UI
                     newest = cup;
                 }
             _celebrating = false;
+            RefreshBadges();
             if (newest != null && newest != _cup) SwitchTo(newest);
         }
 
@@ -404,6 +410,8 @@ namespace SomeGame.UI
         {
             if (wipe == null || wipeImage == null) yield break;
             _wipeFrom = _cup;
+            _wipeTargetSlot = Switchable().IndexOf(next);
+            _wipeCovering = 0f;
             _wipeDirection = direction;
             _wipeReady = false;
             SetPage(0f);
@@ -460,6 +468,7 @@ namespace SomeGame.UI
             wipe.sizeDelta = new Vector2(covered, 0f);
             // The old page blurs, dims and sinks back a little as the new cup covers it.
             float covering = _reveal / w;
+            _wipeCovering = covering;
             foreach (var g in new UnityEngine.UI.Graphic[] { wipeImage, wipeBlur, wipeDim })
             {
                 if (g == null) continue;
@@ -525,6 +534,7 @@ namespace SomeGame.UI
             bool open = CupList.IsPlayable(_cup);
             if (open) Refresh();
             _wipeFrom = null;
+            _wipeTargetSlot = -1;
             _wipeReady = false;
             _switching = false;
             // Races of this cup that opened since you last looked unlock now.
@@ -561,7 +571,7 @@ namespace SomeGame.UI
         {
             bool open = CupList.IsPlayable(cup);
             var oldPalette = Theme.Current;
-            var newPalette = open ? Theme.Of(cup.look) : oldPalette; // a locked page keeps the colours
+            var newPalette = open ? Theme.Of(cup.look) : Theme.Locked; // a locked page is all greys
             var plan = Theme.RecolorPlan(transform, oldPalette, newPalette);
             _fadePlan = fadeAbove ? new List<(UnityEngine.UI.Graphic, Color, Color)>() : null;
             foreach (var (graphic, a, b) in plan)
@@ -595,48 +605,75 @@ namespace SomeGame.UI
             UpdateDots(false);
         }
 
+        const float BadgeSpacing = 118f;
+
+        // The cup bar: one badge per cup (its picture; a lock or "?" while locked or still coming).
         void BuildDots()
         {
-            if (dots == null || dotTemplate == null) return;
-            dotTemplate.gameObject.SetActive(false);
+            if (dots == null || badgeTemplate == null) return;
+            badgeTemplate.gameObject.SetActive(false);
             var cups = Switchable();
-            dots.gameObject.SetActive(cups.Count >= 2); // one cup: nothing to page through
+            dots.gameObject.SetActive(cups.Count >= 2);
             if (cups.Count < 2) return;
             for (int i = 0; i < cups.Count; i++)
             {
-                var dot = Instantiate(dotTemplate, dots);
-                dot.gameObject.SetActive(true);
-                _dots.Add(dot);
+                var badge = Instantiate(badgeTemplate, dots);
+                badge.gameObject.SetActive(true);
+                badge.anchoredPosition = new Vector2((i - (cups.Count - 1) * 0.5f) * BadgeSpacing, 0f);
+                var cup = cups[i];
+                badge.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => SwitchTo(cup));
+                _badges.Add(badge);
             }
-            UpdateDots(true);
+            dots.sizeDelta = new Vector2(cups.Count * BadgeSpacing + 24f, dots.sizeDelta.y);
+            _ringAt = cups.IndexOf(_cup);
+            RefreshBadges();
+            UpdateDots(false);
         }
 
-        float[] _dotWidth;
-
-        // The current cup's mark is a long amber pill, the others round cream dots; they ease between the
-        // two. The dark plate behind them fits its marks.
-        void UpdateDots(bool target)
+        // Pictures and colours of the badges (after an unlock they change).
+        void RefreshBadges()
         {
-            if (_dots.Count == 0) return;
-            _dotWidth ??= new float[_dots.Count];
-            int current = Switchable().IndexOf(_cup);
-            float size = dotTemplate.rectTransform.sizeDelta.y, gap = size * 0.6f;
-            float total = 0f;
-            for (int i = 0; i < _dots.Count; i++)
+            var cups = Switchable();
+            for (int i = 0; i < _badges.Count && i < cups.Count; i++)
             {
-                float want = i == current ? size * 2.6f : size;
-                _dotWidth[i] = target && _dotWidth[i] > 0f ? Mathf.Lerp(_dotWidth[i], want, 1f - Mathf.Exp(-12f * Time.unscaledDeltaTime)) : want;
-                total += _dotWidth[i] + (i > 0 ? gap : 0f);
+                var cup = cups[i];
+                bool soon = CupList.IsComingSoon(cup), locked = !soon && !CupList.IsUnlocked(cup);
+                var icon = _badges[i].Find("Icon").GetComponent<UnityEngine.UI.Image>();
+                icon.sprite = soon ? soonSprite : locked ? lockSprite : cup.icon;
+                icon.rectTransform.sizeDelta = Vector2.one * (soon || locked ? 46f : 78f);
+                icon.color = soon || locked ? Theme.StoneDark : Color.white;
+                _badges[i].Find("Face").GetComponent<UnityEngine.UI.Image>().color = soon || locked ? Theme.Stone : Theme.Cream;
             }
-            dots.sizeDelta = new Vector2(total + size * 1.5f, size * 1.8f);
-            float x = -total * 0.5f;
-            for (int i = 0; i < _dots.Count; i++)
+        }
+
+        // The ring glides (springy) to the current cup, or follows the swipe between two cups; the current
+        // badge is bigger and bright, the others smaller and dimmed.
+        void UpdateDots(bool animate)
+        {
+            if (_badges.Count == 0) return;
+            var cups = Switchable();
+            float target = cups.IndexOf(_cup);
+            if (_wipeFrom != null && _wipeTargetSlot >= 0) target = Mathf.Lerp(cups.IndexOf(_wipeFrom), _wipeTargetSlot, _wipeCovering);
+            if (animate)
             {
-                var rt = _dots[i].rectTransform;
-                rt.sizeDelta = new Vector2(_dotWidth[i], size);
-                rt.anchoredPosition = new Vector2(x + _dotWidth[i] * 0.5f, 0f);
-                x += _dotWidth[i] + gap;
-                _dots[i].color = i == current ? Theme.Amber : Theme.WithAlpha(Theme.Cream, 0.55f);
+                float dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+                _ringVelocity += (target - _ringAt) * 260f * dt;
+                _ringVelocity *= Mathf.Exp(-18f * dt);
+                _ringAt += _ringVelocity * dt;
+            }
+            else { _ringAt = target; _ringVelocity = 0f; }
+            if (barRing != null)
+            {
+                barRing.anchoredPosition = new Vector2((_ringAt - (_badges.Count - 1) * 0.5f) * BadgeSpacing, 0f);
+                float pulse = 1f + 0.04f * Mathf.Sin(Time.unscaledTime * 3f);
+                barRing.localScale = Vector3.one * pulse;
+            }
+            for (int i = 0; i < _badges.Count; i++)
+            {
+                float near = Mathf.Clamp01(1f - Mathf.Abs(_ringAt - i));
+                _badges[i].localScale = Vector3.one * Mathf.Lerp(0.82f, 1.12f, near);
+                var group = _badges[i].GetComponent<CanvasGroup>();
+                if (group != null) group.alpha = Mathf.Lerp(0.6f, 1f, near);
             }
         }
 

@@ -34,6 +34,14 @@ namespace SomeGame.UI
             Stone = Hex("CCD8E4"), StoneDark = Hex("7B8CA1"), Leaf = Hex("6FA7B8"),
         };
 
+        /// <summary>Greys for a locked or coming-soon cup's page: no colour until it is earned.</summary>
+        public static readonly Palette Locked = new()
+        {
+            Cream = Hex("E9EAE8"), CreamDark = Hex("CDCFCC"), Ink = Hex("3A3D3C"), InkSoft = Hex("55595A"),
+            Orange = Hex("75797A"), OrangeDeep = Hex("4C504F"), Amber = Hex("D3D6D3"), Rust = Hex("2F3231"),
+            Stone = Hex("C4C7C4"), StoneDark = Hex("7D817F"), Leaf = Hex("8E928F"),
+        };
+
         public static Palette Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
 
         public static Palette Current { get; private set; } = Valley;

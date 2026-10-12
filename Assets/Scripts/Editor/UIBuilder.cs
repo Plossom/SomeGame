@@ -163,12 +163,12 @@ namespace SomeGame.EditorTools
             // stars and trophies counter (starts 256 from the right), level with the menu button.
             var cupRt = Rt("Cup", safe);
             cupRt.anchorMin = new Vector2(0f, 1f); cupRt.anchorMax = new Vector2(1f, 1f); cupRt.pivot = new Vector2(0.5f, 1f);
-            cupRt.offsetMin = new Vector2(216f, -202f); cupRt.offsetMax = new Vector2(-272f, -50f);
-            var chapter = Txt(cupRt, "VALLEY CUP", 96, Theme.Rust, _condItalic);
+            cupRt.offsetMin = new Vector2(216f, -148f); cupRt.offsetMax = new Vector2(-272f, -44f);
+            var chapter = Txt(cupRt, "VALLEY CUP", 84, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
-            chapter.enableAutoSizing = true; chapter.fontSizeMin = 60; chapter.fontSizeMax = 96;
+            chapter.enableAutoSizing = true; chapter.fontSizeMin = 56; chapter.fontSizeMax = 84;
             // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
-            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -215f), new Vector2(1050f, 360f));
+            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -276f), new Vector2(1050f, 360f));
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, 0f), new Vector2(770f, 170f)), "MEADOW RUN", 136, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 80; title.fontSizeMax = 136; // keeps clear of the trophy counter
             // Your records for the race, beside the star times: best time over best lap.
@@ -224,8 +224,7 @@ namespace SomeGame.EditorTools
             wipeEdge.preserveAspect = false;
             wipe.gameObject.SetActive(false);
 
-            BuildCupMenu(canvas, safe);
-            BuildMenu(canvas, menuButton, null, null);
+            BuildMenu(canvas, menuButton, null, null); // (the cup bar under the cup name replaces the old globe menu)
 
             var infoWindow = BuildRaceInfo(canvas);
 
@@ -245,12 +244,20 @@ namespace SomeGame.EditorTools
             float[] depth = { 1f, 1.15f, 1.3f, 1f };
             parallax.arraySize = depth.Length;
             for (int i = 0; i < depth.Length; i++) parallax.GetArrayElementAtIndex(i).floatValue = depth[i];
-            // Page marks (one per cup) on a small dark plate under the cup name; the plate fits its marks.
-            var dots = At("CupDots", safe, new Vector2(0.5f, 1f), new Vector2(-28f, -169f), new Vector2(120f, 44f));
-            dots.pivot = new Vector2(0.5f, 1f);
+            // The cup bar under the cup name: a round badge per cup on a dark plate, a glowing ring on the current one.
+            var dots = At("CupBar", safe, new Vector2(0.5f, 1f), new Vector2(-28f, -150f), new Vector2(380f, 110f));
             Img(dots, "Pill", Theme.Ink, sliced: true);
-            var dot = Img(At("Dot", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(24f, 24f)), "Pill", Theme.Amber, sliced: true);
-            Set(so, "dots", dots); Set(so, "dotTemplate", dot);
+            var ring = At("Ring", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(106f, 106f));
+            Img(At("Glow", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f)), "Circle", Theme.WithAlpha(Theme.Amber, 0.22f));
+            Img(At("Line", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(106f, 106f)), "Ring", Theme.Amber);
+            var badgeT = At("Badge", dots, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f));
+            var badgeFace = Img(At("Face", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), "Circle", Theme.Cream, raycast: true);
+            Img(At("Icon", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(66f, 66f)), null, Color.white).preserveAspect = true;
+            badgeT.gameObject.AddComponent<CanvasGroup>();
+            var badgeButton = badgeT.gameObject.AddComponent<Button>();
+            badgeButton.targetGraphic = badgeFace; badgeButton.transition = Selectable.Transition.None;
+            badgeT.gameObject.AddComponent<ButtonFeedback>();
+            Set(so, "dots", dots); Set(so, "badgeTemplate", badgeT); Set(so, "barRing", ring);
             Set(so, "wipe", wipe); Set(so, "wipeImage", wipeImage); Set(so, "wipeEdge", wipeEdge);
             Set(so, "wipeBlur", wipeBlur); Set(so, "wipeDim", wipeDim); Set(so, "incomingBlur", incoming);
             Set(so, "lockedPage", lockedPage.gameObject);
@@ -263,7 +270,7 @@ namespace SomeGame.EditorTools
             Set(so, "lockedTrophies", lockedPage.Find("Needs/Trophies/Count").GetComponent<TMP_Text>());
             SetArray(so, "racePageParts", new[] { header.gameObject, bottom.gameObject });
             Set(so, "celebration", BuildCupCelebration(canvas)); Set(so, "sparkle", Sprite("Sparkle"));
-            SetArray(so, "fadeRoots", new[] { canvas.Find("CupMenu") });
+            SetArray(so, "fadeRoots", new Transform[0]); // everything sits under the frozen picture now
             var swipe = map.gameObject.AddComponent<MapSwipe>();
             Configure(swipe, ("screen", screen), ("canvas", canvas.GetComponent<Canvas>()));
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -290,9 +297,10 @@ namespace SomeGame.EditorTools
             Img(At("Icon", plate, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(210f, 210f)), "IconLock", Hex("6F7371"));
             var title = Txt(At("Title", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -80f), new Vector2(1000f, 190f)), "LOCKED", 170, Hex("F4F5F3"), _black);
             title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 170;
-            var caption = Txt(At("Caption", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -205f), new Vector2(1000f, 60f)), "TO UNLOCK", 44, Hex("E3E5E2"), _condItalic);
+            var caption = Txt(At("Caption", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -212f), new Vector2(1050f, 80f)), "TO UNLOCK", 64, Hex("E3E5E2"), _condItalic);
+            caption.enableAutoSizing = true; caption.fontSizeMin = 40; caption.fontSizeMax = 64;
             caption.characterSpacing = 8f;
-            var needs = At("Needs", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -330f), new Vector2(640f, 150f));
+            var needs = At("Needs", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -350f), new Vector2(640f, 150f));
             Img(needs, "Round", Theme.Ink, sliced: true);
             void Need(string name, float x, string icon)
             {
