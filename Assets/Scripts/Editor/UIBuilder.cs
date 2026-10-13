@@ -945,6 +945,7 @@ namespace SomeGame.EditorTools
             var slider = BuildSlider(sound);
 
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
+            var driftButton = MenuButton(card, "DriftButton", "DRIFT   AUTO", Color.white, Theme.Ink, Theme.Ink, 130f, out var driftLabel, 46);
             var assistButton = MenuButton(card, "AssistButton", "STEERING HELP   ON", Color.white, Theme.Ink, Theme.Ink, 130f, out var assistLabel, 46);
             var tutorialButton = MenuButton(card, "TutorialButton", "TUTORIAL", Color.white, Theme.Ink, Theme.Ink, 130f, out _, 46);
             var cupsButton = MenuButton(card, "CupsButton", "UNLOCK ALL   OFF", Color.white, Theme.Ink, Theme.Ink, 130f, out var cupsLabel, 46);
@@ -961,6 +962,7 @@ namespace SomeGame.EditorTools
             Set(so, "resetButton", resetButton); Set(so, "resetLabel", resetLabel); Set(so, "tutorialButton", tutorialButton);
             Set(so, "cupsButton", cupsButton); Set(so, "cupsLabel", cupsLabel);
             Set(so, "assistButton", assistButton); Set(so, "assistLabel", assistLabel);
+            Set(so, "driftButton", driftButton); Set(so, "driftLabel", driftLabel);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             so.ApplyModifiedPropertiesWithoutUndo();
             panel.gameObject.SetActive(false);

@@ -240,7 +240,7 @@ namespace SomeGame.Car
 
             if (IsDrifting)
             {
-                _driftCharge += dt;
+                _driftCharge += dt * DriftChargeRate;
                 // Lifted the steering thumb, ran onto the grass or got too slow: drift lost, no boost.
                 if (!ControlsEnabled || throttle <= 0f || offRoad || speed < stats.driftMinSpeed * stats.driftKeepSpeedFactor)
                 {
@@ -330,10 +330,14 @@ namespace SomeGame.Car
             return stats.boostKick * Mathf.Lerp(0.5f, 1f, BoostStrength);
         }
 
+        /// <summary>How fast the current drift charges its boost (a clean flick charges faster). Reset when it ends.</summary>
+        public float DriftChargeRate { get; set; } = 1f;
+
         void EndDrift()
         {
             _driftDirection = 0;
             _driftCharge = 0f;
+            DriftChargeRate = 1f;
         }
 
         /// <summary>

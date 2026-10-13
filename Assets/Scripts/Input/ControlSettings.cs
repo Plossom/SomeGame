@@ -11,6 +11,23 @@ namespace SomeGame.Input
 
         public enum Assist { Off, Light, Strong }
 
+        /// <summary>How drifts are started: by themselves (Auto), with a counter-steer flick, or by hand (Manual).</summary>
+        public enum DriftMode { Auto, Flick, Manual }
+
+        const string DriftModeKey = "Controls.DriftMode";
+
+        public static DriftMode Drift
+        {
+            get => (DriftMode)Mathf.Clamp(PlayerPrefs.GetInt(DriftModeKey, (int)DriftMode.Auto), 0, 2);
+            set
+            {
+                if (value == Drift) return;
+                PlayerPrefs.SetInt(DriftModeKey, (int)value);
+                PlayerPrefs.Save();
+                Changed?.Invoke();
+            }
+        }
+
         /// <summary>Smart steering: Light (default) or Off. (A saved "Strong" from earlier counts as Light.)</summary>
         public static Assist SteerAssist
         {

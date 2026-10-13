@@ -23,12 +23,14 @@ namespace SomeGame.UI
         static readonly Vector2 RingAt = new(-210f, -30f), TapAt = new(30f, -40f), CarAt = new(230f, 0f);
 
         int _step = -1;
+        SomeGame.Input.ControlSettings.DriftMode _mode;
         float _start;
         Image _rippleImage, _pressImage;
 
-        public void Play(int step)
+        public void Play(int step, SomeGame.Input.ControlSettings.DriftMode mode)
         {
             _step = step;
+            _mode = mode;
             _start = Time.unscaledTime;
             gameObject.SetActive(true);
         }
@@ -122,13 +124,28 @@ namespace SomeGame.UI
             float period = charge ? 3.2f : 2.6f;
             float c = Mathf.Repeat(t, period);
             bool held = c > 0.4f && c < period - 0.35f;
-            Stick(-28f);
-            finger2.gameObject.SetActive(true);
-            finger2.anchoredPosition = TapAt + new Vector2(0f, held ? -6f : 18f);
-            finger2.localScale = Vector3.one * (held ? 0.94f : 1f);
-            press.gameObject.SetActive(held);
-            press.anchoredPosition = TapAt;
-            _pressImage.color = new Color(1f, 1f, 1f, 0.45f + 0.15f * Mathf.Sin(t * 8f));
+            if (_mode == SomeGame.Input.ControlSettings.DriftMode.Manual)
+            {
+                Stick(-28f);
+                finger2.gameObject.SetActive(true);
+                finger2.anchoredPosition = TapAt + new Vector2(0f, held ? -6f : 18f);
+                finger2.localScale = Vector3.one * (held ? 0.94f : 1f);
+                press.gameObject.SetActive(held);
+                press.anchoredPosition = TapAt;
+                _pressImage.color = new Color(1f, 1f, 1f, 0.45f + 0.15f * Mathf.Sin(t * 8f));
+            }
+            else if (_mode == SomeGame.Input.ControlSettings.DriftMode.Flick)
+            {
+                // A quick swing the other way, then firmly into the curve, held.
+                float stick = c < 0.15f ? Mathf.Lerp(0f, 35f, c / 0.15f) : c < 0.4f ? Mathf.Lerp(35f, -55f, (c - 0.15f) / 0.25f) : held ? -55f : Mathf.Lerp(-55f, 0f, (c - (period - 0.35f)) / 0.35f);
+                Stick(stick);
+            }
+            else
+            {
+                // Auto: firmly into the curve and hold.
+                float stick = c < 0.4f ? Mathf.Lerp(0f, -55f, c / 0.4f) : held ? -55f : Mathf.Lerp(-55f, 0f, (c - (period - 0.35f)) / 0.35f);
+                Stick(stick);
+            }
             float slide = held ? Mathf.Clamp01((c - 0.4f) / 0.3f) : 0f;
             CarHeading(-28f - 38f * slide);
             car.anchoredPosition = CarAt + new Vector2(Mathf.Sin(c * 2f) * 12f * slide, 0f);
@@ -155,11 +172,15 @@ namespace SomeGame.UI
         {
             float c = Mathf.Repeat(t, 2.8f);
             if (c < 1.5f) { Drift(c, true); return; }
-            Stick(0f);
-            finger2.gameObject.SetActive(true);
-            float lift = Mathf.Clamp01((c - 1.5f) / 0.25f);
-            finger2.anchoredPosition = TapAt + new Vector2(0f, -6f + 40f * lift);
-            Tap(TapAt, Mathf.InverseLerp(1.5f, 2f, c));
+            if (_mode == SomeGame.Input.ControlSettings.DriftMode.Manual)
+            {
+                Stick(0f);
+                finger2.gameObject.SetActive(true);
+                float lift = Mathf.Clamp01((c - 1.5f) / 0.25f);
+                finger2.anchoredPosition = TapAt + new Vector2(0f, -6f + 40f * lift);
+                Tap(TapAt, Mathf.InverseLerp(1.5f, 2f, c));
+            }
+            else Stick(Mathf.Lerp(-55f, 0f, Mathf.Clamp01((c - 1.5f) / 0.2f))); // straighten the thumb
             float go = Mathf.Clamp01((c - 1.55f) / 0.3f);
             CarHeading(Mathf.Lerp(-66f, 0f, go));
             float dash = Mathf.InverseLerp(1.6f, 2.6f, c);

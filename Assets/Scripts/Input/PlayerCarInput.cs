@@ -21,6 +21,9 @@ namespace SomeGame.Input
         public float Throttle { get; private set; }
         public bool DriftHeld { get; private set; }
 
+        /// <summary>Development: a stick direction set from code (automated tests); null = the real stick.</summary>
+        [System.NonSerialized] public Vector2? ScriptedStick;
+
         SomeGame.Track.TrackSensor _sensor;
         SomeGame.Car.CarMovement _car;
 
@@ -36,18 +39,28 @@ namespace SomeGame.Input
 
         void Update()
         {
-            DriftHeld = SecondFingerDown() || DriftKeyDown();
+            bool manual = SecondFingerDown() || DriftKeyDown(); // the drift finger works in every mode
 
-            if (joystick != null && joystick.IsPastDeadZone)
+            Vector2 raw;
+            if (ScriptedStick.HasValue)
             {
-                SteerDirection = Assisted(joystick.Value.normalized);
-                Throttle = 1f;
-                return;
+                raw = ScriptedStick.Value; // automated tests
+                SteerDirection = raw == Vector2.zero ? raw : Assisted(raw);
+                Throttle = raw == Vector2.zero ? 0f : 1f;
             }
-
-            Vector2 keys = ReadKeyboard();
-            SteerDirection = keys == Vector2.zero ? keys : Assisted(keys);
-            Throttle = keys == Vector2.zero ? 0f : 1f;
+            else if (joystick != null && joystick.IsPastDeadZone)
+            {
+                raw = joystick.Value.normalized;
+                SteerDirection = Assisted(raw);
+                Throttle = 1f;
+            }
+            else
+            {
+                raw = ReadKeyboard();
+                SteerDirection = raw == Vector2.zero ? raw : Assisted(raw);
+                Throttle = raw == Vector2.zero ? 0f : 1f;
+            }
+            DriftHeld = manual || (ControlSettings.Drift != ControlSettings.DriftMode.Manual && OneFingerDrift(raw));
         }
 
         // Smart steering. Only when the aim roughly follows the road (a clear steer elsewhere always wins).
@@ -195,6 +208,94 @@ namespace SomeGame.Input
             Vector2 to = at - from;
             float distance = to.magnitude;
             return distance < 32f && distance > 0.5f && Vector2.Angle(aim, to) < Mathf.Lerp(28f, 14f, distance / 32f);
+        }
+
+        // ------------------------------------------------------------------ one-finger drifting
+
+        [Header("One-finger drifting")]
+        [Tooltip("Auto: how far (degrees) the stick must point into a turn, past the direction of travel, to start a drift.")]
+        [SerializeField] float autoStartAngle = 38f;
+        [Tooltip("Seconds the stick must be held that far into the turn.")]
+        [SerializeField] float autoStartTime = 0.12f;
+        [Tooltip("A drift (Auto or Flick) lasts while the stick points at least this far into the turn.")]
+        [SerializeField] float keepAngle = 6f;
+        [Tooltip("Flick: the counter-steer must reach this far out, and the turn-in this far in, within the flick time.")]
+        [SerializeField] float flickOutAngle = 22f, flickInAngle = 26f, flickTime = 0.6f;
+
+        float _intoTurnFor, _straightFor, _flickAt = -10f;
+        int _flickSide;
+        bool _oneFingerDrift;
+
+        // Auto: steer firmly into a turn at speed and the car drifts by itself. Flick: swing the stick briefly
+        // the other way first, then into the turn. Either drift lasts while the stick points into the turn
+        // and ends with the boost when you straighten it.
+        bool OneFingerDrift(Vector2 stick)
+        {
+            if (_car == null) return false;
+            float dt = Time.deltaTime;
+            Vector2 velocity = _car.Body.linearVelocity;
+            if (stick == Vector2.zero || velocity.magnitude < 3f || _car.IsAirborne)
+            {
+                _intoTurnFor = 0f;
+                _oneFingerDrift = false;
+                return false;
+            }
+            float angle = Vector2.SignedAngle(velocity, stick); // positive = left of the direction of travel
+
+            if (_oneFingerDrift)
+            {
+                // Still turning in? A short grace stops it flickering when the thumb wobbles.
+                bool into = _car.IsDrifting ? angle * _car.DriftDirection > keepAngle : Mathf.Abs(angle) > keepAngle;
+                _straightFor = into ? 0f : _straightFor + dt;
+                // Ends when straightened, or when the drift did not start / was lost (grass, too slow).
+                if (_straightFor > 0.12f || (!_car.IsDrifting && Time.time - _startedAt > 0.4f)) _oneFingerDrift = false;
+                return _oneFingerDrift;
+            }
+
+            bool fast = _car.ForwardSpeed >= _car.Stats.driftMinSpeed;
+            if (ControlSettings.Drift == ControlSettings.DriftMode.Auto)
+            {
+                _intoTurnFor = fast && Mathf.Abs(angle) >= autoStartAngle ? _intoTurnFor + dt : 0f;
+                if (_intoTurnFor >= autoStartTime) Begin(1f);
+            }
+            else
+            {
+                // The flick: out one way, then (quickly) into the turn the other way.
+                if (Mathf.Abs(angle) >= flickOutAngle && Mathf.Sign(angle) != _flickSide)
+                {
+                    if (Time.time - _flickAt <= flickTime && _flickSide != 0 && Mathf.Abs(angle) >= flickInAngle && fast)
+                    {
+                        float quick = 1f - Mathf.Clamp01((Time.time - _flickAt) / flickTime);
+                        Begin(Mathf.Lerp(1.15f, 1.6f, quick)); // a quick, clean flick charges the boost faster
+                        _flickSide = 0;
+                        return _oneFingerDrift;
+                    }
+                    _flickSide = (int)Mathf.Sign(angle);
+                    _flickAt = Time.time;
+                }
+                else if (Mathf.Abs(angle) < 8f && Time.time - _flickAt > flickTime) _flickSide = 0;
+            }
+            return _oneFingerDrift;
+        }
+
+        float _startedAt;
+
+        void Begin(float chargeRate)
+        {
+            _oneFingerDrift = true;
+            _straightFor = 0f;
+            _intoTurnFor = 0f;
+            _startedAt = Time.time;
+            _pendingRate = chargeRate;
+        }
+
+        float _pendingRate = 1f;
+
+        void LateUpdate()
+        {
+            // The charge rate is applied once the drift has really started.
+            if (_car != null && _car.IsDrifting && _pendingRate != 1f) { _car.DriftChargeRate = _pendingRate; _pendingRate = 1f; }
+            if (_car != null && !_car.IsDrifting && !_oneFingerDrift) _pendingRate = 1f;
         }
 
         static bool SecondFingerDown()
