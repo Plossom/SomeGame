@@ -61,8 +61,10 @@ namespace SomeGame.Race
                 var path = Circuit.Path;
                 float from = Circuit.CheckpointDistance(NextCheckpoint - 1);
                 float span = path.Length / CheckpointCount;
-                float fraction = Mathf.Repeat(_sensor.Current.Distance - from, path.Length) / span;
-                return CheckpointsPassed + Mathf.Clamp(fraction, 0f, 0.999f);
+                // Signed: put back behind the last checkpoint (after a splash) counts as behind it, not as
+                // almost at the next one, so the ranking stays right.
+                float fraction = path.DeltaDistance(from, _sensor.Current.Distance) / span;
+                return CheckpointsPassed + Mathf.Clamp(fraction, -0.999f, 0.999f);
             }
         }
 

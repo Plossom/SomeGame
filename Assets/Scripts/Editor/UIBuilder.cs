@@ -762,7 +762,8 @@ namespace SomeGame.EditorTools
             fade.alpha = 0f; fade.blocksRaycasts = false; fade.interactable = false;
 
             // The demo under the hint card: white fingers act out the step, a mini car shows what happens.
-            var demo = At("Demo", root, new Vector2(0.5f, 0f), new Vector2(0f, 260f), new Vector2(820f, 460f));
+            // At the top, right under the hint card.
+            var demo = At("Demo", root, new Vector2(0.5f, 1f), new Vector2(0f, -470f), new Vector2(820f, 460f));
             demo.localScale = Vector3.one * 1.6f; // big enough to read at a glance
             var demoGroup = demo.gameObject.AddComponent<CanvasGroup>();
             demoGroup.blocksRaycasts = false; demoGroup.interactable = false;
