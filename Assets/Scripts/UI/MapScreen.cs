@@ -311,7 +311,56 @@ namespace SomeGame.UI
                 }
             _celebrating = false;
             RefreshBadges();
-            if (newest != null && newest != _cup) SwitchTo(newest);
+            if (newest != null && newest != _cup)
+            {
+                SwitchTo(newest);
+                StartCoroutine(Arrive());
+            }
+        }
+
+        /// <summary>True while the map is animating (switching cups, unlocking): the tour waits.</summary>
+        public bool Busy => _switching || _celebrating || _wipeFrom != null;
+
+        /// <summary>The selected race's stop on the map.</summary>
+        public RectTransform SelectedStop => _selected >= 0 && _selected < _nodes.Count ? (RectTransform)_nodes[_selected].transform : null;
+
+        // A new cup's welcome once the map has switched to it: its name jumps up and sparkles fly off it.
+        System.Collections.IEnumerator Arrive()
+        {
+            yield return null;
+            while (_switching || _wipeFrom != null) yield return null;
+            var title = chapterLabel.rectTransform;
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.unlock, 0.9f);
+            var bits = new List<(RectTransform rt, Vector2 v)>();
+            if (sparkle != null)
+                for (int i = 0; i < 18; i++)
+                {
+                    var go = new GameObject("Sparkle", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                    var rt = (RectTransform)go.transform;
+                    rt.SetParent(title, false);
+                    rt.sizeDelta = Vector2.one * Random.Range(40f, 80f);
+                    var img = go.GetComponent<UnityEngine.UI.Image>();
+                    img.sprite = sparkle; img.raycastTarget = false; img.color = Theme.Amber;
+                    float a = i / 18f * Mathf.PI * 2f;
+                    bits.Add((rt, new Vector2(Mathf.Cos(a) * 1.6f, Mathf.Sin(a)) * Random.Range(420f, 700f)));
+                }
+            for (float t = 0f; t < 1.1f; t += Time.unscaledDeltaTime)
+            {
+                float k = Mathf.Clamp01(t / 0.6f);
+                title.localScale = Vector3.one * (1f + 0.35f * Mathf.Sin(k * Mathf.PI) * (1f - k * 0.3f));
+                title.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(k * Mathf.PI * 3f) * 4f * (1f - k));
+                foreach (var (rt, v) in bits)
+                {
+                    rt.anchoredPosition = v * (1f - Mathf.Pow(1f - Mathf.Clamp01(t / 1.1f), 3f));
+                    rt.localRotation = Quaternion.Euler(0f, 0f, t * 240f);
+                    var img = rt.GetComponent<UnityEngine.UI.Image>();
+                    var c = img.color; c.a = 1f - Mathf.Clamp01(t / 1.1f); img.color = c;
+                }
+                yield return null;
+            }
+            title.localScale = Vector3.one;
+            title.localRotation = Quaternion.identity;
+            foreach (var (rt, _) in bits) Destroy(rt.gameObject);
         }
 
         // ------------------------------------------------------------------ switching cups

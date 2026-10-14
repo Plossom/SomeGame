@@ -36,8 +36,15 @@ namespace SomeGame.EditorTools
         {
             // The entry: a square button with two people, top right between the stars / trophies counter and
             // the cup dropdown (same column, same width as the dropdown).
-            var open = SquareButton(safe, "OnlineButton", new Vector2(1f, 1f), new Vector2(-66f, -216f), "IconPeople", 128f);
-            open.transform.Find("Face/Icon").localScale = Vector3.one * 1.25f;
+            // As wide as the counters above, flatter; the people in the cup's star colour.
+            var openRt = At("OnlineButton", safe, new Vector2(1f, 1f), new Vector2(-60f, -216f), new Vector2(140f, 94f));
+            Img(At("Shadow", openRt, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(140f, 82f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
+            var openFace = At("Face", openRt, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(140f, 82f));
+            var openBg = Img(openFace, "Round", Theme.Ink, sliced: true, raycast: true);
+            Img(At("Icon", openFace, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(62f, 62f)), "IconPeople", Theme.Amber);
+            var open = openRt.gameObject.AddComponent<Button>();
+            open.targetGraphic = openBg; open.transition = Selectable.Transition.None;
+            openRt.gameObject.AddComponent<ButtonFeedback>();
 
             // Its own canvas over the map's: the map recolours its canvas per cup, the lobby styles itself.
             var lobbyCanvas = CreateCanvas();
@@ -364,7 +371,7 @@ namespace SomeGame.EditorTools
                 return t.gameObject;
             }
             var you = Tag("YOU", Theme.Orange, Color.white, null);
-            var hostTag = Tag("HOST", Theme.Ink, Theme.Amber, "IconCrown");
+            var hostTag = Tag("HOST", Theme.Ink, Theme.Amber, null); // the crown is the winner's
             var bot = Tag("BOT", Theme.Stone, Theme.Ink, "IconBot");
 
             var badge = At("Ready", filled, new Vector2(1f, 0.5f), new Vector2(-52f, 0f), new Vector2(66f, 66f));
@@ -393,11 +400,17 @@ namespace SomeGame.EditorTools
             var cardButton = body.gameObject.AddComponent<Button>(); cardButton.targetGraphic = hit; cardButton.transition = Selectable.Transition.None;
             body.gameObject.AddComponent<ButtonFeedback>();
 
+            // The last winner's crown, placed after the name at runtime.
+            var crown = At("Crown", filled, new Vector2(0f, 1f), new Vector2(400f, -50f), new Vector2(46f, 46f));
+            crown.pivot = new Vector2(0.5f, 0.5f);
+            Img(At("Shadow", crown, new Vector2(0.5f, 0.5f), new Vector2(2f, -4f), new Vector2(46f, 46f)), "IconCrown", Theme.WithAlpha(Theme.Ink, 0.3f));
+            Img(Stretch("Icon", crown), "IconCrown", new Color(1f, 0.74f, 0.12f));
+
             var card = root.gameObject.AddComponent<OnlineSlotCard>();
             Configure(card, ("body", body), ("filled", filled.gameObject), ("empty", empty.gameObject), ("face", face), ("highlight", highlight),
                 ("car", car), ("carBody", carBody), ("nameLabel", name), ("youTag", you), ("hostTag", hostTag), ("botTag", bot),
                 ("readyBadge", badge), ("readyFace", readyFace), ("readyCheck", check.gameObject), ("removeButton", remove),
-                ("cardButton", cardButton), ("emptyLabel", emptyLabel), ("emptyPlus", plus.gameObject));
+                ("cardButton", cardButton), ("emptyLabel", emptyLabel), ("emptyPlus", plus.gameObject), ("crown", crown));
             return card;
         }
 
@@ -467,6 +480,61 @@ namespace SomeGame.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        // ================================================================== map: the tour after the tutorial
+
+        static void BuildMapTour(RectTransform canvas, MapScreen screen, params RectTransform[] targets)
+        {
+            var root = Stretch("MapTour", canvas);
+            var area = SafeArea(root);
+            area.offsetMin = area.offsetMax = Vector2.zero;
+            Object.DestroyImmediate(area.GetComponent<SafeAreaFitter>()); // the dim covers the whole screen
+            var tapRt = Stretch("Tap", area);
+            var tapImage = Img(tapRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            var tap = tapRt.gameObject.AddComponent<Button>(); tap.targetGraphic = tapImage; tap.transition = Selectable.Transition.None;
+            var dims = new RectTransform[4];
+            for (int i = 0; i < 4; i++)
+            {
+                dims[i] = Rt($"Dim{i + 1}", area);
+                Img(dims[i], null, Theme.WithAlpha(Theme.Ink, 0.74f));
+            }
+            var frame = Rt("Frame", area);
+            var frameImage = Img(frame, "Round", Theme.Amber, sliced: true);
+            frameImage.fillCenter = false;
+            frameImage.pixelsPerUnitMultiplier = 5f; // a thin rim with small rounded corners
+
+            var card = At("Card", area, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(960f, 470f));
+            card.gameObject.AddComponent<CanvasGroup>();
+            var cs = Stretch("Shadow", card); cs.offsetMin = cs.offsetMax = new Vector2(0f, -16f);
+            Img(cs, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
+            Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true);
+            var step = Txt(At("Step", card, new Vector2(0f, 1f), new Vector2(50f, -34f), new Vector2(600f, 44f)), "MAP TOUR · 1/10", 36, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            step.characterSpacing = 6f;
+            var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(46f, -76f), new Vector2(860f, 96f)), "THE RACE", 84, Theme.Ink, _black, TextAlignmentOptions.Left);
+            var body = Txt(At("Body", card, new Vector2(0f, 1f), new Vector2(50f, -174f), new Vector2(860f, 110f)), "", 40, Theme.InkSoft, _semi, TextAlignmentOptions.TopLeft);
+            body.textWrappingMode = TextWrappingModes.Normal;
+            var next = WideButton(card, "NextButton", Vector2.zero, new Vector2(300f, 100f), "NEXT", Theme.Orange, Theme.OrangeDeep, Color.white, 50, _black);
+            var nextRt = (RectTransform)next.transform;
+            nextRt.anchorMin = nextRt.anchorMax = nextRt.pivot = new Vector2(1f, 0f); nextRt.anchoredPosition = new Vector2(-40f, 34f);
+            var skipRt = At("SkipButton", card, new Vector2(0f, 0f), new Vector2(40f, 40f), new Vector2(220f, 90f));
+            var skipHit = Img(skipRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            Txt(Stretch("Label", skipRt), "SKIP TOUR", 40, Theme.StoneDark, _condItalic, TextAlignmentOptions.Left).characterSpacing = 4f;
+            var skip = skipRt.gameObject.AddComponent<Button>(); skip.targetGraphic = skipHit; skip.transition = Selectable.Transition.None;
+            skipRt.gameObject.AddComponent<ButtonFeedback>();
+
+            var finger = At("Finger", area, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(120f, 150f));
+            finger.pivot = new Vector2(0.5f, 0.96f);
+            Img(finger, "Finger", Color.white);
+
+            var tour = root.gameObject.AddComponent<MapTour>();
+            Configure(tour, ("screen", screen), ("root", area.gameObject), ("area", area), ("frame", frame), ("card", card),
+                ("stepLabel", step), ("titleLabel", title), ("bodyLabel", body), ("nextLabel", next.transform.Find("Face/Label").GetComponent<TMP_Text>()),
+                ("nextButton", next), ("skipButton", skip), ("tapArea", tap), ("finger", finger));
+            var so = new SerializedObject(tour);
+            SetArray(so, "dims", dims);
+            SetArray(so, "targets", targets);
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
         // ================================================================== race: waiting + results
 
         static void BuildOnlineRaceView(RectTransform canvas, RaceManager race)
@@ -511,14 +579,24 @@ namespace SomeGame.EditorTools
                 var rim = Stretch("Highlight", content); rim.offsetMin = new Vector2(-9f, -9f); rim.offsetMax = new Vector2(9f, 9f);
                 Img(rim, "Round", Theme.Orange, sliced: true);
                 Img(Stretch("Face", content), "Round", Theme.Ink, sliced: true);
-                var placeText = Txt(At("Place", content, new Vector2(0f, 0.5f), new Vector2(30f, 0f), new Vector2(80f, 100f)), "1", 64, Theme.Amber, _black);
-                placeText.rectTransform.pivot = new Vector2(0f, 0.5f);
+                var medal = At("Medal", content, new Vector2(0f, 0.5f), new Vector2(70f, 0f), new Vector2(84f, 84f));
+                medal.pivot = new Vector2(0.5f, 0.5f);
+                Img(medal, "Circle", new Color(1f, 0.78f, 0.2f));
+                var placeText = Txt(At("Place", content, new Vector2(0f, 0.5f), new Vector2(70f, 0f), new Vector2(84f, 100f)), "1", 60, Theme.Amber, _black);
+                placeText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
                 var car = At("Car", content, new Vector2(0f, 0.5f), new Vector2(170f, 0f), new Vector2(52f, 92f));
                 car.pivot = new Vector2(0.5f, 0.5f); car.localRotation = Quaternion.Euler(0f, 0f, -90f);
                 Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
                 Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
-                var nameText = Txt(At("Name", content, new Vector2(0f, 0.5f), new Vector2(240f, 0f), new Vector2(430f, 90f)), "PLAYER", 52, Theme.Cream, _black, TextAlignmentOptions.Left);
+                var nameText = Txt(At("Name", content, new Vector2(0f, 0.5f), new Vector2(240f, 16f), new Vector2(380f, 64f)), "PLAYER", 50, Theme.Cream, _black, TextAlignmentOptions.Left);
                 nameText.rectTransform.pivot = new Vector2(0f, 0.5f);
+                nameText.enableAutoSizing = true; nameText.fontSizeMin = 32; nameText.fontSizeMax = 50;
+                var subText = Txt(At("Sub", content, new Vector2(0f, 0.5f), new Vector2(242f, -28f), new Vector2(400f, 40f)), "+1.25 S", 32, Theme.Stone, _condItalic, TextAlignmentOptions.Left);
+                subText.rectTransform.pivot = new Vector2(0f, 0.5f);
+                subText.characterSpacing = 3f;
+                var rowCrown = At("Crown", content, new Vector2(0f, 0.5f), new Vector2(170f, 44f), new Vector2(48f, 48f));
+                rowCrown.pivot = new Vector2(0.5f, 0.5f); rowCrown.localRotation = Quaternion.Euler(0f, 0f, 14f);
+                Img(rowCrown, "IconCrown", new Color(1f, 0.78f, 0.2f));
                 var timeText = Txt(At("Time", content, new Vector2(1f, 0.5f), new Vector2(-36f, 0f), new Vector2(290f, 90f)), "1:02.33", 52, Theme.Cream, _cond, TextAlignmentOptions.Right);
                 timeText.rectTransform.pivot = new Vector2(1f, 0.5f);
                 rows[i] = row;
@@ -547,6 +625,39 @@ namespace SomeGame.EditorTools
             var closedButton = WideButton(card, "MapButton", new Vector2(0f, -420f), new Vector2(600f, 150f), "MAP", Theme.Orange, Theme.OrangeDeep, Color.white, 66, _black);
             closed.gameObject.AddComponent<PopIn>();
             Configure(closed.GetComponent<PopIn>(), ("card", card));
+
+            // The winner's moment, over the results: rays, trophy, the winner's car, WINNER and the name.
+            var win = Stretch("Winner", root);
+            var winDim = Img(win, null, new Color(0f, 0f, 0f, 0.82f), raycast: true);
+            var winSafe = SafeArea(win);
+            var rays = At("Rays", winSafe, new Vector2(0.5f, 0.5f), new Vector2(0f, 330f), new Vector2(1500f, 1500f));
+            rays.pivot = new Vector2(0.5f, 0.5f);
+            Img(rays, "Rays", new Color(1f, 0.85f, 0.45f, 0.5f));
+            Img(At("Glow", rays, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(700f, 700f)), "Circle", new Color(1f, 0.85f, 0.45f, 0.25f));
+            var trophy = At("Trophy", winSafe, new Vector2(0.5f, 0.5f), new Vector2(0f, 330f), new Vector2(380f, 380f));
+            trophy.pivot = new Vector2(0.5f, 0.5f);
+            Img(At("Shadow", trophy, new Vector2(0.5f, 0.5f), new Vector2(10f, -16f), new Vector2(380f, 380f)), "IconTrophy", new Color(0f, 0f, 0f, 0.35f));
+            Img(Stretch("Icon", trophy), "IconTrophy", new Color(1f, 0.78f, 0.2f));
+            var winCar = At("Car", winSafe, new Vector2(0.5f, 0.5f), new Vector2(0f, -40f), new Vector2(130f, 228f));
+            winCar.pivot = new Vector2(0.5f, 0.5f); winCar.localRotation = Quaternion.Euler(0f, 0f, -90f);
+            Img(At("Shadow", winCar, new Vector2(0.5f, 0.5f), new Vector2(12f, -12f), new Vector2(140f, 240f)), "CarShadow", new Color(0f, 0f, 0f, 0.45f)).preserveAspect = false;
+            var winBody = Img(Stretch("Body", winCar), "Car", Theme.Orange); winBody.preserveAspect = false;
+            Img(Stretch("Details", winCar), "CarDetails", Color.white).preserveAspect = false;
+            var winCaption = Txt(At("Caption", winSafe, new Vector2(0.5f, 0.5f), new Vector2(0f, -230f), new Vector2(1000f, 110f)), "WINNER", 96, new Color(1f, 0.78f, 0.2f), _black);
+            winCaption.rectTransform.pivot = new Vector2(0.5f, 0.5f); winCaption.characterSpacing = 14f;
+            var winName = Txt(At("Name", winSafe, new Vector2(0.5f, 0.5f), new Vector2(0f, -370f), new Vector2(1060f, 190f)), "ZIPPY FOX", 160, Color.white, _black);
+            winName.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            winName.enableAutoSizing = true; winName.fontSizeMin = 90; winName.fontSizeMax = 160;
+            winName.fontSharedMaterial = _blackShadow;
+            var winTap = Txt(At("Tap", winSafe, new Vector2(0.5f, 0f), new Vector2(0f, 120f), new Vector2(1000f, 60f)), "TAP TO SEE THE RANKING", 42, Theme.Cream, _condItalic);
+            winTap.characterSpacing = 6f;
+            var confetti = Stretch("Confetti", win);
+            confetti.anchorMin = confetti.anchorMax = new Vector2(0.5f, 0.5f);
+            var winSkip = win.gameObject.AddComponent<Button>(); winSkip.targetGraphic = winDim; winSkip.transition = Selectable.Transition.None;
+            Configure(view, ("winner", win.gameObject), ("winnerDim", winDim), ("winnerRays", rays), ("winnerTrophy", trophy), ("winnerCar", winCar),
+                ("winnerCarBody", winBody), ("winnerCaption", winCaption), ("winnerName", winName), ("winnerTap", winTap), ("winnerSkip", winSkip),
+                ("confettiLayer", confetti), ("confettiSprite", Sprite("Round")));
+            closed.SetAsLastSibling();
 
             Configure(view, ("race", race), ("waiting", waiting.gameObject), ("waitingLabel", waitingLabel), ("results", results.gameObject),
                 ("resultsGroup", group), ("placeLabel", place), ("raceLabel", raceLabel), ("lobbyButton", lobby), ("leaveButton", leave),

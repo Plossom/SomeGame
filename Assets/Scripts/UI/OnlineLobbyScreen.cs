@@ -330,7 +330,7 @@ namespace SomeGame.UI
                 if (slot.Kind == SlotKind.Human) people++;
                 if (slot.Kind != SlotKind.Empty) filled++;
                 bool hostSeat = slot.Kind == SlotKind.Human && slot.ClientId == Unity.Netcode.NetworkManager.ServerClientId;
-                slotCards[i].Show(slot, i == me, hostSeat, host, inLobby, intro ? 0.15f + i * 0.05f : -1f);
+                slotCards[i].Show(slot, i == me, hostSeat, host, inLobby, _room.CrownSlot.Value == i, intro ? 0.15f + i * 0.05f : -1f);
             }
             playersCaption.text = $"RACERS  <color={Theme.Html(Theme.InkSoft)}>{filled}/8</color>";
             fillButton.gameObject.SetActive(host && inLobby && filled < OnlineRoom.SlotCount);

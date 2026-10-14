@@ -29,6 +29,8 @@ namespace SomeGame.UI
         [SerializeField] Button cardButton;
         [SerializeField] TMP_Text emptyLabel;
         [SerializeField] GameObject emptyPlus;
+        [Tooltip("The winner's crown, placed right after the name.")]
+        [SerializeField] RectTransform crown;
 
         public Button CardButton => cardButton;
         public Button RemoveButton => removeButton;
@@ -36,12 +38,14 @@ namespace SomeGame.UI
         SlotKind _kind = (SlotKind)255;
         int _color = -1;
         bool _ready;
-        float _popAt = -10f, _squashAt = -10f, _readyAt = -10f, _leaveAt = -10f;
+        float _popAt = -10f, _squashAt = -10f, _readyAt = -10f, _leaveAt = -10f, _crownAt = -10f;
+        bool _crowned;
+        const float NameWidth = 262f;
         float _delay;
         Color _carFrom, _carTo;
 
         /// <summary>Shows the seat. <paramref name="intro"/> staggers the first appearance (room opening).</summary>
-        public void Show(LobbySlot slot, bool isLocal, bool hostSeat, bool hostView, bool inLobby, float intro = -1f)
+        public void Show(LobbySlot slot, bool isLocal, bool hostSeat, bool hostView, bool inLobby, bool crowned, float intro = -1f)
         {
             if (intro >= 0f)
             {
@@ -66,9 +70,21 @@ namespace SomeGame.UI
             emptyLabel.text = hostView && inLobby ? "ADD BOT" : "OPEN SEAT";
             emptyPlus.SetActive(hostView && inLobby);
             cardButton.interactable = hostView && inLobby && slot.Kind != SlotKind.Human;
-            if (!isFilled) return;
+            if (!isFilled) { crown.gameObject.SetActive(false); _crowned = false; return; }
 
             nameLabel.text = slot.Name.ToString();
+            // The crown sits right after the name (the name gives up room for it).
+            if (crowned && !_crowned) _crownAt = Time.unscaledTime;
+            _crowned = crowned;
+            crown.gameObject.SetActive(crowned);
+            var nameRt = nameLabel.rectTransform;
+            nameRt.sizeDelta = new Vector2(crowned ? NameWidth - 52f : NameWidth, nameRt.sizeDelta.y);
+            if (crowned)
+            {
+                nameLabel.ForceMeshUpdate();
+                float width = Mathf.Min(nameLabel.textBounds.size.x, NameWidth - 52f);
+                crown.anchoredPosition = new Vector2(nameRt.anchoredPosition.x + width + 28f, crown.anchoredPosition.y);
+            }
             youTag.SetActive(isLocal);
             hostTag.SetActive(hostSeat);
             botTag.SetActive(slot.Kind == SlotKind.Bot);
@@ -119,6 +135,13 @@ namespace SomeGame.UI
             car.localScale = new Vector3(1f + 0.25f * bounce, 1f - 0.18f * bounce, 1f);
             car.localRotation = Quaternion.Euler(0f, 0f, -90f + Mathf.Sin(now * 2.2f + transform.GetSiblingIndex()) * 4f);
             if (squash < 1f) carBody.color = Color.Lerp(_carFrom, _carTo, squash * 2f);
+
+            if (_crowned)
+            {
+                float c = (now - _crownAt) / 0.5f;
+                crown.localScale = Vector3.one * (c >= 0f && c < 1f ? Back(c) : 1f);
+                crown.localRotation = Quaternion.Euler(0f, 0f, 12f + Mathf.Sin(now * 2.6f) * 7f);
+            }
 
             float r = (now - _readyAt) / 0.35f;
             readyBadge.localScale = Vector3.one * (r >= 0f && r < 1f ? Back(r) : 1f);

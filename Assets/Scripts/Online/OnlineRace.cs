@@ -164,9 +164,23 @@ namespace SomeGame.Online
                 e.Progress.ApplyRemote(state.Checkpoints, state.Has(CarState.Finished), state.FinishTime, _race.StartTime);
         }
 
+        /// <summary>The first car over the line (by finish time), or null while nobody has finished.</summary>
+        public Entry Winner
+        {
+            get
+            {
+                Entry best = null;
+                foreach (var e in _entries)
+                    if (e.Progress.IsFinished && (best == null || e.Progress.FinishTime < best.Progress.FinishTime)) best = e;
+                return best;
+            }
+        }
+
         void Update()
         {
             if (_room == null || !_room.IsSpawned) return;
+            // The host hands the crown to the winner (and corrects it if an earlier finish arrives late).
+            if (_room.IsServer && Winner is { } winner) _room.Crown(winner.Slot);
             _sendTimer -= Time.unscaledDeltaTime;
             if (_sendTimer > 0f) return;
             _sendTimer = SendInterval;

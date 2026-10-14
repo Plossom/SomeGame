@@ -266,7 +266,7 @@ namespace SomeGame.EditorTools
             var columnLayer = SafeArea(canvas);
             columnLayer.name = "CupColumnLayer";
             columnLayer.SetSiblingIndex(wipe.GetSiblingIndex() + 1);
-            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-66f, -372f), new Vector2(128f, 64f)); // under the ONLINE button
+            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-66f, -326f), new Vector2(128f, 64f)); // under the ONLINE button
             Img(dots, "Round", Theme.Ink, sliced: true, raycast: true);
             dots.gameObject.AddComponent<RectMask2D>();
             var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(128f, 600f));
@@ -305,9 +305,16 @@ namespace SomeGame.EditorTools
             Set(so, "lockedStars", lockedPage.Find("Needs/Stars/Count").GetComponent<TMP_Text>());
             Set(so, "lockedTrophies", lockedPage.Find("Needs/Trophies/Count").GetComponent<TMP_Text>());
             SetArray(so, "racePageParts", new[] { header.gameObject, bottom.gameObject });
-            Set(so, "celebration", BuildCupCelebration(canvas)); Set(so, "sparkle", Sprite("Sparkle"));
+            var celebration = BuildCupCelebration(canvas);
+            Configure(celebration, ("flyTarget", dots)); // the new cup's badge flies into the dropdown
+            Set(so, "celebration", celebration); Set(so, "sparkle", Sprite("Sparkle"));
             
             BuildOnlineLobby(canvas, safe); // over everything else on the map
+            // The swipe step of the tour points at the middle of the map.
+            var swipeArea = At("SwipeArea", safe, new Vector2(0.5f, 0.5f), new Vector2(0f, -120f), new Vector2(900f, 640f));
+            swipeArea.pivot = new Vector2(0.5f, 0.5f);
+            BuildMapTour(canvas, screen, title.rectTransform, timesRt, records, null, swipeArea, dots, counters,
+                (RectTransform)safe.Find("OnlineButton"), (RectTransform)menuButton.transform, (RectTransform)start.transform);
 
             var swipe = map.gameObject.AddComponent<MapSwipe>();
             Configure(swipe, ("screen", screen), ("canvas", canvas.GetComponent<Canvas>()));

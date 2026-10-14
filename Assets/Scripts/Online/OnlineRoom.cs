@@ -34,6 +34,8 @@ namespace SomeGame.Online
         public readonly NetworkVariable<double> GoTime = new();
         /// <summary>Bit per slot: who takes part in the current race.</summary>
         public readonly NetworkVariable<byte> RaceMask = new();
+        /// <summary>The last race's winner (slot), who wears the crown until someone else wins; -1 = nobody yet.</summary>
+        public readonly NetworkVariable<int> CrownSlot = new(-1);
         /// <summary>Counts the races of this room; states of an older race are ignored.</summary>
         public readonly NetworkVariable<int> RaceNumber = new();
 
@@ -57,6 +59,7 @@ namespace SomeGame.Online
             Slots.OnListChanged += _ => Changed?.Invoke();
             RaceIndex.OnValueChanged += (_, _) => Changed?.Invoke();
             RandomRace.OnValueChanged += (_, _) => Changed?.Invoke();
+            CrownSlot.OnValueChanged += (_, _) => Changed?.Invoke();
             Phase.OnValueChanged += OnPhaseChanged;
             if (IsServer)
             {
@@ -295,6 +298,7 @@ namespace SomeGame.Online
             {
                 Slots[slot] = default;
                 _latest[slot] = null;
+                if (CrownSlot.Value == slot) CrownSlot.Value = -1; // the crown leaves with its wearer
             }
             _loaded.Remove(clientId);
         }
@@ -339,6 +343,7 @@ namespace SomeGame.Online
         {
             if (!IsServer || Phase.Value != RoomPhase.Lobby || slot < 0 || slot >= Slots.Count || Slots[slot].Kind != SlotKind.Bot) return;
             Slots[slot] = default;
+            if (CrownSlot.Value == slot) CrownSlot.Value = -1;
         }
 
         /// <summary>Host: a bot's colour, cycled to the next free one.</summary>
@@ -407,6 +412,12 @@ namespace SomeGame.Online
             for (int i = 0; i < _latest.Length; i++) _latest[i] = null;
             _loadingSince = Time.unscaledTime;
             Phase.Value = RoomPhase.Loading;
+        }
+
+        /// <summary>Host: the race's winner (the first to finish) gets the crown.</summary>
+        public void Crown(int slot)
+        {
+            if (IsServer && CrownSlot.Value != slot) CrownSlot.Value = slot;
         }
 
         /// <summary>Host: the race is over, everyone back to the lobby.</summary>

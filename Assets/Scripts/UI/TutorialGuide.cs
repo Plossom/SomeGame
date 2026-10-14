@@ -84,7 +84,12 @@ namespace SomeGame.UI
             _car.BoostStarted += _ => _boosted = true;
             _car.Launched += _ => _jumped = true;
             skipButton.onClick.AddListener(Finish);
-            doneButton.onClick.AddListener(GameSession.ReturnToMap);
+            doneButton.onClick.AddListener(() =>
+            {
+                PlayerPrefs.SetInt(MapTour.PendingKey, 1); // the map shows its tour once
+                PlayerPrefs.Save();
+                GameSession.ReturnToMap();
+            });
 
             const string second = "Tap a <b>second finger</b> anywhere";
             bool drifting = SomeGame.Input.ControlSettings.Drifting;

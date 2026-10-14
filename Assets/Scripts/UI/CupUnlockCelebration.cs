@@ -31,6 +31,8 @@ namespace SomeGame.UI
         [SerializeField] RectTransform confettiLayer;
         [SerializeField] Sprite confettiSprite;
         [SerializeField, Min(0)] int confettiCount = 90;
+        [Tooltip("Where the badge flies when you go on (the cup dropdown on the map).")]
+        [SerializeField] RectTransform flyTarget;
 
         static readonly Color[] ConfettiColors =
         {
@@ -118,11 +120,23 @@ namespace SomeGame.UI
                 yield return null;
             }
 
-            // Out.
-            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.3f)
+            // Out: the badge flies into the cup dropdown (it lives there from now on), the rest fades.
+            Vector3 home = badge.position;
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.55f)
             {
+                float e = t * t * (3f - 2f * t);
                 dim.color = new Color(0f, 0f, 0f, 0.75f * (1f - t));
-                badge.localScale = Vector3.one * (1f - t);
+                if (flyTarget != null)
+                {
+                    // An arc: up and over, then into the dropdown, spinning once.
+                    Vector3 to = flyTarget.position;
+                    Vector3 p = Vector3.Lerp(home, to, e);
+                    p.y += Mathf.Sin(e * Mathf.PI) * (Screen.height * 0.08f);
+                    badge.position = p;
+                    badge.localScale = Vector3.one * Mathf.Lerp(1f, 0.18f, e);
+                    badge.localRotation = Quaternion.Euler(0f, 0f, -360f * e);
+                }
+                else badge.localScale = Vector3.one * (1f - t);
                 titleRt.localScale = Vector3.one * (1f - t);
                 cupName.alpha = 1f - t;
                 raysImage.color = new Color(1f, 0.9f, 0.55f, 0.55f * (1f - t));
@@ -132,6 +146,8 @@ namespace SomeGame.UI
             foreach (var c in _confetti) if (c.rt != null) Destroy(c.rt.gameObject);
             _confetti.Clear();
             panel.SetActive(false);
+            badge.position = home;
+            badge.localRotation = Quaternion.identity;
         }
 
         void Update()
