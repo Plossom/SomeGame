@@ -20,7 +20,7 @@ namespace SomeGame.UI
         [SerializeField] RectTransform ramp;
 
         static readonly Color Blue = new(0.31f, 0.64f, 1f), Orange = new(1f, 0.6f, 0.24f), Purple = new(0.71f, 0.42f, 1f);
-        static readonly Vector2 RingAt = new(-210f, -30f), TapAt = new(30f, -40f), CarAt = new(230f, 0f);
+        static readonly Vector2 RingAt = new(-285f, -20f), TapAt = new(0f, -30f), CarAt = new(285f, 0f);
 
         int _step = -1;
         float _start;
@@ -90,7 +90,7 @@ namespace SomeGame.UI
             ripple.gameObject.SetActive(k > 0f && k < 1f);
             ripple.anchoredPosition = at;
             ripple.localScale = Vector3.one * Mathf.Lerp(0.4f, 1.5f, k);
-            _rippleImage.color = new Color(1f, 1f, 1f, 0.9f * (1f - k));
+            _rippleImage.color = Theme.WithAlpha(Theme.Ink, 0.9f * (1f - k));
         }
 
         void Steer(float t)
@@ -129,7 +129,7 @@ namespace SomeGame.UI
                 finger2.localScale = Vector3.one * (held ? 0.94f : 1f);
                 press.gameObject.SetActive(held);
                 press.anchoredPosition = TapAt;
-                _pressImage.color = new Color(1f, 1f, 1f, 0.45f + 0.15f * Mathf.Sin(t * 8f));
+                _pressImage.color = Theme.WithAlpha(Theme.Ink, 0.25f + 0.1f * Mathf.Sin(t * 8f));
             }
             float slide = held ? Mathf.Clamp01((c - 0.4f) / 0.3f) : 0f;
             CarHeading(-28f - 38f * slide);

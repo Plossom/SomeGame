@@ -726,7 +726,7 @@ namespace SomeGame.EditorTools
             var root = Stretch("Tutorial", safe);
             var card = Rt("Card", root);
             card.anchorMin = new Vector2(0f, 1f); card.anchorMax = new Vector2(1f, 1f); card.pivot = new Vector2(0.5f, 1f);
-            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 400f);
+            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 840f); // room for the demo under the text
             var shadow = Stretch("Shadow", card); shadow.offsetMin = shadow.offsetMax = new Vector2(0f, -14f);
             Img(shadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
             Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true);
@@ -762,12 +762,12 @@ namespace SomeGame.EditorTools
             fade.alpha = 0f; fade.blocksRaycasts = false; fade.interactable = false;
 
             // The demo under the hint card: white fingers act out the step, a mini car shows what happens.
-            // At the top, right under the hint card.
-            var demo = At("Demo", root, new Vector2(0.5f, 1f), new Vector2(0f, -470f), new Vector2(820f, 460f));
-            demo.localScale = Vector3.one * 1.6f; // big enough to read at a glance
+            // Inside the hint card, under its text: a small dark screen acting out the step.
+            var demo = At("Demo", card, new Vector2(0.5f, 1f), new Vector2(0f, -350f), new Vector2(820f, 460f));
+            demo.localScale = Vector3.one * 1.04f; // as wide as the card
+            demo.gameObject.AddComponent<RectMask2D>(); // the jumping car stays inside its area
             var demoGroup = demo.gameObject.AddComponent<CanvasGroup>();
             demoGroup.blocksRaycasts = false; demoGroup.interactable = false;
-            Img(demo, "Round", Theme.WithAlpha(Theme.Ink, 0.35f), sliced: true);
             RectTransform Part(string name, string sprite, Vector2 size, Color color, Vector2 pivot)
             {
                 var rt = At(name, demo, new Vector2(0.5f, 0.5f), Vector2.zero, size);
@@ -784,12 +784,12 @@ namespace SomeGame.EditorTools
             var sparks = new Image[3];
             for (int i = 0; i < sparks.Length; i++) sparks[i] = Part($"Spark{i}", "Circle", new Vector2(24f, 24f), Color.white, center).GetComponent<Image>();
             var lines = new RectTransform[3];
-            for (int i = 0; i < lines.Length; i++) lines[i] = Part($"SpeedLine{i}", null, new Vector2(8f, 72f), new Color(1f, 1f, 1f, 0.7f), center);
-            var ring = Part("Ring", "Ring", new Vector2(190f, 190f), new Color(1f, 1f, 1f, 0.8f), center);
-            ring.anchoredPosition = new Vector2(-210f, -30f);
-            var knob = Part("Knob", "Circle", new Vector2(72f, 72f), new Color(1f, 1f, 1f, 0.9f), center);
-            var press = Part("Press", "Circle", new Vector2(86f, 86f), new Color(1f, 1f, 1f, 0.5f), center);
-            var ripple = Part("Ripple", "Ring", new Vector2(110f, 110f), Color.white, center);
+            for (int i = 0; i < lines.Length; i++) lines[i] = Part($"SpeedLine{i}", null, new Vector2(8f, 72f), Theme.WithAlpha(Theme.Ink, 0.5f), center);
+            var ring = Part("Ring", "Ring", new Vector2(190f, 190f), Theme.WithAlpha(Theme.Ink, 0.7f), center);
+            ring.anchoredPosition = new Vector2(-285f, -20f);
+            var knob = Part("Knob", "Circle", new Vector2(72f, 72f), Theme.WithAlpha(Theme.Ink, 0.35f), center);
+            var press = Part("Press", "Circle", new Vector2(86f, 86f), Theme.WithAlpha(Theme.Ink, 0.3f), center);
+            var ripple = Part("Ripple", "Ring", new Vector2(110f, 110f), Theme.Ink, center);
             var finger1 = Part("Finger1", "Finger", new Vector2(80f, 100f), Color.white, new Vector2(0.5f, 0.96f));
             var finger2 = Part("Finger2", "Finger", new Vector2(80f, 100f), Color.white, new Vector2(0.5f, 0.96f));
             var demoComp = demo.gameObject.AddComponent<TutorialDemo>();
