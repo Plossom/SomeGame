@@ -35,9 +35,13 @@ namespace SomeGame.UI
         [SerializeField] Button leaveButton, copyButton;
         [SerializeField] TMP_Text codeLabel, copiedLabel;
         [SerializeField] Image racePicture;
-        [SerializeField] TMP_Text raceChapter, raceTitle, raceDetails, raceCounter;
+        [SerializeField] TMP_Text raceTitle, raceDetails, raceCounter;
         [SerializeField] Image[] raceDifficulty;
         [SerializeField] Button racePrev, raceNext;
+        [Tooltip("Row of cup tabs over the race (one per cup, then RANDOM); the inactive tab to copy.")]
+        [SerializeField] RectTransform cupTabs;
+        [SerializeField] Button tabTemplate;
+        [SerializeField] Sprite diceSprite;
         [SerializeField] TMP_Text playersCaption;
         [SerializeField] Button fillButton;
         [SerializeField] OnlineSlotCard[] slotCards;
@@ -86,6 +90,7 @@ namespace SomeGame.UI
             copyButton.onClick.AddListener(CopyCode);
             racePrev.onClick.AddListener(() => PageRace(-1));
             raceNext.onClick.AddListener(() => PageRace(1));
+            tabTemplate.gameObject.SetActive(false);
             fillButton.onClick.AddListener(() => _room?.FillWithBots());
             mainButton.onClick.AddListener(MainAction);
             for (int i = 0; i < swatches.Length; i++)
@@ -271,25 +276,51 @@ namespace SomeGame.UI
 
             codeLabel.text = _session.Code;
 
-            // The race.
-            var races = OnlineRoom.Races;
+            // The race: cup tabs (and RANDOM), then the race of that cup.
+            BuildTabs();
+            bool random = _room.RandomRace.Value;
+            var (cup, inCup, count) = OnlineRoom.Locate(_room.RaceIndex.Value);
+            int shown = random ? -2 : _room.RaceIndex.Value;
             var level = _room.Race;
-            if (level != null && _room.RaceIndex.Value != _shownRace)
+            if (level != null && shown != _shownRace)
             {
-                if (_shownRace >= 0) _raceAt = Time.unscaledTime;
-                _shownRace = _room.RaceIndex.Value;
-                racePicture.sprite = level.preview;
-                racePicture.enabled = level.preview != null;
-                raceChapter.text = level.chapter;
-                raceTitle.text = level.displayName.ToUpperInvariant();
-                raceDetails.text = level.laps + (level.laps == 1 ? " LAP" : " LAPS");
+                if (_shownRace != -1) _raceAt = Time.unscaledTime;
+                _shownRace = shown;
+                if (random)
+                {
+                    racePicture.sprite = diceSprite;
+                    racePicture.color = Theme.Amber;
+                    raceTitle.text = "RANDOM RACE";
+                    raceDetails.text = "ANY CUP · A SURPRISE";
+                }
+                else
+                {
+                    racePicture.sprite = level.preview;
+                    racePicture.color = Color.white;
+                    raceTitle.text = level.displayName.ToUpperInvariant();
+                    raceDetails.text = level.laps + (level.laps == 1 ? " LAP" : " LAPS");
+                }
+                racePicture.enabled = racePicture.sprite != null;
                 for (int i = 0; i < raceDifficulty.Length; i++)
+                {
+                    raceDifficulty[i].gameObject.SetActive(!random);
                     raceDifficulty[i].color = i < level.difficulty ? Theme.Orange : Theme.WithAlpha(Theme.Stone, 0.25f);
+                }
             }
-            raceCounter.text = $"{_room.RaceIndex.Value + 1} / {races.Count}";
-            racePrev.gameObject.SetActive(host && inLobby);
-            raceNext.gameObject.SetActive(host && inLobby);
-            raceCounter.gameObject.SetActive(host && inLobby);
+            for (int i = 0; i < _tabs.Count; i++)
+            {
+                bool on = i == _tabs.Count - 1 ? random : !random && i == cup;
+                var (button, face, label, icon) = _tabs[i];
+                face.color = on ? Theme.Orange : Theme.InkSoft;
+                label.color = on ? Color.white : Theme.Stone;
+                if (icon != null) icon.color = on ? Color.white : Theme.Stone;
+                button.interactable = host && inLobby;
+            }
+            raceCounter.text = $"RACE {inCup + 1}/{count}";
+            bool paging = host && inLobby && !random && count > 1;
+            racePrev.gameObject.SetActive(paging);
+            raceNext.gameObject.SetActive(paging);
+            raceCounter.gameObject.SetActive(!random);
 
             // Seats.
             int people = 0, filled = 0;
@@ -364,7 +395,35 @@ namespace SomeGame.UI
         {
             if (_room == null) return;
             _raceSlide = step;
-            _room.SelectRace(_room.RaceIndex.Value + step);
+            _room.PageRace(step);
+        }
+
+        readonly List<(Button button, Image face, TMP_Text label, Image icon)> _tabs = new();
+
+        // One tab per cup with races, then RANDOM (with the die).
+        void BuildTabs()
+        {
+            if (_tabs.Count > 0) return;
+            var cups = OnlineRoom.Cups;
+            for (int i = 0; i <= cups.Count; i++)
+            {
+                bool random = i == cups.Count;
+                var tab = Instantiate(tabTemplate, cupTabs);
+                tab.gameObject.SetActive(true);
+                var label = tab.GetComponentInChildren<TMP_Text>();
+                label.text = random ? "RANDOM" : cups[i].displayName.ToUpperInvariant();
+                var icon = tab.transform.Find("Icon")?.GetComponent<Image>();
+                if (icon != null) icon.gameObject.SetActive(random);
+                int cup = i;
+                tab.onClick.AddListener(() =>
+                {
+                    if (_room == null) return;
+                    _raceSlide = 0;
+                    if (random) _room.SetRandom(!_room.RandomRace.Value);
+                    else _room.SelectCup(cup);
+                });
+                _tabs.Add((tab, (Image)tab.targetGraphic, label, random ? icon : null));
+            }
         }
 
         void PickColor(int color)
@@ -424,6 +483,7 @@ namespace SomeGame.UI
             float re = 1f - Mathf.Pow(1f - r, 3f);
             racePicture.rectTransform.anchoredPosition = new Vector2(_raceSlide * 80f * (1f - re), 0f);
             var pc = racePicture.color; pc.a = r < 1f ? re : 1f; racePicture.color = pc;
+            racePicture.rectTransform.localScale = Vector3.one * (_raceSlide == 0 && r < 1f ? Mathf.Lerp(0.85f, 1f, re) : 1f);
             raceTitle.alpha = r < 1f ? re : 1f;
 
             // Your colour's ring glides to it.

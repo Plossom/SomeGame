@@ -62,3 +62,36 @@ namespace SomeGame.Online
         }
     }
 }
+
+#if UNITY_EDITOR
+namespace SomeGame.Online
+{
+    /// <summary>Editor test: how evenly a car moves on screen (frame-to-frame speed changes).</summary>
+    public class MotionProbe : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.Transform Target;
+        readonly System.Collections.Generic.List<float> _speeds = new();
+        UnityEngine.Vector3 _last;
+        bool _started;
+
+        void LateUpdate()
+        {
+            if (Target == null) return;
+            var p = Target.position;
+            if (_started && UnityEngine.Time.deltaTime > 0f) _speeds.Add((p - _last).magnitude / UnityEngine.Time.deltaTime);
+            _last = p;
+            _started = true;
+        }
+
+        /// <summary>Mean speed, and mean size of the change in speed between frames (lower = smoother).</summary>
+        public string Report()
+        {
+            if (_speeds.Count < 3) return "no data";
+            float mean = 0f, jerk = 0f, worst = 0f;
+            for (int i = 0; i < _speeds.Count; i++) mean += _speeds[i];
+            for (int i = 1; i < _speeds.Count; i++) { float d = UnityEngine.Mathf.Abs(_speeds[i] - _speeds[i - 1]); jerk += d; worst = UnityEngine.Mathf.Max(worst, d); }
+            return $"frames={_speeds.Count} speed={mean / _speeds.Count:0.0} jitter={jerk / (_speeds.Count - 1):0.00} worst={worst:0.0}";
+        }
+    }
+}
+#endif

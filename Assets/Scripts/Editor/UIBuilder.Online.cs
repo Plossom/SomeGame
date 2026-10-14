@@ -34,18 +34,10 @@ namespace SomeGame.EditorTools
 
         static void BuildOnlineLobby(RectTransform canvas, RectTransform safe)
         {
-            // The entry: a dark pill under the star times, two people and ONLINE.
-            var openRt = At("OnlineButton", safe, new Vector2(0f, 1f), new Vector2(60f, -556f), new Vector2(300f, 118f));
-            Img(At("Shadow", openRt, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(300f, 106f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
-            var openFace = At("Face", openRt, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(300f, 106f));
-            var openBg = Img(openFace, "Round", Theme.Ink, sliced: true, raycast: true);
-            Img(At("Icon", openFace, new Vector2(0f, 0.5f), new Vector2(26f, 0f), new Vector2(66f, 66f)), "IconPeople", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
-            var openLabel = Txt(At("Label", openFace, new Vector2(1f, 0.5f), new Vector2(-28f, 0f), new Vector2(190f, 80f)), "ONLINE", 54, Theme.Cream, _condItalic, TextAlignmentOptions.Right);
-            openLabel.rectTransform.pivot = new Vector2(1f, 0.5f);
-            openLabel.characterSpacing = 4f;
-            var open = openRt.gameObject.AddComponent<Button>();
-            open.targetGraphic = openBg; open.transition = Selectable.Transition.None;
-            openRt.gameObject.AddComponent<ButtonFeedback>();
+            // The entry: a square button with two people, top right between the stars / trophies counter and
+            // the cup dropdown (same column, same width as the dropdown).
+            var open = SquareButton(safe, "OnlineButton", new Vector2(1f, 1f), new Vector2(-66f, -216f), "IconPeople", 128f);
+            open.transform.Find("Face/Icon").localScale = Vector3.one * 1.25f;
 
             // Its own canvas over the map's: the map recolours its canvas per cup, the lobby styles itself.
             var lobbyCanvas = CreateCanvas();
@@ -206,26 +198,43 @@ namespace SomeGame.EditorTools
             copied.rectTransform.pivot = new Vector2(1f, 1f);
             copied.alpha = 0f;
 
-            // The race: the track from above, its name, laps and difficulty; the host pages with the arrows.
-            var raceCard = At("Race", content, new Vector2(0.5f, 1f), new Vector2(0f, -470f), new Vector2(1050f, 400f));
+            // The race: cup tabs (and RANDOM) along the top, the track from above, its name, laps and
+            // difficulty; the host picks the cup and pages through its races with the arrows.
+            var raceCard = At("Race", content, new Vector2(0.5f, 1f), new Vector2(0f, -470f), new Vector2(1050f, 430f));
             var raceShadow = Stretch("Shadow", raceCard); raceShadow.offsetMin = raceShadow.offsetMax = new Vector2(0f, -14f);
             Img(raceShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Face", raceCard), "Round", Theme.Ink, sliced: true);
-            var frame = At("Track", raceCard, new Vector2(0f, 0.5f), new Vector2(26f, 0f), new Vector2(200f, 356f));
+            var frame = At("Track", raceCard, new Vector2(0f, 0.5f), new Vector2(26f, 0f), new Vector2(200f, 386f));
             frame.pivot = new Vector2(0f, 0.5f);
             Img(frame, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
             frame.gameObject.AddComponent<RectMask2D>();
             var picture = Img(Stretch("Picture", frame), null, Color.white);
             picture.rectTransform.offsetMin = new Vector2(8f, 8f); picture.rectTransform.offsetMax = new Vector2(-8f, -8f);
             picture.preserveAspect = true;
-            var raceChapter = Txt(At("Chapter", raceCard, new Vector2(0f, 1f), new Vector2(260f, -34f), new Vector2(760f, 44f)), "VALLEY CUP · RACE 1", 36, Theme.Amber, _condItalic, TextAlignmentOptions.Left);
-            raceChapter.characterSpacing = 6f;
-            var raceTitle = Txt(At("Name", raceCard, new Vector2(0f, 1f), new Vector2(256f, -80f), new Vector2(760f, 110f)), "SUNDAY LOOP", 92, Theme.Cream, _black, TextAlignmentOptions.Left);
+
+            var tabs = At("CupTabs", raceCard, new Vector2(0f, 1f), new Vector2(256f, -26f), new Vector2(768f, 66f));
+            var tabsLayout = tabs.gameObject.AddComponent<HorizontalLayoutGroup>();
+            tabsLayout.spacing = 12f; tabsLayout.childAlignment = TextAnchor.MiddleLeft;
+            tabsLayout.childControlWidth = true; tabsLayout.childControlHeight = true;
+            tabsLayout.childForceExpandWidth = false; tabsLayout.childForceExpandHeight = true;
+            var tabRt = Rt("Tab", tabs);
+            var tabFace = Rounded(Img(tabRt, "Round", Theme.InkSoft, sliced: true, raycast: true), 14f);
+            var tabLayout = tabRt.gameObject.AddComponent<HorizontalLayoutGroup>();
+            tabLayout.padding = new RectOffset(20, 22, 6, 6); tabLayout.spacing = 8f; tabLayout.childAlignment = TextAnchor.MiddleCenter;
+            tabLayout.childControlWidth = true; tabLayout.childControlHeight = true; tabLayout.childForceExpandWidth = false;
+            var tabIcon = Rt("Icon", tabRt);
+            Img(tabIcon, "IconDice", Theme.Stone);
+            var tabIconSize = tabIcon.gameObject.AddComponent<LayoutElement>(); tabIconSize.preferredWidth = 38f; tabIconSize.preferredHeight = 38f;
+            Txt(Rt("Label", tabRt), "VALLEY CUP", 34, Theme.Stone, _condItalic).characterSpacing = 3f;
+            var tab = tabRt.gameObject.AddComponent<Button>(); tab.targetGraphic = tabFace; tab.transition = Selectable.Transition.None;
+            tabRt.gameObject.AddComponent<ButtonFeedback>();
+
+            var raceTitle = Txt(At("Name", raceCard, new Vector2(0f, 1f), new Vector2(256f, -106f), new Vector2(760f, 110f)), "SUNDAY LOOP", 92, Theme.Cream, _black, TextAlignmentOptions.Left);
             raceTitle.enableAutoSizing = true; raceTitle.fontSizeMin = 56; raceTitle.fontSizeMax = 92;
-            var details = Txt(At("Details", raceCard, new Vector2(0f, 1f), new Vector2(260f, -196f), new Vector2(200f, 50f)), "3 LAPS", 40, Theme.Stone, _cond, TextAlignmentOptions.Left);
+            var details = Txt(At("Details", raceCard, new Vector2(0f, 1f), new Vector2(260f, -222f), new Vector2(420f, 50f)), "3 LAPS", 40, Theme.Stone, _cond, TextAlignmentOptions.Left);
             var pips = new Image[5];
             for (int i = 0; i < 5; i++)
-                pips[i] = Img(At($"Pip{i + 1}", raceCard, new Vector2(0f, 1f), new Vector2(440f + i * 62f, -208f), new Vector2(52f, 24f)), "Pill", Theme.Orange, sliced: true);
+                pips[i] = Rounded(Img(At($"Pip{i + 1}", raceCard, new Vector2(0f, 1f), new Vector2(440f + i * 62f, -234f), new Vector2(52f, 26f)), "Round", Theme.Orange, sliced: true), 6f);
             var prev = SquareButton(raceCard, "PrevRace", new Vector2(0f, 0f), new Vector2(260f, 30f), "IconPlay", 108f);
             prev.transform.Find("Face/Icon").localScale = new Vector3(-1f, 1f, 1f);
             var next = SquareButton(raceCard, "NextRace", new Vector2(0f, 0f), new Vector2(620f, 30f), "IconPlay", 108f);
@@ -235,13 +244,13 @@ namespace SomeGame.EditorTools
                 arrow.transform.Find("Face").GetComponent<Image>().color = Theme.Orange;
                 arrow.transform.Find("Face/Icon").GetComponent<Image>().color = Color.white;
             }
-            var counter = Txt(At("Counter", raceCard, new Vector2(0f, 0f), new Vector2(386f, 40f), new Vector2(214f, 100f)), "1 / 9", 50, Theme.Cream, _condItalic);
+            var counter = Txt(At("Counter", raceCard, new Vector2(0f, 0f), new Vector2(380f, 40f), new Vector2(226f, 100f)), "RACE 1/8", 44, Theme.Cream, _condItalic);
 
             // Seats: two columns of four.
-            var playersCaption = Txt(At("PlayersCaption", content, new Vector2(0f, 1f), new Vector2(64f, -906f), new Vector2(600f, 60f)), "RACERS 1/8", 46, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            var playersCaption = Txt(At("PlayersCaption", content, new Vector2(0f, 1f), new Vector2(64f, -936f), new Vector2(600f, 60f)), "RACERS 1/8", 46, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
             playersCaption.characterSpacing = 6f;
-            var fillRt = At("FillButton", content, new Vector2(1f, 1f), new Vector2(-60f, -896f), new Vector2(330f, 80f));
-            var fillBg = Img(fillRt, "Pill", Theme.Ink, sliced: true, raycast: true);
+            var fillRt = At("FillButton", content, new Vector2(1f, 1f), new Vector2(-60f, -926f), new Vector2(330f, 80f));
+            var fillBg = Rounded(Img(fillRt, "Round", Theme.Ink, sliced: true, raycast: true), 16f);
             Img(At("Icon", fillRt, new Vector2(0f, 0.5f), new Vector2(22f, 0f), new Vector2(50f, 50f)), "IconBot", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
             var fillLabel = Txt(At("Label", fillRt, new Vector2(1f, 0.5f), new Vector2(-28f, 0f), new Vector2(240f, 70f)), "FILL WITH BOTS", 36, Theme.Cream, _condItalic, TextAlignmentOptions.Right);
             fillLabel.rectTransform.pivot = new Vector2(1f, 0.5f);
@@ -252,13 +261,13 @@ namespace SomeGame.EditorTools
             for (int i = 0; i < 8; i++)
             {
                 int col = i % 2, row = i / 2;
-                cards[i] = SeatCard(content, i, new Vector2(60f + col * 540f, -1000f - row * 176f));
+                cards[i] = SeatCard(content, i, new Vector2(60f + col * 540f, -1030f - row * 176f));
             }
 
             // Colours.
-            var colourCaption = Txt(At("ColourCaption", content, new Vector2(0f, 1f), new Vector2(64f, -1712f), new Vector2(600f, 56f)), "YOUR COLOUR", 42, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            var colourCaption = Txt(At("ColourCaption", content, new Vector2(0f, 1f), new Vector2(64f, -1742f), new Vector2(600f, 56f)), "YOUR COLOUR", 42, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
             colourCaption.characterSpacing = 6f;
-            var swatchRow = At("Colours", content, new Vector2(0.5f, 1f), new Vector2(0f, -1772f), new Vector2(1050f, 120f));
+            var swatchRow = At("Colours", content, new Vector2(0.5f, 1f), new Vector2(0f, -1802f), new Vector2(1050f, 120f));
             var ring = At("Ring", swatchRow, new Vector2(0f, 0.5f), new Vector2(66f, 0f), new Vector2(128f, 128f));
             ring.pivot = new Vector2(0.5f, 0.5f);
             Img(ring, "RingDashed", Theme.Ink);
@@ -295,8 +304,8 @@ namespace SomeGame.EditorTools
             refs.AddRange(new (string, Object)[]
             {
                 ("roomPanel", panel.gameObject), ("roomGroup", group), ("roomContent", content), ("leaveButton", leave), ("copyButton", copy),
-                ("codeLabel", code), ("copiedLabel", copied), ("racePicture", picture), ("raceChapter", raceChapter), ("raceTitle", raceTitle),
-                ("raceDetails", details), ("raceCounter", counter), ("racePrev", prev), ("raceNext", next), ("playersCaption", playersCaption),
+                ("codeLabel", code), ("copiedLabel", copied), ("racePicture", picture), ("raceTitle", raceTitle),
+                ("raceDetails", details), ("raceCounter", counter), ("racePrev", prev), ("raceNext", next), ("cupTabs", tabs), ("tabTemplate", tab), ("diceSprite", Sprite("IconDice")), ("playersCaption", playersCaption),
                 ("fillButton", fill), ("swatchRing", ring), ("mainButton", main),
                 ("mainFace", main.transform.Find("Face").GetComponent<Image>()), ("mainShadow", main.transform.Find("Shadow").GetComponent<Image>()),
                 ("mainLabel", main.transform.Find("Face/Label").GetComponent<TMP_Text>()), ("hintLabel", hint), ("toast", toast), ("toastLabel", toastLabel),
@@ -341,7 +350,7 @@ namespace SomeGame.EditorTools
             GameObject Tag(string label, Color bg, Color text, string icon)
             {
                 var t = Rt(label + "Tag", tags);
-                Img(t, "Pill", bg, sliced: true);
+                Rounded(Img(t, "Round", bg, sliced: true), 10f);
                 var l = t.gameObject.AddComponent<HorizontalLayoutGroup>();
                 l.padding = new RectOffset(12, 14, 3, 3); l.spacing = 4f; l.childAlignment = TextAnchor.MiddleCenter;
                 l.childControlWidth = true; l.childControlHeight = true; l.childForceExpandWidth = false;
@@ -390,6 +399,13 @@ namespace SomeGame.EditorTools
                 ("readyBadge", badge), ("readyFace", readyFace), ("readyCheck", check.gameObject), ("removeButton", remove),
                 ("cardButton", cardButton), ("emptyLabel", emptyLabel), ("emptyPlus", plus.gameObject));
             return card;
+        }
+
+        /// <summary>A "Round" sliced image with smaller corners: a rectangle with rounded edges (radius in canvas units).</summary>
+        static Image Rounded(Image image, float radius)
+        {
+            image.pixelsPerUnitMultiplier = 40f / Mathf.Max(1f, radius); // the sprite's corners are 40 px
+            return image;
         }
 
         // A wide button with a hard shadow (like the menu buttons), anchored at the top centre of its parent.

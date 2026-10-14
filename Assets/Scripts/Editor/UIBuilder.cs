@@ -266,7 +266,7 @@ namespace SomeGame.EditorTools
             var columnLayer = SafeArea(canvas);
             columnLayer.name = "CupColumnLayer";
             columnLayer.SetSiblingIndex(wipe.GetSiblingIndex() + 1);
-            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-66f, -206f), new Vector2(128f, 64f));
+            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-66f, -372f), new Vector2(128f, 64f)); // under the ONLINE button
             Img(dots, "Round", Theme.Ink, sliced: true, raycast: true);
             dots.gameObject.AddComponent<RectMask2D>();
             var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(128f, 600f));
@@ -434,7 +434,8 @@ namespace SomeGame.EditorTools
             difficulty.characterSpacing = 8f;
             var pips = new Image[5];
             for (int i = 0; i < pips.Length; i++)
-                pips[i] = Img(At($"Pip{i + 1}", card, new Vector2(0.5f, 1f), new Vector2((i - 2) * 112f, -1368f), new Vector2(96f, 38f)), "Pill", Theme.Orange, sliced: true);
+                pips[i] = Img(At($"Pip{i + 1}", card, new Vector2(0.5f, 1f), new Vector2((i - 2) * 112f, -1368f), new Vector2(96f, 38f)), "Round", Theme.Orange, sliced: true);
+            foreach (var pip in pips) Rounded(pip, 8f); // little bars with rounded edges
 
             // What is on the track: a row of round badges with the game's own pictures.
             var row = At("Features", card, new Vector2(0.5f, 1f), new Vector2(0f, -1432f), new Vector2(930f, 108f));
@@ -847,7 +848,7 @@ namespace SomeGame.EditorTools
             subtitle.characterSpacing = 10f;
             var tag = At("NewBest", safe, new Vector2(1f, 1f), new Vector2(-80f, -420f), new Vector2(330f, 90f));
             tag.localRotation = Quaternion.Euler(0f, 0f, 8f);
-            Img(tag, "Pill", Theme.Ink, sliced: true);
+            Rounded(Img(tag, "Round", Theme.Ink, sliced: true), 16f);
             Txt(Stretch("Label", tag), "NEW BEST LAP", 40, Theme.Amber, _condItalic);
             Pop(tag, 0.5f);
 

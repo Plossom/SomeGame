@@ -8,12 +8,12 @@ namespace SomeGame.Online
 {
     /// <summary>
     /// An online race on this phone: puts every room member on the grid (seat = lobby slot) in their
-    /// colour, drives your car (and, on the host, the bots) and sends them to the room about 20 times a
+    /// colour, drives your car (and, on the host, the bots) and sends them to the room 30 times a
     /// second; the other cars are puppets that follow what the room sends. Added by the RaceManager.
     /// </summary>
     public class OnlineRace : MonoBehaviour
     {
-        const float SendInterval = 0.05f;
+        const float SendInterval = 1f / 30f;
 
         public class Entry
         {

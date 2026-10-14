@@ -28,14 +28,14 @@ namespace SomeGame.Online
             Kind == other.Kind && ClientId == other.ClientId && Name.Equals(other.Name) && Color == other.Color && Ready == other.Ready;
     }
 
-    /// <summary>A car's state as sent over the network (about 20 times a second).</summary>
+    /// <summary>A car's state as sent over the network (30 times a second).</summary>
     public struct CarState : INetworkSerializable
     {
         public const byte Boost = 1, Elevated = 2, Hidden = 4, Finished = 8, Airborne = 16;
 
         public byte Slot;
         public int Race;          // which race of the room this belongs to (old packets are ignored)
-        public double Stamp;      // server time when it was taken
+        public double Stamp;      // when it was taken, on the sending phone's clock
         public UnityEngine.Vector2 Position;
         public float Rotation;
         public UnityEngine.Vector2 Velocity;

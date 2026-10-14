@@ -13,12 +13,12 @@ namespace SomeGame.Online
     /// The online room, run by the host and mirrored on every phone: eight slots (players and bots, each
     /// with a name and a car colour no one else has), the chosen race and the race start. During a race
     /// it relays every car's state: each phone sends its own car to the host, the host sends all cars
-    /// (its bots included) to everyone, about 20 times a second.
+    /// (its bots included) to everyone, 30 times a second.
     /// </summary>
     public class OnlineRoom : NetworkBehaviour
     {
         public const int SlotCount = 8;
-        const float SendInterval = 0.05f;
+        const float SendInterval = 1f / 30f;
         const float LoadTimeout = 15f;
         /// <summary>Seconds from "everyone is ready" to GO: the countdown (3-2-1) plus a little margin.</summary>
         const float CountdownLead = 4.2f;
@@ -27,6 +27,8 @@ namespace SomeGame.Online
 
         public readonly NetworkList<LobbySlot> Slots = new();
         public readonly NetworkVariable<int> RaceIndex = new();
+        /// <summary>The host ticked RANDOM: a surprise race (any cup) is drawn at every start.</summary>
+        public readonly NetworkVariable<bool> RandomRace = new();
         public readonly NetworkVariable<RoomPhase> Phase = new();
         /// <summary>Server time of GO (0 until everyone has loaded the race).</summary>
         public readonly NetworkVariable<double> GoTime = new();
@@ -54,6 +56,7 @@ namespace SomeGame.Online
             DontDestroyOnLoad(gameObject);
             Slots.OnListChanged += _ => Changed?.Invoke();
             RaceIndex.OnValueChanged += (_, _) => Changed?.Invoke();
+            RandomRace.OnValueChanged += (_, _) => Changed?.Invoke();
             Phase.OnValueChanged += OnPhaseChanged;
             if (IsServer)
             {
@@ -99,6 +102,45 @@ namespace SomeGame.Online
                             if (level != null && !level.isTutorial) list.Add(level);
                 return list;
             }
+        }
+
+        /// <summary>The cups that have races, in map order.</summary>
+        public static List<CupDefinition> Cups
+        {
+            get
+            {
+                var list = new List<CupDefinition>();
+                var cups = CupList.Instance;
+                if (cups != null) foreach (var cup in cups.cups) if (cup.HasRaces) list.Add(cup);
+                return list;
+            }
+        }
+
+        /// <summary>The cup of a race (index into <see cref="Cups"/>) and its place in that cup.</summary>
+        public static (int cup, int race, int count) Locate(int raceIndex)
+        {
+            int start = 0, c = 0;
+            foreach (var cup in Cups)
+            {
+                int n = 0;
+                foreach (var level in cup.races.levels) if (level != null && !level.isTutorial) n++;
+                if (raceIndex < start + n) return (c, raceIndex - start, n);
+                start += n;
+                c++;
+            }
+            return (0, 0, 1);
+        }
+
+        /// <summary>Global index of a cup's first race.</summary>
+        public static int FirstRaceOf(int cupIndex)
+        {
+            int start = 0, c = 0;
+            foreach (var cup in Cups)
+            {
+                if (c++ == cupIndex) return start;
+                foreach (var level in cup.races.levels) if (level != null && !level.isTutorial) start++;
+            }
+            return 0;
         }
 
         public LevelDefinition Race
@@ -324,10 +366,38 @@ namespace SomeGame.Online
             PlayerPrefs.SetInt("Online.Race", RaceIndex.Value);
         }
 
+        /// <summary>Host: shows a cup's races (starting with its first).</summary>
+        public void SelectCup(int cupIndex)
+        {
+            if (!IsServer || Phase.Value != RoomPhase.Lobby) return;
+            RandomRace.Value = false;
+            if (Locate(RaceIndex.Value).cup != cupIndex) SelectRace(FirstRaceOf(cupIndex));
+        }
+
+        /// <summary>Host: RANDOM on or off.</summary>
+        public void SetRandom(bool random)
+        {
+            if (!IsServer || Phase.Value != RoomPhase.Lobby) return;
+            RandomRace.Value = random;
+        }
+
+        /// <summary>Host: pages through the races of the current cup (wrapping round).</summary>
+        public void PageRace(int step)
+        {
+            var (cup, race, count) = Locate(RaceIndex.Value);
+            SelectRace(FirstRaceOf(cup) + ((race + step) % count + count) % count);
+        }
+
         /// <summary>Host: everyone into the race.</summary>
         public void StartRace()
         {
             if (!IsServer || Phase.Value != RoomPhase.Lobby || Race == null) return;
+            if (RandomRace.Value)
+            {
+                int count = Races.Count, pick = UnityEngine.Random.Range(0, count);
+                if (count > 1 && pick == RaceIndex.Value) pick = (pick + 1) % count; // not the same one twice
+                RaceIndex.Value = pick;
+            }
             byte mask = 0;
             for (int i = 0; i < Slots.Count; i++) if (Slots[i].Kind != SlotKind.Empty) mask |= (byte)(1 << i);
             RaceMask.Value = mask;
@@ -385,7 +455,9 @@ namespace SomeGame.Online
         public void Submit(CarState state)
         {
             state.Race = RaceNumber.Value;
-            state.Stamp = NetworkManager.ServerTime.Time;
+            // The time of the physics step the position comes from, on the sender's own steady clock
+            // (the puppet keeps a timeline per car, so the clocks need not agree).
+            state.Stamp = Time.fixedTimeAsDouble;
             if (IsServer) _latest[state.Slot] = state;
             else SubmitRpc(state);
         }
