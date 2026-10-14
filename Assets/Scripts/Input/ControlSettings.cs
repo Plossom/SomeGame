@@ -11,18 +11,16 @@ namespace SomeGame.Input
 
         public enum Assist { Off, Light, Strong }
 
-        /// <summary>How drifts are started: by hand with a second finger (Manual, the default) or by themselves (Auto).</summary>
-        public enum DriftMode { Manual, Auto }
+        const string DriftingKey = "Controls.Drifting";
 
-        const string DriftModeKey = "Controls.Drift";
-
-        public static DriftMode Drift
+        /// <summary>Drifting (second finger to hop and hold) on, or off for an easier game. On by default.</summary>
+        public static bool Drifting
         {
-            get => PlayerPrefs.GetInt(DriftModeKey, (int)DriftMode.Manual) == (int)DriftMode.Auto ? DriftMode.Auto : DriftMode.Manual;
+            get => PlayerPrefs.GetInt(DriftingKey, 1) == 1;
             set
             {
-                if (value == Drift) return;
-                PlayerPrefs.SetInt(DriftModeKey, (int)value);
+                if (value == Drifting) return;
+                PlayerPrefs.SetInt(DriftingKey, value ? 1 : 0);
                 PlayerPrefs.Save();
                 Changed?.Invoke();
             }

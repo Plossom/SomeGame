@@ -87,25 +87,22 @@ namespace SomeGame.UI
             doneButton.onClick.AddListener(GameSession.ReturnToMap);
 
             const string second = "Tap a <b>second finger</b> anywhere";
-            var mode = SomeGame.Input.ControlSettings.Drift;
-            string driftBody = mode == SomeGame.Input.ControlSettings.DriftMode.Auto
-                ? "In a curve, at speed, steer <b>into the curve</b>: the car drifts by itself and holds it round the bend."
-                : "Steer a little into the curve, then hop again and <b>keep holding</b>: you drift round the corner.";
-            string boostBody = mode == SomeGame.Input.ControlSettings.DriftMode.Manual
-                ? "Now let go: the longer the drift, the bigger the boost."
-                : "At the end of the curve the drift lets go by itself (or <b>straighten your thumb</b>): the longer the drift, the bigger the boost.";
+            bool drifting = SomeGame.Input.ControlSettings.Drifting;
             var steps = new System.Collections.Generic.List<Step>
             {
                 new Step { title = "STEER", body = "Touch the screen and drag: the car drives where you point. Lift your thumb to roll.",
                     done = () => _steerTime > 2f, demo = 0 },
             };
-            // The hop belongs to drifting by hand.
-            if (mode == SomeGame.Input.ControlSettings.DriftMode.Manual)
+            // Drifting can be switched off in the menu: then the practice skips it.
+            if (drifting)
+            {
                 steps.Add(new Step { title = "HOP", body = second + " while you steer: the car hops.", done = () => _hopped, demo = 1 });
-            steps.Add(new Step { title = "DRIFT", body = driftBody, done = () => _drifted, spot = Spot.BeforeCurve, demo = 2 });
-            steps.Add(new Step { title = "CHARGE", body = "Keep drifting: the sparks turn <color=#4FA3FF>blue</color>, <color=#FF9A3D>orange</color>, then <color=#B66BFF>purple</color>.",
-                done = () => _car.IsDrifting && _car.DriftTier >= 1, demo = 3 });
-            steps.Add(new Step { title = "BOOST!", body = boostBody, done = () => _boosted, demo = 4 });
+                steps.Add(new Step { title = "DRIFT", body = "Steer a little into the curve, then hop again and <b>keep holding</b>: you drift round the corner.",
+                    done = () => _drifted, spot = Spot.BeforeCurve, demo = 2 });
+                steps.Add(new Step { title = "CHARGE", body = "Keep drifting: the sparks turn <color=#4FA3FF>blue</color>, <color=#FF9A3D>orange</color>, then <color=#B66BFF>purple</color>.",
+                    done = () => _car.IsDrifting && _car.DriftTier >= 1, demo = 3 });
+                steps.Add(new Step { title = "BOOST!", body = "Now let go: the longer the drift, the bigger the boost.", done = () => _boosted, demo = 4 });
+            }
             steps.Add(new Step { title = "JUMP", body = "Drive straight over the <b>ramp with the white arrows</b> at full speed to fly across the stream.",
                 done = () => _jumped, spot = Spot.BeforeRamp, demo = 5 });
             _steps = steps.ToArray();
@@ -147,7 +144,7 @@ namespace SomeGame.UI
             stepLabel.text = $"PRACTICE  ·  {index + 1}/{_steps.Length}";
             titleLabel.text = _steps[index].title;
             bodyLabel.text = _steps[index].body;
-            if (demo != null) demo.Play(_steps[index].demo, SomeGame.Input.ControlSettings.Drift);
+            if (demo != null) demo.Play(_steps[index].demo);
             if (_steps[index].spot != Spot.Anywhere) StartCoroutine(MoveTo(_steps[index].spot));
         }
 
