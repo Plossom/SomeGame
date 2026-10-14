@@ -726,7 +726,7 @@ namespace SomeGame.EditorTools
             var root = Stretch("Tutorial", safe);
             var card = Rt("Card", root);
             card.anchorMin = new Vector2(0f, 1f); card.anchorMax = new Vector2(1f, 1f); card.pivot = new Vector2(0.5f, 1f);
-            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 840f); // room for the demo under the text
+            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 640f); // room for the demo under the text
             var shadow = Stretch("Shadow", card); shadow.offsetMin = shadow.offsetMax = new Vector2(0f, -14f);
             Img(shadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
             Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true);
@@ -763,7 +763,7 @@ namespace SomeGame.EditorTools
 
             // The demo under the hint card: white fingers act out the step, a mini car shows what happens.
             // Inside the hint card, under its text: a small dark screen acting out the step.
-            var demo = At("Demo", card, new Vector2(0.5f, 1f), new Vector2(0f, -350f), new Vector2(820f, 460f));
+            var demo = At("Demo", card, new Vector2(0.5f, 1f), new Vector2(0f, -300f), new Vector2(820f, 300f));
             demo.localScale = Vector3.one * 1.04f; // as wide as the card
             demo.gameObject.AddComponent<RectMask2D>(); // the jumping car stays inside its area
             var demoGroup = demo.gameObject.AddComponent<CanvasGroup>();
@@ -786,7 +786,7 @@ namespace SomeGame.EditorTools
             var lines = new RectTransform[3];
             for (int i = 0; i < lines.Length; i++) lines[i] = Part($"SpeedLine{i}", null, new Vector2(8f, 72f), Theme.WithAlpha(Theme.Ink, 0.5f), center);
             var ring = Part("Ring", "Ring", new Vector2(190f, 190f), Theme.WithAlpha(Theme.Ink, 0.7f), center);
-            ring.anchoredPosition = new Vector2(-285f, -20f);
+            ring.anchoredPosition = new Vector2(-285f, 0f);
             var knob = Part("Knob", "Circle", new Vector2(72f, 72f), Theme.WithAlpha(Theme.Ink, 0.35f), center);
             var press = Part("Press", "Circle", new Vector2(86f, 86f), Theme.WithAlpha(Theme.Ink, 0.3f), center);
             var ripple = Part("Ripple", "Ring", new Vector2(110f, 110f), Theme.Ink, center);

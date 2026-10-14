@@ -20,7 +20,7 @@ namespace SomeGame.UI
         [SerializeField] RectTransform ramp;
 
         static readonly Color Blue = new(0.31f, 0.64f, 1f), Orange = new(1f, 0.6f, 0.24f), Purple = new(0.71f, 0.42f, 1f);
-        static readonly Vector2 RingAt = new(-285f, -20f), TapAt = new(0f, -30f), CarAt = new(285f, 0f);
+        static readonly Vector2 RingAt = new(-285f, 0f), TapAt = new(0f, -10f), CarAt = new(285f, 0f);
 
         int _step = -1;
         float _start;
@@ -167,7 +167,7 @@ namespace SomeGame.UI
             float go = Mathf.Clamp01((c - 1.55f) / 0.3f);
             CarHeading(Mathf.Lerp(-66f, 0f, go));
             float dash = Mathf.InverseLerp(1.6f, 2.6f, c);
-            car.anchoredPosition = CarAt + new Vector2(0f, 120f * Mathf.Sin(dash * Mathf.PI * 0.5f) - 20f);
+            car.anchoredPosition = CarAt + new Vector2(0f, 100f * Mathf.Sin(dash * Mathf.PI * 0.5f) - 20f);
             carShadow.anchoredPosition = car.anchoredPosition + new Vector2(6f, -8f);
             for (int i = 0; i < speedLines.Length; i++)
             {
@@ -185,9 +185,9 @@ namespace SomeGame.UI
             ramp.gameObject.SetActive(true);
             ramp.anchoredPosition = CarAt + new Vector2(0f, -10f);
             float c = Mathf.Repeat(t, 2.4f);
-            float y = Mathf.Lerp(-150f, 170f, Mathf.Clamp01(c / 1.8f));
+            float y = Mathf.Lerp(-120f, 130f, Mathf.Clamp01(c / 1.8f));
             car.anchoredPosition = CarAt + new Vector2(0f, y);
-            float air = y > 20f && y < 150f ? Mathf.Sin(Mathf.InverseLerp(20f, 150f, y) * Mathf.PI) : 0f;
+            float air = y > 10f && y < 120f ? Mathf.Sin(Mathf.InverseLerp(10f, 120f, y) * Mathf.PI) : 0f;
             car.localScale = Vector3.one * (1f + 0.45f * air);
             carShadow.anchoredPosition = CarAt + new Vector2(6f + 18f * air, y - 8f - 26f * air);
             carShadow.localScale = Vector3.one * (1f - 0.25f * air);
