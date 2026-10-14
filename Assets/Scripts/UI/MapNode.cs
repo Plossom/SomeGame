@@ -95,7 +95,7 @@ namespace SomeGame.UI
             burstImage.sprite = sparkle;
             burstImage.raycastTarget = false;
             var requirementTexts = requirement.GetComponentsInChildren<UnityEngine.UI.Graphic>();
-            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.star, 0.8f);
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.unlock, 0.9f);
             bool opened = false;
             for (float t = 0f; t < 0.55f; t += Time.unscaledDeltaTime)
             {

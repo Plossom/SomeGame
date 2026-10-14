@@ -31,3 +31,12 @@ MonoBehaviour:
   star: {fileID: 8300000, guid: f348b613ee59e4a1ea6fcb5141dcfd97, type: 3}
   win: {fileID: 8300000, guid: b01479a874cce461d97350a832935549, type: 3}
   lose: {fileID: 8300000, guid: 072722279745e4b13892bfa106a02104, type: 3}
+  iceSlide: {fileID: 8300000, guid: 7d2cd0d68c03d44fc848930ab774d01e, type: 3}
+  roofLand: {fileID: 8300000, guid: d3dcd522955b24db4ab402382c744dae, type: 3}
+  wallWhoosh: {fileID: 8300000, guid: 04603ce7bd5884fc488b18d6b33338f7, type: 3}
+  penguin: {fileID: 8300000, guid: b70d5c471b25d43d7a33608d382d77c1, type: 3}
+  dashPanel: {fileID: 8300000, guid: 113118e44b7c84478b345138c11b3e61, type: 3}
+  snowPoof: {fileID: 8300000, guid: 28f1b245dd5434c358564f58e38b4616, type: 3}
+  trick: {fileID: 8300000, guid: 88f56a4d049c344ac874b295f2bc95d6, type: 3}
+  unlock: {fileID: 8300000, guid: 742bc3de8291c4e6eb3ba89140e0e741, type: 3}
+  fanfare: {fileID: 8300000, guid: 13ce50ce1f111435d82a4c07023d44da, type: 3}

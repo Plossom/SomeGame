@@ -21,10 +21,10 @@ MonoBehaviour:
   description: 'The grand finale on the water: leap from island to island across the lagoon. One mistake and you splash!'
   difficulty: 5
   rivalCount: 7
-  rivalSpeedScale: 1.02
+  rivalSpeedScale: 0.99
   rivalCornerScale: 1.1
   starsRequired: 14
   starTimes:
-  - 145
-  - 129
-  - 125
+  - 138
+  - 123
+  - 119

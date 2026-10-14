@@ -21,10 +21,10 @@ MonoBehaviour:
   description: 'Race through a snowy village: bounce onto the rooftops, ride the ice wall and slide across the frozen lake. Watch out for the penguins!'
   difficulty: 1
   rivalCount: 7
-  rivalSpeedScale: 0.9
+  rivalSpeedScale: 0.87
   rivalCornerScale: 1
   starsRequired: 0
   starTimes:
-  - 154
-  - 117
-  - 100
+  - 146
+  - 111
+  - 95

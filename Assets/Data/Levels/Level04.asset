@@ -21,10 +21,10 @@ MonoBehaviour:
   description: 'Everything at once on a narrow canyon road: jump pads, gaps, leaping fish and rolling logs.'
   difficulty: 4
   rivalCount: 7
-  rivalSpeedScale: 0.89
+  rivalSpeedScale: 0.86
   rivalCornerScale: 1
   starsRequired: 10
   starTimes:
-  - 114
-  - 100
-  - 96
+  - 108
+  - 95
+  - 91

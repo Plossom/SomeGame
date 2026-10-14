@@ -31,6 +31,17 @@ namespace SomeGame.Audio
         public AudioClip win;
         public AudioClip lose;
 
+        [Header("Track features and unlocks")]
+        public AudioClip iceSlide;
+        public AudioClip roofLand;
+        public AudioClip wallWhoosh;
+        public AudioClip penguin;
+        public AudioClip dashPanel;
+        public AudioClip snowPoof;
+        public AudioClip trick;
+        public AudioClip unlock;
+        public AudioClip fanfare;
+
         static AudioLibrary _instance;
         public static AudioLibrary Instance => _instance != null ? _instance : _instance = Resources.Load<AudioLibrary>("AudioLibrary");
     }

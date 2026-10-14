@@ -21,10 +21,10 @@ MonoBehaviour:
   description: 'A long, tricky run over the lake: cross the causeway, bounce off the pads and dodge the fish.'
   difficulty: 4
   rivalCount: 7
-  rivalSpeedScale: 0.9
+  rivalSpeedScale: 0.87
   rivalCornerScale: 1
   starsRequired: 12
   starTimes:
-  - 117
-  - 109
-  - 103
+  - 111
+  - 104
+  - 98

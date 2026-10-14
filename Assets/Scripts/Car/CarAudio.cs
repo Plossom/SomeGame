@@ -64,7 +64,13 @@ namespace SomeGame.Car
             _car.Landed += OnLanded;
             _car.Slipped += OnSlipped;
             _car.Crashed += OnCrashed;
-            if (_terrain != null) _terrain.Splashed += OnSplashed;
+            if (_terrain != null)
+            {
+                _terrain.Splashed += OnSplashed;
+                _terrain.PenguinHit += OnPenguin;
+                _terrain.DashPanel += OnDashPanel;
+                _terrain.RoofLanded += OnRoofLanded;
+            }
         }
 
         void OnDisable()
@@ -74,7 +80,13 @@ namespace SomeGame.Car
             _car.Landed -= OnLanded;
             _car.Slipped -= OnSlipped;
             _car.Crashed -= OnCrashed;
-            if (_terrain != null) _terrain.Splashed -= OnSplashed;
+            if (_terrain != null)
+            {
+                _terrain.Splashed -= OnSplashed;
+                _terrain.PenguinHit -= OnPenguin;
+                _terrain.DashPanel -= OnDashPanel;
+                _terrain.RoofLanded -= OnRoofLanded;
+            }
         }
 
         void Update()
@@ -94,6 +106,31 @@ namespace SomeGame.Car
             _screechLevel = Mathf.MoveTowards(_screechLevel, squeal ? 1f : 0f, Time.deltaTime * 6f);
             _screech.volume = _screechLevel * screechVolume * (_isPlayer ? 1f : 0.6f);
             _screech.pitch = 0.9f + speed01 * 0.25f;
+
+            // Onto the ice and up the ice wall: one sound as it starts.
+            bool onIce = _sensor != null && _sensor.OnIce && !_car.IsAirborne;
+            if (onIce && !_wasOnIce) PlayOneShot(Library.iceSlide, 0.7f);
+            _wasOnIce = onIce;
+            bool riding = _car.IsWallRiding;
+            if (riding && !_wasRiding) PlayOneShot(Library.wallWhoosh, 0.7f);
+            _wasRiding = riding;
+        }
+
+        bool _wasOnIce, _wasRiding;
+        SomeGame.Track.TrackSensor _sensor;
+
+        void Start() => _sensor = GetComponent<SomeGame.Track.TrackSensor>();
+
+        void OnPenguin() => PlayOneShot(Library.penguin, 0.8f);
+        void OnDashPanel() => PlayOneShot(Library.dashPanel, 0.75f);
+        void OnRoofLanded() => PlayOneShot(Library.roofLand, 0.9f);
+
+        // Bumping a rolling snowball: a soft poof.
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+            var body = collision.rigidbody;
+            if (body != null && body.name.StartsWith("Sweeper") && body.transform.Find("Snowball") != null)
+                PlayOneShot(Library.snowPoof, 0.9f);
         }
 
         void PlayOneShot(AudioClip clip, float volume)

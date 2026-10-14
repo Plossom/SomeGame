@@ -154,6 +154,7 @@ namespace SomeGame.UI
             burst.color = Theme.WithAlpha(color, 0.9f);
             trickRoot.gameObject.SetActive(true);
             _trickShownAt = Time.time;
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.trick, _combo >= 2 ? 0.75f : 0.55f);
 
             if (_combo >= 2)
             {

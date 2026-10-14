@@ -21,10 +21,10 @@ MonoBehaviour:
   description: 'The river cuts the track in two: hit the ramp straight and fly across. Then dash past the lakes.'
   difficulty: 2
   rivalCount: 7
-  rivalSpeedScale: 0.96
+  rivalSpeedScale: 0.93
   rivalCornerScale: 1
   starsRequired: 6
   starTimes:
-  - 89
-  - 81
+  - 85
   - 77
+  - 73

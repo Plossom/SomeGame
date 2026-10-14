@@ -66,6 +66,12 @@ namespace SomeGame.Car
         public event Action WallRide;
         /// <summary>The car crossed a whole ice branch (frozen lake) and came off its far end.</summary>
         public event Action IceRun;
+        /// <summary>The car bumped into a penguin (and spins).</summary>
+        public event Action PenguinHit;
+        /// <summary>The car drove over a dash panel (boost).</summary>
+        public event Action DashPanel;
+        /// <summary>The car landed up on a row of roofs.</summary>
+        public event Action RoofLanded;
 
         void Awake()
         {
@@ -184,13 +190,21 @@ namespace SomeGame.Car
                 Splash(track);
                 return;
             }
-            if (!_car.IsSlipping && (track.IsOil(position) || track.FishHit(position, Time.time) || track.PenguinHit(position, Time.time)))
-                _car.Slip(UnityEngine.Random.value < 0.5f ? -1 : 1);
+            if (!_car.IsSlipping)
+            {
+                bool penguin = track.PenguinHit(position, Time.time);
+                if (penguin || track.IsOil(position) || track.FishHit(position, Time.time))
+                {
+                    _car.Slip(UnityEngine.Random.value < 0.5f ? -1 : 1);
+                    if (penguin) PenguinHit?.Invoke();
+                }
+            }
             // Dash panel: a boost (once per panel).
             if (Time.time - _dashAt > 0.6f && _sensor.Branch < 0 && track.DashPanelAt(point.Distance, point.Lateral) != null)
             {
                 _dashAt = Time.time;
                 _car.GiveBoost(dashBoost);
+                DashPanel?.Invoke();
             }
         }
 
@@ -230,6 +244,7 @@ namespace SomeGame.Car
                 _sensor.Elevated = true;
                 _sensor.Sample();
                 _dust.Emit(12);
+                RoofLanded?.Invoke();
                 return;
             }
             _sensor.Sample();

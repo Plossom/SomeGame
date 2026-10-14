@@ -21,10 +21,10 @@ MonoBehaviour:
   description: A quick spin through the valley with a few fast bends. Watch out for the oil on the racing line.
   difficulty: 1
   rivalCount: 7
-  rivalSpeedScale: 0.94
+  rivalSpeedScale: 0.91
   rivalCornerScale: 1
   starsRequired: 2
   starTimes:
-  - 67
-  - 61
+  - 64
   - 58
+  - 55

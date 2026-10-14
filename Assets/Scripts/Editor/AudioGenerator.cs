@@ -35,6 +35,15 @@ namespace SomeGame.EditorTools
             Write("Star", Chime(new[] { 1760f }, 0f, 0.6f, bright: true));
             Write("Win", Jingle(new[] { 523.25f, 659.25f, 783.99f, 1046.5f, 1318.5f }, 0.11f, 1.1f));
             Write("Lose", Jingle(new[] { 659.25f, 587.33f, 523.25f, 392f }, 0.16f, 0.9f));
+            Write("IceSlide", IceSlide());
+            Write("RoofLand", RoofLand());
+            Write("WallWhoosh", WallWhoosh());
+            Write("Penguin", Penguin());
+            Write("DashPanel", DashPanel());
+            Write("SnowPoof", SnowPoof());
+            Write("Unlock", Unlock());
+            Write("Fanfare", Fanfare());
+            Write("Trick", Chime(new[] { 1318.5f, 1975.5f }, 0.06f, 0.35f, bright: true));
             AssetDatabase.Refresh();
             foreach (var path in Directory.GetFiles(Folder, "*.wav"))
             {
@@ -103,6 +112,165 @@ namespace SomeGame.EditorTools
                 phase += Mathf.Lerp(180f, 700f, t) / Rate;
                 float env = Mathf.Sin(Mathf.PI * Mathf.Pow(t, 0.6f));
                 s[i] = (band.Process(noise.Next()) * 1.4f + (float)Math.Sin(2 * Math.PI * phase) * 0.25f) * env;
+            }
+            return Normalize(s, 0.8f);
+        }
+
+        // Skidding onto ice: a bright, glassy hiss with little crackles.
+        static float[] IceSlide()
+        {
+            int n = (int)(0.8f * Rate);
+            var s = new float[n];
+            var noise = new Noise(11);
+            var band = new BandPass(5200f, 3f);
+            var crackle = new Noise(12);
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / n;
+                float env = Mathf.Min(1f, t * 20f) * (1f - t);
+                float crack = crackle.Next() > 0.995f ? 1f : 0f;
+                s[i] = band.Process(noise.Next()) * 1.2f * env + crack * 0.6f * (1f - t);
+            }
+            return Normalize(s, 0.55f);
+        }
+
+        // Landing on a snowy roof: a deep wooden thud with a soft crunch of snow.
+        static float[] RoofLand()
+        {
+            int n = (int)(0.45f * Rate);
+            var s = new float[n];
+            var noise = new Noise(13);
+            float lp = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                float thud = Mathf.Sin(2f * Mathf.PI * Mathf.Lerp(110f, 60f, t / 0.45f) * t) * Mathf.Exp(-t * 14f);
+                float knock = Mathf.Sin(2f * Mathf.PI * 420f * t) * Mathf.Exp(-t * 60f) * 0.4f;
+                lp += (noise.Next() - lp) * 0.15f;
+                s[i] = thud + knock + lp * 0.8f * Mathf.Exp(-t * 9f);
+            }
+            return Normalize(s, 0.8f);
+        }
+
+        // Riding up the ice wall: an airy swoosh that rises and falls.
+        static float[] WallWhoosh()
+        {
+            int n = (int)(0.7f * Rate);
+            var s = new float[n];
+            var noise = new Noise(14);
+            var band = new BandPass(600f, 1.5f);
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / n;
+                band.SetFrequency(Mathf.Lerp(600f, 2400f, Mathf.Sin(Mathf.PI * t)));
+                s[i] = band.Process(noise.Next()) * Mathf.Sin(Mathf.PI * t);
+            }
+            return Normalize(s, 0.6f);
+        }
+
+        // A startled penguin: two quick nasal honks.
+        static float[] Penguin()
+        {
+            int n = (int)(0.42f * Rate);
+            var s = new float[n];
+            double phase = 0;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                bool second = t > 0.2f;
+                float local = second ? t - 0.2f : t;
+                float env = local < 0.17f ? Mathf.Sin(Mathf.PI * local / 0.17f) : 0f;
+                float f = (second ? 640f : 560f) + 40f * Mathf.Sin(2f * Mathf.PI * 30f * t) - 180f * local;
+                phase += f / Rate;
+                float p = (float)(phase % 1.0);
+                float nasal = (p < 0.3f ? 1f : -0.4f) * 0.5f + Mathf.Sin(2f * Mathf.PI * p * 3f) * 0.3f;
+                s[i] = nasal * env;
+            }
+            return Normalize(s, 0.6f);
+        }
+
+        // Over a dash panel: an electric zap chirping up, with a shimmer.
+        static float[] DashPanel()
+        {
+            int n = (int)(0.5f * Rate);
+            var s = new float[n];
+            double phase = 0, phase2 = 0;
+            var noise = new Noise(15);
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / n;
+                phase += Mathf.Lerp(400f, 2200f, t * t) / Rate;
+                phase2 += Mathf.Lerp(800f, 4400f, t) / Rate;
+                float square = Math.Sin(2 * Math.PI * phase) > 0 ? 0.5f : -0.5f;
+                float env = Mathf.Min(1f, t * 25f) * (1f - t);
+                s[i] = (square * 0.6f + (float)Math.Sin(2 * Math.PI * phase2) * 0.3f + noise.Next() * 0.1f) * env;
+            }
+            return Normalize(s, 0.6f);
+        }
+
+        // Bumping a snowball: a soft, muffled poof.
+        static float[] SnowPoof()
+        {
+            int n = (int)(0.35f * Rate);
+            var s = new float[n];
+            var noise = new Noise(16);
+            float lp = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                lp += (noise.Next() - lp) * 0.08f;
+                s[i] = lp * Mathf.Exp(-t * 12f) * Mathf.Min(1f, t * 200f) + Mathf.Sin(2f * Mathf.PI * 80f * t) * Mathf.Exp(-t * 20f) * 0.5f;
+            }
+            return Normalize(s, 0.7f);
+        }
+
+        // A race unlocks: a metallic clink of the lock, then a bright rising arpeggio.
+        static float[] Unlock()
+        {
+            int n = (int)(0.9f * Rate);
+            var s = new float[n];
+            float[] notes = { 783.99f, 987.77f, 1174.66f, 1567.98f };
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                float clink = (Mathf.Sin(2f * Mathf.PI * 2350f * t) + Mathf.Sin(2f * Mathf.PI * 3170f * t) * 0.6f) * Mathf.Exp(-t * 35f) * 0.6f;
+                float tune = 0f;
+                for (int k = 0; k < notes.Length; k++)
+                {
+                    float start = 0.12f + k * 0.08f;
+                    if (t < start) continue;
+                    float u = t - start;
+                    tune += (Mathf.Sin(2f * Mathf.PI * notes[k] * u) + Mathf.Sin(4f * Mathf.PI * notes[k] * u) * 0.25f) * Mathf.Exp(-u * 4f) * 0.35f;
+                }
+                s[i] = clink + tune;
+            }
+            return Normalize(s, 0.75f);
+        }
+
+        // A new cup: a short brassy fanfare, then a held major chord with a shimmer.
+        static float[] Fanfare()
+        {
+            int n = (int)(2.4f * Rate);
+            var s = new float[n];
+            (float start, float length, float[] chord)[] parts =
+            {
+                (0f, 0.16f, new[] { 523.25f }), (0.17f, 0.16f, new[] { 523.25f }), (0.34f, 0.16f, new[] { 659.25f }),
+                (0.51f, 1.8f, new[] { 523.25f, 659.25f, 783.99f, 1046.5f }),
+            };
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                float v = 0f;
+                foreach (var (start, length, chord) in parts)
+                {
+                    if (t < start || t > start + length + 0.3f) continue;
+                    float u = t - start;
+                    float env = Mathf.Min(1f, u * 40f) * (u < length ? 1f - 0.3f * u / length : Mathf.Exp(-(u - length) * 10f) * 0.7f);
+                    foreach (float f in chord)
+                        for (int h = 1; h <= 4; h++) v += Mathf.Sin(2f * Mathf.PI * f * h * u) / (h * h) * env * 0.25f; // brassy
+                }
+                v += Mathf.Sin(2f * Mathf.PI * 2093f * t) * 0.05f * Mathf.Sin(t * 40f) * (t > 0.5f ? Mathf.Exp(-(t - 0.5f) * 1.5f) : 0f);
+                s[i] = v;
             }
             return Normalize(s, 0.8f);
         }

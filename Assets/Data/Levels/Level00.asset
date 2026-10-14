@@ -21,10 +21,10 @@ MonoBehaviour:
   description: A wide, friendly oval to warm up on. Hop into the turns and drift round them to keep your speed.
   difficulty: 1
   rivalCount: 7
-  rivalSpeedScale: 0.93
+  rivalSpeedScale: 0.9
   rivalCornerScale: 0.97
   starsRequired: 0
   starTimes:
-  - 65
-  - 59
+  - 62
   - 56
+  - 53

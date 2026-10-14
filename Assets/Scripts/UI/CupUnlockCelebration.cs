@@ -88,7 +88,7 @@ namespace SomeGame.UI
             }
 
             // Burst: white flash, the lock flies apart, the badge lights up, rays and confetti.
-            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.win, 1f);
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.fanfare, 1f);
             rays.gameObject.SetActive(true);
             SpawnConfetti();
             title.gameObject.SetActive(true);
