@@ -220,6 +220,7 @@ namespace SomeGame.Online
                 var go = new GameObject("NetworkManager");
                 DontDestroyOnLoad(go);
                 var transport = go.AddComponent<UnityTransport>();
+                transport.DisconnectTimeoutMS = 10000; // a phone that quit or lost signal frees its seat after 10 s
                 _network = go.AddComponent<NetworkManager>();
                 _network.NetworkConfig = new NetworkConfig
                 {

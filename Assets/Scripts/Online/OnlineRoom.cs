@@ -408,8 +408,23 @@ namespace SomeGame.Online
 
         // ------------------------------------------------------------------ phase changes
 
+        // Values of one update arrive one after another (the phase before the race list): react next frame.
         void OnPhaseChanged(RoomPhase previous, RoomPhase phase)
         {
+            Changed?.Invoke();
+            _phaseFrom = previous;
+            _phasePending = true;
+        }
+
+        bool _phasePending;
+        RoomPhase _phaseFrom;
+
+        void LateUpdate()
+        {
+            if (!_phasePending || !IsSpawned) return;
+            _phasePending = false;
+            var previous = _phaseFrom;
+            var phase = Phase.Value;
             Changed?.Invoke();
             int me = LocalSlot;
             if (phase == RoomPhase.Loading && me >= 0 && InRace(me))
