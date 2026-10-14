@@ -88,15 +88,12 @@ namespace SomeGame.UI
 
             const string second = "Tap a <b>second finger</b> anywhere";
             var mode = SomeGame.Input.ControlSettings.Drift;
-            string driftBody = mode switch
-            {
-                SomeGame.Input.ControlSettings.DriftMode.Auto => "At speed, steer <b>firmly into the curve</b> and keep it there: the car drifts by itself.",
-                SomeGame.Input.ControlSettings.DriftMode.Flick => "Before the curve, <b>flick</b> your thumb quickly the other way, then <b>into the curve</b>: the car swings into a drift.",
-                _ => "Steer a little into the curve, then hop again and <b>keep holding</b>: you drift round the corner.",
-            };
+            string driftBody = mode == SomeGame.Input.ControlSettings.DriftMode.Auto
+                ? "In a curve, at speed, steer <b>into the curve</b>: the car drifts by itself and holds it round the bend."
+                : "Steer a little into the curve, then hop again and <b>keep holding</b>: you drift round the corner.";
             string boostBody = mode == SomeGame.Input.ControlSettings.DriftMode.Manual
                 ? "Now let go: the longer the drift, the bigger the boost."
-                : "Now <b>straighten your thumb</b>: the longer the drift, the bigger the boost.";
+                : "At the end of the curve the drift lets go by itself (or <b>straighten your thumb</b>): the longer the drift, the bigger the boost.";
             var steps = new System.Collections.Generic.List<Step>
             {
                 new Step { title = "STEER", body = "Touch the screen and drag: the car drives where you point. Lift your thumb to roll.",

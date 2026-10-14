@@ -34,7 +34,7 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Slider volumeSlider;
         [SerializeField] UnityEngine.UI.Button joystickButton;
         [SerializeField] TMP_Text joystickLabel;
-        [Tooltip("Drifting: Auto / Flick / Manual.")]
+        [Tooltip("Drifting: Manual / Auto.")]
         [SerializeField] UnityEngine.UI.Button driftButton;
         [SerializeField] TMP_Text driftLabel;
         [Tooltip("Smart steering: on (light) / off.")]
@@ -68,12 +68,8 @@ namespace SomeGame.UI
             mainMenuButton.onClick.AddListener(() => { Unpause(); GameSession.ReturnToMap(); });
             joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
             if (driftButton != null)
-                driftButton.onClick.AddListener(() => ControlSettings.Drift = ControlSettings.Drift switch
-                {
-                    ControlSettings.DriftMode.Auto => ControlSettings.DriftMode.Flick,
-                    ControlSettings.DriftMode.Flick => ControlSettings.DriftMode.Manual,
-                    _ => ControlSettings.DriftMode.Auto,
-                });
+                driftButton.onClick.AddListener(() => ControlSettings.Drift =
+                    ControlSettings.Drift == ControlSettings.DriftMode.Manual ? ControlSettings.DriftMode.Auto : ControlSettings.DriftMode.Manual);
             if (assistButton != null)
                 assistButton.onClick.AddListener(() => ControlSettings.SteerAssist =
                     ControlSettings.SteerAssist == ControlSettings.Assist.Off ? ControlSettings.Assist.Light : ControlSettings.Assist.Off);
@@ -179,7 +175,7 @@ namespace SomeGame.UI
             if (driftLabel != null)
             {
                 var m = ControlSettings.Drift;
-                string word = m == ControlSettings.DriftMode.Auto ? "AUTO" : m == ControlSettings.DriftMode.Flick ? "FLICK" : "MANUAL";
+                string word = m == ControlSettings.DriftMode.Auto ? "AUTO" : "MANUAL";
                 driftLabel.text = $"DRIFT   <color={Theme.Html(Theme.Orange)}>{word}</color>";
             }
             if (assistLabel != null)

@@ -60,7 +60,14 @@ namespace SomeGame.Input
                 SteerDirection = raw == Vector2.zero ? raw : Assisted(raw);
                 Throttle = raw == Vector2.zero ? 0f : 1f;
             }
-            DriftHeld = manual || (ControlSettings.Drift != ControlSettings.DriftMode.Manual && OneFingerDrift(raw));
+            DriftHeld = manual || (ControlSettings.Drift == ControlSettings.DriftMode.Auto && AutoDrift(raw));
+            // An auto drift drives a clean line through the curve: its curve follows the road's.
+            if (_car != null)
+            {
+                bool guided = _autoDrift && !manual && _car.IsDrifting && raw != Vector2.zero;
+                _car.DriftTurnOverride = guided ? DriftTurn(_car.DriftDirection) : null;
+                if (guided) SteerDirection = ((Vector2)Vector3.Slerp(raw, DriftLine(_car.DriftDirection), autoLine)).normalized;
+            }
         }
 
         // Smart steering. Only when the aim roughly follows the road (a clear steer elsewhere always wins).
@@ -210,92 +217,127 @@ namespace SomeGame.Input
             return distance < 32f && distance > 0.5f && Vector2.Angle(aim, to) < Mathf.Lerp(28f, 14f, distance / 32f);
         }
 
-        // ------------------------------------------------------------------ one-finger drifting
+        // ------------------------------------------------------------------ auto drifting
 
-        [Header("One-finger drifting")]
-        [Tooltip("Auto: how far (degrees) the stick must point into a turn, past the direction of travel, to start a drift.")]
-        [SerializeField] float autoStartAngle = 38f;
+        [Header("Auto drifting")]
+        [Tooltip("How far (degrees) the stick must point into a turn, past the direction of travel, to start a drift where the road bends that way (and anywhere else).")]
+        [SerializeField] float autoStartInCurve = 14f, autoStartAnywhere = 45f;
+        [Tooltip("During an auto drift: how much the drift follows the road's line rather than the thumb (0..1).")]
+        [SerializeField, Range(0f, 1f)] float autoLine = 0.75f;
         [Tooltip("Seconds the stick must be held that far into the turn.")]
-        [SerializeField] float autoStartTime = 0.12f;
-        [Tooltip("A drift (Auto or Flick) lasts while the stick points at least this far into the turn.")]
-        [SerializeField] float keepAngle = 6f;
-        [Tooltip("Flick: the counter-steer must reach this far out, and the turn-in this far in, within the flick time.")]
-        [SerializeField] float flickOutAngle = 22f, flickInAngle = 26f, flickTime = 0.6f;
+        [SerializeField] float autoStartTime = 0.1f;
+        [Tooltip("How much the road must turn over the stretch ahead (degrees) to count as a curve worth drifting.")]
+        [SerializeField] float curveTurn = 32f;
+        [Tooltip("Length of road ahead (m) over which the turn is measured: long enough that wide, sweeping curves count too.")]
+        [SerializeField] float curveLength = 30f;
 
-        float _intoTurnFor, _straightFor, _flickAt = -10f;
-        int _flickSide;
-        bool _oneFingerDrift;
+        float _intoTurnFor, _endingFor, _startedAt, _endedAt = -10f;
+        bool _autoDrift;
 
-        // Auto: steer firmly into a turn at speed and the car drifts by itself. Flick: swing the stick briefly
-        // the other way first, then into the turn. Either drift lasts while the stick points into the turn
-        // and ends with the boost when you straighten it.
-        bool OneFingerDrift(Vector2 stick)
+        // Auto: where the road bends, steer into the curve at speed and the car drifts by itself. It holds the
+        // drift through the curve and lets go (boost) at its exit, when you clearly steer out, or just before
+        // the drift would carry the car off the outside of the road.
+        // How much the road turns (signed, degrees; positive = left) from here over the next stretch.
+        static float Bend(SomeGame.Track.TrackPath path, float from, float length) =>
+            Vector2.SignedAngle(path.TangentAt(from), path.TangentAt(from + length));
+
+        // How sharply an auto drift should curve (deg/s toward its side): as much as the road turns here,
+        // corrected towards the car's line (a little inside of the middle) and the road's direction.
+        float DriftTurn(int side)
         {
-            if (_car == null) return false;
+            var track = _sensor.Track;
+            var path = track.Path;
+            float d = _sensor.Current.Distance;
+            Vector2 velocity = _car.Body.linearVelocity;
+            float speed = velocity.magnitude;
+            float roadRate = Vector2.SignedAngle(path.TangentAt(d), path.TangentAt(d + 6f)) / 6f * speed; // deg/s, left positive
+            float headingError = Vector2.SignedAngle(path.TangentAt(d), velocity);                       // left positive
+            float half = track.HalfWidthAt(d);
+            float wantLateral = side * half * 0.2f;
+            float lateral = _sensor.Current.Lateral;
+            float edgeGain = Mathf.Lerp(6f, 18f, Mathf.InverseLerp(half * 0.5f, half, Mathf.Abs(lateral))); // push back harder near an edge
+            float rate = roadRate - headingError * 2.5f + (wantLateral - lateral) * edgeGain;
+            return Mathf.Clamp(rate * side, 4f, _car.Stats.driftTightTurnRate);
+        }
+
+        // Where an auto drift aims: the road a little way ahead, slightly towards the inside of the curve.
+        Vector2 DriftLine(int side)
+        {
+            var track = _sensor.Track;
+            var path = track.Path;
+            float speed = _car.Body.linearVelocity.magnitude;
+            float at = _sensor.Current.Distance + 6f + speed * 0.25f;
+            // A little inside of the middle, pulled back towards the middle when the car is near an edge.
+            float half = track.HalfWidthAt(at);
+            // The further out the car is, the harder the line pulls it back in.
+            float now = _sensor.Current.Lateral;
+            float lateral = Mathf.Clamp(side * half * 0.15f - now * 1.1f, -half * 0.7f, half * 0.7f);
+            Vector2 target = path.PointAt(at) + path.NormalAt(at) * lateral;
+            return (target - _car.Body.position).normalized;
+        }
+
+        bool AutoDrift(Vector2 stick)
+        {
+            if (_car == null || _sensor == null || _sensor.Track == null) return false;
             float dt = Time.deltaTime;
             Vector2 velocity = _car.Body.linearVelocity;
-            if (stick == Vector2.zero || velocity.magnitude < 3f || _car.IsAirborne)
+            if (stick == Vector2.zero || velocity.magnitude < 3f || _car.IsAirborne || _car.IsSlipping)
             {
                 _intoTurnFor = 0f;
-                _oneFingerDrift = false;
+                _autoDrift = false;
                 return false;
             }
+            var track = _sensor.Track;
+            var path = track.Path;
+            float d = _sensor.Current.Distance, speed = velocity.magnitude;
             float angle = Vector2.SignedAngle(velocity, stick); // positive = left of the direction of travel
 
-            if (_oneFingerDrift)
+            if (_autoDrift)
             {
-                // Still turning in? A short grace stops it flickering when the thumb wobbles.
-                bool into = _car.IsDrifting ? angle * _car.DriftDirection > keepAngle : Mathf.Abs(angle) > keepAngle;
-                _straightFor = into ? 0f : _straightFor + dt;
-                // Ends when straightened, or when the drift did not start / was lost (grass, too slow).
-                if (_straightFor > 0.12f || (!_car.IsDrifting && Time.time - _startedAt > 0.4f)) _oneFingerDrift = false;
-                return _oneFingerDrift;
-            }
-
-            bool fast = _car.ForwardSpeed >= _car.Stats.driftMinSpeed;
-            if (ControlSettings.Drift == ControlSettings.DriftMode.Auto)
-            {
-                _intoTurnFor = fast && Mathf.Abs(angle) >= autoStartAngle ? _intoTurnFor + dt : 0f;
-                if (_intoTurnFor >= autoStartTime) Begin(1f);
-            }
-            else
-            {
-                // The flick: out one way, then (quickly) into the turn the other way.
-                if (Mathf.Abs(angle) >= flickOutAngle && Mathf.Sign(angle) != _flickSide)
+                if (!_car.IsDrifting)
                 {
-                    if (Time.time - _flickAt <= flickTime && _flickSide != 0 && Mathf.Abs(angle) >= flickInAngle && fast)
-                    {
-                        float quick = 1f - Mathf.Clamp01((Time.time - _flickAt) / flickTime);
-                        Begin(Mathf.Lerp(1.15f, 1.6f, quick)); // a quick, clean flick charges the boost faster
-                        _flickSide = 0;
-                        return _oneFingerDrift;
-                    }
-                    _flickSide = (int)Mathf.Sign(angle);
-                    _flickAt = Time.time;
+                    // The drift did not start (or was lost): give up after a moment.
+                    if (Time.time - _startedAt > 0.4f) _autoDrift = false;
+                    return _autoDrift;
                 }
-                else if (Mathf.Abs(angle) < 8f && Time.time - _flickAt > flickTime) _flickSide = 0;
+                int side = _car.DriftDirection;
+                // Clearly steering out of the curve (compared with the drift's line) ends it.
+                bool steeringOut = Vector2.SignedAngle(DriftLine(side), stick) * side < -35f;
+                // The curve is over when the road ahead hardly turns any more.
+                bool curveOver = Bend(path, d, curveLength * 0.6f) * side < 7f;
+                // About to leave the road (on either side): let go now, before the grass ends it without a boost.
+                float lateral = _sensor.Current.Lateral, outer = track.OffRoadAt(d);
+                Vector2 roadLeft = path.NormalAt(d);
+                float sideways = Vector2.Dot(_car.Body.linearVelocity, roadLeft) * Mathf.Sign(lateral); // towards the nearer edge
+                bool atEdge = Mathf.Abs(lateral) + Mathf.Max(0f, sideways) * 0.3f > outer - 0.4f; // within about 0.3 s of the edge
+                if (atEdge) { _autoDrift = false; _endedAt = Time.time; return false; }
+                // Otherwise hold it at least until it has earned a boost.
+                float held = Time.time - _startedAt;
+                bool charged = _car.DriftTier >= 1; // the sparks are showing: letting go now gives a boost
+                // Fully charged: cash the boost in at the next easier part (or soon anyway), so long curves
+                // get several drifts and boosts instead of one slow endless drift.
+                bool full = _car.DriftTier >= 3 && (Bend(path, d, 15f) * side < 30f || held > _car.Stats.driftMaxCharge + 1f);
+                _endingFor = charged && (steeringOut || curveOver || full) ? _endingFor + dt : 0f;
+                if (_endingFor > 0.1f) { _autoDrift = false; _endedAt = Time.time; } // let go: boost
+                return _autoDrift;
             }
-            return _oneFingerDrift;
-        }
 
-        float _startedAt;
-
-        void Begin(float chargeRate)
-        {
-            _oneFingerDrift = true;
-            _straightFor = 0f;
-            _intoTurnFor = 0f;
-            _startedAt = Time.time;
-            _pendingRate = chargeRate;
-        }
-
-        float _pendingRate = 1f;
-
-        void LateUpdate()
-        {
-            // The charge rate is applied once the drift has really started.
-            if (_car != null && _car.IsDrifting && _pendingRate != 1f) { _car.DriftChargeRate = _pendingRate; _pendingRate = 1f; }
-            if (_car != null && !_car.IsDrifting && !_oneFingerDrift) _pendingRate = 1f;
+            if (_car.ForwardSpeed < _car.Stats.driftMinSpeed) { _intoTurnFor = 0f; return false; }
+            // A moment to settle after a drift before the next one (no restarting straight after the boost).
+            if (_car.IsBoosting || Time.time - _endedAt < 0.6f) { _intoTurnFor = 0f; return false; }
+            // Not right at the edge of the road (it would have to end at once).
+            if (Mathf.Abs(_sensor.Current.Lateral) > track.OffRoadAt(d) * 0.65f) { _intoTurnFor = 0f; return false; }
+            float bend = Bend(path, d, curveLength);
+            bool curveThatWay = Mathf.Abs(bend) >= curveTurn && Mathf.Sign(bend) == Mathf.Sign(angle);
+            float needed = curveThatWay ? autoStartInCurve : autoStartAnywhere;
+            _intoTurnFor = Mathf.Abs(angle) >= needed ? _intoTurnFor + dt : 0f;
+            if (_intoTurnFor >= autoStartTime)
+            {
+                _autoDrift = true;
+                _intoTurnFor = _endingFor = 0f;
+                _startedAt = Time.time;
+            }
+            return _autoDrift;
         }
 
         static bool SecondFingerDown()

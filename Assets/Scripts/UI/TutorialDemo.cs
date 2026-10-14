@@ -134,16 +134,10 @@ namespace SomeGame.UI
                 press.anchoredPosition = TapAt;
                 _pressImage.color = new Color(1f, 1f, 1f, 0.45f + 0.15f * Mathf.Sin(t * 8f));
             }
-            else if (_mode == SomeGame.Input.ControlSettings.DriftMode.Flick)
-            {
-                // A quick swing the other way, then firmly into the curve, held.
-                float stick = c < 0.15f ? Mathf.Lerp(0f, 35f, c / 0.15f) : c < 0.4f ? Mathf.Lerp(35f, -55f, (c - 0.15f) / 0.25f) : held ? -55f : Mathf.Lerp(-55f, 0f, (c - (period - 0.35f)) / 0.35f);
-                Stick(stick);
-            }
             else
             {
-                // Auto: firmly into the curve and hold.
-                float stick = c < 0.4f ? Mathf.Lerp(0f, -55f, c / 0.4f) : held ? -55f : Mathf.Lerp(-55f, 0f, (c - (period - 0.35f)) / 0.35f);
+                // Auto: into the curve and hold.
+                float stick = c < 0.4f ? Mathf.Lerp(0f, -40f, c / 0.4f) : held ? -40f : Mathf.Lerp(-40f, 0f, (c - (period - 0.35f)) / 0.35f);
                 Stick(stick);
             }
             float slide = held ? Mathf.Clamp01((c - 0.4f) / 0.3f) : 0f;
@@ -180,7 +174,7 @@ namespace SomeGame.UI
                 finger2.anchoredPosition = TapAt + new Vector2(0f, -6f + 40f * lift);
                 Tap(TapAt, Mathf.InverseLerp(1.5f, 2f, c));
             }
-            else Stick(Mathf.Lerp(-55f, 0f, Mathf.Clamp01((c - 1.5f) / 0.2f))); // straighten the thumb
+            else Stick(Mathf.Lerp(-40f, 0f, Mathf.Clamp01((c - 1.5f) / 0.2f))); // straighten the thumb
             float go = Mathf.Clamp01((c - 1.55f) / 0.3f);
             CarHeading(Mathf.Lerp(-66f, 0f, go));
             float dash = Mathf.InverseLerp(1.6f, 2.6f, c);

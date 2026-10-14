@@ -292,7 +292,7 @@ namespace SomeGame.Car
             // Entry: the car tilts quickly into the corner (slightly past the drift angle) while its
             // path stays almost straight; the curve fades in as the entry settles.
             float entry = 1f - Mathf.Clamp01(_driftCharge / stats.driftEntryTime);
-            float curve = Mathf.Lerp(stats.driftWideTurnRate, stats.driftTightTurnRate, _driftTightness) * (1f - entry);
+            float curve = (DriftTurnOverride ?? Mathf.Lerp(stats.driftWideTurnRate, stats.driftTightTurnRate, _driftTightness)) * (1f - entry);
             travel += _driftDirection * curve * dt;
             float rad = (travel + 90f) * Mathf.Deg2Rad;
             _body.linearVelocity = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * speed;
@@ -329,6 +329,12 @@ namespace SomeGame.Car
             BoostStarted?.Invoke(BoostStrength);
             return stats.boostKick * Mathf.Lerp(0.5f, 1f, BoostStrength);
         }
+
+        /// <summary>
+        /// Auto drifting: how sharply (degrees per second, toward the drift's side) the drift curves, set each
+        /// frame so the drift follows the road; null = from the stick as usual.
+        /// </summary>
+        public float? DriftTurnOverride { get; set; }
 
         /// <summary>How fast the current drift charges its boost (a clean flick charges faster). Reset when it ends.</summary>
         public float DriftChargeRate { get; set; } = 1f;
