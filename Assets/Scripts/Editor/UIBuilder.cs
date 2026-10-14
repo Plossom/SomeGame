@@ -726,7 +726,7 @@ namespace SomeGame.EditorTools
             var root = Stretch("Tutorial", safe);
             var card = Rt("Card", root);
             card.anchorMin = new Vector2(0f, 1f); card.anchorMax = new Vector2(1f, 1f); card.pivot = new Vector2(0.5f, 1f);
-            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 640f); // room for the demo under the text
+            card.anchoredPosition = new Vector2(87f, -48f); card.sizeDelta = new Vector2(-270f, 590f); // room for the demo under the text
             var shadow = Stretch("Shadow", card); shadow.offsetMin = shadow.offsetMax = new Vector2(0f, -14f);
             Img(shadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
             Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true);
@@ -763,7 +763,7 @@ namespace SomeGame.EditorTools
 
             // The demo under the hint card: white fingers act out the step, a mini car shows what happens.
             // Inside the hint card, under its text: a small dark screen acting out the step.
-            var demo = At("Demo", card, new Vector2(0.5f, 1f), new Vector2(0f, -300f), new Vector2(820f, 300f));
+            var demo = At("Demo", card, new Vector2(0.5f, 0f), new Vector2(0f, 6f), new Vector2(820f, 300f)); // on the card's bottom edge
             demo.localScale = Vector3.one * 1.04f; // as wide as the card
             demo.gameObject.AddComponent<RectMask2D>(); // the jumping car stays inside its area
             var demoGroup = demo.gameObject.AddComponent<CanvasGroup>();

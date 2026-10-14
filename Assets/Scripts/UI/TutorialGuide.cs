@@ -145,6 +145,7 @@ namespace SomeGame.UI
             titleLabel.text = _steps[index].title;
             bodyLabel.text = _steps[index].body;
             if (demo != null) demo.Play(_steps[index].demo);
+            FitCard();
             if (_steps[index].spot != Spot.Anywhere) StartCoroutine(MoveTo(_steps[index].spot));
         }
 
@@ -215,6 +216,17 @@ namespace SomeGame.UI
                 yield return null;
             }
             fade.alpha = to;
+        }
+
+        // The card is as tall as its text plus the animation along its bottom edge.
+        void FitCard()
+        {
+            var cardRt = (RectTransform)card.transform;
+            var bodyRt = bodyLabel.rectTransform;
+            bodyLabel.ForceMeshUpdate();
+            float textBottom = -bodyRt.anchoredPosition.y + bodyLabel.preferredHeight;
+            float demoHeight = demo != null ? ((RectTransform)demo.transform).rect.height * demo.transform.localScale.y : 0f;
+            cardRt.sizeDelta = new Vector2(cardRt.sizeDelta.x, textBottom + demoHeight + 4f);
         }
 
         void Finish()
