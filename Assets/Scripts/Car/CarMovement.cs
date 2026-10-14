@@ -86,10 +86,10 @@ namespace SomeGame.Car
         /// <summary>Throttle applied in the last physics step (-1..1; negative = braking, 0 without control).</summary>
         public float Throttle { get; private set; }
         public bool IsBoosting => _boostTimer > 0f;
-        public bool IsAirborne => _airTimer > 0f;
+        public bool IsAirborne => IsPuppet ? _puppetAir > 0f : _airTimer > 0f;
         /// <summary>0 at take-off and landing, 1 at the top of the jump.</summary>
         bool _airLocked;
-        public float AirHeight => IsAirborne ? Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration)) : 0f;
+        public float AirHeight => IsPuppet ? _puppetAir : IsAirborne ? Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration)) : 0f;
         public bool IsSlipping => _slipTimer > 0f;
         /// <summary>Strength (0..1) of the boost currently running.</summary>
         public float BoostStrength { get; private set; }
@@ -112,6 +112,7 @@ namespace SomeGame.Car
         void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
+            if (IsPuppet) return; // moved by the network (DrivePuppet)
             if (IsAirborne)
             {
                 Fly(dt);
@@ -346,7 +347,7 @@ namespace SomeGame.Car
         /// </summary>
         public void Launch(float duration, Vector2? direction = null, bool locked = false)
         {
-            if (IsAirborne || duration <= 0f) return;
+            if (IsPuppet || IsAirborne || duration <= 0f) return;
             EndDrift();
             _exitTimer = _calmTimer = 0f;
             _airLocked = locked;
@@ -394,7 +395,7 @@ namespace SomeGame.Car
         /// </summary>
         public void Slip(int direction)
         {
-            if (IsAirborne || IsSlipping) return;
+            if (IsPuppet || IsAirborne || IsSlipping) return;
             EndDrift();
             _exitTimer = _calmTimer = 0f;
             _boostTimer = 0f;
@@ -426,6 +427,7 @@ namespace SomeGame.Car
         /// <summary>Starts a boost without a drift (e.g. a reward for landing a shortcut jump).</summary>
         public void GiveBoost(float strength)
         {
+            if (IsPuppet) return;
             BoostStrength = Mathf.Clamp01(strength);
             _boostDuration = Mathf.Lerp(stats.boostMinDuration, stats.boostMaxDuration, BoostStrength);
             _boostTimer = _boostDuration;
@@ -438,6 +440,7 @@ namespace SomeGame.Car
         /// </summary>
         public void Bump(Vector2 normal, float impact = 6f)
         {
+            if (IsPuppet) return;
             Vector2 v = _body.linearVelocity;
             float into = Vector2.Dot(v, normal);
             if (into < 0f) v -= normal * (into * 1.6f);
@@ -466,11 +469,95 @@ namespace SomeGame.Car
             if (sensor != null) sensor.Sample();
         }
 
+        // ------------------------------------------------------------------ online: a car driven by another phone
+
+        float _puppetAir;
+        bool _puppetBoost;
+
+        /// <summary>True for a car driven by another phone (online): it follows the network, no physics of its own.</summary>
+        public bool IsPuppet { get; private set; }
+
+        /// <summary>
+        /// Turns this car into a puppet: kinematic (other cars still bump into it), moved only by
+        /// <see cref="DrivePuppet"/>.
+        /// </summary>
+        public void MakePuppet()
+        {
+            IsPuppet = true;
+            ControlsEnabled = false;
+            Body.bodyType = RigidbodyType2D.Kinematic;
+            Body.useFullKinematicContacts = true;
+            Body.interpolation = RigidbodyInterpolation2D.Interpolate;
+        }
+
+        /// <summary>
+        /// One physics step of a puppet towards where the other phone says the car is. Drift, sparks, boost
+        /// and jumps are copied too (the same events fire, so smoke, sparks, sounds and the hop play).
+        /// </summary>
+        public void DrivePuppet(Vector2 position, float rotation, Vector2 velocity, int drift, int tier, float air, bool boost, float dt)
+        {
+            if (!IsPuppet) return;
+            Vector2 from = Body.position;
+            if ((position - from).sqrMagnitude > 64f) // put back after a splash: jump there
+            {
+                Body.position = position;
+                Body.rotation = rotation;
+                transform.SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, rotation));
+                Body.linearVelocity = velocity;
+                Body.angularVelocity = 0f;
+            }
+            else
+            {
+                Body.linearVelocity = (position - from) / dt;
+                Body.angularVelocity = Mathf.DeltaAngle(Body.rotation, rotation) / dt;
+            }
+            ForwardSpeed = Vector2.Dot(velocity, transform.up);
+            SidewaysSpeed = Vector2.Dot(velocity, transform.right);
+            Throttle = velocity.sqrMagnitude > 1f ? 1f : 0f;
+
+            if (drift != 0 && _driftDirection == 0)
+            {
+                Hopped?.Invoke();
+                DriftStarted?.Invoke();
+            }
+            _driftDirection = drift;
+            _driftCharge = tier switch
+            {
+                0 => 0f,
+                1 => stats.driftMinCharge,
+                2 => (stats.driftMinCharge + stats.driftMaxCharge) * 0.5f,
+                _ => stats.driftMaxCharge,
+            };
+            if (boost && !_puppetBoost)
+            {
+                BoostStrength = 0.8f;
+                _boostDuration = _boostTimer = stats.boostMaxDuration;
+                BoostStarted?.Invoke(BoostStrength);
+            }
+            _puppetBoost = boost;
+            if (!boost) _boostTimer = 0f;
+
+            bool wasAir = _puppetAir > 0f;
+            _puppetAir = air;
+            if (air > 0f && !wasAir)
+            {
+                if (_collider != null) _collider.enabled = false;
+                Launched?.Invoke(0.8f);
+            }
+            else if (air <= 0f && wasAir)
+            {
+                if (_collider != null) _collider.enabled = true;
+                Collided?.Invoke(stats.landingImpact);
+                Landed?.Invoke();
+            }
+        }
+
         /// <summary>Body rotation (degrees) that faces a world direction; the sprite faces +Y.</summary>
         static float HeadingOf(Vector2 direction) => Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
 
         void OnCollisionEnter2D(Collision2D collision)
         {
+            if (IsPuppet) return; // the other car's own phone feels the knock
             float impact = collision.relativeVelocity.magnitude;
             Collided?.Invoke(impact);
             Crashed?.Invoke(impact);
@@ -486,6 +573,7 @@ namespace SomeGame.Car
 
         void TakeHit(Vector2 impulse)
         {
+            if (IsPuppet) return;
             _body.AddForce(impulse, ForceMode2D.Impulse);
             _hitTimer = stats.hitRecoveryTime;
             EndDrift(); // getting rammed spins you out of a drift, charge is lost

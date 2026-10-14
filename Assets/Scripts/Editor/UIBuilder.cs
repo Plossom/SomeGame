@@ -15,7 +15,7 @@ namespace SomeGame.EditorTools
     /// Units are canvas units of the 1170x2532 reference resolution. Look: flat cream, pine-green and
     /// orange shapes with hard drop shadows and condensed italic type.
     /// </summary>
-    public static class UIBuilder
+    public static partial class UIBuilder
     {
         const string Art = ArtGenerator.Folder + "/";
         const string FontFolder = "Assets/Art/Fonts/Barlow/";
@@ -307,6 +307,8 @@ namespace SomeGame.EditorTools
             SetArray(so, "racePageParts", new[] { header.gameObject, bottom.gameObject });
             Set(so, "celebration", BuildCupCelebration(canvas)); Set(so, "sparkle", Sprite("Sparkle"));
             
+            BuildOnlineLobby(canvas, safe); // over everything else on the map
+
             var swipe = map.gameObject.AddComponent<MapSwipe>();
             Configure(swipe, ("screen", screen), ("canvas", canvas.GetComponent<Canvas>()));
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -713,6 +715,7 @@ namespace SomeGame.EditorTools
             cso.ApplyModifiedPropertiesWithoutUndo();
 
             BuildResults(canvas, race);
+            BuildOnlineRaceView(canvas, race);
             BuildTutorial(safe, race, hud.gameObject, aheadRt.gameObject);
             BuildMenu(canvas, menuButton, race, joystick);
 

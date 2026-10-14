@@ -66,9 +66,23 @@ namespace SomeGame.Race
         /// <summary>1-based position of a car in the current standings.</summary>
         public int PositionOf(RaceProgress car) => _standings.IndexOf(car) + 1;
 
+        /// <summary>Online: the room's race glue (null offline).</summary>
+        public SomeGame.Online.OnlineRace Online { get; private set; }
+
+        /// <summary>Time.time at GO.</summary>
+        public float StartTime => _startTime;
+
         void Awake()
         {
             Level = GameSession.CurrentLevel;
+            if (GameSession.Online && SomeGame.Online.OnlineRoom.Current != null && Level != null)
+            {
+                track.SetLayout(Level.track);
+                laps = Level.laps;
+                Online = gameObject.AddComponent<SomeGame.Online.OnlineRace>();
+                Player = Online.Setup(this, player, rivals);
+                return;
+            }
             int rivalCount = rivals.Count;
             if (Level != null)
             {
@@ -99,7 +113,7 @@ namespace SomeGame.Race
         }
 
         // Rivals share their CarStats assets, so each gets a scaled runtime copy.
-        void ScaleRival(CarMovement rival)
+        internal void ScaleRival(CarMovement rival)
         {
             var stats = Instantiate(rival.Stats);
             stats.topSpeed *= Level.rivalSpeedScale;
@@ -108,7 +122,7 @@ namespace SomeGame.Race
             if (rival.TryGetComponent(out AIDriverInput ai)) ai.CornerGrip *= Level.rivalCornerScale;
         }
 
-        RaceProgress Register(CarMovement car, int gridSlot, string displayName)
+        internal RaceProgress Register(CarMovement car, int gridSlot, string displayName)
         {
             var pose = track.GridSlot(gridSlot);
             car.transform.SetPositionAndRotation(pose.position, pose.rotation);
@@ -129,17 +143,31 @@ namespace SomeGame.Race
         IEnumerator Countdown()
         {
             State = RaceState.Countdown;
-            for (int n = 3; n > 0; n--)
+            if (Online != null)
             {
-                CountdownTick?.Invoke(n);
-                yield return new WaitForSeconds(countdownStepSeconds);
+                // Online: every phone counts down to the same moment (the host's clock).
+                Online.ReportLoaded();
+                for (int n = 3; n > 0; n--)
+                {
+                    int tick = n;
+                    yield return new WaitUntil(() => Online.SecondsToGo <= tick);
+                    CountdownTick?.Invoke(n);
+                }
+                yield return new WaitUntil(() => Online.SecondsToGo <= 0f);
             }
+            else
+                for (int n = 3; n > 0; n--)
+                {
+                    CountdownTick?.Invoke(n);
+                    yield return new WaitForSeconds(countdownStepSeconds);
+                }
 
             _startTime = Time.time;
             foreach (var car in _cars)
             {
                 car.Begin(laps, _startTime);
-                car.GetComponent<CarMovement>().ControlsEnabled = true;
+                var movement = car.GetComponent<CarMovement>();
+                if (!movement.IsPuppet) movement.ControlsEnabled = true;
             }
             Player.LapCompleted += OnPlayerLap;
             State = RaceState.Racing;
@@ -149,15 +177,19 @@ namespace SomeGame.Race
 
         void Update()
         {
-            if (State != RaceState.Racing) return;
-            _standings.Sort(CompareStandings);
+            if (State == RaceState.Countdown) return;
+            _standings.Sort(CompareStandings); // after your finish too: the others are still racing
         }
 
         int CompareStandings(RaceProgress a, RaceProgress b)
         {
-            int fa = _finishOrder.IndexOf(a), fb = _finishOrder.IndexOf(b);
-            if (fa >= 0 || fb >= 0)
-                return (fa < 0 ? int.MaxValue : fa).CompareTo(fb < 0 ? int.MaxValue : fb);
+            // Finished cars by finish time (an online car's finish may arrive a moment late), then by progress.
+            if (a.IsFinished || b.IsFinished)
+            {
+                if (a.IsFinished != b.IsFinished) return a.IsFinished ? -1 : 1;
+                int byTime = a.FinishTime.CompareTo(b.FinishTime);
+                return byTime != 0 ? byTime : _finishOrder.IndexOf(a).CompareTo(_finishOrder.IndexOf(b));
+            }
             return b.Progress.CompareTo(a.Progress);
         }
 
@@ -176,7 +208,13 @@ namespace SomeGame.Race
             State = RaceState.Finished;
             player.ControlsEnabled = false;
             if (joystick != null) joystick.Interactable = false;
-            FinalPosition = _finishOrder.IndexOf(Player) + 1;
+            FinalPosition = PositionOf(Player);
+            if (Online != null)
+            {
+                // Online races are for fun: no stars or records.
+                PlayerFinished?.Invoke();
+                return;
+            }
             float? previous = Level != null ? ProgressStore.BestTimeOf(Level) : null;
             IsNewBestTime = Level != null && (!previous.HasValue || RaceTime < previous.Value);
             StarsEarned = Level != null

@@ -65,7 +65,13 @@ namespace SomeGame.UI
             if (closeButton != null) closeButton.onClick.AddListener(Close);
             resumeButton.onClick.AddListener(Close);
             restartButton.onClick.AddListener(() => { Unpause(); race.Restart(); });
-            mainMenuButton.onClick.AddListener(() => { Unpause(); GameSession.ReturnToMap(); });
+            mainMenuButton.onClick.AddListener(() =>
+            {
+                Unpause();
+                // Online: the map button leaves the room (the host's leaving closes it for everyone).
+                if (GameSession.Online) SomeGame.Online.OnlineSession.Instance.Leave();
+                GameSession.ReturnToMap();
+            });
             joystickButton.onClick.AddListener(() => ControlSettings.InvisibleJoystick = !ControlSettings.InvisibleJoystick);
             if (driftButton != null)
                 driftButton.onClick.AddListener(() => ControlSettings.Drifting = !ControlSettings.Drifting);
@@ -90,9 +96,14 @@ namespace SomeGame.UI
             volumeSlider.onValueChanged.AddListener(v => SoundSettings.Volume = v);
 
             resumeButton.gameObject.SetActive(inRace);
-            restartButton.gameObject.SetActive(inRace);
+            restartButton.gameObject.SetActive(inRace && !GameSession.Online); // an online race cannot be restarted alone
             mainMenuButton.gameObject.SetActive(inRace);
-            title.text = inRace ? "PAUSED" : "MENU";
+            if (inRace && GameSession.Online)
+            {
+                var label = mainMenuButton.GetComponentInChildren<TMPro.TMP_Text>();
+                if (label != null) label.text = "LEAVE ROOM";
+            }
+            title.text = inRace ? (GameSession.Online ? "MENU" : "PAUSED") : "MENU";
             panel.SetActive(false);
         }
 
@@ -139,7 +150,7 @@ namespace SomeGame.UI
             if (resetLabel != null) resetLabel.text = "RESET GAME";
             RefreshSettings();
             panel.SetActive(true);
-            if (race == null) return;
+            if (race == null || GameSession.Online) return; // an online race goes on for the others
 
             Time.timeScale = 0f;
             AudioListener.pause = true; // car sounds stop; music and menu clicks go on
@@ -154,7 +165,7 @@ namespace SomeGame.UI
         {
             if (!IsOpen) return;
             panel.SetActive(false);
-            if (race == null) return;
+            if (race == null || GameSession.Online) return;
             Unpause();
             if (joystick != null) joystick.Interactable = _joystickWasInteractable && race.State != RaceState.Finished;
         }

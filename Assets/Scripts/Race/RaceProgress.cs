@@ -88,8 +88,31 @@ namespace SomeGame.Race
             _tracking = true;
         }
 
+        /// <summary>
+        /// Online: a car driven on another phone. Its checkpoints and finish come from that phone
+        /// (<see cref="ApplyRemote"/>); only the fraction to the next checkpoint is measured here.
+        /// </summary>
+        public bool Remote { get; set; }
+
+        /// <summary>Online: the other phone's count of checkpoints, and its finish (seconds after GO).</summary>
+        public void ApplyRemote(int checkpoints, bool finished, float finishSeconds, float startTime)
+        {
+            if (!_tracking || IsFinished) return;
+            while (CheckpointsPassed < checkpoints)
+            {
+                bool crossedLine = NextCheckpoint == 0;
+                CheckpointsPassed++;
+                if (crossedLine && CheckpointsPassed > 1) _lapTimes.Add(0f);
+            }
+            if (!finished) return;
+            IsFinished = true;
+            FinishTime = startTime + finishSeconds;
+            Finished?.Invoke(this);
+        }
+
         void FixedUpdate()
         {
+            if (Remote) return;
             if (!_tracking || IsFinished)
             {
                 _wrongWayTimer = 0f;

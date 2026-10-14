@@ -14,17 +14,33 @@ namespace SomeGame.Race
         /// <summary>True while a scene is loading (screens can show "loading" meanwhile).</summary>
         public static bool Loading { get; private set; }
 
-        public static void StartRace(LevelDefinition level)
+        /// <summary>True while the race being played is an online one (a room's race, see SomeGame.Online).</summary>
+        public static bool Online { get; private set; }
+
+        /// <summary>True while the race scene is the active scene.</summary>
+        public static bool InRaceScene => SceneManager.GetActiveScene().name == RaceScene;
+
+        public static void StartRace(LevelDefinition level) => StartRace(level, false);
+
+        /// <summary>Enters an online room's race (the room tells every phone when).</summary>
+        public static void StartOnlineRace(LevelDefinition level) => StartRace(level, true);
+
+        static void StartRace(LevelDefinition level, bool online)
         {
             if (Loading) return;
             CurrentLevel = level;
+            Online = online;
             SomeGame.UI.Theme.Use(SomeGame.UI.Theme.Valley); // the race screens use the Valley colours
             // The loading screen shows the track and the progress, then hands over to the race.
             Loading = true;
             SomeGame.UI.LoadingScreen.Show(level, RaceScene, () => Loading = false);
         }
 
-        public static void ReturnToMap() => Load(MapScene);
+        public static void ReturnToMap()
+        {
+            Online = false;
+            Load(MapScene);
+        }
 
         /// <summary>Starts the practice drive and remembers that the tutorial has been seen.</summary>
         public static void StartTutorial()

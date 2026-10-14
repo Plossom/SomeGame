@@ -66,6 +66,7 @@ namespace SomeGame.UI
 
         void Show()
         {
+            if (GameSession.Online) return; // online races show the room's results (OnlineResults)
             var level = race.Level;
             int position = race.FinalPosition;
             bool won = position == 1;
