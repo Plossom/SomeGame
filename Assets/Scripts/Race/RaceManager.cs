@@ -195,7 +195,7 @@ namespace SomeGame.Race
 
         void OnPlayerLap(RaceProgress car, float lapTime)
         {
-            bool newBest = BestLapStore.Submit(TrackId, lapTime);
+            bool newBest = Online == null && BestLapStore.Submit(TrackId, lapTime); // online races keep no records
             PlayerLapCompleted?.Invoke(lapTime, newBest);
         }
 

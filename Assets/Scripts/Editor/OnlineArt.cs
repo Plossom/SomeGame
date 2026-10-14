@@ -52,6 +52,19 @@ namespace SomeGame.EditorTools
                 float pips = Min(Circle(x, y, 40, 40, 8), Circle(x, y, 88, 40, 8), Circle(x, y, 64, 64, 8), Circle(x, y, 40, 88, 8), Circle(x, y, 88, 88, 8));
                 return Fill(Mathf.Max(body, -pips));
             });
+            GenerateMute();
+            AssetDatabase.Refresh();
+        }
+
+        /// <summary>The sound icon's speaker, crossed out (volume all the way down).</summary>
+        [MenuItem("SomeGame/Generate Mute Icon")]
+        public static void GenerateMute()
+        {
+            Ui("IconMute", (x, y) => Fill(Min(
+                RoundRect(x, y, 30, 64, 12, 16, 3),
+                Triangle(x, y, new Vector2(36, 50), new Vector2(36, 78), new Vector2(68, 104)),
+                Triangle(x, y, new Vector2(36, 50), new Vector2(68, 104), new Vector2(68, 24)),
+                Capsule(x, y, 82, 48, 110, 80, 7), Capsule(x, y, 82, 80, 110, 48, 7))));
             AssetDatabase.Refresh();
         }
     }

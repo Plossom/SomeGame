@@ -70,10 +70,14 @@ namespace SomeGame.UI
             var level = race.Level;
             int position = race.FinalPosition;
             bool won = position == 1;
+            // In the colours of the race's cup (built in the Valley colours).
+            var palette = Theme.OfLevel(level);
+            Theme.RecolorAll(transform, Theme.Valley, palette);
+            Theme.Hills(transform, palette);
 
             raceLabel.text = level != null ? level.chapter : "TEST RACE";
             positionLabel.text = TimeFormat.Ordinal(position).ToUpperInvariant();
-            positionLabel.color = won ? Theme.Orange : Theme.Ink;
+            positionLabel.color = won ? palette.Orange : palette.Ink;
             subtitle.text = won ? "PLACE · WINNER" : "PLACE";
             newBestTag.SetActive(false); // the best-lap row says NEW BEST instead
 
@@ -81,7 +85,7 @@ namespace SomeGame.UI
             for (int i = 0; i < stars.Length; i++)
             {
                 stars[i].gameObject.SetActive(level != null);
-                stars[i].color = i < earned ? Theme.Amber : Theme.CreamDark;
+                stars[i].color = i < earned ? palette.Amber : palette.CreamDark;
             }
 
             totalValue.text = TimeFormat.Race(race.RaceTime);
@@ -90,7 +94,7 @@ namespace SomeGame.UI
             bestLapValue.text = bestLap >= float.MaxValue ? "-"
                 : _newBest ? $"<size=60%>NEW BEST  </size>{TimeFormat.Race(bestLap)}"
                 : TimeFormat.Race(bestLap);
-            bestLapValue.color = _newBest ? Theme.Amber : Theme.White;
+            bestLapValue.color = _newBest ? palette.Amber : Theme.White;
             if (bestTimeValue != null)
             {
                 var best = level != null ? ProgressStore.BestTimeOf(level) : null;
@@ -98,7 +102,7 @@ namespace SomeGame.UI
                 bestTimeValue.text = !best.HasValue ? "-"
                     : isNew ? $"<size=60%>NEW BEST  </size>{TimeFormat.Race(best.Value)}"
                     : TimeFormat.Race(best.Value);
-                bestTimeValue.color = isNew ? Theme.Amber : Theme.White;
+                bestTimeValue.color = isNew ? palette.Amber : Theme.White;
             }
 
             if (level == null)

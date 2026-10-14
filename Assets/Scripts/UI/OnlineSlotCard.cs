@@ -104,7 +104,7 @@ namespace SomeGame.UI
             if (ready && !_ready) _readyAt = Time.unscaledTime;
             _ready = ready;
             readyCheck.SetActive(ready);
-            readyFace.color = ready ? Theme.Leaf : Theme.WithAlpha(Theme.StoneDark, 0.35f);
+            readyFace.color = ready ? Theme.Neutral.Leaf : Theme.WithAlpha(Theme.Neutral.StoneDark, 0.35f);
         }
 
         void Update()

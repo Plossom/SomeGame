@@ -18,7 +18,10 @@ namespace SomeGame.UI
 
         public void OnBeginDrag(PointerEventData e)
         {
-            _active = Mathf.Abs(e.delta.x) >= Mathf.Abs(e.delta.y) && screen.CanSwipe;
+            bool sideways = Mathf.Abs(e.delta.x) >= Mathf.Abs(e.delta.y);
+            // Still sliding from the last swipe: finish that at once and go on with this one.
+            if (sideways && !screen.CanSwipe) screen.HurrySwitch();
+            _active = sideways && screen.CanSwipe;
             _dx = 0f;
             _velocity = 0f;
         }

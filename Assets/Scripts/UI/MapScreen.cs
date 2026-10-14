@@ -437,6 +437,10 @@ namespace SomeGame.UI
             else cam.Render();
             canvas.renderMode = mode;
             canvas.worldCamera = null;
+            // Switching this canvas's mode and back leaves the other overlay canvases (the online screens)
+            // undrawn until they are refreshed: refresh them.
+            foreach (var other in FindObjectsByType<Canvas>(FindObjectsInactive.Exclude))
+                if (other != canvas && other.isRootCanvas && other.enabled) { other.enabled = false; other.enabled = true; }
             wipe.gameObject.SetActive(wipeShown);
             if (incomingBlur != null) incomingBlur.gameObject.SetActive(blurShown);
             Canvas.ForceUpdateCanvases();
@@ -532,14 +536,14 @@ namespace SomeGame.UI
             if (_switching) return;
             if (_wipeFrom == null)
             {
-                StartCoroutine(SpringBack(dx));
+                _spring = StartCoroutine(SpringBack(dx));
                 return;
             }
             float reveal = Mathf.Max(0f, -_wipeDirection * dx);
             bool flick = Mathf.Abs(velocity) > 1600f && Mathf.Sign(velocity) == -_wipeDirection;
             float decision = reveal > PageWidth * switchDistance || flick ? 1f : 0f;
             if (!_wipeReady) { _pendingRelease = decision; return; }
-            StartCoroutine(FinishWipe(decision > 0.5f, slideIn));
+            _finishing = StartCoroutine(FinishWipe(decision > 0.5f, slideIn));
         }
 
         /// <summary>Slides <paramref name="cup"/> in over the current one (from the cup menu).</summary>
@@ -554,6 +558,7 @@ namespace SomeGame.UI
 
         System.Collections.IEnumerator SpringBack(float from)
         {
+            _springing = true;
             _switching = true;
             for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.35f)
             {
@@ -562,12 +567,47 @@ namespace SomeGame.UI
             }
             SetPage(0f);
             _switching = false;
+            _springing = false;
+        }
+
+        Coroutine _finishing;
+        bool _finishGo, _springing;
+
+        /// <summary>
+        /// A new swipe while the last switch is still sliding: that switch jumps to its end at once, so the
+        /// next one can start straight away (swiping quickly through the cups feels immediate).
+        /// </summary>
+        public bool HurrySwitch()
+        {
+            if (_celebrating || _wipeStarting) return false;
+            if (_springing)
+            {
+                StopAllSpring();
+                return true;
+            }
+            if (_finishing == null || _wipeFrom == null) return false;
+            StopCoroutine(_finishing);
+            _finishing = null;
+            SetWipe(_finishGo ? PageWidth : 0f);
+            CompleteWipe(_finishGo);
+            return true;
+        }
+
+        Coroutine _spring;
+
+        void StopAllSpring()
+        {
+            if (_spring != null) StopCoroutine(_spring);
+            _spring = null;
+            SetPage(0f);
+            _switching = _springing = false;
         }
 
         // Freezes the current page as a picture over everything, then puts the next cup underneath.
         System.Collections.IEnumerator BeginWipe(CupDefinition next, int direction)
         {
             if (wipe == null || wipeImage == null) yield break;
+            _wipeStarting = true;
             OpenCups(); // the cup column unfolds and shows the switch
             _wipeFrom = _cup;
             _wipeTargetSlot = Switchable().IndexOf(next);
@@ -609,8 +649,9 @@ namespace SomeGame.UI
             {
                 bool go = _pendingRelease.Value > 0.5f;
                 _pendingRelease = null;
-                StartCoroutine(FinishWipe(go, slideIn * 1.2f));
+                _finishing = StartCoroutine(FinishWipe(go, slideIn * 1.2f));
             }
+            _wipeStarting = false;
         }
 
         // Shows <paramref name="reveal"/> canvas units of the new cup from the side it comes from.
@@ -672,6 +713,7 @@ namespace SomeGame.UI
         System.Collections.IEnumerator FinishWipe(bool go, float duration)
         {
             _switching = true;
+            _finishGo = go;
             float from = _reveal, to = go ? PageWidth : 0f;
             for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / duration)
             {
@@ -680,6 +722,13 @@ namespace SomeGame.UI
                 yield return null;
             }
             SetWipe(to);
+            _finishing = null;
+            CompleteWipe(go);
+        }
+
+        // The end of a switch: the new cup (or the old one, if it slid back) is the page, the picture is gone.
+        void CompleteWipe(bool go)
+        {
             if (_fadePlan != null) foreach (var (graphic, _, b) in _fadePlan) if (graphic != null) graphic.color = b;
             _fadePlan = null;
             if (!go) ShowCup(_wipeFrom, fadeAbove: false);

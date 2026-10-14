@@ -146,6 +146,7 @@ namespace SomeGame.EditorTools
 
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
+            menuButton.gameObject.AddComponent<KeepPalette>(); // like the menu itself
 
             // Stars and trophies (races won) on one small plate, its top level with the menu button.
             // Same size as the menu button.
@@ -911,6 +912,7 @@ namespace SomeGame.EditorTools
         static void BuildMenu(RectTransform canvas, Button openButton, RaceManager race, FloatingJoystick joystick)
         {
             var host = Stretch("GameMenu", canvas);
+            host.gameObject.AddComponent<KeepPalette>(); // the same colours on every cup
             var panel = Stretch("Panel", host);
             var dimRt = Stretch("Dim", panel);
             var dimImage = Img(dimRt, null, Theme.WithAlpha(Theme.Ink, 0.7f), raycast: true);
@@ -953,7 +955,8 @@ namespace SomeGame.EditorTools
             settings.characterSpacing = 12f;
 
             var sound = Layout(Rt("Sound", card), 770f, 110f);
-            Img(At("Icon", sound, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), "IconSound", Theme.Ink).rectTransform.pivot = new Vector2(0f, 0.5f);
+            var soundIcon = Img(At("Icon", sound, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), "IconSound", Theme.Ink);
+            soundIcon.rectTransform.pivot = new Vector2(0f, 0.5f);
             var slider = BuildSlider(sound);
 
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
@@ -970,7 +973,7 @@ namespace SomeGame.EditorTools
             Set(so, "openButton", openButton); Set(so, "panel", panel.gameObject); Set(so, "closeArea", dim);
             Set(so, "closeButton", close); Set(so, "title", title);
             Set(so, "resumeButton", resume); Set(so, "restartButton", restart); Set(so, "mainMenuButton", mainMenu);
-            Set(so, "volumeSlider", slider); Set(so, "joystickButton", joystickButton); Set(so, "joystickLabel", joystickLabel);
+            Set(so, "volumeSlider", slider); Set(so, "soundIcon", soundIcon); Set(so, "soundOn", Sprite("IconSound")); Set(so, "soundOff", Sprite("IconMute")); Set(so, "joystickButton", joystickButton); Set(so, "joystickLabel", joystickLabel);
             Set(so, "resetButton", resetButton); Set(so, "resetLabel", resetLabel); Set(so, "tutorialButton", tutorialButton);
             Set(so, "cupsButton", cupsButton); Set(so, "cupsLabel", cupsLabel);
             Set(so, "assistButton", assistButton); Set(so, "assistLabel", assistLabel);
@@ -980,6 +983,7 @@ namespace SomeGame.EditorTools
             panel.gameObject.SetActive(false);
         }
 
+        // A flat bar with rounded corners and a rounded square knob (not pills).
         static Slider BuildSlider(RectTransform parent)
         {
             var root = At("Slider", parent, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(620f, 110f));
@@ -987,21 +991,23 @@ namespace SomeGame.EditorTools
             root.anchoredPosition = Vector2.zero;
             var track = Stretch("Track", root);
             track.anchorMin = new Vector2(0f, 0.38f); track.anchorMax = new Vector2(1f, 0.62f);
-            Img(track, "Pill", Theme.CreamDark, sliced: true);
+            Rounded(Img(track, "Round", Theme.CreamDark, sliced: true), 8f);
             var fillArea = Stretch("Fill Area", root);
             fillArea.anchorMin = new Vector2(0f, 0.38f); fillArea.anchorMax = new Vector2(1f, 0.62f);
             fillArea.offsetMax = new Vector2(-40f, 0f);
             var fill = Stretch("Fill", fillArea);
             fill.offsetMax = new Vector2(40f, 0f);
-            Img(fill, "Pill", Theme.Orange, sliced: true);
+            Rounded(Img(fill, "Round", Theme.Orange, sliced: true), 8f);
             var handleArea = Stretch("Handle Slide Area", root);
             handleArea.offsetMin = new Vector2(40f, 0f); handleArea.offsetMax = new Vector2(-40f, 0f);
             var handle = Rt("Handle", handleArea);
             handle.anchorMin = new Vector2(0f, 0f); handle.anchorMax = new Vector2(0f, 1f);
-            handle.sizeDelta = new Vector2(90f, 0f);
-            Img(At("Shadow", handle, new Vector2(0.5f, 0.5f), new Vector2(0f, -8f), new Vector2(90f, 90f)), "Circle", Theme.Ink);
-            var knob = Img(At("Knob", handle, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(90f, 90f)), "Circle", Color.white, raycast: true);
-            Img(At("Ring", handle, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(90f, 90f)), "Ring", Theme.Ink);
+            handle.sizeDelta = new Vector2(80f, 0f);
+            Rounded(Img(At("Shadow", handle, new Vector2(0.5f, 0.5f), new Vector2(0f, -8f), new Vector2(80f, 84f)), "Round", Theme.Ink, sliced: true), 18f);
+            var knob = Rounded(Img(At("Knob", handle, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(80f, 84f)), "Round", Color.white, sliced: true, raycast: true), 18f);
+            // Two little grip lines on the knob.
+            Rounded(Img(At("Grip1", handle, new Vector2(0.5f, 0.5f), new Vector2(-9f, 0f), new Vector2(7f, 34f)), "Round", Theme.Stone, sliced: true), 3f);
+            Rounded(Img(At("Grip2", handle, new Vector2(0.5f, 0.5f), new Vector2(9f, 0f), new Vector2(7f, 34f)), "Round", Theme.Stone, sliced: true), 3f);
             var slider = root.gameObject.AddComponent<Slider>();
             slider.fillRect = fill; slider.handleRect = handle; slider.targetGraphic = knob;
             slider.direction = Slider.Direction.LeftToRight; slider.minValue = 0f; slider.maxValue = 1f; slider.value = 1f;

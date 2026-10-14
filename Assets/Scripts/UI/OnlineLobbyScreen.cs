@@ -11,6 +11,7 @@ namespace SomeGame.UI
     /// Playing with friends, on the map. The ONLINE button opens a card: your name, CREATE ROOM, or a
     /// friend's six-letter code and JOIN. In a room: the code to share, the race (the host picks it),
     /// eight seats (players and bots), the car colours (each colour once) and START (host) or READY.
+    /// Always in plain black and greys (<see cref="Theme.Neutral"/>), whatever cup the map shows.
     /// </summary>
     public class OnlineLobbyScreen : MonoBehaviour
     {
@@ -25,7 +26,11 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text[] codeLetters;
         [SerializeField] Image[] codeBoxes;
         [SerializeField] TMP_Text statusLabel;
-        [SerializeField] RectTransform spinner;
+        [Tooltip("The progress bar along the bottom of the card while a room opens: fill, the little car on it, its label.")]
+        [SerializeField] GameObject progressBar;
+        [SerializeField] Image progressFill;
+        [SerializeField] RectTransform progressCar;
+        [SerializeField] TMP_Text progressLabel;
         [SerializeField] RectTransform[] demoCars;
 
         [Header("Room")]
@@ -60,12 +65,13 @@ namespace SomeGame.UI
         int _raceSlide, _shownRace = -1;
         readonly LobbySlot[] _lastSlots = new LobbySlot[OnlineRoom.SlotCount];
         readonly Queue<string> _toasts = new();
-        Theme.Palette _palette = Theme.Valley;
         string _status = "";
         bool _statusError;
 
         void Awake()
         {
+            Theme.RecolorAll(transform, Theme.Valley, Theme.Neutral); // built in the Valley colours
+            Theme.Hills(transform, Theme.Neutral);
             openButton.onClick.AddListener(OpenEntry);
             entryClose.onClick.AddListener(CloseEntry);
             entryDim.onClick.AddListener(CloseEntry);
@@ -144,16 +150,26 @@ namespace SomeGame.UI
         void OpenEntry()
         {
             if (OnlineSession.Active) { ShowRoom(); return; }
-            Restyle();
+            Redraw();
+            entryPanel.SetActive(true); // first: the card always opens
             nameField.SetTextWithoutNotify(OnlineSession.PlayerName);
-            SetStatus(_session.State == OnlineSession.Status.Connecting ? "CONNECTING..." : "", false);
+            SetStatus("", false);
             ShowCode();
-            entryPanel.SetActive(true);
+            OnSessionChanged();
+        }
+
+        // The X (or a tap beside the card) also gives up on a room that is still opening.
+        // Makes sure this screen's own canvas is drawn (the map's cup switch can leave it undrawn).
+        void Redraw()
+        {
+            var canvas = GetComponentInParent<Canvas>().rootCanvas;
+            canvas.enabled = false;
+            canvas.enabled = true;
         }
 
         void CloseEntry()
         {
-            if (_session.State == OnlineSession.Status.Connecting) return; // wait for the answer
+            if (_session.State == OnlineSession.Status.Connecting) _session.Cancel();
             entryPanel.SetActive(false);
         }
 
@@ -188,7 +204,7 @@ namespace SomeGame.UI
             _status = text;
             _statusError = error;
             statusLabel.text = text;
-            statusLabel.color = error ? Theme.Rust : Theme.InkSoft;
+            statusLabel.color = error ? Theme.Neutral.Rust : Theme.Neutral.InkSoft;
         }
 
         void OnFailed(string message)
@@ -203,7 +219,11 @@ namespace SomeGame.UI
 
         void OnSessionChanged()
         {
-            createButton.interactable = joinButton.interactable = _session.State == OnlineSession.Status.Offline;
+            bool free = _session.State == OnlineSession.Status.Offline;
+            createButton.interactable = joinButton.interactable = free;
+            // Busy buttons look it.
+            foreach (var b in new[] { createButton, joinButton })
+                b.GetComponent<CanvasGroup>().alpha = free ? 1f : 0.45f;
             if (_session.State == OnlineSession.Status.InRoom)
             {
                 entryPanel.SetActive(false);
@@ -217,8 +237,8 @@ namespace SomeGame.UI
         void ShowRoom()
         {
             if (OnlineRoom.Current == null) return;
-            Restyle();
             Watch(OnlineRoom.Current);
+            Redraw();
             _roomShown = true;
             _roomShownAt = _codeAt = Time.unscaledTime;
             _shownRace = -1;
@@ -289,7 +309,7 @@ namespace SomeGame.UI
                 if (random)
                 {
                     racePicture.sprite = diceSprite;
-                    racePicture.color = Theme.Amber;
+                    racePicture.color = Theme.Neutral.Amber;
                     raceTitle.text = "RANDOM RACE";
                     raceDetails.text = "ANY CUP · A SURPRISE";
                 }
@@ -304,16 +324,16 @@ namespace SomeGame.UI
                 for (int i = 0; i < raceDifficulty.Length; i++)
                 {
                     raceDifficulty[i].gameObject.SetActive(!random);
-                    raceDifficulty[i].color = i < level.difficulty ? Theme.Orange : Theme.WithAlpha(Theme.Stone, 0.25f);
+                    raceDifficulty[i].color = i < level.difficulty ? Theme.Neutral.Amber : Theme.WithAlpha(Theme.Neutral.Stone, 0.25f);
                 }
             }
             for (int i = 0; i < _tabs.Count; i++)
             {
                 bool on = i == _tabs.Count - 1 ? random : !random && i == cup;
                 var (button, face, label, icon) = _tabs[i];
-                face.color = on ? Theme.Orange : Theme.InkSoft;
-                label.color = on ? Color.white : Theme.Stone;
-                if (icon != null) icon.color = on ? Color.white : Theme.Stone;
+                face.color = on ? Theme.Neutral.Amber : Theme.Neutral.InkSoft; // the chosen tab lights up
+                label.color = on ? Theme.Neutral.Ink : Theme.Neutral.Stone;
+                if (icon != null) icon.color = on ? Theme.Neutral.Ink : Theme.Neutral.Stone;
                 button.interactable = host && inLobby;
             }
             raceCounter.text = $"RACE {inCup + 1}/{count}";
@@ -332,7 +352,7 @@ namespace SomeGame.UI
                 bool hostSeat = slot.Kind == SlotKind.Human && slot.ClientId == Unity.Netcode.NetworkManager.ServerClientId;
                 slotCards[i].Show(slot, i == me, hostSeat, host, inLobby, _room.CrownSlot.Value == i, intro ? 0.15f + i * 0.05f : -1f);
             }
-            playersCaption.text = $"RACERS  <color={Theme.Html(Theme.InkSoft)}>{filled}/8</color>";
+            playersCaption.text = $"RACERS  <color={Theme.Html(Theme.Neutral.InkSoft)}>{filled}/8</color>";
             fillButton.gameObject.SetActive(host && inLobby && filled < OnlineRoom.SlotCount);
 
             // Colours: yours ringed, the others' taken ones dimmed.
@@ -374,9 +394,9 @@ namespace SomeGame.UI
         {
             mainLabel.text = label;
             mainButton.interactable = enabled;
-            mainFace.color = enabled ? Theme.Orange : Theme.Stone;
-            mainShadow.color = enabled ? Theme.OrangeDeep : Theme.StoneDark;
-            mainLabel.color = enabled ? Color.white : Theme.StoneDark;
+            mainFace.color = enabled ? Theme.Neutral.Orange : Theme.Neutral.Stone;
+            mainShadow.color = enabled ? Theme.Neutral.OrangeDeep : Theme.Neutral.StoneDark;
+            mainLabel.color = enabled ? Color.white : Theme.Neutral.StoneDark;
             _mainPulse = pulse;
         }
 
@@ -446,16 +466,6 @@ namespace SomeGame.UI
             _copiedAt = Time.unscaledTime;
         }
 
-        // The lobby takes the colours of the cup on the map (never the grey of a locked cup).
-        void Restyle()
-        {
-            var target = Theme.Current == Theme.Locked ? Theme.Valley : Theme.Current;
-            if (target == _palette) return;
-            foreach (var (graphic, _, to) in Theme.RecolorPlan(transform, _palette, target))
-                if (graphic.name != "Body") graphic.color = to; // car bodies keep the car colours
-            _palette = target;
-        }
-
         // ------------------------------------------------------------------ animation
 
         void Update()
@@ -522,12 +532,28 @@ namespace SomeGame.UI
             else if (toast.gameObject.activeSelf) toast.gameObject.SetActive(false);
         }
 
+        float _shownProgress, _stepSince;
+        string _lastStep;
+
         void AnimateEntry(float now)
         {
             bool busy = _session.State == OnlineSession.Status.Connecting;
-            spinner.gameObject.SetActive(busy);
-            spinner.localRotation = Quaternion.Euler(0f, 0f, -now * 360f);
             if (!busy && !_statusError && _status.EndsWith("...")) SetStatus("", false);
+            // Opening / joining: the bar fills step by step (creeping on inside a step, so it never looks stuck).
+            progressBar.SetActive(busy);
+            statusLabel.gameObject.SetActive(!busy);
+            if (busy)
+            {
+                if (_session.Progress < _shownProgress - 0.01f) _shownProgress = 0f;
+                float goal = Mathf.Min(_session.Progress + 0.2f * (1f - Mathf.Exp(-(now - _stepSince) * 0.4f)), 0.97f);
+                if (_session.Step != _lastStep) { _lastStep = _session.Step; _stepSince = now; }
+                _shownProgress = Mathf.MoveTowards(_shownProgress, Mathf.Max(goal, _session.Progress), Time.unscaledDeltaTime * 0.8f);
+                progressFill.fillAmount = _shownProgress;
+                var track = (RectTransform)progressCar.parent;
+                progressCar.anchoredPosition = new Vector2(track.rect.width * _shownProgress, 64f + Mathf.Abs(Mathf.Sin(now * 9f)) * 6f);
+                progressLabel.text = _session.Step + "  " + Mathf.RoundToInt(_shownProgress * 100f) + "%";
+            }
+            else _shownProgress = 0f;
             // Three little cars racing side by side, swinging into drifts.
             for (int i = 0; i < demoCars.Length; i++)
             {
@@ -542,7 +568,7 @@ namespace SomeGame.UI
             for (int i = 0; i < codeBoxes.Length; i++)
             {
                 bool on = i == next;
-                codeBoxes[i].color = on ? Color.Lerp(Theme.Orange, Theme.Amber, 0.5f + 0.5f * Mathf.Sin(now * 6f)) : Theme.Ink;
+                codeBoxes[i].color = on ? Color.Lerp(Theme.Neutral.Orange, Theme.Neutral.Amber, 0.5f + 0.5f * Mathf.Sin(now * 6f)) : Theme.Neutral.Ink;
                 float s = i < codeField.text.Length ? 1f : 0.96f;
                 codeBoxes[i].transform.localScale = Vector3.one * Mathf.Lerp(codeBoxes[i].transform.localScale.x, s, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 14f));
             }

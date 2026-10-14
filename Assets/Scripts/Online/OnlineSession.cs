@@ -51,7 +51,7 @@ namespace SomeGame.Online
 
         ISession _session;
         NetworkManager _network;
-        bool _leaving;
+        bool _quitting; // shutting down on purpose: no "the room closed" message
 
         public static string PlayerName
         {
@@ -111,12 +111,30 @@ namespace SomeGame.Online
 
         // ------------------------------------------------------------------ create / join / leave
 
+        /// <summary>How far opening or joining a room has got (0..1), and what it is doing.</summary>
+        public float Progress { get; private set; }
+        public string Step { get; private set; } = "";
+
+        Task _leaving;
+        int _attempt; // a cancelled or timed-out attempt finds a newer number and gives up
+
+        const float StepTimeout = 20f;
+
+        void Report(float progress, string step)
+        {
+            Progress = progress;
+            Step = step;
+        }
+
         public async void Create()
         {
             if (State != Status.Offline) return;
+            int attempt = ++_attempt;
             SetState(Status.Connecting);
             try
             {
+                Report(0.05f, "GETTING READY");
+                await FinishLeaving();
                 EnsureNetworkManager();
                 if (LocalTest)
                 {
@@ -126,18 +144,24 @@ namespace SomeGame.Online
                 }
                 else
                 {
-                    await SignIn();
+                    Report(0.15f, "CONNECTING TO THE SERVER");
+                    await Limit(SignIn(), attempt);
+                    Report(0.45f, "OPENING A ROOM");
                     var options = new SessionOptions { MaxPlayers = MaxPlayers, IsPrivate = true, Name = PlayerName + "'S ROOM" }.WithRelayNetwork();
-                    _session = await MultiplayerService.Instance.CreateSessionAsync(options);
+                    var session = await Limit(MultiplayerService.Instance.CreateSessionAsync(options), attempt);
+                    if (attempt != _attempt) { _ = session.LeaveAsync(); return; } // cancelled meanwhile
+                    _session = session;
                     Code = _session.Code;
                     Watch(_session);
                 }
+                Report(0.9f, "SETTING UP THE ROOM");
                 SpawnRoom();
+                Report(1f, "READY");
                 SetState(Status.InRoom);
             }
             catch (Exception e)
             {
-                Fail(Explain(e, "Could not create a room."));
+                if (attempt == _attempt) Fail(Explain(e, "Could not create a room."));
             }
         }
 
@@ -146,9 +170,12 @@ namespace SomeGame.Online
             if (State != Status.Offline) return;
             code = (code ?? "").Trim().ToUpperInvariant();
             if (code.Length == 0) { Failed?.Invoke("ENTER THE ROOM CODE"); return; }
+            int attempt = ++_attempt;
             SetState(Status.Connecting);
             try
             {
+                Report(0.05f, "GETTING READY");
+                await FinishLeaving();
                 EnsureNetworkManager();
                 if (LocalTest || code == "LOCAL")
                 {
@@ -157,46 +184,89 @@ namespace SomeGame.Online
                 }
                 else
                 {
-                    await SignIn();
-                    _session = await MultiplayerService.Instance.JoinSessionByCodeAsync(code);
+                    Report(0.15f, "CONNECTING TO THE SERVER");
+                    await Limit(SignIn(), attempt);
+                    Report(0.45f, "LOOKING FOR " + code);
+                    var session = await Limit(MultiplayerService.Instance.JoinSessionByCodeAsync(code), attempt);
+                    if (attempt != _attempt) { _ = session.LeaveAsync(); return; }
+                    _session = session;
                     Watch(_session);
                 }
                 Code = code;
                 // The room object arrives from the host shortly; give up if it does not.
+                Report(0.75f, "ENTERING THE ROOM");
                 float until = Time.realtimeSinceStartup + 15f;
-                while (OnlineRoom.Current == null && Time.realtimeSinceStartup < until && State == Status.Connecting)
+                while (OnlineRoom.Current == null && Time.realtimeSinceStartup < until && attempt == _attempt)
                     await Task.Yield();
-                if (State != Status.Connecting) return;
+                if (attempt != _attempt) return;
                 if (OnlineRoom.Current == null) throw new Exception("No answer from the room.");
+                Report(1f, "READY");
                 SetState(Status.InRoom);
             }
             catch (Exception e)
             {
-                Fail(Explain(e, "Could not join that room."));
+                if (attempt == _attempt) Fail(Explain(e, "Could not join that room."));
             }
         }
 
-        /// <summary>Leaves the room (the host closes it for everyone).</summary>
-        public async void Leave()
+        /// <summary>Gives up on an attempt that is still connecting (the X on the card).</summary>
+        public void Cancel()
         {
-            if (_leaving) return;
-            _leaving = true;
+            if (State != Status.Connecting) return;
+            _attempt++;
+            Leave();
+        }
+
+        /// <summary>
+        /// Leaves the room (the host closes it for everyone). You are offline at once; telling the server
+        /// finishes in the background (a new room waits for that first).
+        /// </summary>
+        public void Leave()
+        {
+            _attempt++;
+            var session = _session;
+            _session = null;
+            _quitting = true;
+            if (_network != null && (_network.IsListening || _network.IsClient || _network.ShutdownInProgress)) _network.Shutdown();
+            Code = "";
+            Report(0f, "");
+            if (session != null) _leaving = LeaveQuietly(session);
+            _quitting = false;
+            SetState(Status.Offline);
+        }
+
+        static async Task LeaveQuietly(ISession session)
+        {
             try
             {
-                var session = _session;
-                _session = null;
-                if (_network != null && (_network.IsListening || _network.IsClient)) _network.Shutdown();
-                if (session != null)
-                {
-                    try { await session.LeaveAsync(); } catch (Exception e) { Debug.LogWarning("Leaving the session: " + e.Message); }
-                }
+                var leave = session.LeaveAsync();
+                await Task.WhenAny(leave, Task.Delay(8000)); // never wait for ever
             }
-            finally
-            {
-                Code = "";
-                _leaving = false;
-                SetState(Status.Offline);
-            }
+            catch (Exception e) { Debug.LogWarning("Leaving the session: " + e.Message); }
+        }
+
+        async Task FinishLeaving()
+        {
+            if (_leaving != null && !_leaving.IsCompleted) await _leaving;
+            _leaving = null;
+            // The network shuts down at the end of a frame: wait until it really has.
+            for (int i = 0; i < 120 && _network != null && (_network.ShutdownInProgress || _network.IsListening); i++)
+                await Task.Yield();
+        }
+
+        // A network step that takes too long (no signal, a stuck server) fails instead of hanging.
+        async Task Limit(Task task, int attempt)
+        {
+            var done = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(StepTimeout)));
+            if (attempt != _attempt) throw new OperationCanceledException();
+            if (done != task) throw new TimeoutException();
+            await task; // rethrows its error
+        }
+
+        async Task<T> Limit<T>(Task<T> task, int attempt)
+        {
+            await Limit((Task)task, attempt);
+            return task.Result;
         }
 
         // ------------------------------------------------------------------ internals
@@ -248,20 +318,20 @@ namespace SomeGame.Online
 
         void Watch(ISession session)
         {
-            session.RemovedFromSession += () => { if (!_leaving && State != Status.Offline) Fail("THE ROOM WAS CLOSED"); };
-            session.Deleted += () => { if (!_leaving && State != Status.Offline) Fail("THE ROOM WAS CLOSED"); };
+            session.RemovedFromSession += () => { if (!_quitting && _session == session && State != Status.Offline) Fail("THE ROOM WAS CLOSED"); };
+            session.Deleted += () => { if (!_quitting && _session == session && State != Status.Offline) Fail("THE ROOM WAS CLOSED"); };
         }
 
         // The local client stopped: the host left, the connection dropped, or we left on purpose.
         void OnClientStopped(bool wasHost)
         {
-            if (_leaving || State == Status.Offline) return;
+            if (_quitting || State == Status.Offline) return;
             Fail(wasHost ? "THE ROOM WAS CLOSED" : "THE HOST LEFT THE ROOM");
         }
 
         void OnDisconnect(ulong clientId)
         {
-            if (_network == null || _network.IsServer || _leaving || State == Status.Offline) return;
+            if (_network == null || _network.IsServer || _quitting || State == Status.Offline) return;
             if (clientId == _network.LocalClientId || clientId == NetworkManager.ServerClientId)
                 Fail("THE HOST LEFT THE ROOM");
         }
@@ -300,6 +370,7 @@ namespace SomeGame.Online
             }
             if (e is RequestFailedException || e is AuthenticationException) return "NO CONNECTION TO THE GAME SERVER";
             if (e is ServicesInitializationException) return "ONLINE PLAY IS NOT SET UP YET";
+            if (e is TimeoutException) return "NO ANSWER - CHECK YOUR INTERNET";
             return fallback.ToUpperInvariant();
         }
     }

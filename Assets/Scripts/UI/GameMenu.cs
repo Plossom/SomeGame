@@ -32,6 +32,9 @@ namespace SomeGame.UI
 
         [Header("Settings")]
         [SerializeField] UnityEngine.UI.Slider volumeSlider;
+        [Tooltip("The speaker by the volume slider: crossed out when the volume is (almost) off.")]
+        [SerializeField] UnityEngine.UI.Image soundIcon;
+        [SerializeField] Sprite soundOn, soundOff;
         [SerializeField] UnityEngine.UI.Button joystickButton;
         [SerializeField] TMP_Text joystickLabel;
         [Tooltip("Drifting on / off.")]
@@ -59,6 +62,9 @@ namespace SomeGame.UI
 
         void Awake()
         {
+            // The menu (and its button) is plain black and grey, the same on every cup and in every race.
+            Theme.RecolorAll(transform, Theme.Valley, Theme.Neutral);
+            if (openButton != null) Theme.RecolorAll(openButton.transform, Theme.Valley, Theme.Neutral);
             bool inRace = race != null;
             openButton.onClick.AddListener(Open);
             closeArea.onClick.AddListener(Close);
@@ -93,7 +99,7 @@ namespace SomeGame.UI
                 resetButton.gameObject.SetActive(!inRace);
                 resetButton.onClick.AddListener(OnReset);
             }
-            volumeSlider.onValueChanged.AddListener(v => SoundSettings.Volume = v);
+            volumeSlider.onValueChanged.AddListener(v => { SoundSettings.Volume = v; ShowSoundIcon(v); });
 
             resumeButton.gameObject.SetActive(inRace);
             restartButton.gameObject.SetActive(inRace && !GameSession.Online); // an online race cannot be restarted alone
@@ -176,26 +182,32 @@ namespace SomeGame.UI
             AudioListener.pause = false;
         }
 
+        void ShowSoundIcon(float volume)
+        {
+            if (soundIcon != null && soundOn != null && soundOff != null) soundIcon.sprite = volume < 0.05f ? soundOff : soundOn;
+        }
+
         void RefreshSettings()
         {
             volumeSlider.SetValueWithoutNotify(SoundSettings.Volume);
+            ShowSoundIcon(SoundSettings.Volume);
             joystickLabel.text = ControlSettings.InvisibleJoystick
-                ? $"JOYSTICK   <color={Theme.Html(Theme.StoneDark)}>HIDDEN</color>"
-                : $"JOYSTICK   <color={Theme.Html(Theme.Orange)}>VISIBLE</color>";
+                ? $"JOYSTICK   <color={Theme.Html(Theme.Neutral.StoneDark)}>HIDDEN</color>"
+                : $"JOYSTICK   <color={Theme.Html(Theme.Neutral.Leaf)}>VISIBLE</color>";
             if (driftLabel != null)
                 driftLabel.text = ControlSettings.Drifting
-                    ? $"DRIFTING   <color={Theme.Html(Theme.Orange)}>ON</color>"
-                    : $"DRIFTING   <color={Theme.Html(Theme.StoneDark)}>OFF</color>";
+                    ? $"DRIFTING   <color={Theme.Html(Theme.Neutral.Leaf)}>ON</color>"
+                    : $"DRIFTING   <color={Theme.Html(Theme.Neutral.StoneDark)}>OFF</color>";
             if (assistLabel != null)
             {
                 var a = ControlSettings.SteerAssist;
                 string word = a == ControlSettings.Assist.Off ? "OFF" : "ON";
-                assistLabel.text = $"STEERING HELP   <color={Theme.Html(a == ControlSettings.Assist.Off ? Theme.StoneDark : Theme.Orange)}>{word}</color>";
+                assistLabel.text = $"STEERING HELP   <color={Theme.Html(a == ControlSettings.Assist.Off ? Theme.Neutral.StoneDark : Theme.Neutral.Leaf)}>{word}</color>";
             }
             if (cupsLabel != null)
                 cupsLabel.text = CupList.DevUnlockAll
-                    ? $"UNLOCK ALL   <color={Theme.Html(Theme.Orange)}>ON</color>"
-                    : $"UNLOCK ALL   <color={Theme.Html(Theme.StoneDark)}>OFF</color>";
+                    ? $"UNLOCK ALL   <color={Theme.Html(Theme.Neutral.Leaf)}>ON</color>"
+                    : $"UNLOCK ALL   <color={Theme.Html(Theme.Neutral.StoneDark)}>OFF</color>";
         }
     }
 }

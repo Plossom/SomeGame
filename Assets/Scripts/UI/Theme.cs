@@ -42,7 +42,28 @@ namespace SomeGame.UI
             Stone = Hex("C4C7C4"), StoneDark = Hex("686D6B"), Leaf = Hex("9A9F9B"),
         };
 
+        /// <summary>
+        /// Plain black, greys and white for the menu and the online screens: the same on every cup (the
+        /// coloured palettes belong to the cups' maps and races).
+        /// </summary>
+        public static readonly Palette Neutral = new()
+        {
+            Cream = Hex("F2F2F0"), CreamDark = Hex("DADAD6"), Ink = Hex("25272B"), InkSoft = Hex("5A5D63"),
+            Orange = Hex("111214"), OrangeDeep = Hex("3A3C41"), Amber = Hex("F5F5F2"), Rust = Hex("6E7177"),
+            Stone = Hex("BFC1C4"), StoneDark = Hex("85888D"), Leaf = Hex("3FA066"),
+        };
+
         public static Palette Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
+
+        /// <summary>The palette of the cup a race belongs to (Valley when it is in none).</summary>
+        public static Palette OfLevel(LevelDefinition level)
+        {
+            var cups = CupList.Instance;
+            if (level != null && cups != null)
+                foreach (var cup in cups.cups)
+                    if (cup.races != null && cup.races.levels.Contains(level)) return Of(cup.look);
+            return Valley;
+        }
 
         public static Palette Current { get; private set; } = Valley;
 
@@ -82,7 +103,33 @@ namespace SomeGame.UI
             if (from == Current) return;
             Color[] a = from.All, b = Current.All;
             foreach (var graphic in root.GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
-                if (TryMap(graphic.color, a, b, out var mapped)) graphic.color = mapped;
+                if (!Kept(graphic) && TryMap(graphic.color, a, b, out var mapped)) graphic.color = mapped;
+        }
+
+        /// <summary>
+        /// Swaps every palette colour under <paramref name="root"/> from one palette to another, also under
+        /// <see cref="KeepPalette"/> (that is how kept UI gets its own palette). Images named "Body" (the cars,
+        /// in the players' colours) keep theirs.
+        /// </summary>
+        public static void RecolorAll(Transform root, Palette from, Palette to)
+        {
+            if (root == null || from == to) return;
+            Color[] a = from.All, b = to.All;
+            foreach (var graphic in root.GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
+                if (graphic.name != "Body" && TryMap(graphic.color, a, b, out var mapped)) graphic.color = mapped;
+        }
+
+        /// <summary>The rolling hills behind some screens (loading, finish, online), in the palette's style.</summary>
+        public static void Hills(Transform root, Palette palette)
+        {
+            // Meadow green, snow for the Winter Cup, plain greys for the neutral screens.
+            string back = palette == Winter ? "DCE8F3" : palette == Neutral ? "E2E2DF" : "9CC383";
+            string front = palette == Winter ? "C3D8EA" : palette == Neutral ? "D2D2CE" : "7FB06C";
+            foreach (var image in root.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+            {
+                if (image.name == "HillBack") image.color = Hex(back);
+                else if (image.name == "HillFront") image.color = Hex(front);
+            }
         }
 
         public static bool TryMap(Color c, Palette from, out Color mapped) => TryMap(c, from.All, Current.All, out mapped);
@@ -100,9 +147,11 @@ namespace SomeGame.UI
             if (from == to) return plan;
             Color[] a = from.All, b = to.All;
             foreach (var graphic in root.GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
-                if (TryMap(graphic.color, a, b, out var mapped)) plan.Add((graphic, graphic.color, mapped));
+                if (!Kept(graphic) && TryMap(graphic.color, a, b, out var mapped)) plan.Add((graphic, graphic.color, mapped));
             return plan;
         }
+
+        static bool Kept(UnityEngine.UI.Graphic graphic) => graphic.GetComponentInParent<KeepPalette>(true) != null;
 
         static readonly float[] Shades = { 1f, 0.7f, 0.6f };
 

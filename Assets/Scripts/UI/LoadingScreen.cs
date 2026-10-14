@@ -44,6 +44,10 @@ namespace SomeGame.UI
 
         IEnumerator Run(LevelDefinition level, string scene, Action done)
         {
+            // In the colours of the race's cup (the prefab is built in the Valley colours).
+            var palette = Theme.OfLevel(level);
+            Theme.RecolorAll(transform, Theme.Valley, palette);
+            Theme.Hills(transform, palette);
             chapter.text = level != null ? level.chapter : "";
             title.text = level != null ? level.displayName.ToUpperInvariant() : "";
             details.text = level != null ? $"{level.laps} laps  ·  {level.rivalCount} rivals" : "";

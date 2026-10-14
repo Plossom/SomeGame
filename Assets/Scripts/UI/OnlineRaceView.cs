@@ -47,6 +47,8 @@ namespace SomeGame.UI
 
         void Awake()
         {
+            Theme.RecolorAll(transform, Theme.Valley, Theme.Neutral); // the online screens are black and grey
+            Theme.Hills(transform, Theme.Neutral);
             waiting.SetActive(false);
             results.SetActive(false);
             closed.SetActive(false);
@@ -177,7 +179,7 @@ namespace SomeGame.UI
 
         void SpawnConfetti()
         {
-            Color[] colours = { Gold, Theme.Orange, new(0.24f, 0.49f, 0.85f), new(0.6f, 0.83f, 0.28f), new(0.91f, 0.44f, 0.69f), Color.white };
+            Color[] colours = { Gold, Theme.Neutral.Orange, new(0.24f, 0.49f, 0.85f), new(0.6f, 0.83f, 0.28f), new(0.91f, 0.44f, 0.69f), Color.white };
             for (int i = 0; i < 110; i++)
             {
                 var go = new GameObject("Confetti", typeof(RectTransform), typeof(Image));
@@ -219,9 +221,9 @@ namespace SomeGame.UI
                 var medal = row.Find("Content/Medal").GetComponent<Image>();
                 medal.gameObject.SetActive(car.IsFinished && i < 3);
                 medal.color = i == 0 ? Gold : i == 1 ? Silver : Bronze;
-                placeText.color = car.IsFinished && i < 3 ? Theme.Ink : Theme.Amber;
+                placeText.color = car.IsFinished && i < 3 ? Theme.Neutral.Ink : Theme.Neutral.Amber;
                 row.Find("Content/Name").GetComponent<TMP_Text>().text = you ? "YOU" : entry != null ? entry.Name : car.DisplayName;
-                row.Find("Content/Car/Body").GetComponent<Image>().color = entry != null ? entry.Color : Theme.Orange;
+                row.Find("Content/Car/Body").GetComponent<Image>().color = entry != null ? entry.Color : Theme.Neutral.Orange;
                 var time = row.Find("Content/Time").GetComponent<TMP_Text>();
                 var sub = row.Find("Content/Sub").GetComponent<TMP_Text>();
                 bool isWinner = first != null && entry == first;
@@ -231,15 +233,15 @@ namespace SomeGame.UI
                     float seconds = car.FinishTime - race.StartTime;
                     time.text = TimeFormat.Race(seconds);
                     sub.text = isWinner ? "WINNER" : first != null ? "+" + (car.FinishTime - first.Progress.FinishTime).ToString("0.00") + " S" : "";
-                    sub.color = isWinner ? Gold : Theme.Stone;
+                    sub.color = isWinner ? Gold : Theme.Neutral.Stone;
                 }
                 else
                 {
                     time.text = "LAP " + car.CurrentLap + "/" + car.TotalLaps;
                     sub.text = "STILL RACING" + new string('.', 1 + Mathf.FloorToInt(Time.unscaledTime * 3f) % 3);
-                    sub.color = Theme.Stone;
+                    sub.color = Theme.Neutral.Stone;
                 }
-                time.color = car.IsFinished ? Theme.Cream : Theme.Stone;
+                time.color = car.IsFinished ? Theme.Neutral.Cream : Theme.Neutral.Stone;
                 row.Find("Content/Highlight").gameObject.SetActive(you);
                 // Rows slide in one after another.
                 float k = Mathf.Clamp01((t - 0.25f - i * 0.07f) / 0.32f);

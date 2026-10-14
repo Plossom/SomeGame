@@ -148,16 +148,32 @@ namespace SomeGame.EditorTools
 
             var status = Txt(At("Status", card, new Vector2(0.5f, 1f), new Vector2(30f, -1478f), new Vector2(800f, 60f)), "", 40, Theme.InkSoft, _condItalic);
             status.characterSpacing = 4f;
-            var spinner = At("Spinner", card, new Vector2(0.5f, 1f), new Vector2(0f, -1570f), new Vector2(64f, 64f));
-            spinner.pivot = new Vector2(0.5f, 0.5f);
-            Img(spinner, "RingDashed", Theme.Orange);
+            // While a room opens: a bar along the bottom of the card with the buggy riding on it (like loading).
+            var bar = At("Progress", card, new Vector2(0.5f, 1f), new Vector2(0f, -1520f), new Vector2(800f, 40f));
+            var barTrack = Rounded(Img(bar, "Round", Theme.CreamDark, sliced: true), 20f);
+            var fillRt = Stretch("Fill", bar);
+            fillRt.offsetMin = new Vector2(7f, 7f); fillRt.offsetMax = new Vector2(-7f, -7f);
+            var barFill = Img(fillRt, "Round", Theme.Orange, sliced: true);
+            Rounded(barFill, 13f);
+            barFill.type = Image.Type.Filled; barFill.fillMethod = Image.FillMethod.Horizontal; barFill.fillAmount = 0.3f; barFill.preserveAspect = false;
+            var carTrack = Rt("CarTrack", bar);
+            carTrack.anchorMin = Vector2.zero; carTrack.anchorMax = new Vector2(1f, 0f); carTrack.sizeDelta = Vector2.zero;
+            var barCar = At("Car", carTrack, new Vector2(0f, 0f), new Vector2(0f, 64f), new Vector2(46f, 80f));
+            barCar.pivot = new Vector2(0.5f, 0.5f); barCar.localRotation = Quaternion.Euler(0f, 0f, -90f);
+            Img(Stretch("Body", barCar), "Car", Theme.Orange).preserveAspect = false;
+            Img(Stretch("Details", barCar), "CarDetails", Color.white).preserveAspect = false;
+            var barLabel = Txt(At("Label", bar, new Vector2(0.5f, 0f), new Vector2(0f, -60f), new Vector2(800f, 50f)), "OPENING A ROOM  40%", 36, Theme.InkSoft, _condItalic);
+            barLabel.characterSpacing = 4f;
+            bar.gameObject.SetActive(false);
+            create.gameObject.AddComponent<CanvasGroup>();
+            join.gameObject.AddComponent<CanvasGroup>();
 
             Configure(panel.gameObject.AddComponent<PopIn>(), ("card", card), ("backdrop", dimImage));
             panel.gameObject.SetActive(false);
             refs.AddRange(new (string, Object)[]
             {
                 ("entryPanel", panel.gameObject), ("entryClose", close), ("entryDim", dim), ("nameField", nameField), ("diceButton", dice),
-                ("createButton", create), ("joinButton", join), ("codeField", codeField), ("statusLabel", status), ("spinner", spinner),
+                ("createButton", create), ("joinButton", join), ("codeField", codeField), ("statusLabel", status), ("progressBar", bar.gameObject), ("progressFill", barFill), ("progressCar", barCar), ("progressLabel", barLabel),
             });
             _codeLetters = letters; _codeBoxes = boxes; _demoCars = cars;
         }
@@ -199,8 +215,8 @@ namespace SomeGame.EditorTools
             code.rectTransform.pivot = Vector2.zero; code.characterSpacing = 18f;
             var copy = SquareButton(plate, "CopyButton", new Vector2(1f, 0.5f), new Vector2(-36f, 6f), "IconCopy", 128f);
             ((RectTransform)copy.transform).pivot = new Vector2(1f, 0.5f);
-            foreach (var g in new[] { "Shadow", "Face" }) copy.transform.Find(g).GetComponent<Image>().color = g == "Face" ? Theme.Orange : Theme.OrangeDeep;
-            copy.transform.Find("Face/Icon").GetComponent<Image>().color = Color.white;
+            foreach (var g in new[] { "Shadow", "Face" }) copy.transform.Find(g).GetComponent<Image>().color = g == "Face" ? Theme.Cream : Theme.StoneDark;
+            copy.transform.Find("Face/Icon").GetComponent<Image>().color = Theme.Ink;
             var copied = Txt(At("Copied", plate, new Vector2(1f, 1f), new Vector2(-180f, -6f), new Vector2(300f, 50f)), "COPIED!", 40, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             copied.rectTransform.pivot = new Vector2(1f, 1f);
             copied.alpha = 0f;
@@ -245,11 +261,11 @@ namespace SomeGame.EditorTools
             var prev = SquareButton(raceCard, "PrevRace", new Vector2(0f, 0f), new Vector2(260f, 30f), "IconPlay", 108f);
             prev.transform.Find("Face/Icon").localScale = new Vector3(-1f, 1f, 1f);
             var next = SquareButton(raceCard, "NextRace", new Vector2(0f, 0f), new Vector2(620f, 30f), "IconPlay", 108f);
-            foreach (var arrow in new[] { prev, next })
+            foreach (var arrow in new[] { prev, next }) // light keys on the dark card
             {
-                arrow.transform.Find("Shadow").GetComponent<Image>().color = Theme.OrangeDeep;
-                arrow.transform.Find("Face").GetComponent<Image>().color = Theme.Orange;
-                arrow.transform.Find("Face/Icon").GetComponent<Image>().color = Color.white;
+                arrow.transform.Find("Shadow").GetComponent<Image>().color = Theme.StoneDark;
+                arrow.transform.Find("Face").GetComponent<Image>().color = Theme.Cream;
+                arrow.transform.Find("Face/Icon").GetComponent<Image>().color = Theme.Ink;
             }
             var counter = Txt(At("Counter", raceCard, new Vector2(0f, 0f), new Vector2(380f, 40f), new Vector2(226f, 100f)), "RACE 1/8", 44, Theme.Cream, _condItalic);
 
