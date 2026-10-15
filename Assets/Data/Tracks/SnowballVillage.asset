@@ -72,15 +72,7 @@ MonoBehaviour:
     speedBoost: 1.1
     target: {x: 48.5, y: 105.5}
   geysers: []
-  sweepers:
-  - kind: 2
-    distance: 290
-    period: 5
-    offset: 0
-  - kind: 2
-    distance: 40
-    period: 5.5
-    offset: 2.6
+  sweepers: []
   skyLife: 0
   rivers: []
   lakes: []
@@ -118,19 +110,7 @@ MonoBehaviour:
     to: 402.29498
     side: 1
     width: 4.5
-  penguins:
-  - kind: 0
-    distance: 434.31683
-    count: 4
-    period: 9
-    crossing: 3.2
-    offset: 0
-  - kind: 0
-    distance: 125.83377
-    count: 3
-    period: 8
-    crossing: 2.8
-    offset: 3
+  penguins: []
   dashPanels:
   - distance: 144.50726
     lateral: -1.8

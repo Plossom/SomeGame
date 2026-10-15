@@ -31,6 +31,7 @@ namespace SomeGame.EditorTools
             World("ToyLoco", 192, 320, ToyLoco, 128, false);
             World("ToyWagon", 192, 256, ToyWagon, 128, false);
             World("ForestLog", 512, 128, ForestLog, 128, false);
+            World("MushroomPad", 256, 256, MushroomPad, 128, false);
         }
 
         // ================================================================== floors and roofs (tile 128 px)
@@ -538,6 +539,26 @@ namespace SomeGame.EditorTools
                 c = Over(c, Outline, Stroke(b, 2.5f));
             }
             c = Over(c, Outline, Stroke(tub, 5f));
+            return c;
+        }
+
+        // A bouncy mushroom from above (a jump pad in the meadows and woods): a big red cap with white spots,
+        // a lighter ring round its springy middle.
+        static Color MushroomPad(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            c = Over(c, Shadow, Soft(Circle(x, y, 140, 114, 118), 14f));
+            float cap = Circle(x, y, 128, 128, 116);
+            c = Over(c, Hex("C9302A"), Fill(cap));
+            c = Over(c, Hex("E8463A"), Fill(Circle(x, y, 118, 140, 92)) * Fill(cap + 4f));
+            c = Over(c, Hex("F26B5E"), Fill(Circle(x, y, 104, 156, 44)) * Fill(cap + 8f)); // shine
+            foreach (var (sx, sy, r) in new[] { (128f, 128f, 24f), (70f, 150f, 16f), (186f, 150f, 15f), (92f, 76f, 14f), (170f, 82f, 17f), (128f, 200f, 12f), (50f, 100f, 10f), (204f, 108f, 10f) })
+            {
+                float spot = Circle(x, y, sx, sy, r);
+                c = Over(c, Color.white, Fill(spot));
+                c = Over(c, Hex("E8E2D6"), Fill(Circle(x, y, sx + r * 0.25f, sy - r * 0.25f, r * 0.6f)) * Fill(spot) * 0.6f);
+            }
+            c = Over(c, Hex("7A1A16"), Stroke(cap, 5f));
             return c;
         }
 

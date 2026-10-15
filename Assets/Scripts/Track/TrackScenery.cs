@@ -76,7 +76,11 @@ namespace SomeGame.Track
             }
             Assign(trees, ToMesh(layout.bakedScenery.FindAll(i => !i.canopy)));
             var crowns = layout.bakedScenery.FindAll(i => i.canopy);
-            if (crowns.Count > 0) Assign(Canopy(), ToMesh(crowns));
+            if (crowns.Count > 0)
+            {
+                Assign(Canopy(), ToMesh(crowns));
+                SyncCanopyMaterial();
+            }
             else if (_canopy != null) _canopy.sharedMesh = null;
         }
 
@@ -257,13 +261,16 @@ namespace SomeGame.Track
             return _canopy;
         }
 
-        void LateUpdate()
+        // The crowns use the scenery's sheet (the track may swap it for its own, so this follows it).
+        void LateUpdate() => SyncCanopyMaterial();
+
+        void SyncCanopyMaterial()
         {
-            // Follow the scenery's sheet (the track may swap it for its own).
             if (_canopy == null) return;
             var below = trees.GetComponent<MeshRenderer>();
             var mine = _canopy.GetComponent<MeshRenderer>();
-            if (below != null && mine.sharedMaterial != below.sharedMaterial) mine.sharedMaterial = below.sharedMaterial;
+            var sheet = track.Layout != null && track.Layout.sceneryMaterial != null ? track.Layout.sceneryMaterial : below != null ? below.sharedMaterial : null;
+            if (sheet != null && mine.sharedMaterial != sheet) mine.sharedMaterial = sheet;
         }
 
         static bool Within(float d, Vector2 range, float length)

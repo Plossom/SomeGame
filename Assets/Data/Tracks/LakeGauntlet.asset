@@ -114,11 +114,7 @@ MonoBehaviour:
     period: 2.4
     active: 0.8
     offset: 1.1
-  sweepers:
-  - kind: 0
-    distance: 406.34024
-    period: 3.2
-    offset: 0
+  sweepers: []
   skyLife: 0.8
   rivers: []
   lakes:

@@ -46,11 +46,26 @@ namespace SomeGame.Car
             _sensor = GetComponent<SomeGame.Track.TrackSensor>();
             if (visual != null) _visualScale = visual.localScale;
         }
-        void OnEnable() => _car.Hopped += Hop;
+        void OnEnable()
+        {
+            _car.Hopped += Hop;
+            _car.TrickStarted += OnTrick;
+        }
+
+        float _trickAt = -10f;
+
+        // A trick: one full spin in the air (and a whoosh for the player's car).
+        void OnTrick()
+        {
+            _trickAt = Time.time;
+            if (GetComponent<SomeGame.Input.PlayerCarInput>() != null)
+                SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.trick, 0.8f);
+        }
 
         void OnDisable()
         {
             _car.Hopped -= Hop;
+            _car.TrickStarted -= OnTrick;
             _time = -1f;
             Apply(0f);
         }
@@ -73,9 +88,12 @@ namespace SomeGame.Car
                 float h = _car.AirHeight;
                 if (visual != null) visual.localScale = BaseScale * Mathf.Lerp(1f, jumpScale, h);
                 if (shadow != null) shadow.localPosition = BaseShadow + jumpShadowLift * h;
+                float spin = Mathf.Clamp01((Time.time - _trickAt) / 0.45f);
+                if (visual != null) visual.localRotation = Quaternion.Euler(0f, 0f, spin < 1f ? 360f * (1f - (1f - spin) * (1f - spin)) : 0f);
                 _time = -1f;
                 return;
             }
+            if (visual != null && visual.localRotation != Quaternion.identity) visual.localRotation = Quaternion.identity;
             if (_time < 0f)
             {
                 Apply(0f);

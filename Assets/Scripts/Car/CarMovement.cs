@@ -44,6 +44,14 @@ namespace SomeGame.Car
         public event Action Landed;
         /// <summary>The car hit an oil puddle.</summary>
         public event Action Slipped;
+        /// <summary>A trick in the air (the hop button pressed mid-jump): the car spins.</summary>
+        public event Action TrickStarted;
+        /// <summary>Landed a trick: a boost follows.</summary>
+        public event Action TrickLanded;
+
+        bool _trick;
+        /// <summary>Boost strength for landing a trick.</summary>
+        const float TrickBoost = 0.55f;
 
         public CarStats Stats
         {
@@ -349,6 +357,7 @@ namespace SomeGame.Car
         {
             if (IsPuppet || IsAirborne || duration <= 0f) return;
             EndDrift();
+            _trick = false;
             _exitTimer = _calmTimer = 0f;
             _airLocked = locked;
             if (direction.HasValue)
@@ -369,6 +378,14 @@ namespace SomeGame.Car
         void Fly(float dt)
         {
             _airTimer -= dt;
+            // A trick: the hop button pressed in the air (not right at take-off, not just before landing).
+            bool held = ControlsEnabled && _input != null && _input.DriftHeld;
+            if (held && !_driftHeldLastStep && !_trick && _airDuration - _airTimer > 0.1f && _airTimer > 0.2f)
+            {
+                _trick = true;
+                TrickStarted?.Invoke();
+            }
+            _driftHeldLastStep = held;
             Vector2 steer = ControlsEnabled && _input != null && !_airLocked ? _input.SteerDirection : Vector2.zero;
             if (steer.sqrMagnitude > 0.0001f)
             {
@@ -386,6 +403,12 @@ namespace SomeGame.Car
             if (_collider != null) _collider.enabled = true;
             _body.linearVelocity *= stats.landingSpeedKeep;
             Collided?.Invoke(stats.landingImpact); // a little camera shake
+            if (_trick)
+            {
+                _trick = false;
+                TrickLanded?.Invoke();
+                GiveBoost(TrickBoost);
+            }
             Landed?.Invoke();
         }
 
@@ -454,6 +477,7 @@ namespace SomeGame.Car
         /// <summary>Puts the car back on the road (after a splash), standing still.</summary>
         public void Respawn(Pose pose)
         {
+            _trick = false;
             _exitTimer = _calmTimer = 0f;
             _airTimer = 0f;
             _slipTimer = 0f;

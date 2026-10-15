@@ -32,6 +32,9 @@ namespace SomeGame.UI
         static readonly Color RoofColor = Hex("FF7EB6");
         static readonly Color WallColor = Hex("5FD0FF");
         static readonly Color IceColor = Hex("A8E8FF");
+        static readonly Color TrickColor = Hex("FF6FD8");
+        bool _tricked;
+        float _trickBoostAt = -10f;
 
         CarMovement _car;
         CarTerrain _terrain;
@@ -57,6 +60,7 @@ namespace SomeGame.UI
             _car.BoostStarted -= OnBoost;
             _car.Launched -= OnLaunch;
             _car.Landed -= OnLand;
+            _car.TrickLanded -= OnTrickLanded;
             _car.Slipped -= Break;
             _car.Crashed -= OnCrash;
             if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; _terrain.IceRun -= OnIceRun; }
@@ -72,6 +76,7 @@ namespace SomeGame.UI
             _car.BoostStarted += OnBoost;
             _car.Launched += OnLaunch;
             _car.Landed += OnLand;
+            _car.TrickLanded += OnTrickLanded;
             _car.Slipped += Break;
             _car.Crashed += OnCrash;
             _terrain = race.Player.GetComponent<CarTerrain>();
@@ -94,9 +99,16 @@ namespace SomeGame.UI
             Animate();
         }
 
+        void OnTrickLanded()
+        {
+            _tricked = true;
+            _trickBoostAt = Time.time;
+        }
+
         void OnBoost(float strength)
         {
             if (race.State != RaceState.Racing) return;
+            if (Time.time - _trickBoostAt < 0.05f) return; // the trick's own boost: the landing says TRICK!
             bool fromDrift = Time.time - _driftSeenAt < 0.25f && _tierSeen > 0;
             if (fromDrift)
             {
@@ -116,6 +128,12 @@ namespace SomeGame.UI
             if (race.State != RaceState.Racing || air < 0.35f) return;
             // A splash is not a jump.
             if (_sensor != null && _sensor.Track != null && _sensor.Track.IsWater(_car.transform.position)) { Break(); return; }
+            if (_tricked)
+            {
+                _tricked = false;
+                Trick(air >= 0.9f ? "BIG TRICK!" : "TRICK!", TrickColor);
+                return;
+            }
             Trick(air >= 1.6f ? "MEGA AIR!" : air >= 0.9f ? "BIG AIR!" : "JUMP!", AirColor);
         }
 

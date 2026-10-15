@@ -44,7 +44,22 @@ namespace SomeGame.Input
 
         public Vector2 SteerDirection { get; private set; }
         public float Throttle { get; private set; }
-        public bool DriftHeld => false;
+        /// <summary>Rivals do not drift; mid-jump the bolder ones press it once for a trick.</summary>
+        public bool DriftHeld => _trickPress;
+
+        bool _trickPress, _wasAirborne;
+        float _airStart;
+        int _jumps;
+
+        void LateUpdate()
+        {
+            if (_car == null) return;
+            bool air = _car.IsAirborne;
+            if (air && !_wasAirborne) { _airStart = Time.time; _jumps++; }
+            _wasAirborne = air;
+            float since = Time.time - _airStart;
+            _trickPress = air && since > 0.15f && since < 0.3f && Takes(1000 + _jumps);
+        }
 
         public float CornerGrip
         {

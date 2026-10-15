@@ -1282,7 +1282,8 @@ namespace SomeGame.EditorTools
                 ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
-                ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")));
+                ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")),
+                ("mushroomPadSprite", Sprite("MushroomPad")));
         }
 
         static TrackLine Line(RectTransform rt)
