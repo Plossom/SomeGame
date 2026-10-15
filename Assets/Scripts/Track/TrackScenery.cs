@@ -35,6 +35,9 @@ namespace SomeGame.Track
             public Color[] tints = { Color.white };
             [Tooltip("Only beside this stretch of the lap (lap distances from, to; may wrap past the start). (0, 0) = all round.")]
             public Vector2 along;
+            [Tooltip("Tree crowns reaching over the road's edge, drawn above the cars (a forest you drive through). " +
+                     "Clearance may be negative: that far over the kerb.")]
+            public bool canopy;
             [Tooltip("Furniture: only inside the rooms of a house (clear of its walls). Everything else stays outside the houses.")]
             public bool indoor;
         }
@@ -44,6 +47,8 @@ namespace SomeGame.Track
         [Tooltip("Scenery also fills this far beyond the play area, so the world has no visible edge.")]
         [SerializeField, Min(0f)] float overscan = 14f;
         [SerializeField] Kind[] kinds = { new() };
+        [Tooltip("Sorting order of the tree crowns over the road (above the cars).")]
+        [SerializeField] int canopyOrder = 30;
 
         [Header("Run-off (match TrackRenderer)")]
         [Tooltip("Extra clearance on the outside / inside of the tightest corners, where the sand run-off is.")]
@@ -69,7 +74,10 @@ namespace SomeGame.Track
                 if (!Application.isPlaying) UnityEditor.EditorUtility.SetDirty(layout);
 #endif
             }
-            Assign(trees, ToMesh(layout.bakedScenery));
+            Assign(trees, ToMesh(layout.bakedScenery.FindAll(i => !i.canopy)));
+            var crowns = layout.bakedScenery.FindAll(i => i.canopy);
+            if (crowns.Count > 0) Assign(Canopy(), ToMesh(crowns));
+            else if (_canopy != null) _canopy.sharedMesh = null;
         }
 
         /// <summary>Everything that decides where the scenery goes; when it changes, the scenery is placed again.</summary>
@@ -140,7 +148,8 @@ namespace SomeGame.Track
             var area = Rect.MinMaxRect(bounds.xMin - margin, bounds.yMin - margin, bounds.xMax + margin, bounds.yMax + margin);
 
             var placed = new List<(Vector2 p, float r)>();
-            var items = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint)>();
+            var items = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint, bool canopy)>();
+            var crownsPlaced = new List<(Vector2 p, float r)>();
 
             // A track can bring its own scenery (e.g. boats and buoys for a water track).
             var useKinds = layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds;
@@ -150,6 +159,15 @@ namespace SomeGame.Track
                 for (int attempt = 0; attempt < kind.count * 30 && done < kind.count; attempt++)
                 {
                     var p = new Vector2(Range(area.xMin, area.xMax), Range(area.yMin, area.yMax));
+                    // Scenery kept near a stretch of road is looked for right beside it (a thin band of the map).
+                    if (!kind.indoor && kind.along != Vector2.zero && kind.clearance.y > 0f)
+                    {
+                        float span = Mathf.Repeat(kind.along.y - kind.along.x, path.Length);
+                        float d = kind.along.x + Range(0f, span);
+                        float sizeGuess = (kind.sizeRange.x + kind.sizeRange.y) * 0.5f;
+                        float off = track.OffRoadAt(d) + Range(kind.clearance.x, kind.clearance.y) + sizeGuess * 0.5f;
+                        p = path.PointAt(d) + path.NormalAt(d) * (random.Next(2) == 0 ? off : -off);
+                    }
                     // Furniture is looked for inside the rooms (they are a small part of the map).
                     if (kind.indoor && layout.rooms is { Count: > 0 })
                     {
@@ -174,9 +192,10 @@ namespace SomeGame.Track
                     if (OnBranch(p, size)) continue;
                     if (track.BankAt(projection.Distance, projection.Lateral - Mathf.Sign(projection.Lateral) * (size * 0.5f + 1f), out _) != null) continue; // banked walls stay clear
                     float r = size * 0.45f;
-                    if (placed.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r))) continue;
+                    var layer = kind.canopy ? crownsPlaced : placed; // crowns overlap the trees below, not each other
+                    if (layer.Exists(q => (q.p - p).sqrMagnitude < (q.r + r) * (q.r + r) * (kind.canopy ? 0.3f : 1f))) continue;
 
-                    placed.Add((p, r));
+                    layer.Add((p, r));
                     done++;
                     float angle = kind.alignToRoad
                         ? Mathf.Atan2(path.TangentAt(projection.Distance).y, path.TangentAt(projection.Distance).x)
@@ -184,23 +203,24 @@ namespace SomeGame.Track
                         : Range(0f, Mathf.PI * 2f);
                     var right = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (size * 0.5f);
                     Color32 tint = kind.tints is { Length: > 0 } ? kind.tints[random.Next(kind.tints.Length)] : Color.white;
-                    items.Add((p, right, kind.uv, tint));
+                    if (kind.canopy) tint.a = 235; // a touch see-through: cars can just be made out underneath
+                    items.Add((p, right, kind.uv, tint, kind.canopy));
                 }
             }
 
             // Hand-placed pieces (furniture): rugs under everything, the rest in among the scenery.
-            var flat = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint)>();
+            var flat = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint, bool canopy)>();
             if (layout.decor != null)
                 foreach (var d in layout.decor)
                 {
                     float a = d.angle * Mathf.Deg2Rad;
-                    var item = (d.position, new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * (d.size * 0.5f), d.uv, (Color32)Color.white);
+                    var item = (d.position, new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * (d.size * 0.5f), d.uv, (Color32)Color.white, false);
                     if (d.flat) flat.Add(item); else items.Add(item);
                 }
             // Draw top-down from the back so overlapping crowns read naturally.
             items.Sort((a, b) => b.p.y.CompareTo(a.p.y));
             items.InsertRange(0, flat);
-            return items.ConvertAll(i => new TrackLayout.SceneryItem { position = i.p, right = i.right, uv = i.uv, tint = i.tint });
+            return items.ConvertAll(i => new TrackLayout.SceneryItem { position = i.p, right = i.right, uv = i.uv, tint = i.tint, canopy = i.canopy });
         }
 
         // Furniture stays in a room, clear of its walls; trees and the rest stay outside the houses.
@@ -219,6 +239,31 @@ namespace SomeGame.Track
             foreach (var house in layout.houses)
                 if (p.x > house.min.x - r && p.x < house.max.x + r && p.y > house.min.y - r && p.y < house.max.y + r) return false;
             return true;
+        }
+
+        MeshFilter _canopy;
+
+        // The crowns' own layer, above the cars (same sheet as the scenery below).
+        MeshFilter Canopy()
+        {
+            if (_canopy == null)
+            {
+                var t = trees.transform.Find("Canopy");
+                var go = t != null ? t.gameObject : new GameObject("Canopy", typeof(MeshFilter), typeof(MeshRenderer)) { hideFlags = HideFlags.DontSave };
+                go.transform.SetParent(trees.transform, false);
+                _canopy = go.GetComponent<MeshFilter>();
+                go.GetComponent<MeshRenderer>().sortingOrder = canopyOrder;
+            }
+            return _canopy;
+        }
+
+        void LateUpdate()
+        {
+            // Follow the scenery's sheet (the track may swap it for its own).
+            if (_canopy == null) return;
+            var below = trees.GetComponent<MeshRenderer>();
+            var mine = _canopy.GetComponent<MeshRenderer>();
+            if (below != null && mine.sharedMaterial != below.sharedMaterial) mine.sharedMaterial = below.sharedMaterial;
         }
 
         static bool Within(float d, Vector2 range, float length)

@@ -265,6 +265,8 @@ namespace SomeGame.Track
             public Vector2 right;
             public Rect uv;
             public Color32 tint;
+            /// <summary>A tree crown over the road's edge, drawn above the cars.</summary>
+            public bool canopy;
         }
 
         [Serializable]
