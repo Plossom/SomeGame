@@ -28,6 +28,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite penguinSprite;
         [SerializeField] Sprite sheepSprite;
         [SerializeField] Sprite boulderSprite;
+        [SerializeField] Sprite catSprite, vacuumSprite, ballSprite;
         [SerializeField, Min(0.3f)] float penguinSize = 2f;
         [SerializeField] Sprite dashPanelSprite;
         [SerializeField] Material particleMaterial;
@@ -115,6 +116,16 @@ namespace SomeGame.Track
                     go.AddComponent<BoxCollider2D>().size = new Vector2(4f, 0.9f);
                     visual = Sprite("Log", logSprite, Vector2.zero, 4.2f, 0f, sortingOrder, go.transform).transform;
                 }
+                else if (s.kind == TrackLayout.SweeperKind.Vacuum && vacuumSprite != null)
+                {
+                    go.AddComponent<CircleCollider2D>().radius = 1.6f;
+                    visual = Sprite("Vacuum", vacuumSprite, Vector2.zero, 3.4f, 0f, sortingOrder, go.transform).transform;
+                }
+                else if (s.kind == TrackLayout.SweeperKind.Ball && ballSprite != null)
+                {
+                    go.AddComponent<CircleCollider2D>().radius = 1.25f;
+                    visual = Sprite("BeachBall", ballSprite, Vector2.zero, 2.6f, 0f, sortingOrder, go.transform).transform;
+                }
                 else if (s.kind == TrackLayout.SweeperKind.Boulder && boulderSprite != null)
                 {
                     go.AddComponent<CircleCollider2D>().radius = 1.45f;
@@ -140,9 +151,14 @@ namespace SomeGame.Track
                 foreach (var line in layout.penguins)
                 {
                     var birds = new Transform[line.count];
-                    bool sheep = line.kind == TrackLayout.CrossingKind.Sheep && sheepSprite != null;
+                    var (name, sprite, scale) = line.kind switch
+                    {
+                        TrackLayout.CrossingKind.Sheep when sheepSprite != null => ("Sheep", sheepSprite, 1.15f),
+                        TrackLayout.CrossingKind.Cat when catSprite != null => ("Cat", catSprite, 2.2f),
+                        _ => ("Penguin", penguinSprite, 1f),
+                    };
                     for (int k = 0; k < line.count; k++)
-                        birds[k] = Sprite(sheep ? "Sheep" : "Penguin", sheep ? sheepSprite : penguinSprite, path.PointAt(line.distance), penguinSize * (sheep ? 1.15f : 1f), 0f, sortingOrder + 1).transform;
+                        birds[k] = Sprite(name, sprite, path.PointAt(line.distance), penguinSize * scale, 0f, sortingOrder + 1).transform;
                     _penguins.Add((line, birds));
                 }
 
@@ -168,8 +184,9 @@ namespace SomeGame.Track
                 Vector2 target = path.PointAt(s.distance) + path.NormalAt(s.distance) * lateral;
                 Vector2 step = target - body.position;
                 body.MovePosition(target);
-                // Hay bales and snowballs roll as they move.
-                if (s.kind != TrackLayout.SweeperKind.Log) visual.Rotate(0f, 0f, -step.magnitude * 50f * Mathf.Sign(Mathf.Cos(phase * Mathf.PI * 2f)));
+                // Hay bales, snowballs and balls roll as they move; the robot vacuum turns slowly as it goes.
+                if (s.kind == TrackLayout.SweeperKind.Vacuum) visual.Rotate(0f, 0f, 40f * Time.fixedDeltaTime);
+                else if (s.kind != TrackLayout.SweeperKind.Log) visual.Rotate(0f, 0f, -step.magnitude * 50f * Mathf.Sign(Mathf.Cos(phase * Mathf.PI * 2f)));
             }
         }
 

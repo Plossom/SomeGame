@@ -7,9 +7,9 @@ namespace SomeGame.Track
     /// <summary>
     /// The set pieces of a journey race (Play mode): an arch over the road at every section line (SECTION 2,
     /// SECTION 3, FINISH; confetti when you pass under it), level crossings where a little mine train rolls
-    /// across now and then (lights blink and barriers drop first; it shoves cars aside), the rockslide that
-    /// closes one of two ways (a different one each race) and landmarks with moving parts (windmill sails).
-    /// The race's surprise seed makes the timetable and the rockslide the same on every phone online.
+    /// across now and then (lights blink and barriers drop first; it shoves cars aside; a toy train in the
+    /// house), fallen logs across the forest road (behind their ramps) and landmarks with moving parts
+    /// (windmill sails). The race's surprise seed makes the timetable the same on every phone online.
     /// </summary>
     public class TrackJourney : MonoBehaviour
     {
@@ -17,7 +17,9 @@ namespace SomeGame.Track
         [SerializeField] Sprite pillarSprite, bannerSprite;
         [SerializeField] Sprite locoSprite, wagonSprite, crossingSprite, barrierSprite, lampSprite;
         [SerializeField] Material railsMaterial;
-        [SerializeField] Sprite rockPileSprite;
+        [SerializeField] Sprite toyLocoSprite, toyWagonSprite;
+        [SerializeField] Material toyRailsMaterial;
+        [SerializeField] Sprite logSprite;
         [SerializeField] Sprite windmillTowerSprite, windmillSailsSprite;
         [SerializeField] Material particleMaterial;
         [SerializeField] TMP_FontAsset font;
@@ -69,12 +71,11 @@ namespace SomeGame.Track
         {
             foreach (var go in _spawned) if (go != null) Destroy(go);
             _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear();
-            track.ClosedBranch = track.ForcedBranch = -1;
             var layout = track.Layout;
             if (layout == null) return;
             if (track.Sections > 1) BuildArches();
             foreach (var train in layout.trains) BuildCrossing(train);
-            foreach (var slide in layout.rockslides) BuildRockslide(slide);
+            if (logSprite != null && layout.logJumps != null) foreach (float log in layout.logJumps) BuildLog(log);
             foreach (var prop in layout.props) BuildProp(prop);
         }
 
@@ -86,10 +87,11 @@ namespace SomeGame.Track
             int sections = track.Sections;
             for (int k = 0; k < sections; k++)
             {
-                float d = path.Length * k / sections;
+                float d = track.SectionLineDistance(k);
                 Vector2 centre = path.PointAt(d), normal = path.NormalAt(d), tangent = path.TangentAt(d);
                 float half = track.OffRoadAt(d) + 1.6f;
-                float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
+                // The banner runs across the road with its words upright for the drivers coming towards it.
+                float angle = Mathf.Atan2(-normal.y, -normal.x) * Mathf.Rad2Deg;
                 var root = new GameObject(k == 0 ? "FinishArch" : $"SectionArch{k + 1}").transform;
                 root.SetParent(transform, false);
                 root.position = centre;
@@ -166,7 +168,8 @@ namespace SomeGame.Track
             Vector2 centre = path.PointAt(data.distance), normal = path.NormalAt(data.distance), tangent = path.TangentAt(data.distance);
             var c = new Crossing { Data = data, Centre = centre, Across = normal, Reach = data.reach };
             // The rails: a strip across the road and out into the land on both sides.
-            if (railsMaterial != null)
+            var rails = data.toy && toyRailsMaterial != null ? toyRailsMaterial : railsMaterial;
+            if (rails != null)
             {
                 var go = new GameObject("Rails", typeof(MeshFilter), typeof(MeshRenderer));
                 go.transform.SetParent(transform, false);
@@ -180,7 +183,7 @@ namespace SomeGame.Track
                 mesh.RecalculateBounds();
                 go.GetComponent<MeshFilter>().sharedMesh = mesh;
                 var r = go.GetComponent<MeshRenderer>();
-                r.sharedMaterial = railsMaterial;
+                r.sharedMaterial = rails;
                 r.sortingOrder = -46;
             }
             // Signals and barriers on both sides of the road, before and after the rails.
@@ -231,7 +234,9 @@ namespace SomeGame.Track
                 body.interpolation = RigidbodyInterpolation2D.Interpolate;
                 body.useFullKinematicContacts = true;
                 go.AddComponent<BoxCollider2D>().size = new Vector2(1.9f, i == 0 ? 3.1f : 2.5f);
-                Sprite(i == 0 ? "Loco" : "Wagon", i == 0 ? locoSprite : wagonSprite, go.transform, Vector2.zero, i == 0 ? 3.3f : 2.7f, 0f, 7);
+                var loco = data.toy && toyLocoSprite != null ? toyLocoSprite : locoSprite;
+                var wagon = data.toy && toyWagonSprite != null ? toyWagonSprite : wagonSprite;
+                Sprite(i == 0 ? "Loco" : "Wagon", i == 0 ? loco : wagon, go.transform, Vector2.zero, i == 0 ? 3.3f : 2.7f, 0f, 7);
                 body.position = centre + normal * (data.reach + 20f);
                 cars.Add(body);
             }
@@ -311,56 +316,16 @@ namespace SomeGame.Track
             }
         }
 
-        // ------------------------------------------------------------------ rockslide
+        // ------------------------------------------------------------------ forest logs
 
-        void BuildRockslide(TrackLayout.Rockslide slide)
+        // A fallen trunk across the road just past its little ramp (the jump itself is the track's).
+        void BuildLog(float distance)
         {
-            var branches = track.Branches;
-            if (slide.branch < 0 || slide.branch >= branches.Count) return;
-            var route = branches[slide.branch];
-            bool closeBranch = Track.SeedShift(route.From + 0.5f) < 0.5f;
-            Vector2 at;
-            float radius;
-            if (closeBranch)
-            {
-                at = route.PointAt(route.Length * 0.4f);
-                radius = route.HalfWidth + 1.2f;
-                track.ClosedBranch = slide.branch;
-            }
-            else
-            {
-                var path = track.Path;
-                float mid = route.From + track.Path.DeltaDistance(route.From, route.To) * 0.5f;
-                at = path.PointAt(mid);
-                radius = track.OffRoadAt(mid) + 1.2f;
-                track.ForcedBranch = slide.branch;
-            }
-            var pile = Sprite("Rockslide", rockPileSprite, transform, at, radius * 2.4f, Random.Range(0f, 360f), 6);
-            var wall = new GameObject("RockslideWall");
-            wall.transform.SetParent(transform, false);
-            wall.transform.position = at;
-            wall.AddComponent<CircleCollider2D>().radius = radius;
-            _spawned.Add(wall);
-            // Dust still drifting off it, and a sign.
-            var dust = Particles("SlideDust", at, new Color(0.85f, 0.6f, 0.4f, 0.4f), 0.8f, 2.2f, new Vector2(1.4f, 3f));
-            var e = dust.emission; e.rateOverTime = 6f;
-            if (font != null)
-            {
-                var text = new GameObject("RoadClosed").AddComponent<TextMeshPro>();
-                text.transform.SetParent(transform, false);
-                text.transform.position = at + Vector2.up * (radius + 1.2f);
-                _spawned.Add(text.gameObject);
-                text.font = font;
-                text.text = "ROAD CLOSED";
-                text.fontSize = 5f;
-                text.fontStyle = FontStyles.Italic;
-                text.alignment = TextAlignmentOptions.Center;
-                text.color = new Color(1f, 0.78f, 0.25f);
-                text.outlineColor = new Color32(23, 61, 51, 255);
-                text.outlineWidth = 0.25f;
-                text.rectTransform.sizeDelta = new Vector2(12f, 2f);
-                text.sortingOrder = overheadOrder - 2;
-            }
+            var path = track.Path;
+            Vector2 normal = path.NormalAt(distance);
+            float span = (track.OffRoadAt(distance) + 1.5f) * 2f;
+            var log = Sprite("ForestLog", logSprite, transform, path.PointAt(distance), span, Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg, 6);
+            log.transform.localScale = new Vector3(span / logSprite.bounds.size.x, span / logSprite.bounds.size.x * 1.3f, 1f);
         }
 
         // ------------------------------------------------------------------ props

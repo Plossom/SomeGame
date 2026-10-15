@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: c2f49000c683a493d9f6b060255d2ec2, type: 3}
   laps: 3
-  description: 'One long journey in three sections: from the windmill farm, through the red canyon and down the river. Something new around every corner!'
+  description: 'One long journey: race through two houses (upstairs, out of the window, into the chalet), across the farm and through the forest. Watch out for the cat!'
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.86
   rivalCornerScale: 1
   starsRequired: 10
   starTimes:
-  - 96
-  - 84
-  - 77
+  - 102
+  - 89
+  - 85

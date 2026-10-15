@@ -87,12 +87,18 @@ MonoBehaviour:
   sampleSpacing: 1
   checkpointCount: 6
   sections: 1
+  sectionLines: []
   boundaryMargin: 25
+  rooms: []
+  houses: []
+  upstairs: []
+  stairs: []
+  decor: []
+  logJumps: []
   trains: []
-  rockslides: []
   props: []
+  bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 0}
-  grounds: []
   waterWorld: 1
   biome: 0
   gaps:
@@ -180,6 +186,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: Boat
     uv:
       serializedVersion: 2
@@ -197,6 +204,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: LilyPads
     uv:
       serializedVersion: 2
@@ -214,6 +222,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: Buoy
     uv:
       serializedVersion: 2
@@ -231,6 +240,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   bakedScenery:
   - position: {x: 14.932608, y: 110.38457}
     right: {x: -0.62976724, y: -2.0693357}
@@ -1915,4 +1925,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 16f5d554c7e84f91
+  bakedSignature: b6715849daf7c33d

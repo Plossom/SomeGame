@@ -1262,23 +1262,27 @@ namespace SomeGame.EditorTools
             if (branches == null) branches = track.gameObject.AddComponent<SomeGame.Track.TrackBranches>(); // Unity's null: no ?? here
             Configure(branches, ("track", track), ("roads", roads), ("edges", edges), ("ice", ice), ("roofs", roofs), ("roofShadows", roofShadows), ("meadowRoad", Mat("Road")), ("snowRoad", Mat("WinterRoad")));
 
-            // The journey race: ground zones under the road, the set pieces (arches, mine train, rockslide,
-            // windmill), sheep and boulders.
-            var ground = track.GetComponent<SomeGame.Track.TrackGround>();
-            if (ground == null) ground = track.gameObject.AddComponent<SomeGame.Track.TrackGround>();
-            Configure(ground, ("track", track));
-            var gso = new SerializedObject(ground);
-            SetArray(gso, "materials", new[] { Mat("GroundMud"), Mat("GroundSand"), Mat("GroundRedRock"), Mat("GroundPebbles"), Mat("GroundWheat") });
-            gso.ApplyModifiedPropertiesWithoutUndo();
+            // The journey race: the houses it drives through, the set pieces (arches, trains, forest logs,
+            // windmill), sheep, the cat, the robot vacuum, the ball and boulders.
+            GameObjectUtility.RemoveMonoBehavioursWithMissingScript(track.gameObject); // e.g. the old ground-zone component
+            var houses = track.GetComponent<SomeGame.Track.TrackHouses>();
+            if (houses == null) houses = track.gameObject.AddComponent<SomeGame.Track.TrackHouses>();
+            Configure(houses, ("track", track), ("plain", Mat("Plain")));
+            var hso = new SerializedObject(houses);
+            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks") });
+            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue") });
+            hso.ApplyModifiedPropertiesWithoutUndo();
             var journey = track.GetComponent<SomeGame.Track.TrackJourney>();
             if (journey == null) journey = track.gameObject.AddComponent<SomeGame.Track.TrackJourney>();
             Material particles = hazards != null ? new SerializedObject(hazards).FindProperty("particleMaterial").objectReferenceValue as Material : null;
             Configure(journey, ("track", track), ("pillarSprite", Sprite("ArchPillar")), ("bannerSprite", Sprite("Banner")),
                 ("locoSprite", Sprite("MineLoco")), ("wagonSprite", Sprite("MineWagon")), ("crossingSprite", Sprite("CrossingLight")),
                 ("barrierSprite", Sprite("Barrier")), ("lampSprite", Sprite("SparkDot")), ("railsMaterial", Mat("Rails")),
-                ("rockPileSprite", Sprite("RockPile")), ("windmillTowerSprite", Sprite("WindmillTower")), ("windmillSailsSprite", Sprite("WindmillSails")),
+                ("logSprite", Sprite("ForestLog")), ("windmillTowerSprite", Sprite("WindmillTower")), ("windmillSailsSprite", Sprite("WindmillSails")),
+                ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
-            if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")));
+            if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
+                ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")));
         }
 
         static TrackLine Line(RectTransform rt)

@@ -39,12 +39,18 @@ MonoBehaviour:
   sampleSpacing: 1
   checkpointCount: 6
   sections: 1
+  sectionLines: []
   boundaryMargin: 25
+  rooms: []
+  houses: []
+  upstairs: []
+  stairs: []
+  decor: []
+  logJumps: []
   trains: []
-  rockslides: []
   props: []
+  bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 0}
-  grounds: []
   waterWorld: 0
   biome: 0
   gaps: []
@@ -7315,4 +7321,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 94bc53f696bfdd5d
+  bakedSignature: 678a8a3c8c79fd7f

@@ -23,20 +23,64 @@ namespace SomeGame.Track
         public float Length => Path.Length;
         public int CheckpointCount => layout.checkpointCount;
 
-        /// <summary>The branch a rockslide has closed this race (-1 = none).</summary>
-        public int ClosedBranch { get; set; } = -1;
-        /// <summary>The branch everyone must take this race, because the rockslide closed the road beside it (-1 = none).</summary>
-        public int ForcedBranch { get; set; } = -1;
-
         /// <summary>
-        /// Picks this race's surprises (which way the rockslide closes, the train timetable). Set by the race
+        /// Picks this race's surprises (the train timetable, when the herds and the cat cross). Set by the race
         /// before the track starts; online every phone gets the same number, so all see the same race.
         /// </summary>
         public static int SurpriseSeed { get; set; }
         /// <summary>Sections of a journey track (1 for a circuit raced in laps).</summary>
-        public int Sections => layout.sections > 1 && layout.checkpointCount % layout.sections == 0 ? layout.sections : 1;
-        /// <summary>Checkpoints from one lap line (or section line) to the next.</summary>
-        public int CheckpointsPerLap => CheckpointCount / Sections;
+        public int Sections => SectionCheckpoints.Length;
+
+        int[] _sectionCheckpoints;
+
+        /// <summary>
+        /// The checkpoints that are lap lines: just the start line for a circuit; for a journey also each section
+        /// line (evenly spaced, or at the layout's own section line distances).
+        /// </summary>
+        public int[] SectionCheckpoints => _sectionCheckpoints ??= FindSectionCheckpoints();
+
+        int[] FindSectionCheckpoints()
+        {
+            int count = CheckpointCount;
+            var lines = new List<int> { 0 };
+            if (layout.sectionLines is { Length: > 0 })
+            {
+                foreach (float d in layout.sectionLines)
+                {
+                    int k = Mathf.Clamp(Mathf.RoundToInt(d / Path.Length * count), 1, count - 1);
+                    if (!lines.Contains(k)) lines.Add(k);
+                }
+                lines.Sort();
+            }
+            else if (layout.sections > 1 && count % layout.sections == 0)
+                for (int k = 1; k < layout.sections; k++) lines.Add(k * count / layout.sections);
+            return lines.ToArray();
+        }
+
+        /// <summary>True if checkpoint <paramref name="index"/> is the start line or a section line.</summary>
+        public bool IsLapLine(int index) => System.Array.IndexOf(SectionCheckpoints, ((index % CheckpointCount) + CheckpointCount) % CheckpointCount) >= 0;
+
+        /// <summary>Lap (or section) lines crossed after the start, for a car that has passed this many checkpoints.</summary>
+        public int LinesPassed(int checkpointsPassed)
+        {
+            if (checkpointsPassed <= 1) return 0;
+            int count = CheckpointCount, loops = (checkpointsPassed - 1) / count, rest = (checkpointsPassed - 1) % count;
+            int lines = loops * Sections;
+            foreach (int k in SectionCheckpoints) if (k >= 1 && k <= rest) lines++;
+            return lines;
+        }
+
+        /// <summary>True if a point is inside one of the rooms of a house the track runs through.</summary>
+        public bool InRoom(Vector2 p)
+        {
+            if (layout.rooms == null) return false;
+            foreach (var room in layout.rooms)
+                if (p.x >= room.min.x && p.x <= room.max.x && p.y >= room.min.y && p.y <= room.max.y) return true;
+            return false;
+        }
+
+        /// <summary>Lap distance of section line <paramref name="k"/> (0 = the start/finish line).</summary>
+        public float SectionLineDistance(int k) => CheckpointDistance(SectionCheckpoints[k]);
 
         public float CheckpointDistance(int index) =>
             Mathf.Repeat(index, layout.checkpointCount) * Path.Length / layout.checkpointCount;
@@ -127,7 +171,7 @@ namespace SomeGame.Track
         {
             into.Clear();
             // Each race the herd keeps its own rhythm, shifted by the race's surprise seed (sheep).
-            float shift = line.kind == TrackLayout.CrossingKind.Sheep ? SeedShift(line.distance) * line.period : 0f;
+            float shift = line.kind != TrackLayout.CrossingKind.Penguins ? SeedShift(line.distance) * line.period : 0f;
             float t = Mathf.Repeat(time + line.offset + shift, line.period), half = line.period * 0.5f;
             bool back = t >= half;
             float walk = Mathf.Clamp01((back ? t - half : t) / line.crossing);
@@ -162,8 +206,9 @@ namespace SomeGame.Track
             {
                 if ((Path.PointAt(line.distance) - p).sqrMagnitude > 400f) continue;
                 PenguinPositions(line, time, _penguinScratch);
+                float r = line.kind == TrackLayout.CrossingKind.Cat ? radius * 1.9f : radius; // the cat is bigger
                 foreach (var (position, _) in _penguinScratch)
-                    if ((position - p).sqrMagnitude < radius * radius) return true;
+                    if ((position - p).sqrMagnitude < r * r) return true;
             }
             return false;
         }
@@ -393,6 +438,14 @@ namespace SomeGame.Track
                     RampStart = path.WrapDistance(gap.from - layout.rampLength), Lip = path.WrapDistance(gap.from),
                     FarBank = path.WrapDistance(gap.to), Lateral = gap.rampLateral,
                 });
+            // Forest logs across the road: a little ramp right before each one.
+            if (layout.logJumps != null)
+                foreach (float log in layout.logJumps)
+                    jumps.Add(new Jump
+                    {
+                        RampStart = path.WrapDistance(log - 1.4f - layout.rampLength), Lip = path.WrapDistance(log - 1.4f),
+                        FarBank = path.WrapDistance(log + 1.4f), Lateral = 0f,
+                    });
             jumps.Sort((a, b) => a.RampStart.CompareTo(b.RampStart));
             return jumps;
         }
@@ -482,6 +535,7 @@ namespace SomeGame.Track
         {
             _path = null;
             _jumps = null;
+            _sectionCheckpoints = null;
             _shortcuts = null;
             _branches = null;
             Rebuilt?.Invoke();

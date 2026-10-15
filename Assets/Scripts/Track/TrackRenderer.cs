@@ -213,6 +213,7 @@ namespace SomeGame.Track
                 float inside = extra * runoffInside / Mathf.Max(0.01f, runoffCorner);
                 widths[0, i] = turn < 0f ? extra : inside; // left side is outside in a right turn
                 widths[1, i] = turn > 0f ? extra : inside;
+                if (track.InRoom(path[i])) widths[0, i] = widths[1, i] = 0f; // indoors the floor runs up to the kerb
             }
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();

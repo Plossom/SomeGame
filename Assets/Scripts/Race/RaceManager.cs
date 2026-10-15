@@ -77,7 +77,7 @@ namespace SomeGame.Race
         void Awake()
         {
             Level = GameSession.CurrentLevel;
-            // This race's surprises (rockslide, train timetable, herds): random alone; online the room's race
+            // This race's surprises (train timetable, herds, the cat): random alone; online the room's race
             // number, so every phone sees the same race.
             var room = SomeGame.Online.OnlineRoom.Current;
             SomeGame.Track.Track.SurpriseSeed = GameSession.Online && room != null

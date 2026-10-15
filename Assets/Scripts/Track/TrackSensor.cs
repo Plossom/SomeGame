@@ -28,6 +28,8 @@ namespace SomeGame.Track
         public Vector2 RoadDirection { get; private set; } = Vector2.up;
         /// <summary>Up on the roofs (set by CarTerrain when the car lands on one): only roofs count as road.</summary>
         public bool Elevated { get; set; }
+        /// <summary>On an upper floor of a house (only drawn higher; no rooftop rules).</summary>
+        public bool Upstairs { get; private set; }
         /// <summary>On a roof branch (up on the roofs).</summary>
         public bool OnRoof => Branch >= 0 && track.Branches[Branch].Kind == TrackLayout.BranchKind.Roof;
         /// <summary>On a banked wall: how far up it (0 = not on a wall, up to 1 at the top).</summary>
@@ -106,6 +108,13 @@ namespace SomeGame.Track
 
             _hint = point.Segment;
             Current = point;
+            Upstairs = false;
+            if (track.Layout.upstairs != null && Branch < 0)
+                foreach (var span in track.Layout.upstairs)
+                {
+                    float into = path.DeltaDistance(span.from, point.Distance);
+                    if (into >= 0f && into <= path.DeltaDistance(span.from, span.to)) { Upstairs = true; break; }
+                }
             float bankHeight = 0f;
             bool onBank = Branch < 0 && !Elevated && track.BankAt(point.Distance, point.Lateral, out bankHeight) != null;
             BankHeight = onBank ? Mathf.Max(0.01f, bankHeight) : 0f;

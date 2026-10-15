@@ -51,7 +51,7 @@ namespace SomeGame.Race
         int CheckpointCount => Circuit.CheckpointCount;
         public int NextCheckpoint => CheckpointsPassed % CheckpointCount;
         /// <summary>Laps (or sections) done. A section line counts like the start/finish line.</summary>
-        public int LapsCompleted => CheckpointsPassed <= 0 ? 0 : (CheckpointsPassed - 1) / Circuit.CheckpointsPerLap;
+        public int LapsCompleted => Circuit.LinesPassed(CheckpointsPassed);
         public int CurrentLap => Mathf.Clamp(LapsCompleted + 1, 1, TotalLaps);
 
         /// <summary>Monotonic race progress used for ranking (checkpoints plus fraction to the next one).</summary>
@@ -101,7 +101,7 @@ namespace SomeGame.Race
             if (!_tracking || IsFinished) return;
             while (CheckpointsPassed < checkpoints)
             {
-                bool crossedLine = NextCheckpoint % Circuit.CheckpointsPerLap == 0;
+                bool crossedLine = Circuit.IsLapLine(NextCheckpoint);
                 CheckpointsPassed++;
                 if (crossedLine && CheckpointsPassed > 1) _lapTimes.Add(0f);
             }
@@ -168,7 +168,7 @@ namespace SomeGame.Race
 
         void PassCheckpoint()
         {
-            bool crossedLine = NextCheckpoint % Circuit.CheckpointsPerLap == 0; // the start line, or a section line
+            bool crossedLine = Circuit.IsLapLine(NextCheckpoint); // the start line, or a section line
             CheckpointsPassed++;
             if (!crossedLine || CheckpointsPassed == 1) return;
 

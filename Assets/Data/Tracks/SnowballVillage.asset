@@ -49,12 +49,18 @@ MonoBehaviour:
   sampleSpacing: 1
   checkpointCount: 8
   sections: 1
+  sectionLines: []
   boundaryMargin: 25
+  rooms: []
+  houses: []
+  upstairs: []
+  stairs: []
+  decor: []
+  logJumps: []
   trains: []
-  rockslides: []
   props: []
+  bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 0}
-  grounds: []
   waterWorld: 0
   biome: 1
   gaps: []
@@ -156,6 +162,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: Igloo
     uv:
       serializedVersion: 2
@@ -173,6 +180,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: FrozenPond
     uv:
       serializedVersion: 2
@@ -190,6 +198,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: SnowPine
     uv:
       serializedVersion: 2
@@ -207,6 +216,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: FrostTree
     uv:
       serializedVersion: 2
@@ -224,6 +234,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: FrostBush
     uv:
       serializedVersion: 2
@@ -241,6 +252,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: SnowRock
     uv:
       serializedVersion: 2
@@ -258,6 +270,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: IceCrystals
     uv:
       serializedVersion: 2
@@ -275,6 +288,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: Snowman
     uv:
       serializedVersion: 2
@@ -292,6 +306,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: Sled
     uv:
       serializedVersion: 2
@@ -309,6 +324,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: Gifts
     uv:
       serializedVersion: 2
@@ -326,6 +342,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   - name: Lamp
     uv:
       serializedVersion: 2
@@ -343,6 +360,7 @@ MonoBehaviour:
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    indoor: 0
   bakedScenery:
   - position: {x: 17.098661, y: 140.08508}
     right: {x: -2.142651, y: -0.54248863}
@@ -9771,4 +9789,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 51f24f8593dd6812
+  bakedSignature: 2fa017619d2aaf74

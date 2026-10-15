@@ -5,40 +5,40 @@ using static SomeGame.EditorTools.Sdf;
 namespace SomeGame.EditorTools
 {
     /// <summary>
-    /// Art for the journey race (Valley Cup race 6): ground textures for its stretches (mud, sand, red rock,
-    /// pebbles, wheat), a scenery atlas with the farm, canyon and river pieces, and the sprites of the things
-    /// that move or stand on the road (sheep, boulders, the mine train and its level crossing, the rockslide,
-    /// the windmill's sails, the section arches). Same flat, outlined Alpine Rally style as the rest.
+    /// Art for the journey race (Valley Cup race 6): a scenery atlas with the farm, garden and forest pieces and
+    /// the furniture of the house, and the sprites of the things that move or stand on the road (sheep, boulders,
+    /// the train and its level crossing, the windmill's sails, the section arches). The house itself (floors,
+    /// roofs, the cat, the robot vacuum, the toy train...) is in ArtGenerator.House. Same flat, outlined style.
     /// </summary>
     public static partial class ArtGenerator
     {
-        // ---------- scenery atlas: 4 x 4 cells of 256 px ----------
+        // ---------- scenery atlas: 4 x 8 cells of 256 px (outdoors, then the furniture) ----------
         public static readonly string[] JourneyCells =
         {
             "Pine", "Tree", "Bushes", "Rock",
             "Windmill", "Sunflowers", "HayRolls", "Barn",
-            "Mesa", "RedRocks", "DryBush", "Hoodoos",
+            "Field", "Stump", "Ferns", "Mushrooms",
             "Reeds", "RiverStones", "Crowd", "Flowers",
+            "Hedge", "GardenBed", "Fountain", "LogPile",
+            "Sofa", "Armchair", "CoffeeTable", "Rug",
+            "Bookshelf", "Plant", "TvUnit", "Bed",
+            "Counter", "DiningTable", "Toys", "Lamp",
         };
+
+        const int JourneyRows = 8;
 
         /// <summary>UV rect of a journey scenery cell by name (row 0 at the top of the texture).</summary>
         public static Rect JourneyCell(string name)
         {
             int i = System.Array.IndexOf(JourneyCells, name);
             int col = i % 4, row = i / 4;
-            return new Rect(col * 0.25f, 1f - (row + 1) * 0.25f, 0.25f, 0.25f);
+            return new Rect(col * 0.25f, 1f - (row + 1) / (float)JourneyRows, 0.25f, 1f / JourneyRows);
         }
 
         [MenuItem("SomeGame/Generate Journey Art")]
         public static void GenerateJourney()
         {
-            World("GroundMud", 128, 128, MudPixel, 32, true);
-            World("GroundSand", 128, 128, DesertSandPixel, 32, true);
-            World("GroundRedRock", 128, 128, RedRockPixel, 32, true);
-            World("GroundPebbles", 128, 128, PebblesPixel, 32, true);
-            World("GroundWheat", 128, 128, WheatPixel, 32, true);
-            foreach (var g in new[] { "GroundMud", "GroundSand", "GroundRedRock", "GroundPebbles", "GroundWheat" }) Material(g, g);
-            World("SceneryJourney", 1024, 1024, JourneyPixel, 128, false);
+            World("SceneryJourney", 1024, 256 * JourneyRows, JourneyPixel, 128, false);
             Material("SceneryJourney", "SceneryJourney");
 
             World("WindmillTower", 256, 256, WindmillTower, 128, false);
@@ -51,130 +51,51 @@ namespace SomeGame.EditorTools
             Material("Rails", "Rails");
             World("CrossingLight", 128, 128, CrossingLight, 128, false);
             World("Barrier", 48, 384, Barrier, 128, false);
-            World("RockPile", 384, 384, RockPile, 128, false);
             World("ArchPillar", 160, 160, ArchPillar, 128, false);
-            World("CanyonWall", 64, 64, CanyonWallPixel, 32, true);
-            Material("CanyonWall", "CanyonWall");
+            GenerateHouse();
             World("Banner", 128, 128, (x, y) => White(Fill(RoundRect(x, y, 64, 64, 60, 60, 18))), 128, false);
             AssetDatabase.Refresh();
         }
 
         static Color JourneyPixel(float x, float y)
         {
-            int col = (int)(x / 256), row = 3 - (int)(y / 256);
-            float lx = x - col * 256, ly = y - (3 - row) * 256;
-            return (row * 4 + col) switch
+            int col = (int)(x / 256), row = JourneyRows - 1 - (int)(y / 256);
+            float lx = x - col * 256, ly = y - (JourneyRows - 1 - row) * 256;
+            return JourneyCells[row * 4 + col] switch
             {
-                0 => Pine(lx, ly),
-                1 => RoundTree(lx, ly),
-                2 => Bushes(lx, ly),
-                3 => Rock(lx, ly),
-                4 => WindmillTower(lx, ly),
-                5 => Sunflowers(lx, ly),
-                6 => HayRolls(lx, ly),
-                7 => Barn(lx, ly),
-                8 => Mesa(lx, ly),
-                9 => RedRocks(lx, ly),
-                10 => DryBush(lx, ly),
-                11 => Hoodoos(lx, ly),
-                12 => Reeds(lx, ly),
-                13 => RiverStones(lx, ly),
-                14 => Crowd(lx, ly),
-                _ => Flowers(lx, ly),
+                "Pine" => Pine(lx, ly),
+                "Tree" => RoundTree(lx, ly),
+                "Bushes" => Bushes(lx, ly),
+                "Rock" => Rock(lx, ly),
+                "Windmill" => WindmillTower(lx, ly),
+                "Sunflowers" => Sunflowers(lx, ly),
+                "HayRolls" => HayRolls(lx, ly),
+                "Barn" => Barn(lx, ly),
+                "Field" => PatchField(lx, ly),
+                "Stump" => Stump(lx, ly),
+                "Ferns" => Ferns(lx, ly),
+                "Mushrooms" => Mushrooms(lx, ly),
+                "Reeds" => Reeds(lx, ly),
+                "RiverStones" => RiverStones(lx, ly),
+                "Crowd" => Crowd(lx, ly),
+                "Flowers" => Flowers(lx, ly),
+                "Hedge" => Hedge(lx, ly),
+                "GardenBed" => GardenBed(lx, ly),
+                "Fountain" => Fountain(lx, ly),
+                "LogPile" => LogPile(lx, ly),
+                "Sofa" => Sofa(lx, ly),
+                "Armchair" => Armchair(lx, ly),
+                "CoffeeTable" => CoffeeTable(lx, ly),
+                "Rug" => Rug(lx, ly),
+                "Bookshelf" => Bookshelf(lx, ly),
+                "Plant" => HousePlant(lx, ly),
+                "TvUnit" => TvUnit(lx, ly),
+                "Bed" => Bed(lx, ly),
+                "Counter" => Counter(lx, ly),
+                "DiningTable" => DiningTable(lx, ly),
+                "Toys" => Toys(lx, ly),
+                _ => FloorLamp(lx, ly),
             };
-        }
-
-        // ================================================================== ground textures (tile 128 px)
-
-        static float N(float x, float y, float cell) => Noise(x / cell, y / cell, Mathf.RoundToInt(128f / cell));
-
-        static Color MudPixel(float x, float y)
-        {
-            float n = N(x, y, 16) * 0.6f + N(x, y, 8) * 0.4f;
-            Color c = Color.Lerp(Hex("6E5235"), Hex("8A6A45"), n);
-            // Puddles and tyre ruts.
-            float puddle = N(x + 40, y + 9, 32);
-            if (puddle > 0.68f) c = Color.Lerp(c, Hex("4D3A27"), Mathf.Clamp01((puddle - 0.68f) * 8f));
-            if (puddle > 0.8f) c = Color.Lerp(c, Hex("8C9C8C"), Mathf.Clamp01((puddle - 0.8f) * 10f) * 0.35f); // a wet sheen
-            c = Color.Lerp(c, Hex("5C432C"), Mathf.Clamp01(1f - Mathf.Abs(Mathf.Repeat(x + N(x, y, 32) * 10f, 64f) - 20f) / 2.5f) * 0.4f);
-            return c;
-        }
-
-        static Color DesertSandPixel(float x, float y)
-        {
-            float n = N(x, y, 16) * 0.5f + N(x, y, 4) * 0.5f;
-            Color c = Color.Lerp(Hex("D9B37A"), Hex("E8C890"), n);
-            // Wind ripples.
-            float ripple = Mathf.Sin((y + N(x, y, 32) * 18f) * 0.4f);
-            c = Color.Lerp(c, Hex("C79E64"), Mathf.Clamp01(ripple - 0.6f) * 0.8f);
-            return c;
-        }
-
-        static Color RedRockPixel(float x, float y)
-        {
-            float n = N(x, y, 32) * 0.55f + N(x, y, 8) * 0.45f;
-            Color c = Color.Lerp(Hex("B5582F"), Hex("D27845"), n);
-            // Strata bands and cracks.
-            float band = Mathf.Repeat(y + N(x, y, 32) * 24f, 32f);
-            if (band < 3f) c = Color.Lerp(c, Hex("9A4626"), 0.55f);
-            float crack = Mathf.Abs(N(x, y, 16) - 0.5f);
-            if (crack < 0.018f) c = Color.Lerp(c, Hex("7C3820"), 0.7f);
-            if (Hash((int)x / 3, (int)y / 3) > 0.985f) c = Color.Lerp(c, Hex("F0B27A"), 0.6f); // grit
-            return c;
-        }
-
-        static Color PebblesPixel(float x, float y)
-        {
-            Color c = Color.Lerp(Hex("B8B1A0"), Hex("CFC8B6"), N(x, y, 16));
-            // Pebbles on a jittered grid.
-            const float cell = 16f;
-            int cx = Mathf.FloorToInt(x / cell), cy = Mathf.FloorToInt(y / cell);
-            for (int i = -1; i <= 1; i++)
-                for (int j = -1; j <= 1; j++)
-                {
-                    int gx = ((cx + i) % 8 + 8) % 8, gy = ((cy + j) % 8 + 8) % 8;
-                    float px = (cx + i + 0.2f + Hash(gx, gy) * 0.6f) * cell, py = (cy + j + 0.2f + Hash(gy + 7, gx) * 0.6f) * cell;
-                    float r = 3f + Hash(gx * 3, gy * 5) * 3f;
-                    float d = Ellipse(x, y, px, py, r * 1.3f, r);
-                    if (d < 0f)
-                    {
-                        Color stone = Color.Lerp(Hex("8E8A80"), Hex("E2DDD0"), Hash(gx + 11, gy + 3));
-                        c = Over(c, Color.Lerp(stone, Color.white, Mathf.Clamp01((py - y) / r) * 0.25f), Fill(d));
-                    }
-                }
-            return c;
-        }
-
-        static Color WheatPixel(float x, float y)
-        {
-            float n = N(x, y, 16);
-            Color c = Color.Lerp(Hex("D9B54A"), Hex("EBCB62"), n);
-            // Rows of wheat with darker furrows.
-            float row = Mathf.Repeat(x + N(x, y, 32) * 6f, 12f);
-            c = Color.Lerp(c, Hex("B8923A"), Mathf.Clamp01(1f - Mathf.Abs(row - 1.5f) / 1.5f) * 0.6f);
-            if (Hash((int)x / 2, (int)y / 4) > 0.93f) c = Color.Lerp(c, Hex("F7E39A"), 0.6f);
-            return c;
-        }
-
-        public static void GenerateCanyonWall()
-        {
-            World("CanyonWall", 64, 64, CanyonWallPixel, 32, true);
-            Material("CanyonWall", "CanyonWall");
-            AssetDatabase.Refresh();
-        }
-
-        // A banked sandstone wall (u = across, from the kerb up to the rim), with a chevron along it.
-        static Color CanyonWallPixel(float x, float y)
-        {
-            float u = x / 64f;
-            if (u > 0.93f) return Hex("6E2E17");
-            if (u > 0.82f) return Hex("E9A26A");
-            Color c = Color.Lerp(Hex("A44E2A"), Hex("DB8550"), Mathf.SmoothStep(0f, 1f, u / 0.82f));
-            c = Color.Lerp(c, Shade(c, 0.9f), Noise(x / 8f, y / 8f, 8) * 0.6f);
-            if (Mathf.Repeat(x + Noise(x / 8f, y / 8f, 8) * 6f, 16f) < 1.5f) c = Color.Lerp(c, Hex("8A3E20"), 0.5f); // strata
-            float cx = 32f, chevron = Mathf.Abs(Mathf.Abs(x - cx) * 0.9f + (y - 40f)) - 4f;
-            if (Mathf.Abs(x - cx) < 18f && chevron < 0f) c = Color.Lerp(c, Hex("FFE2C0"), 0.7f);
-            return c;
         }
 
         // ================================================================== scenery cells
@@ -231,75 +152,6 @@ namespace SomeGame.EditorTools
             }
             Roll(92, 160, 0.3f);
             Roll(170, 96, -0.4f);
-            return c;
-        }
-
-        static Color Mesa(float x, float y)
-        {
-            Color c = new(0, 0, 0, 0);
-            float wob = (N(x, y, 32) - 0.5f) * 26f; // soft, slow wobble (no jagged edge)
-            float outer = Circle(x, y, 128, 128, 112) + wob;
-            c = Over(c, Shadow, Soft(Circle(x, y, 144, 110, 112) + wob, 14f));
-            c = Over(c, Hex("9A4626"), Fill(outer));
-            c = Over(c, Hex("B9572F"), Fill(outer + 14f));
-            c = Over(c, Hex("CC6B3C"), Fill(outer + 30f));
-            float top = outer + 46f;
-            c = Over(c, Hex("DE8A52"), Fill(top));
-            c = Over(c, Hex("8DA357"), Fill(top + 6f) * Mathf.Clamp01((N(x, y, 32) - 0.55f) * 6f)); // a little scrub on top
-            c = Over(c, Outline, Stroke(outer, 5f) * 0.8f);
-            return c;
-        }
-
-        static Color RedRocks(float x, float y)
-        {
-            Color c = new(0, 0, 0, 0);
-            void Stone(float cx, float cy, float r, float seed)
-            {
-                float d = Circle(x, y, cx, cy, r) + (N(x + seed * 10f, y, 32) - 0.5f) * r * 0.35f;
-                c = Over(c, Shadow, Soft(Circle(x, y, cx + r * 0.25f, cy - r * 0.25f, r), 8f));
-                c = Over(c, Hex("A44E2A"), Fill(d));
-                c = Over(c, Hex("D27A48"), Fill(Circle(x, y, cx - r * 0.25f, cy + r * 0.25f, r * 0.55f)) * Fill(d + 4f));
-                c = Over(c, Outline, Stroke(d, 4f) * 0.8f);
-            }
-            Stone(96, 150, 58, 1);
-            Stone(170, 100, 44, 7);
-            Stone(170, 180, 26, 13);
-            return c;
-        }
-
-        static Color DryBush(float x, float y)
-        {
-            Color c = new(0, 0, 0, 0);
-            c = Over(c, Shadow, Soft(Circle(x, y, 140, 116, 70), 14f));
-            float a = Mathf.Atan2(y - 128, x - 128), r = Vector2.Distance(new Vector2(x, y), new Vector2(128, 128));
-            float spikes = r - (56f + 18f * Mathf.Abs(Mathf.Sin(a * 7f)));
-            c = Over(c, Hex("8C8A4A"), Fill(spikes));
-            c = Over(c, Hex("A9A65C"), Fill(Circle(x, y, 118, 138, 36)) * Fill(spikes + 6f));
-            // Twigs.
-            for (int i = 0; i < 7; i++)
-            {
-                float ang = i * 0.9f + 0.3f;
-                c = Over(c, Hex("6B4E33"), Fill(Capsule(x, y, 128, 128, 128 + Mathf.Cos(ang) * 70, 128 + Mathf.Sin(ang) * 70, 2.5f)) * 0.8f);
-            }
-            c = Over(c, Outline, Stroke(spikes, 3f) * 0.6f);
-            return c;
-        }
-
-        static Color Hoodoos(float x, float y)
-        {
-            Color c = new(0, 0, 0, 0);
-            void Pillar(float cx, float cy, float r)
-            {
-                c = Over(c, Shadow, Soft(Circle(x, y, cx + r * 0.6f, cy - r * 0.6f, r), 8f));
-                float d = Circle(x, y, cx, cy, r);
-                c = Over(c, Hex("B9572F"), Fill(d));
-                c = Over(c, Hex("D9804A"), Fill(d + r * 0.3f));
-                c = Over(c, Hex("E9A26A"), Fill(d + r * 0.6f)); // cap stone
-                c = Over(c, Outline, Stroke(d, 4f) * 0.8f);
-            }
-            Pillar(84, 170, 40);
-            Pillar(170, 150, 32);
-            Pillar(118, 84, 46);
             return c;
         }
 
@@ -511,24 +363,6 @@ namespace SomeGame.EditorTools
             bool red = Mathf.Repeat(y, 64f) < 32f;
             Color c = Over(new Color(0, 0, 0, 0), red ? Hex("D63A2C") : Hex("FFFFFF"), Fill(arm));
             c = Over(c, Outline, Stroke(arm, 3f));
-            return c;
-        }
-
-        // A rockslide blocking a passage: a heap of boulders, dust round its foot.
-        static Color RockPile(float x, float y)
-        {
-            Color c = new(0, 0, 0, 0);
-            c = Over(c, new Color(0.85f, 0.6f, 0.4f, 0.45f), Soft(Circle(x, y, 192, 192, 170), 40f));
-            for (int i = 0; i < 16; i++)
-            {
-                float a = Hash(i, 1) * Mathf.PI * 2f, r = Mathf.Sqrt(Hash(i, 2)) * 120f;
-                float cx = 192 + Mathf.Cos(a) * r, cy = 192 + Mathf.Sin(a) * r, s = 30 + Hash(i, 3) * 36;
-                float d = Circle(x, y, cx, cy, s) + (N(x + i * 9f, y, 32) - 0.5f) * s * 0.35f;
-                c = Over(c, Shadow, Soft(Circle(x, y, cx + 10, cy - 10, s), 8f));
-                c = Over(c, Hash(i, 4) > 0.5f ? Hex("A44E2A") : Hex("8F918A"), Fill(d));
-                c = Over(c, Color.white, Fill(Circle(x, y, cx - s * 0.3f, cy + s * 0.3f, s * 0.35f)) * Fill(d + 4f) * 0.25f);
-                c = Over(c, Outline, Stroke(d, 4f) * 0.8f);
-            }
             return c;
         }
 

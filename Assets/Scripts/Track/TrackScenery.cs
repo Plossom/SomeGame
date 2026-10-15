@@ -35,6 +35,8 @@ namespace SomeGame.Track
             public Color[] tints = { Color.white };
             [Tooltip("Only beside this stretch of the lap (lap distances from, to; may wrap past the start). (0, 0) = all round.")]
             public Vector2 along;
+            [Tooltip("Furniture: only inside the rooms of a house (clear of its walls). Everything else stays outside the houses.")]
+            public bool indoor;
         }
 
         [SerializeField] MeshFilter trees;
@@ -77,6 +79,7 @@ namespace SomeGame.Track
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
                 margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps, sections = layout.sections,
+                rooms = layout.rooms, houses = layout.houses, decor = layout.decor,
                 shortcuts = layout.shortcuts, branches = layout.branches, banks = layout.banks, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
@@ -102,6 +105,9 @@ namespace SomeGame.Track
             public bool waterWorld;
             public List<Kind> kinds;
             public int seed, span, sections;
+            public List<TrackLayout.Room> rooms;
+            public List<TrackLayout.House> houses;
+            public List<TrackLayout.Decor> decor;
             public Vector4 runoff;
         }
 
@@ -144,10 +150,17 @@ namespace SomeGame.Track
                 for (int attempt = 0; attempt < kind.count * 30 && done < kind.count; attempt++)
                 {
                     var p = new Vector2(Range(area.xMin, area.xMax), Range(area.yMin, area.yMax));
+                    // Furniture is looked for inside the rooms (they are a small part of the map).
+                    if (kind.indoor && layout.rooms is { Count: > 0 })
+                    {
+                        var room = layout.rooms[random.Next(layout.rooms.Count)];
+                        p = new Vector2(Range(room.min.x, room.max.x), Range(room.min.y, room.max.y));
+                    }
                     if (kind.clustered && Mathf.PerlinNoise(p.x * 0.045f + seed % 100, p.y * 0.045f) < 0.45f) continue;
                     float size = Range(kind.sizeRange.x, kind.sizeRange.y);
                     var projection = path.Project(p);
                     if (kind.along != Vector2.zero && !Within(projection.Distance, kind.along, path.Length)) continue;
+                    if (!Indoors(layout, p, size, kind.indoor)) continue;
                     float fromKerb = Mathf.Abs(projection.Lateral) - track.OffRoadAt(projection.Distance) - size * 0.5f;
                     float turn = path.TurnAtDistance(projection.Distance, runoffSpan);
                     bool outside = turn * projection.Lateral < 0f; // left turn: the right side is outside
@@ -175,9 +188,37 @@ namespace SomeGame.Track
                 }
             }
 
+            // Hand-placed pieces (furniture): rugs under everything, the rest in among the scenery.
+            var flat = new List<(Vector2 p, Vector2 right, Rect uv, Color32 tint)>();
+            if (layout.decor != null)
+                foreach (var d in layout.decor)
+                {
+                    float a = d.angle * Mathf.Deg2Rad;
+                    var item = (d.position, new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * (d.size * 0.5f), d.uv, (Color32)Color.white);
+                    if (d.flat) flat.Add(item); else items.Add(item);
+                }
             // Draw top-down from the back so overlapping crowns read naturally.
             items.Sort((a, b) => b.p.y.CompareTo(a.p.y));
+            items.InsertRange(0, flat);
             return items.ConvertAll(i => new TrackLayout.SceneryItem { position = i.p, right = i.right, uv = i.uv, tint = i.tint });
+        }
+
+        // Furniture stays in a room, clear of its walls; trees and the rest stay outside the houses.
+        static bool Indoors(TrackLayout layout, Vector2 p, float size, bool indoor)
+        {
+            if (indoor)
+            {
+                if (layout.rooms == null) return false;
+                float m = size * 0.5f + 1.2f;
+                foreach (var room in layout.rooms)
+                    if (p.x > room.min.x + m && p.x < room.max.x - m && p.y > room.min.y + m && p.y < room.max.y - m) return true;
+                return false;
+            }
+            if (layout.houses == null) return true;
+            float r = size * 0.5f + 1.5f;
+            foreach (var house in layout.houses)
+                if (p.x > house.min.x - r && p.x < house.max.x + r && p.y > house.min.y - r && p.y < house.max.y + r) return false;
+            return true;
         }
 
         static bool Within(float d, Vector2 range, float length)

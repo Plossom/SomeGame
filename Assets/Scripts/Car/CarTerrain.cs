@@ -70,6 +70,7 @@ namespace SomeGame.Car
         public event Action PenguinHit;
         /// <summary>The car drove over a dash panel (boost).</summary>
         public event Action DashPanel;
+        float _logAt = -10f;
         /// <summary>The car landed up on a row of roofs.</summary>
         public event Action RoofLanded;
 
@@ -184,6 +185,17 @@ namespace SomeGame.Car
                     return;
                 }
             }
+
+            // A log across the forest road, met on the ground (too slow off its ramp): bump back off it.
+            if (track.Layout.logJumps != null && Time.time - _logAt > 0.8f)
+                foreach (float log in track.Layout.logJumps)
+                {
+                    float to = track.Path.DeltaDistance(point.Distance, log);
+                    if (Mathf.Abs(to) > 0.9f || Mathf.Abs(point.Lateral) > track.OffRoadAt(log)) continue;
+                    _logAt = Time.time;
+                    _car.Bump(-track.Path.TangentAt(log), 7f);
+                    break;
+                }
 
             if (!_car.OnRamp && track.IsWater(position))
             {
@@ -322,8 +334,11 @@ namespace SomeGame.Car
 
         void Splash(SomeGame.Track.Track track)
         {
-            _splash.transform.position = _car.Body.position;
-            _splash.Emit(40);
+            // Short of a window jump: a fall into the garden (dust), not a splash.
+            bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld;
+            var burst = dry ? _dust : _splash;
+            burst.transform.position = _car.Body.position;
+            burst.Emit(40);
             float d = _sensor.Current.Distance;
             _repeatSplashes = Mathf.Abs(track.Path.DeltaDistance(_lastSplashAt, d)) < 40f ? _repeatSplashes + 1 : 1;
             _lastSplashAt = d;
@@ -334,7 +349,7 @@ namespace SomeGame.Car
                 _car.Respawn(track.RespawnAfterWater(d));
             }
             else _car.Respawn(track.RespawnBefore(d, respawnBack)); // always back before the water, never ahead
-            Splashed?.Invoke();
+            if (!dry) Splashed?.Invoke();
             StopAllCoroutines();
             StartCoroutine(Blink());
         }
