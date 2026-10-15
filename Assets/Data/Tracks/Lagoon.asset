@@ -86,7 +86,13 @@ MonoBehaviour:
   kerbWidth: 0.6
   sampleSpacing: 1
   checkpointCount: 6
+  sections: 1
   boundaryMargin: 25
+  trains: []
+  rockslides: []
+  props: []
+  sceneryMaterial: {fileID: 0}
+  grounds: []
   waterWorld: 1
   biome: 0
   gaps:
@@ -173,6 +179,7 @@ MonoBehaviour:
     squareAngle: 0
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
   - name: Boat
     uv:
       serializedVersion: 2
@@ -189,6 +196,7 @@ MonoBehaviour:
     squareAngle: 0
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
   - name: LilyPads
     uv:
       serializedVersion: 2
@@ -205,6 +213,7 @@ MonoBehaviour:
     squareAngle: 0
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
   - name: Buoy
     uv:
       serializedVersion: 2
@@ -221,6 +230,7 @@ MonoBehaviour:
     squareAngle: 0
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
   bakedScenery:
   - position: {x: 14.932608, y: 110.38457}
     right: {x: -0.62976724, y: -2.0693357}
@@ -1905,4 +1915,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4294967295
-  bakedSignature: 2bb76f3eaf0f5234
+  bakedSignature: 16f5d554c7e84f91

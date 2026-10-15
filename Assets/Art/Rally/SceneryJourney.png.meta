@@ -1,0 +1,951 @@
+fileFormatVersion: 2
+guid: d9c7304e49bdb4156a50c450cb9611e0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6460701613894287204
+    second: SceneryJourney_0
+  - first:
+      213: 3359811430774492640
+    second: SceneryJourney_1
+  - first:
+      213: 8135313685029942618
+    second: SceneryJourney_2
+  - first:
+      213: -7754710065829633491
+    second: SceneryJourney_3
+  - first:
+      213: 2782103850960966868
+    second: SceneryJourney_4
+  - first:
+      213: -1656217547017430218
+    second: SceneryJourney_5
+  - first:
+      213: 8073906619795849902
+    second: SceneryJourney_6
+  - first:
+      213: 271572902343977686
+    second: SceneryJourney_7
+  - first:
+      213: -5009465658125524218
+    second: SceneryJourney_8
+  - first:
+      213: 5544782282386949027
+    second: SceneryJourney_9
+  - first:
+      213: -2883021736907355480
+    second: SceneryJourney_10
+  - first:
+      213: -8431800713315662739
+    second: SceneryJourney_11
+  - first:
+      213: -1818242548542694199
+    second: SceneryJourney_12
+  - first:
+      213: 6966235645264239357
+    second: SceneryJourney_13
+  - first:
+      213: 6621685853464551427
+    second: SceneryJourney_14
+  - first:
+      213: -8604286407680222750
+    second: SceneryJourney_15
+  - first:
+      213: 3613329898802703444
+    second: SceneryJourney_16
+  - first:
+      213: -775033371335867479
+    second: SceneryJourney_17
+  - first:
+      213: 2069495999186070002
+    second: SceneryJourney_18
+  - first:
+      213: 3507588782602293406
+    second: SceneryJourney_19
+  - first:
+      213: 2171946380672348368
+    second: SceneryJourney_20
+  - first:
+      213: -6360835802105501690
+    second: SceneryJourney_21
+  - first:
+      213: -369012224160202251
+    second: SceneryJourney_22
+  - first:
+      213: 2081277652908861492
+    second: SceneryJourney_23
+  - first:
+      213: -4656320343244338874
+    second: SceneryJourney_24
+  - first:
+      213: 239044578054676009
+    second: SceneryJourney_25
+  - first:
+      213: 6128314550375034907
+    second: SceneryJourney_26
+  - first:
+      213: 809992141493660999
+    second: SceneryJourney_27
+  - first:
+      213: 8088502856386860117
+    second: SceneryJourney_28
+  - first:
+      213: -226298111657291029
+    second: SceneryJourney_29
+  - first:
+      213: -9129305994459245133
+    second: SceneryJourney_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryJourney_0
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 767
+        width: 233
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c90c908cc1af656a0800000000000000
+      internalID: -6460701613894287204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_1
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 773
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ed4c9bf1b270ae20800000000000000
+      internalID: 3359811430774492640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_2
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 788
+        width: 220
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a55759c91b076e070800000000000000
+      internalID: 8135313685029942618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_3
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 793
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d222416084cb16490800000000000000
+      internalID: -7754710065829633491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_4
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 531
+        width: 197
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d456c456b40c9620800000000000000
+      internalID: 2782103850960966868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_5
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 517
+        width: 242
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63bd14f7aeee309e0800000000000000
+      internalID: -1656217547017430218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_6
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 540
+        width: 217
+        height: 182
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea24b961b474c0070800000000000000
+      internalID: 8073906619795849902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_7
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 547
+        width: 219
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6daa5d6ad12d4c300800000000000000
+      internalID: 271572902343977686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_8
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 255
+        width: 252
+        height: 251
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 603e8e4768dca7ab0800000000000000
+      internalID: -5009465658125524218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_9
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 296
+        width: 202
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a3cd8abb1603fc40800000000000000
+      internalID: 5544782282386949027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_10
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 294
+        width: 165
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aa48e351037df7d0800000000000000
+      internalID: -2883021736907355480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_11
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 261
+        width: 185
+        height: 208
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d644fe1cce93cfa80800000000000000
+      internalID: -8431800713315662739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_12
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 38
+        width: 204
+        height: 168
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cc9c9a190e44c6e0800000000000000
+      internalID: -1818242548542694199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_13
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 57
+        width: 250
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfa93a1296a0da060800000000000000
+      internalID: 6966235645264239357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_14
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 157
+        width: 24
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 300ebf55334f4eb50800000000000000
+      internalID: 6621685853464551427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_15
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 176
+        width: 43
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e99f74891f679880800000000000000
+      internalID: -8604286407680222750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_16
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 203
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45cee621660252230800000000000000
+      internalID: 3613329898802703444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_17
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 94
+        width: 116
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a3c37c41478e35f0800000000000000
+      internalID: -775033371335867479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_18
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 119
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f9e39785a358bc10800000000000000
+      internalID: 2069495999186070002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_19
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 133
+        width: 70
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e90972de9657da030800000000000000
+      internalID: 3507588782602293406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_20
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 106
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d0bb2bc9bd442e10800000000000000
+      internalID: 2171946380672348368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_21
+      rect:
+        serializedVersion: 2
+        x: 958
+        y: 129
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6082ae40a85c9b7a0800000000000000
+      internalID: -6360835802105501690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_22
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 22
+        width: 113
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f18725565101eaf0800000000000000
+      internalID: -369012224160202251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_23
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 64
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 438679c8ffe22ec10800000000000000
+      internalID: 2081277652908861492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_24
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 84
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6490f7c615d616fb0800000000000000
+      internalID: -4656320343244338874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_25
+      rect:
+        serializedVersion: 2
+        x: 897
+        y: 77
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92e9e68f6c1415300800000000000000
+      internalID: 239044578054676009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_26
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 91
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1036f64d952c0550800000000000000
+      internalID: 6128314550375034907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_27
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 40
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74d6698af8bad3b00800000000000000
+      internalID: 809992141493660999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_28
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 34
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 554dbaf3e72204070800000000000000
+      internalID: 8088502856386860117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_29
+      rect:
+        serializedVersion: 2
+        x: 963
+        y: 59
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be2535101170cdcf0800000000000000
+      internalID: -226298111657291029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryJourney_30
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 17
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b5996231903e4180800000000000000
+      internalID: -9129305994459245133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryJourney_0: -6460701613894287204
+      SceneryJourney_1: 3359811430774492640
+      SceneryJourney_10: -2883021736907355480
+      SceneryJourney_11: -8431800713315662739
+      SceneryJourney_12: -1818242548542694199
+      SceneryJourney_13: 6966235645264239357
+      SceneryJourney_14: 6621685853464551427
+      SceneryJourney_15: -8604286407680222750
+      SceneryJourney_16: 3613329898802703444
+      SceneryJourney_17: -775033371335867479
+      SceneryJourney_18: 2069495999186070002
+      SceneryJourney_19: 3507588782602293406
+      SceneryJourney_2: 8135313685029942618
+      SceneryJourney_20: 2171946380672348368
+      SceneryJourney_21: -6360835802105501690
+      SceneryJourney_22: -369012224160202251
+      SceneryJourney_23: 2081277652908861492
+      SceneryJourney_24: -4656320343244338874
+      SceneryJourney_25: 239044578054676009
+      SceneryJourney_26: 6128314550375034907
+      SceneryJourney_27: 809992141493660999
+      SceneryJourney_28: 8088502856386860117
+      SceneryJourney_29: -226298111657291029
+      SceneryJourney_3: -7754710065829633491
+      SceneryJourney_30: -9129305994459245133
+      SceneryJourney_4: 2782103850960966868
+      SceneryJourney_5: -1656217547017430218
+      SceneryJourney_6: 8073906619795849902
+      SceneryJourney_7: 271572902343977686
+      SceneryJourney_8: -5009465658125524218
+      SceneryJourney_9: 5544782282386949027
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

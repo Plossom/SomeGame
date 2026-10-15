@@ -77,6 +77,12 @@ namespace SomeGame.Race
         void Awake()
         {
             Level = GameSession.CurrentLevel;
+            // This race's surprises (rockslide, train timetable, herds): random alone; online the room's race
+            // number, so every phone sees the same race.
+            var room = SomeGame.Online.OnlineRoom.Current;
+            SomeGame.Track.Track.SurpriseSeed = GameSession.Online && room != null
+                ? room.RaceNumber.Value * 7919 + room.RaceIndex.Value * 31 + 17
+                : UnityEngine.Random.Range(1, 1000000);
             if (GameSession.Online && SomeGame.Online.OnlineRoom.Current != null && Level != null)
             {
                 track.SetLayout(Level.track);

@@ -10,7 +10,7 @@ namespace SomeGame.EditorTools
     /// start line, checkpoint post), the scenery atlas (pine, tree, chalet, rock) and the materials.
     /// Flat illustration style: dark outlines and baked drop shadows (light from the top left).
     /// </summary>
-    public static class ArtGenerator
+    public static partial class ArtGenerator
     {
         public const string Folder = "Assets/Art/Rally";
 

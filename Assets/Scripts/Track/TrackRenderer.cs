@@ -133,6 +133,9 @@ namespace SomeGame.Track
             Swap(kerbs, snowKerbs, snow);
             Swap(runoff, snowRunoff, snow);
             Swap(scenery, snowScenery, snow);
+            // A track with its own scenery sheet (the journey race) uses it instead.
+            var own = track.Layout != null ? track.Layout.sceneryMaterial : null;
+            if (scenery != null && own != null) scenery.GetComponent<Renderer>().sharedMaterial = own;
             if (snowfall != null && Application.isPlaying) snowfall.SetActive(snow);
         }
 

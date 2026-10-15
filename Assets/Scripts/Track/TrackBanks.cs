@@ -11,6 +11,7 @@ namespace SomeGame.Track
     public class TrackBanks : TrackDerivedBehaviour
     {
         [SerializeField] MeshFilter walls;
+        Material _usual;
         [Tooltip("Length of one chevron along the wall (one texture repeat).")]
         [SerializeField, Min(0.5f)] float tile = 4f;
         [Tooltip("Metres at each end over which the wall rises to its full width.")]
@@ -38,6 +39,12 @@ namespace SomeGame.Track
             foreach (var m in meshes)
             {
                 if (Application.isPlaying) Destroy(m.mesh); else DestroyImmediate(m.mesh);
+            }
+            var wallRenderer = walls != null ? walls.GetComponent<MeshRenderer>() : null;
+            if (wallRenderer != null)
+            {
+                if (_usual == null) _usual = wallRenderer.sharedMaterial;
+                wallRenderer.sharedMaterial = layout.bankMaterial != null ? layout.bankMaterial : _usual; // sandstone in the canyon
             }
             Assign(walls, combined);
         }

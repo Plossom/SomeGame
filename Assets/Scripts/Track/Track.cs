@@ -22,6 +22,17 @@ namespace SomeGame.Track
         public TrackPath Path => _path ??= Build();
         public float Length => Path.Length;
         public int CheckpointCount => layout.checkpointCount;
+
+        /// <summary>The branch a rockslide has closed this race (-1 = none).</summary>
+        public int ClosedBranch { get; set; } = -1;
+        /// <summary>The branch everyone must take this race, because the rockslide closed the road beside it (-1 = none).</summary>
+        public int ForcedBranch { get; set; } = -1;
+
+        /// <summary>
+        /// Picks this race's surprises (which way the rockslide closes, the train timetable). Set by the race
+        /// before the track starts; online every phone gets the same number, so all see the same race.
+        /// </summary>
+        public static int SurpriseSeed { get; set; }
         /// <summary>Sections of a journey track (1 for a circuit raced in laps).</summary>
         public int Sections => layout.sections > 1 && layout.checkpointCount % layout.sections == 0 ? layout.sections : 1;
         /// <summary>Checkpoints from one lap line (or section line) to the next.</summary>
@@ -115,7 +126,9 @@ namespace SomeGame.Track
         public void PenguinPositions(TrackLayout.Penguins line, float time, List<(Vector2 position, Vector2 heading)> into)
         {
             into.Clear();
-            float t = Mathf.Repeat(time + line.offset, line.period), half = line.period * 0.5f;
+            // Each race the herd keeps its own rhythm, shifted by the race's surprise seed (sheep).
+            float shift = line.kind == TrackLayout.CrossingKind.Sheep ? SeedShift(line.distance) * line.period : 0f;
+            float t = Mathf.Repeat(time + line.offset + shift, line.period), half = line.period * 0.5f;
             bool back = t >= half;
             float walk = Mathf.Clamp01((back ? t - half : t) / line.crossing);
             float reach = OffRoadAt(line.distance) + 2.5f;
@@ -129,6 +142,14 @@ namespace SomeGame.Track
                 Vector2 along = Path.TangentAt(line.distance) * ((k % 2 == 0 ? 0.35f : -0.35f));
                 into.Add((centre + across * lateral + along, across));
             }
+        }
+
+        /// <summary>A fraction 0..1 from the race's surprise seed and a key (e.g. a lap distance): the same on every phone.</summary>
+        public static float SeedShift(float key)
+        {
+            uint h = (uint)(SurpriseSeed * 73856093) ^ (uint)(Mathf.RoundToInt(key * 10f) * 19349663);
+            h = (h ^ (h >> 13)) * 1274126177u;
+            return (h & 0xFFFF) / 65535f;
         }
 
         readonly List<(Vector2 position, Vector2 heading)> _penguinScratch = new();

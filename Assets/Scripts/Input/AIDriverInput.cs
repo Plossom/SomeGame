@@ -81,6 +81,9 @@ namespace SomeGame.Input
         // Whether this rival goes for choice <paramref name="what"/> (a branch, a wall) on this lap.
         bool Takes(int what)
         {
+            var track = _sensor != null ? _sensor.Track : null;
+            if (track != null && track.ClosedBranch == what) return false; // the rockslide closed it
+            if (track != null && track.ForcedBranch == what) return true;  // the rockslide closed the road beside it
             int lap = _progress != null ? _progress.CurrentLap : 1;
             uint h = (uint)(_seed * 73856093 ^ (what + 1) * 19349663 ^ lap * 83492791);
             h = (h ^ (h >> 13)) * 1274126177u;

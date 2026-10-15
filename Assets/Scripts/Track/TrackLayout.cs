@@ -40,6 +40,68 @@ namespace SomeGame.Track
         [Tooltip("Grass margin around the track before the invisible boundary wall.")]
         [Min(5f)] public float boundaryMargin = 25f;
 
+        [Header("Journey surprises")]
+        [Tooltip("Level crossings: a little mine train rolls across the road now and then (lights blink, barriers drop first). Its timetable differs every race.")]
+        public List<Train> trains = new();
+        [Tooltip("A rockslide closes one of two ways each race, at random: either this branch or the main road beside it.")]
+        public List<Rockslide> rockslides = new();
+        [Tooltip("Landmarks with moving parts (a windmill whose sails turn).")]
+        public List<Prop> props = new();
+
+        [Serializable]
+        public class Train
+        {
+            [Tooltip("Lap distance of the level crossing.")]
+            public float distance;
+            [Tooltip("Average seconds between trains.")]
+            [Min(4f)] public float period = 16f;
+            [Min(0)] public int wagons = 3;
+            [Tooltip("Speed of the train (units per second).")]
+            [Min(2f)] public float speed = 13f;
+            [Tooltip("How far the rails reach from the road on each side.")]
+            [Min(10f)] public float reach = 45f;
+        }
+
+        [Serializable]
+        public class Rockslide
+        {
+            [Tooltip("Index of the branch that is the other way through.")]
+            public int branch;
+        }
+
+        public enum PropKind { Windmill }
+
+        [Serializable]
+        public class Prop
+        {
+            public PropKind kind;
+            public Vector2 position;
+            [Min(1f)] public float size = 12f;
+        }
+
+        [Tooltip("The banked walls' look on this track (empty = the usual ice wall).")]
+        public Material bankMaterial;
+        [Tooltip("This track's own scenery sheet (empty = the cup's usual one). The scenery kinds' uv point into it.")]
+        public Material sceneryMaterial;
+
+        [Header("Ground")]
+        [Tooltip("Stretches of other ground along the road (mud, sand, red rock, pebbles...), soft-edged, under the road and scenery.")]
+        public List<GroundZone> grounds = new();
+
+        public enum GroundKind { Mud, Sand, RedRock, Pebbles, Wheat }
+
+        [Serializable]
+        public class GroundZone
+        {
+            public GroundKind kind;
+            [Tooltip("Lap distances where it starts and ends.")]
+            public float from, to;
+            [Tooltip("How far it reaches out from the centre line on each side.")]
+            [Min(2f)] public float reach = 30f;
+            [Tooltip("Distance over which it fades in and out at its ends.")]
+            [Min(0f)] public float fade = 25f;
+        }
+
         [Header("Water, jumps and oil")]
         [Tooltip("The whole world is water: the road is a causeway, and anything off the road is a splash.")]
         public bool waterWorld;
@@ -91,12 +153,16 @@ namespace SomeGame.Track
 
         public enum Biome { Meadow, Snow }
 
-        public enum SweeperKind { Log, HayBale, Snowball }
+        public enum SweeperKind { Log, HayBale, Snowball, Boulder }
+
+        public enum CrossingKind { Penguins, Sheep }
 
         /// <summary>A little line of penguins that waddles across the road, waits, and waddles back.</summary>
         [Serializable]
         public class Penguins
         {
+            [Tooltip("What crosses the road: a line of penguins, or a herd of sheep.")]
+            public CrossingKind kind;
             [Tooltip("Lap distance where they cross.")]
             public float distance;
             [Min(1)] public int count = 3;

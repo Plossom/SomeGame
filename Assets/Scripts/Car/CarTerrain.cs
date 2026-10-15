@@ -200,7 +200,8 @@ namespace SomeGame.Car
                 }
             }
             // Dash panel: a boost (once per panel).
-            if (Time.time - _dashAt > 0.6f && _sensor.Branch < 0 && track.DashPanelAt(point.Distance, point.Lateral) != null)
+            // (Not before GO: a boost drives the car, it would roll off the grid.)
+            if (_car.ControlsEnabled && Time.time - _dashAt > 0.6f && _sensor.Branch < 0 && track.DashPanelAt(point.Distance, point.Lateral) != null)
             {
                 _dashAt = Time.time;
                 _car.GiveBoost(dashBoost);

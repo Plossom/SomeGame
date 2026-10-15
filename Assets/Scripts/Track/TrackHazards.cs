@@ -26,6 +26,8 @@ namespace SomeGame.Track
         [Tooltip("Jump pad on dry ground (a gummiboat is used on water).")]
         [SerializeField] Sprite jumpPadSprite;
         [SerializeField] Sprite penguinSprite;
+        [SerializeField] Sprite sheepSprite;
+        [SerializeField] Sprite boulderSprite;
         [SerializeField, Min(0.3f)] float penguinSize = 2f;
         [SerializeField] Sprite dashPanelSprite;
         [SerializeField] Material particleMaterial;
@@ -113,6 +115,14 @@ namespace SomeGame.Track
                     go.AddComponent<BoxCollider2D>().size = new Vector2(4f, 0.9f);
                     visual = Sprite("Log", logSprite, Vector2.zero, 4.2f, 0f, sortingOrder, go.transform).transform;
                 }
+                else if (s.kind == TrackLayout.SweeperKind.Boulder && boulderSprite != null)
+                {
+                    go.AddComponent<CircleCollider2D>().radius = 1.45f;
+                    visual = Sprite("Boulder", boulderSprite, Vector2.zero, 3.1f, 0f, sortingOrder, go.transform).transform;
+                    var dust = Particles("BoulderDust", start, Vector2.up, new Color(0.85f, 0.55f, 0.35f, 0.55f), 1.2f, 0.7f, new Vector2(0.6f, 1.2f), 60f);
+                    dust.transform.SetParent(go.transform, true);
+                    var e = dust.emission; e.rateOverTime = 14f;
+                }
                 else if (s.kind == TrackLayout.SweeperKind.Snowball && snowballSprite != null)
                 {
                     go.AddComponent<CircleCollider2D>().radius = 1.35f;
@@ -130,7 +140,9 @@ namespace SomeGame.Track
                 foreach (var line in layout.penguins)
                 {
                     var birds = new Transform[line.count];
-                    for (int k = 0; k < line.count; k++) birds[k] = Sprite("Penguin", penguinSprite, path.PointAt(line.distance), penguinSize, 0f, sortingOrder + 1).transform;
+                    bool sheep = line.kind == TrackLayout.CrossingKind.Sheep && sheepSprite != null;
+                    for (int k = 0; k < line.count; k++)
+                        birds[k] = Sprite(sheep ? "Sheep" : "Penguin", sheep ? sheepSprite : penguinSprite, path.PointAt(line.distance), penguinSize * (sheep ? 1.15f : 1f), 0f, sortingOrder + 1).transform;
                     _penguins.Add((line, birds));
                 }
 

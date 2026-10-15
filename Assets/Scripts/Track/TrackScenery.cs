@@ -33,6 +33,8 @@ namespace SomeGame.Track
             public bool squareAngle;
             [Tooltip("Each item picks one of these tints at random.")]
             public Color[] tints = { Color.white };
+            [Tooltip("Only beside this stretch of the lap (lap distances from, to; may wrap past the start). (0, 0) = all round.")]
+            public Vector2 along;
         }
 
         [SerializeField] MeshFilter trees;
@@ -74,7 +76,7 @@ namespace SomeGame.Track
             var sig = new SignatureData
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
-                margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps,
+                margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps, sections = layout.sections,
                 shortcuts = layout.shortcuts, branches = layout.branches, banks = layout.banks, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
@@ -99,7 +101,7 @@ namespace SomeGame.Track
             public List<TrackLayout.Bank> banks;
             public bool waterWorld;
             public List<Kind> kinds;
-            public int seed, span;
+            public int seed, span, sections;
             public Vector4 runoff;
         }
 
@@ -145,6 +147,7 @@ namespace SomeGame.Track
                     if (kind.clustered && Mathf.PerlinNoise(p.x * 0.045f + seed % 100, p.y * 0.045f) < 0.45f) continue;
                     float size = Range(kind.sizeRange.x, kind.sizeRange.y);
                     var projection = path.Project(p);
+                    if (kind.along != Vector2.zero && !Within(projection.Distance, kind.along, path.Length)) continue;
                     float fromKerb = Mathf.Abs(projection.Lateral) - track.OffRoadAt(projection.Distance) - size * 0.5f;
                     float turn = path.TurnAtDistance(projection.Distance, runoffSpan);
                     bool outside = turn * projection.Lateral < 0f; // left turn: the right side is outside
@@ -175,6 +178,12 @@ namespace SomeGame.Track
             // Draw top-down from the back so overlapping crowns read naturally.
             items.Sort((a, b) => b.p.y.CompareTo(a.p.y));
             return items.ConvertAll(i => new TrackLayout.SceneryItem { position = i.p, right = i.right, uv = i.uv, tint = i.tint });
+        }
+
+        static bool Within(float d, Vector2 range, float length)
+        {
+            float from = Mathf.Repeat(range.x, length), to = Mathf.Repeat(range.y, length);
+            return from <= to ? d >= from && d <= to : d >= from || d <= to;
         }
 
         // The other ways round stay clear too (ice: also its frozen margin).

@@ -45,7 +45,13 @@ MonoBehaviour:
   kerbWidth: 0.8
   sampleSpacing: 1
   checkpointCount: 6
+  sections: 1
   boundaryMargin: 25
+  trains: []
+  rockslides: []
+  props: []
+  sceneryMaterial: {fileID: 0}
+  grounds: []
   waterWorld: 0
   biome: 0
   gaps: []
@@ -7372,4 +7378,4 @@ MonoBehaviour:
     tint:
       serializedVersion: 2
       rgba: 4293328875
-  bakedSignature: a5b4aeb414bfaa9f
+  bakedSignature: d1442a900f04ba64
