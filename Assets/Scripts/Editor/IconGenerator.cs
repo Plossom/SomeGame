@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
@@ -7,9 +8,10 @@ using static SomeGame.EditorTools.Sdf;
 namespace SomeGame.EditorTools
 {
     /// <summary>
-    /// Paints the app icon (1024 x 1024) the way the game looks: seen from above, the orange buggy drifts
-    /// through a sweeping corner on bright grass, with skid marks and purple drift sparks behind its rear
-    /// wheels, a kerb on the inside of the bend and the game's pines and round trees around it.
+    /// Paints the app icon (1024 x 1024): a close, bold shot of the orange buggy drifting through a bend,
+    /// seen from above like in the game. The road fills most of the picture, with kerbs on both sides,
+    /// puffy tyre smoke and purple drift sparks behind the rear wheels and a few trees in the corners;
+    /// the light falls on the car in the middle and the edges darken.
     /// Saves it to Assets/Art/AppIcon.png and sets it as the app icon for iOS and as the default icon.
     /// iOS rounds the corners itself, so the picture fills the square.
     /// </summary>
@@ -18,11 +20,11 @@ namespace SomeGame.EditorTools
         const int Size = 1024;
         const string IconPath = "Assets/Art/AppIcon.png";
 
-        // The bend: a circle around C (bottom right), from the bottom edge to the right edge.
-        static readonly Vector2 C = new(1094f, 11f);
-        const float R = 760f, HalfWidth = 200f;
+        // The bend: a circle around C (bottom right) sweeping from the bottom left to the top right.
+        static readonly Vector2 C = new(1180f, -110f);
+        const float R = 900f, HalfWidth = 300f;
         // The buggy sits on the bend at this angle (degrees around C), its nose turned into the corner.
-        const float CarAt = 140f, DriftAngle = 24f, CarScale = 1.45f;
+        const float CarAt = 138f, DriftAngle = 22f, CarScale = 1.95f;
 
         static readonly Color Outline = Hex("14231E");
         static readonly Color TreeShadow = new(0.05f, 0.12f, 0.08f, 0.32f);
@@ -40,20 +42,27 @@ namespace SomeGame.EditorTools
             float angle = (heading - 90f) * Mathf.Deg2Rad; // the sprite's nose points up
             Vector2 Local(float x, float y) => centre + CarScale * new Vector2(x * Mathf.Cos(angle) - y * Mathf.Sin(angle), x * Mathf.Sin(angle) + y * Mathf.Cos(angle));
             Vector2 rearLeft = Local(-70f, -112f), rearRight = Local(70f, -112f);
+            var puffs = Puffs(rearLeft, rearRight);
 
             var px = new Color[Size * Size];
             for (int y = 0; y < Size; y++)
                 for (int x = 0; x < Size; x++)
-                    px[y * Size + x] = Background(x + 0.5f, y + 0.5f, rearLeft, rearRight);
+                {
+                    float fx = x + 0.5f, fy = y + 0.5f;
+                    px[y * Size + x] = Smoke(Background(fx, fy, rearLeft, rearRight), fx, fy, puffs);
+                }
 
             Color orange = Hex("FF7A1A");
-            Stamp(px, car, details, cw, ch, centre + new Vector2(16f, -22f), angle, CarScale, orange, shadow: true);
+            Stamp(px, car, details, cw, ch, centre + new Vector2(22f, -30f), angle, CarScale, orange, shadow: true);
             Stamp(px, car, details, cw, ch, centre, angle, CarScale, orange, shadow: false);
             for (int y = 0; y < Size; y++)
                 for (int x = 0; x < Size; x++)
                 {
                     int i = y * Size + x;
                     px[i] = Sparks(px[i], x + 0.5f, y + 0.5f, rearLeft, rearRight, heading + 180f);
+                    // Light on the middle, darker edges.
+                    float v = Dist(x + 0.5f, y + 0.5f, 540f, 520f) / 720f;
+                    px[i] = Over(px[i], new Color(0.02f, 0.06f, 0.05f, 1f), Mathf.Clamp01(v * v - 0.12f) * 0.55f);
                 }
 
             var tex = new Texture2D(Size, Size, TextureFormat.RGBA32, false);
@@ -94,26 +103,28 @@ namespace SomeGame.EditorTools
             // Grass with soft patches and speckles, as on the tracks.
             float patch = Noise(x / 90f, y / 90f, 64);
             Color c = Color.Lerp(Hex("58A535"), Hex("6DBA43"), patch);
-            float speck = Hash((int)(x / 7f), (int)(y / 7f));
+            float speck = Hash((int)(x / 9f), (int)(y / 9f));
             if (speck > 0.993f) c = Over(c, Hex("F2D46B"), 0.8f);
             else if (speck < 0.01f) c = Over(c, Hex("9AD164"), 0.8f);
 
-            // Asphalt with white edge lines; an orange and cream kerb on the inside of the bend.
+            // Asphalt with white edge lines, a red and cream kerb on both sides, a dark outline.
             float road = Mathf.Abs(off) - HalfWidth;
-            c = Over(c, Hex("3F4A3E"), Fill(road - 10f) * 0.35f);
-            Color asphalt = Color.Lerp(Hex("55595A"), Hex("616566"), Noise(x / 7f, y / 7f, 256));
+            c = Over(c, Hex("3F4A3E"), Fill(road - 16f) * 0.4f);
+            Color asphalt = Color.Lerp(Hex("55595A"), Hex("62666A"), Noise(x / 8f, y / 8f, 256));
             c = Over(c, asphalt, Fill(road));
-            c = Over(c, Hex("F4EEDC"), Fill(Shell(Mathf.Abs(off) - (HalfWidth - 22f), 8f)));
-            float kerb = Shell(off + HalfWidth + 20f, 20f);
-            bool stripe = Mathf.Repeat(theta * Mathf.Deg2Rad * (R - HalfWidth) / 46f, 2f) < 1f;
-            c = Over(c, stripe ? Hex("FF7A1A") : Hex("F4EEDC"), Fill(kerb));
-            c = Over(c, Outline, Stroke(kerb, 3f) * 0.35f);
+            c = Over(c, Hex("F4EEDC"), Fill(Shell(Mathf.Abs(off) - (HalfWidth - 30f), 9f)));
+            float kerb = Shell(Mathf.Abs(off) - HalfWidth - 24f, 24f);
+            float run = theta * Mathf.Deg2Rad * (R + Mathf.Sign(off) * (HalfWidth + 24f));
+            bool stripe = Mathf.Repeat(run / 58f, 2f) < 1f;
+            c = Over(c, stripe ? Hex("E8402E") : Hex("F4EEDC"), Fill(kerb));
+            c = Over(c, Outline, Stroke(kerb, 4f) * 0.5f);
+            c = Over(c, Outline, Stroke(Mathf.Abs(off) - HalfWidth - 48f, 6f) * 0.6f);
 
             // Skid marks from the rear wheels, back along the bend and fading out.
             c = Skid(c, x, y, r, theta, rearLeft);
             c = Skid(c, x, y, r, theta, rearRight);
 
-            // Trees: pines and round crowns off the road, outside the bend and in the inside corner.
+            // A few trees in the corners, off the road.
             foreach (var (tx, ty, s, pine) in Trees)
             {
                 if (Mathf.Abs(x - tx) > 160f * s || Mathf.Abs(y - ty) > 160f * s) continue;
@@ -124,9 +135,8 @@ namespace SomeGame.EditorTools
 
         static readonly (float x, float y, float s, bool pine)[] Trees =
         {
-            (70f, 960f, 1.25f, true), (250f, 1010f, 1f, false), (80f, 740f, 1f, false), (300f, 860f, 0.85f, true),
-            (470f, 1000f, 0.8f, true), (1060f, 1060f, 0.9f, true), (30f, 40f, 1f, true),
-            (960f, 330f, 1.2f, false), (800f, 120f, 0.95f, true), (1010f, 80f, 0.9f, false),
+            (40f, 1000f, 1.3f, true), (220f, 1060f, 1f, false), (-10f, 800f, 0.9f, false),
+            (1010f, 150f, 1.1f, false), (1070f, 330f, 0.8f, true), (850f, -20f, 0.85f, true),
         };
 
         static Color Skid(Color c, float x, float y, float r, float theta, Vector2 wheel)
@@ -135,9 +145,45 @@ namespace SomeGame.EditorTools
             float wt = Mathf.Atan2(wheel.y - C.y, wheel.x - C.x) * Mathf.Rad2Deg;
             float behind = theta - wt; // the car drives clockwise, so the marks lie at larger angles
             if (behind < -1f || behind > 40f) return c;
-            float fade = Mathf.Clamp01(1.3f - behind / 32f) * Mathf.Clamp01((behind + 1f) / 3f);
-            float width = Mathf.Lerp(26f, 20f, behind / 40f);
-            return Over(c, Hex("262A2A"), Fill(Mathf.Abs(r - wr) - width * 0.5f) * 0.85f * fade);
+            float fade = Mathf.Clamp01(1.3f - behind / 30f) * Mathf.Clamp01((behind + 1f) / 3f);
+            float width = Mathf.Lerp(40f, 30f, behind / 40f);
+            return Over(c, Hex("2A2E2E"), Fill(Mathf.Abs(r - wr) - width * 0.5f) * 0.8f * fade);
+        }
+
+        // Tyre smoke: puffs trailing back along the bend from both rear wheels, growing as they drift off.
+        static List<(Vector2 p, float r)> Puffs(Vector2 rearLeft, Vector2 rearRight)
+        {
+            var list = new List<(Vector2, float)>();
+            for (int k = 0; k < 6; k++)
+                foreach (var w in new[] { rearLeft, rearRight })
+                {
+                    int side = w == rearLeft ? 1 : -1;
+                    float wr = Vector2.Distance(w, C), wt = Mathf.Atan2(w.y - C.y, w.x - C.x);
+                    float a = wt + 0.045f + k * 0.055f + (Hash(k, side + 5) - 0.5f) * 0.03f;
+                    float rr = wr + side * (6f + k * 16f) + (Hash(k, side + 9) - 0.5f) * 40f;
+                    list.Add((C + rr * new Vector2(Mathf.Cos(a), Mathf.Sin(a)), 30f + k * 9f + Hash(k, side + 13) * 12f));
+                }
+            return list;
+        }
+
+        // One soft cartoon cloud from all the puffs: light grey body, white tops (light from the top left),
+        // a single outline around the whole cloud, thinning out towards its far end.
+        static Color Smoke(Color c, float x, float y, List<(Vector2 p, float r)> puffs)
+        {
+            float d = 1e6f, light = 0f, age = 0f;
+            for (int i = 0; i < puffs.Count; i++)
+            {
+                var (p, r) = puffs[i];
+                float di = Circle(x, y, p.x, p.y, r);
+                if (di < d) age = i / (float)puffs.Count;
+                d = SMin(d, di, 18f);
+                light = Mathf.Max(light, Fill(Circle(x, y, p.x - r * 0.25f, p.y + r * 0.25f, r * 0.62f) / 3f));
+            }
+            if (d > 6f) return c;
+            float alpha = Mathf.Lerp(0.97f, 0.7f, age);
+            c = Over(c, Hex("CCD3D9"), Fill(d) * alpha);
+            c = Over(c, Color.white, light * Fill(d + 3f) * alpha);
+            return Over(c, Hex("56616B"), Stroke(d, 4f) * 0.5f * alpha);
         }
 
         // Purple drift sparks spraying back from the rear wheels, with a glow (the top drift tier).
@@ -147,18 +193,18 @@ namespace SomeGame.EditorTools
             foreach (var w in new[] { rearLeft, rearRight })
             {
                 float d = Dist(x, y, w.x, w.y);
-                if (d > 170f) continue;
-                c = Over(c, purple, Gauss(d, 52f) * 0.7f);
-                c = Over(c, light, Gauss(d, 16f) * 0.9f);
+                if (d > 220f) continue;
+                c = Over(c, purple, Gauss(d, 70f) * 0.7f);
+                c = Over(c, light, Gauss(d, 22f) * 0.95f);
                 // A few sparks thrown backwards and outwards.
                 for (int k = 0; k < 5; k++)
                 {
                     float a = (back - 50f + k * 25f + (w == rearLeft ? -8f : 8f)) * Mathf.Deg2Rad;
-                    float len = 70f + 30f * Hash(k, w == rearLeft ? 1 : 2);
-                    Vector2 a0 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 26f, a1 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * len;
-                    float seg = SegDist(new Vector2(x, y), a0, a1) - 5f;
-                    c = Over(c, purple, Fill(seg - 3f));
-                    c = Over(c, Color.white, Fill(seg + 1f));
+                    float len = 100f + 45f * Hash(k, w == rearLeft ? 1 : 2);
+                    Vector2 a0 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 36f, a1 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * len;
+                    float seg = SegDist(new Vector2(x, y), a0, a1) - 7f;
+                    c = Over(c, purple, Fill(seg - 4f));
+                    c = Over(c, Color.white, Fill(seg + 1.5f));
                 }
             }
             return c;
