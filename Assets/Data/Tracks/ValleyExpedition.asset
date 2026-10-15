@@ -617,7 +617,7 @@ MonoBehaviour:
     angle: 10
   oil: []
   rampLength: 3
-  rampWidth: 2.8
+  rampWidth: 5
   shortcuts: []
   branches:
   - kind: 0
