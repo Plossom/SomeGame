@@ -237,7 +237,7 @@ namespace SomeGame.UI
                 }
                 else
                 {
-                    time.text = "LAP " + car.CurrentLap + "/" + car.TotalLaps;
+                    time.text = (race.Sectioned ? "SECTION " : "LAP ") + car.CurrentLap + "/" + car.TotalLaps;
                     sub.text = "STILL RACING" + new string('.', 1 + Mathf.FloorToInt(Time.unscaledTime * 3f) % 3);
                     sub.color = Theme.Neutral.Stone;
                 }

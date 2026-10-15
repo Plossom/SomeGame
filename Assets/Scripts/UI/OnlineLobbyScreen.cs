@@ -318,7 +318,7 @@ namespace SomeGame.UI
                     racePicture.sprite = level.preview;
                     racePicture.color = Color.white;
                     raceTitle.text = level.displayName.ToUpperInvariant();
-                    raceDetails.text = level.laps + (level.laps == 1 ? " LAP" : " LAPS");
+                    raceDetails.text = level.LapsText.ToUpperInvariant();
                 }
                 racePicture.enabled = racePicture.sprite != null;
                 for (int i = 0; i < raceDifficulty.Length; i++)

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Level04
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Chaos Canyon
+  displayName: Valley Expedition
   chapter: "VALLEY CUP \xB7 RACE 6"
-  track: {fileID: 11400000, guid: 69c3b63f26b0747ea8e6673463c9a40d, type: 2}
+  track: {fileID: 11400000, guid: 78dd63217c7cb478d89f838e9a4ad734, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: c2f49000c683a493d9f6b060255d2ec2, type: 3}
   laps: 3
-  description: 'Everything at once on a narrow canyon road: jump pads, gaps, leaping fish and rolling logs.'
+  description: 'One long journey in three sections: from the windmill farm, through the red canyon and down the river. Something new around every corner!'
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.86

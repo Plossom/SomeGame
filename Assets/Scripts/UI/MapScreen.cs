@@ -1155,6 +1155,8 @@ namespace SomeGame.UI
             bestChip.text = best.HasValue ? TimeFormat.Race(best.Value) : "—";
             var bestLap = level.track != null ? BestLapStore.Get(level.track.name) : null;
             bestLapLabel.text = bestLap.HasValue ? TimeFormat.Race(bestLap.Value) : "—";
+            var lapCaption = bestLapLabel.transform.parent.Find("Caption")?.GetComponent<TMP_Text>();
+            if (lapCaption != null) lapCaption.text = level.Sectioned ? "Best sect." : "Best lap";
             for (int i = 0; i < starTimes.Length; i++)
             {
                 starTimes[i].text = i < level.starTimes.Length ? TimeFormat.Race(level.starTimes[i]) : "-";

@@ -10,6 +10,7 @@ namespace SomeGame.UI
     {
         [SerializeField] RaceManager race;
         [SerializeField] TMP_Text lapLabel;
+        bool _captioned;
         [SerializeField] TMP_Text timeLabel;
         [SerializeField] TMP_Text positionLabel;
         [Tooltip("Shows the last lap time for a few seconds after each lap.")]
@@ -38,6 +39,12 @@ namespace SomeGame.UI
         void Update()
         {
             var player = race.Player;
+            if (!_captioned)
+            {
+                _captioned = true;
+                var caption = lapLabel.transform.parent.Find("Caption")?.GetComponent<TMP_Text>();
+                if (caption != null && race.Sectioned) caption.text = "SECTION";
+            }
             lapLabel.text = $"{player.CurrentLap}<size=60%><color={Muted}>/{race.Laps}</color></size>";
             timeLabel.text = TimeFormat.Clock(race.RaceTime); // hundredths only on the results screen
             int position = race.PositionOf(player);
@@ -65,7 +72,8 @@ namespace SomeGame.UI
 
         void FlashLap(float lapTime, bool newBest)
         {
-            lapFlashLabel.text = $"LAP  {TimeFormat.Race(lapTime)}{(newBest ? "  ·  BEST" : "")}";
+            string what = race.Sectioned ? $"SECTION {Mathf.Max(1, race.Player.LapsCompleted)}" : "LAP";
+            lapFlashLabel.text = $"{what}  {TimeFormat.Race(lapTime)}{(newBest ? "  ·  BEST" : "")}";
             lapFlashLabel.color = newBest ? Theme.Orange : Theme.Ink;
             LapFlash.SetActive(true);
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.lap, 0.7f);

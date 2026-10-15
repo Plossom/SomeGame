@@ -38,6 +38,8 @@ namespace SomeGame.Race
 
         public RaceState State { get; private set; } = RaceState.Countdown;
         public int Laps => laps;
+        /// <summary>True when the race is a journey in sections instead of laps.</summary>
+        public bool Sectioned => track.Sections > 1;
         public RaceProgress Player { get; private set; }
         public IReadOnlyList<RaceProgress> Standings => _standings;
         public string TrackId => track.Layout.name;
@@ -78,7 +80,7 @@ namespace SomeGame.Race
             if (GameSession.Online && SomeGame.Online.OnlineRoom.Current != null && Level != null)
             {
                 track.SetLayout(Level.track);
-                laps = Level.laps;
+                laps = Level.RaceLaps;
                 Online = gameObject.AddComponent<SomeGame.Online.OnlineRace>();
                 Player = Online.Setup(this, player, rivals);
                 return;
@@ -87,7 +89,7 @@ namespace SomeGame.Race
             if (Level != null)
             {
                 track.SetLayout(Level.track);
-                laps = Level.laps;
+                laps = Level.RaceLaps;
                 rivalCount = Mathf.Min(Level.rivalCount, rivals.Count);
             }
 

@@ -50,7 +50,7 @@ namespace SomeGame.UI
             Theme.Hills(transform, palette);
             chapter.text = level != null ? level.chapter : "";
             title.text = level != null ? level.displayName.ToUpperInvariant() : "";
-            details.text = level != null ? $"{level.laps} laps  ·  {level.rivalCount} rivals" : "";
+            details.text = level != null ? $"{level.LapsText}  ·  {level.rivalCount} rivals" : "";
             preview.sprite = level != null ? level.preview : null;
             preview.enabled = preview.sprite != null;
             SetProgress(0f);

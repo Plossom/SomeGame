@@ -22,6 +22,10 @@ namespace SomeGame.Track
         public TrackPath Path => _path ??= Build();
         public float Length => Path.Length;
         public int CheckpointCount => layout.checkpointCount;
+        /// <summary>Sections of a journey track (1 for a circuit raced in laps).</summary>
+        public int Sections => layout.sections > 1 && layout.checkpointCount % layout.sections == 0 ? layout.sections : 1;
+        /// <summary>Checkpoints from one lap line (or section line) to the next.</summary>
+        public int CheckpointsPerLap => CheckpointCount / Sections;
 
         public float CheckpointDistance(int index) =>
             Mathf.Repeat(index, layout.checkpointCount) * Path.Length / layout.checkpointCount;

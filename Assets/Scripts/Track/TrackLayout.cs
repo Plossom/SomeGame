@@ -34,6 +34,9 @@ namespace SomeGame.Track
         [Min(0.25f)] public float sampleSpacing = 1f;
         [Tooltip("Checkpoints evenly spaced along the lap, checkpoint 0 is the start/finish line.")]
         [Min(2)] public int checkpointCount = 6;
+        [Tooltip("1 = a circuit raced in laps. 3 = one long journey in three sections: the loop is split into equal parts " +
+                 "and each section line counts like a lap line (Mario Kart style). checkpointCount must be a multiple of it.")]
+        [Min(1)] public int sections = 1;
         [Tooltip("Grass margin around the track before the invisible boundary wall.")]
         [Min(5f)] public float boundaryMargin = 25f;
 

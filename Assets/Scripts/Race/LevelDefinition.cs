@@ -41,6 +41,15 @@ namespace SomeGame.Race
         [Tooltip("Total race time (including penalties) for 1, 2 and 3 stars, in seconds. Must decrease.")]
         public float[] starTimes = { 75f, 68f, 63f };
 
+        /// <summary>True for a journey in sections (one long loop) instead of laps.</summary>
+        public bool Sectioned => track != null && track.sections > 1;
+
+        /// <summary>Laps raced: the sections of a journey track, else <see cref="laps"/>.</summary>
+        public int RaceLaps => Sectioned ? track.sections : laps;
+
+        /// <summary>"3 laps" or "3 sections".</summary>
+        public string LapsText => Sectioned ? $"{RaceLaps} sections" : (laps == 1 ? "1 lap" : $"{laps} laps");
+
         /// <summary>Stars for a finished race, by total time only (the place does not matter).</summary>
         public int StarsFor(bool won, float totalTime)
         {

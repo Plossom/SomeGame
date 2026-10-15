@@ -74,6 +74,8 @@ namespace SomeGame.UI
             var palette = Theme.OfLevel(level);
             Theme.RecolorAll(transform, Theme.Valley, palette);
             Theme.Hills(transform, palette);
+            var lapCaption = bestLapValue.transform.parent.Find("Label")?.GetComponent<TMP_Text>();
+            if (lapCaption != null) lapCaption.text = race.Sectioned ? "Best section" : "Best lap";
 
             raceLabel.text = level != null ? level.chapter : "TEST RACE";
             positionLabel.text = TimeFormat.Ordinal(position).ToUpperInvariant();
