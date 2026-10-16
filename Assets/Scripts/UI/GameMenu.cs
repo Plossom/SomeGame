@@ -62,9 +62,9 @@ namespace SomeGame.UI
 
         void Awake()
         {
-            // The menu (and its button) is plain black and grey, the same on every cup and in every race.
+            // The menu is plain black and grey, the same on every cup and in every race; its button wears the
+            // cup's colours like the other buttons beside it.
             Theme.RecolorAll(transform, Theme.Valley, Theme.Neutral);
-            if (openButton != null) Theme.RecolorAll(openButton.transform, Theme.Valley, Theme.Neutral);
             bool inRace = race != null;
             openButton.onClick.AddListener(Open);
             closeArea.onClick.AddListener(Close);

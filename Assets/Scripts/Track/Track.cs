@@ -370,6 +370,19 @@ namespace SomeGame.Track
             return false;
         }
 
+        public Vector2 CowPosition(TrackLayout.Cow cow) => Path.PointAt(cow.distance) + Path.NormalAt(cow.distance) * cow.lateral;
+
+        /// <summary>The cow a car at this point bumps into, or -1.</summary>
+        public int CowAt(Vector2 p, float carRadius = 0.9f)
+        {
+            for (int i = 0; i < layout.cows.Count; i++)
+            {
+                float r = layout.cows[i].radius + carRadius;
+                if ((p - CowPosition(layout.cows[i])).sqrMagnitude < r * r) return i;
+            }
+            return -1;
+        }
+
         /// <summary>The oil puddle under a point, if any.</summary>
         public bool IsOil(Vector2 p)
         {
@@ -392,6 +405,12 @@ namespace SomeGame.Track
                 float along = Path.DeltaDistance(distance, spot.distance);
                 if (along < -2.5f - spot.radius || along > ahead + spot.radius) continue;
                 if (Mathf.Abs(spot.lateral) < carHalfWidth + spot.radius + 0.3f) return true;
+            }
+            foreach (var cow in layout.cows)
+            {
+                float along = Path.DeltaDistance(distance, cow.distance);
+                if (along < -2.5f - cow.radius || along > ahead + cow.radius) continue;
+                if (Mathf.Abs(cow.lateral) < carHalfWidth + cow.radius + 0.3f) return true;
             }
             return false;
         }
@@ -457,7 +476,7 @@ namespace SomeGame.Track
             return false;
         }
 
-        static float DistanceToSegment(Vector2 p, Vector2 a, Vector2 b)
+        public static float DistanceToSegment(Vector2 p, Vector2 a, Vector2 b)
         {
             Vector2 ab = b - a;
             float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / Mathf.Max(1e-6f, ab.sqrMagnitude));

@@ -142,7 +142,9 @@ namespace SomeGame.UI
             Add(track.banks.Count > 0, "wall");
             Add(Has(TrackLayout.BranchKind.Ice), "ice");
             Add(track.rivers.Count > 0 || track.gaps.Count > 0, "ramp");
-            Add(track.bouncers.Count > 0, track.waterWorld || track.gaps.Count > 0 || track.rivers.Count > 0 ? "gummiboat" : "pad");
+            // Pads as the track draws them: gummi boats in the water, bouncy mushrooms on meadow ground.
+            Add(track.bouncers.Exists(b => Wet(track, b.position)), "gummiboat");
+            Add(track.bouncers.Exists(b => !Wet(track, b.position)), track.biome == TrackLayout.Biome.Meadow ? "mushroom" : "pad");
             Add(track.dashPanels.Count > 0, "dash");
             Add(track.penguins.Count > 0, "penguin");
             Add(track.geysers.Count > 0, "fish");
@@ -150,8 +152,28 @@ namespace SomeGame.UI
             Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Log), "log");
             Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.HayBale), "hay");
             Add(track.oil.Count > 0, "oil");
+            Add(track.cows.Count > 0, "cow");
+            Add(track.logJumps.Count > 0, "forestlog");
             Add(track.shortcuts.Count > 0, "shortcut");
             return keys;
+        }
+
+        static bool Wet(TrackLayout track, Vector2 p)
+        {
+            if (track.waterWorld) return true;
+            foreach (var lake in track.lakes)
+            {
+                Vector2 local = Quaternion.Euler(0f, 0f, -lake.angle) * (p - lake.center);
+                if (new Vector2(local.x / lake.radii.x, local.y / lake.radii.y).sqrMagnitude < 1f) return true;
+            }
+            foreach (var river in track.rivers)
+                for (int i = 1; i < river.points.Length; i++)
+                {
+                    Vector2 a = river.points[i - 1], ab = river.points[i] - a;
+                    float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / Mathf.Max(1e-6f, ab.sqrMagnitude));
+                    if (Vector2.Distance(p, a + ab * t) < river.width * 0.5f) return true;
+                }
+            return false;
         }
     }
 }

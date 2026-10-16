@@ -89,7 +89,7 @@ namespace SomeGame.Car
                 float h = _car.AirHeight;
                 if (visual != null) visual.localScale = BaseScale * Mathf.Lerp(1f, jumpScale, h);
                 if (shadow != null) shadow.localPosition = BaseShadow + jumpShadowLift * h;
-                float spin = Mathf.Clamp01((Time.time - _trickAt) / 0.45f);
+                float spin = Mathf.Clamp01((Time.time - _trickAt) / _car.TrickSpin);
                 if (visual != null) visual.localRotation = Quaternion.Euler(0f, 0f, spin < 1f ? 360f * (1f - (1f - spin) * (1f - spin)) : 0f);
                 _time = -1f;
                 return;

@@ -68,6 +68,8 @@ namespace SomeGame.Car
         public event Action IceRun;
         /// <summary>The car bumped into a penguin (and spins).</summary>
         public event Action PenguinHit;
+        /// <summary>Bumped into a cow on the road (its index in the layout).</summary>
+        public event Action<int> CowHit;
         /// <summary>The car drove over a dash panel (boost).</summary>
         public event Action DashPanel;
         float _logAt = -10f;
@@ -205,10 +207,12 @@ namespace SomeGame.Car
             if (!_car.IsSlipping)
             {
                 bool penguin = track.PenguinHit(position, Time.time);
-                if (penguin || track.IsOil(position) || track.FishHit(position, Time.time))
+                int cow = track.CowAt(position);
+                if (penguin || cow >= 0 || track.IsOil(position) || track.FishHit(position, Time.time))
                 {
                     _car.Slip(UnityEngine.Random.value < 0.5f ? -1 : 1);
                     if (penguin) PenguinHit?.Invoke();
+                    if (cow >= 0) CowHit?.Invoke(cow);
                 }
             }
             // Dash panel: a boost (once per panel).
@@ -310,14 +314,34 @@ namespace SomeGame.Car
             {
                 // Jump pad: throw the car towards the next pad, keeping how far off-centre it landed,
                 // so a sloppy first jump drifts further off with every hop.
-                Vector2 dir = (bouncer.target - bouncer.position).normalized;
+                Vector2 chord = bouncer.target - bouncer.position;
                 float padSpeed = Mathf.Max(_car.Body.linearVelocity.magnitude, 13f);
-                _car.Body.linearVelocity = dir * padSpeed;
-                _car.Body.rotation = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
-                transform.rotation = Quaternion.Euler(0f, 0f, _car.Body.rotation);
                 // Onto a roof: an aimed flight that lands exactly on it.
                 bool ontoRoof = _sensor.Track.BranchAt(bouncer.target, out _, out _, roofs: true, ground: false) >= 0;
-                _car.Launch(Vector2.Distance(bouncer.position, bouncer.target) / padSpeed, null, ontoRoof);
+                float heading = Mathf.Atan2(chord.y, chord.x) * Mathf.Rad2Deg - 90f, length = chord.magnitude;
+                float? landing = null;
+                if (!ontoRoof && _sensor.Track.BouncerAt(bouncer.target) == null)
+                {
+                    // Onto the road (not the next pad of a chain): an arc that lands on the target already pointing along the road (so a
+                    // hidden shortcut across a bend drops you straight back into the race).
+                    var path = _sensor.Track.Path;
+                    Vector2 along = path.TangentAt(path.Project(bouncer.target).Distance);
+                    float roadHeading = Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f;
+                    float turn = Mathf.DeltaAngle(heading, roadHeading);
+                    if (Mathf.Abs(turn) < 75f && Mathf.Abs(turn) > 3f)
+                    {
+                        // On a circular arc the chord points halfway between the take-off and landing headings.
+                        float half = Mathf.Abs(turn) * Mathf.Deg2Rad;
+                        length *= half / Mathf.Sin(half); // and the arc is a little longer than the chord
+                        landing = roadHeading;
+                        heading -= turn;
+                    }
+                }
+                Vector2 dir = new(Mathf.Cos((heading + 90f) * Mathf.Deg2Rad), Mathf.Sin((heading + 90f) * Mathf.Deg2Rad));
+                _car.Body.linearVelocity = dir * padSpeed;
+                _car.Body.rotation = heading;
+                transform.rotation = Quaternion.Euler(0f, 0f, heading);
+                _car.Launch(length / padSpeed, null, ontoRoof, landing);
                 AnyBounce?.Invoke(bouncer.position);
                 return;
             }

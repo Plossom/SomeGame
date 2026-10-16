@@ -39,6 +39,7 @@ namespace SomeGame.EditorTools
             Write("RoofLand", RoofLand());
             Write("WallWhoosh", WallWhoosh());
             Write("Penguin", Penguin());
+            Write("Moo", Moo());
             Write("DashPanel", DashPanel());
             Write("SnowPoof", SnowPoof());
             Write("Unlock", Unlock());
@@ -187,6 +188,29 @@ namespace SomeGame.EditorTools
                 s[i] = nasal * env;
             }
             return Normalize(s, 0.6f);
+        }
+
+        // A grumpy cow: a low, nasal "mmmoooh" sliding down, the mouth opening from hum to vowel.
+        static float[] Moo()
+        {
+            int n = (int)(1.0f * Rate);
+            var s = new float[n];
+            var low = new BandPass(400f, 1.2f);
+            var high = new BandPass(900f, 2f);
+            double phase = 0;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                float env = Mathf.Clamp01(t / 0.08f) * Mathf.Clamp01((1f - t) / 0.3f);
+                float f = 150f - 45f * t + 4f * Mathf.Sin(2f * Mathf.PI * 5.5f * t);
+                phase += f / Rate;
+                float saw = (float)(phase % 1.0) * 2f - 1f;
+                float open = Mathf.Clamp01((t - 0.12f) / 0.35f); // the hum opens into "ooh"
+                low.SetFrequency(Mathf.Lerp(300f, 520f, open));
+                high.SetFrequency(Mathf.Lerp(700f, 1050f, open));
+                s[i] = (low.Process(saw) * 1.2f + high.Process(saw) * 0.5f * open) * env;
+            }
+            return Normalize(s, 0.7f);
         }
 
         // Over a dash panel: an electric zap chirping up, with a shimmer.

@@ -97,6 +97,13 @@ namespace SomeGame.Car
         public bool IsAirborne => IsPuppet ? _puppetAir > 0f : _airTimer > 0f;
         /// <summary>0 at take-off and landing, 1 at the top of the jump.</summary>
         bool _airLocked;
+        // A curved flight: the heading turns from the take-off heading to this one by the landing.
+        float? _airTurnTo;
+        float _airTurnFrom;
+        /// <summary>Seconds left until this car lands (0 on the ground).</summary>
+        public float AirTimeLeft => IsPuppet || !IsAirborne ? 0f : _airTimer;
+        /// <summary>How long the current trick's spin lasts: it always ends before the car lands.</summary>
+        public float TrickSpin { get; private set; } = 0.45f;
         public float AirHeight => IsPuppet ? _puppetAir : IsAirborne ? Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration)) : 0f;
         public bool IsSlipping => _slipTimer > 0f;
         /// <summary>Strength (0..1) of the boost currently running.</summary>
@@ -353,9 +360,10 @@ namespace SomeGame.Car
         /// Sends the car into the air (off a ramp) for <paramref name="duration"/> seconds. With a
         /// direction, the car is turned to fly that way (big shortcut ramps).
         /// </summary>
-        public void Launch(float duration, Vector2? direction = null, bool locked = false)
+        public void Launch(float duration, Vector2? direction = null, bool locked = false, float? landingHeading = null)
         {
             if (IsPuppet || IsAirborne || duration <= 0f) return;
+            _airTurnTo = landingHeading;
             EndDrift();
             _trick = false;
             _exitTimer = _calmTimer = 0f;
@@ -368,6 +376,7 @@ namespace SomeGame.Car
                 _body.linearVelocity = dir * _body.linearVelocity.magnitude;
             }
             _airDuration = _airTimer = duration;
+            _airTurnFrom = _body.rotation;
             _body.angularVelocity = 0f;
             if (_collider != null) _collider.enabled = false; // flies over cars and scenery
             Launched?.Invoke(duration);
@@ -380,14 +389,21 @@ namespace SomeGame.Car
             _airTimer -= dt;
             // A trick: the hop button pressed in the air (not right at take-off, not just before landing).
             bool held = ControlsEnabled && _input != null && _input.DriftHeld;
-            if (held && !_driftHeldLastStep && !_trick && _airDuration - _airTimer > 0.1f && _airTimer > 0.2f)
+            if (held && !_driftHeldLastStep && !_trick && _airDuration - _airTimer > 0.1f && _airTimer > 0.3f)
             {
                 _trick = true;
+                TrickSpin = Mathf.Min(0.45f, _airTimer - 0.06f);
                 TrickStarted?.Invoke();
             }
             _driftHeldLastStep = held;
-            Vector2 steer = ControlsEnabled && _input != null && !_airLocked ? _input.SteerDirection : Vector2.zero;
-            if (steer.sqrMagnitude > 0.0001f)
+            Vector2 steer = ControlsEnabled && _input != null && !_airLocked && !_airTurnTo.HasValue ? _input.SteerDirection : Vector2.zero;
+            if (_airTurnTo.HasValue)
+            {
+                // Curving round onto the road it lands on.
+                float goal = Mathf.LerpAngle(_airTurnFrom, _airTurnTo.Value, 1f - Mathf.Max(0f, _airTimer - dt) / _airDuration);
+                _body.angularVelocity = Mathf.DeltaAngle(_body.rotation, goal) / dt;
+            }
+            else if (steer.sqrMagnitude > 0.0001f)
             {
                 float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(steer));
                 _body.angularVelocity = Mathf.Clamp(delta, -stats.turnRate * stats.airSteering * dt, stats.turnRate * stats.airSteering * dt) / dt;

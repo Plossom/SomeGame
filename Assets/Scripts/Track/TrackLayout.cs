@@ -72,6 +72,22 @@ namespace SomeGame.Track
         [Tooltip("Logs across the road with a little ramp before them: jump them, or bump into them (forest).")]
         public List<float> logJumps = new();
 
+        /// <summary>A cow resting on the road: bump into it and you spin (like oil).</summary>
+        [Serializable]
+        public class Cow
+        {
+            public float distance;
+            [Tooltip("Sideways offset from the centre line (positive = left).")]
+            public float lateral;
+            [Tooltip("Degrees, relative to the driving direction.")]
+            public float angle;
+            [Min(0.5f)] public float radius = 1.2f;
+        }
+        [Tooltip("Cows chilling on the road (farm).")]
+        public List<Cow> cows = new();
+        [Tooltip("Wooden fences along both sides of the road on these stretches (lap distances from, to).")]
+        public List<Vector2> fences = new();
+
         public enum FloorKind { Parquet, Tiles, Carpet, Planks }
         public enum RoofKind { Red, Blue }
 

@@ -49,16 +49,29 @@ namespace SomeGame.Input
 
         bool _trickPress, _wasAirborne;
         float _airStart;
+        Vector2 _airAim;
         int _jumps;
 
         void LateUpdate()
         {
             if (_car == null) return;
             bool air = _car.IsAirborne;
-            if (air && !_wasAirborne) { _airStart = Time.time; _jumps++; }
+            if (air && !_wasAirborne)
+            {
+                _airStart = Time.time;
+                _jumps++;
+                // In the air, aim for one point past the landing and turn smoothly towards it (no wobbling).
+                if (_sensor.Track != null)
+                {
+                    var path = _sensor.Track.Path;
+                    float land = _sensor.Current.Distance + Mathf.Max(0f, _car.ForwardSpeed) * _car.AirTimeLeft + 8f;
+                    _airAim = path.PointAt(land) + path.NormalAt(land) * Mathf.Clamp(_sensor.Current.Lateral, -1.5f, 1.5f);
+                }
+            }
             _wasAirborne = air;
             float since = Time.time - _airStart;
-            _trickPress = air && since > 0.15f && since < 0.3f && Takes(1000 + _jumps);
+            // Only on jumps long enough for the whole spin.
+            _trickPress = air && since > 0.15f && since < 0.3f && _car.AirTimeLeft > 0.5f && Takes(1000 + _jumps);
         }
 
         public float CornerGrip
@@ -153,6 +166,7 @@ namespace SomeGame.Input
                     break;
                 }
             }
+            if (_car.IsAirborne && _wasAirborne) aim = _airAim;
             SteerDirection = (aim - _car.Body.position).normalized;
             Throttle = speed < targetSpeed - 0.3f ? 1f : speed > targetSpeed + 1.5f ? -1f : 0f;
         }
@@ -220,20 +234,23 @@ namespace SomeGame.Input
                 float dodge = Mathf.Clamp(at.Lateral > 0f ? at.Lateral - clear : at.Lateral + clear, -limit, limit);
                 lateral = Mathf.Lerp(lateral, dodge, Mathf.InverseLerp(oilLookAhead, oilLookAhead * 0.4f, to));
             }
-            // Steer around oil puddles ahead: pass on whichever side needs the smaller move.
+            // Steer around oil puddles and cows ahead: pass on whichever side needs the smaller move.
             var layout = _sensor.Track.Layout;
-            foreach (var spot in layout.oil)
-            {
-                float to = path.DeltaDistance(distance, spot.distance);
-                if (to < -1f || to > oilLookAhead) continue;
-                float clear = spot.radius + 1.5f;
-                if (Mathf.Abs(lateral - spot.lateral) >= clear) continue;
-                float limit = _sensor.Track.HalfWidthAt(spot.distance) - 0.9f;
-                float left = spot.lateral + clear, right = spot.lateral - clear;
-                float dodge = left > limit ? right : right < -limit ? left : (Mathf.Abs(left - lateral) < Mathf.Abs(right - lateral) ? left : right);
-                lateral = Mathf.Lerp(lateral, Mathf.Clamp(dodge, -limit, limit), Mathf.InverseLerp(oilLookAhead, oilLookAhead * 0.4f, to));
-            }
+            foreach (var spot in layout.oil) lateral = Dodge(path, distance, lateral, spot.distance, spot.lateral, spot.radius);
+            foreach (var cow in layout.cows) lateral = Dodge(path, distance, lateral, cow.distance, cow.lateral, cow.radius);
             return lateral;
+        }
+
+        float Dodge(TrackPath path, float distance, float lateral, float at, float spotLateral, float radius)
+        {
+            float to = path.DeltaDistance(distance, at);
+            if (to < -1f || to > oilLookAhead) return lateral;
+            float clear = radius + 1.5f;
+            if (Mathf.Abs(lateral - spotLateral) >= clear) return lateral;
+            float limit = _sensor.Track.HalfWidthAt(at) - 0.9f;
+            float left = spotLateral + clear, right = spotLateral - clear;
+            float dodge = left > limit ? right : right < -limit ? left : (Mathf.Abs(left - lateral) < Mathf.Abs(right - lateral) ? left : right);
+            return Mathf.Lerp(lateral, Mathf.Clamp(dodge, -limit, limit), Mathf.InverseLerp(oilLookAhead, oilLookAhead * 0.4f, to));
         }
 
         /// <summary>Fastest speed from which every corner in the scan range can still be taken.</summary>

@@ -194,6 +194,7 @@ namespace SomeGame.Track
                     if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     if (InShortcutPath(p, size)) continue;
                     if (OnBranch(p, size)) continue;
+                    if (NearPad(layout, p, size, kind.canopy)) continue;
                     if (track.BankAt(projection.Distance, projection.Lateral - Mathf.Sign(projection.Lateral) * (size * 0.5f + 1f), out _) != null) continue; // banked walls stay clear
                     float r = size * 0.45f;
                     var layer = kind.canopy ? crownsPlaced : placed; // crowns overlap the trees below, not each other
@@ -277,6 +278,18 @@ namespace SomeGame.Track
         {
             float from = Mathf.Repeat(range.x, length), to = Mathf.Repeat(range.y, length);
             return from <= to ? d >= from && d <= to : d >= from || d <= to;
+        }
+
+        // Jump pads stay clear, and no tree crown hangs over a pad's flight (a gap in the treetops that
+        // gives a hidden shortcut away to those who look).
+        static bool NearPad(TrackLayout layout, Vector2 p, float size, bool canopy)
+        {
+            foreach (var b in layout.bouncers)
+            {
+                if ((p - b.position).magnitude < b.radius + size * 0.5f + 1f) return true;
+                if (canopy && b.HasTarget && Track.DistanceToSegment(p, b.position, b.target) < size * 0.45f + 1.5f) return true;
+            }
+            return false;
         }
 
         // The other ways round stay clear too (ice: also its frozen margin).

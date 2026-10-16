@@ -43,6 +43,8 @@ namespace SomeGame.EditorTools
 
             World("WindmillTower", 256, 256, WindmillTower, 128, false);
             World("Sheep", 128, 128, Sheep, 128, false);
+            World("Cow", 160, 256, Cow, 128, false);
+            World("Fence", 256, 64, Fence, 128, false);
             World("Boulder", 160, 160, Boulder, 128, false);
             World("WindmillSails", 512, 512, WindmillSails, 128, false);
             World("MineLoco", 192, 320, MineLoco, 128, false);
@@ -246,6 +248,61 @@ namespace SomeGame.EditorTools
             c = Over(c, Hex("2E2A28"), Fill(Ellipse(x, y, 48, 98, 8, 4)));
             c = Over(c, Hex("2E2A28"), Fill(Ellipse(x, y, 80, 98, 8, 4)));
             c = Over(c, Outline, Stroke(wool, 3f) * 0.7f);
+            return c;
+        }
+
+        // A black-and-white cow from above, lying down for a rest, head (+Y) a little to one side.
+        static Color Cow(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float Body(float ox, float oy) => SMin(Ellipse(x, y, 80 + ox, 104 + oy, 50, 78), Circle(x, y, 80 + ox, 60 + oy, 44), 20f);
+            c = Over(c, Shadow, Soft(Body(10, -10), 10f));
+            float body = Body(0, 0);
+            c = Over(c, Hex("F6F3EC"), Fill(body));
+            c = Over(c, Hex("FFFFFF"), Fill(Circle(x, y, 66, 120, 30)) * Fill(body + 8f));
+            // Black patches (fixed blobs so every cow looks the same and reads well).
+            float patches = Min(Ellipse(x, y, 58, 130, 22, 30), Ellipse(x, y, 104, 88, 20, 26), Circle(x, y, 70, 58, 18), Ellipse(x, y, 100, 150, 14, 12));
+            c = Over(c, Hex("2C2A2B"), Fill(patches + (N(x, y, 10) - 0.5f) * 8f) * Fill(body + 2f));
+            // The tail curled beside her.
+            c = Over(c, Hex("2C2A2B"), Fill(Capsule(x, y, 92, 26, 122, 16, 4f)));
+            c = Over(c, Hex("2C2A2B"), Fill(Circle(x, y, 124, 15, 7f)));
+            c = Over(c, Outline, Stroke(body, 4f) * 0.7f);
+            // The head: white with a black ear, a pink muzzle, little horns.
+            float head = RotRect(x, y, 86, 206, 26, 34, 18, 0.18f);
+            c = Over(c, Shadow, Soft(head + 4f, 8f));
+            c = Over(c, Hex("FFFFFF"), Fill(head));
+            c = Over(c, Hex("F2A9A4"), Fill(Ellipse(x, y, 90, 232, 20, 13)) * Fill(head + 1f));
+            c = Over(c, Hex("B86A66"), Fill(Circle(x, y, 82, 234, 3.5f)));
+            c = Over(c, Hex("B86A66"), Fill(Circle(x, y, 98, 232, 3.5f)));
+            float earL = Ellipse(x, y, 52, 192, 16, 8), earR = Ellipse(x, y, 120, 198, 16, 8);
+            c = Over(c, Hex("2C2A2B"), Fill(earL));
+            c = Over(c, Hex("F6F3EC"), Fill(earR));
+            c = Over(c, Outline, Stroke(earR, 3f) * 0.7f);
+            c = Over(c, Hex("E8D9B8"), Fill(Capsule(x, y, 68, 196, 62, 184, 5f)));
+            c = Over(c, Hex("E8D9B8"), Fill(Capsule(x, y, 104, 200, 112, 188, 5f)));
+            c = Over(c, Hex("2C2A2B"), Fill(Circle(x, y, 74, 212, 4f)));
+            c = Over(c, Hex("2C2A2B"), Fill(Circle(x, y, 100, 216, 4f)));
+            c = Over(c, Outline, Stroke(head, 4f) * 0.7f);
+            return c;
+        }
+
+        // One length of farm fence from above: two posts and two rails between them (laid along +X).
+        static Color Fence(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float rails = Min(RoundRect(x, y, 128, 24, 124, 5, 3), RoundRect(x, y, 128, 42, 124, 5, 3));
+            c = Over(c, Shadow, Soft(rails + 2f, 6f) * Fill(Circle(x, y, 128, 26, 400)));
+            c = Over(c, Hex("A87444"), Fill(rails));
+            c = Over(c, Hex("C99760"), Fill(RoundRect(x, y, 128, 26, 124, 1.5f, 1f)));
+            c = Over(c, Hex("C99760"), Fill(RoundRect(x, y, 128, 44, 124, 1.5f, 1f)));
+            c = Over(c, Outline, Stroke(rails, 2.5f) * 0.6f);
+            foreach (float px in new[] { 12f, 244f })
+            {
+                float post = RoundRect(x, y, px, 33, 11, 14, 4);
+                c = Over(c, Hex("8A5A32"), Fill(post));
+                c = Over(c, Hex("B0804E"), Fill(Circle(x, y, px - 2, 35, 6)));
+                c = Over(c, Outline, Stroke(post, 3f) * 0.7f);
+            }
             return c;
         }
 

@@ -36,6 +36,7 @@ namespace SomeGame.Audio
         public AudioClip roofLand;
         public AudioClip wallWhoosh;
         public AudioClip penguin;
+        public AudioClip moo;
         public AudioClip dashPanel;
         public AudioClip snowPoof;
         public AudioClip trick;

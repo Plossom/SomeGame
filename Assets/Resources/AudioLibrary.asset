@@ -35,6 +35,7 @@ MonoBehaviour:
   roofLand: {fileID: 8300000, guid: d3dcd522955b24db4ab402382c744dae, type: 3}
   wallWhoosh: {fileID: 8300000, guid: 04603ce7bd5884fc488b18d6b33338f7, type: 3}
   penguin: {fileID: 8300000, guid: b70d5c471b25d43d7a33608d382d77c1, type: 3}
+  moo: {fileID: 8300000, guid: ffda574ca3dcb4039b6f81b78d48abaf, type: 3}
   dashPanel: {fileID: 8300000, guid: 113118e44b7c84478b345138c11b3e61, type: 3}
   snowPoof: {fileID: 8300000, guid: 28f1b245dd5434c358564f58e38b4616, type: 3}
   trick: {fileID: 8300000, guid: 88f56a4d049c344ac874b295f2bc95d6, type: 3}

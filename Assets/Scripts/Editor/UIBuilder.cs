@@ -146,7 +146,6 @@ namespace SomeGame.EditorTools
 
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
-            menuButton.gameObject.AddComponent<KeepPalette>(); // like the menu itself
 
             // Stars and trophies (races won) on one small plate, its top level with the menu button.
             // Same size as the menu button.
@@ -495,7 +494,7 @@ namespace SomeGame.EditorTools
             {
                 ("roof", "RoofRow"), ("wall", "IceWall"), ("ice", "Ice"), ("ramp", "Ramp"), ("gummiboat", "Gummiboat"), ("pad", "JumpPad"),
                 ("dash", "DashPanel"), ("penguin", "Penguin"), ("fish", "Fish"), ("snowball", "Snowball"), ("log", "Log"), ("hay", "HayBale"),
-                ("oil", "Oil"), ("shortcut", "Arrow"),
+                ("oil", "Oil"), ("shortcut", "Arrow"), ("mushroom", "MushroomPad"), ("cow", "Cow"), ("forestlog", "ForestLog"),
             };
             var icons = wso.FindProperty("icons");
             icons.arraySize = iconList.Length;
@@ -1279,6 +1278,7 @@ namespace SomeGame.EditorTools
                 ("locoSprite", Sprite("MineLoco")), ("wagonSprite", Sprite("MineWagon")), ("crossingSprite", Sprite("CrossingLight")),
                 ("barrierSprite", Sprite("Barrier")), ("lampSprite", Sprite("SparkDot")), ("railsMaterial", Mat("Rails")),
                 ("logSprite", Sprite("ForestLog")), ("windmillTowerSprite", Sprite("WindmillTower")), ("windmillSailsSprite", Sprite("WindmillSails")),
+                ("cowSprite", Sprite("Cow")), ("fenceSprite", Sprite("Fence")),
                 ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),

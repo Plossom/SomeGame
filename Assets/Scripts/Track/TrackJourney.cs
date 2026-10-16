@@ -21,14 +21,20 @@ namespace SomeGame.Track
         [SerializeField] Material toyRailsMaterial;
         [SerializeField] Sprite logSprite;
         [SerializeField] Sprite windmillTowerSprite, windmillSailsSprite;
+        [SerializeField] Sprite cowSprite, fenceSprite;
         [SerializeField] Material particleMaterial;
         [SerializeField] TMP_FontAsset font;
         [SerializeField] int overheadOrder = 40;
+        // Painted on the road: above the road, its lines and the boost pads, below walls and cars.
+        const int GroundOrder = -45;
 
         readonly List<GameObject> _spawned = new();
         readonly List<Arch> _arches = new();
         readonly List<Crossing> _crossings = new();
         readonly List<Transform> _sails = new();
+        readonly List<CowView> _cows = new();
+        readonly List<SomeGame.Car.CarTerrain> _listening = new();
+        float _carsCheckedAt = -10f;
         SomeGame.Race.RaceManager _race;
 
         class Arch
@@ -37,6 +43,13 @@ namespace SomeGame.Track
             public Transform Banner;
             public ParticleSystem Confetti;
             public float PoppedAt = -10f;
+        }
+
+        class CowView
+        {
+            public Transform Visual;
+            public float Phase, StartledAt = -10f;
+            public float Angle, Scale;
         }
 
         class Crossing
@@ -65,18 +78,106 @@ namespace SomeGame.Track
         {
             if (track != null) track.Rebuilt -= Build;
             if (_race != null) _race.PlayerLapCompleted -= OnPlayerSection;
+            foreach (var t in _listening) if (t != null) t.CowHit -= OnCowHit;
         }
 
         void Build()
         {
             foreach (var go in _spawned) if (go != null) Destroy(go);
-            _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear();
+            _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear(); _cows.Clear();
             var layout = track.Layout;
             if (layout == null) return;
             if (track.Sections > 1) BuildArches();
             foreach (var train in layout.trains) BuildCrossing(train);
             if (logSprite != null && layout.logJumps != null) foreach (float log in layout.logJumps) BuildLog(log);
             foreach (var prop in layout.props) BuildProp(prop);
+            if (fenceSprite != null && layout.fences != null) foreach (var stretch in layout.fences) BuildFence(stretch);
+            if (cowSprite != null && layout.cows != null) foreach (var cow in layout.cows) BuildCow(cow);
+        }
+
+        // ------------------------------------------------------------------ farm
+
+        // Wooden fence along both sides of the road, a little off the kerb; left open wherever it would stand on
+        // another piece of road, in water or right beside a branch's mouth.
+        void BuildFence(Vector2 stretch)
+        {
+            var path = track.Path;
+            const float Step = 2.6f;
+            float span = Mathf.Repeat(stretch.y - stretch.x, path.Length);
+            foreach (float side in new[] { -1f, 1f })
+            {
+                Vector2? last = null;
+                for (float k = 0f; k <= span; k += Step)
+                {
+                    float d = path.WrapDistance(stretch.x + k);
+                    Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 1.2f);
+                    if (!FenceFits(p)) { last = null; continue; }
+                    if (last.HasValue)
+                    {
+                        Vector2 a = last.Value, along = p - a;
+                        if (along.magnitude < Step * 1.6f)
+                        {
+                            var sr = Sprite("Fence", fenceSprite, transform, (a + p) * 0.5f, 1f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg, 7);
+                            float unit = fenceSprite.bounds.size.x;
+                            sr.transform.localScale = new Vector3(along.magnitude / unit * 1.06f, 2.2f, 1f);
+                        }
+                    }
+                    last = p;
+                }
+            }
+        }
+
+        bool FenceFits(Vector2 p)
+        {
+            var at = track.Path.Project(p);
+            if (Mathf.Abs(at.Lateral) < track.OffRoadAt(at.Distance) + 0.6f) return false; // another stretch of the road
+            if (track.WaterDistance(p) < 1.5f) return false;
+            if (track.BranchAt(p, out _, out _) >= 0) return false;
+            foreach (var branch in track.Layout.branches)
+                foreach (float end in new[] { branch.from, branch.to })
+                    if (Mathf.Abs(track.Path.DeltaDistance(end, at.Distance)) < 10f) return false;
+            foreach (var b in track.Layout.bouncers)
+                if ((b.position - p).sqrMagnitude < 25f) return false;
+            return true;
+        }
+
+        void BuildCow(TrackLayout.Cow cow)
+        {
+            var path = track.Path;
+            Vector2 tangent = path.TangentAt(cow.distance);
+            float angle = Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f + cow.angle;
+            var root = new GameObject("Cow").transform;
+            root.SetParent(transform, false);
+            root.position = track.CowPosition(cow);
+            _spawned.Add(root.gameObject);
+            var sr = Sprite("Visual", cowSprite, root, Vector2.zero, cow.radius * 2.6f, angle, 9);
+            _cows.Add(new CowView { Visual = sr.transform, Phase = Random.value * 10f, Angle = angle, Scale = sr.transform.localScale.x });
+        }
+
+        void OnCowHit(int index)
+        {
+            if (index >= 0 && index < _cows.Count) _cows[index].StartledAt = Time.time;
+        }
+
+        // Cows breathe slowly; bumped, one jumps up with a start and shakes its head.
+        void UpdateCows()
+        {
+            if (_cows.Count == 0) return;
+            if (Time.time - _carsCheckedAt > 1f)
+            {
+                _carsCheckedAt = Time.time;
+                foreach (var t in FindObjectsByType<SomeGame.Car.CarTerrain>())
+                    if (!_listening.Contains(t)) { _listening.Add(t); t.CowHit += OnCowHit; }
+            }
+            foreach (var cow in _cows)
+            {
+                float since = Time.time - cow.StartledAt;
+                float hop = since < 0.7f ? Mathf.Sin(since / 0.7f * Mathf.PI) : 0f;
+                float wiggle = since < 1.1f ? Mathf.Sin(since * 30f) * (1f - since / 1.1f) * 14f : 0f;
+                float breathe = 1f + Mathf.Sin(Time.time * 1.6f + cow.Phase) * 0.018f;
+                cow.Visual.localScale = Vector3.one * (cow.Scale * breathe * (1f + hop * 0.22f));
+                cow.Visual.localRotation = Quaternion.Euler(0f, 0f, cow.Angle + wiggle);
+            }
         }
 
         // ------------------------------------------------------------------ section arches
@@ -96,29 +197,26 @@ namespace SomeGame.Track
                 root.SetParent(transform, false);
                 root.position = centre;
                 _spawned.Add(root.gameObject);
-                // Two stone pillars at the road's edges.
+                // Two stone pillars at the road's edges (beside the road, so no car passes under them).
                 foreach (float side in new[] { -1f, 1f })
-                    Sprite("Pillar", pillarSprite, root, normal * side * half, 2.6f, angle, overheadOrder);
-                // The banner across: its shadow on the road, the board, a checkered stripe, the words.
+                    Sprite("Pillar", pillarSprite, root, normal * side * half, 2.6f, angle, GroundOrder + 50);
+                // The line is painted on the road, under the cars: a dark band, a checkered stripe, the words.
                 var banner = new GameObject("Banner").transform;
                 banner.SetParent(root, false);
                 banner.localRotation = Quaternion.Euler(0f, 0f, angle);
-                var shadow = Sprite("Shadow", bannerSprite, root, new Vector2(0.7f, -1.1f), 1f, angle, -40);
-                shadow.color = new Color(0f, 0f, 0f, 0.22f);
-                shadow.transform.localScale = new Vector3(half * 2f / BannerSize, 1.9f / BannerSize, 1f);
-                var board = Sprite("Board", bannerSprite, banner, Vector2.zero, 1f, 0f, overheadOrder + 1);
-                board.color = new Color(0.09f, 0.24f, 0.2f);
+                var board = Sprite("Board", bannerSprite, banner, Vector2.zero, 1f, 0f, GroundOrder);
+                board.color = new Color(0.09f, 0.24f, 0.2f, 0.92f);
                 board.transform.localScale = new Vector3(half * 2f / BannerSize, 1.9f / BannerSize, 1f);
                 int squares = Mathf.RoundToInt(half * 2f / 0.5f);
                 for (int s = 0; s < squares; s++)
                     for (int r = 0; r < 2; r++)
                     {
                         if ((s + r) % 2 == 0) continue;
-                        var sq = Sprite("Check", bannerSprite, banner, new Vector2(-half + (s + 0.5f) * (half * 2f / squares), -0.62f - r * 0.24f), 1f, 0f, overheadOrder + 2);
+                        var sq = Sprite("Check", bannerSprite, banner, new Vector2(-half + (s + 0.5f) * (half * 2f / squares), -0.62f - r * 0.24f), 1f, 0f, GroundOrder + 2);
                         sq.color = Color.white;
                         sq.transform.localScale = new Vector3((half * 2f / squares) / BannerSize, 0.24f / BannerSize, 1f);
                     }
-                var stripe = Sprite("Stripe", bannerSprite, banner, new Vector2(0f, -0.74f), 1f, 0f, overheadOrder + 1);
+                var stripe = Sprite("Stripe", bannerSprite, banner, new Vector2(0f, -0.74f), 1f, 0f, GroundOrder + 1);
                 stripe.color = new Color(0.12f, 0.12f, 0.13f);
                 stripe.transform.localScale = new Vector3(half * 2f / BannerSize, 0.5f / BannerSize, 1f);
                 if (font != null)
@@ -134,7 +232,7 @@ namespace SomeGame.Track
                     text.alignment = TextAlignmentOptions.Center;
                     text.color = k == 0 ? new Color(1f, 0.78f, 0.25f) : new Color(0.96f, 0.9f, 0.78f);
                     text.rectTransform.sizeDelta = new Vector2(half * 2f, 1.4f);
-                    text.sortingOrder = overheadOrder + 3;
+                    text.sortingOrder = GroundOrder + 3;
                 }
                 var confetti = Confetti(centre);
                 _arches.Add(new Arch { Distance = d, Banner = banner, Confetti = confetti });
@@ -349,6 +447,7 @@ namespace SomeGame.Track
         {
             foreach (var s in _sails) s.Rotate(0f, 0f, -38f * Time.deltaTime);
             foreach (var c in _crossings) UpdateCrossing(c);
+            UpdateCows();
             foreach (var a in _arches)
             {
                 float k = (Time.time - a.PoppedAt) / 0.5f;
