@@ -1,0 +1,821 @@
+fileFormatVersion: 2
+guid: 9bab859a62b5942a2aba5e1086e66504
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8225700331380843650
+    second: SceneryAlpine_0
+  - first:
+      213: -7022056435774036960
+    second: SceneryAlpine_1
+  - first:
+      213: 3474798879788773670
+    second: SceneryAlpine_2
+  - first:
+      213: 1478536845068869184
+    second: SceneryAlpine_3
+  - first:
+      213: -6419453008646103809
+    second: SceneryAlpine_4
+  - first:
+      213: 81192530204806055
+    second: SceneryAlpine_5
+  - first:
+      213: -7081143813994323134
+    second: SceneryAlpine_6
+  - first:
+      213: -100887179950818094
+    second: SceneryAlpine_7
+  - first:
+      213: 8451767019769586746
+    second: SceneryAlpine_8
+  - first:
+      213: 7581958540902026343
+    second: SceneryAlpine_9
+  - first:
+      213: 2773576868328070872
+    second: SceneryAlpine_10
+  - first:
+      213: -5019966413179668486
+    second: SceneryAlpine_11
+  - first:
+      213: 7573222072369752986
+    second: SceneryAlpine_12
+  - first:
+      213: -7264272633810620666
+    second: SceneryAlpine_13
+  - first:
+      213: 7841196543617953369
+    second: SceneryAlpine_14
+  - first:
+      213: -4266788122873621125
+    second: SceneryAlpine_15
+  - first:
+      213: -2027607771041978925
+    second: SceneryAlpine_16
+  - first:
+      213: 7334661221365653973
+    second: SceneryAlpine_17
+  - first:
+      213: 3618011314753665973
+    second: SceneryAlpine_18
+  - first:
+      213: -5956646993794686255
+    second: SceneryAlpine_19
+  - first:
+      213: -3042701817043963497
+    second: SceneryAlpine_20
+  - first:
+      213: -3723439269943576217
+    second: SceneryAlpine_21
+  - first:
+      213: 216670300330182884
+    second: SceneryAlpine_22
+  - first:
+      213: -3921172796368196445
+    second: SceneryAlpine_23
+  - first:
+      213: 530561288665383830
+    second: SceneryAlpine_24
+  - first:
+      213: 4675570075586949964
+    second: SceneryAlpine_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryAlpine_0
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 1304
+        width: 144
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 284a4c8aede872270800000000000000
+      internalID: 8225700331380843650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_1
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 1296
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02461f840e4ac8e90800000000000000
+      internalID: -7022056435774036960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_2
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 1360
+        width: 209
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6213cbfbb27f83030800000000000000
+      internalID: 3474798879788773670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_3
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 1311
+        width: 191
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04e18ad4d61d48410800000000000000
+      internalID: 1478536845068869184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_4
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 1023
+        width: 142
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffc1657108589e6a0800000000000000
+      internalID: -6419453008646103809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_5
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 1058
+        width: 217
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7abc5411d24702100800000000000000
+      internalID: 81192530204806055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_6
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 1200
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 243e96bf739babd90800000000000000
+      internalID: -7081143813994323134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1092
+        width: 257
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dcf3a4f4a3999ef0800000000000000
+      internalID: -100887179950818094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_8
+      rect:
+        serializedVersion: 2
+        x: 794
+        y: 1148
+        width: 230
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a346ab93355ba4570800000000000000
+      internalID: 8451767019769586746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_9
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 1075
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76c443c3f17883960800000000000000
+      internalID: 7581958540902026343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 767
+        width: 257
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8de5fe97779bd7620800000000000000
+      internalID: 2773576868328070872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_11
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 808
+        width: 216
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af7b806e42f755ab0800000000000000
+      internalID: -5019966413179668486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_12
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 808
+        width: 216
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9b2fb4a95d791960800000000000000
+      internalID: 7573222072369752986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_13
+      rect:
+        serializedVersion: 2
+        x: 780
+        y: 779
+        width: 244
+        height: 211
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60f602ef68e103b90800000000000000
+      internalID: -7264272633810620666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_14
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 551
+        width: 203
+        height: 183
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95e6e5446b681dc60800000000000000
+      internalID: 7841196543617953369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_15
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 547
+        width: 201
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7513440fc259c4c0800000000000000
+      internalID: -4266788122873621125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_16
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 551
+        width: 250
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d5a837997d7cd3e0800000000000000
+      internalID: -2027607771041978925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_17
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 511
+        width: 257
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d125572583f9c560800000000000000
+      internalID: 7334661221365653973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_18
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 283
+        width: 235
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bb7c392f12c53230800000000000000
+      internalID: 3618011314753665973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_19
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 281
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d2287a6e1db55da0800000000000000
+      internalID: -5956646993794686255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_20
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 255
+        width: 191
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 791b8ad71d626c5d0800000000000000
+      internalID: -3042701817043963497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_21
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 269
+        width: 110
+        height: 210
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 769f54c26bfa35cc0800000000000000
+      internalID: -3723439269943576217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_22
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e8ce8c7d74c10300800000000000000
+      internalID: 216670300330182884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_23
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ac6c81fd123599c0800000000000000
+      internalID: -3921172796368196445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_24
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69349765eaeec5700800000000000000
+      internalID: 530561288665383830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAlpine_25
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 36
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c437ec52636f2e040800000000000000
+      internalID: 4675570075586949964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryAlpine_0: 8225700331380843650
+      SceneryAlpine_1: -7022056435774036960
+      SceneryAlpine_10: 2773576868328070872
+      SceneryAlpine_11: -5019966413179668486
+      SceneryAlpine_12: 7573222072369752986
+      SceneryAlpine_13: -7264272633810620666
+      SceneryAlpine_14: 7841196543617953369
+      SceneryAlpine_15: -4266788122873621125
+      SceneryAlpine_16: -2027607771041978925
+      SceneryAlpine_17: 7334661221365653973
+      SceneryAlpine_18: 3618011314753665973
+      SceneryAlpine_19: -5956646993794686255
+      SceneryAlpine_2: 3474798879788773670
+      SceneryAlpine_20: -3042701817043963497
+      SceneryAlpine_21: -3723439269943576217
+      SceneryAlpine_22: 216670300330182884
+      SceneryAlpine_23: -3921172796368196445
+      SceneryAlpine_24: 530561288665383830
+      SceneryAlpine_25: 4675570075586949964
+      SceneryAlpine_3: 1478536845068869184
+      SceneryAlpine_4: -6419453008646103809
+      SceneryAlpine_5: 81192530204806055
+      SceneryAlpine_6: -7081143813994323134
+      SceneryAlpine_7: -100887179950818094
+      SceneryAlpine_8: 8451767019769586746
+      SceneryAlpine_9: 7581958540902026343
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

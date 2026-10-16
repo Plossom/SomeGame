@@ -10,7 +10,7 @@ namespace SomeGame.EditorTools
     /// snow run-off, and a winter scenery atlas (12 cells of 256 px, 4 x 3), all seen from above.
     /// Writes into <see cref="ArtGenerator.Folder"/> with a material for each.
     /// </summary>
-    public static class WinterArt
+    public static partial class WinterArt
     {
         static readonly Color Outline = Hex("16283A");
         static readonly Color Shadow = new(0.12f, 0.2f, 0.36f, 0.3f);
