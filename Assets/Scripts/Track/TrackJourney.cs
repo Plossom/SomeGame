@@ -26,6 +26,8 @@ namespace SomeGame.Track
         [SerializeField] Sprite coasterCarSprite;
         [SerializeField] Sprite bridgeLeafSprite, stoneBridgeSprite, ringSprite, lanternSprite, floatLanternSprite, glowSprite, headlightSprite;
         [SerializeField] Material waterfallMaterial;
+        [Tooltip("The things on the lake, by TrackLayout.BoatKind.")]
+        [SerializeField] Sprite[] boatSprites;
         [SerializeField] Material coasterRailsMaterial;
         [SerializeField] Material particleMaterial;
         [SerializeField] TMP_FontAsset font;
@@ -46,6 +48,7 @@ namespace SomeGame.Track
         readonly List<FallView> _falls = new();
         readonly List<(SpriteRenderer glow, float strength)> _glows = new();
         readonly List<(Transform t, Vector2 home, float phase)> _floaters = new();
+        readonly List<BoatView> _boats = new();
         readonly Dictionary<SomeGame.Car.CarMovement, SpriteRenderer> _headlights = new();
         SpriteRenderer _night;
         ParticleSystem _skyLanterns, _fireflies;
@@ -103,6 +106,13 @@ namespace SomeGame.Track
             public float Angle, Scale;
         }
 
+        class BoatView
+        {
+            public Transform Visual;
+            public TrackLayout.Boat Data;
+            public float Phase, Scale, Turn;
+        }
+
         class Crossing
         {
             public TrackLayout.Train Data;
@@ -136,7 +146,7 @@ namespace SomeGame.Track
         {
             foreach (var go in _spawned) if (go != null) Destroy(go);
             _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear(); _cows.Clear(); _spinners.Clear(); _coasters.Clear(); _fireworks = null;
-            _drawbridges.Clear(); _rings.Clear(); _falls.Clear(); _glows.Clear(); _floaters.Clear(); _headlights.Clear();
+            _drawbridges.Clear(); _rings.Clear(); _falls.Clear(); _glows.Clear(); _floaters.Clear(); _headlights.Clear(); _boats.Clear();
             _night = null; _skyLanterns = _fireflies = null;
             var layout = track.Layout;
             if (layout == null) return;
@@ -156,6 +166,7 @@ namespace SomeGame.Track
             if (ringSprite != null && layout.rings != null) foreach (var ring in layout.rings) BuildRing(ring);
             if (waterfallMaterial != null && layout.waterfalls != null) foreach (var fall in layout.waterfalls) BuildWaterfall(fall);
             if (layout.dusk) BuildDusk();
+            if (layout.boats != null && boatSprites != null) foreach (var boat in layout.boats) BuildBoat(boat);
             if (cowSprite != null && layout.cows != null) foreach (var cow in layout.cows) BuildCow(cow);
         }
 
@@ -934,6 +945,49 @@ namespace SomeGame.Track
             }
         }
 
+        // ------------------------------------------------------------------ the lake
+
+        // On the water, above the lake and below the cars: boats drift round slow circles, everything bobs.
+        void BuildBoat(TrackLayout.Boat boat)
+        {
+            int k = (int)boat.kind;
+            if (k >= boatSprites.Length || boatSprites[k] == null) return;
+            float size = boat.kind switch
+            {
+                TrackLayout.BoatKind.Sailboat => 6.5f,
+                TrackLayout.BoatKind.Rowboat => 4f,
+                TrackLayout.BoatKind.SwanBoat => 4.2f,
+                TrackLayout.BoatKind.Buoy => 1.6f,
+                _ => 4.4f,
+            };
+            var sr = Sprite(boat.kind.ToString(), boatSprites[k], transform, boat.position, size, boat.angle, -43);
+            // The ducks' picture heads along +x, the boats' along +y.
+            float turn = boat.kind == TrackLayout.BoatKind.Ducks ? 0f : -90f;
+            _boats.Add(new BoatView { Visual = sr.transform, Data = boat, Phase = boat.position.x * 0.37f + boat.position.y * 0.11f, Scale = sr.transform.localScale.x, Turn = turn });
+        }
+
+        void UpdateBoats()
+        {
+            float t = Time.time;
+            foreach (var b in _boats)
+            {
+                if (b.Visual == null) continue;
+                float bob = Mathf.Sin(t * 1.3f + b.Phase);
+                b.Visual.localScale = Vector3.one * (b.Scale * (1f + bob * 0.015f));
+                if (b.Data.drift <= 0f)
+                {
+                    b.Visual.rotation = Quaternion.Euler(0f, 0f, b.Data.angle + bob * 3f);
+                    continue;
+                }
+                // Round a circle (anticlockwise), about 2 m/s, pointing where it goes.
+                float a = b.Phase + t * 2f / b.Data.drift;
+                Vector2 centre = b.Data.position;
+                b.Visual.position = centre + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * b.Data.drift;
+                float heading = a * Mathf.Rad2Deg + 90f;
+                b.Visual.rotation = Quaternion.Euler(0f, 0f, heading + b.Turn + bob * 2f);
+            }
+        }
+
         // ------------------------------------------------------------------ every frame
 
         void Update()
@@ -947,6 +1001,7 @@ namespace SomeGame.Track
             UpdateRings();
             UpdateFalls();
             UpdateDusk();
+            UpdateBoats();
             foreach (var (t, speed) in _spinners) if (t != null) t.Rotate(0f, 0f, speed * Time.deltaTime);
             foreach (var a in _arches)
             {

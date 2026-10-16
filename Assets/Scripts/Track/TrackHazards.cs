@@ -70,9 +70,10 @@ namespace SomeGame.Track
 
             foreach (var b in layout.bouncers)
             {
-                bool dry = jumpPadSprite != null && !track.IsWater(b.position);
+                bool orange = layout.padLook == TrackLayout.PadLook.Orange;
+                bool dry = jumpPadSprite != null && (orange || !track.IsWater(b.position));
                 bool trampoline = dry && trampolineSprite != null && layout.padLook == TrackLayout.PadLook.Trampoline;
-                bool mushroom = dry && !trampoline && mushroomPadSprite != null && layout.biome == TrackLayout.Biome.Meadow;
+                bool mushroom = dry && !trampoline && !orange && mushroomPadSprite != null && layout.biome == TrackLayout.Biome.Meadow;
                 var sr = Sprite(trampoline ? "Trampoline" : mushroom ? "MushroomPad" : dry ? "JumpPad" : "Gummiboat",
                     trampoline ? trampolineSprite : mushroom ? mushroomPadSprite : dry ? jumpPadSprite : gummiboatSprite,
                     b.position, b.radius * (mushroom || trampoline ? 2.4f : 2.15f), 0f, sortingOrder - 2);

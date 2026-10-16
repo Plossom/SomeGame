@@ -1274,6 +1274,9 @@ namespace SomeGame.EditorTools
             hso.ApplyModifiedPropertiesWithoutUndo();
             var journey = track.GetComponent<SomeGame.Track.TrackJourney>();
             if (journey == null) journey = track.gameObject.AddComponent<SomeGame.Track.TrackJourney>();
+            var jso = new SerializedObject(journey);
+            SetArray(jso, "boatSprites", new[] { Sprite("Sailboat"), Sprite("Rowboat"), Sprite("SwanBoat"), Sprite("MarkerBuoy"), Sprite("Ducks") });
+            jso.ApplyModifiedPropertiesWithoutUndo();
             Material particles = hazards != null ? new SerializedObject(hazards).FindProperty("particleMaterial").objectReferenceValue as Material : null;
             Configure(journey, ("track", track), ("pillarSprite", Sprite("ArchPillar")), ("bannerSprite", Sprite("Banner")),
                 ("locoSprite", Sprite("MineLoco")), ("wagonSprite", Sprite("MineWagon")), ("crossingSprite", Sprite("CrossingLight")),

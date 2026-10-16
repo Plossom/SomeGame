@@ -117,9 +117,24 @@ namespace SomeGame.Track
         public List<Coaster> coasters = new();
         [Tooltip("Strings of pennants along both sides of the road on these stretches (lap distances from, to).")]
         public List<Vector2> buntings = new();
-        public enum PadLook { Auto, Trampoline }
-        [Tooltip("How the jump pads on dry ground look (Auto: mushrooms in the meadows, jump pads elsewhere).")]
+        public enum PadLook { Auto, Trampoline, Orange }
+        [Tooltip("How the jump pads look (Auto: mushrooms in the meadows, jump pads elsewhere, gummi boats in the water; " +
+                 "Orange: the orange jump pads everywhere, on the water too).")]
         public PadLook padLook;
+        public enum BoatKind { Sailboat, Rowboat, SwanBoat, Buoy, Ducks }
+        /// <summary>Something on the lake: a boat, a buoy, a duck family.</summary>
+        [Serializable]
+        public class Boat
+        {
+            public BoatKind kind;
+            public Vector2 position;
+            [Tooltip("Degrees.")]
+            public float angle;
+            [Tooltip("Goes slowly round a circle this big (0 = stays where it is, bobbing).")]
+            public float drift;
+        }
+        [Tooltip("Boats, buoys and ducks on the lakes.")]
+        public List<Boat> boats = new();
         [Tooltip("Fireworks over the scenery, away from the road.")]
         public bool fireworks;
 

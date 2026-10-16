@@ -1,0 +1,1029 @@
+fileFormatVersion: 2
+guid: 9870add9c1de5477aa68a91f9217f4b1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3212995940375418661
+    second: SceneryLake_0
+  - first:
+      213: -7993326543387224830
+    second: SceneryLake_1
+  - first:
+      213: -6880033632857317619
+    second: SceneryLake_2
+  - first:
+      213: 6217313964784361905
+    second: SceneryLake_3
+  - first:
+      213: 8378963606079054038
+    second: SceneryLake_4
+  - first:
+      213: 2636856831314378978
+    second: SceneryLake_5
+  - first:
+      213: -1031288966867290204
+    second: SceneryLake_6
+  - first:
+      213: -3124891010605367463
+    second: SceneryLake_7
+  - first:
+      213: 3225007149371716307
+    second: SceneryLake_8
+  - first:
+      213: 3655528445775896485
+    second: SceneryLake_9
+  - first:
+      213: -7249470271306093569
+    second: SceneryLake_10
+  - first:
+      213: -3393964682552405079
+    second: SceneryLake_11
+  - first:
+      213: 3528988964945386102
+    second: SceneryLake_12
+  - first:
+      213: -4145940313084675082
+    second: SceneryLake_13
+  - first:
+      213: -8549899159289413088
+    second: SceneryLake_14
+  - first:
+      213: 7793534979823066580
+    second: SceneryLake_15
+  - first:
+      213: 8810122469734536189
+    second: SceneryLake_16
+  - first:
+      213: 2635940997907112835
+    second: SceneryLake_17
+  - first:
+      213: -2761938637260107784
+    second: SceneryLake_18
+  - first:
+      213: -6737918946395628647
+    second: SceneryLake_19
+  - first:
+      213: 5706012858486935357
+    second: SceneryLake_20
+  - first:
+      213: -3431762209303058542
+    second: SceneryLake_21
+  - first:
+      213: 8981411995306473186
+    second: SceneryLake_22
+  - first:
+      213: -7939003713121433849
+    second: SceneryLake_23
+  - first:
+      213: 7616652967707086709
+    second: SceneryLake_24
+  - first:
+      213: 108338021174780376
+    second: SceneryLake_25
+  - first:
+      213: 5214526648797321701
+    second: SceneryLake_26
+  - first:
+      213: 307915458315782481
+    second: SceneryLake_27
+  - first:
+      213: 6135216523778403502
+    second: SceneryLake_28
+  - first:
+      213: -6195857549070344483
+    second: SceneryLake_29
+  - first:
+      213: -4116388604347131986
+    second: SceneryLake_30
+  - first:
+      213: -2630587981764578113
+    second: SceneryLake_31
+  - first:
+      213: -8498611698918849110
+    second: SceneryLake_32
+  - first:
+      213: 6121276712807559590
+    second: SceneryLake_33
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryLake_0
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 1029
+        width: 211
+        height: 231
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52759dad8cad69c20800000000000000
+      internalID: 3212995940375418661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_1
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 1029
+        width: 211
+        height: 231
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20514b7fbdff11190800000000000000
+      internalID: -7993326543387224830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_2
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 1031
+        width: 212
+        height: 232
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0f9cc6ecd53580a0800000000000000
+      internalID: -6880033632857317619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_3
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 1039
+        width: 197
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b12c083c16584650800000000000000
+      internalID: 6217313964784361905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_4
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 775
+        width: 191
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d0a44e810f084470800000000000000
+      internalID: 8378963606079054038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_5
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 793
+        width: 206
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e04e02415ff79420800000000000000
+      internalID: 2636856831314378978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_6
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 767
+        width: 218
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a7781d062020b1f0800000000000000
+      internalID: -1031288966867290204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_7
+      rect:
+        serializedVersion: 2
+        x: 786
+        y: 790
+        width: 229
+        height: 203
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95f3e07ae2822a4d0800000000000000
+      internalID: -3124891010605367463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_8
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 529
+        width: 188
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d275606ae681cc20800000000000000
+      internalID: 3225007149371716307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_9
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 529
+        width: 188
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5afdecce0cb0bb230800000000000000
+      internalID: 3655528445775896485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_10
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 527
+        width: 220
+        height: 223
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffbab059235b46b90800000000000000
+      internalID: -7249470271306093569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_11
+      rect:
+        serializedVersion: 2
+        x: 772
+        y: 513
+        width: 251
+        height: 251
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a31e3c6a1736e0d0800000000000000
+      internalID: -3393964682552405079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_12
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 263
+        width: 235
+        height: 237
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67ad7d724cc79f030800000000000000
+      internalID: 3528988964945386102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_13
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 255
+        width: 233
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fbbd9a5049a676c0800000000000000
+      internalID: -4145940313084675082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_14
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 261
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 022c4219308a85980800000000000000
+      internalID: -8549899159289413088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_15
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 276
+        width: 220
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dd5fe0b5c2382c60800000000000000
+      internalID: 7793534979823066580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_16
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 50
+        width: 182
+        height: 156
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df3d63c45b7d34a70800000000000000
+      internalID: 8810122469734536189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_17
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 57
+        width: 250
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 383642d2f5eb49420800000000000000
+      internalID: 2635940997907112835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_18
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 157
+        width: 24
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ff4faa517f9ba9d0800000000000000
+      internalID: -2761938637260107784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_19
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 176
+        width: 43
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99bd6b2da6a1e72a0800000000000000
+      internalID: -6737918946395628647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_20
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 203
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3fcce98674df2f40800000000000000
+      internalID: 5706012858486935357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_21
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 297a1e0f37eef50d0800000000000000
+      internalID: -3431762209303058542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_22
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 119
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e6bca9cf9264ac70800000000000000
+      internalID: 8981411995306473186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_23
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 133
+        width: 70
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 707c3e08f2ef2d190800000000000000
+      internalID: -7939003713121433849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_24
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 106
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57f0b95f489c3b960800000000000000
+      internalID: 7616652967707086709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_25
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 129
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d1aac33bd4e08100800000000000000
+      internalID: 108338021174780376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_26
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 64
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e95f5dfb58bd5840800000000000000
+      internalID: 5214526648797321701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_27
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 84
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15983c95a7fe54400800000000000000
+      internalID: 307915458315782481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_28
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 77
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eac2bef2ceaa42550800000000000000
+      internalID: 6135216523778403502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_29
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 91
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dde5dbcd264e30aa0800000000000000
+      internalID: -6195857549070344483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_30
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 40
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea75c68bf56afd6c0800000000000000
+      internalID: -4116388604347131986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_31
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 34
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb4b2840b264e7bd0800000000000000
+      internalID: -2630587981764578113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_32
+      rect:
+        serializedVersion: 2
+        x: 707
+        y: 59
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa586f9ffadde0a80800000000000000
+      internalID: -8498611698918849110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLake_33
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 17
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a1f3c60db423f450800000000000000
+      internalID: 6121276712807559590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryLake_0: 3212995940375418661
+      SceneryLake_1: -7993326543387224830
+      SceneryLake_10: -7249470271306093569
+      SceneryLake_11: -3393964682552405079
+      SceneryLake_12: 3528988964945386102
+      SceneryLake_13: -4145940313084675082
+      SceneryLake_14: -8549899159289413088
+      SceneryLake_15: 7793534979823066580
+      SceneryLake_16: 8810122469734536189
+      SceneryLake_17: 2635940997907112835
+      SceneryLake_18: -2761938637260107784
+      SceneryLake_19: -6737918946395628647
+      SceneryLake_2: -6880033632857317619
+      SceneryLake_20: 5706012858486935357
+      SceneryLake_21: -3431762209303058542
+      SceneryLake_22: 8981411995306473186
+      SceneryLake_23: -7939003713121433849
+      SceneryLake_24: 7616652967707086709
+      SceneryLake_25: 108338021174780376
+      SceneryLake_26: 5214526648797321701
+      SceneryLake_27: 307915458315782481
+      SceneryLake_28: 6135216523778403502
+      SceneryLake_29: -6195857549070344483
+      SceneryLake_3: 6217313964784361905
+      SceneryLake_30: -4116388604347131986
+      SceneryLake_31: -2630587981764578113
+      SceneryLake_32: -8498611698918849110
+      SceneryLake_33: 6121276712807559590
+      SceneryLake_4: 8378963606079054038
+      SceneryLake_5: 2636856831314378978
+      SceneryLake_6: -1031288966867290204
+      SceneryLake_7: -3124891010605367463
+      SceneryLake_8: 3225007149371716307
+      SceneryLake_9: 3655528445775896485
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

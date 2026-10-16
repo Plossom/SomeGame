@@ -363,7 +363,8 @@ namespace SomeGame.Car
                 bool ontoRoof = _sensor.Track.BranchAt(bouncer.target, out _, out _, roofs: true, ground: false) >= 0;
                 float heading = Mathf.Atan2(chord.y, chord.x) * Mathf.Rad2Deg - 90f, length = chord.magnitude;
                 float? landing = null;
-                if (!ontoRoof && _sensor.Track.BouncerAt(bouncer.target) == null)
+                bool ontoPad = _sensor.Track.BouncerAt(bouncer.target) != null;
+                if (!ontoRoof && !ontoPad)
                 {
                     // Onto the road (not the next pad of a chain): an arc that lands on the target already pointing along the road (so a
                     // hidden shortcut across a bend drops you straight back into the race).
@@ -384,7 +385,7 @@ namespace SomeGame.Car
                 _car.Body.linearVelocity = dir * padSpeed;
                 _car.Body.rotation = heading;
                 transform.rotation = Quaternion.Euler(0f, 0f, heading);
-                _car.Launch(length / padSpeed, null, ontoRoof, landing);
+                _car.Launch(length / padSpeed, null, ontoRoof || ontoPad, landing); // pad to pad: no steering, it lands on the next one
                 AnyBounce?.Invoke(bouncer.position);
                 return;
             }
@@ -413,7 +414,10 @@ namespace SomeGame.Car
             {
                 // Rivals never get stuck for good: after a few failed tries they are put down past the water.
                 _repeatSplashes = 0;
-                _car.Respawn(track.RespawnAfterWater(d));
+                var past = track.RespawnAfterWater(d);
+                _car.Respawn(past);
+                // The checkpoints over the water count (a long gap can hold one).
+                if (_progress != null) _progress.CreditFlight(track.Path.WrapDistance(d - 40f), track.Path.Project(past.position).Distance);
             }
             else _car.Respawn(track.RespawnBefore(d, respawnBack)); // always back before the water, never ahead
             if (!dry) Splashed?.Invoke();

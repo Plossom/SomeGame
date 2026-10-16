@@ -149,9 +149,10 @@ namespace SomeGame.UI
             Add(Has(TrackLayout.BranchKind.Ice), "ice");
             Add(track.rivers.Count > 0 || track.gaps.Count > 0, "ramp");
             // Pads as the track draws them: gummi boats in the water, bouncy mushrooms on meadow ground.
-            Add(track.bouncers.Exists(b => Wet(track, b.position)), "gummiboat");
-            Add(track.bouncers.Exists(b => !Wet(track, b.position)),
-                track.padLook == TrackLayout.PadLook.Trampoline ? "trampoline" : track.biome == TrackLayout.Biome.Meadow ? "mushroom" : "pad");
+            bool orange = track.padLook == TrackLayout.PadLook.Orange;
+            Add(!orange && track.bouncers.Exists(b => Wet(track, b.position)), "gummiboat");
+            Add(track.bouncers.Exists(b => orange || !Wet(track, b.position)),
+                orange ? "pad" : track.padLook == TrackLayout.PadLook.Trampoline ? "trampoline" : track.biome == TrackLayout.Biome.Meadow ? "mushroom" : "pad");
             Add(track.dashPanels.Count > 0, "dash");
             Add(track.penguins.Count > 0, "penguin");
             Add(track.geysers.Count > 0, "fish");

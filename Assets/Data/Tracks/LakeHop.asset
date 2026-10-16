@@ -1,0 +1,1537 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: LakeHop
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 230, y: 28.75}
+  - {x: 195.5, y: 27.599998}
+  - {x: 161, y: 29.9}
+  - {x: 140.3, y: 28.75}
+  - {x: 119.6, y: 28.75}
+  - {x: 92, y: 25.3}
+  - {x: 66.7, y: 29.9}
+  - {x: 46, y: 27.599998}
+  - {x: 25.3, y: 36.8}
+  - {x: 13.799999, y: 57.5}
+  - {x: 18.4, y: 80.5}
+  - {x: 9.2, y: 103.5}
+  - {x: 11.5, y: 121.899994}
+  - {x: 25.3, y: 133.4}
+  - {x: 43.7, y: 129.95}
+  - {x: 69, y: 128.8}
+  - {x: 92, y: 128.8}
+  - {x: 115, y: 128.8}
+  - {x: 131.09999, y: 133.4}
+  - {x: 149.5, y: 124.2}
+  - {x: 170.2, y: 119.6}
+  - {x: 188.59999, y: 128.8}
+  - {x: 207, y: 135.7}
+  - {x: 223.09999, y: 131.09999}
+  - {x: 234.59999, y: 140.3}
+  - {x: 236.9, y: 156.4}
+  - {x: 236.9, y: 174.8}
+  - {x: 236.9, y: 193.2}
+  - {x: 234.59999, y: 209.3}
+  - {x: 220.79999, y: 220.79999}
+  - {x: 195.5, y: 220.79999}
+  - {x: 170.2, y: 218.5}
+  - {x: 144.9, y: 223.09999}
+  - {x: 124.2, y: 225.4}
+  - {x: 110.399994, y: 236.9}
+  - {x: 119.6, y: 250.7}
+  - {x: 144.9, y: 257.6}
+  - {x: 179.4, y: 255.29999}
+  - {x: 213.9, y: 262.19998}
+  - {x: 248.4, y: 259.9}
+  - {x: 282.9, y: 253}
+  - {x: 312.8, y: 236.9}
+  - {x: 328.9, y: 211.59999}
+  - {x: 326.6, y: 184}
+  - {x: 331.19998, y: 156.4}
+  - {x: 326.6, y: 126.5}
+  - {x: 324.3, y: 96.6}
+  - {x: 317.4, y: 71.299995}
+  - {x: 301.3, y: 50.6}
+  - {x: 278.3, y: 34.5}
+  - {x: 253, y: 29.9}
+  roadWidth: 7.5
+  widths: []
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 36
+  sections: 3
+  sectionLines:
+  - 417.1716
+  - 815.18463
+  boundaryMargin: 25
+  rooms:
+  - min: {x: 112.7, y: 14.95}
+    max: {x: 156.4, y: 42.55}
+    floor: 3
+    upper: 0
+  houses:
+  - min: {x: 112.7, y: 14.95}
+    max: {x: 156.4, y: 42.55}
+    roof: 0
+  upstairs: []
+  stairs: []
+  decor:
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 34.103394, y: 55.70163}
+    size: 27.379011
+    angle: 61.83384
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 37.57879, y: 71.02887}
+    size: 28.707468
+    angle: 118.78796
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 50.090508, y: 50.777004}
+    size: 31.454735
+    angle: 324.03485
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 52.774143, y: 70.02584}
+    size: 33.799644
+    angle: 206.58438
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 90.48345, y: 55.93645}
+    size: 27.984638
+    angle: 126.28881
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 91.72892, y: 66.22381}
+    size: 29.869299
+    angle: 86.28544
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 104.80858, y: 40.55469}
+    size: 27.815302
+    angle: 73.18405
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 112.238014, y: 54.77704}
+    size: 29.300571
+    angle: 186.57198
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 110.00158, y: 67.72446}
+    size: 26.63676
+    angle: 226.63211
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 128.23003, y: 54.11738}
+    size: 30.913305
+    angle: 262.42706
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 125.55644, y: 70.79055}
+    size: 27.551783
+    angle: 209.32585
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 147.479, y: 51.736263}
+    size: 29.004383
+    angle: 143.41248
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 141.05336, y: 64.711464}
+    size: 28.677105
+    angle: 334.90802
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 165.21965, y: 37.550903}
+    size: 32.06288
+    angle: 219.17824
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 164.11353, y: 54.774494}
+    size: 30.992487
+    angle: 182.32167
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 159.9345, y: 66.69564}
+    size: 27.34989
+    angle: 106.63198
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 181.89966, y: 39.75711}
+    size: 28.254816
+    angle: 327.59302
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 179.41858, y: 53.394367}
+    size: 31.893112
+    angle: 356.9657
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 185.0753, y: 68.24673}
+    size: 26.365671
+    angle: 201.87933
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 202.39505, y: 39.02525}
+    size: 29.383694
+    angle: 222.639
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 199.14767, y: 49.548004}
+    size: 29.49095
+    angle: 238.1594
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 196.85393, y: 65.43014}
+    size: 33.36701
+    angle: 280.5465
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 214.70964, y: 55.263226}
+    size: 26.839226
+    angle: 320.75662
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 221.18623, y: 70.342766}
+    size: 29.301796
+    angle: 299.4583
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 232.75531, y: 52.662415}
+    size: 27.170792
+    angle: 183.686
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 235.1382, y: 66.76716}
+    size: 26.507353
+    angle: 54.41812
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 258.60617, y: 55.88489}
+    size: 28.789639
+    angle: 2.0229018
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 251.71165, y: 65.22787}
+    size: 33.170666
+    angle: 182.58563
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 276.83743, y: 52.917633}
+    size: 33.941303
+    angle: 62.208447
+    flat: 1
+  - cell: Beach
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 288.86206, y: 70.731674}
+    size: 30.851656
+    angle: 145.63219
+    flat: 1
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 57.41165, y: 61.31998}
+    size: 6.2202334
+    angle: -14.007381
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 276.09863, y: 58.42123}
+    size: 5.5
+    angle: -16.129787
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 286.4048, y: 50.21289}
+    size: 5.752126
+    angle: 23.510164
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 93.06257, y: 43.737682}
+    size: 6.4294877
+    angle: -13.643521
+    flat: 0
+  - cell: Picnic
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 40.373886, y: 50.9248}
+    size: 5.5
+    angle: 19.97669
+    flat: 0
+  - cell: Picnic
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 195.10974, y: 49.652843}
+    size: 5.5
+    angle: 12.570649
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 124.64171, y: 48.671104}
+    size: 5.927223
+    angle: -14.976257
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 39.99575, y: 58.94047}
+    size: 6.1690145
+    angle: 19.633347
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 249.68051, y: 59.22486}
+    size: 6.2170415
+    angle: -4.2673855
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 226.87021, y: 47.58327}
+    size: 5.7154346
+    angle: 24.86157
+    flat: 0
+  - cell: Sandcastle
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 214.54405, y: 52.29015}
+    size: 4.5
+    angle: -18.761574
+    flat: 0
+  - cell: Picnic
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 94.46736, y: 52.028057}
+    size: 5.5
+    angle: 1.9524783
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 215.57378, y: 39.174423}
+    size: 5.678318
+    angle: 18.233845
+    flat: 0
+  - cell: Picnic
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 256.63226, y: 43.91958}
+    size: 5.5
+    angle: -21.897186
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 179.70476, y: 45.64801}
+    size: 5.5
+    angle: 13.387405
+    flat: 0
+  - cell: Sandcastle
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 263.3074, y: 55.526836}
+    size: 4.5
+    angle: -1.8256217
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 240.08589, y: 60.214012}
+    size: 5.5663276
+    angle: -24.092522
+    flat: 0
+  - cell: Sandcastle
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 237.64372, y: 40.133625}
+    size: 4.5
+    angle: -1.3283446
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 49.05779, y: 43.828453}
+    size: 6.4197483
+    angle: 16.177181
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 99.11146, y: 40.088303}
+    size: 6.1674404
+    angle: 4.3935924
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 289.6072, y: 64.589195}
+    size: 5.5
+    angle: -15.794874
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 243.02477, y: 50.614185}
+    size: 5.533635
+    angle: -12.693217
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 169.96538, y: 40.793434}
+    size: 6.224694
+    angle: 5.6138487
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 200.38855, y: 41.880527}
+    size: 5.5
+    angle: 16.899221
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 301.05075, y: 66.10055}
+    size: 5.5
+    angle: -17.07011
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 46.854084, y: 66.70951}
+    size: 5.5
+    angle: -21.733017
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 282.58133, y: 63.604626}
+    size: 6.3893833
+    angle: -10.773569
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 191.74638, y: 40.007694}
+    size: 5.9431815
+    angle: -8.972977
+    flat: 0
+  - cell: Sandcastle
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 39.62865, y: 42.92393}
+    size: 4.5
+    angle: -14.966238
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 111.88333, y: 51.16658}
+    size: 5.840461
+    angle: 10.377708
+    flat: 0
+  - cell: Sandcastle
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 222.01923, y: 54.512493}
+    size: 4.5
+    angle: 21.836645
+    flat: 0
+  - cell: Parasol
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 246.19028, y: 38.269875}
+    size: 6.379575
+    angle: -22.655075
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 268.1562, y: 49.823204}
+    size: 5.6695437
+    angle: 10.362166
+    flat: 0
+  - cell: ParasolBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 137.46358, y: 50.733772}
+    size: 5.9132752
+    angle: 22.01633
+    flat: 0
+  - cell: Lifeguard
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 172.5, y: 46}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: BeachHut
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 96.6, y: 43.7}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: BeachHut
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 202.4, y: 41.399998}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: BeachHut
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 271.4, y: 46}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    position: {x: 213.9, y: 115}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: Kayaks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 119.6, y: 36.8}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Kayaks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 128.8, y: 36.8}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Kayaks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 147.2, y: 20.699999}
+    size: 6
+    angle: 0
+    flat: 0
+  logJumps: []
+  rings: []
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings:
+  - {x: 1207.7247, y: 22}
+  - {x: 69.11138, y: 119.629745}
+  padLook: 2
+  boats:
+  - kind: 0
+    position: {x: 135.7, y: 80.5}
+    angle: 0
+    drift: 9
+  - kind: 0
+    position: {x: 204.7, y: 82.799995}
+    angle: 0
+    drift: 11
+  - kind: 0
+    position: {x: 172.5, y: 174.8}
+    angle: 0
+    drift: 10
+  - kind: 0
+    position: {x: 262.19998, y: 96.6}
+    angle: 0
+    drift: 7
+  - kind: 2
+    position: {x: 161, y: 71.299995}
+    angle: 0
+    drift: 4
+  - kind: 2
+    position: {x: 184, y: 92}
+    angle: 0
+    drift: 3.5
+  - kind: 2
+    position: {x: 138, y: 172.5}
+    angle: 0
+    drift: 4
+  - kind: 1
+    position: {x: 73.6, y: 52.899998}
+    angle: 20
+    drift: 0
+  - kind: 1
+    position: {x: 266.8, y: 161}
+    angle: -40
+    drift: 0
+  - kind: 1
+    position: {x: 82.799995, y: 161}
+    angle: 70
+    drift: 0
+  - kind: 4
+    position: {x: 110.399994, y: 87.4}
+    angle: 0
+    drift: 5
+  - kind: 4
+    position: {x: 202.4, y: 170.2}
+    angle: 0
+    drift: 4
+  - kind: 4
+    position: {x: 156.4, y: 239.2}
+    angle: 0
+    drift: 2.5
+  - kind: 3
+    position: {x: 81.99699, y: 33.87117}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 78.679756, y: 20.681932}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 74.270996, y: 35.74097}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 71.538376, y: 22.418327}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 65.074524, y: 36.693546}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 65.55827, y: 23.102154}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 65.26298, y: 122.077156}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 65.53861, y: 135.67436}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 82.174385, y: 121.94353}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 82.07424, y: 135.54317}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 98.575615, y: 121.829796}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 99.117165, y: 135.419}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 243.88263, y: 161.50755}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 230.28293, y: 161.59593}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 243.71799, y: 172.52248}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 230.11938, y: 172.32768}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 243.84169, y: 183.16312}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 230.2444, y: 183.43408}
+    angle: 0
+    drift: 0
+  fireworks: 0
+  cows: []
+  fences: []
+  trains: []
+  props: []
+  bankMaterial: {fileID: 2100000, guid: a655625dfb973417bb8d666b2a38e344, type: 2}
+  sceneryMaterial: {fileID: 2100000, guid: 9728e75d2539745949f561b3c91463dc, type: 2}
+  waterWorld: 0
+  biome: 0
+  gaps:
+  - from: 145.16057
+    to: 170.66057
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+  - from: 347.4216
+    to: 403.1716
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+  - from: 554.0615
+    to: 590.3115
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+  elevatedRoad: 0
+  bouncers:
+  - position: {x: 77.8674, y: 27.906406}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 67.81303, y: 29.233625}
+  - position: {x: 67.81303, y: 29.233625}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 55.362793, y: 28.279232}
+  - position: {x: 61.853855, y: 128.95045}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 71.99922, y: 129.54808}
+  - position: {x: 71.99922, y: 129.54808}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 82.1302, y: 127.94337}
+  - position: {x: 82.1302, y: 127.94337}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 92.26461, y: 129.59863}
+  - position: {x: 92.26461, y: 129.59863}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 102.39131, y: 128.48376}
+  - position: {x: 102.39131, y: 128.48376}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 114.9738, y: 128.79668}
+  - position: {x: 237.08614, y: 162.06963}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 237.7186, y: 172.43654}
+  - position: {x: 237.7186, y: 172.43654}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 236.43285, y: 182.79277}
+  - position: {x: 236.43285, y: 182.79277}
+    radius: 2.4
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 236.78395, y: 195.54118}
+  - position: {x: 325.69666, y: 112.75714}
+    radius: 2.2
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 0, y: 0}
+  - position: {x: 140.42986, y: 225.86075}
+    radius: 1.8
+    airTime: 1
+    speedBoost: 1.1
+    target: {x: 142.49629, y: 257.34085}
+  geysers:
+  - distance: 467.18982
+    side: 1
+    period: 3
+    active: 0.8
+    offset: 0
+  sweepers: []
+  skyLife: 0.8
+  rivers:
+  - points:
+    - {x: 287.5, y: 112.7}
+    - {x: 310.5, y: 115}
+    - {x: 345, y: 110.399994}
+    - {x: 379.5, y: 117.299995}
+    width: 11
+    rampLaterals:
+    - 0
+    bridged: 
+  lakes:
+  - center: {x: 172.5, y: 80.5}
+    radii: {x: 82.799995, y: 27.599998}
+    angle: 0
+  - center: {x: 172.5, y: 172.5}
+    radii: {x: 82.799995, y: 27.599998}
+    angle: 0
+  - center: {x: 82.799995, y: 126.5}
+    radii: {x: 27.599998, y: 59.8}
+    angle: 0
+  - center: {x: 262.19998, y: 126.5}
+    radii: {x: 27.599998, y: 59.8}
+    angle: 0
+  - center: {x: 73.6, y: 43.7}
+    radii: {x: 14.95, y: 25.3}
+    angle: 0
+  - center: {x: 149.5, y: 239.2}
+    radii: {x: 25.3, y: 9.2}
+    angle: 0
+  oil: []
+  rampLength: 3
+  rampWidth: 5
+  shortcuts: []
+  branches: []
+  banks: []
+  penguins: []
+  dashPanels:
+  - distance: 121.16057
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 325.4216
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 536.0615
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 1061.75
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 45.992146
+    lateral: 1.8
+    length: 4
+    width: 3.2
+  - distance: 991.77313
+    lateral: -1.6
+    length: 4
+    width: 3.2
+  scenery:
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 10
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 1.2, y: 3.5}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 185.1007}
+    canopy: 0
+    indoor: 0
+  - name: Flowers
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 20
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.5, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 417.1716}
+    canopy: 0
+    indoor: 0
+  - name: Reeds
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 40
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 0.8, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Tree
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 40
+    sizeRange: {x: 4, y: 6.5}
+    clearance: {x: 2.5, y: 14}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 208.04816, y: 815.18463}
+    canopy: 0
+    indoor: 0
+  - name: Flowers
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 30
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.2, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 417.1716, y: 815.18463}
+    canopy: 0
+    indoor: 0
+  - name: Rock
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 14
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 10
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 1, y: 3}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 417.1716, y: 609.3817}
+    canopy: 0
+    indoor: 0
+  - name: CampTent
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 10
+    sizeRange: {x: 6, y: 7.5}
+    clearance: {x: 2, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 609.3817, y: 725.26416}
+    canopy: 0
+    indoor: 0
+  - name: CampTentGreen
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 10
+    sizeRange: {x: 6, y: 7.5}
+    clearance: {x: 2, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 609.3817, y: 725.26416}
+    canopy: 0
+    indoor: 0
+  - name: Campfire
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 5
+    sizeRange: {x: 4.5, y: 5.5}
+    clearance: {x: 3, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 609.3817, y: 725.26416}
+    canopy: 0
+    indoor: 0
+  - name: Picnic
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    count: 6
+    sizeRange: {x: 4.5, y: 5.5}
+    clearance: {x: 2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 609.3817, y: 725.26416}
+    canopy: 0
+    indoor: 0
+  - name: Kayaks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    count: 4
+    sizeRange: {x: 5.5, y: 6}
+    clearance: {x: 2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 609.3817, y: 725.26416}
+    canopy: 0
+    indoor: 0
+  - name: Pine
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 90
+    sizeRange: {x: 6, y: 9.5}
+    clearance: {x: 2, y: 14}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 815.18463, y: 1077.9744}
+    canopy: 0
+    indoor: 0
+  - name: Tree
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 40
+    sizeRange: {x: 4, y: 6.5}
+    clearance: {x: 2.5, y: 14}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 815.18463, y: 1237.7247}
+    canopy: 0
+    indoor: 0
+  - name: Bushes
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 30
+    sizeRange: {x: 2.5, y: 4}
+    clearance: {x: 1.2, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 8
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 1.2, y: 3.5}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 815.18463, y: 1237.7247}
+    canopy: 0
+    indoor: 0
+  - name: Pine
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 220
+    sizeRange: {x: 7, y: 11}
+    clearance: {x: 18, y: 0}
+    alignToRoad: 0
+    clustered: 1
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Tree
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 90
+    sizeRange: {x: 4, y: 6.5}
+    clearance: {x: 10, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Bushes
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 50
+    sizeRange: {x: 2.5, y: 4}
+    clearance: {x: 4, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery: []
+  bakedSignature: 

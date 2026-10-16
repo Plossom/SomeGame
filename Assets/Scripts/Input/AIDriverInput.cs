@@ -50,13 +50,17 @@ namespace SomeGame.Input
         bool _trickPress, _wasAirborne;
         float _airStart;
         Vector2 _airAim;
+        float _lastAirLeft;
         int _jumps;
 
         void LateUpdate()
         {
             if (_car == null) return;
             bool air = _car.IsAirborne;
-            if (air && !_wasAirborne)
+            // A new flight: off the ground, or bounced on from a pad without touching down (more air than a moment ago).
+            bool launched = air && (!_wasAirborne || _car.AirTimeLeft > _lastAirLeft + 0.02f);
+            _lastAirLeft = _car.AirTimeLeft;
+            if (launched)
             {
                 _airStart = Time.time;
                 _jumps++;
