@@ -28,6 +28,7 @@ namespace SomeGame.Race
         float _lastDistance;
         float _lapStartTime;
         bool _tracking;
+        bool _rival;
         readonly List<float> _lapTimes = new();
 
         public event Action<RaceProgress, float> LapCompleted;
@@ -74,6 +75,7 @@ namespace SomeGame.Race
             _sensor = GetComponent<TrackSensor>();
             _body = GetComponent<Rigidbody2D>();
             _car = GetComponent<SomeGame.Car.CarMovement>();
+            _rival = GetComponent<SomeGame.Input.AIDriverInput>() != null;
         }
 
         /// <summary>Starts counting from the current position. Call at GO.</summary>
@@ -134,6 +136,9 @@ namespace SomeGame.Race
                 if (moved > 0f && toCheckpoint > 0f && toCheckpoint <= moved && betweenPosts)
                     PassCheckpoint();
             }
+            // Rivals never turn back: one that went past a checkpoint beside the road (a wild landing) gets it.
+            for (int guard = 0; _rival && guard < 3 && MissedCheckpoint && Mathf.Abs(_sensor.Current.Lateral) <= Circuit.OffRoadAt(distance); guard++)
+                PassCheckpoint();
             _lastDistance = distance;
         }
 

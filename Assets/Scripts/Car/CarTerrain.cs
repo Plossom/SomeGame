@@ -385,7 +385,7 @@ namespace SomeGame.Car
                 _car.Body.linearVelocity = dir * padSpeed;
                 _car.Body.rotation = heading;
                 transform.rotation = Quaternion.Euler(0f, 0f, heading);
-                _car.Launch(length / padSpeed, null, ontoRoof || ontoPad, landing); // pad to pad: no steering, it lands on the next one
+                _car.Launch(length / padSpeed, null, true, landing); // an aimed throw: no steering, it lands on its target
                 AnyBounce?.Invoke(bouncer.position);
                 return;
             }

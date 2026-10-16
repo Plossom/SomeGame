@@ -143,8 +143,8 @@ namespace SomeGame.Track
         [Tooltip("Wooden fences along both sides of the road on these stretches (lap distances from, to).")]
         public List<Vector2> fences = new();
 
-        public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust }
-        public enum RoofKind { Red, Blue, Circus }
+        public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust, Cobbles }
+        public enum RoofKind { Red, Blue, Circus, Slate }
 
         [Serializable]
         public class Room

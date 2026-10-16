@@ -1,0 +1,1029 @@
+fileFormatVersion: 2
+guid: 9b91cb84c96bb4803a74f9037d32d4a0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1577027506235400761
+    second: SceneryCastle_0
+  - first:
+      213: 4060477169189693785
+    second: SceneryCastle_1
+  - first:
+      213: 6918315703972953494
+    second: SceneryCastle_2
+  - first:
+      213: 7210628455386595886
+    second: SceneryCastle_3
+  - first:
+      213: -6408804469056341464
+    second: SceneryCastle_4
+  - first:
+      213: -63059722686480843
+    second: SceneryCastle_5
+  - first:
+      213: -6155953174070553666
+    second: SceneryCastle_6
+  - first:
+      213: -3449981479051597983
+    second: SceneryCastle_7
+  - first:
+      213: 6559218249027600845
+    second: SceneryCastle_8
+  - first:
+      213: 541906011147845405
+    second: SceneryCastle_9
+  - first:
+      213: -8487401367446499998
+    second: SceneryCastle_10
+  - first:
+      213: 978939415401894171
+    second: SceneryCastle_11
+  - first:
+      213: -1061295581440538663
+    second: SceneryCastle_12
+  - first:
+      213: 6765972443433155180
+    second: SceneryCastle_13
+  - first:
+      213: 1019596222538338765
+    second: SceneryCastle_14
+  - first:
+      213: 8483797153892511706
+    second: SceneryCastle_15
+  - first:
+      213: 1270702470450287157
+    second: SceneryCastle_16
+  - first:
+      213: -4620488275204620794
+    second: SceneryCastle_17
+  - first:
+      213: 8532884607173224220
+    second: SceneryCastle_18
+  - first:
+      213: 6360798055073908034
+    second: SceneryCastle_19
+  - first:
+      213: -8164189806786056518
+    second: SceneryCastle_20
+  - first:
+      213: 6113019178146785547
+    second: SceneryCastle_21
+  - first:
+      213: 8514535522555817253
+    second: SceneryCastle_22
+  - first:
+      213: 3573479018656610550
+    second: SceneryCastle_23
+  - first:
+      213: -8376941220657676870
+    second: SceneryCastle_24
+  - first:
+      213: 5975722756102881258
+    second: SceneryCastle_25
+  - first:
+      213: 4053805579486570669
+    second: SceneryCastle_26
+  - first:
+      213: 8505016353067033628
+    second: SceneryCastle_27
+  - first:
+      213: 493246561500478390
+    second: SceneryCastle_28
+  - first:
+      213: 8050703783388802110
+    second: SceneryCastle_29
+  - first:
+      213: -6805772215452447714
+    second: SceneryCastle_30
+  - first:
+      213: 2158186561571811750
+    second: SceneryCastle_31
+  - first:
+      213: -3618793401857803905
+    second: SceneryCastle_32
+  - first:
+      213: -6879294049866467616
+    second: SceneryCastle_33
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryCastle_0
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 1053
+        width: 233
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd91d9a6d54d1ae0800000000000000
+      internalID: -1577027506235400761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_1
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 1053
+        width: 233
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 959a228d876b95830800000000000000
+      internalID: 4060477169189693785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_2
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 1053
+        width: 233
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69d705b5a7bc20060800000000000000
+      internalID: 6918315703972953494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_3
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 1023
+        width: 236
+        height: 237
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2244aa606c411460800000000000000
+      internalID: 7210628455386595886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_4
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 807
+        width: 224
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82af5fa6a4a5f07a0800000000000000
+      internalID: -6408804469056341464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_5
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 805
+        width: 183
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53e33ad2487ff1ff0800000000000000
+      internalID: -63059722686480843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_6
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 798
+        width: 189
+        height: 169
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb3169d2439a19aa0800000000000000
+      internalID: -6155953174070553666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_7
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 863
+        width: 194
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 167e373af143f10d0800000000000000
+      internalID: -3449981479051597983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_8
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 517
+        width: 246
+        height: 246
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc1cc89ce36070b50800000000000000
+      internalID: 6559218249027600845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_9
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 553
+        width: 122
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1fbd1065ac358700800000000000000
+      internalID: 541906011147845405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_10
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 511
+        width: 235
+        height: 237
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26dcf2bac61b63a80800000000000000
+      internalID: -8487401367446499998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_11
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 536
+        width: 187
+        height: 187
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1198af2634e59d00800000000000000
+      internalID: 978939415401894171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 327
+        width: 257
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d78b8aaa458541f0800000000000000
+      internalID: -1061295581440538663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_13
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 255
+        width: 196
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6a3ae2f61095ed50800000000000000
+      internalID: 6765972443433155180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_14
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 261
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc15ab2cc55562e00800000000000000
+      internalID: 1019596222538338765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_15
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 276
+        width: 220
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adfab38ff808cb570800000000000000
+      internalID: 8483797153892511706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_16
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 57
+        width: 250
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53296661a2172a110800000000000000
+      internalID: 1270702470450287157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_17
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 157
+        width: 24
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60e3293e46ab0efb0800000000000000
+      internalID: -4620488275204620794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_18
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 176
+        width: 43
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1765ff4755ea6670800000000000000
+      internalID: 8532884607173224220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_19
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 203
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2450da05128164850800000000000000
+      internalID: 6360798055073908034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_20
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abee6af50a8f2be80800000000000000
+      internalID: -8164189806786056518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_21
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 0
+        width: 239
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b09e69aed8ec5d450800000000000000
+      internalID: 6113019178146785547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_22
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 119
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52d626122f4b92670800000000000000
+      internalID: 8514535522555817253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_23
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 133
+        width: 70
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f8b65ffb3c879130800000000000000
+      internalID: 3573479018656610550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_24
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 106
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abd3f5eb7502fbb80800000000000000
+      internalID: -8376941220657676870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_25
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 129
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeffab99f280ee250800000000000000
+      internalID: 5975722756102881258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_26
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 64
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da82bc152b2024830800000000000000
+      internalID: 4053805579486570669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_27
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 84
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c14e275cf43e70670800000000000000
+      internalID: 8505016353067033628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_28
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 77
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bb3be4622d58d600800000000000000
+      internalID: 493246561500478390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_29
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 91
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3c68c0cf68d9bf60800000000000000
+      internalID: 8050703783388802110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_30
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 40
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ccbb38a3a0d81a0800000000000000
+      internalID: -6805772215452447714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_31
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 34
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a172814e3b63fd10800000000000000
+      internalID: 2158186561571811750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_32
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 59
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f79fcbef29677cdc0800000000000000
+      internalID: -3618793401857803905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCastle_33
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 17
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e6304c7286d780a0800000000000000
+      internalID: -6879294049866467616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryCastle_0: -1577027506235400761
+      SceneryCastle_1: 4060477169189693785
+      SceneryCastle_10: -8487401367446499998
+      SceneryCastle_11: 978939415401894171
+      SceneryCastle_12: -1061295581440538663
+      SceneryCastle_13: 6765972443433155180
+      SceneryCastle_14: 1019596222538338765
+      SceneryCastle_15: 8483797153892511706
+      SceneryCastle_16: 1270702470450287157
+      SceneryCastle_17: -4620488275204620794
+      SceneryCastle_18: 8532884607173224220
+      SceneryCastle_19: 6360798055073908034
+      SceneryCastle_2: 6918315703972953494
+      SceneryCastle_20: -8164189806786056518
+      SceneryCastle_21: 6113019178146785547
+      SceneryCastle_22: 8514535522555817253
+      SceneryCastle_23: 3573479018656610550
+      SceneryCastle_24: -8376941220657676870
+      SceneryCastle_25: 5975722756102881258
+      SceneryCastle_26: 4053805579486570669
+      SceneryCastle_27: 8505016353067033628
+      SceneryCastle_28: 493246561500478390
+      SceneryCastle_29: 8050703783388802110
+      SceneryCastle_3: 7210628455386595886
+      SceneryCastle_30: -6805772215452447714
+      SceneryCastle_31: 2158186561571811750
+      SceneryCastle_32: -3618793401857803905
+      SceneryCastle_33: -6879294049866467616
+      SceneryCastle_4: -6408804469056341464
+      SceneryCastle_5: -63059722686480843
+      SceneryCastle_6: -6155953174070553666
+      SceneryCastle_7: -3449981479051597983
+      SceneryCastle_8: 6559218249027600845
+      SceneryCastle_9: 541906011147845405
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

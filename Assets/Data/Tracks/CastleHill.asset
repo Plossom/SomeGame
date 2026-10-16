@@ -1,0 +1,1449 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: CastleHill
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: 0}
+  - {x: 28.800001, y: -2.4}
+  - {x: 52.800003, y: 7.2000003}
+  - {x: 64.8, y: 26.400002}
+  - {x: 60.000004, y: 48}
+  - {x: 69.600006, y: 67.200005}
+  - {x: 91.200005, y: 76.8}
+  - {x: 117.600006, y: 74.4}
+  - {x: 136.8, y: 60.000004}
+  - {x: 146.40001, y: 38.4}
+  - {x: 165.6, y: 24}
+  - {x: 192, y: 21.6}
+  - {x: 220.8, y: 26.400002}
+  - {x: 249.6, y: 31.2}
+  - {x: 276, y: 40.800003}
+  - {x: 314.40002, y: 50.4}
+  - {x: 343.2, y: 64.8}
+  - {x: 360, y: 88.8}
+  - {x: 350.40002, y: 112.8}
+  - {x: 326.40002, y: 122.4}
+  - {x: 324, y: 144}
+  - {x: 348, y: 158.40001}
+  - {x: 357.6, y: 182.40001}
+  - {x: 340.80002, y: 201.6}
+  - {x: 314.40002, y: 208.8}
+  - {x: 283.2, y: 206.40001}
+  - {x: 256.80002, y: 216.00002}
+  - {x: 232.8, y: 232.8}
+  - {x: 208.8, y: 237.6}
+  - {x: 182.40001, y: 235.20001}
+  - {x: 168, y: 218.40001}
+  - {x: 148.8, y: 206.40001}
+  - {x: 129.6, y: 206.40001}
+  - {x: 110.4, y: 211.20001}
+  - {x: 98.4, y: 228.00002}
+  - {x: 91.200005, y: 244.8}
+  - {x: 67.200005, y: 249.6}
+  - {x: 43.2, y: 247.20001}
+  - {x: 21.6, y: 230.40001}
+  - {x: 12, y: 204.00002}
+  - {x: 21.6, y: 177.6}
+  - {x: 38.4, y: 158.40001}
+  - {x: 36, y: 134.40001}
+  - {x: 19.2, y: 117.600006}
+  - {x: -2.4, y: 108.00001}
+  - {x: -19.2, y: 91.200005}
+  - {x: -21.6, y: 64.8}
+  - {x: -14.400001, y: 43.2}
+  - {x: -24, y: 21.6}
+  - {x: -28.800001, y: 4.8}
+  roadWidth: 7
+  widths: []
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 36
+  sections: 3
+  sectionLines:
+  - 430.70413
+  - 733.67664
+  boundaryMargin: 25
+  rooms:
+  - min: {x: -40.800003, y: -19.2}
+    max: {x: 31.2, y: 21.6}
+    floor: 5
+    upper: 0
+  - min: {x: 84, y: 192}
+    max: {x: 192, y: 261.6}
+    floor: 5
+    upper: 0
+  - min: {x: 117.600006, y: 192}
+    max: {x: 151.20001, y: 223.20001}
+    floor: 0
+    upper: 0
+  houses:
+  - min: {x: 117.600006, y: 192}
+    max: {x: 151.20001, y: 223.20001}
+    roof: 3
+  upstairs: []
+  stairs: []
+  decor:
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 91.29231, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 99.78462, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 108.27693, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 116.76924, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 125.26154, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 133.75386, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 142.24617, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 150.73848, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 159.23077, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 167.72308, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 176.2154, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 184.7077, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 190.8}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 91.29231, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 99.78462, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 108.27693, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 116.76924, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 125.26154, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 133.75386, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 142.24617, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 150.73848, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 159.23077, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 167.72308, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 176.2154, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 184.7077, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 262.80002}
+    size: 10.5
+    angle: 0
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 190.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 198.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 206.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 214.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 222.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 230.80002}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 238.80002}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 262.80002}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 190.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 198.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 206.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 214.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 222.8}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 246.80002}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 254.80002}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: CastleWall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 262.80002}
+    size: 10.5
+    angle: 90
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 190.8}
+    size: 13
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 262.80002}
+    size: 13
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 82.8, y: 262.80002}
+    size: 13
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 193.20001, y: 190.8}
+    size: 13
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 206.52992, y: 246.2332}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 205.64183, y: 229.25642}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 70.03265, y: 257.97684}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 69.24277, y: 240.99521}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 222.17299, y: 18.011621}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Tower
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    position: {x: 219.42702, y: 34.788383}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Well
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 180, y: 201.6}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Statue
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    position: {x: 100.8, y: 201.6}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Barrels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 180, y: 254.40001}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Barrels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 91.200005, y: 254.40001}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: MarketStall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 144, y: 254.40001}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: MarketStall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 124.8, y: 254.40001}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: Banner
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 160.8, y: 240.00002}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Banner
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 120.00001, y: 235.20001}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Haycart
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    position: {x: 168, y: 199.20001}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Fountain
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.2
+    position: {x: -16.800001, y: 14.400001}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: MarketStall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 12, y: 15.6}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: MarketStall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: -31.2, y: -12}
+    size: 8
+    angle: 180
+    flat: 0
+  - cell: MarketStall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 16.800001, y: -13.200001}
+    size: 8
+    angle: 180
+    flat: 0
+  - cell: Barrels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: -36, y: 12}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Well
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    position: {x: 24, y: 16.800001}
+    size: 5
+    angle: 0
+    flat: 0
+  logJumps: []
+  rings: []
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings:
+  - {x: 29.005398, y: 100.58529}
+  - {x: 957.99963, y: 1092.9529}
+  padLook: 2
+  boats: []
+  fireworks: 0
+  cows: []
+  fences:
+  - {x: 440.70413, y: 641}
+  trains:
+  - distance: 465.73315
+    period: 15
+    wagons: 4
+    speed: 13
+    reach: 60
+    toy: 0
+  props:
+  - kind: 0
+    position: {x: 391.2, y: 144}
+    size: 16
+  bankMaterial: {fileID: 0}
+  sceneryMaterial: {fileID: 2100000, guid: ff144e25a335f4b098cd494950b646c8, type: 2}
+  waterWorld: 0
+  biome: 0
+  gaps: []
+  elevatedRoad: 0
+  bouncers:
+  - position: {x: 300.13474, y: 46.389427}
+    radius: 2.2
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 0, y: 0}
+  - position: {x: 76.62359, y: 249.05052}
+    radius: 2
+    airTime: 0.6
+    speedBoost: 1
+    target: {x: 0, y: 0}
+  - position: {x: 64.951454, y: 36.985916}
+    radius: 1.8
+    airTime: 1
+    speedBoost: 1.1
+    target: {x: 155.08376, y: 29.968077}
+  geysers: []
+  sweepers:
+  - kind: 1
+    distance: 577.49664
+    period: 4.5
+    offset: 0
+  skyLife: 0.7
+  rivers:
+  - points:
+    - {x: 300, y: -48}
+    - {x: 300, y: 72}
+    - {x: 302.40002, y: 144}
+    - {x: 297.6, y: 288}
+    width: 11
+    rampLaterals:
+    - 0
+    bridged: 01000000i
+  - points:
+    - {x: 76.8, y: 184.8}
+    - {x: 199.20001, y: 184.8}
+    - {x: 199.20001, y: 268.80002}
+    - {x: 76.8, y: 268.80002}
+    - {x: 76.8, y: 184.8}
+    width: 8
+    rampLaterals:
+    - 0
+    bridged: 00000000i
+  lakes:
+  - center: {x: 360, y: -36}
+    radii: {x: 31.2, y: 16.800001}
+    angle: 0
+  oil: []
+  rampLength: 3
+  rampWidth: 3.2
+  shortcuts: []
+  branches: []
+  banks: []
+  penguins: []
+  dashPanels:
+  - distance: 260.16257
+    lateral: 1.6
+    length: 4
+    width: 3.2
+  - distance: 676.06635
+    lateral: -1.6
+    length: 4
+    width: 3.2
+  - distance: 1171.8533
+    lateral: 1.6
+    length: 4
+    width: 3.2
+  scenery:
+  - name: TownHouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    count: 24
+    sizeRange: {x: 9, y: 11}
+    clearance: {x: 0.6, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 301.39767}
+    canopy: 0
+    indoor: 0
+  - name: TownHouseBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    count: 18
+    sizeRange: {x: 9, y: 11}
+    clearance: {x: 0.6, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 301.39767}
+    canopy: 0
+    indoor: 0
+  - name: TownHouseGreen
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    count: 14
+    sizeRange: {x: 9, y: 11}
+    clearance: {x: 0.6, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 301.39767}
+    canopy: 0
+    indoor: 0
+  - name: TownHouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    count: 12
+    sizeRange: {x: 9, y: 11}
+    clearance: {x: 0.6, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1226.0167, y: 1286.0167}
+    canopy: 0
+    indoor: 0
+  - name: TownHouseBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8
+      width: 0.25
+      height: 0.2
+    count: 10
+    sizeRange: {x: 9, y: 11}
+    clearance: {x: 0.6, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1226.0167, y: 1286.0167}
+    canopy: 0
+    indoor: 0
+  - name: MarketStall
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    count: 8
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 301.39767}
+    canopy: 0
+    indoor: 0
+  - name: Barrels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    count: 10
+    sizeRange: {x: 3.5, y: 4.5}
+    clearance: {x: 0.6, y: 3}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 301.39767}
+    canopy: 0
+    indoor: 0
+  - name: Banner
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    count: 10
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 0.6, y: 2}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 301.39767}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 12
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 301.39767}
+    canopy: 0
+    indoor: 0
+  - name: Vines
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 46
+    sizeRange: {x: 12, y: 16}
+    clearance: {x: 2, y: 26}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 1
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 430.70413, y: 733.67664}
+    canopy: 0
+    indoor: 0
+  - name: Cypress
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 40
+    sizeRange: {x: 3, y: 4.5}
+    clearance: {x: 1, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 430.70413, y: 733.67664}
+    canopy: 0
+    indoor: 0
+  - name: Haycart
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 5
+    sizeRange: {x: 5, y: 6}
+    clearance: {x: 1.5, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 430.70413, y: 733.67664}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 6
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 1, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 430.70413, y: 733.67664}
+    canopy: 0
+    indoor: 0
+  - name: KnightTent
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 14
+    sizeRange: {x: 8, y: 11}
+    clearance: {x: 2, y: 16}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 933.69037, y: 1116.9744}
+    canopy: 0
+    indoor: 0
+  - name: Banner
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.2
+    count: 14
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 0.6, y: 3}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 933.69037, y: 1116.9744}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 14
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 933.69037, y: 1116.9744}
+    canopy: 0
+    indoor: 0
+  - name: Statue
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 4
+    sizeRange: {x: 5, y: 6}
+    clearance: {x: 1.5, y: 6}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 933.69037, y: 1116.9744}
+    canopy: 0
+    indoor: 0
+  - name: Vines
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 60
+    sizeRange: {x: 14, y: 18}
+    clearance: {x: 12, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 1
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Tree
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 120
+    sizeRange: {x: 4.5, y: 6.5}
+    clearance: {x: 8, y: 0}
+    alignToRoad: 0
+    clustered: 1
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Haycart
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 6
+    sizeRange: {x: 5, y: 6}
+    clearance: {x: 8, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Flowers
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 40
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.2, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Rock
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.2
+    count: 16
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 2, y: 14}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Bushes
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 50
+    sizeRange: {x: 2.5, y: 4}
+    clearance: {x: 2, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Tree
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 200
+    sizeRange: {x: 4.5, y: 7}
+    clearance: {x: 12, y: 0}
+    alignToRoad: 0
+    clustered: 1
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Cypress
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.4
+      width: 0.25
+      height: 0.2
+    count: 60
+    sizeRange: {x: 3, y: 4.5}
+    clearance: {x: 8, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Tree
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.2
+      width: 0.25
+      height: 0.2
+    count: 40
+    sizeRange: {x: 4, y: 6}
+    clearance: {x: 4, y: 16}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery: []
+  bakedSignature: 
