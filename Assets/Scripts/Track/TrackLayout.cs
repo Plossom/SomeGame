@@ -83,13 +83,32 @@ namespace SomeGame.Track
             public float angle;
             [Min(0.5f)] public float radius = 1.2f;
         }
+        /// <summary>A roller coaster: a closed loop of rails on stilts (it may cross over the road), a train racing round.</summary>
+        [Serializable]
+        public class Coaster
+        {
+            public Vector2[] points = { };
+            [Min(1)] public int cars = 4;
+            [Tooltip("Metres per second (faster downhill, slower on the climbs).")]
+            [Min(1f)] public float speed = 16f;
+        }
+        [Tooltip("Roller coasters over the fairground.")]
+        public List<Coaster> coasters = new();
+        [Tooltip("Strings of pennants along both sides of the road on these stretches (lap distances from, to).")]
+        public List<Vector2> buntings = new();
+        public enum PadLook { Auto, Trampoline }
+        [Tooltip("How the jump pads on dry ground look (Auto: mushrooms in the meadows, jump pads elsewhere).")]
+        public PadLook padLook;
+        [Tooltip("Fireworks over the scenery, away from the road.")]
+        public bool fireworks;
+
         [Tooltip("Cows chilling on the road (farm).")]
         public List<Cow> cows = new();
         [Tooltip("Wooden fences along both sides of the road on these stretches (lap distances from, to).")]
         public List<Vector2> fences = new();
 
-        public enum FloorKind { Parquet, Tiles, Carpet, Planks }
-        public enum RoofKind { Red, Blue }
+        public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust }
+        public enum RoofKind { Red, Blue, Circus }
 
         [Serializable]
         public class Room
@@ -135,7 +154,7 @@ namespace SomeGame.Track
             public bool toy;
         }
 
-        public enum PropKind { Windmill }
+        public enum PropKind { Windmill, Carousel, SwingRide, Teacups }
 
         [Serializable]
         public class Prop

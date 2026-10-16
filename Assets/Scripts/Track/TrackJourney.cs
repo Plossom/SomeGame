@@ -21,7 +21,10 @@ namespace SomeGame.Track
         [SerializeField] Material toyRailsMaterial;
         [SerializeField] Sprite logSprite;
         [SerializeField] Sprite windmillTowerSprite, windmillSailsSprite;
-        [SerializeField] Sprite cowSprite, fenceSprite;
+        [SerializeField] Sprite cowSprite, fenceSprite, buntingSprite;
+        [SerializeField] Sprite carouselBaseSprite, carouselTopSprite, swingHubSprite, swingSeatsSprite, teacupFloorSprite, teacupSprite;
+        [SerializeField] Sprite coasterCarSprite;
+        [SerializeField] Material coasterRailsMaterial;
         [SerializeField] Material particleMaterial;
         [SerializeField] TMP_FontAsset font;
         [SerializeField] int overheadOrder = 40;
@@ -33,6 +36,10 @@ namespace SomeGame.Track
         readonly List<Crossing> _crossings = new();
         readonly List<Transform> _sails = new();
         readonly List<CowView> _cows = new();
+        readonly List<(Transform t, float speed)> _spinners = new();
+        readonly List<CoasterRun> _coasters = new();
+        ParticleSystem _fireworks;
+        float _nextFirework;
         readonly List<SomeGame.Car.CarTerrain> _listening = new();
         float _carsCheckedAt = -10f;
         SomeGame.Race.RaceManager _race;
@@ -43,6 +50,14 @@ namespace SomeGame.Track
             public Transform Banner;
             public ParticleSystem Confetti;
             public float PoppedAt = -10f;
+        }
+
+        class CoasterRun
+        {
+            public TrackPath Path;
+            public TrackLayout.Coaster Data;
+            public Transform[] Cars, Shadows;
+            public float Along;
         }
 
         class CowView
@@ -84,14 +99,17 @@ namespace SomeGame.Track
         void Build()
         {
             foreach (var go in _spawned) if (go != null) Destroy(go);
-            _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear(); _cows.Clear();
+            _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear(); _cows.Clear(); _spinners.Clear(); _coasters.Clear(); _fireworks = null;
             var layout = track.Layout;
             if (layout == null) return;
             if (track.Sections > 1) BuildArches();
             foreach (var train in layout.trains) BuildCrossing(train);
             if (logSprite != null && layout.logJumps != null) foreach (float log in layout.logJumps) BuildLog(log);
             foreach (var prop in layout.props) BuildProp(prop);
-            if (fenceSprite != null && layout.fences != null) foreach (var stretch in layout.fences) BuildFence(stretch);
+            if (fenceSprite != null && layout.fences != null) foreach (var stretch in layout.fences) BuildFence(stretch, fenceSprite, 1.2f, 2.2f, 7);
+            if (buntingSprite != null && layout.buntings != null) foreach (var stretch in layout.buntings) BuildFence(stretch, buntingSprite, 1.1f, 3.4f, 8);
+            if (layout.coasters != null) foreach (var coaster in layout.coasters) BuildCoaster(coaster);
+            if (layout.fireworks && particleMaterial != null) BuildFireworks();
             if (cowSprite != null && layout.cows != null) foreach (var cow in layout.cows) BuildCow(cow);
         }
 
@@ -99,7 +117,7 @@ namespace SomeGame.Track
 
         // Wooden fence along both sides of the road, a little off the kerb; left open wherever it would stand on
         // another piece of road, in water or right beside a branch's mouth.
-        void BuildFence(Vector2 stretch)
+        void BuildFence(Vector2 stretch, Sprite sprite, float offset, float thickness, int order)
         {
             var path = track.Path;
             const float Step = 2.6f;
@@ -110,16 +128,16 @@ namespace SomeGame.Track
                 for (float k = 0f; k <= span; k += Step)
                 {
                     float d = path.WrapDistance(stretch.x + k);
-                    Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 1.2f);
+                    Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + offset);
                     if (!FenceFits(p)) { last = null; continue; }
                     if (last.HasValue)
                     {
                         Vector2 a = last.Value, along = p - a;
                         if (along.magnitude < Step * 1.6f)
                         {
-                            var sr = Sprite("Fence", fenceSprite, transform, (a + p) * 0.5f, 1f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg, 7);
-                            float unit = fenceSprite.bounds.size.x;
-                            sr.transform.localScale = new Vector3(along.magnitude / unit * 1.06f, 2.2f, 1f);
+                            var sr = Sprite(sprite.name, sprite, transform, (a + p) * 0.5f, 1f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg, order);
+                            float unit = sprite.bounds.size.x;
+                            sr.transform.localScale = new Vector3(along.magnitude / unit * 1.06f, thickness, 1f);
                         }
                     }
                     last = p;
@@ -430,15 +448,171 @@ namespace SomeGame.Track
 
         void BuildProp(TrackLayout.Prop prop)
         {
-            if (prop.kind != TrackLayout.PropKind.Windmill) return;
-            Sprite("WindmillTower", windmillTowerSprite, transform, prop.position, prop.size * 0.45f, 0f, 11);
-            var sails = Sprite("WindmillSails", windmillSailsSprite, transform, prop.position + new Vector2(0f, 0.6f), prop.size, 0f, 12);
-            _sails.Add(sails.transform);
-            var collider = new GameObject("WindmillBase");
+            switch (prop.kind)
+            {
+                case TrackLayout.PropKind.Windmill:
+                    Sprite("WindmillTower", windmillTowerSprite, transform, prop.position, prop.size * 0.45f, 0f, 11);
+                    _sails.Add(Sprite("WindmillSails", windmillSailsSprite, transform, prop.position + new Vector2(0f, 0.6f), prop.size, 0f, 12).transform);
+                    Solid(prop.position, prop.size * 0.2f);
+                    break;
+                case TrackLayout.PropKind.Carousel:
+                    if (carouselTopSprite == null) return;
+                    Sprite("CarouselBase", carouselBaseSprite, transform, prop.position, prop.size, 0f, 10);
+                    _spinners.Add((Sprite("Carousel", carouselTopSprite, transform, prop.position, prop.size * 0.92f, 0f, 12).transform, 24f));
+                    Solid(prop.position, prop.size * 0.42f);
+                    break;
+                case TrackLayout.PropKind.SwingRide:
+                    if (swingSeatsSprite == null) return;
+                    _spinners.Add((Sprite("SwingSeats", swingSeatsSprite, transform, prop.position, prop.size, 0f, 13).transform, -70f));
+                    _spinners.Add((Sprite("SwingHub", swingHubSprite, transform, prop.position, prop.size * 0.36f, 0f, 14).transform, -70f));
+                    Solid(prop.position, prop.size * 0.16f);
+                    break;
+                case TrackLayout.PropKind.Teacups:
+                    if (teacupSprite == null) return;
+                    var floor = Sprite("TeacupFloor", teacupFloorSprite, transform, prop.position, prop.size, 0f, 10).transform;
+                    _spinners.Add((floor, 16f));
+                    // Three cups riding round on the turning floor, each spinning on its own the other way.
+                    float unit = prop.size / Mathf.Max(0.01f, floor.localScale.x);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float a = i * Mathf.PI * 2f / 3f + 0.3f;
+                        var cup = Sprite("Teacup", teacupSprite, floor, new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * unit * 0.27f, 1f, 0f, 12).transform;
+                        cup.localScale = Vector3.one * (unit * 0.3f / Mathf.Max(teacupSprite.bounds.size.x, teacupSprite.bounds.size.y));
+                        _spinners.Add((cup, -110f - 40f * i));
+                    }
+                    Solid(prop.position, prop.size * 0.46f);
+                    break;
+            }
+        }
+
+        void Solid(Vector2 at, float radius)
+        {
+            var collider = new GameObject("PropBase");
             collider.transform.SetParent(transform, false);
-            collider.transform.position = prop.position;
-            collider.AddComponent<CircleCollider2D>().radius = prop.size * 0.2f;
+            collider.transform.position = at;
+            collider.AddComponent<CircleCollider2D>().radius = radius;
             _spawned.Add(collider);
+        }
+
+        // ------------------------------------------------------------------ fairground
+
+        // A roller coaster on stilts: its rails (above the cars where they cross the road), their shadow on the
+        // ground, stilts beside the road, and a train racing round, faster downhill.
+        void BuildCoaster(TrackLayout.Coaster data)
+        {
+            if (data.points == null || data.points.Length < 3 || coasterRailsMaterial == null) return;
+            var loop = new TrackPath(data.points, 1f);
+            Strip("CoasterShadow", loop, 2.4f, new Vector2(1.4f, -1.9f), plainShadow: true, order: 1);
+            Strip("CoasterRails", loop, 2.4f, Vector2.zero, plainShadow: false, order: 34);
+            for (float d = 0f; d < loop.Length; d += 7f)
+            {
+                Vector2 p = loop.PointAt(d) + new Vector2(0.7f, -0.95f);
+                var on = track.Path.Project(p);
+                if (Mathf.Abs(on.Lateral) < track.OffRoadAt(on.Distance) + 0.8f) continue; // no stilts on the road
+                var post = Sprite("Stilt", bannerSprite, transform, p, 0.7f, 0f, 2);
+                post.color = new Color(0.35f, 0.2f, 0.2f, 0.85f);
+            }
+            var run = new CoasterRun { Path = loop, Data = data, Cars = new Transform[data.cars], Shadows = new Transform[data.cars] };
+            for (int i = 0; i < data.cars; i++)
+            {
+                run.Shadows[i] = Sprite("CoasterCarShadow", coasterCarSprite, transform, Vector2.zero, 2.2f, 0f, 3).transform;
+                run.Shadows[i].GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0.3f);
+                run.Cars[i] = Sprite("CoasterCar", coasterCarSprite, transform, Vector2.zero, 2.2f, 0f, 35).transform;
+            }
+            _coasters.Add(run);
+        }
+
+        void Strip(string name, TrackPath loop, float width, Vector2 offset, bool plainShadow, int order)
+        {
+            var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+            go.transform.SetParent(transform, false);
+            _spawned.Add(go);
+            var verts = new List<Vector3>();
+            var uvs = new List<Vector2>();
+            var colors = new List<Color>();
+            var tris = new List<int>();
+            int n = Mathf.CeilToInt(loop.Length / 1f);
+            for (int i = 0; i <= n; i++)
+            {
+                float d = loop.Length * i / n;
+                Vector2 p = loop.PointAt(d) + offset, side = loop.NormalAt(d) * (width * 0.5f);
+                verts.Add(p - side); verts.Add(p + side);
+                uvs.Add(new Vector2(d / 2.4f, 0f)); uvs.Add(new Vector2(d / 2.4f, 1f));
+                Color c = plainShadow ? new Color(0f, 0f, 0f, 0.22f) : Color.white;
+                colors.Add(c); colors.Add(c);
+                if (i < n) { int k = i * 2; tris.AddRange(new[] { k, k + 1, k + 3, k, k + 3, k + 2 }); }
+            }
+            var mesh = new Mesh { name = name };
+            mesh.SetVertices(verts); mesh.SetUVs(0, uvs); mesh.SetColors(colors); mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+            go.GetComponent<MeshFilter>().sharedMesh = mesh;
+            var r = go.GetComponent<MeshRenderer>();
+            r.sharedMaterial = coasterRailsMaterial; // the shadow: the same rails, tinted dark
+            r.sortingOrder = order;
+        }
+
+        void UpdateCoasters()
+        {
+            foreach (var run in _coasters)
+            {
+                float length = run.Path.Length;
+                float wave = Mathf.Sin(run.Along / length * Mathf.PI * 6f);
+                run.Along = Mathf.Repeat(run.Along + run.Data.speed * (1f + 0.45f * wave) * Time.deltaTime, length);
+                for (int i = 0; i < run.Cars.Length; i++)
+                {
+                    float d = Mathf.Repeat(run.Along - i * 2.5f, length);
+                    Vector2 p = run.Path.PointAt(d), t = run.Path.TangentAt(d);
+                    var rot = Quaternion.Euler(0f, 0f, Mathf.Atan2(t.y, t.x) * Mathf.Rad2Deg - 90f);
+                    run.Cars[i].SetPositionAndRotation(p, rot);
+                    run.Shadows[i].SetPositionAndRotation(p + new Vector2(1.4f, -1.9f), rot);
+                }
+            }
+        }
+
+        // Fireworks: bursts of coloured sparks over the fair, never over the road.
+        void BuildFireworks()
+        {
+            _fireworks = Particles("Fireworks", Vector2.zero, Color.white, 9f, 1.3f, new Vector2(0.6f, 1.1f));
+            var main = _fireworks.main;
+            main.gravityModifier = 0f;
+            var drag = _fireworks.limitVelocityOverLifetime;
+            drag.enabled = true; drag.dampen = 0.08f; drag.limit = 2f;
+            _fireworks.GetComponent<ParticleSystemRenderer>().sortingOrder = overheadOrder + 5;
+            _fireworks.Play();
+            _nextFirework = Time.time + 1f;
+        }
+
+        static readonly Color[] FireworkColors =
+        {
+            new(1f, 0.35f, 0.3f), new(1f, 0.85f, 0.3f), new(0.4f, 0.85f, 1f), new(0.75f, 0.45f, 1f), new(0.45f, 1f, 0.55f), new(1f, 0.55f, 0.85f),
+        };
+
+        void UpdateFireworks()
+        {
+            if (_fireworks == null || Time.time < _nextFirework) return;
+            _nextFirework = Time.time + Random.Range(0.5f, 1.3f);
+            var cam = Camera.main;
+            if (cam == null) return;
+            // Somewhere on screen, well away from the road, so it never hides a car.
+            float h = cam.orthographicSize, w = h * cam.aspect;
+            for (int attempt = 0; attempt < 12; attempt++)
+            {
+                Vector2 p = (Vector2)cam.transform.position + new Vector2(Random.Range(-w, w), Random.Range(-h, h)) * 0.9f;
+                var on = track.Path.Project(p);
+                if (Mathf.Abs(on.Lateral) < track.OffRoadAt(on.Distance) + 8f) continue;
+                Color color = FireworkColors[Random.Range(0, FireworkColors.Length)];
+                var emit = new ParticleSystem.EmitParams { position = p, applyShapeToPosition = false };
+                for (int i = 0; i < 48; i++)
+                {
+                    float a = i / 48f * Mathf.PI * 2f + Random.value * 0.1f;
+                    emit.velocity = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * Random.Range(8f, 12f);
+                    emit.startColor = i % 4 == 0 ? Color.white : color;
+                    emit.startSize = Random.Range(0.6f, 1.1f);
+                    emit.startLifetime = Random.Range(0.9f, 1.4f);
+                    _fireworks.Emit(emit, 1);
+                }
+                break;
+            }
         }
 
         // ------------------------------------------------------------------ every frame
@@ -448,6 +622,9 @@ namespace SomeGame.Track
             foreach (var s in _sails) s.Rotate(0f, 0f, -38f * Time.deltaTime);
             foreach (var c in _crossings) UpdateCrossing(c);
             UpdateCows();
+            UpdateCoasters();
+            UpdateFireworks();
+            foreach (var (t, speed) in _spinners) if (t != null) t.Rotate(0f, 0f, speed * Time.deltaTime);
             foreach (var a in _arches)
             {
                 float k = (Time.time - a.PoppedAt) / 0.5f;

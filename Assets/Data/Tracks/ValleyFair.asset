@@ -1,0 +1,1149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: ValleyFair
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: 0}
+  - {x: 0, y: 22}
+  - {x: 2, y: 44}
+  - {x: 4, y: 64}
+  - {x: 7, y: 84}
+  - {x: 14, y: 103}
+  - {x: 30, y: 116}
+  - {x: 50, y: 112}
+  - {x: 58, y: 93}
+  - {x: 50, y: 74}
+  - {x: 62, y: 62}
+  - {x: 88, y: 58}
+  - {x: 114, y: 58}
+  - {x: 140, y: 60}
+  - {x: 160, y: 66}
+  - {x: 170, y: 82}
+  - {x: 164, y: 96}
+  - {x: 146, y: 102}
+  - {x: 122, y: 100}
+  - {x: 100, y: 102}
+  - {x: 84, y: 114}
+  - {x: 80, y: 134}
+  - {x: 80, y: 152}
+  - {x: 68, y: 170}
+  - {x: 78, y: 192}
+  - {x: 100, y: 198}
+  - {x: 120, y: 190}
+  - {x: 128, y: 172}
+  - {x: 146, y: 168}
+  - {x: 166, y: 170}
+  - {x: 188, y: 184}
+  - {x: 214, y: 200}
+  - {x: 240, y: 200}
+  - {x: 262, y: 184}
+  - {x: 272, y: 158}
+  - {x: 266, y: 132}
+  - {x: 248, y: 114}
+  - {x: 240, y: 94}
+  - {x: 236, y: 72}
+  - {x: 222, y: 54}
+  - {x: 200, y: 40}
+  - {x: 178, y: 30}
+  - {x: 154, y: 20}
+  - {x: 134, y: 10}
+  - {x: 124, y: -4}
+  - {x: 118, y: -20}
+  - {x: 112, y: -36}
+  - {x: 102, y: -54}
+  - {x: 86, y: -62}
+  - {x: 70, y: -54}
+  - {x: 66, y: -38}
+  - {x: 48, y: -30}
+  - {x: 26, y: -34}
+  - {x: 8, y: -22}
+  roadWidth: 7.5
+  widths: []
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 36
+  sections: 3
+  sectionLines:
+  - 405
+  - 800
+  boundaryMargin: 25
+  rooms:
+  - min: {x: 50, y: 145}
+    max: {x: 140, y: 205}
+    floor: 4
+    upper: 0
+  - min: {x: 54, y: -70}
+    max: {x: 132, y: -16}
+    floor: 1
+    upper: 0
+  houses:
+  - min: {x: 50, y: 145}
+    max: {x: 140, y: 205}
+    roof: 2
+  - min: {x: 54, y: -70}
+    max: {x: 132, y: -16}
+    roof: 1
+  upstairs: []
+  stairs: []
+  decor:
+  - cell: Ring
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 99, y: 174}
+    size: 26
+    angle: 0
+    flat: 1
+  - cell: Pedestal
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 92, y: 180}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Pedestal
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 106, y: 168}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 112, y: 151}
+    size: 16
+    angle: 0
+    flat: 0
+  - cell: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 131, y: 152}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 55, y: 186}
+    size: 14
+    angle: -90
+    flat: 0
+  - cell: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 55, y: 157}
+    size: 12
+    angle: -90
+    flat: 0
+  - cell: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 135, y: 194}
+    size: 12
+    angle: 90
+    flat: 0
+  - cell: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 64, y: 200}
+    size: 12
+    angle: 180
+    flat: 0
+  - cell: Balloons
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 134, y: 182}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 88, y: -38}
+    size: 6
+    angle: 30
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 98, y: -28}
+    size: 6
+    angle: -60
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 84, y: -24}
+    size: 6
+    angle: 150
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 100, y: -42}
+    size: 6
+    angle: 100
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 92, y: -60}
+    size: 6
+    angle: 80
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 60, y: -64}
+    size: 6
+    angle: 20
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 126, y: -62}
+    size: 6
+    angle: -120
+    flat: 0
+  - cell: BumperCar
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 62, y: -22}
+    size: 6
+    angle: 200
+    flat: 0
+  - cell: Plaza
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 32, y: 94}
+    size: 38
+    angle: 0
+    flat: 1
+  - cell: Plaza
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 100, y: 80}
+    size: 30
+    angle: 0
+    flat: 1
+  - cell: Plaza
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.25
+    position: {x: 222, y: 152}
+    size: 44
+    angle: 0
+    flat: 1
+  logJumps: []
+  coasters:
+  - points:
+    - {x: 176, y: 120}
+    - {x: 184, y: 226}
+    - {x: 258, y: 232}
+    - {x: 298, y: 196}
+    - {x: 300, y: 120}
+    - {x: 280, y: 104}
+    - {x: 214, y: 108}
+    cars: 5
+    speed: 18
+  buntings:
+  - {x: 8, y: 92}
+  - {x: 212, y: 292}
+  - {x: 1106, y: 1182}
+  - {x: 590, y: 640}
+  padLook: 1
+  fireworks: 1
+  cows: []
+  fences: []
+  trains: []
+  props:
+  - kind: 1
+    position: {x: 32, y: 94}
+    size: 30
+  - kind: 3
+    position: {x: 100, y: 80}
+    size: 22
+  - kind: 2
+    position: {x: 222, y: 152}
+    size: 36
+  bankMaterial: {fileID: 2100000, guid: a655625dfb973417bb8d666b2a38e344, type: 2}
+  sceneryMaterial: {fileID: 2100000, guid: a287821da9ec34b80997806bd7dc43ef, type: 2}
+  waterWorld: 0
+  biome: 0
+  gaps:
+  - from: 917.54584
+    to: 931.54584
+    rampLateral: 0
+  elevatedRoad: 0
+  bouncers:
+  - position: {x: 149.52061, y: 64.11898}
+    radius: 1.8
+    airTime: 1
+    speedBoost: 1.12
+    target: {x: 127.946976, y: 100.41581}
+  geysers: []
+  sweepers: []
+  skyLife: 0.7
+  rivers:
+  - points:
+    - {x: 205, y: 88}
+    - {x: 238, y: 83}
+    - {x: 275, y: 90}
+    - {x: 300, y: 76}
+    width: 6
+    rampLaterals:
+    - 0
+  lakes:
+  - center: {x: 178, y: 30}
+    radii: {x: 34, y: 20}
+    angle: 0
+  oil: []
+  rampLength: 3
+  rampWidth: 5
+  shortcuts: []
+  branches: []
+  banks: []
+  penguins: []
+  dashPanels:
+  - distance: 150
+    lateral: -1.8
+    length: 4
+    width: 3.2
+  - distance: 279.21738
+    lateral: 2
+    length: 4
+    width: 3.2
+  - distance: 605
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 722
+    lateral: -1.8
+    length: 4
+    width: 3.2
+  - distance: 901.54584
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 1040
+    lateral: 1.8
+    length: 4
+    width: 3.2
+  scenery:
+  - name: Stall
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: StallGreen
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: GameBooth
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 10
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: Popcorn
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 3, y: 4}
+    clearance: {x: 1, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: Balloons
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 1, y: 4}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: Tent
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 6
+    sizeRange: {x: 9, y: 12}
+    clearance: {x: 4, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: TentBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 6
+    sizeRange: {x: 9, y: 12}
+    clearance: {x: 4, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2, y: 100}
+    canopy: 0
+    indoor: 0
+  - name: Stall
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: StallGreen
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: GameBooth
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 10
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: Popcorn
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 3, y: 4}
+    clearance: {x: 1, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: Balloons
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 1, y: 4}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: Tent
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 6
+    sizeRange: {x: 9, y: 12}
+    clearance: {x: 4, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: TentBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 6
+    sizeRange: {x: 9, y: 12}
+    clearance: {x: 4, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 205, y: 300}
+    canopy: 0
+    indoor: 0
+  - name: Stall
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: StallGreen
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: GameBooth
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 10
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.2, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: Popcorn
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 3, y: 4}
+    clearance: {x: 1, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: Balloons
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 1, y: 4}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 16
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 2.5}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: Tent
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 6
+    sizeRange: {x: 9, y: 12}
+    clearance: {x: 4, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: TentBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 6
+    sizeRange: {x: 9, y: 12}
+    clearance: {x: 4, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1100, y: 1186}
+    canopy: 0
+    indoor: 0
+  - name: Tent
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 10, y: 14}
+    clearance: {x: 3, y: 18}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 300, y: 470}
+    canopy: 0
+    indoor: 0
+  - name: TentBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 10, y: 14}
+    clearance: {x: 3, y: 18}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 300, y: 470}
+    canopy: 0
+    indoor: 0
+  - name: Stall
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 5
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.5, y: 6}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 300, y: 470}
+    canopy: 0
+    indoor: 0
+  - name: Balloons
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 5
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 1, y: 6}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 300, y: 470}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 300, y: 470}
+    canopy: 0
+    indoor: 0
+  - name: Tent
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 10, y: 14}
+    clearance: {x: 3, y: 18}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 590, y: 1000}
+    canopy: 0
+    indoor: 0
+  - name: TentBlue
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 10, y: 14}
+    clearance: {x: 3, y: 18}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 590, y: 1000}
+    canopy: 0
+    indoor: 0
+  - name: Stall
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 5
+    sizeRange: {x: 7, y: 9}
+    clearance: {x: 1.5, y: 6}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 590, y: 1000}
+    canopy: 0
+    indoor: 0
+  - name: Balloons
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 5
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 1, y: 6}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 590, y: 1000}
+    canopy: 0
+    indoor: 0
+  - name: Crowd
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 590, y: 1000}
+    canopy: 0
+    indoor: 0
+  - name: LampPost
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    count: 70
+    sizeRange: {x: 2.4, y: 3}
+    clearance: {x: 0.4, y: 1.4}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Bench
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    count: 24
+    sizeRange: {x: 3.5, y: 4.5}
+    clearance: {x: 0.8, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: FlowerBed
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    count: 26
+    sizeRange: {x: 5, y: 7}
+    clearance: {x: 2, y: 16}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Tree
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    count: 90
+    sizeRange: {x: 4, y: 6.5}
+    clearance: {x: 4, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery: []
+  bakedSignature: 

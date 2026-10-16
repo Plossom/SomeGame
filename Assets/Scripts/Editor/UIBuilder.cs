@@ -494,7 +494,7 @@ namespace SomeGame.EditorTools
             {
                 ("roof", "RoofRow"), ("wall", "IceWall"), ("ice", "Ice"), ("ramp", "Ramp"), ("gummiboat", "Gummiboat"), ("pad", "JumpPad"),
                 ("dash", "DashPanel"), ("penguin", "Penguin"), ("fish", "Fish"), ("snowball", "Snowball"), ("log", "Log"), ("hay", "HayBale"),
-                ("oil", "Oil"), ("shortcut", "Arrow"), ("mushroom", "MushroomPad"), ("cow", "Cow"), ("forestlog", "ForestLog"),
+                ("oil", "Oil"), ("shortcut", "Arrow"), ("mushroom", "MushroomPad"), ("cow", "Cow"), ("forestlog", "ForestLog"), ("trampoline", "Trampoline"),
             };
             var icons = wso.FindProperty("icons");
             icons.arraySize = iconList.Length;
@@ -1268,8 +1268,8 @@ namespace SomeGame.EditorTools
             if (houses == null) houses = track.gameObject.AddComponent<SomeGame.Track.TrackHouses>();
             Configure(houses, ("track", track), ("plain", Mat("Plain")));
             var hso = new SerializedObject(houses);
-            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks") });
-            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue") });
+            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks"), Mat("FloorSawdust") });
+            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue"), Mat("RoofCircus") });
             hso.ApplyModifiedPropertiesWithoutUndo();
             var journey = track.GetComponent<SomeGame.Track.TrackJourney>();
             if (journey == null) journey = track.gameObject.AddComponent<SomeGame.Track.TrackJourney>();
@@ -1278,12 +1278,16 @@ namespace SomeGame.EditorTools
                 ("locoSprite", Sprite("MineLoco")), ("wagonSprite", Sprite("MineWagon")), ("crossingSprite", Sprite("CrossingLight")),
                 ("barrierSprite", Sprite("Barrier")), ("lampSprite", Sprite("SparkDot")), ("railsMaterial", Mat("Rails")),
                 ("logSprite", Sprite("ForestLog")), ("windmillTowerSprite", Sprite("WindmillTower")), ("windmillSailsSprite", Sprite("WindmillSails")),
-                ("cowSprite", Sprite("Cow")), ("fenceSprite", Sprite("Fence")),
+                ("cowSprite", Sprite("Cow")), ("fenceSprite", Sprite("Fence")), ("buntingSprite", Sprite("Bunting")),
+                ("carouselBaseSprite", Sprite("CarouselBase")), ("carouselTopSprite", Sprite("CarouselTop")),
+                ("swingHubSprite", Sprite("SwingHub")), ("swingSeatsSprite", Sprite("SwingSeats")),
+                ("teacupFloorSprite", Sprite("TeacupFloor")), ("teacupSprite", Sprite("Teacup")),
+                ("coasterCarSprite", Sprite("CoasterCar")), ("coasterRailsMaterial", Mat("CoasterRails")),
                 ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
                 ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")),
-                ("mushroomPadSprite", Sprite("MushroomPad")));
+                ("mushroomPadSprite", Sprite("MushroomPad")), ("trampolineSprite", Sprite("Trampoline")));
         }
 
         static TrackLine Line(RectTransform rt)

@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Level06
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Hopscotch
+  displayName: Valley Fair
   chapter: "VALLEY CUP \xB7 RACE 5"
-  track: {fileID: 11400000, guid: ec44b3ff42d4f4b75ace5200d8c1901f, type: 2}
+  track: {fileID: 11400000, guid: 5208f9fcd52db46ceb67b7f84fbde546, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 30d5d541bb1f547cfb3ed3a4ce3d5243, type: 3}
   laps: 3
-  description: 'Six streams in a row: jump, land, jump again. Keep your speed up for every single ramp.'
+  description: 'The fair in three sections: round the carousel, through the big top, under the roller coaster, over the flume and the lake, home through the bumper cars. A trampoline hides a short cut.'
   difficulty: 3
   rivalCount: 7
   rivalSpeedScale: 0.83
   rivalCornerScale: 1
   starsRequired: 8
   starTimes:
-  - 73
-  - 65
-  - 61
+  - 85
+  - 76
+  - 69

@@ -31,6 +31,8 @@ namespace SomeGame.Track
         [SerializeField] Sprite catSprite, vacuumSprite, ballSprite;
         [Tooltip("Jump pad on dry ground in the meadows and woods (a bouncy mushroom).")]
         [SerializeField] Sprite mushroomPadSprite;
+        [Tooltip("Jump pad on the fairground (a trampoline).")]
+        [SerializeField] Sprite trampolineSprite;
         [SerializeField, Min(0.3f)] float penguinSize = 2f;
         [SerializeField] Sprite dashPanelSprite;
         [SerializeField] Material particleMaterial;
@@ -69,9 +71,11 @@ namespace SomeGame.Track
             foreach (var b in layout.bouncers)
             {
                 bool dry = jumpPadSprite != null && !track.IsWater(b.position);
-                bool mushroom = dry && mushroomPadSprite != null && layout.biome == TrackLayout.Biome.Meadow;
-                var sr = Sprite(mushroom ? "MushroomPad" : dry ? "JumpPad" : "Gummiboat", mushroom ? mushroomPadSprite : dry ? jumpPadSprite : gummiboatSprite,
-                    b.position, b.radius * (mushroom ? 2.4f : 2.15f), 0f, sortingOrder - 2);
+                bool trampoline = dry && trampolineSprite != null && layout.padLook == TrackLayout.PadLook.Trampoline;
+                bool mushroom = dry && !trampoline && mushroomPadSprite != null && layout.biome == TrackLayout.Biome.Meadow;
+                var sr = Sprite(trampoline ? "Trampoline" : mushroom ? "MushroomPad" : dry ? "JumpPad" : "Gummiboat",
+                    trampoline ? trampolineSprite : mushroom ? mushroomPadSprite : dry ? jumpPadSprite : gummiboatSprite,
+                    b.position, b.radius * (mushroom || trampoline ? 2.4f : 2.15f), 0f, sortingOrder - 2);
                 _boats.Add((sr.transform, b.position, sr.transform.localScale.x));
                 if (b.HasTarget && arrowSprite != null)
                 {
