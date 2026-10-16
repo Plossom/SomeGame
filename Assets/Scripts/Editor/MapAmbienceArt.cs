@@ -30,23 +30,52 @@ namespace SomeGame.EditorTools
             Debug.Log("Map ambience art generated");
         }
 
-        /// <summary>A white pointing hand (index finger up) with a dark outline, for the tutorial's gestures. The fingertip is at (64, 154).</summary>
+        /// <summary>
+        /// A cartoon glove pointing up (index finger raised, the other fingers curled into a soft fist, a rolled
+        /// cuff at the wrist), leaning a little to the right, for the tutorial's gestures. The fingertip is at
+        /// the top centre (pivot 0.5, 0.96).
+        /// </summary>
         [MenuItem("SomeGame/Generate Finger")]
-        public static void GenerateFinger() => Write(ArtGenerator.Folder, "Finger", 128, 160, (x, y) =>
+        public static void GenerateFinger() => Write(ArtGenerator.Folder, "Finger", 256, 320, FingerPixel, 200, false);
+
+        static Color FingerPixel(float px, float py)
         {
-            float finger = Capsule(x, y, 64f, 62f, 64f, 140f, 14f);
-            float palm = RoundRect(x, y, 70f, 46f, 34f, 30f, 16f);
-            float knuckles = Mathf.Min(Circle(x, y, 88f, 70f, 12.5f), Circle(x, y, 102f, 58f, 11.5f));
-            float thumb = Capsule(x, y, 38f, 50f, 22f, 82f, 11f);
-            float hand = SMin(SMin(SMin(finger, palm, 6f), knuckles, 5f), thumb, 6f);
+            // Drawn upright around the fingertip (128, 304), then leant over by turning the picture.
+            const float Lean = 14f * Mathf.Deg2Rad;
+            float cx = px - 128f, cy = py - 304f;
+            float x = 128f + cx * Mathf.Cos(Lean) + cy * Mathf.Sin(Lean), y = 304f - cx * Mathf.Sin(Lean) + cy * Mathf.Cos(Lean);
+
+            float finger = Capsule(x, y, 124f, 186f, 128f, 280f, 24f);
+            float palm = RoundRect(x, y, 140f, 128f, 54f, 60f, 34f);
+            float c1 = Circle(x, y, 158f, 184f, 22f), c2 = Circle(x, y, 186f, 176f, 20f), c3 = Circle(x, y, 206f, 156f, 18f);
+            float fist = SMin(palm, Mathf.Min(Mathf.Min(c1, c2), c3), 8f);
+            float thumb = Capsule(x, y, 104f, 110f, 92f, 160f, 20f);
+            float hand = SMin(SMin(fist, finger, 8f), thumb, 8f);
+            float cuff = RoundRect(x, y, 146f, 62f, 60f, 20f, 18f);
+            float all = Mathf.Min(hand, cuff);
+
+            Color white = Hex("F8F8FA"), shade = Hex("D6D9E0"), deep = Hex("AEB3BD"), line = Hex("2B3440");
             Color c = new(0f, 0f, 0f, 0f);
-            c = Over(c, new Color(0f, 0f, 0f, 0.25f), Mathf.Clamp01(0.5f - (hand + 3f) / 6f));
-            c = Over(c, Color.white, Cover(hand));
-            c = Over(c, new Color(0.85f, 0.88f, 0.9f, 1f), Cover(Mathf.Max(hand + 2f, -(x - 78f)))); // a soft shade on the right
-            c = Over(c, Hex("173D33"), Stroke(hand, 5f));
-            c = Over(c, Hex("C9D2D6"), Cover(RoundRect(x, y, 64f, 136f, 7f, 6f, 4f))); // nail
+            c = Over(c, new Color(0f, 0f, 0f, 0.2f), Mathf.Clamp01(0.5f - (all - 3f) / 8f));
+            // The hand: white, a soft grey rim along its right and lower edges, a gloss on the finger.
+            c = Over(c, white, Cover(hand));
+            float rim = Cover(hand) * (1f - Cover(hand + 14f)) * Mathf.Clamp01((x - 120f) / 50f + (110f - y) / 60f);
+            c = Over(c, shade, rim);
+            c = Over(c, Color.white, Cover(Capsule(x, y, 114f, 214f, 117f, 272f, 6f)) * 0.95f);
+            c = Over(c, Color.white, Cover(Circle(x, y, 152f, 194f, 6f)));
+            c = Over(c, Color.white, Cover(Circle(x, y, 181f, 186f, 5f)));
+            c = Over(c, Color.white, Cover(Circle(x, y, 202f, 166f, 4.5f)));
+            // Creases between the curled fingers (each one's edge where it tucks under its neighbour).
+            c = Over(c, deep, Stroke(c2, 3.5f) * Cover(c1));
+            c = Over(c, deep, Stroke(c3, 3.5f) * Cover(c2));
+            c = Over(c, deep, Stroke(c1, 3.5f) * Cover(finger + 2f) * Cover(-(x - 140f)));
+            // The rolled cuff with a fold line.
+            c = Over(c, white, Cover(cuff));
+            c = Over(c, shade, Cover(Mathf.Max(cuff, y - 56f)));
+            c = Over(c, line, Stroke(all, 6f));
+            c = Over(c, line, Stroke(cuff, 5f) * Cover(hand - 1f));
             return c;
-        }, 100, false);
+        }
 
         /// <summary>Light rays for celebrations: sixteen soft wedges from the centre, fading outwards.</summary>
         [MenuItem("SomeGame/Generate Rays")]
