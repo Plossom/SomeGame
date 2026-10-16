@@ -119,7 +119,7 @@ namespace SomeGame.Track
         public List<Vector2> buntings = new();
         public enum PadLook { Auto, Trampoline, Orange }
         [Tooltip("How the jump pads look (Auto: mushrooms in the meadows, jump pads elsewhere, gummi boats in the water; " +
-                 "Orange: the orange jump pads everywhere, on the water too).")]
+                 "Orange: the orange jump pads on dry ground too, gummi boats in the water).")]
         public PadLook padLook;
         public enum BoatKind { Sailboat, Rowboat, SwanBoat, Buoy, Ducks }
         /// <summary>Something on the lake: a boat, a buoy, a duck family.</summary>

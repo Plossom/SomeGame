@@ -348,6 +348,7 @@ MonoBehaviour:
   - {x: 1106, y: 1182}
   - {x: 590, y: 640}
   padLook: 1
+  boats: []
   fireworks: 1
   cows: []
   fences: []
@@ -419,10 +420,6 @@ MonoBehaviour:
     width: 3.2
   - distance: 722
     lateral: -1.8
-    length: 4
-    width: 3.2
-  - distance: 901.54584
-    lateral: 0
     length: 4
     width: 3.2
   - distance: 1040

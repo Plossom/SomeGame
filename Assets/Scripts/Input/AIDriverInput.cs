@@ -44,14 +44,12 @@ namespace SomeGame.Input
 
         public Vector2 SteerDirection { get; private set; }
         public float Throttle { get; private set; }
-        /// <summary>Rivals do not drift; mid-jump the bolder ones press it once for a trick.</summary>
-        public bool DriftHeld => _trickPress;
+        /// <summary>Rivals neither drift nor do tricks: in the air they fly calmly straight on.</summary>
+        public bool DriftHeld => false;
 
-        bool _trickPress, _wasAirborne;
-        float _airStart;
+        bool _wasAirborne;
         Vector2 _airAim;
         float _lastAirLeft;
-        int _jumps;
 
         void LateUpdate()
         {
@@ -62,8 +60,6 @@ namespace SomeGame.Input
             _lastAirLeft = _car.AirTimeLeft;
             if (launched)
             {
-                _airStart = Time.time;
-                _jumps++;
                 // In the air, aim for one point past the landing and turn smoothly towards it (no wobbling).
                 if (_sensor.Track != null)
                 {
@@ -73,9 +69,6 @@ namespace SomeGame.Input
                 }
             }
             _wasAirborne = air;
-            float since = Time.time - _airStart;
-            // Only on jumps long enough for the whole spin.
-            _trickPress = air && since > 0.15f && since < 0.3f && _car.AirTimeLeft > 0.5f && Takes(1000 + _jumps);
         }
 
         public float CornerGrip

@@ -561,6 +561,7 @@ MonoBehaviour:
   coasters: []
   buntings: []
   padLook: 0
+  boats: []
   fireworks: 0
   cows:
   - distance: 662
@@ -709,15 +710,7 @@ MonoBehaviour:
     lateral: -1.8
     length: 4
     width: 3.2
-  - distance: 296
-    lateral: 0
-    length: 4
-    width: 3.2
   - distance: 736.29266
-    lateral: 0
-    length: 4
-    width: 3.2
-  - distance: 981.29266
     lateral: 0
     length: 4
     width: 3.2
