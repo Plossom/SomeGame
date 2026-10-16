@@ -53,6 +53,15 @@ MonoBehaviour:
   stairs: []
   decor: []
   logJumps: []
+  rings: []
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings: []
+  padLook: 0
+  fireworks: 0
+  cows: []
+  fences: []
   trains: []
   props: []
   bankMaterial: {fileID: 0}
@@ -106,6 +115,7 @@ MonoBehaviour:
     rampLaterals:
     - 1.4
     - -1.4
+    bridged: 
   lakes:
   - center: {x: 40, y: -8}
     radii: {x: 12, y: 7}
@@ -8751,4 +8761,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4293656575
     canopy: 0
-  bakedSignature: e3d5377c12d23c99
+  bakedSignature: 526025614f7b7858

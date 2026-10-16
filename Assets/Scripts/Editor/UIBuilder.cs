@@ -495,6 +495,7 @@ namespace SomeGame.EditorTools
                 ("roof", "RoofRow"), ("wall", "IceWall"), ("ice", "Ice"), ("ramp", "Ramp"), ("gummiboat", "Gummiboat"), ("pad", "JumpPad"),
                 ("dash", "DashPanel"), ("penguin", "Penguin"), ("fish", "Fish"), ("snowball", "Snowball"), ("log", "Log"), ("hay", "HayBale"),
                 ("oil", "Oil"), ("shortcut", "Arrow"), ("mushroom", "MushroomPad"), ("cow", "Cow"), ("forestlog", "ForestLog"), ("trampoline", "Trampoline"),
+                ("lantern", "Lantern"), ("drawbridge", "BridgeLeaf"), ("ring", "BoostRing"), ("waterfall", "Waterfall"), ("coaster", "CoasterCar"),
             };
             var icons = wso.FindProperty("icons");
             icons.arraySize = iconList.Length;
@@ -1283,6 +1284,9 @@ namespace SomeGame.EditorTools
                 ("swingHubSprite", Sprite("SwingHub")), ("swingSeatsSprite", Sprite("SwingSeats")),
                 ("teacupFloorSprite", Sprite("TeacupFloor")), ("teacupSprite", Sprite("Teacup")),
                 ("coasterCarSprite", Sprite("CoasterCar")), ("coasterRailsMaterial", Mat("CoasterRails")),
+                ("bridgeLeafSprite", Sprite("BridgeLeaf")), ("stoneBridgeSprite", Sprite("StoneBridge")), ("ringSprite", Sprite("BoostRing")),
+                ("lanternSprite", Sprite("Lantern")), ("floatLanternSprite", Sprite("FloatLantern")), ("glowSprite", Sprite("Glow")),
+                ("headlightSprite", Sprite("Headlight")), ("waterfallMaterial", Mat("Waterfall")),
                 ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),

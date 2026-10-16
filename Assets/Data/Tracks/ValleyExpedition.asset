@@ -555,6 +555,9 @@ MonoBehaviour:
   - 1074.2927
   - 1268.2681
   - 1413.9158
+  rings: []
+  waterfalls: []
+  dusk: 0
   coasters: []
   buntings: []
   padLook: 0
@@ -603,6 +606,9 @@ MonoBehaviour:
   - from: 313
     to: 348
     rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: 128.68307, y: -77.77299}
@@ -633,6 +639,7 @@ MonoBehaviour:
     width: 7
     rampLaterals:
     - 0
+    bridged: 
   - points:
     - {x: 44, y: -130}
     - {x: 40, y: -100}
@@ -641,6 +648,7 @@ MonoBehaviour:
     width: 7
     rampLaterals:
     - 0
+    bridged: 
   - points:
     - {x: 259.95386, y: 48.423664}
     - {x: 277.9603, y: 24.09739}
@@ -648,6 +656,7 @@ MonoBehaviour:
     width: 6
     rampLaterals:
     - 0
+    bridged: 
   lakes:
   - center: {x: 44, y: -44}
     radii: {x: 12, y: 8}
@@ -18185,4 +18194,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: c3a20eb0bc4e482d
+  bakedSignature: 5688e6d4e7422f0a

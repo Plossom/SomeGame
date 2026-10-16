@@ -138,6 +138,12 @@ namespace SomeGame.UI
             var keys = new List<string>();
             void Add(bool has, string key) { if (has && keys.Count < 7) keys.Add(key); }
             bool Has(TrackLayout.BranchKind kind) => track.branches.Exists(b => b.kind == kind);
+            // The special attractions first.
+            Add(track.dusk, "lantern");
+            Add(track.gaps.Exists(g => g.IsDrawbridge), "drawbridge");
+            Add(track.rings is { Count: > 0 }, "ring");
+            Add(track.waterfalls is { Count: > 0 }, "waterfall");
+            Add(track.coasters is { Count: > 0 }, "coaster");
             Add(Has(TrackLayout.BranchKind.Roof), "roof");
             Add(track.banks.Count > 0, "wall");
             Add(Has(TrackLayout.BranchKind.Ice), "ice");

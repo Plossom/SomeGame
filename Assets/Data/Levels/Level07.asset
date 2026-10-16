@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Level07
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Lake Gauntlet
+  displayName: Lantern Lake
   chapter: "VALLEY CUP \xB7 RACE 7"
-  track: {fileID: 11400000, guid: 44c290866a24b4f89961e0e633d1f523, type: 2}
+  track: {fileID: 11400000, guid: 5ec8af4c0b91c4cc5b091e1d2e472c6d, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: c538f98dc1d2b44e8bcafac96ccd3110, type: 3}
   laps: 3
-  description: 'A long, tricky run over the lake: cross the causeway, bounce off the pads and dodge the fish.'
+  description: 'From golden afternoon into the night: time the drawbridge, fly through the golden rings, race through the waterfall at sunset, and home round the lake by lantern light.'
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.87
   rivalCornerScale: 1
   starsRequired: 12
   starTimes:
-  - 111
-  - 104
-  - 98
+  - 87
+  - 77
+  - 72

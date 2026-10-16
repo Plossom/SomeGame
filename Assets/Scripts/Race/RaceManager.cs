@@ -74,8 +74,17 @@ namespace SomeGame.Race
         /// <summary>Time.time at GO.</summary>
         public float StartTime => _startTime;
 
+        void OnDestroy()
+        {
+            if (SomeGame.Track.Track.ClockSource == RaceClock) SomeGame.Track.Track.ClockSource = null;
+        }
+
+        float RaceClock() => RaceTime;
+
         void Awake()
         {
+            // Drawbridges keep the race clock, so every player (online too) sees them move together.
+            SomeGame.Track.Track.ClockSource = RaceClock;
             Level = GameSession.CurrentLevel;
             // This race's surprises (train timetable, herds, the cat): random alone; online the room's race
             // number, so every phone sees the same race.

@@ -24,6 +24,8 @@ namespace SomeGame.Track
         [SerializeField] Sprite cowSprite, fenceSprite, buntingSprite;
         [SerializeField] Sprite carouselBaseSprite, carouselTopSprite, swingHubSprite, swingSeatsSprite, teacupFloorSprite, teacupSprite;
         [SerializeField] Sprite coasterCarSprite;
+        [SerializeField] Sprite bridgeLeafSprite, stoneBridgeSprite, ringSprite, lanternSprite, floatLanternSprite, glowSprite, headlightSprite;
+        [SerializeField] Material waterfallMaterial;
         [SerializeField] Material coasterRailsMaterial;
         [SerializeField] Material particleMaterial;
         [SerializeField] TMP_FontAsset font;
@@ -39,6 +41,15 @@ namespace SomeGame.Track
         readonly List<(Transform t, float speed)> _spinners = new();
         readonly List<CoasterRun> _coasters = new();
         ParticleSystem _fireworks;
+        readonly List<BridgeView> _drawbridges = new();
+        readonly List<RingView> _rings = new();
+        readonly List<FallView> _falls = new();
+        readonly List<(SpriteRenderer glow, float strength)> _glows = new();
+        readonly List<(Transform t, Vector2 home, float phase)> _floaters = new();
+        readonly Dictionary<SomeGame.Car.CarMovement, SpriteRenderer> _headlights = new();
+        SpriteRenderer _night;
+        ParticleSystem _skyLanterns, _fireflies;
+        float _darkness;
         float _nextFirework;
         readonly List<SomeGame.Car.CarTerrain> _listening = new();
         float _carsCheckedAt = -10f;
@@ -50,6 +61,31 @@ namespace SomeGame.Track
             public Transform Banner;
             public ParticleSystem Confetti;
             public float PoppedAt = -10f;
+        }
+
+        class BridgeView
+        {
+            public TrackLayout.Gap Gap;
+            public Transform Near, Far;
+            public SpriteRenderer NearSprite, FarSprite;
+            public Vector2 NearHinge, FarHinge, Along, Across;
+            public float Leaf, Width;
+            public SpriteRenderer[] Lamps;
+        }
+
+        class RingView
+        {
+            public Transform T;
+            public SpriteRenderer Sprite;
+            public float Scale, HitAt = -10f;
+        }
+
+        class FallView
+        {
+            public Material Material;
+            public Vector2 Centre;
+            public ParticleSystem Mist;
+            public float SplashedAt = -10f;
         }
 
         class CoasterRun
@@ -93,13 +129,15 @@ namespace SomeGame.Track
         {
             if (track != null) track.Rebuilt -= Build;
             if (_race != null) _race.PlayerLapCompleted -= OnPlayerSection;
-            foreach (var t in _listening) if (t != null) t.CowHit -= OnCowHit;
+            foreach (var t in _listening) if (t != null) { t.CowHit -= OnCowHit; t.RingHit -= OnRingHit; }
         }
 
         void Build()
         {
             foreach (var go in _spawned) if (go != null) Destroy(go);
             _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear(); _cows.Clear(); _spinners.Clear(); _coasters.Clear(); _fireworks = null;
+            _drawbridges.Clear(); _rings.Clear(); _falls.Clear(); _glows.Clear(); _floaters.Clear(); _headlights.Clear();
+            _night = null; _skyLanterns = _fireflies = null;
             var layout = track.Layout;
             if (layout == null) return;
             if (track.Sections > 1) BuildArches();
@@ -110,6 +148,14 @@ namespace SomeGame.Track
             if (buntingSprite != null && layout.buntings != null) foreach (var stretch in layout.buntings) BuildFence(stretch, buntingSprite, 1.1f, 3.4f, 8);
             if (layout.coasters != null) foreach (var coaster in layout.coasters) BuildCoaster(coaster);
             if (layout.fireworks && particleMaterial != null) BuildFireworks();
+            for (int g = 0; g < layout.gaps.Count; g++) if (layout.gaps[g].IsDrawbridge && bridgeLeafSprite != null) BuildDrawbridge(layout.gaps[g]);
+            if (stoneBridgeSprite != null)
+                foreach (var (from, to) in track.Bridges)
+                    if (!layout.gaps.Exists(g => g.IsDrawbridge && track.Path.DeltaDistance(from, g.to) > 0f && track.Path.DeltaDistance(g.from, to) > 0f))
+                        BuildStoneBridge(from, to); // (a drawbridge has its own leaves)
+            if (ringSprite != null && layout.rings != null) foreach (var ring in layout.rings) BuildRing(ring);
+            if (waterfallMaterial != null && layout.waterfalls != null) foreach (var fall in layout.waterfalls) BuildWaterfall(fall);
+            if (layout.dusk) BuildDusk();
             if (cowSprite != null && layout.cows != null) foreach (var cow in layout.cows) BuildCow(cow);
         }
 
@@ -178,15 +224,18 @@ namespace SomeGame.Track
         }
 
         // Cows breathe slowly; bumped, one jumps up with a start and shakes its head.
+        void ListenToCars()
+        {
+            if (Time.time - _carsCheckedAt < 1f) return;
+            _carsCheckedAt = Time.time;
+            foreach (var t in FindObjectsByType<SomeGame.Car.CarTerrain>())
+                if (!_listening.Contains(t)) { _listening.Add(t); t.CowHit += OnCowHit; t.RingHit += OnRingHit; }
+        }
+
         void UpdateCows()
         {
+            ListenToCars();
             if (_cows.Count == 0) return;
-            if (Time.time - _carsCheckedAt > 1f)
-            {
-                _carsCheckedAt = Time.time;
-                foreach (var t in FindObjectsByType<SomeGame.Car.CarTerrain>())
-                    if (!_listening.Contains(t)) { _listening.Add(t); t.CowHit += OnCowHit; }
-            }
             foreach (var cow in _cows)
             {
                 float since = Time.time - cow.StartledAt;
@@ -494,6 +543,276 @@ namespace SomeGame.Track
             _spawned.Add(collider);
         }
 
+        // ------------------------------------------------------------------ sunset lake
+
+        // A drawbridge over the river: two leaves hinged at the banks, meeting in the middle when down. They
+        // stand up on the bridge's rhythm (then the near leaf is a ramp); red lamps blink before it rises.
+        void BuildDrawbridge(TrackLayout.Gap gap)
+        {
+            var path = track.Path;
+            float mid = path.WrapDistance(gap.from + path.DeltaDistance(gap.from, gap.to) * 0.5f);
+            var v = new BridgeView
+            {
+                Gap = gap, NearHinge = path.PointAt(gap.from), FarHinge = path.PointAt(gap.to),
+                Along = path.TangentAt(mid), Across = path.NormalAt(mid),
+                Leaf = path.DeltaDistance(gap.from, gap.to) * 0.5f + 0.15f, Width = (track.OffRoadAt(mid) + 0.6f) * 2f,
+            };
+            float angle = Mathf.Atan2(v.Along.y, v.Along.x) * Mathf.Rad2Deg - 90f;
+            v.NearSprite = Sprite("BridgeLeaf", bridgeLeafSprite, transform, v.NearHinge, 1f, angle, -42);
+            v.FarSprite = Sprite("BridgeLeaf", bridgeLeafSprite, transform, v.FarHinge, 1f, angle + 180f, -42);
+            v.Near = v.NearSprite.transform; v.Far = v.FarSprite.transform;
+            // Towers at the four corners, and warning lamps facing the traffic.
+            var lamps = new List<SpriteRenderer>();
+            foreach (var hinge in new[] { v.NearHinge, v.FarHinge })
+                foreach (float side in new[] { -1f, 1f })
+                {
+                    Vector2 at = hinge + v.Across * side * (v.Width * 0.5f + 1.1f);
+                    Sprite("BridgeTower", pillarSprite, transform, at, 2.2f, angle, 11);
+                    var lamp = Sprite("BridgeLamp", lampSprite, transform, at + v.Along * (hinge == v.NearHinge ? -1.6f : 1.6f), 1.1f, 0f, 62);
+                    lamp.color = new Color(1f, 0.15f, 0.1f, 0f);
+                    lamps.Add(lamp);
+                }
+            v.Lamps = lamps.ToArray();
+            _drawbridges.Add(v);
+        }
+
+        void UpdateBridges()
+        {
+            float clock = Track.Clock;
+            foreach (var v in _drawbridges)
+            {
+                float lift = Track.BridgeLift(v.Gap, clock);
+                // Seen from above, a raised leaf looks shorter and catches more light.
+                float along = Mathf.Cos(lift * 72f * Mathf.Deg2Rad);
+                foreach (var (leaf, hinge, dir) in new[] { (v.Near, v.NearHinge, v.Along), (v.Far, v.FarHinge, -v.Along) })
+                {
+                    leaf.position = hinge + dir * (v.Leaf * along * 0.5f);
+                    float unit = bridgeLeafSprite.bounds.size.x;
+                    leaf.localScale = new Vector3(v.Width / unit, v.Leaf * Mathf.Max(0.05f, along) / unit, 1f);
+                }
+                Color shade = Color.Lerp(Color.white, new Color(1.15f, 1.12f, 1.05f), lift);
+                v.NearSprite.color = shade; v.FarSprite.color = shade;
+                float soon = Track.BridgeRisesIn(v.Gap, clock);
+                bool warn = lift > 0.01f || soon < 2f;
+                float blink = warn && Mathf.Repeat(Time.time * 2.5f, 1f) < 0.55f ? 1f : 0f;
+                foreach (var lamp in v.Lamps) lamp.color = new Color(1f, 0.15f, 0.1f, blink);
+            }
+        }
+
+        void BuildStoneBridge(float from, float to)
+        {
+            var path = track.Path;
+            float length = path.DeltaDistance(from, to), mid = path.WrapDistance(from + length * 0.5f);
+            Vector2 along = path.TangentAt(mid);
+            var sr = Sprite("StoneBridge", stoneBridgeSprite, transform, path.PointAt(mid), 1f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f, -42);
+            float unit = stoneBridgeSprite.bounds.size.x;
+            sr.transform.localScale = new Vector3((track.OffRoadAt(mid) + 1.4f) * 2f / unit, length / unit, 1f);
+        }
+
+        void BuildRing(TrackLayout.Ring ring)
+        {
+            var path = track.Path;
+            Vector2 at = path.PointAt(ring.distance) + path.NormalAt(ring.distance) * ring.lateral, along = path.TangentAt(ring.distance);
+            // Stands across the road: its long axis across, so the cars fly through it.
+            var sr = Sprite("BoostRing", ringSprite, transform, at, 5.2f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f, 36);
+            var shadow = Sprite("BoostRingShadow", ringSprite, transform, at + new Vector2(1.6f, -2.2f), 5.2f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f, 2);
+            shadow.color = new Color(0f, 0f, 0f, 0.25f);
+            _rings.Add(new RingView { T = sr.transform, Sprite = sr, Scale = sr.transform.localScale.x });
+        }
+
+        void OnRingHit(int index)
+        {
+            if (index < 0 || index >= _rings.Count) return;
+            _rings[index].HitAt = Time.time;
+            var burst = Particles("RingSparkle", _rings[index].T.position, new Color(1f, 0.85f, 0.3f), 8f, 0.7f, new Vector2(0.3f, 0.6f));
+            burst.GetComponent<ParticleSystemRenderer>().sortingOrder = 37;
+            burst.Emit(30);
+            Destroy(burst.gameObject, 1.5f);
+        }
+
+        void UpdateRings()
+        {
+            foreach (var r in _rings)
+            {
+                float since = Time.time - r.HitAt;
+                float pop = since < 0.4f ? Mathf.Sin(since / 0.4f * Mathf.PI) * 0.35f : 0f;
+                float pulse = 1f + Mathf.Sin(Time.time * 4f) * 0.04f;
+                r.T.localScale = Vector3.one * (r.Scale * pulse * (1f + pop));
+                r.Sprite.color = since < 0.4f ? Color.Lerp(Color.white, new Color(1.4f, 1.4f, 1.4f), 1f - since / 0.4f) : Color.white;
+            }
+        }
+
+        // A waterfall from a cliff beside the road, pouring right across it: falling water (scrolling), mist at
+        // both edges, a splash for every car that drives through.
+        void BuildWaterfall(TrackLayout.Waterfall fall)
+        {
+            var path = track.Path;
+            Vector2 centre = path.PointAt(fall.distance), across = path.NormalAt(fall.distance) * Mathf.Sign(fall.side), along = path.TangentAt(fall.distance);
+            float reach = track.OffRoadAt(fall.distance) + 4f;
+            var go = new GameObject("Waterfall", typeof(MeshFilter), typeof(MeshRenderer));
+            go.transform.SetParent(transform, false);
+            _spawned.Add(go);
+            var mesh = new Mesh { name = "Waterfall" };
+            Vector2 a = centre + across * reach, b = centre - across * reach, w = along * 2.6f;
+            mesh.SetVertices(new List<Vector3> { a - w, a + w, b + w, b - w });
+            mesh.SetUVs(0, new List<Vector2> { new(0, 0), new(1.3f, 0), new(1.3f, reach * 2f / 4f), new(0, reach * 2f / 4f) });
+            mesh.SetColors(new List<Color> { Color.white, Color.white, new(1f, 1f, 1f, 0.85f), new(1f, 1f, 1f, 0.85f) });
+            mesh.SetTriangles(new[] { 0, 1, 2, 0, 2, 3 }, 0);
+            mesh.RecalculateBounds();
+            go.GetComponent<MeshFilter>().sharedMesh = mesh;
+            var r = go.GetComponent<MeshRenderer>();
+            var material = new Material(waterfallMaterial);
+            r.sharedMaterial = material;
+            r.sortingOrder = 38;
+            var mist = Particles("Mist", centre - across * reach, new Color(0.9f, 0.97f, 1f, 0.7f), 2f, 1.6f, new Vector2(1.2f, 2.6f));
+            mist.GetComponent<ParticleSystemRenderer>().sortingOrder = 39;
+            var em = mist.emission; em.rateOverTime = 14f;
+            var shape = mist.shape; shape.radius = 3f;
+            mist.Play();
+            var top = Particles("Spray", centre + across * reach, new Color(0.9f, 0.97f, 1f, 0.6f), 1.5f, 1.2f, new Vector2(0.8f, 1.6f));
+            top.GetComponent<ParticleSystemRenderer>().sortingOrder = 39;
+            var em2 = top.emission; em2.rateOverTime = 8f;
+            top.Play();
+            _falls.Add(new FallView { Material = material, Centre = centre, Mist = mist });
+        }
+
+        void UpdateFalls()
+        {
+            foreach (var f in _falls)
+            {
+                f.Material.mainTextureOffset = new Vector2(0f, Time.time * 1.6f);
+                // Cars driving through throw up a splash.
+                if (Time.time - f.SplashedAt < 0.25f) continue;
+                foreach (var t in _listening)
+                {
+                    if (t == null || ((Vector2)t.transform.position - f.Centre).sqrMagnitude > 9f) continue;
+                    f.SplashedAt = Time.time;
+                    var emit = new ParticleSystem.EmitParams { position = t.transform.position, applyShapeToPosition = true };
+                    f.Mist.Emit(emit, 12);
+                    if (t.GetComponent<SomeGame.Input.PlayerCarInput>() != null)
+                        SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.splash, 0.5f);
+                }
+            }
+        }
+
+        // From afternoon to night over the race: a tint over the world (above the cars, under the lights),
+        // lanterns along the road and on the lake, sky lanterns rising, fireflies, headlights.
+        void BuildDusk()
+        {
+            var cam = Camera.main;
+            if (cam == null || bannerSprite == null) return;
+            _night = Sprite("NightTint", bannerSprite, cam.transform, Vector2.zero, 1f, 0f, 60);
+            _night.transform.localPosition = new Vector3(0f, 0f, 5f);
+            _night.transform.localScale = Vector3.one * 600f;
+            _night.color = new Color(0f, 0f, 0f, 0f);
+            _spawned.Add(_night.gameObject);
+            var path = track.Path;
+            var layout = track.Layout;
+            float sunset = track.Sections > 1 ? track.SectionLineDistance(1) : path.Length * 0.33f;
+            float night = track.Sections > 2 ? track.SectionLineDistance(2) : path.Length * 0.66f;
+            // Lanterns on posts: a few along the sunset road, then both sides all through the night.
+            if (lanternSprite != null)
+                for (float d = sunset; d < path.Length - 4f; d += d < night ? 34f : 15f)
+                {
+                    float side = Mathf.Repeat(d / 15f, 2f) < 1f ? 1f : -1f;
+                    Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 1.3f);
+                    if (track.IsWater(p) || track.InRoom(p)) continue;
+                    Sprite("Lantern", lanternSprite, transform, p, 1.2f, 0f, 61);
+                    var glow = Sprite("LanternGlow", glowSprite, transform, p, 9f, 0f, 61);
+                    _glows.Add((glow, 0.9f));
+                }
+            // Paper lanterns floating on the lakes.
+            var random = new System.Random(7);
+            foreach (var lake in layout.lakes)
+                for (int i = 0; i < 22; i++)
+                {
+                    float a = (float)random.NextDouble() * Mathf.PI * 2f, r = Mathf.Sqrt((float)random.NextDouble()) * 0.85f;
+                    Vector2 local = new(Mathf.Cos(a) * lake.radii.x * r, Mathf.Sin(a) * lake.radii.y * r);
+                    Vector2 p = lake.center + (Vector2)(Quaternion.Euler(0f, 0f, lake.angle) * local);
+                    var paper = Sprite("FloatLantern", floatLanternSprite, transform, p, 1f, (float)random.NextDouble() * 90f, 61);
+                    _floaters.Add((paper.transform, p, (float)random.NextDouble() * 6f));
+                    var glow = Sprite("FloatGlow", glowSprite, paper.transform, Vector2.zero, 1f, 0f, 61);
+                    glow.transform.localScale = Vector3.one * 5f;
+                    _glows.Add((glow, 0.8f));
+                }
+            if (particleMaterial != null)
+            {
+                _skyLanterns = Particles("SkyLanterns", Vector2.zero, new Color(1f, 0.6f, 0.25f), 1.2f, 9f, new Vector2(0.7f, 1.1f));
+                var main = _skyLanterns.main; main.maxParticles = 120;
+                var size = _skyLanterns.sizeOverLifetime; size.enabled = true; size.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 1.2f, 1f, 0.3f));
+                _skyLanterns.GetComponent<ParticleSystemRenderer>().sortingOrder = 63;
+                _skyLanterns.Play();
+                _fireflies = Particles("Fireflies", Vector2.zero, new Color(0.85f, 1f, 0.45f), 0.6f, 3f, new Vector2(0.18f, 0.32f));
+                var fmain = _fireflies.main; fmain.maxParticles = 160;
+                _fireflies.GetComponent<ParticleSystemRenderer>().sortingOrder = 62;
+                _fireflies.Play();
+            }
+        }
+
+        static readonly (float at, Color tint)[] Sky =
+        {
+            (0f, new Color(1f, 0.72f, 0.35f, 0.06f)),     // golden afternoon
+            (0.75f, new Color(1f, 0.6f, 0.3f, 0.13f)),    // low sun
+            (1f, new Color(0.95f, 0.45f, 0.45f, 0.2f)),   // sunset (section 2)
+            (1.6f, new Color(0.45f, 0.22f, 0.55f, 0.38f)), // dusk
+            (2f, new Color(0.05f, 0.07f, 0.22f, 0.58f)),  // night (section 3)
+            (3f, new Color(0.04f, 0.06f, 0.2f, 0.62f)),
+        };
+
+        void UpdateDusk()
+        {
+            if (_night == null) return;
+            var player = GameObject.Find("PlayerCar");
+            var sensor = player != null ? player.GetComponent<TrackSensor>() : null;
+            if (sensor == null) return;
+            // Where the player is in the race: 0..1 section 1, 1..2 section 2, 2..3 section 3 (by the section
+            // they are racing, so the grid behind the start line is still afternoon).
+            var progress = player.GetComponent<SomeGame.Race.RaceProgress>();
+            int section = progress != null ? Mathf.Clamp(progress.CurrentLap - 1, 0, 2) : 0;
+            float d = sensor.Current.Distance, length = track.Path.Length;
+            float from = section == 0 ? 0f : track.SectionLineDistance(section);
+            float to = section == 2 ? length : track.SectionLineDistance(section + 1);
+            float into = section == 0 && d > track.SectionLineDistance(2) ? 0f : d - from;
+            float phase = section + Mathf.Clamp01(into / Mathf.Max(1f, to - from));
+            Color tint = Sky[0].tint;
+            for (int i = 1; i < Sky.Length; i++)
+                if (phase <= Sky[i].at) { tint = Color.Lerp(Sky[i - 1].tint, Sky[i].tint, Mathf.InverseLerp(Sky[i - 1].at, Sky[i].at, phase)); break; }
+            _night.color = Color.Lerp(_night.color, tint, Time.deltaTime * 2f);
+            _darkness = Mathf.InverseLerp(0.15f, 0.6f, _night.color.a);
+            foreach (var (glow, strength) in _glows)
+                if (glow != null) glow.color = new Color(1f, 0.85f, 0.5f, _darkness * strength * (0.85f + Mathf.Sin(Time.time * 3f + glow.transform.position.x) * 0.15f));
+            foreach (var (t, home, phase0) in _floaters)
+                t.position = home + new Vector2(Mathf.Sin(Time.time * 0.5f + phase0), Mathf.Cos(Time.time * 0.4f + phase0)) * 0.6f;
+            // Sky lanterns drift up from the lake and fireflies dance by the road, round the camera, at night.
+            var cam = Camera.main;
+            if (cam != null && _darkness > 0.3f)
+            {
+                Vector2 c = cam.transform.position;
+                float h = cam.orthographicSize, w = h * cam.aspect;
+                if (_skyLanterns != null && Random.value < Time.deltaTime * 2.5f)
+                    _skyLanterns.Emit(new ParticleSystem.EmitParams { position = c + new Vector2(Random.Range(-w, w), Random.Range(-h, h)), velocity = new Vector2(Random.Range(-0.4f, 0.4f), 1.2f), applyShapeToPosition = false }, 1);
+                if (_fireflies != null && Random.value < Time.deltaTime * 14f)
+                {
+                    Vector2 p = c + new Vector2(Random.Range(-w, w), Random.Range(-h, h));
+                    var on = track.Path.Project(p);
+                    if (Mathf.Abs(on.Lateral) > track.OffRoadAt(on.Distance) + 1f)
+                        _fireflies.Emit(new ParticleSystem.EmitParams { position = p, velocity = Random.insideUnitCircle * 0.6f, applyShapeToPosition = false }, 1);
+                }
+            }
+            // Headlights on every car, brighter as it gets dark.
+            if (headlightSprite != null)
+            {
+                foreach (var car in FindObjectsByType<SomeGame.Car.CarMovement>())
+                {
+                    if (_headlights.ContainsKey(car)) continue;
+                    var beam = Sprite("Headlight", headlightSprite, car.transform, new Vector2(0f, 4.6f), 7.5f, 0f, 61);
+                    _headlights[car] = beam;
+                }
+                foreach (var kv in _headlights)
+                    if (kv.Value != null) kv.Value.color = new Color(1f, 1f, 1f, _darkness * 0.85f);
+            }
+        }
+
         // ------------------------------------------------------------------ fairground
 
         // A roller coaster on stilts: its rails (above the cars where they cross the road), their shadow on the
@@ -624,6 +943,10 @@ namespace SomeGame.Track
             UpdateCows();
             UpdateCoasters();
             UpdateFireworks();
+            UpdateBridges();
+            UpdateRings();
+            UpdateFalls();
+            UpdateDusk();
             foreach (var (t, speed) in _spinners) if (t != null) t.Rotate(0f, 0f, speed * Time.deltaTime);
             foreach (var a in _arches)
             {

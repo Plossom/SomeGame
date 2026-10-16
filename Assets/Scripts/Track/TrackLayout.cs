@@ -92,6 +92,27 @@ namespace SomeGame.Track
             [Tooltip("Metres per second (faster downhill, slower on the climbs).")]
             [Min(1f)] public float speed = 16f;
         }
+        /// <summary>A golden ring in the air over a jump: fly through it for a boost.</summary>
+        [Serializable]
+        public class Ring
+        {
+            public float distance;
+            public float lateral;
+        }
+        [Tooltip("Boost rings in the air over the jumps.")]
+        public List<Ring> rings = new();
+        /// <summary>A waterfall pouring across the road: you drive straight through it.</summary>
+        [Serializable]
+        public class Waterfall
+        {
+            public float distance;
+            [Tooltip("Which side it falls from (+1 left, -1 right).")]
+            public float side = 1f;
+        }
+        public List<Waterfall> waterfalls = new();
+        [Tooltip("The race runs from afternoon into the night: sunset after the first section line, night after the second (lanterns, headlights, fireflies).")]
+        public bool dusk;
+
         [Tooltip("Roller coasters over the fairground.")]
         public List<Coaster> coasters = new();
         [Tooltip("Strings of pennants along both sides of the road on these stretches (lap distances from, to).")]
@@ -313,6 +334,13 @@ namespace SomeGame.Track
             public float to;
             [Tooltip("Sideways position of the kicker (positive = left of the centre line).")]
             public float rampLateral;
+            [Tooltip("A drawbridge over the gap: seconds per cycle (0 = an open gap, always jumped).")]
+            [Min(0f)] public float period;
+            [Tooltip("Drawbridge: seconds of each cycle it stands up (then it is a ramp; down, you drive across).")]
+            [Min(0f)] public float raised;
+            [Tooltip("Drawbridge: shifts its rhythm (seconds).")]
+            public float offset;
+            public bool IsDrawbridge => period > 0f;
         }
 
         [Serializable]
@@ -372,6 +400,8 @@ namespace SomeGame.Track
             [Min(1f)] public float width = 6f;
             [Tooltip("Sideways position of the kicker at each crossing, in lap order (positive = left of the centre line).")]
             public float[] rampLaterals = { 0f };
+            [Tooltip("Crossings (in lap order, from 0) where a bridge carries the road over: no jump, no water on the road.")]
+            public int[] bridged = { };
         }
 
         [Serializable]

@@ -69,6 +69,7 @@ namespace SomeGame.Car
                 _terrain.Splashed += OnSplashed;
                 _terrain.PenguinHit += OnPenguin;
                 _terrain.CowHit += OnCow;
+                _terrain.RingHit += OnRing;
                 _terrain.DashPanel += OnDashPanel;
                 _terrain.RoofLanded += OnRoofLanded;
             }
@@ -86,6 +87,7 @@ namespace SomeGame.Car
                 _terrain.Splashed -= OnSplashed;
                 _terrain.PenguinHit -= OnPenguin;
                 _terrain.CowHit -= OnCow;
+                _terrain.RingHit -= OnRing;
                 _terrain.DashPanel -= OnDashPanel;
                 _terrain.RoofLanded -= OnRoofLanded;
             }
@@ -125,6 +127,7 @@ namespace SomeGame.Car
 
         void OnPenguin() => PlayOneShot(Library.penguin, 0.8f);
         void OnCow(int cow) => PlayOneShot(Library.moo, 0.9f);
+        void OnRing(int ring) => PlayOneShot(Library.trick, 0.9f);
         void OnDashPanel() => PlayOneShot(Library.dashPanel, 0.75f);
         void OnRoofLanded() => PlayOneShot(Library.roofLand, 0.9f);
 

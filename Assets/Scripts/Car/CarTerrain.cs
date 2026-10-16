@@ -68,6 +68,13 @@ namespace SomeGame.Car
         public event Action IceRun;
         /// <summary>The car bumped into a penguin (and spins).</summary>
         public event Action PenguinHit;
+        /// <summary>Flew through a boost ring (its index in the layout).</summary>
+        public event Action<int> RingHit;
+        /// <summary>A rising drawbridge flung the car across.</summary>
+        public event Action BridgeFling;
+        readonly System.Collections.Generic.Dictionary<int, bool> _bridgeOpen = new();
+        float _ringAt = -10f;
+        int _lastRing = -1;
         /// <summary>Bumped into a cow on the road (its index in the layout).</summary>
         public event Action<int> CowHit;
         /// <summary>The car drove over a dash panel (boost).</summary>
@@ -87,15 +94,51 @@ namespace SomeGame.Car
             _dust = CreateBurst("LandingDust", new Color(0.93f, 0.86f, 0.7f, 0.7f), new Vector2(1.5f, 4f), new Vector2(0.4f, 0.8f), 0.6f);
         }
 
+        // Mid-air: through a golden ring, a boost.
+        void InTheAir(SomeGame.Track.Track track)
+        {
+            if (track.Layout.rings == null || track.Layout.rings.Count == 0) return;
+            int ring = track.RingAt(_car.Body.position);
+            if (ring < 0 || ring == _lastRing && Time.time - _ringAt < 2f) return;
+            _lastRing = ring;
+            _ringAt = Time.time;
+            _car.GiveBoost(0.7f);
+            RingHit?.Invoke(ring);
+        }
+
         void OnEnable() => _car.Landed += OnLanded;
         void OnDisable() => _car.Landed -= OnLanded;
 
         void FixedUpdate()
         {
             var track = _sensor.Track;
-            if (track == null || _car.IsAirborne) return;
+            if (track == null) return;
+            if (_car.IsAirborne)
+            {
+                InTheAir(track);
+                return;
+            }
             Vector2 position = _car.Body.position;
             var point = _sensor.Current;
+
+            // On a drawbridge as it rises: it flings the car across.
+            for (int g = 0; g < track.Layout.gaps.Count; g++)
+            {
+                var gap = track.Layout.gaps[g];
+                if (!gap.IsDrawbridge) continue;
+                bool open = track.GapOpen(gap);
+                bool wasOpen = _bridgeOpen.TryGetValue(g, out bool w) && w;
+                _bridgeOpen[g] = open;
+                if (!open || wasOpen) continue;
+                float into = track.Path.DeltaDistance(gap.from - 0.5f, point.Distance);
+                if (into < 0f || into > track.Path.DeltaDistance(gap.from - 0.5f, gap.to) || Mathf.Abs(point.Lateral) > track.OffRoadAt(point.Distance)) continue;
+                float speed = Mathf.Max(_car.Body.linearVelocity.magnitude, 10f);
+                _car.Body.linearVelocity = track.Path.TangentAt(point.Distance) * speed;
+                _shortcutFrom = point.Distance;
+                _car.Launch(Mathf.Max(0.5f, (track.Path.DeltaDistance(point.Distance, gap.to) + 3f) / speed));
+                BridgeFling?.Invoke();
+                return;
+            }
 
             if (_sensor.Elevated)
             {

@@ -95,6 +95,15 @@ MonoBehaviour:
   stairs: []
   decor: []
   logJumps: []
+  rings: []
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings: []
+  padLook: 0
+  fireworks: 0
+  cows: []
+  fences: []
   trains: []
   props: []
   bankMaterial: {fileID: 0}
@@ -105,15 +114,27 @@ MonoBehaviour:
   - from: 136.85756
     to: 146.85757
     rampLateral: 0.8
+    period: 0
+    raised: 0
+    offset: 0
   - from: 251.85152
     to: 271.6803
     rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
   - from: 335.80328
     to: 345.80295
     rampLateral: -0.8
+    period: 0
+    raised: 0
+    offset: 0
   - from: 462.11243
     to: 472.1114
     rampLateral: 0.8
+    period: 0
+    raised: 0
+    offset: 0
   elevatedRoad: 1
   bouncers:
   - position: {x: 56, y: 56}
@@ -2082,4 +2103,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: c7ef8f5fff146245
+  bakedSignature: 10979c249a897e0f
