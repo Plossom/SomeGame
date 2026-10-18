@@ -256,7 +256,7 @@ namespace SomeGame.Track
 
         public enum Biome { Meadow, Snow }
 
-        public enum SweeperKind { Log, HayBale, Snowball, Boulder, Vacuum, Ball }
+        public enum SweeperKind { Log, HayBale, Snowball, Boulder, Vacuum, Ball, Curling }
 
         public enum CrossingKind { Penguins, Sheep, Cat }
 

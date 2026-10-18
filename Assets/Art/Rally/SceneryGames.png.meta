@@ -1,0 +1,1003 @@
+fileFormatVersion: 2
+guid: 8900e5411f3694b0cb0a0ca69dc8b7a8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5553875560344250554
+    second: SceneryGames_0
+  - first:
+      213: -7996158990419645668
+    second: SceneryGames_1
+  - first:
+      213: -4504435765798172620
+    second: SceneryGames_2
+  - first:
+      213: -2678374543493479876
+    second: SceneryGames_3
+  - first:
+      213: 1853418768282663239
+    second: SceneryGames_4
+  - first:
+      213: 4311779361489861628
+    second: SceneryGames_5
+  - first:
+      213: 3902031523895877468
+    second: SceneryGames_6
+  - first:
+      213: -9021419302202151202
+    second: SceneryGames_7
+  - first:
+      213: -2063679065593929769
+    second: SceneryGames_8
+  - first:
+      213: 8152806826488774769
+    second: SceneryGames_9
+  - first:
+      213: -8335579417081245318
+    second: SceneryGames_10
+  - first:
+      213: 8921243039711225522
+    second: SceneryGames_11
+  - first:
+      213: -7502582623782522732
+    second: SceneryGames_12
+  - first:
+      213: 3987945065743138029
+    second: SceneryGames_13
+  - first:
+      213: -872704946905092577
+    second: SceneryGames_14
+  - first:
+      213: 505799814142151774
+    second: SceneryGames_15
+  - first:
+      213: 3930104395467024113
+    second: SceneryGames_16
+  - first:
+      213: -7267256472331578838
+    second: SceneryGames_17
+  - first:
+      213: -3420068018920097212
+    second: SceneryGames_18
+  - first:
+      213: 71590319540654073
+    second: SceneryGames_19
+  - first:
+      213: 5010233808362780755
+    second: SceneryGames_20
+  - first:
+      213: -1408781769420213529
+    second: SceneryGames_21
+  - first:
+      213: -1720184210363602538
+    second: SceneryGames_22
+  - first:
+      213: -1711893093179176721
+    second: SceneryGames_23
+  - first:
+      213: -6403587039098017423
+    second: SceneryGames_24
+  - first:
+      213: -853017093603038637
+    second: SceneryGames_25
+  - first:
+      213: 7742206542159906092
+    second: SceneryGames_26
+  - first:
+      213: -8797052904223611359
+    second: SceneryGames_27
+  - first:
+      213: -9007258839203280233
+    second: SceneryGames_28
+  - first:
+      213: -3155095482034364378
+    second: SceneryGames_29
+  - first:
+      213: 8653828972105234329
+    second: SceneryGames_30
+  - first:
+      213: 3571795339353726864
+    second: SceneryGames_31
+  - first:
+      213: -1706457892618392402
+    second: SceneryGames_32
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryGames_0
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 1323
+        width: 205
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64715f28a9bace2b0800000000000000
+      internalID: -5553875560344250554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_1
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 1339
+        width: 166
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1bad7083cfe70190800000000000000
+      internalID: -7996158990419645668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_2
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 1379
+        width: 254
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 438090a59870d71c0800000000000000
+      internalID: -4504435765798172620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_3
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 1283
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c324f971b8084dad0800000000000000
+      internalID: -2678374543493479876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_4
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 1078
+        width: 244
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 749b787cc8aa8b910800000000000000
+      internalID: 1853418768282663239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_5
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 1023
+        width: 97
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfbb6770c7486db30800000000000000
+      internalID: 4311779361489861628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_6
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 1064
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5f90344ffcc62630800000000000000
+      internalID: 3902031523895877468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_7
+      rect:
+        serializedVersion: 2
+        x: 589
+        y: 1134
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ede636231fa7dc280800000000000000
+      internalID: -9021419302202151202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_8
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 1064
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7df1ddcd2d65c53e0800000000000000
+      internalID: -2063679065593929769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_9
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 1134
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1704e3ffc96942170800000000000000
+      internalID: 8152806826488774769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_10
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1075
+        width: 188
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7190d71fa2125c80800000000000000
+      internalID: -8335579417081245318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_11
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 845
+        width: 246
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b6e9e0274f9ecb70800000000000000
+      internalID: 8921243039711225522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_12
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 792
+        width: 177
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 490bc63aad871e790800000000000000
+      internalID: -7502582623782522732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_13
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 839
+        width: 156
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dec346388e6085730800000000000000
+      internalID: 3987945065743138029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_14
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 775
+        width: 242
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1eeefd797783e3f0800000000000000
+      internalID: -872704946905092577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_15
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 562
+        width: 248
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5cc6694046f40700800000000000000
+      internalID: 505799814142151774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_16
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 640
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f6630600298a8630800000000000000
+      internalID: 3930104395467024113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_17
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 640
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a229403fdb4852b90800000000000000
+      internalID: -7267256472331578838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_18
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 558
+        width: 232
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44af790d14a7980d0800000000000000
+      internalID: -3420068018920097212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_19
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 541
+        width: 251
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ffc39d24075ef000800000000000000
+      internalID: 71590319540654073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_20
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 550
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 358bd157a1de78540800000000000000
+      internalID: 5010233808362780755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_21
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 550
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e279abd170037ce0800000000000000
+      internalID: -1408781769420213529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_22
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 553
+        width: 37
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 699aa09139da028e0800000000000000
+      internalID: -1720184210363602538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_23
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 292
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe84c9f3d422e38e0800000000000000
+      internalID: -1711893093179176721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_24
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 432
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 179644ef383e127a0800000000000000
+      internalID: -6403587039098017423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_25
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35a647c09797924f0800000000000000
+      internalID: -853017093603038637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_26
+      rect:
+        serializedVersion: 2
+        x: 780
+        y: 267
+        width: 244
+        height: 211
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c25852384d7d17b60800000000000000
+      internalID: 7742206542159906092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_27
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 380
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 126ee6d0ef69ae580800000000000000
+      internalID: -8797052904223611359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_28
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 307
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79a8a49eec9cff280800000000000000
+      internalID: -9007258839203280233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_29
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 620e6e02069d634d0800000000000000
+      internalID: -3155095482034364378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_30
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 997f055a993981870800000000000000
+      internalID: 8653828972105234329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_31
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09f139cdfe0919130800000000000000
+      internalID: 3571795339353726864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryGames_32
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaca15e76917158e0800000000000000
+      internalID: -1706457892618392402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryGames_0: -5553875560344250554
+      SceneryGames_1: -7996158990419645668
+      SceneryGames_10: -8335579417081245318
+      SceneryGames_11: 8921243039711225522
+      SceneryGames_12: -7502582623782522732
+      SceneryGames_13: 3987945065743138029
+      SceneryGames_14: -872704946905092577
+      SceneryGames_15: 505799814142151774
+      SceneryGames_16: 3930104395467024113
+      SceneryGames_17: -7267256472331578838
+      SceneryGames_18: -3420068018920097212
+      SceneryGames_19: 71590319540654073
+      SceneryGames_2: -4504435765798172620
+      SceneryGames_20: 5010233808362780755
+      SceneryGames_21: -1408781769420213529
+      SceneryGames_22: -1720184210363602538
+      SceneryGames_23: -1711893093179176721
+      SceneryGames_24: -6403587039098017423
+      SceneryGames_25: -853017093603038637
+      SceneryGames_26: 7742206542159906092
+      SceneryGames_27: -8797052904223611359
+      SceneryGames_28: -9007258839203280233
+      SceneryGames_29: -3155095482034364378
+      SceneryGames_3: -2678374543493479876
+      SceneryGames_30: 8653828972105234329
+      SceneryGames_31: 3571795339353726864
+      SceneryGames_32: -1706457892618392402
+      SceneryGames_4: 1853418768282663239
+      SceneryGames_5: 4311779361489861628
+      SceneryGames_6: 3902031523895877468
+      SceneryGames_7: -9021419302202151202
+      SceneryGames_8: -2063679065593929769
+      SceneryGames_9: 8152806826488774769
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

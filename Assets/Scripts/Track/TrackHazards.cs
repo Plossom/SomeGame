@@ -28,7 +28,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite penguinSprite;
         [SerializeField] Sprite sheepSprite;
         [SerializeField] Sprite boulderSprite;
-        [SerializeField] Sprite catSprite, vacuumSprite, ballSprite;
+        [SerializeField] Sprite catSprite, vacuumSprite, ballSprite, curlingSprite;
         [Tooltip("Jump pad on dry ground in the meadows and woods (a bouncy mushroom).")]
         [SerializeField] Sprite mushroomPadSprite;
         [Tooltip("Jump pad on the fairground (a trampoline).")]
@@ -130,6 +130,11 @@ namespace SomeGame.Track
                     go.AddComponent<CircleCollider2D>().radius = 1.6f;
                     visual = Sprite("Vacuum", vacuumSprite, Vector2.zero, 3.4f, 0f, sortingOrder, go.transform).transform;
                 }
+                else if (s.kind == TrackLayout.SweeperKind.Curling && curlingSprite != null)
+                {
+                    go.AddComponent<CircleCollider2D>().radius = 1.15f;
+                    visual = Sprite("CurlingStone", curlingSprite, Vector2.zero, 2.5f, 0f, sortingOrder, go.transform).transform;
+                }
                 else if (s.kind == TrackLayout.SweeperKind.Ball && ballSprite != null)
                 {
                     go.AddComponent<CircleCollider2D>().radius = 1.25f;
@@ -193,8 +198,9 @@ namespace SomeGame.Track
                 Vector2 target = path.PointAt(s.distance) + path.NormalAt(s.distance) * lateral;
                 Vector2 step = target - body.position;
                 body.MovePosition(target);
-                // Hay bales, snowballs and balls roll as they move; the robot vacuum turns slowly as it goes.
+                // Hay bales, snowballs and balls roll as they move; the robot vacuum and curling stones turn slowly as they go.
                 if (s.kind == TrackLayout.SweeperKind.Vacuum) visual.Rotate(0f, 0f, 40f * Time.fixedDeltaTime);
+                else if (s.kind == TrackLayout.SweeperKind.Curling) visual.Rotate(0f, 0f, 70f * Time.fixedDeltaTime); // slides, curling round slowly
                 else if (s.kind != TrackLayout.SweeperKind.Log) visual.Rotate(0f, 0f, -step.magnitude * 50f * Mathf.Sign(Mathf.Cos(phase * Mathf.PI * 2f)));
             }
         }
