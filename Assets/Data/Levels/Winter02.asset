@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
+  m_Name: Winter02
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
+  displayName: Glacier Pass
+  chapter: "WINTER CUP \xB7 RACE 2"
+  track: {fileID: 11400000, guid: 94c913d4d70c54176ac5f4a0e2359d33, type: 2}
+  isTutorial: 0
+  preview: {fileID: 21300000, guid: 087d39038291043538d290130c0c0c0d, type: 3}
+  laps: 3
+  description: 'Up the mountain in three sections: through the ski valley past the ice-fishing holes (or take the forest path), up the switchbacks of the pass under the gondola, ride the ice wall and leap the crevasse, then slide through the hall of the ice palace and race down home. Somewhere on the way down a pad flies you across a bend.'
+  difficulty: 2
+  rivalCount: 7
+  rivalSpeedScale: 0.9
+  rivalCornerScale: 1
+  starsRequired: 22
+  starTimes:
+  - 77
+  - 68
+  - 65

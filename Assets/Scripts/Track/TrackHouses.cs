@@ -30,7 +30,7 @@ namespace SomeGame.Track
         readonly List<Roof> _roofs = new();
         Transform _player;
 
-        const int FloorOrder = -95, ShadowOrder = -97, WallOrder = -43, StairOrder = -47, RoofOrder = 44;
+        const int FloorOrder = -95, IceFloorOrder = -46, ShadowOrder = -97, WallOrder = -43, StairOrder = -47, RoofOrder = 44;
 
         protected override void Build(TrackPath path, TrackLayout layout)
         {
@@ -46,7 +46,9 @@ namespace SomeGame.Track
             {
                 if (room.upper) Part("UpperShadow", Quad(room.min + new Vector2(0.8f, -1.6f), room.max + new Vector2(0.8f, -1.6f), new Color(0f, 0f, 0f, 0.35f)), plain, FloorOrder - 1);
                 int k = Mathf.Clamp((int)room.floor, 0, floors.Length - 1);
-                Part("Floor", Floor(room.min, room.max, room.upper ? 1f : 0.93f), floors[k], FloorOrder);
+                // An ice floor (ice palace hall) covers the road too: the car slides over the bare ice.
+                int order = room.floor == TrackLayout.FloorKind.Ice ? IceFloorOrder : FloorOrder;
+                Part("Floor", Floor(room.min, room.max, room.upper ? 1f : 0.93f), floors[k], order);
             }
 
             // Walls round each room, broken where the road goes through.

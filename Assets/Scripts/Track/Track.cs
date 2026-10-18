@@ -79,6 +79,15 @@ namespace SomeGame.Track
             return false;
         }
 
+        /// <summary>True on the ice floor of a room (an ice palace hall): little grip, like a frozen lake.</summary>
+        public bool OnIceFloor(Vector2 p)
+        {
+            if (layout.rooms == null) return false;
+            foreach (var room in layout.rooms)
+                if (room.floor == TrackLayout.FloorKind.Ice && p.x >= room.min.x && p.x <= room.max.x && p.y >= room.min.y && p.y <= room.max.y) return true;
+            return false;
+        }
+
         /// <summary>Lap distance of section line <paramref name="k"/> (0 = the start/finish line).</summary>
         public float SectionLineDistance(int k) => CheckpointDistance(SectionCheckpoints[k]);
 

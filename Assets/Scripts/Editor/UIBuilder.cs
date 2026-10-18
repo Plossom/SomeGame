@@ -1269,8 +1269,8 @@ namespace SomeGame.EditorTools
             if (houses == null) houses = track.gameObject.AddComponent<SomeGame.Track.TrackHouses>();
             Configure(houses, ("track", track), ("plain", Mat("Plain")));
             var hso = new SerializedObject(houses);
-            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks"), Mat("FloorSawdust"), Mat("FloorCobbles") });
-            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue"), Mat("RoofCircus"), Mat("RoofSlate") });
+            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks"), Mat("FloorSawdust"), Mat("FloorCobbles"), Mat("FloorIce") });
+            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue"), Mat("RoofCircus"), Mat("RoofSlate"), Mat("RoofIce") });
             hso.ApplyModifiedPropertiesWithoutUndo();
             var journey = track.GetComponent<SomeGame.Track.TrackJourney>();
             if (journey == null) journey = track.gameObject.AddComponent<SomeGame.Track.TrackJourney>();
