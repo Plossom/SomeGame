@@ -1,0 +1,769 @@
+fileFormatVersion: 2
+guid: f6ab4be8b98ce4958959261c493cc5ff
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5402093452491360682
+    second: SceneryCandy_0
+  - first:
+      213: 4218980545389608507
+    second: SceneryCandy_1
+  - first:
+      213: -6657278521268395622
+    second: SceneryCandy_2
+  - first:
+      213: 6801493911571970707
+    second: SceneryCandy_3
+  - first:
+      213: 5640567285776545255
+    second: SceneryCandy_4
+  - first:
+      213: -5446096947845286741
+    second: SceneryCandy_5
+  - first:
+      213: -4343875412819534476
+    second: SceneryCandy_6
+  - first:
+      213: -941071773146732558
+    second: SceneryCandy_7
+  - first:
+      213: 4997185064791405702
+    second: SceneryCandy_8
+  - first:
+      213: -7915325438629624890
+    second: SceneryCandy_9
+  - first:
+      213: 5913869906550932763
+    second: SceneryCandy_10
+  - first:
+      213: 1047622001701156268
+    second: SceneryCandy_11
+  - first:
+      213: -1624534202562098045
+    second: SceneryCandy_12
+  - first:
+      213: -534871462010426642
+    second: SceneryCandy_13
+  - first:
+      213: -2898392787501968201
+    second: SceneryCandy_14
+  - first:
+      213: 6336005515604027514
+    second: SceneryCandy_15
+  - first:
+      213: -4119801618739281694
+    second: SceneryCandy_16
+  - first:
+      213: -5092855923990164912
+    second: SceneryCandy_17
+  - first:
+      213: 638753455555698212
+    second: SceneryCandy_18
+  - first:
+      213: -4076505720326204876
+    second: SceneryCandy_19
+  - first:
+      213: -8672581859667689149
+    second: SceneryCandy_20
+  - first:
+      213: -3939214510313135671
+    second: SceneryCandy_21
+  - first:
+      213: 6795771352330172852
+    second: SceneryCandy_22
+  - first:
+      213: 6980454643236452969
+    second: SceneryCandy_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryCandy_0
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 1308
+        width: 146
+        height: 172
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 656f9c060a8e705b0800000000000000
+      internalID: -5402093452491360682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_1
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 1283
+        width: 120
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3e3b32f374dc8a30800000000000000
+      internalID: 4218980545389608507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_2
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 1308
+        width: 166
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a91a5f8e4789c93a0800000000000000
+      internalID: -6657278521268395622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_3
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 1334
+        width: 243
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39aba3d3da2c36e50800000000000000
+      internalID: 6801493911571970707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_4
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 1060
+        width: 189
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e57668bf02574e40800000000000000
+      internalID: 5640567285776545255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_5
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 1028
+        width: 141
+        height: 220
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba4b75b3ea39b64b0800000000000000
+      internalID: -5446096947845286741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_6
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 1057
+        width: 221
+        height: 198
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47d965ea35477b3c0800000000000000
+      internalID: -4343875412819534476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_7
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 1053
+        width: 154
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f721755534a0f2f0800000000000000
+      internalID: -941071773146732558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_8
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 807
+        width: 194
+        height: 170
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68477c71751995540800000000000000
+      internalID: 4997185064791405702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_9
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 815
+        width: 206
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c34ed4637d172290800000000000000
+      internalID: -7915325438629624890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_10
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 771
+        width: 235
+        height: 236
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1547d3d859421250800000000000000
+      internalID: 5913869906550932763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_11
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 785
+        width: 246
+        height: 227
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca5f746f8a6e98e00800000000000000
+      internalID: 1047622001701156268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_12
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 533
+        width: 234
+        height: 192
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38c40daffbe7479e0800000000000000
+      internalID: -1624534202562098045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_13
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 533
+        width: 234
+        height: 192
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeaef5a3d31c398f0800000000000000
+      internalID: -534871462010426642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_14
+      rect:
+        serializedVersion: 2
+        x: 611
+        y: 518
+        width: 119
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b41469bd17d6c7d0800000000000000
+      internalID: -2898392787501968201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_15
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 520
+        width: 183
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a786e7462730ee750800000000000000
+      internalID: 6336005515604027514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 255
+        width: 257
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e047f1614683d6c0800000000000000
+      internalID: -4119801618739281694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_17
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 291
+        width: 201
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05a825e258a8259b0800000000000000
+      internalID: -5092855923990164912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_18
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 280
+        width: 144
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42e537132ee4dd800800000000000000
+      internalID: 638753455555698212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_19
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 432db1745a75d67c0800000000000000
+      internalID: -4076505720326204876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_20
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 341c2097fbcc4a780800000000000000
+      internalID: -8672581859667689149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_21
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c1a8b216491559c0800000000000000
+      internalID: -3939214510313135671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_22
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b97a661a0e6f4e50800000000000000
+      internalID: 6795771352330172852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryCandy_23
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 36
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96ab5d4938e8fd060800000000000000
+      internalID: 6980454643236452969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryCandy_0: -5402093452491360682
+      SceneryCandy_1: 4218980545389608507
+      SceneryCandy_10: 5913869906550932763
+      SceneryCandy_11: 1047622001701156268
+      SceneryCandy_12: -1624534202562098045
+      SceneryCandy_13: -534871462010426642
+      SceneryCandy_14: -2898392787501968201
+      SceneryCandy_15: 6336005515604027514
+      SceneryCandy_16: -4119801618739281694
+      SceneryCandy_17: -5092855923990164912
+      SceneryCandy_18: 638753455555698212
+      SceneryCandy_19: -4076505720326204876
+      SceneryCandy_2: -6657278521268395622
+      SceneryCandy_20: -8672581859667689149
+      SceneryCandy_21: -3939214510313135671
+      SceneryCandy_22: 6795771352330172852
+      SceneryCandy_23: 6980454643236452969
+      SceneryCandy_3: 6801493911571970707
+      SceneryCandy_4: 5640567285776545255
+      SceneryCandy_5: -5446096947845286741
+      SceneryCandy_6: -4343875412819534476
+      SceneryCandy_7: -941071773146732558
+      SceneryCandy_8: 4997185064791405702
+      SceneryCandy_9: -7915325438629624890
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

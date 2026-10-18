@@ -194,6 +194,7 @@ namespace SomeGame.Track
                     if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     if (InShortcutPath(p, size)) continue;
                     if (OnBranch(p, size)) continue;
+                    if (InPool(layout, p, size)) continue;
                     if (NearPad(layout, p, size, kind.canopy)) continue;
                     if (track.BankAt(projection.Distance, projection.Lateral - Mathf.Sign(projection.Lateral) * (size * 0.5f + 1f), out _) != null) continue; // banked walls stay clear
                     float r = size * 0.45f;
@@ -227,6 +228,18 @@ namespace SomeGame.Track
             items.InsertRange(0, flat);
             return items.ConvertAll(i => new TrackLayout.SceneryItem { position = i.p, right = i.right, uv = i.uv, tint = i.tint, canopy = i.canopy });
         }
+
+        // Nothing stands in a pond or pool drawn flat on the ground (a frozen pond, the hot chocolate lake).
+        static bool InPool(TrackLayout layout, Vector2 p, float size)
+        {
+            if (layout.decor == null) return false;
+            foreach (var d in layout.decor)
+                if (d.flat && d.cell != null && (d.cell.Contains("Pond") || d.cell.Contains("Pool")) && (d.position - p).sqrMagnitude < Sq(d.size * 0.5f + size * 0.4f))
+                    return true;
+            return false;
+        }
+
+        static float Sq(float v) => v * v;
 
         // Furniture stays in a room, clear of its walls; trees and the rest stay outside the houses.
         static bool Indoors(TrackLayout layout, Vector2 p, float size, bool indoor)

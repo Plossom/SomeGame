@@ -144,7 +144,7 @@ namespace SomeGame.Track
         public List<Vector2> fences = new();
 
         public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust, Cobbles, Ice }
-        public enum RoofKind { Red, Blue, Circus, Slate, Ice }
+        public enum RoofKind { Red, Blue, Circus, Slate, Ice, Gingerbread }
 
         [Serializable]
         public class Room
