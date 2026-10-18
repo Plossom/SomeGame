@@ -139,7 +139,7 @@ namespace SomeGame.UI
             void Add(bool has, string key) { if (has && keys.Count < 7) keys.Add(key); }
             bool Has(TrackLayout.BranchKind kind) => track.branches.Exists(b => b.kind == kind);
             // The special attractions first.
-            Add(track.dusk, "lantern");
+            Add(track.dusk, track.biome == TrackLayout.Biome.Snow ? "aurora" : "lantern"); // winter nights have the northern lights, no lanterns
             Add(track.gaps.Exists(g => g.IsDrawbridge), "drawbridge");
             Add(track.rings is { Count: > 0 }, "ring");
             Add(track.waterfalls is { Count: > 0 }, "waterfall");
@@ -154,7 +154,8 @@ namespace SomeGame.UI
             Add(track.bouncers.Exists(b => !Wet(track, b.position)),
                 orange ? "pad" : track.padLook == TrackLayout.PadLook.Trampoline ? "trampoline" : track.biome == TrackLayout.Biome.Meadow ? "mushroom" : "pad");
             Add(track.dashPanels.Count > 0, "dash");
-            Add(track.penguins.Count > 0, "penguin");
+            Add(track.penguins.Exists(p => p.kind == TrackLayout.CrossingKind.Reindeer), "reindeer");
+            Add(track.penguins.Exists(p => p.kind != TrackLayout.CrossingKind.Reindeer), "penguin");
             Add(track.geysers.Count > 0, "fish");
             Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Snowball), "snowball");
             Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Curling), "curling");

@@ -1,0 +1,1133 @@
+fileFormatVersion: 2
+guid: d0bc858e63732450a82a881b1bd088bd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8104396061920114846
+    second: SceneryAurora_0
+  - first:
+      213: -6734339678199282106
+    second: SceneryAurora_1
+  - first:
+      213: 8749162765444131143
+    second: SceneryAurora_2
+  - first:
+      213: 7364823323788745396
+    second: SceneryAurora_3
+  - first:
+      213: 1013351492076848879
+    second: SceneryAurora_4
+  - first:
+      213: 1291094584293091969
+    second: SceneryAurora_5
+  - first:
+      213: 7193900152918779199
+    second: SceneryAurora_6
+  - first:
+      213: 9081725595794119955
+    second: SceneryAurora_7
+  - first:
+      213: 6242859978142777682
+    second: SceneryAurora_8
+  - first:
+      213: -4468319843861522174
+    second: SceneryAurora_9
+  - first:
+      213: -8864363818325335661
+    second: SceneryAurora_10
+  - first:
+      213: -4039551872390612388
+    second: SceneryAurora_11
+  - first:
+      213: 2441272590968588706
+    second: SceneryAurora_12
+  - first:
+      213: 6358957917664397172
+    second: SceneryAurora_13
+  - first:
+      213: 6786381198218198618
+    second: SceneryAurora_14
+  - first:
+      213: -4622678966465555415
+    second: SceneryAurora_15
+  - first:
+      213: -3796610032293221978
+    second: SceneryAurora_16
+  - first:
+      213: -1517105026127611388
+    second: SceneryAurora_17
+  - first:
+      213: 765123100540250492
+    second: SceneryAurora_18
+  - first:
+      213: -3964233284374771841
+    second: SceneryAurora_19
+  - first:
+      213: -7242412339872047569
+    second: SceneryAurora_20
+  - first:
+      213: -1830488828965540824
+    second: SceneryAurora_21
+  - first:
+      213: 2296755803565538125
+    second: SceneryAurora_22
+  - first:
+      213: -5737176192186409430
+    second: SceneryAurora_23
+  - first:
+      213: -717728939044526562
+    second: SceneryAurora_24
+  - first:
+      213: 1003068207081481685
+    second: SceneryAurora_25
+  - first:
+      213: 3277114023488405570
+    second: SceneryAurora_26
+  - first:
+      213: -8106872039443654457
+    second: SceneryAurora_27
+  - first:
+      213: -5810458078714686166
+    second: SceneryAurora_28
+  - first:
+      213: 4347530588775484093
+    second: SceneryAurora_29
+  - first:
+      213: 3247451290537633314
+    second: SceneryAurora_30
+  - first:
+      213: -6916289648980937849
+    second: SceneryAurora_31
+  - first:
+      213: -7534221109617836693
+    second: SceneryAurora_32
+  - first:
+      213: -8558189318116750694
+    second: SceneryAurora_33
+  - first:
+      213: 817439184434792539
+    second: SceneryAurora_34
+  - first:
+      213: 7037925091038359212
+    second: SceneryAurora_35
+  - first:
+      213: 6878155407125811930
+    second: SceneryAurora_36
+  - first:
+      213: 7598141245342601125
+    second: SceneryAurora_37
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryAurora_0
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 1310
+        width: 233
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e98b2d58749987070800000000000000
+      internalID: 8104396061920114846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_1
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 1465
+        width: 38
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6460d142eb1da82a0800000000000000
+      internalID: -6734339678199282106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_2
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 1492
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7492f5c1e254b6970800000000000000
+      internalID: 8749162765444131143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_3
+      rect:
+        serializedVersion: 2
+        x: 770
+        y: 1284
+        width: 253
+        height: 248
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ba90ffdacb153660800000000000000
+      internalID: 7364823323788745396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_4
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 1310
+        width: 247
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe64ad520d5201e00800000000000000
+      internalID: 1013351492076848879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_5
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 1417
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18a68341fa3eae110800000000000000
+      internalID: 1291094584293091969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_6
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 1393
+        width: 56
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f352a5cf21ed5d360800000000000000
+      internalID: 7193900152918779199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_7
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 1420
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31d91e4ff45c80e70800000000000000
+      internalID: 9081725595794119955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_8
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 1377
+        width: 38
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25104b3f21813a650800000000000000
+      internalID: 6242859978142777682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_9
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 1305
+        width: 38
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2091ec3b6c65df1c0800000000000000
+      internalID: -4468319843861522174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_10
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 1332
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 391a4e892147bf480800000000000000
+      internalID: -8864363818325335661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_11
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1025
+        width: 234
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5ab46a79f0a0f7c0800000000000000
+      internalID: -4039551872390612388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_12
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 1143
+        width: 52
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a98490bc7421e120800000000000000
+      internalID: 2441272590968588706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_13
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 1104
+        width: 123
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4774b00f88e8f3850800000000000000
+      internalID: 6358957917664397172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_14
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 1063
+        width: 203
+        height: 183
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5e7f267eb11e2e50800000000000000
+      internalID: 6786381198218198618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_15
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 1068
+        width: 179
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9249625d8f1f8dfb0800000000000000
+      internalID: -4622678966465555415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_16
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 1075
+        width: 52
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a96a7a7a4bbf4bc0800000000000000
+      internalID: -3796610032293221978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_17
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 1089
+        width: 52
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40a34b6440922fae0800000000000000
+      internalID: -1517105026127611388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_18
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 1065
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c79a529f7634e9a00800000000000000
+      internalID: 765123100540250492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_19
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 840
+        width: 215
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f77cf0ec4d63cf8c0800000000000000
+      internalID: -3964233284374771841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_20
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 789
+        width: 58
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2e550d4958cd7b90800000000000000
+      internalID: -7242412339872047569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_21
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 787
+        width: 176
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82c2030cb1cc896e0800000000000000
+      internalID: -1830488828965540824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_22
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 791
+        width: 198
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4b375f0c37bfdf10800000000000000
+      internalID: 2296755803565538125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_23
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 785
+        width: 222
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2e96ea66a47160b0800000000000000
+      internalID: -5737176192186409430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_24
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 539
+        width: 235
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e16ab37255d1a06f0800000000000000
+      internalID: -717728939044526562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_25
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 531
+        width: 198
+        height: 198
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d56498483d9bed00800000000000000
+      internalID: 1003068207081481685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_26
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 522
+        width: 217
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2404a7a67d5aa7d20800000000000000
+      internalID: 3277114023488405570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_27
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 513
+        width: 67
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c81a6905da9e7f80800000000000000
+      internalID: -8106872039443654457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_28
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 292
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2599eb992b1d5fa0800000000000000
+      internalID: -5810458078714686166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_29
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 432
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dba8b1a4908855c30800000000000000
+      internalID: 4347530588775484093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_30
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22621e53eb3411d20800000000000000
+      internalID: 3247451290537633314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_31
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 255
+        width: 191
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 783b7c455376400a0800000000000000
+      internalID: -6916289648980937849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_32
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 380
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6dbafd91d1117790800000000000000
+      internalID: -7534221109617836693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_33
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 307
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9acb1d88243b3980800000000000000
+      internalID: -8558189318116750694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_34
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5888b57b90285b00800000000000000
+      internalID: 817439184434792539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_35
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cae662fe49bbba160800000000000000
+      internalID: 7037925091038359212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_36
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad29aa796ed147f50800000000000000
+      internalID: 6878155407125811930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAurora_37
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5afc3e9b435027960800000000000000
+      internalID: 7598141245342601125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryAurora_0: 8104396061920114846
+      SceneryAurora_1: -6734339678199282106
+      SceneryAurora_10: -8864363818325335661
+      SceneryAurora_11: -4039551872390612388
+      SceneryAurora_12: 2441272590968588706
+      SceneryAurora_13: 6358957917664397172
+      SceneryAurora_14: 6786381198218198618
+      SceneryAurora_15: -4622678966465555415
+      SceneryAurora_16: -3796610032293221978
+      SceneryAurora_17: -1517105026127611388
+      SceneryAurora_18: 765123100540250492
+      SceneryAurora_19: -3964233284374771841
+      SceneryAurora_2: 8749162765444131143
+      SceneryAurora_20: -7242412339872047569
+      SceneryAurora_21: -1830488828965540824
+      SceneryAurora_22: 2296755803565538125
+      SceneryAurora_23: -5737176192186409430
+      SceneryAurora_24: -717728939044526562
+      SceneryAurora_25: 1003068207081481685
+      SceneryAurora_26: 3277114023488405570
+      SceneryAurora_27: -8106872039443654457
+      SceneryAurora_28: -5810458078714686166
+      SceneryAurora_29: 4347530588775484093
+      SceneryAurora_3: 7364823323788745396
+      SceneryAurora_30: 3247451290537633314
+      SceneryAurora_31: -6916289648980937849
+      SceneryAurora_32: -7534221109617836693
+      SceneryAurora_33: -8558189318116750694
+      SceneryAurora_34: 817439184434792539
+      SceneryAurora_35: 7037925091038359212
+      SceneryAurora_36: 6878155407125811930
+      SceneryAurora_37: 7598141245342601125
+      SceneryAurora_4: 1013351492076848879
+      SceneryAurora_5: 1291094584293091969
+      SceneryAurora_6: 7193900152918779199
+      SceneryAurora_7: 9081725595794119955
+      SceneryAurora_8: 6242859978142777682
+      SceneryAurora_9: -4468319843861522174
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

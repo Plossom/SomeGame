@@ -253,7 +253,7 @@ namespace SomeGame.Track
             float walk = Mathf.Clamp01((back ? t - half : t) / line.crossing);
             float reach = OffRoadAt(line.distance) + 2.5f;
             Vector2 centre = Path.PointAt(line.distance), across = Path.NormalAt(line.distance) * (back ? 1f : -1f);
-            const float spacing = 1.6f;
+            float spacing = line.kind == TrackLayout.CrossingKind.Reindeer ? 2.8f : 1.6f; // reindeer walk further apart
             for (int k = 0; k < line.count; k++)
             {
                 // The leader walks the whole way; the others follow in a row behind it.
@@ -282,7 +282,7 @@ namespace SomeGame.Track
             {
                 if ((Path.PointAt(line.distance) - p).sqrMagnitude > 400f) continue;
                 PenguinPositions(line, time, _penguinScratch);
-                float r = line.kind == TrackLayout.CrossingKind.Cat ? radius * 1.9f : radius; // the cat is bigger
+                float r = line.kind switch { TrackLayout.CrossingKind.Cat => radius * 1.9f, TrackLayout.CrossingKind.Reindeer => radius * 1.5f, _ => radius }; // the cat and the reindeer are bigger
                 foreach (var (position, _) in _penguinScratch)
                     if ((position - p).sqrMagnitude < r * r) return true;
             }

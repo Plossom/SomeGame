@@ -1,0 +1,1168 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: NorthernLights
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: 0}
+  - {x: 34.16, y: -4.88}
+  - {x: 68.32, y: 0}
+  - {x: 97.600006, y: 12.200001}
+  - {x: 122, y: 4.88}
+  - {x: 148.84, y: -7.32}
+  - {x: 178.12001, y: -2.44}
+  - {x: 202.52, y: 14.64}
+  - {x: 217.16, y: 41.48}
+  - {x: 214.72, y: 70.76}
+  - {x: 202.52, y: 97.600006}
+  - {x: 207.40001, y: 126.880005}
+  - {x: 224.48001, y: 151.28}
+  - {x: 239.12001, y: 183}
+  - {x: 236.68001, y: 212.28}
+  - {x: 219.6, y: 234.24}
+  - {x: 195.20001, y: 244}
+  - {x: 165.92, y: 248.88}
+  - {x: 136.64, y: 256.2}
+  - {x: 109.8, y: 251.32}
+  - {x: 87.840004, y: 258.64}
+  - {x: 63.440002, y: 273.28}
+  - {x: 36.600002, y: 280.6}
+  - {x: 9.76, y: 275.72}
+  - {x: -14.64, y: 258.64}
+  - {x: -29.28, y: 234.24}
+  - {x: -36.600002, y: 207.40001}
+  - {x: -58.56, y: 197.64}
+  - {x: -82.96, y: 178.12001}
+  - {x: -92.72, y: 148.84}
+  - {x: -85.4, y: 119.560005}
+  - {x: -63.440002, y: 102.48}
+  - {x: -36.600002, y: 97.600006}
+  - {x: -9.76, y: 104.920006}
+  - {x: 19.52, y: 112.240005}
+  - {x: 46.36, y: 122}
+  - {x: 68.32, y: 119.560005}
+  - {x: 78.08, y: 102.48}
+  - {x: 68.32, y: 85.4}
+  - {x: 43.920002, y: 78.08}
+  - {x: 17.08, y: 70.76}
+  - {x: -2.44, y: 56.120003}
+  - {x: -17.08, y: 36.600002}
+  - {x: -24.400002, y: 17.08}
+  - {x: -14.64, y: 3.66}
+  roadWidth: 8
+  widths: []
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 36
+  sections: 3
+  sectionLines:
+  - 387.30408
+  - 749.1942
+  boundaryMargin: 25
+  rooms:
+  - min: {x: 102.48, y: 236.68001}
+    max: {x: 173.24, y: 268.4}
+    floor: 7
+    upper: 0
+  houses:
+  - min: {x: 102.48, y: 236.68001}
+    max: {x: 173.24, y: 268.4}
+    roof: 6
+  upstairs: []
+  stairs: []
+  decor:
+  - cell: Cabin
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 7.32, y: 19.52}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: Lavvu
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 31.720001, y: 20.74}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: Cabin
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 56.120003, y: 21.960001}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: Lavvu
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 80.520004, y: 31.720001}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: Lavvu
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 14.64, y: -21.960001}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: Cabin
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 41.48, y: -24.400002}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: Woodpile
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: 65.880005, y: -19.52}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Sauna
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: 92.72, y: -14.64}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: HuskySled
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 126.880005, y: -17.08}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: ReindeerPen
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: 136.64, y: 29.28}
+    size: 16
+    angle: 0
+    flat: 0
+  - cell: WinterCrowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -4.88, y: -14.64}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lavvu
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 165.92, y: -24.400002}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: FrozenFall
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 253.76001, y: 183}
+    size: 20
+    angle: -90
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 251.32, y: 156.16}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 248.88, y: 219.6}
+    size: 13
+    angle: 40
+    flat: 0
+  - cell: FrozenFall
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 244, y: 241.56001}
+    size: 16
+    angle: -60
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 97.600006, y: 275.72}
+    size: 14
+    angle: 0
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 117.12, y: 283.04}
+    size: 16
+    angle: 70
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 143.96, y: 285.48}
+    size: 16
+    angle: 140
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 170.8, y: 280.6}
+    size: 15
+    angle: 200
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 183, y: 263.52002}
+    size: 12
+    angle: 30
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 180.56, y: 234.24}
+    size: 13
+    angle: 100
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 156.16, y: 224.48001}
+    size: 15
+    angle: 160
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 126.880005, y: 224.48001}
+    size: 14
+    angle: 250
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 100.04, y: 229.36}
+    size: 12
+    angle: 300
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 80.520004, y: 241.56001}
+    size: 11
+    angle: 20
+    flat: 0
+  - cell: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 195.20001, y: 280.6}
+    size: 12
+    angle: 80
+    flat: 0
+  - cell: IceCrystals
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 112.240005, y: 262.30002}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Stalagmites
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 126.880005, y: 244}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: IceCrystals
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 161.04001, y: 240.34001}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Stalagmites
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 153.72, y: 262.30002}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Yeti
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 139.08, y: 263.52002}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Stalagmites
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 168.36, y: 261.08002}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: YetiTracks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 78.08, y: 244}
+    size: 9
+    angle: 20
+    flat: 1
+  - cell: YetiTracks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: -4.88, y: 241.56001}
+    size: 9
+    angle: -40
+    flat: 1
+  - cell: Yeti
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: -4.88, y: 234.24}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Snowman
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -46.36, y: 244}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: IceFishing
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: -68.32, y: 163.48001}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Sauna
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: -102.48, y: 170.8}
+    size: 10
+    angle: 90
+    flat: 0
+  - cell: Igloo
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -104.920006, y: 126.880005}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: IceFishing
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: -21.960001, y: 156.16}
+    size: 9
+    angle: -30
+    flat: 0
+  - cell: Observatory
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 61, y: 102.48}
+    size: 16
+    angle: 0
+    flat: 0
+  - cell: Stargazers
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 36.600002, y: 97.600006}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: Igloo
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 97.600006, y: 104.920006}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: ReindeerHerd
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 97.600006, y: 48.800003}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: ReindeerHerd
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 146.40001, y: 73.200005}
+    size: 12
+    angle: 120
+    flat: 0
+  - cell: Lavvu
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 122, y: 36.600002}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: Lavvu
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 161.04001, y: 100.04}
+    size: 10
+    angle: 0
+    flat: 0
+  - cell: ReindeerPen
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: 134.2, y: 143.96}
+    size: 16
+    angle: 0
+    flat: 0
+  - cell: HuskySled
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 85.4, y: 170.8}
+    size: 9
+    angle: 30
+    flat: 0
+  - cell: ReindeerHerd
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 170.8, y: 183}
+    size: 12
+    angle: 200
+    flat: 0
+  - cell: Woodpile
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: 117.12, y: 124.44}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 107.67261, y: 199.20462}
+    size: 21.68806
+    angle: 208.14479
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -22.880264, y: -21.80123}
+    size: 23.33976
+    angle: 276.3077
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -24.716536, y: -6.658906}
+    size: 23.940432
+    angle: 73.829994
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 74.76407, y: 231.9618}
+    size: 20.598646
+    angle: 336.27225
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 138.45432, y: 213.89151}
+    size: 21.31554
+    angle: 174.1341
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 35.065796, y: 31.930016}
+    size: 25.897535
+    angle: 187.61159
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 192.78458, y: 133.9804}
+    size: 29.19631
+    angle: 146.36974
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 179.16003, y: 158.88011}
+    size: 20.684147
+    angle: 238.76158
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -102.51428, y: 21.52445}
+    size: 16.958897
+    angle: 184.96861
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -70.952286, y: 56.83312}
+    size: 22.958204
+    angle: 76.123634
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 238.64648, y: 264.903}
+    size: 21.72492
+    angle: 281.01495
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 219.55956, y: 288.2594}
+    size: 22.817574
+    angle: 271.36072
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 127.77728, y: 67.56402}
+    size: 16.847765
+    angle: 256.07706
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -13.116695, y: -20.353384}
+    size: 19.674858
+    angle: 98.58689
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 97.51693, y: 145.17644}
+    size: 16.361168
+    angle: 264.61145
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 109.61984, y: 48.643497}
+    size: 27.111576
+    angle: 44.91082
+    flat: 1
+  logJumps: []
+  rings: []
+  waterfalls: []
+  dusk: 1
+  coasters: []
+  buntings:
+  - {x: 1206.157, y: 69.16974}
+  padLook: 0
+  boats: []
+  fireworks: 0
+  cows: []
+  fences: []
+  trains: []
+  props: []
+  bankMaterial: {fileID: 0}
+  sceneryMaterial: {fileID: 2100000, guid: 223b0c0eb7cc54bf4b555dbe294faa35, type: 2}
+  waterWorld: 0
+  biome: 1
+  gaps:
+  - from: 643.56146
+    to: 662.31146
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+  elevatedRoad: 0
+  bouncers:
+  - position: {x: 60.6008, y: 119.54037}
+    radius: 1.9
+    airTime: 1
+    speedBoost: 1.05
+    target: {x: 56.081432, y: 80.69902}
+  geysers: []
+  sweepers:
+  - kind: 2
+    distance: 724.8443
+    period: 4.6
+    offset: 0
+  - kind: 2
+    distance: 751.78
+    period: 5.1
+    offset: 2.3
+  skyLife: 0.6
+  rivers: []
+  lakes:
+  - center: {x: 36.600002, y: 279.38}
+    radii: {x: 8, y: 12}
+    angle: -10
+  oil: []
+  rampLength: 3
+  rampWidth: 2.8
+  shortcuts: []
+  branches:
+  - kind: 0
+    from: 156.40776
+    to: 276.95776
+    points:
+    - {x: 163.48001, y: 4.88}
+    - {x: 158.6, y: 21.960001}
+    - {x: 178.12001, y: 31.720001}
+    - {x: 183, y: 51.24}
+    - {x: 202.52, y: 58.56}
+    width: 5.5
+  - kind: 1
+    from: 767.1949
+    to: 940.4891
+    points:
+    - {x: -48.800003, y: 187.88}
+    - {x: -36.600002, y: 165.92}
+    - {x: -61, y: 143.96}
+    - {x: -46.36, y: 119.560005}
+    width: 12
+  banks:
+  - from: 366.47424
+    to: 456.01395
+    side: -1
+    width: 4.5
+  penguins:
+  - kind: 3
+    distance: 114.06905
+    count: 3
+    period: 9
+    crossing: 4
+    offset: 0
+  - kind: 3
+    distance: 990.88104
+    count: 4
+    period: 10
+    crossing: 4.5
+    offset: 3
+  dashPanels:
+  - distance: 49.426243
+    lateral: 1.6
+    length: 4
+    width: 3.2
+  - distance: 259.70978
+    lateral: -1.6
+    length: 4
+    width: 3.2
+  - distance: 696.79974
+    lateral: 1.6
+    length: 4
+    width: 3.2
+  - distance: 1203.1757
+    lateral: -1.6
+    length: 4
+    width: 3.2
+  scenery:
+  - name: WinterCrowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    count: 6
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1186.157, y: 139.82149}
+    canopy: 0
+    indoor: 0
+  - name: Snowman
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    count: 4
+    sizeRange: {x: 3.5, y: 4.5}
+    clearance: {x: 1.5, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1186.157, y: 387.30408}
+    canopy: 0
+    indoor: 0
+  - name: Woodpile
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    count: 3
+    sizeRange: {x: 7, y: 8}
+    clearance: {x: 2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 387.30408}
+    canopy: 0
+    indoor: 0
+  - name: SnowRock
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 20
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.5, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 267.30408, y: 749.1942}
+    canopy: 0
+    indoor: 0
+  - name: IceCrystals
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    count: 10
+    sizeRange: {x: 3, y: 4.5}
+    clearance: {x: 1, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 387.30408, y: 749.1942}
+    canopy: 0
+    indoor: 0
+  - name: CaveRock
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    count: 8
+    sizeRange: {x: 7, y: 11}
+    clearance: {x: 3, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 327.30408, y: 749.1942}
+    canopy: 0
+    indoor: 0
+  - name: Igloo
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    count: 4
+    sizeRange: {x: 4.5, y: 5.5}
+    clearance: {x: 3, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 749.1942, y: 1186.157}
+    canopy: 0
+    indoor: 0
+  - name: ReindeerHerd
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    count: 4
+    sizeRange: {x: 9, y: 11}
+    clearance: {x: 4, y: 14}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 749.1942, y: 1186.157}
+    canopy: 0
+    indoor: 0
+  - name: Stargazers
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    count: 3
+    sizeRange: {x: 7, y: 8}
+    clearance: {x: 2, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 749.1942, y: 1186.157}
+    canopy: 0
+    indoor: 0
+  - name: FrostTree
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 30
+    sizeRange: {x: 4, y: 6}
+    clearance: {x: 2, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: FrostBush
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 30
+    sizeRange: {x: 2.5, y: 4}
+    clearance: {x: 1.5, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: SnowPine
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 240
+    sizeRange: {x: 6, y: 10}
+    clearance: {x: 12, y: 0}
+    alignToRoad: 0
+    clustered: 1
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery: []
+  bakedSignature: 

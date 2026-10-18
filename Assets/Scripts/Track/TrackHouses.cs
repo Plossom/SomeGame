@@ -28,6 +28,7 @@ namespace SomeGame.Track
         readonly List<GameObject> _parts = new();
         class Roof { public Mesh Tiles, Ridge; public Color RidgeColor; public Rect Area; public float Alpha = 1f; }
         readonly List<Roof> _roofs = new();
+        Color _top, _edge; // the colours of the walls being built (rock for a cave)
         Transform _player;
 
         const int FloorOrder = -95, IceFloorOrder = -46, ShadowOrder = -97, WallOrder = -43, StairOrder = -47, RoofOrder = 44;
@@ -61,6 +62,10 @@ namespace SomeGame.Track
             _parts.Add(colliders);
             foreach (var room in layout.rooms)
             {
+                // A cave (rock floor) has walls of grey rock, frosted on top; houses have plastered walls.
+                bool cave = room.floor == TrackLayout.FloorKind.Rock;
+                _top = cave ? new Color(0.78f, 0.84f, 0.9f) : wallTop;
+                _edge = cave ? new Color(0.24f, 0.27f, 0.33f) : wallEdge;
                 var corners = new[] { room.min, new Vector2(room.max.x, room.min.y), room.max, new Vector2(room.min.x, room.max.y) };
                 for (int e = 0; e < 4; e++)
                 {
@@ -94,13 +99,16 @@ namespace SomeGame.Track
             foreach (var house in layout.houses)
             {
                 int k = Mathf.Clamp((int)house.roof, 0, roofs.Length - 1);
-                var roof = Part("Roof", Floor(house.min - Vector2.one * 0.8f, house.max + Vector2.one * 0.8f, 1f, roofTile), roofs[k], RoofOrder);
+                float tile = house.roof == TrackLayout.RoofKind.Cave ? roofTile * 5f : roofTile; // the mountain over a cave is one big tile, not shingles
+                var roof = Part("Roof", Floor(house.min - Vector2.one * 0.8f, house.max + Vector2.one * 0.8f, 1f, tile), roofs[k], RoofOrder);
+                // A cave has no ridge (the mountain is all snow and rock).
+                var ridgeColor = house.roof == TrackLayout.RoofKind.Cave ? new Color(0.93f, 0.96f, 1f, 0f) : new Color(0.35f, 0.12f, 0.08f, 0.9f);
                 var ridge = Part("RoofRidge", Quad(new Vector2(house.min.x - 0.8f, (house.min.y + house.max.y) * 0.5f - 0.5f),
-                    new Vector2(house.max.x + 0.8f, (house.min.y + house.max.y) * 0.5f + 0.5f), new Color(0.35f, 0.12f, 0.08f, 0.9f)), plain, RoofOrder + 1);
+                    new Vector2(house.max.x + 0.8f, (house.min.y + house.max.y) * 0.5f + 0.5f), ridgeColor), plain, RoofOrder + 1);
                 _roofs.Add(new Roof
                 {
                     Tiles = roof.GetComponent<MeshFilter>().sharedMesh, Ridge = ridge.GetComponent<MeshFilter>().sharedMesh,
-                    RidgeColor = new Color(0.35f, 0.12f, 0.08f, 0.9f), Area = Rect.MinMaxRect(house.min.x, house.min.y, house.max.x, house.max.y),
+                    RidgeColor = ridgeColor, Area = Rect.MinMaxRect(house.min.x, house.min.y, house.max.x, house.max.y),
                 });
             }
         }
@@ -147,9 +155,9 @@ namespace SomeGame.Track
             Vector2 dir = (b - a).normalized, n = new(-dir.y, dir.x);
             Vector2 p0 = a + dir * from, p1 = a + dir * to;
             float h = wallThickness * 0.5f;
-            AddQuad(p0 - n * h - dir * h * 0.6f, p1 - n * h + dir * h * 0.6f, p1 + n * h + dir * h * 0.6f, p0 + n * h - dir * h * 0.6f, wallEdge, v, c, t);
+            AddQuad(p0 - n * h - dir * h * 0.6f, p1 - n * h + dir * h * 0.6f, p1 + n * h + dir * h * 0.6f, p0 + n * h - dir * h * 0.6f, _edge, v, c, t);
             float i = h * 0.55f;
-            AddQuad(p0 - n * i, p1 - n * i, p1 + n * i, p0 + n * i, wallTop, v, c, t);
+            AddQuad(p0 - n * i, p1 - n * i, p1 + n * i, p0 + n * i, _top, v, c, t);
             var edge = colliders.AddComponent<EdgeCollider2D>();
             edge.points = new[] { p0, p1 };
             edge.edgeRadius = h;

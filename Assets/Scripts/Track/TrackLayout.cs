@@ -110,7 +110,7 @@ namespace SomeGame.Track
             public float side = 1f;
         }
         public List<Waterfall> waterfalls = new();
-        [Tooltip("The race runs from afternoon into the night: sunset after the first section line, night after the second (lanterns, headlights, fireflies).")]
+        [Tooltip("The race runs from afternoon into the night: sunset after the first section line, night after the second (lanterns, headlights, fireflies; on snow the northern lights instead of lanterns).")]
         public bool dusk;
 
         [Tooltip("Roller coasters over the fairground.")]
@@ -143,8 +143,8 @@ namespace SomeGame.Track
         [Tooltip("Wooden fences along both sides of the road on these stretches (lap distances from, to).")]
         public List<Vector2> fences = new();
 
-        public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust, Cobbles, Ice }
-        public enum RoofKind { Red, Blue, Circus, Slate, Ice, Gingerbread }
+        public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust, Cobbles, Ice, Rock }
+        public enum RoofKind { Red, Blue, Circus, Slate, Ice, Gingerbread, Cave }
 
         [Serializable]
         public class Room
@@ -258,7 +258,7 @@ namespace SomeGame.Track
 
         public enum SweeperKind { Log, HayBale, Snowball, Boulder, Vacuum, Ball, Curling }
 
-        public enum CrossingKind { Penguins, Sheep, Cat }
+        public enum CrossingKind { Penguins, Sheep, Cat, Reindeer }
 
         /// <summary>A little line of penguins that waddles across the road, waits, and waddles back.</summary>
         [Serializable]

@@ -24,7 +24,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite cowSprite, fenceSprite, buntingSprite;
         [SerializeField] Sprite carouselBaseSprite, carouselTopSprite, swingHubSprite, swingSeatsSprite, teacupFloorSprite, teacupSprite;
         [SerializeField] Sprite coasterCarSprite;
-        [SerializeField] Sprite bridgeLeafSprite, stoneBridgeSprite, ringSprite, lanternSprite, floatLanternSprite, glowSprite, headlightSprite;
+        [SerializeField] Sprite bridgeLeafSprite, stoneBridgeSprite, ringSprite, lanternSprite, floatLanternSprite, glowSprite, headlightSprite, auroraSprite;
         [SerializeField] Material waterfallMaterial;
         [Tooltip("The things on the lake, by TrackLayout.BoatKind.")]
         [SerializeField] Sprite[] boatSprites;
@@ -51,6 +51,8 @@ namespace SomeGame.Track
         readonly List<BoatView> _boats = new();
         readonly Dictionary<SomeGame.Car.CarMovement, SpriteRenderer> _headlights = new();
         SpriteRenderer _night;
+        readonly List<(SpriteRenderer sr, float phase)> _auroras = new();
+        bool _winterNight;
         ParticleSystem _skyLanterns, _fireflies;
         float _darkness;
         float _nextFirework;
@@ -147,7 +149,7 @@ namespace SomeGame.Track
             foreach (var go in _spawned) if (go != null) Destroy(go);
             _spawned.Clear(); _arches.Clear(); _crossings.Clear(); _sails.Clear(); _cows.Clear(); _spinners.Clear(); _coasters.Clear(); _fireworks = null;
             _drawbridges.Clear(); _rings.Clear(); _falls.Clear(); _glows.Clear(); _floaters.Clear(); _headlights.Clear(); _boats.Clear();
-            _night = null; _skyLanterns = _fireflies = null;
+            _night = null; _skyLanterns = _fireflies = null; _auroras.Clear(); _winterNight = false;
             var layout = track.Layout;
             if (layout == null) return;
             if (track.Sections > 1) BuildArches();
@@ -719,6 +721,10 @@ namespace SomeGame.Track
             _spawned.Add(_night.gameObject);
             var path = track.Path;
             var layout = track.Layout;
+            // A winter night has no lanterns (on snow they look like checkpoint posts): the northern lights
+            // ripple over the sky instead, and the snow glitters by the road.
+            _winterNight = layout.biome == TrackLayout.Biome.Snow;
+            if (_winterNight) { BuildAurora(); return; }
             float sunset = track.Sections > 1 ? track.SectionLineDistance(1) : path.Length * 0.33f;
             float night = track.Sections > 2 ? track.SectionLineDistance(2) : path.Length * 0.66f;
             // Lanterns on posts: a few along the sunset road, then both sides all through the night.
@@ -760,6 +766,39 @@ namespace SomeGame.Track
             }
         }
 
+        // The northern lights: three soft curtains of light drifting over the camera view, showing as it gets dark.
+        void BuildAurora()
+        {
+            var cam = Camera.main;
+            if (auroraSprite != null)
+                for (int i = 0; i < 3; i++)
+                {
+                    var sr = Sprite("Aurora", auroraSprite, cam.transform, Vector2.zero, 1f, 0f, 61);
+                    sr.transform.localPosition = new Vector3(0f, 0f, 5f);
+                    sr.color = new Color(1f, 1f, 1f, 0f);
+                    _spawned.Add(sr.gameObject);
+                    _auroras.Add((sr, i * 2.1f));
+                }
+            if (particleMaterial != null)
+            {
+                _fireflies = Particles("SnowGlitter", Vector2.zero, new Color(0.8f, 0.95f, 1f), 0.05f, 1.4f, new Vector2(0.12f, 0.26f));
+                var main = _fireflies.main; main.maxParticles = 200;
+                _fireflies.GetComponent<ParticleSystemRenderer>().sortingOrder = 62;
+                _fireflies.Play();
+            }
+        }
+
+        // A winter evening: a rosy sunset over the snow, then a clear polar night (moonlit snow stays bright).
+        static readonly (float at, Color tint)[] WinterSky =
+        {
+            (0f, new Color(1f, 0.78f, 0.62f, 0.05f)),
+            (0.75f, new Color(1f, 0.62f, 0.55f, 0.12f)),
+            (1f, new Color(0.95f, 0.5f, 0.62f, 0.2f)),     // pink sunset (section 2)
+            (1.6f, new Color(0.42f, 0.3f, 0.66f, 0.32f)),  // violet dusk
+            (2f, new Color(0.05f, 0.1f, 0.28f, 0.48f)),    // polar night (section 3)
+            (3f, new Color(0.04f, 0.09f, 0.26f, 0.52f)),
+        };
+
         static readonly (float at, Color tint)[] Sky =
         {
             (0f, new Color(1f, 0.72f, 0.35f, 0.06f)),     // golden afternoon
@@ -769,6 +808,26 @@ namespace SomeGame.Track
             (2f, new Color(0.05f, 0.07f, 0.22f, 0.58f)),  // night (section 3)
             (3f, new Color(0.04f, 0.06f, 0.2f, 0.62f)),
         };
+
+        void UpdateAurora()
+        {
+            var cam = Camera.main;
+            if (cam == null || _auroras.Count == 0) return;
+            float h = cam.orthographicSize, w = h * cam.aspect;
+            for (int i = 0; i < _auroras.Count; i++)
+            {
+                var (sr, phase) = _auroras[i];
+                if (sr == null) continue;
+                float t = Time.time * 0.11f + phase;
+                // Each curtain sways slowly across the view and breathes in and out.
+                sr.transform.localPosition = new Vector3(Mathf.Sin(t) * w * 0.35f, (i - 1) * h * 0.55f + Mathf.Cos(t * 0.7f) * h * 0.15f, 5f);
+                sr.transform.localRotation = Quaternion.Euler(0f, 0f, -18f + i * 16f + Mathf.Sin(t * 0.8f) * 8f);
+                Vector2 size = sr.sprite.bounds.size;
+                sr.transform.localScale = new Vector3(w * 2.8f / size.x, h * 1.3f / size.y, 1f);
+                float pulse = 0.75f + 0.25f * Mathf.Sin(Time.time * 0.6f + phase * 2f);
+                sr.color = new Color(1f, 1f, 1f, _darkness * 0.3f * pulse);
+            }
+        }
 
         void UpdateDusk()
         {
@@ -785,11 +844,13 @@ namespace SomeGame.Track
             float to = section == 2 ? length : track.SectionLineDistance(section + 1);
             float into = section == 0 && d > track.SectionLineDistance(2) ? 0f : d - from;
             float phase = section + Mathf.Clamp01(into / Mathf.Max(1f, to - from));
-            Color tint = Sky[0].tint;
-            for (int i = 1; i < Sky.Length; i++)
-                if (phase <= Sky[i].at) { tint = Color.Lerp(Sky[i - 1].tint, Sky[i].tint, Mathf.InverseLerp(Sky[i - 1].at, Sky[i].at, phase)); break; }
+            var sky = _winterNight ? WinterSky : Sky;
+            Color tint = sky[0].tint;
+            for (int i = 1; i < sky.Length; i++)
+                if (phase <= sky[i].at) { tint = Color.Lerp(sky[i - 1].tint, sky[i].tint, Mathf.InverseLerp(sky[i - 1].at, sky[i].at, phase)); break; }
             _night.color = Color.Lerp(_night.color, tint, Time.deltaTime * 2f);
-            _darkness = Mathf.InverseLerp(0.15f, 0.6f, _night.color.a);
+            _darkness = Mathf.InverseLerp(0.15f, _winterNight ? 0.48f : 0.6f, _night.color.a);
+            UpdateAurora();
             foreach (var (glow, strength) in _glows)
                 if (glow != null) glow.color = new Color(1f, 0.85f, 0.5f, _darkness * strength * (0.85f + Mathf.Sin(Time.time * 3f + glow.transform.position.x) * 0.15f));
             foreach (var (t, home, phase0) in _floaters)
@@ -807,7 +868,7 @@ namespace SomeGame.Track
                     Vector2 p = c + new Vector2(Random.Range(-w, w), Random.Range(-h, h));
                     var on = track.Path.Project(p);
                     if (Mathf.Abs(on.Lateral) > track.OffRoadAt(on.Distance) + 1f)
-                        _fireflies.Emit(new ParticleSystem.EmitParams { position = p, velocity = Random.insideUnitCircle * 0.6f, applyShapeToPosition = false }, 1);
+                        _fireflies.Emit(new ParticleSystem.EmitParams { position = p, velocity = Random.insideUnitCircle * (_winterNight ? 0.05f : 0.6f), applyShapeToPosition = false }, 1);
                 }
             }
             // Headlights on every car, brighter as it gets dark.

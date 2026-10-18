@@ -496,7 +496,7 @@ namespace SomeGame.EditorTools
                 ("dash", "DashPanel"), ("penguin", "Penguin"), ("fish", "Fish"), ("snowball", "Snowball"), ("log", "Log"), ("hay", "HayBale"),
                 ("oil", "Oil"), ("shortcut", "Arrow"), ("mushroom", "MushroomPad"), ("cow", "Cow"), ("forestlog", "ForestLog"), ("trampoline", "Trampoline"),
                 ("lantern", "Lantern"), ("drawbridge", "BridgeLeaf"), ("ring", "BoostRing"), ("waterfall", "Waterfall"), ("coaster", "CoasterCar"),
-                ("floe", "IceFloe"), ("curling", "CurlingStone"),
+                ("floe", "IceFloe"), ("curling", "CurlingStone"), ("aurora", "AuroraBadge"), ("reindeer", "Reindeer"),
             };
             var icons = wso.FindProperty("icons");
             icons.arraySize = iconList.Length;
@@ -1272,8 +1272,8 @@ namespace SomeGame.EditorTools
             if (houses == null) houses = track.gameObject.AddComponent<SomeGame.Track.TrackHouses>();
             Configure(houses, ("track", track), ("plain", Mat("Plain")));
             var hso = new SerializedObject(houses);
-            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks"), Mat("FloorSawdust"), Mat("FloorCobbles"), Mat("FloorIce") });
-            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue"), Mat("RoofCircus"), Mat("RoofSlate"), Mat("RoofIce"), Mat("RoofGinger") });
+            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks"), Mat("FloorSawdust"), Mat("FloorCobbles"), Mat("FloorIce"), Mat("FloorRock") });
+            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue"), Mat("RoofCircus"), Mat("RoofSlate"), Mat("RoofIce"), Mat("RoofGinger"), Mat("RoofCave") });
             hso.ApplyModifiedPropertiesWithoutUndo();
             var journey = track.GetComponent<SomeGame.Track.TrackJourney>();
             if (journey == null) journey = track.gameObject.AddComponent<SomeGame.Track.TrackJourney>();
@@ -1292,11 +1292,11 @@ namespace SomeGame.EditorTools
                 ("coasterCarSprite", Sprite("CoasterCar")), ("coasterRailsMaterial", Mat("CoasterRails")),
                 ("bridgeLeafSprite", Sprite("BridgeLeaf")), ("stoneBridgeSprite", Sprite("StoneBridge")), ("ringSprite", Sprite("BoostRing")),
                 ("lanternSprite", Sprite("Lantern")), ("floatLanternSprite", Sprite("FloatLantern")), ("glowSprite", Sprite("Glow")),
-                ("headlightSprite", Sprite("Headlight")), ("waterfallMaterial", Mat("Waterfall")),
+                ("headlightSprite", Sprite("Headlight")), ("auroraSprite", Sprite("Aurora")), ("waterfallMaterial", Mat("Waterfall")),
                 ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
-                ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")), ("curlingSprite", Sprite("CurlingStone")), ("iceFloeSprite", Sprite("IceFloe")),
+                ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")), ("curlingSprite", Sprite("CurlingStone")), ("reindeerSprite", Sprite("Reindeer")), ("iceFloeSprite", Sprite("IceFloe")),
                 ("mushroomPadSprite", Sprite("MushroomPad")), ("trampolineSprite", Sprite("Trampoline")));
         }
 
