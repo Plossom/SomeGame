@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
+  m_Name: Winter05
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
+  displayName: Frozen Harbour
+  chapter: "WINTER CUP \xB7 RACE 5"
+  track: {fileID: 11400000, guid: fd4b8816bce604f7b923fed6bb9e911c, type: 2}
+  isTutorial: 0
+  preview: {fileID: 21300000, guid: 277620e0da9264018ad294b3b7cfd24f, type: 3}
+  laps: 3
+  description: 'Round the frozen harbour in three sections: along the fishing quay and over the canal on the drawbridge (time it, or get flung across), through the container port (or the narrow alley), hop the inlet on ice floes and swing round the lighthouse, then race home along the west quay through the fish market hall.'
+  difficulty: 4
+  rivalCount: 7
+  rivalSpeedScale: 0.97
+  rivalCornerScale: 1
+  starsRequired: 28
+  starTimes:
+  - 74
+  - 66
+  - 62

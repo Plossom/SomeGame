@@ -496,6 +496,7 @@ namespace SomeGame.EditorTools
                 ("dash", "DashPanel"), ("penguin", "Penguin"), ("fish", "Fish"), ("snowball", "Snowball"), ("log", "Log"), ("hay", "HayBale"),
                 ("oil", "Oil"), ("shortcut", "Arrow"), ("mushroom", "MushroomPad"), ("cow", "Cow"), ("forestlog", "ForestLog"), ("trampoline", "Trampoline"),
                 ("lantern", "Lantern"), ("drawbridge", "BridgeLeaf"), ("ring", "BoostRing"), ("waterfall", "Waterfall"), ("coaster", "CoasterCar"),
+                ("floe", "IceFloe"), ("curling", "CurlingStone"),
             };
             var icons = wso.FindProperty("icons");
             icons.arraySize = iconList.Length;
@@ -1254,6 +1255,8 @@ namespace SomeGame.EditorTools
             if (hazards != null)
                 Configure(hazards, ("snowballSprite", Sprite("Snowball")), ("jumpPadSprite", Sprite("JumpPad")), ("penguinSprite", Sprite("Penguin")),
                     ("dashPanelSprite", Sprite("DashPanel")));
+            var features = Object.FindFirstObjectByType<SomeGame.Track.TrackFeatures>();
+            if (features != null) Configure(features, ("snowShore", Mat("SnowShore")));
             var bankLayer = Layer("Banks", "IceWall", -47);
             var banks = track.GetComponent<SomeGame.Track.TrackBanks>();
             if (banks == null) banks = track.gameObject.AddComponent<SomeGame.Track.TrackBanks>();
@@ -1275,7 +1278,7 @@ namespace SomeGame.EditorTools
             var journey = track.GetComponent<SomeGame.Track.TrackJourney>();
             if (journey == null) journey = track.gameObject.AddComponent<SomeGame.Track.TrackJourney>();
             var jso = new SerializedObject(journey);
-            SetArray(jso, "boatSprites", new[] { Sprite("Sailboat"), Sprite("Rowboat"), Sprite("SwanBoat"), Sprite("MarkerBuoy"), Sprite("Ducks") });
+            SetArray(jso, "boatSprites", new[] { Sprite("Sailboat"), Sprite("Rowboat"), Sprite("SwanBoat"), Sprite("MarkerBuoy"), Sprite("Ducks"), Sprite("Iceberg"), Sprite("Trawler"), Sprite("Icebreaker"), Sprite("SealFloe") });
             jso.ApplyModifiedPropertiesWithoutUndo();
             Material particles = hazards != null ? new SerializedObject(hazards).FindProperty("particleMaterial").objectReferenceValue as Material : null;
             Configure(journey, ("track", track), ("pillarSprite", Sprite("ArchPillar")), ("bannerSprite", Sprite("Banner")),
@@ -1293,7 +1296,7 @@ namespace SomeGame.EditorTools
                 ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
-                ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")), ("curlingSprite", Sprite("CurlingStone")),
+                ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")), ("curlingSprite", Sprite("CurlingStone")), ("iceFloeSprite", Sprite("IceFloe")),
                 ("mushroomPadSprite", Sprite("MushroomPad")), ("trampolineSprite", Sprite("Trampoline")));
         }
 

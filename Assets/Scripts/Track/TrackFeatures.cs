@@ -17,6 +17,9 @@ namespace SomeGame.Track
         [Tooltip("Lakes are drawn under the road (it crosses them on causeways); rivers over it.")]
         [SerializeField] MeshFilter lakeWater;
         [SerializeField] MeshFilter lakeBanks;
+        [Tooltip("Lake shore on winter tracks (instead of sand).")]
+        [SerializeField] Material snowShore;
+        Material _sandShore;
         [Tooltip("White arrows on the road shortly before every ramp.")]
         [SerializeField] MeshFilter arrows;
         [SerializeField, Min(0.5f)] float arrowSize = 1.8f;
@@ -34,7 +37,16 @@ namespace SomeGame.Track
             foreach (var lake in layout.lakes) Lake(lake, lw, lb);
             Assign(water, w.ToMesh("Water"));
             if (lakeWater != null) Assign(lakeWater, lw.ToMesh("LakeWater"));
-            if (lakeBanks != null) Assign(lakeBanks, lb.ToMesh("LakeBanks"));
+            if (lakeBanks != null)
+            {
+                Assign(lakeBanks, lb.ToMesh("LakeBanks"));
+                var shore = lakeBanks.GetComponent<MeshRenderer>();
+                if (shore != null)
+                {
+                    if (_sandShore == null) _sandShore = shore.sharedMaterial;
+                    shore.sharedMaterial = layout.biome == TrackLayout.Biome.Snow && snowShore != null ? snowShore : _sandShore;
+                }
+            }
 
             // Approach arrows: in line with each kicker, and leading off the road onto each corner-cut ramp.
             var a = new MeshData();

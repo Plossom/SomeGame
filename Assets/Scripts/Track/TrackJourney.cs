@@ -958,6 +958,10 @@ namespace SomeGame.Track
                 TrackLayout.BoatKind.Rowboat => 4f,
                 TrackLayout.BoatKind.SwanBoat => 4.2f,
                 TrackLayout.BoatKind.Buoy => 1.6f,
+                TrackLayout.BoatKind.Iceberg => 11f,
+                TrackLayout.BoatKind.Trawler => 7f,
+                TrackLayout.BoatKind.Icebreaker => 13f,
+                TrackLayout.BoatKind.SealFloe => 4.6f,
                 _ => 4.4f,
             };
             var sr = Sprite(boat.kind.ToString(), boatSprites[k], transform, boat.position, size, boat.angle, -43);

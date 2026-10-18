@@ -121,7 +121,7 @@ namespace SomeGame.Track
         [Tooltip("How the jump pads look (Auto: mushrooms in the meadows, jump pads elsewhere, gummi boats in the water; " +
                  "Orange: the orange jump pads on dry ground too, gummi boats in the water).")]
         public PadLook padLook;
-        public enum BoatKind { Sailboat, Rowboat, SwanBoat, Buoy, Ducks }
+        public enum BoatKind { Sailboat, Rowboat, SwanBoat, Buoy, Ducks, Iceberg, Trawler, Icebreaker, SealFloe }
         /// <summary>Something on the lake: a boat, a buoy, a duck family.</summary>
         [Serializable]
         public class Boat

@@ -14,6 +14,8 @@ namespace SomeGame.Track
     {
         [SerializeField] Track track;
         [SerializeField] Sprite gummiboatSprite;
+        [Tooltip("The pad on winter water: an ice floe instead of a gummiboat.")]
+        [SerializeField] Sprite iceFloeSprite;
         [Tooltip("Arrow on a jump pad, pointing where it throws you.")]
         [SerializeField] Sprite arrowSprite;
         [Tooltip("Little pond beside the road for fish on dry ground.")]
@@ -74,8 +76,9 @@ namespace SomeGame.Track
                 bool dry = jumpPadSprite != null && !track.IsWater(b.position);
                 bool trampoline = dry && trampolineSprite != null && layout.padLook == TrackLayout.PadLook.Trampoline;
                 bool mushroom = dry && !trampoline && !orange && mushroomPadSprite != null && layout.biome == TrackLayout.Biome.Meadow;
-                var sr = Sprite(trampoline ? "Trampoline" : mushroom ? "MushroomPad" : dry ? "JumpPad" : "Gummiboat",
-                    trampoline ? trampolineSprite : mushroom ? mushroomPadSprite : dry ? jumpPadSprite : gummiboatSprite,
+                bool floe = !dry && iceFloeSprite != null && layout.biome == TrackLayout.Biome.Snow;
+                var sr = Sprite(trampoline ? "Trampoline" : mushroom ? "MushroomPad" : dry ? "JumpPad" : floe ? "IceFloe" : "Gummiboat",
+                    trampoline ? trampolineSprite : mushroom ? mushroomPadSprite : dry ? jumpPadSprite : floe ? iceFloeSprite : gummiboatSprite,
                     b.position, b.radius * (mushroom || trampoline ? 2.4f : 2.15f), 0f, sortingOrder - 2);
                 _boats.Add((sr.transform, b.position, sr.transform.localScale.x));
                 if (b.HasTarget && arrowSprite != null)
