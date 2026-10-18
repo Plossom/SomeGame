@@ -62,6 +62,8 @@ namespace SomeGame.Car
             _car.BoostStarted += OnBoost;
             _car.Launched += OnLaunched;
             _car.Landed += OnLanded;
+            _car.CarryStarted += OnCarryStarted;
+            _car.CarriedBack += OnLanded;
             _car.Slipped += OnSlipped;
             _car.Crashed += OnCrashed;
             if (_terrain != null)
@@ -80,6 +82,8 @@ namespace SomeGame.Car
             _car.BoostStarted -= OnBoost;
             _car.Launched -= OnLaunched;
             _car.Landed -= OnLanded;
+            _car.CarryStarted -= OnCarryStarted;
+            _car.CarriedBack -= OnLanded;
             _car.Slipped -= OnSlipped;
             _car.Crashed -= OnCrashed;
             if (_terrain != null)
@@ -148,6 +152,7 @@ namespace SomeGame.Car
 
         void OnBoost(float strength) => PlayOneShot(Library.boost, Mathf.Lerp(0.5f, 0.9f, strength));
         void OnLaunched(float airTime) => PlayOneShot(Library.jump, 0.55f);
+        void OnCarryStarted() => PlayOneShot(Library.wallWhoosh, 0.8f);
         void OnLanded() => PlayOneShot(Library.land, 0.8f);
         void OnSlipped() => PlayOneShot(Library.oilSpin, 0.75f);
         void OnSplashed() => PlayOneShot(Library.splash, 0.9f);

@@ -55,7 +55,7 @@ namespace SomeGame.Car
         float _dashAt = -10f;
         int _lastBranch = -1;
         float _lastAlong;
-        ParticleSystem _splash, _dust;
+        ParticleSystem _splash, _dust, _sparkle;
         SpriteRenderer[] _sprites;
 
         /// <summary>The car fell into water and is being put back on the road.</summary>
@@ -92,6 +92,7 @@ namespace SomeGame.Car
             _sprites = GetComponentsInChildren<SpriteRenderer>();
             _splash = CreateBurst("Splash", new Color(0.85f, 0.95f, 1f, 0.9f), new Vector2(3f, 7f), new Vector2(0.25f, 0.55f), 0.7f);
             _dust = CreateBurst("LandingDust", new Color(0.93f, 0.86f, 0.7f, 0.7f), new Vector2(1.5f, 4f), new Vector2(0.4f, 0.8f), 0.6f);
+            _sparkle = CreateBurst("CarrySparkle", new Color(1f, 0.86f, 0.35f, 0.95f), new Vector2(0.5f, 2f), new Vector2(0.15f, 0.4f), 0.7f);
         }
 
         // Mid-air: through a golden ring, a boost.
@@ -106,13 +107,53 @@ namespace SomeGame.Car
             RingHit?.Invoke(ring);
         }
 
-        void OnEnable() => _car.Landed += OnLanded;
-        void OnDisable() => _car.Landed -= OnLanded;
+        void OnEnable()
+        {
+            _car.Landed += OnLanded;
+            _car.CarryStarted += OnCarryStarted;
+            _car.CarriedBack += OnCarriedBack;
+        }
+
+        void OnDisable()
+        {
+            _car.Landed -= OnLanded;
+            _car.CarryStarted -= OnCarryStarted;
+            _car.CarriedBack -= OnCarriedBack;
+        }
+
+        // Missed a checkpoint: a puff where the car is lifted up, a trail of sparkles on the way back.
+        void OnCarryStarted()
+        {
+            _dust.transform.position = _car.Body.position;
+            _dust.Emit(16);
+            StopAllCoroutines();
+            foreach (var s in _sprites) if (s != null) s.enabled = true;
+        }
+
+        void OnCarriedBack()
+        {
+            _sensor.Elevated = false; // set down on the road, also when lifted off a roof
+            _sensor.Sample();
+            _shortcutFrom = null;
+            _fromCornerCut = _roofExit = false;
+            _sparkle.transform.position = _car.Body.position;
+            _sparkle.Emit(30);
+            _dust.transform.position = _car.Body.position;
+            _dust.Emit(18);
+            StopAllCoroutines();
+            StartCoroutine(Blink(false));
+        }
 
         void FixedUpdate()
         {
             var track = _sensor.Track;
             if (track == null) return;
+            if (_car.IsCarried)
+            {
+                _sparkle.transform.position = _car.Body.position;
+                _sparkle.Emit(2);
+                return;
+            }
             if (_car.IsAirborne)
             {
                 InTheAir(track);
@@ -425,11 +466,11 @@ namespace SomeGame.Car
             StartCoroutine(Blink());
         }
 
-        IEnumerator Blink()
+        IEnumerator Blink(bool wait = true)
         {
             float seconds = _isRival ? blinkSeconds : playerBlinkSeconds;
             // The player waits a moment before driving on (the penalty), then blinks while getting going.
-            if (!_isRival && playerWait > 0f)
+            if (wait && !_isRival && playerWait > 0f)
             {
                 _car.ControlsEnabled = false;
                 for (float w = 0f; w < playerWait; w += Time.deltaTime)

@@ -48,6 +48,10 @@ namespace SomeGame.Car
         public event Action TrickStarted;
         /// <summary>Landed a trick: a boost follows.</summary>
         public event Action TrickLanded;
+        /// <summary>Missed a checkpoint: the car is lifted up and carried back to it.</summary>
+        public event Action CarryStarted;
+        /// <summary>Set down again after being carried back.</summary>
+        public event Action CarriedBack;
 
         bool _trick;
         /// <summary>Boost strength for landing a trick.</summary>
@@ -386,6 +390,11 @@ namespace SomeGame.Car
         // an aimed flight, e.g. a pad onto the roofs, so it lands where it was thrown).
         void Fly(float dt)
         {
+            if (_carried)
+            {
+                Carry(dt);
+                return;
+            }
             _airTimer -= dt;
             // A trick: the hop button pressed in the air (not right at take-off, not just before landing).
             bool held = ControlsEnabled && _input != null && _input.DriftHeld;
@@ -426,6 +435,61 @@ namespace SomeGame.Car
                 GiveBoost(TrickBoost);
             }
             Landed?.Invoke();
+        }
+
+        // ------------------------------------------------------------------ carried back (missed checkpoint)
+
+        bool _carried;
+        Vector2 _carryFrom, _carryTo;
+        float _carryFromHeading, _carryToHeading, _carrySpeed;
+
+        /// <summary>True while the car is being carried back through the air to a checkpoint it missed.</summary>
+        public bool IsCarried => _carried && IsAirborne;
+
+        /// <summary>
+        /// Lifts the car up and carries it through the air (over cars and scenery) to <paramref name="pose"/>,
+        /// where it is set down driving on at <paramref name="speedAfter"/>.
+        /// </summary>
+        public void CarryBack(Pose pose, float speedAfter)
+        {
+            if (IsPuppet || IsAirborne) return;
+            EndDrift();
+            _trick = false;
+            _exitTimer = _calmTimer = 0f;
+            _slipTimer = 0f;
+            _boostTimer = 0f;
+            _carried = true;
+            _carryFrom = _body.position;
+            _carryTo = pose.position;
+            _carryFromHeading = _body.rotation;
+            _carryToHeading = pose.rotation.eulerAngles.z;
+            _carrySpeed = speedAfter;
+            _airLocked = true;
+            _airTurnTo = null;
+            _airDuration = _airTimer = Mathf.Clamp(0.75f + Vector2.Distance(_carryFrom, _carryTo) / 60f, 0.85f, 1.5f);
+            _body.angularVelocity = 0f;
+            if (_collider != null) _collider.enabled = false;
+            CarryStarted?.Invoke();
+        }
+
+        void Carry(float dt)
+        {
+            _airTimer -= dt;
+            float t = 1f - Mathf.Max(0f, _airTimer) / _airDuration;
+            float eased = t * t * (3f - 2f * t);
+            Vector2 goal = Vector2.Lerp(_carryFrom, _carryTo, eased);
+            _body.linearVelocity = (goal - _body.position) / dt;
+            _body.angularVelocity = Mathf.DeltaAngle(_body.rotation, Mathf.LerpAngle(_carryFromHeading, _carryToHeading, eased)) / dt;
+            ForwardSpeed = _body.linearVelocity.magnitude;
+            SidewaysSpeed = 0f;
+            if (_airTimer > 0f) return;
+
+            _carried = false;
+            Respawn(new Pose(_carryTo, Quaternion.Euler(0f, 0f, _carryToHeading)));
+            _body.linearVelocity = (Vector2)transform.up * _carrySpeed;
+            ForwardSpeed = _carrySpeed;
+            Collided?.Invoke(stats.landingImpact);
+            CarriedBack?.Invoke();
         }
 
         /// <summary>
@@ -494,6 +558,7 @@ namespace SomeGame.Car
         public void Respawn(Pose pose)
         {
             _trick = false;
+            _carried = false;
             _exitTimer = _calmTimer = 0f;
             _airTimer = 0f;
             _slipTimer = 0f;

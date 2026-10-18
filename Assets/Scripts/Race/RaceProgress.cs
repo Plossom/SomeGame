@@ -20,6 +20,10 @@ namespace SomeGame.Race
         [SerializeField, Min(0f)] float gateMargin = 0.5f;
         [Tooltip("How far past the next checkpoint (units) the car must be before Missed Checkpoint shows.")]
         [SerializeField, Min(0f)] float missedCheckpointMargin = 6f;
+        [Tooltip("Seconds Missed Checkpoint shows before the player is carried back to it.")]
+        [SerializeField, Min(0f)] float carryBackDelay = 0.35f;
+        [Tooltip("Units before the missed checkpoint where the car is set down again.")]
+        [SerializeField, Min(0f)] float carryBackLead = 5f;
 
         TrackSensor _sensor;
         Rigidbody2D _body;
@@ -29,6 +33,7 @@ namespace SomeGame.Race
         float _lapStartTime;
         bool _tracking;
         bool _rival;
+        float _missedTimer;
         readonly List<float> _lapTimes = new();
 
         public event Action<RaceProgress, float> LapCompleted;
@@ -123,7 +128,8 @@ namespace SomeGame.Race
             }
             var path = Circuit.Path;
             float distance = _sensor.Current.Distance;
-            UpdateWrongWay(_sensor.RoadDirection, Time.fixedDeltaTime); // the branch's direction on a branch
+            if (CarryingBack) _wrongWayTimer = 0f; // flying back against the track direction is not wrong way
+            else UpdateWrongWay(_sensor.RoadDirection, Time.fixedDeltaTime); // the branch's direction on a branch
 
             float moved = path.DeltaDistance(_lastDistance, distance);
 
@@ -139,6 +145,7 @@ namespace SomeGame.Race
             // Rivals never turn back: one that went past a checkpoint beside the road (a wild landing) gets it.
             for (int guard = 0; _rival && guard < 3 && MissedCheckpoint && Mathf.Abs(_sensor.Current.Lateral) <= Circuit.OffRoadAt(distance); guard++)
                 PassCheckpoint();
+            CarryBackIfMissed(Time.fixedDeltaTime);
             _lastDistance = distance;
         }
 
@@ -159,6 +166,27 @@ namespace SomeGame.Race
             }
             _sensor.Sample();
             _lastDistance = _sensor.Current.Distance;
+        }
+
+        /// <summary>True while the car is being carried back to the checkpoint it missed.</summary>
+        public bool CarryingBack => _car != null && _car.IsCarried;
+
+        // The player never has to drive back: a moment after missing a checkpoint, the car is lifted up and
+        // carried through the air to just before it, and set down driving on (most of its speed kept).
+        void CarryBackIfMissed(float dt)
+        {
+            if (_rival || _car == null || !MissedCheckpoint)
+            {
+                _missedTimer = 0f;
+                return;
+            }
+            _missedTimer += dt;
+            if (_missedTimer < carryBackDelay) return;
+            _missedTimer = 0f;
+            var pose = Circuit.RespawnBefore(Circuit.CheckpointDistance(NextCheckpoint), carryBackLead);
+            float top = _car.Stats != null ? _car.Stats.topSpeed : 18f;
+            float speed = Mathf.Clamp(_body.linearVelocity.magnitude * 0.85f, top * 0.55f, top);
+            _car.CarryBack(pose, speed);
         }
 
         void UpdateWrongWay(Vector2 trackDirection, float dt)

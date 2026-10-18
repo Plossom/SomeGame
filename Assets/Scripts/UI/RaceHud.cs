@@ -55,7 +55,7 @@ namespace SomeGame.UI
             {
                 string warning = race.State != RaceState.Racing ? null
                     : player.IsWrongWay ? "WRONG WAY"
-                    : player.MissedCheckpoint ? "MISSED CHECKPOINT\n<size=60%>GO BACK</size>"
+                    : player.MissedCheckpoint || player.CarryingBack ? "MISSED CHECKPOINT"
                     : null;
                 bool show = warning != null;
                 if (warningLabel.gameObject.activeSelf != show) warningLabel.gameObject.SetActive(show);
