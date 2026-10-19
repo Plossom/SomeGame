@@ -1,0 +1,699 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: PenguinBay
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: 0}
+  - {x: 30, y: -6}
+  - {x: 60, y: -2}
+  - {x: 82, y: 14}
+  - {x: 90, y: 38}
+  - {x: 80, y: 60}
+  - {x: 60, y: 70}
+  - {x: 40, y: 64}
+  - {x: 22, y: 72}
+  - {x: 12, y: 92}
+  - {x: -6, y: 104}
+  - {x: -30, y: 100}
+  - {x: -48, y: 88}
+  - {x: -56, y: 64}
+  - {x: -50, y: 40}
+  - {x: -34, y: 26}
+  - {x: -22, y: 12}
+  - {x: -12, y: 3}
+  roadWidth: 8
+  widths: []
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 12
+  sections: 1
+  sectionLines: []
+  boundaryMargin: 25
+  rooms: []
+  houses: []
+  upstairs: []
+  stairs: []
+  decor:
+  - cell: PenguinColony
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 64, y: 24}
+    size: 13
+    angle: 0
+    flat: 0
+  - cell: EmperorPenguins
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 112, y: 56}
+    size: 9
+    angle: 0
+    flat: 0
+  - cell: PenguinChicks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 62, y: 82}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: PenguinColony
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 114, y: 28}
+    size: 12
+    angle: 40
+    flat: 0
+  - cell: PenguinSign
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: -62, y: 44}
+    size: 4.5
+    angle: 0
+    flat: 0
+  - cell: FishBarrel
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 54, y: 40}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: PenguinChicks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 30, y: 36}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: PenguinColony
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: -24, y: -14}
+    size: 11
+    angle: 0
+    flat: 0
+  - cell: PenguinChicks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: -72, y: 52}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: ResearchHut
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: 16, y: -18}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: WeatherMast
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: 36, y: -20}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: Crates
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 0, y: -16}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: WinterCrowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -6, y: 14}
+    size: 7
+    angle: 180
+    flat: 0
+  - cell: Kayaks
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 0, y: 118}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: Nets
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: -36, y: 114}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: Buoys
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -4, y: 88}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: IceArch
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.16666667
+    position: {x: -46, y: 104}
+    size: 12
+    angle: 35
+    flat: 0
+  - cell: Seals
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -70, y: 70}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: PolarBears
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -72, y: 30}
+    size: 8
+    angle: 20
+    flat: 0
+  - cell: Anchor
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 10, y: 40}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: Igloo
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -34, y: 6}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: EmperorPenguins
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 30, y: 50}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: IcebergCell
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: -80, y: 96}
+    size: 12
+    angle: 0
+    flat: 0
+  - cell: IcebergCell
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8333333
+      width: 0.25
+      height: 0.16666667
+    position: {x: 40, y: 108}
+    size: 10
+    angle: 60
+    flat: 0
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -3.2245457, y: 16.398201}
+    size: 22.603382
+    angle: 139.93016
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -30.2567, y: -28.314241}
+    size: 14.599214
+    angle: 141.2998
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 9.614428, y: 41.491043}
+    size: 23.81783
+    angle: 287.99203
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -62.523434, y: 32.297924}
+    size: 23.444803
+    angle: 68.39711
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 49.271725, y: 104.518135}
+    size: 16.212585
+    angle: 32.956787
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 76.87869, y: -14.872025}
+    size: 17.880943
+    angle: 91.08249
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 61.16581, y: -27.534098}
+    size: 25.508253
+    angle: 194.33601
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: 96.51934, y: -13.987522}
+    size: 20.923668
+    angle: 328.7432
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -28.477688, y: -15.073428}
+    size: 15.827206
+    angle: 230.49323
+    flat: 1
+  - cell: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    position: {x: -48.783085, y: -0.38318217}
+    size: 19.002666
+    angle: 302.6777
+    flat: 1
+  logJumps: []
+  rings: []
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings:
+  - {x: 380.45233, y: 30.651047}
+  padLook: 0
+  boats:
+  - kind: 5
+    position: {x: -24, y: 70}
+    angle: 30
+    drift: 0
+  - kind: 5
+    position: {x: -10, y: 46}
+    angle: -50
+    drift: 0
+  - kind: 8
+    position: {x: -30, y: 50}
+    angle: 60
+    drift: 0
+  - kind: 8
+    position: {x: -6, y: 74}
+    angle: -20
+    drift: 0
+  fireworks: 0
+  cows: []
+  fences: []
+  trains: []
+  props: []
+  bankMaterial: {fileID: 0}
+  sceneryMaterial: {fileID: 2100000, guid: cbc689c5b59804258a5bd830b308adf8, type: 2}
+  waterWorld: 0
+  biome: 1
+  gaps:
+  - from: 252.73949
+    to: 266.4895
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+  elevatedRoad: 0
+  bouncers:
+  - position: {x: -15.251472, y: 103.29374}
+    radius: 2.4
+    airTime: 0.55
+    speedBoost: 1
+    target: {x: -20.945871, y: 103.79019}
+  - position: {x: -20.945871, y: 103.79019}
+    radius: 2.4
+    airTime: 0.55
+    speedBoost: 1
+    target: {x: -29.428225, y: 100.22247}
+  geysers:
+  - distance: 354.44528
+    side: -1
+    period: 3.6
+    active: 1
+    offset: 0
+  sweepers: []
+  skyLife: 0.7
+  rivers: []
+  lakes:
+  - center: {x: -18, y: 60}
+    radii: {x: 20, y: 24}
+    angle: 0
+  - center: {x: -18, y: 103}
+    radii: {x: 6, y: 13}
+    angle: 0
+  oil: []
+  rampLength: 3
+  rampWidth: 2.8
+  shortcuts: []
+  branches:
+  - kind: 1
+    from: 114.38248
+    to: 182.88914
+    points:
+    - {x: 74, y: 42}
+    - {x: 64, y: 56}
+    - {x: 50, y: 56}
+    width: 9
+  banks: []
+  penguins:
+  - kind: 0
+    distance: 99.51512
+    count: 4
+    period: 8
+    crossing: 3
+    offset: 0
+  - kind: 0
+    distance: 329.93137
+    count: 5
+    period: 9
+    crossing: 3.4
+    offset: 4
+  dashPanels:
+  - distance: 44.832134
+    lateral: 1.6
+    length: 4
+    width: 3.2
+  - distance: 308.86243
+    lateral: -1.6
+    length: 4
+    width: 3.2
+  scenery:
+  - name: PenguinChicks
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    count: 5
+    sizeRange: {x: 5, y: 7}
+    clearance: {x: 2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: EmperorPenguins
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    count: 4
+    sizeRange: {x: 5, y: 7}
+    clearance: {x: 2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Seals
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    count: 3
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: WinterCrowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    count: 5
+    sizeRange: {x: 6, y: 7}
+    clearance: {x: 0.8, y: 3}
+    alignToRoad: 1
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 370.45233, y: 61.120014}
+    canopy: 0
+    indoor: 0
+  - name: Snowman
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    count: 3
+    sizeRange: {x: 3.5, y: 4.5}
+    clearance: {x: 1.5, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: SnowRock
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 14
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.5, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: FrostBush
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 22
+    sizeRange: {x: 2.5, y: 4}
+    clearance: {x: 1.5, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: FrostTree
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 14
+    sizeRange: {x: 4, y: 6}
+    clearance: {x: 3, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: SnowPine
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    count: 150
+    sizeRange: {x: 6, y: 10}
+    clearance: {x: 14, y: 0}
+    alignToRoad: 0
+    clustered: 1
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery: []
+  bakedSignature: 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Winter06
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Northern Lights
-  chapter: "WINTER CUP \xB7 RACE 6"
+  chapter: "WINTER CUP \xB7 RACE 8"
   track: {fileID: 11400000, guid: 2bcd544d4f8ca4c5e938bd57184475f6, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 9ed1e55917f3a4c0e84ae0e5a4536149, type: 3}

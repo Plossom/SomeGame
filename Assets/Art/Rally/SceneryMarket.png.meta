@@ -1,0 +1,951 @@
+fileFormatVersion: 2
+guid: 085853a91eda34ae8a3cfbf18c408340
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6087441028073938655
+    second: SceneryMarket_0
+  - first:
+      213: 2841414075143634042
+    second: SceneryMarket_1
+  - first:
+      213: -8515095753789145431
+    second: SceneryMarket_2
+  - first:
+      213: -5056622693866209406
+    second: SceneryMarket_3
+  - first:
+      213: 5158164993698853517
+    second: SceneryMarket_4
+  - first:
+      213: -2892419598184815718
+    second: SceneryMarket_5
+  - first:
+      213: -6964513670807755640
+    second: SceneryMarket_6
+  - first:
+      213: -2690923683144561102
+    second: SceneryMarket_7
+  - first:
+      213: -2970883648564585512
+    second: SceneryMarket_8
+  - first:
+      213: 3140240934274154758
+    second: SceneryMarket_9
+  - first:
+      213: 6157797942770127413
+    second: SceneryMarket_10
+  - first:
+      213: 1389090067452470601
+    second: SceneryMarket_11
+  - first:
+      213: -833961781409836526
+    second: SceneryMarket_12
+  - first:
+      213: 5939195255970197279
+    second: SceneryMarket_13
+  - first:
+      213: 4242113147851699581
+    second: SceneryMarket_14
+  - first:
+      213: 3238437118759959790
+    second: SceneryMarket_15
+  - first:
+      213: 7819899565978607805
+    second: SceneryMarket_16
+  - first:
+      213: -48268752689157918
+    second: SceneryMarket_17
+  - first:
+      213: 2631653918087729872
+    second: SceneryMarket_18
+  - first:
+      213: -78763766935516500
+    second: SceneryMarket_19
+  - first:
+      213: 7657463226054108430
+    second: SceneryMarket_20
+  - first:
+      213: -4961615867657143496
+    second: SceneryMarket_21
+  - first:
+      213: 7942040680363323656
+    second: SceneryMarket_22
+  - first:
+      213: -8103269054449561024
+    second: SceneryMarket_23
+  - first:
+      213: 5724602442780666772
+    second: SceneryMarket_24
+  - first:
+      213: -1028769417078340473
+    second: SceneryMarket_25
+  - first:
+      213: -1336106402627554709
+    second: SceneryMarket_26
+  - first:
+      213: -4546004113494713848
+    second: SceneryMarket_27
+  - first:
+      213: 6578722660405703611
+    second: SceneryMarket_28
+  - first:
+      213: -4128392397353349463
+    second: SceneryMarket_29
+  - first:
+      213: -5154873599692898812
+    second: SceneryMarket_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryMarket_0
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 1436
+        width: 185
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fde5c75cc5fea7450800000000000000
+      internalID: 6087441028073938655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_1
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 1291
+        width: 216
+        height: 216
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7c3bb00c0bbe6720800000000000000
+      internalID: 2841414075143634042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_2
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 1325
+        width: 195
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aef5fed68d44d980800000000000000
+      internalID: -8515095753789145431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_3
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 1293
+        width: 110
+        height: 210
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28ffce8737443d9b0800000000000000
+      internalID: -5056622693866209406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_4
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1405
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d82764e8bbb759740800000000000000
+      internalID: 5158164993698853517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_5
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 1393
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a93e0dc33bf0cd7d0800000000000000
+      internalID: -2892419598184815718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_6
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 1405
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 884e62a47b3195f90800000000000000
+      internalID: -6964513670807755640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_7
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 1393
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23e8b74da2be7aad0800000000000000
+      internalID: -2690923683144561102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_8
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 1405
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8db9a42ef0d45c6d0800000000000000
+      internalID: -2970883648564585512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_9
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 1320
+        width: 185
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6014d84fd70649b20800000000000000
+      internalID: 3140240934274154758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_10
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 1033
+        width: 222
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 532d1718a94e47550800000000000000
+      internalID: 6157797942770127413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_11
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 1128
+        width: 201
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 945278f7e0a074310800000000000000
+      internalID: 1389090067452470601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_12
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 1031
+        width: 148
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21290d6ad2c2d64f0800000000000000
+      internalID: -833961781409836526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_13
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 1032
+        width: 125
+        height: 229
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1fe9cb3e924c6250800000000000000
+      internalID: 5939195255970197279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_14
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 1073
+        width: 52
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d75f6baae630fda30800000000000000
+      internalID: 4242113147851699581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 787
+        width: 769
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eec702bc66d31fc20800000000000000
+      internalID: 3238437118759959790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_16
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 819
+        width: 239
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db0e261493dd58c60800000000000000
+      internalID: 7819899565978607805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_17
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 511
+        width: 245
+        height: 246
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e8263e33d3845ff0800000000000000
+      internalID: -48268752689157918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_18
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 559
+        width: 217
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d2526f9b43858420800000000000000
+      internalID: 2631653918087729872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_19
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 559
+        width: 217
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caa03a275cc28eef0800000000000000
+      internalID: -78763766935516500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_20
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 559
+        width: 217
+        height: 198
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e05629dab36c44a60800000000000000
+      internalID: 7657463226054108430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_21
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 292
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83bba58f7acc42bb0800000000000000
+      internalID: -4961615867657143496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_22
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 432
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 801f1c88bebc73e60800000000000000
+      internalID: 7942040680363323656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_23
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0425e1a5ab76b8f80800000000000000
+      internalID: -8103269054449561024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_24
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 291
+        width: 201
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49b664a679fd17f40800000000000000
+      internalID: 5724602442780666772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_25
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 380
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78482437aa319b1f0800000000000000
+      internalID: -1028769417078340473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_26
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 307
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6272494e42357de0800000000000000
+      internalID: -1336106402627554709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_27
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80adea3385959e0c0800000000000000
+      internalID: -4546004113494713848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_28
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb37b4177615c4b50800000000000000
+      internalID: 6578722660405703611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_29
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ae845edcf005b6c0800000000000000
+      internalID: -4128392397353349463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMarket_30
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40ef344d5c53678b0800000000000000
+      internalID: -5154873599692898812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryMarket_0: 6087441028073938655
+      SceneryMarket_1: 2841414075143634042
+      SceneryMarket_10: 6157797942770127413
+      SceneryMarket_11: 1389090067452470601
+      SceneryMarket_12: -833961781409836526
+      SceneryMarket_13: 5939195255970197279
+      SceneryMarket_14: 4242113147851699581
+      SceneryMarket_15: 3238437118759959790
+      SceneryMarket_16: 7819899565978607805
+      SceneryMarket_17: -48268752689157918
+      SceneryMarket_18: 2631653918087729872
+      SceneryMarket_19: -78763766935516500
+      SceneryMarket_2: -8515095753789145431
+      SceneryMarket_20: 7657463226054108430
+      SceneryMarket_21: -4961615867657143496
+      SceneryMarket_22: 7942040680363323656
+      SceneryMarket_23: -8103269054449561024
+      SceneryMarket_24: 5724602442780666772
+      SceneryMarket_25: -1028769417078340473
+      SceneryMarket_26: -1336106402627554709
+      SceneryMarket_27: -4546004113494713848
+      SceneryMarket_28: 6578722660405703611
+      SceneryMarket_29: -4128392397353349463
+      SceneryMarket_3: -5056622693866209406
+      SceneryMarket_30: -5154873599692898812
+      SceneryMarket_4: 5158164993698853517
+      SceneryMarket_5: -2892419598184815718
+      SceneryMarket_6: -6964513670807755640
+      SceneryMarket_7: -2690923683144561102
+      SceneryMarket_8: -2970883648564585512
+      SceneryMarket_9: 3140240934274154758
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

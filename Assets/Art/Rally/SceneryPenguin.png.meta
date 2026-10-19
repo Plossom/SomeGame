@@ -1,0 +1,1055 @@
+fileFormatVersion: 2
+guid: 803a0a7672ac34341a0c632eb00e903f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8391873349822450629
+    second: SceneryPenguin_0
+  - first:
+      213: 428212655477880526
+    second: SceneryPenguin_1
+  - first:
+      213: 754981737020174341
+    second: SceneryPenguin_2
+  - first:
+      213: 5774802907062238598
+    second: SceneryPenguin_3
+  - first:
+      213: 4400163038191022680
+    second: SceneryPenguin_4
+  - first:
+      213: -4581888287435686064
+    second: SceneryPenguin_5
+  - first:
+      213: -1786605272402130364
+    second: SceneryPenguin_6
+  - first:
+      213: -7333016929971688001
+    second: SceneryPenguin_7
+  - first:
+      213: -3938299369882526594
+    second: SceneryPenguin_8
+  - first:
+      213: 8477641928939301791
+    second: SceneryPenguin_9
+  - first:
+      213: -5717901369867821667
+    second: SceneryPenguin_10
+  - first:
+      213: 18546766252377826
+    second: SceneryPenguin_11
+  - first:
+      213: -3873797012344405618
+    second: SceneryPenguin_12
+  - first:
+      213: 6957959298312100048
+    second: SceneryPenguin_13
+  - first:
+      213: -8514871499949238882
+    second: SceneryPenguin_14
+  - first:
+      213: -4148353070531155136
+    second: SceneryPenguin_15
+  - first:
+      213: -8207706174842600254
+    second: SceneryPenguin_16
+  - first:
+      213: 186799291080619898
+    second: SceneryPenguin_17
+  - first:
+      213: -1156034192413383584
+    second: SceneryPenguin_18
+  - first:
+      213: -4588506505983633682
+    second: SceneryPenguin_19
+  - first:
+      213: 814166845909815354
+    second: SceneryPenguin_20
+  - first:
+      213: 5873703764715855080
+    second: SceneryPenguin_21
+  - first:
+      213: -1847872445761099290
+    second: SceneryPenguin_22
+  - first:
+      213: -2336651383774357158
+    second: SceneryPenguin_23
+  - first:
+      213: 7317519897294807966
+    second: SceneryPenguin_24
+  - first:
+      213: 8805453364421393790
+    second: SceneryPenguin_25
+  - first:
+      213: 393578808287882353
+    second: SceneryPenguin_26
+  - first:
+      213: 5972915413520509261
+    second: SceneryPenguin_27
+  - first:
+      213: -2087840686529643309
+    second: SceneryPenguin_28
+  - first:
+      213: -874357974805952372
+    second: SceneryPenguin_29
+  - first:
+      213: 3552225514340254021
+    second: SceneryPenguin_30
+  - first:
+      213: -5936188159995193771
+    second: SceneryPenguin_31
+  - first:
+      213: 1356543067125095887
+    second: SceneryPenguin_32
+  - first:
+      213: 7679963170811500995
+    second: SceneryPenguin_33
+  - first:
+      213: -70855028584744300
+    second: SceneryPenguin_34
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryPenguin_0
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 1325
+        width: 195
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cb0c30895ce57470800000000000000
+      internalID: 8391873349822450629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_1
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 1325
+        width: 234
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec6f512342151f500800000000000000
+      internalID: 428212655477880526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_2
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 1313
+        width: 165
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 500bef6c3eb3a7a00800000000000000
+      internalID: 754981737020174341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_3
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 1291
+        width: 230
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68d7653d5a8342050800000000000000
+      internalID: 5774802907062238598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_4
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 1049
+        width: 66
+        height: 220
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 852fd2d58f4801d30800000000000000
+      internalID: 4400163038191022680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_5
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 1050
+        width: 59
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05f7fd2e0ecd960c0800000000000000
+      internalID: -4581888287435686064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_6
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 1052
+        width: 44
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44a81a878f3b437e0800000000000000
+      internalID: -1786605272402130364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_7
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 1078
+        width: 76
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbdac1544f3eb3a90800000000000000
+      internalID: -7333016929971688001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_8
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 1061
+        width: 121
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7cd10fc6995859c0800000000000000
+      internalID: -3938299369882526594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_9
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 1097
+        width: 175
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9b626bfa62a6a570800000000000000
+      internalID: 8477641928939301791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_10
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 1072
+        width: 154
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9d1f44bffee5a0b0800000000000000
+      internalID: -5717901369867821667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_11
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 809
+        width: 226
+        height: 154
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e684368f24e14000800000000000000
+      internalID: 18546766252377826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_12
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 825
+        width: 184
+        height: 172
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e810e3b34228d3ac0800000000000000
+      internalID: -3873797012344405618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_13
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 839
+        width: 130
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d8d481fd13af8060800000000000000
+      internalID: 6957959298312100048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_14
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 838
+        width: 111
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e959d690c7915d980800000000000000
+      internalID: -8514871499949238882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_15
+      rect:
+        serializedVersion: 2
+        x: 666
+        y: 948
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04be61c7cd61e66c0800000000000000
+      internalID: -4148353070531155136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_16
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 792
+        width: 159
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c40ab368be581e80800000000000000
+      internalID: -8207706174842600254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_17
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 838
+        width: 18
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a77b72d27f4a79200800000000000000
+      internalID: 186799291080619898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_18
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 533
+        width: 249
+        height: 212
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 064aef4e601f4ffe0800000000000000
+      internalID: -1156034192413383584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_19
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 549
+        width: 201
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee6d64dc4a95250c0800000000000000
+      internalID: -4588506505983633682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_20
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 549
+        width: 158
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a30da56ce608c4b00800000000000000
+      internalID: 814166845909815354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_21
+      rect:
+        serializedVersion: 2
+        x: 686
+        y: 646
+        width: 68
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ec53cb2476938150800000000000000
+      internalID: 5873703764715855080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_22
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 681
+        width: 38
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e96d201dc90b56e0800000000000000
+      internalID: -1847872445761099290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_23
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 550
+        width: 163
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a59543252fb829fd0800000000000000
+      internalID: -2336651383774357158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_24
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 542
+        width: 55
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e932c13a39d0d8560800000000000000
+      internalID: 7317519897294807966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_25
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 292
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7dfa908e21433a70800000000000000
+      internalID: 8805453364421393790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_26
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 432
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17cee1347d5467500800000000000000
+      internalID: 393578808287882353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_27
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4968583cee04e250800000000000000
+      internalID: 5972915413520509261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_28
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 255
+        width: 191
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dcfacb15ff7603e0800000000000000
+      internalID: -2087840686529643309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_29
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 380
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c884921fd08add3f0800000000000000
+      internalID: -874357974805952372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_30
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 307
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5418458e84a0c4130800000000000000
+      internalID: 3552225514340254021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_31
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5565b9bd15c6e9da0800000000000000
+      internalID: -5936188159995193771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_32
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcd92867bb863d210800000000000000
+      internalID: 1356543067125095887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_33
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c95d4c40d5b49a60800000000000000
+      internalID: 7679963170811500995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryPenguin_34
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49af7a61ab5440ff0800000000000000
+      internalID: -70855028584744300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryPenguin_0: 8391873349822450629
+      SceneryPenguin_1: 428212655477880526
+      SceneryPenguin_10: -5717901369867821667
+      SceneryPenguin_11: 18546766252377826
+      SceneryPenguin_12: -3873797012344405618
+      SceneryPenguin_13: 6957959298312100048
+      SceneryPenguin_14: -8514871499949238882
+      SceneryPenguin_15: -4148353070531155136
+      SceneryPenguin_16: -8207706174842600254
+      SceneryPenguin_17: 186799291080619898
+      SceneryPenguin_18: -1156034192413383584
+      SceneryPenguin_19: -4588506505983633682
+      SceneryPenguin_2: 754981737020174341
+      SceneryPenguin_20: 814166845909815354
+      SceneryPenguin_21: 5873703764715855080
+      SceneryPenguin_22: -1847872445761099290
+      SceneryPenguin_23: -2336651383774357158
+      SceneryPenguin_24: 7317519897294807966
+      SceneryPenguin_25: 8805453364421393790
+      SceneryPenguin_26: 393578808287882353
+      SceneryPenguin_27: 5972915413520509261
+      SceneryPenguin_28: -2087840686529643309
+      SceneryPenguin_29: -874357974805952372
+      SceneryPenguin_3: 5774802907062238598
+      SceneryPenguin_30: 3552225514340254021
+      SceneryPenguin_31: -5936188159995193771
+      SceneryPenguin_32: 1356543067125095887
+      SceneryPenguin_33: 7679963170811500995
+      SceneryPenguin_34: -70855028584744300
+      SceneryPenguin_4: 4400163038191022680
+      SceneryPenguin_5: -4581888287435686064
+      SceneryPenguin_6: -1786605272402130364
+      SceneryPenguin_7: -7333016929971688001
+      SceneryPenguin_8: -3938299369882526594
+      SceneryPenguin_9: 8477641928939301791
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Winter05
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Frozen Harbour
-  chapter: "WINTER CUP \xB7 RACE 5"
+  chapter: "WINTER CUP \xB7 RACE 7"
   track: {fileID: 11400000, guid: fd4b8816bce604f7b923fed6bb9e911c, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 277620e0da9264018ad294b3b7cfd24f, type: 3}

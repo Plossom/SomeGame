@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Winter03
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Santa's Workshop
-  chapter: "WINTER CUP \xB7 RACE 3"
+  chapter: "WINTER CUP \xB7 RACE 4"
   track: {fileID: 11400000, guid: c614b76c218d64c73b033f593cdbd5c1, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: a7ba80b6c3e664addaf4207b63cb8b20, type: 3}
