@@ -11,13 +11,13 @@ namespace SomeGame.Car
     {
         [Tooltip("The front wheels (child sprites), turned about their own centre.")]
         [SerializeField] Transform[] wheels;
-        [SerializeField, Range(0f, 60f)] float maxAngle = 28f;
+        [SerializeField, Range(0f, 60f)] float maxAngle = 32f;
         [Tooltip("Wheel angle per degree between the heading and where the player steers.")]
-        [SerializeField, Min(0f)] float steerGain = 0.7f;
+        [SerializeField, Min(0f)] float steerGain = 0.6f;
         [Tooltip("Wheel angle (degrees) per degree per second the car turns (rivals and online cars).")]
         [SerializeField, Min(0f)] float turnGain = 0.4f;
         [Tooltip("Seconds the wheels take to follow.")]
-        [SerializeField, Min(0.01f)] float smoothTime = 0.07f;
+        [SerializeField, Min(0.01f)] float smoothTime = 0.1f;
 
         /// <summary>How far the wheels turn compared with the car's (the snowmobile's skis turn less).</summary>
         public float AngleScale { get; set; } = 1f;
