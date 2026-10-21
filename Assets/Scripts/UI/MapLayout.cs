@@ -12,17 +12,22 @@ namespace SomeGame.UI
     {
         readonly Vector2[] _points;
         readonly int _firstStopPoint, _lastStopPoint;
+
+        /// <summary>Race stops on this road (the cup's races, or its races and a "coming soon" stop).</summary>
+        public int Stops { get; }
         List<Vector2> _samples;
         List<float> _distances;
 
         /// <param name="points">The road from the bottom of the screen; it ends at the last stop.</param>
         /// <param name="firstStopPoint">Control point of race 1.</param>
         /// <param name="lastStopPoint">Control point of the last stop.</param>
-        public MapRoad(Vector2[] points, int firstStopPoint, int lastStopPoint)
+        /// <param name="stops">Race stops spaced evenly between them.</param>
+        public MapRoad(Vector2[] points, int firstStopPoint, int lastStopPoint, int stops)
         {
             _points = points;
             _firstStopPoint = firstStopPoint;
             _lastStopPoint = lastStopPoint;
+            Stops = stops;
         }
 
         /// <summary>The road as a dense polyline.</summary>
@@ -35,7 +40,7 @@ namespace SomeGame.UI
         {
             Build();
             float first = _distances[_firstStopPoint * Steps], last = _distances[_lastStopPoint * Steps];
-            int stops = MapLayout.StopCount;
+            int stops = Stops;
             return Mathf.Lerp(first, last, stops > 1 ? index / (float)(stops - 1) : 0f);
         }
 
@@ -97,14 +102,14 @@ namespace SomeGame.UI
         {
             new(40f, -184f), new(190f, 345f), new(255f, 590f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
             new(800f, 1346f), new(500f, 1483f), new(410f, 1656f),
-        }, 1, 8);
+        }, 1, 8, 9);
 
         /// <summary>The mountain road: comes in from the bottom left and climbs in switchbacks towards the peaks.</summary>
         public static readonly MapRoad Winter = new(new Vector2[]
         {
             new(50f, -160f), new(270f, 300f), new(690f, 430f), new(920f, 620f), new(690f, 800f), new(290f, 900f),
             new(210f, 1060f), new(490f, 1190f), new(840f, 1290f), new(870f, 1450f), new(530f, 1560f),
-        }, 1, 10);
+        }, 1, 10, 8);
 
         public static MapRoad Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
 
@@ -114,9 +119,7 @@ namespace SomeGame.UI
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetOnPlay() => Current = Valley;
 
-        const int Stops = 8;
-
-        public static int StopCount => Stops;
+        public static int StopCount => Current.Stops;
 
         public static IReadOnlyList<Vector2> Samples => Current.Samples;
         public static float Length => Current.Length;
