@@ -60,8 +60,11 @@ namespace SomeGame.EditorTools
             title.enableAutoSizing = true; title.fontSizeMin = 90; title.fontSizeMax = 170;
             var details = Txt(At("Details", safe, new Vector2(0.5f, 1f), new Vector2(0f, -450f), new Vector2(1000f, 60f)), "3 laps  ·  7 rivals", 44, Theme.InkSoft, _bold);
 
-            // The track picture in a framed card with a hard shadow.
-            var card = At("Preview", safe, new Vector2(0.5f, 1f), new Vector2(0f, -560f), new Vector2(860f, 1500f));
+            // The track picture in a framed card with a hard shadow, sized to the picture's shape (centred where
+            // the largest card would be).
+            var card = At("Preview", safe, new Vector2(0.5f, 1f), new Vector2(0f, -560f - 750f), new Vector2(860f, 1500f));
+            card.pivot = new Vector2(0.5f, 0.5f);
+            card.anchoredPosition = new Vector2(0f, -560f - 750f);
             var cardShadow = Stretch("Shadow", card);
             cardShadow.offsetMin = cardShadow.offsetMax = new Vector2(0f, -22f);
             Img(cardShadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
@@ -70,6 +73,7 @@ namespace SomeGame.EditorTools
             picture.offsetMin = new Vector2(22f, 22f); picture.offsetMax = new Vector2(-22f, -22f);
             var previewImage = Img(picture, null, Color.white);
             previewImage.preserveAspect = true;
+            Configure(card.gameObject.AddComponent<PreviewFrame>(), ("picture", previewImage), ("maxSize", new Vector2(1000f, 1500f)), ("inset", 22f));
 
             // Progress bar with the buggy riding along it.
             var bar = At("Bar", safe, new Vector2(0.5f, 0f), new Vector2(0f, 230f), new Vector2(900f, 56f));
@@ -429,12 +433,15 @@ namespace SomeGame.EditorTools
             var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(56f, -110f), new Vector2(840f, 140f)), "SUNDAY LOOP", 120, Theme.Ink, _black, TextAlignmentOptions.Left);
             title.enableAutoSizing = true; title.fontSizeMin = 70; title.fontSizeMax = 120;
 
-            // The track from above in a dark frame (the picture is portrait, 560 x 1000), big and centred.
-            var frame = At("Track", card, new Vector2(0.5f, 1f), new Vector2(0f, -272f), new Vector2(570f, 1006f));
+            // The track from above in a dark frame sized to the picture's shape (up to 880 x 1006), big and centred.
+            var frame = At("Track", card, new Vector2(0.5f, 1f), new Vector2(0f, -272f - 503f), new Vector2(570f, 1006f));
+            frame.pivot = new Vector2(0.5f, 0.5f);
+            frame.anchoredPosition = new Vector2(0f, -272f - 503f);
             Img(frame, "Round", Theme.Ink, sliced: true);
             var picture = Img(Stretch("Picture", frame), null, Color.white);
             picture.rectTransform.offsetMin = new Vector2(12f, 12f); picture.rectTransform.offsetMax = new Vector2(-12f, -12f);
             picture.preserveAspect = true;
+            Configure(frame.gameObject.AddComponent<PreviewFrame>(), ("picture", picture), ("maxSize", new Vector2(880f, 1006f)), ("inset", 12f));
 
             // Difficulty: a small caption and five pips under the picture.
             var difficulty = Txt(At("DifficultyCaption", card, new Vector2(0.5f, 1f), new Vector2(0f, -1298f), new Vector2(600f, 44f)), "DIFFICULTY", 36, Theme.Rust, _condItalic);
@@ -1253,6 +1260,7 @@ namespace SomeGame.EditorTools
             var ice = Layer("BranchIce", "Ice", -56);
             var roofShadows = Layer("RoofShadows", "Trail", -45);
             var roofs = Layer("Roofs", "RoofRow", -41);
+            var icePatches = Layer("IcePatches", "IcePatch", -46); // over the road and its kerbs, like the oil
             // The winter surprises' sprites on the hazards.
             var hazards = Object.FindAnyObjectByType<SomeGame.Track.TrackHazards>();
             if (hazards != null)
@@ -1266,7 +1274,7 @@ namespace SomeGame.EditorTools
             Configure(banks, ("track", track), ("walls", bankLayer));
             var branches = track.GetComponent<SomeGame.Track.TrackBranches>();
             if (branches == null) branches = track.gameObject.AddComponent<SomeGame.Track.TrackBranches>(); // Unity's null: no ?? here
-            Configure(branches, ("track", track), ("roads", roads), ("edges", edges), ("ice", ice), ("roofs", roofs), ("roofShadows", roofShadows), ("meadowRoad", Mat("Road")), ("snowRoad", Mat("WinterRoad")));
+            Configure(branches, ("track", track), ("roads", roads), ("edges", edges), ("ice", ice), ("roofs", roofs), ("roofShadows", roofShadows), ("icePatches", icePatches), ("meadowRoad", Mat("Road")), ("snowRoad", Mat("WinterRoad")));
 
             // The journey race: the houses it drives through, the set pieces (arches, trains, forest logs,
             // windmill), sheep, the cat, the robot vacuum, the ball and boulders.

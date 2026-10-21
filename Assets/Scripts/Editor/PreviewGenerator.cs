@@ -14,7 +14,8 @@ namespace SomeGame.EditorTools
     public static class PreviewGenerator
     {
         const string Folder = "Assets/Art/Previews";
-        const int Width = 560, Height = 1000;
+        // Each picture has its track's own shape (with a small margin), its longer side this many pixels.
+        const int LongSide = 1000;
 
         [MenuItem("SomeGame/Generate Track Previews")]
         public static string Generate()
@@ -38,7 +39,6 @@ namespace SomeGame.EditorTools
                 foreach (var l in AssetDatabase.LoadAssetAtPath<LevelCatalog>(AssetDatabase.GUIDToAssetPath(guid)).levels)
                     if (l != null && !levels.Contains(l)) levels.Add(l);
             var log = new System.Text.StringBuilder();
-            var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
             foreach (var level in levels)
             {
                 var layout = level.track;
@@ -49,14 +49,21 @@ namespace SomeGame.EditorTools
                 Rect b = track.Path.Bounds();
                 foreach (var branch in track.Branches) // the other ways round are in the picture too
                     foreach (var p in branch.Points) b = Rect.MinMaxRect(Mathf.Min(b.xMin, p.x), Mathf.Min(b.yMin, p.y), Mathf.Max(b.xMax, p.x), Mathf.Max(b.yMax, p.y));
-                float margin = 10f, aspect = (float)Width / Height;
+                // The ground reaches well beyond this margin, so the picture is filled to its edges.
+                const float margin = 10f;
+                float worldW = b.width + margin * 2f, worldH = b.height + margin * 2f;
+                int Width = worldW >= worldH ? LongSide : Mathf.RoundToInt(LongSide * worldW / worldH);
+                int Height = worldW >= worldH ? Mathf.RoundToInt(LongSide * worldH / worldW) : LongSide;
+                var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
                 cam.transform.position = new Vector3(b.center.x, b.center.y, -10f);
-                cam.orthographicSize = Mathf.Max(b.height * 0.5f + margin, (b.width * 0.5f + margin) / aspect);
+                cam.orthographicSize = worldH * 0.5f;
                 cam.backgroundColor = layout.waterWorld ? new Color(0.25f, 0.58f, 0.74f)
                     : layout.biome == SomeGame.Track.TrackLayout.Biome.Snow ? new Color(0.9f, 0.94f, 0.98f) : new Color(0.373f, 0.627f, 0.247f);
                 cam.targetTexture = rt;
+                cam.aspect = (float)Width / Height;
                 cam.Render();
                 cam.targetTexture = null;
+                cam.ResetAspect();
 
                 var tex = new Texture2D(Width, Height, TextureFormat.RGB24, false);
                 var previous = RenderTexture.active;
@@ -64,6 +71,7 @@ namespace SomeGame.EditorTools
                 tex.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
                 tex.Apply();
                 RenderTexture.active = previous;
+                Object.DestroyImmediate(rt);
                 string path = $"{Folder}/{level.name}.png";
                 File.WriteAllBytes(path, tex.EncodeToPNG());
                 Object.DestroyImmediate(tex);
@@ -78,7 +86,6 @@ namespace SomeGame.EditorTools
                 EditorUtility.SetDirty(level);
                 log.Append(level.name).Append(' ');
             }
-            Object.DestroyImmediate(rt);
             AssetDatabase.SaveAssets();
             // Reopen the scene without saving the temporary changes.
             EditorSceneManager.OpenScene(UIBuilder.RaceScenePath);

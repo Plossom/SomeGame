@@ -234,6 +234,7 @@ namespace SomeGame.EditorTools
             var picture = Img(Stretch("Picture", frame), null, Color.white);
             picture.rectTransform.offsetMin = new Vector2(8f, 8f); picture.rectTransform.offsetMax = new Vector2(-8f, -8f);
             picture.preserveAspect = true;
+            Configure(frame.gameObject.AddComponent<PreviewFrame>(), ("picture", picture), ("maxSize", new Vector2(200f, 386f)), ("inset", 8f));
 
             var tabs = At("CupTabs", raceCard, new Vector2(0f, 1f), new Vector2(256f, -26f), new Vector2(768f, 66f));
             var tabsLayout = tabs.gameObject.AddComponent<HorizontalLayoutGroup>();
