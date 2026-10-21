@@ -24,9 +24,8 @@ namespace SomeGame.Car
         [SerializeField] Vector2 shadowOffset = new(0.08f, -0.1f);
         [Tooltip("Extra shadow offset at the top of the hop.")]
         [SerializeField] Vector2 shadowLift = new(0.25f, -0.3f);
-        [Tooltip("Sprite scale and extra shadow offset while up on the roofs.")]
+        [Tooltip("Sprite scale while up on the roofs (closer to the camera).")]
         [SerializeField, Min(1f)] float roofScale = 1.14f;
-        [SerializeField] Vector2 roofShadowLift = new(0.6f, -0.75f);
         [Tooltip("How much narrower the car looks riding a banked wall (tilted on its side).")]
         [SerializeField, Range(0f, 0.6f)] float wallSquash = 0.3f;
 
@@ -72,9 +71,10 @@ namespace SomeGame.Car
 
         void Hop() => _time = 0f;
 
-        // Up on the roofs the car is a bit bigger (closer to the camera) and its shadow falls further away.
+        // Up on the roofs the car is a bit bigger (closer to the camera); it rests on the roof, so its shadow
+        // falls right under it as on the road.
         Vector3 BaseScale => Vector3.Scale(_visualScale * Mathf.Lerp(1f, roofScale, _elevation), new Vector3(1f - wallSquash * _tilt, 1f, 1f));
-        Vector2 BaseShadow => shadowOffset + roofShadowLift * _elevation;
+        Vector2 BaseShadow => shadowOffset;
 
         void Update()
         {

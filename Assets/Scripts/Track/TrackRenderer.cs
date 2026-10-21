@@ -76,10 +76,11 @@ namespace SomeGame.Track
         [SerializeField] GameObject snowfall;
 
         [Header("Vehicles")]
-        [Tooltip("Body (tinted), details and shadow of the snowmobile, for tracks raced on snowmobiles.")]
+        [Tooltip("Body (tinted), details, shadow and ski (in place of the front wheels) of the snowmobile, for tracks raced on snowmobiles.")]
         [SerializeField] Sprite snowmobileBody;
         [SerializeField] Sprite snowmobileDetails;
         [SerializeField] Sprite snowmobileShadow;
+        [SerializeField] Sprite snowmobileSki;
 
         [Tooltip("Grass tint range for the large meadow patches.")]
         [SerializeField] Color meadowDark = new(0.8f, 0.88f, 0.8f);
@@ -148,8 +149,8 @@ namespace SomeGame.Track
             if (Application.isPlaying) ApplyVehicle(track.Layout != null ? track.Layout.vehicle : TrackLayout.Vehicle.Car);
         }
 
-        // Every car (player, rivals, online puppets) takes this track's vehicle: its body, details and
-        // shadow sprites swapped in (the car's own are remembered for the next track).
+        // Every car (player, rivals, online puppets) takes this track's vehicle: its body, details, shadow
+        // and front wheel sprites swapped in (the car's own are remembered for the next track).
         readonly System.Collections.Generic.Dictionary<SpriteRenderer, Sprite> _carSprites = new();
 
         void ApplyVehicle(TrackLayout.Vehicle vehicle)
@@ -158,7 +159,7 @@ namespace SomeGame.Track
             foreach (var car in FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 foreach (var sr in car.GetComponentsInChildren<SpriteRenderer>(true))
                 {
-                    var sprite = sr.name switch { "Visual" => snowmobileBody, "Details" => snowmobileDetails, "Shadow" => snowmobileShadow, _ => null };
+                    var sprite = sr.name switch { "Visual" => snowmobileBody, "Details" => snowmobileDetails, "Shadow" => snowmobileShadow, "WheelL" or "WheelR" => snowmobileSki, _ => null };
                     if (sprite == null) continue;
                     if (!_carSprites.ContainsKey(sr)) _carSprites[sr] = sr.sprite;
                     sr.sprite = sled ? sprite : _carSprites[sr];

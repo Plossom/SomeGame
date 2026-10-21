@@ -107,6 +107,7 @@ namespace SomeGame.EditorTools
         {
             World("Car", 192, 336, CarBodyPixel, 192, false);
             World("CarDetails", 192, 336, CarDetailsPixel, 192, false);
+            GenerateSteeringWheels();
             World("CarShadow", 192, 336, (x, y) =>
             {
                 float d = RoundRect(x, y, 96, 170, 84, 146, 40);
@@ -178,8 +179,32 @@ namespace SomeGame.EditorTools
         static float WheelSdf(float x, float y)
         {
             float d = float.MaxValue;
-            foreach (var w in Wheels) d = Mathf.Min(d, RoundRect(x, y, w.x, w.y, w.z, w.w, 9));
+            for (int i = _bodyOnly ? 2 : 0; i < Wheels.Length; i++) d = Mathf.Min(d, RoundRect(x, y, Wheels[i].x, Wheels[i].y, Wheels[i].z, Wheels[i].w, 9));
             return d;
+        }
+
+        // The race car's body without its front wheels ("CarBody"), which are their own sprite ("CarWheel")
+        // so they can turn with the steering. "Car" (with all four wheels) stays for the menus and the map.
+        static bool _bodyOnly;
+
+        [MenuItem("SomeGame/Generate Steering Wheels")]
+        public static void GenerateSteeringWheels()
+        {
+            _bodyOnly = true;
+            try { World("CarBody", 192, 336, CarBodyPixel, 192, false); }
+            finally { _bodyOnly = false; }
+            // One front wheel centred in its own sprite (pivot in the middle), same scale as the car.
+            var w = Wheels[0];
+            World("CarWheel", 48, 72, (x, y) => WheelPixel(x - 24f + w.x, y - 36f + w.y, w), 192, false);
+            AssetDatabase.SaveAssets();
+        }
+
+        static Color WheelPixel(float x, float y, Vector4 w)
+        {
+            float wheel = RoundRect(x, y, w.x, w.y, w.z, w.w, 9);
+            bool tread = Mathf.Repeat(y, 9f) < 4f;
+            Color c = Over(new Color(0, 0, 0, 0), tread ? new Color(0.11f, 0.11f, 0.11f) : new Color(0.17f, 0.17f, 0.17f), Fill(wheel));
+            return Over(c, Outline, Stroke(wheel, 4f));
         }
 
         // Bodywork: tapered nose, side pods and the engine cover at the back.

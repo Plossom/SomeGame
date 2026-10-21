@@ -41,6 +41,30 @@ namespace SomeGame.Input
 
         public static event Action Changed;
 
+        const string CameraZoomKey = "Controls.CameraZoom";
+
+        /// <summary>Race camera: 0 normal (default), 1 far, 2 farthest (sees more of the track).</summary>
+        public static int CameraZoom
+        {
+            get => Mathf.Clamp(PlayerPrefs.GetInt(CameraZoomKey, 0), 0, ZoomFactors.Length - 1);
+            set
+            {
+                value = Mathf.Clamp(value, 0, ZoomFactors.Length - 1);
+                if (value == CameraZoom) return;
+                PlayerPrefs.SetInt(CameraZoomKey, value);
+                PlayerPrefs.Save();
+                Changed?.Invoke();
+            }
+        }
+
+        static readonly float[] ZoomFactors = { 1f, 1.2f, 1.4f };
+        public static readonly string[] ZoomNames = { "NORMAL", "FAR", "FARTHEST" };
+
+        /// <summary>How much more of the world the race camera shows than normal.</summary>
+        public static float CameraZoomFactor => ZoomFactors[CameraZoom];
+
+        public static int CameraZoomSteps => ZoomFactors.Length;
+
         /// <summary>When true the floating joystick still works but draws nothing.</summary>
         public static bool InvisibleJoystick
         {

@@ -15,10 +15,13 @@ namespace SomeGame.EditorTools
         {
             Write(ArtGenerator.Folder, "Snowmobile", 192, 336, SnowmobileBodyPixel, 192, false);
             Write(ArtGenerator.Folder, "SnowmobileDetails", 192, 336, SnowmobileDetailsPixel, 192, false);
+            // One ski centred in its own sprite (pivot at its spindle), turned with the steering like the
+            // car's front wheels and put in their place (centre x 28 / 164, y 266 of the body sprite).
+            Write(ArtGenerator.Folder, "SnowmobileSki", 32, 160, (x, y) => SkiPixel(x - 16f + 28f, y - 80f + 266f), 192, false);
             Write(ArtGenerator.Folder, "SnowmobileShadow", 192, 336, (x, y) =>
             {
-                float d = Mathf.Min(RoundRect(x, y, 96, 150, 58, 118, 40), Mathf.Min(RoundRect(x, y, 42, 262, 12, 58, 10), RoundRect(x, y, 150, 262, 12, 58, 10)));
-                return new Color(0, 0, 0, Mathf.Clamp01(0.5f - d / 14f));
+                float d = Mathf.Min(Mathf.Min(HoodSdf(x, y), TunnelSdf(x, y)), Mathf.Min(SkiSdf(x, y), RoundRect(x, y, 96, 36, 36, 26, 10)));
+                return new Color(0, 0, 0, Mathf.Clamp01(0.5f - (d - 6f) / 14f));
             }, 192, false);
             Write(ArtGenerator.Folder, "PackedSnowRoad", 128, 128, PackedSnowRoadPixel, 32, true);
             ArtGenerator.Material("PackedSnowRoad", "PackedSnowRoad");
@@ -28,64 +31,92 @@ namespace SomeGame.EditorTools
 
         // ------------------------------------------------------------------ snowmobile (nose at the top)
 
-        static readonly Color Rubber = new(0.15f, 0.16f, 0.18f), Steel = new(0.24f, 0.25f, 0.28f);
+        static readonly Color Rubber = Hex("23262C"), Steel = Hex("5B616B"), Suit = Hex("2C3442"), SuitLight = Hex("46536A");
 
-        // The skis with their curled tips.
-        static float SkiSdf(float x, float y) => Mathf.Min(RoundRect(x, y, 34, 258, 6.5f, 62, 6.5f), RoundRect(x, y, 158, 258, 6.5f, 62, 6.5f));
+        // Skis with their upturned tips (for the shadow; the skis themselves are the "SnowmobileSki" sprite).
+        static float SkiSdf(float x, float y) => Mathf.Min(SkiAt(x, y, 28f), SkiAt(x, y, 164f));
 
-        // The hood (tapered to the nose) and the running boards along both sides of the seat.
-        static float SledBodySdf(float x, float y)
+        static float SkiAt(float x, float y, float cx) => Mathf.Min(RoundRect(x, y, cx, 260, 8f, 58, 8f), Ellipse(x, y, cx, 316, 10f, 14f));
+
+        // A ski: dark with a light keel and a silver tip.
+        static Color SkiPixel(float x, float y)
         {
-            float hood = SMin(Polygon(x, y, new[] { new Vector2(56, 190), new Vector2(136, 190), new Vector2(114, 304), new Vector2(78, 304) }) - 10f,
-                              Ellipse(x, y, 96, 212, 52, 34), 10f);
-            float boards = RoundRect(x, y, 96, 132, 56, 72, 16);
-            return Mathf.Min(hood, boards);
+            float ski = SkiAt(x, y, 28f);
+            Color c = Over(new Color(0, 0, 0, 0), Rubber, Fill(ski));
+            c = Over(c, Hex("8C939E"), Fill(Ellipse(x, y, 28, 318, 6f, 9f)));
+            c = Over(c, Hex("4A505A"), Fill(RoundRect(x, y, 28, 258, 2f, 50, 2f)));
+            return Over(c, Outline, Stroke(ski, 4f));
         }
+
+        // The hood: a pointed nose widening to the side panels in front of the rider.
+        static float HoodSdf(float x, float y) => Polygon(x, y, new[]
+        {
+            new Vector2(50, 172), new Vector2(142, 172), new Vector2(146, 208), new Vector2(126, 286),
+            new Vector2(96, 318), new Vector2(66, 286), new Vector2(46, 208),
+        }) - 6f;
+
+        // The tunnel over the track, with the footboards along both sides of the seat.
+        static float TunnelSdf(float x, float y) => RoundRect(x, y, 96, 116, 48, 66, 14);
 
         static Color SnowmobileBodyPixel(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            // Rear track (rubber with tread bars) sticking out behind the body.
-            float track = RoundRect(x, y, 96, 70, 40, 56, 14);
-            bool bar = Mathf.Repeat(y, 10f) < 4.5f;
-            c = Over(c, bar ? Rubber : Shade(Rubber, 1.4f), Fill(track));
+            // Rear of the track sticking out behind the tunnel, with lugs.
+            float track = RoundRect(x, y, 96, 40, 34, 30, 10);
+            c = Over(c, Mathf.Repeat(y, 9f) < 4f ? Rubber : Hex("383C44"), Fill(track));
             c = Over(c, Outline, Stroke(track, 4f));
-            // Ski struts and the skis.
-            float struts = Mathf.Min(Capsule(x, y, 34, 250, 64, 238, 4.5f), Capsule(x, y, 158, 250, 128, 238, 4.5f));
-            c = Over(c, Steel, Fill(struts));
-            float skis = SkiSdf(x, y);
-            c = Over(c, Rubber, Fill(skis));
-            c = Over(c, new Color(0.42f, 0.43f, 0.47f), Fill(Mathf.Min(RoundRect(x, y, 32, 258, 2, 54, 2), RoundRect(x, y, 156, 258, 2, 54, 2))));
-            c = Over(c, new Color(0.55f, 0.56f, 0.6f), Fill(Mathf.Min(Circle(x, y, 34, 314, 6), Circle(x, y, 158, 314, 6)))); // curled tips
-            c = Over(c, Outline, Stroke(skis, 4f));
+            // Suspension arms from the skis to the hood, each with a tinted shock absorber.
+            float arms = Min(Capsule(x, y, 30, 270, 64, 226, 4f), Capsule(x, y, 30, 256, 60, 200, 4f),
+                             Capsule(x, y, 162, 270, 128, 226, 4f), Capsule(x, y, 162, 256, 132, 200, 4f));
+            c = Over(c, Steel, Fill(arms));
+            c = Over(c, Outline, Stroke(arms, 2.5f));
+            float shocks = Mathf.Min(Capsule(x, y, 36, 262, 56, 214, 5f), Capsule(x, y, 156, 262, 136, 214, 5f));
+            c = Over(c, new Color(0.9f, 0.9f, 0.9f), Fill(shocks));
+            c = Over(c, Outline, Stroke(shocks, 2.5f));
 
-            // Body (tinted): bright on the hood's ridge, darker towards the right.
-            float body = SledBodySdf(x, y);
-            float inside = Mathf.Clamp01(-body / 14f);
-            float v = Mathf.Lerp(0.8f, 1f, inside) - Mathf.Clamp01((x - 120f) / 60f) * 0.08f;
-            c = Over(c, new Color(v, v, v), Fill(body));
-            c = Over(c, new Color(0.94f, 0.94f, 0.94f), Fill(Polygon(x, y, new[] { new Vector2(84, 214), new Vector2(108, 214), new Vector2(102, 296), new Vector2(90, 296) })) * Fill(body + 4f));
-            // Darker footwells on the running boards.
-            float wells = Mathf.Min(RoundRect(x, y, 52, 122, 9, 40, 6), RoundRect(x, y, 140, 122, 9, 40, 6));
-            c = Over(c, new Color(0.66f, 0.66f, 0.66f), Fill(wells));
-            c = Over(c, Outline, Stroke(body, 4.5f));
+            // Tunnel (tinted) with dark grippy footboards.
+            float tunnel = TunnelSdf(x, y);
+            c = Over(c, new Color(0.82f, 0.82f, 0.82f), Fill(tunnel));
+            float boards = Mathf.Min(RoundRect(x, y, 58, 118, 10, 48, 5), RoundRect(x, y, 134, 118, 10, 48, 5));
+            c = Over(c, Mathf.Repeat(y, 8f) < 3f ? Hex("2E3238") : Hex("3B4048"), Fill(boards));
+            c = Over(c, Outline, Stroke(tunnel, 4.5f));
 
-            // Long dark seat.
-            float seat = RoundRect(x, y, 96, 118, 26, 62, 14);
-            c = Over(c, new Color(0.14f, 0.14f, 0.16f), Fill(seat));
-            c = Over(c, new Color(0.22f, 0.22f, 0.25f), Fill(RoundRect(x, y, 90, 104, 12, 40, 8)));
+            // Hood (tinted): lit along the middle, side panels a shade darker, dark air intakes.
+            float hood = HoodSdf(x, y);
+            float side = Mathf.Abs(x - 96f);
+            float v = Mathf.Lerp(1f, 0.8f, Mathf.InverseLerp(14f, 44f, side)) - Mathf.Clamp01((x - 120f) / 60f) * 0.06f;
+            c = Over(c, new Color(v, v, v), Fill(hood));
+            c = Over(c, Hex("2A2E35"), Fill(Mathf.Min(RotRect(x, y, 70, 250, 4, 16, 3, -16f), RotRect(x, y, 122, 250, 4, 16, 3, 16f))));
+            c = Over(c, Outline, Stroke(hood, 4.5f));
 
-            // The rider: arms to the handlebar, jacket (tinted) and helmet.
-            float arms = Mathf.Min(Capsule(x, y, 72, 160, 62, 198, 8f), Capsule(x, y, 120, 160, 130, 198, 8f));
-            float jacket = Ellipse(x, y, 96, 144, 34, 26);
-            c = Over(c, new Color(0.88f, 0.88f, 0.88f), Fill(Mathf.Min(arms, jacket)));
-            c = Over(c, Outline, Stroke(Mathf.Min(arms, jacket), 3.5f));
-            // Handlebar across the front of the seat with black grips (drawn over the hands).
-            float handlebar = Capsule(x, y, 58, 202, 134, 202, 4f);
-            c = Over(c, Steel, Fill(handlebar));
-            c = Over(c, Rubber, Fill(Mathf.Min(Capsule(x, y, 54, 202, 66, 202, 6f), Capsule(x, y, 126, 202, 138, 202, 6f))));
-            float helmet = Circle(x, y, 96, 158, 22);
-            c = Over(c, new Color(0.97f, 0.97f, 0.98f), Fill(helmet));
+            // Seat.
+            float seat = RoundRect(x, y, 96, 106, 22, 58, 14);
+            c = Over(c, Hex("1E2126"), Fill(seat));
+            c = Over(c, Hex("33373F"), Fill(RoundRect(x, y, 92, 96, 10, 40, 8)));
+            c = Over(c, Outline, Stroke(seat, 3f));
+
+            // The rider in a dark suit: legs down to the boots on the footboards, arms out to the grips.
+            float legs = Mathf.Min(Capsule(x, y, 78, 140, 58, 104, 11f), Capsule(x, y, 114, 140, 134, 104, 11f));
+            c = Over(c, Suit, Fill(legs));
+            c = Over(c, Hex("15181D"), Fill(Mathf.Min(RoundRect(x, y, 57, 94, 9, 14, 6), RoundRect(x, y, 135, 94, 9, 14, 6))));
+            c = Over(c, Outline, Stroke(legs, 3f));
+            float armsUp = Mathf.Min(Capsule(x, y, 66, 156, 60, 194, 10f), Capsule(x, y, 126, 156, 132, 194, 10f));
+            float torso = Ellipse(x, y, 96, 146, 40, 28);
+            float rider = Mathf.Min(armsUp, torso);
+            c = Over(c, Suit, Fill(rider));
+            c = Over(c, SuitLight, Fill(Ellipse(x, y, 88, 152, 24, 15)) * Fill(torso));
+            c = Over(c, Outline, Stroke(rider, 3.5f));
+
+            // Handlebar with gloves on the grips.
+            c = Over(c, Steel, Fill(Capsule(x, y, 60, 198, 132, 198, 3.5f)));
+            float gloves = Mathf.Min(Circle(x, y, 61, 197, 10f), Circle(x, y, 131, 197, 10f));
+            c = Over(c, Hex("15181D"), Fill(gloves));
+            c = Over(c, Outline, Stroke(gloves, 2.5f));
+
+            // Helmet (tinted).
+            float helmet = Circle(x, y, 96, 154, 27);
+            c = Over(c, new Color(0.95f, 0.95f, 0.95f), Fill(helmet));
+            c = Over(c, Color.white, Fill(Circle(x, y, 88, 160, 12)) * Fill(helmet));
             c = Over(c, Outline, Stroke(helmet, 3.5f));
             return c;
         }
@@ -93,51 +124,42 @@ namespace SomeGame.EditorTools
         static Color SnowmobileDetailsPixel(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            // Tinted windscreen in front of the handlebar.
-            float screen = Polygon(x, y, new[] { new Vector2(64, 214), new Vector2(128, 214), new Vector2(118, 238), new Vector2(74, 238) }) - 3f;
-            c = Over(c, new Color(0.55f, 0.78f, 0.95f, 0.75f), Fill(screen));
-            c = Over(c, new Color(1f, 1f, 1f, 0.7f), Fill(Capsule(x, y, 76, 226, 92, 232, 2.5f)));
+            float hood = HoodSdf(x, y);
+            // White racing stripes swooping down both sides of the hood.
+            float stripes = Mathf.Min(Capsule(x, y, 84, 300, 62, 200, 4.5f), Capsule(x, y, 108, 300, 130, 200, 4.5f));
+            c = Over(c, new Color(1f, 1f, 1f, 0.92f), Fill(stripes) * Fill(hood + 6f));
+            // Headlights: two slanted slits at the nose.
+            float lights = Mathf.Min(RotRect(x, y, 84, 290, 9, 4, 3, 35f), RotRect(x, y, 108, 290, 9, 4, 3, -35f));
+            c = Over(c, Hex("FFF6D8"), Fill(lights));
+            c = Over(c, Outline, Stroke(lights, 2.5f));
+            // Tall curved windscreen in front of the handlebar.
+            float screen = Mathf.Max(Ellipse(x, y, 96, 206, 38, 30), 206f - y);
+            c = Over(c, new Color(0.62f, 0.82f, 0.96f, 0.8f), Fill(screen));
+            c = Over(c, new Color(1f, 1f, 1f, 0.75f), Fill(Capsule(x, y, 74, 214, 86, 226, 2.5f)));
             c = Over(c, Outline, Stroke(screen, 3f));
-            // Helmet: dark visor at the front, a stripe over the top.
-            float shell = Circle(x, y, 96, 158, 19);
-            c = Over(c, Hex("1D2733"), Fill(Mathf.Max(shell, Mathf.Abs(x - 96f) - 14f)) * Mathf.Clamp01(y - 164f));
-            c = Over(c, new Color(1f, 1f, 1f, 0.55f), Fill(Capsule(x, y, 88, 171, 96, 174, 2f)));
-            c = Over(c, Hex("E0303A"), Fill(Mathf.Max(Mathf.Abs(x - 96f) - 3.5f, shell)) * Mathf.Clamp01(160f - y));
-            // Headlight on the nose, tail light on the back of the seat, snow flap behind the track.
-            float head = RoundRect(x, y, 96, 296, 14, 6, 4);
-            c = Over(c, Hex("FFF6D8"), Fill(head));
-            c = Over(c, Outline, Stroke(head, 2.5f));
-            float tail = RoundRect(x, y, 96, 52, 14, 4, 2);
+            // Helmet: dark visor at the front and a white stripe over the top.
+            float shell = Circle(x, y, 96, 154, 23);
+            c = Over(c, Hex("1D2733"), Fill(Mathf.Max(shell, 165f - y)));
+            c = Over(c, new Color(1f, 1f, 1f, 0.6f), Fill(Capsule(x, y, 86, 172, 96, 175, 2.2f)));
+            c = Over(c, new Color(1f, 1f, 1f, 0.9f), Fill(Mathf.Max(Mathf.Abs(x - 96f) - 4f, Circle(x, y, 96, 154, 25))) * Mathf.Clamp01(160f - y));
+            // Tail light across the back of the tunnel and the snow flap behind the track.
+            float tail = RoundRect(x, y, 96, 54, 18, 3.5f, 2);
             c = Over(c, Hex("E0303A"), Fill(tail));
             c = Over(c, Outline, Stroke(tail, 2f));
-            float flap = RoundRect(x, y, 96, 16, 34, 4, 2);
-            c = Over(c, new Color(0.12f, 0.12f, 0.13f), Fill(flap));
-            // White racing chevron down the hood.
-            float chevron = Mathf.Max(Shell(Mathf.Abs(x - 96f) * 0.8f + (y - 270f), 5f), Mathf.Abs(x - 96f) - 30f);
-            c = Over(c, new Color(1f, 1f, 1f, 0.85f), Fill(chevron) * Fill(SledBodySdf(x, y) + 8f));
+            float flap = RoundRect(x, y, 96, 10, 34, 6, 3);
+            c = Over(c, Hex("16181C"), Fill(flap));
+            c = Over(c, new Color(1f, 1f, 1f, 0.8f), Fill(RoundRect(x, y, 96, 10, 14, 2, 1)));
             return c;
         }
 
         // ------------------------------------------------------------------ packed-snow road
 
-        // Trodden snow, clearly greyer and bluer than the fresh snow beside it so the road stays readable: soft
-        // lumps, two wavy pairs of tyre ruts along the road (v), grit and the odd sparkle. Tiles both ways.
+        // Packed snow, clearly bluer and greyer than the fresh snow beside it so the road stays readable:
+        // soft mottling, nothing in lines or dots. Tiles both ways.
         static Color PackedSnowRoadPixel(float x, float y)
         {
-            float n = Noise(x / 16f, y / 16f, 8) * 0.55f + Noise(x / 6f, y / 6f, 21) * 0.25f + Hash((int)x, (int)y) * 0.2f;
-            Color c = Color.Lerp(Hex("A3B4C7"), Hex("BCCAD9"), n);
-            // Ruts: compressed, a little darker, with a bright packed ridge between them.
-            float wobble = (Noise(3.5f, y / 32f, 4) - 0.5f) * 10f;
-            foreach (float lane in new[] { 30f, 98f })
-            {
-                float d = Mathf.Abs(x - lane - wobble);
-                c = Color.Lerp(c, Hex("8597AD"), Mathf.Clamp01(1f - Mathf.Abs(d - 9f) / 5f) * 0.65f);
-                c = Color.Lerp(c, Hex("D3DEEA"), Mathf.Clamp01(1f - d / 3f) * 0.5f);
-            }
-            // Grit strewn on the snow and a few sparkles.
-            float h = Hash((int)(x / 2) + 31, (int)(y / 2) + 17);
-            if (h > 0.985f) c = Color.Lerp(c, Hex("8C7B6A"), 0.55f);
-            else if (h < 0.008f) c = Color.white;
+            float n = Noise(x / 32f, y / 32f, 4) * 0.45f + Noise(x / 12.8f, y / 12.8f, 10) * 0.35f + Noise(x / 4f, y / 4f, 32) * 0.2f;
+            Color c = Color.Lerp(Hex("ADBDCF"), Hex("C4D1DF"), n);
             return c;
         }
     }

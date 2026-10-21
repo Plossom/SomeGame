@@ -84,10 +84,11 @@ namespace SomeGame.CameraRig
             Vector2 p = _focus + _lookAhead + framingOffset;
             // Keep the car at or above minCarScreenHeight: limit how far the camera sits above it.
             float carY = target != null ? target.transform.position.y : p.y;
-            p.y = Mathf.Min(p.y, carY + orthographicSize * (1f - 2f * minCarScreenHeight));
+            float size = orthographicSize * SomeGame.Input.ControlSettings.CameraZoomFactor; // the player's zoom setting
+            p.y = Mathf.Min(p.y, carY + size * (1f - 2f * minCarScreenHeight));
             p += Offset;
             transform.SetPositionAndRotation(new Vector3(p.x, p.y, transform.position.z), Quaternion.identity);
-            _camera.orthographicSize = orthographicSize;
+            _camera.orthographicSize = size;
         }
     }
 }

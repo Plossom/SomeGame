@@ -43,6 +43,9 @@ namespace SomeGame.UI
         [Tooltip("Smart steering: on (light) / off.")]
         [SerializeField] UnityEngine.UI.Button assistButton;
         [SerializeField] TMP_Text assistLabel;
+        [Tooltip("Race camera zoom: normal / far / farthest.")]
+        [SerializeField] UnityEngine.UI.Button zoomButton;
+        [SerializeField] TMP_Text zoomLabel;
 
         [Header("Map only")]
         [Tooltip("Resets all progress (asks for a second tap first).")]
@@ -84,6 +87,8 @@ namespace SomeGame.UI
             if (assistButton != null)
                 assistButton.onClick.AddListener(() => ControlSettings.SteerAssist =
                     ControlSettings.SteerAssist == ControlSettings.Assist.Off ? ControlSettings.Assist.Light : ControlSettings.Assist.Off);
+            if (zoomButton != null)
+                zoomButton.onClick.AddListener(() => ControlSettings.CameraZoom = (ControlSettings.CameraZoom + 1) % ControlSettings.CameraZoomSteps);
             if (tutorialButton != null)
             {
                 tutorialButton.gameObject.SetActive(!inRace);
@@ -203,6 +208,11 @@ namespace SomeGame.UI
                 var a = ControlSettings.SteerAssist;
                 string word = a == ControlSettings.Assist.Off ? "OFF" : "ON";
                 assistLabel.text = $"STEERING HELP   <color={Theme.Html(a == ControlSettings.Assist.Off ? Theme.Neutral.StoneDark : Theme.Neutral.Leaf)}>{word}</color>";
+            }
+            if (zoomLabel != null)
+            {
+                int zoom = ControlSettings.CameraZoom;
+                zoomLabel.text = $"CAMERA   <color={Theme.Html(zoom == 0 ? Theme.Neutral.StoneDark : Theme.Neutral.Leaf)}>{ControlSettings.ZoomNames[zoom]}</color>";
             }
             if (cupsLabel != null)
                 cupsLabel.text = CupList.DevUnlockAll

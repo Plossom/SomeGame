@@ -963,6 +963,7 @@ namespace SomeGame.EditorTools
             var joystickButton = MenuButton(card, "JoystickButton", "JOYSTICK   VISIBLE", Color.white, Theme.Ink, Theme.Ink, 130f, out var joystickLabel, 46);
             var driftButton = MenuButton(card, "DriftButton", "DRIFTING   ON", Color.white, Theme.Ink, Theme.Ink, 130f, out var driftLabel, 46);
             var assistButton = MenuButton(card, "AssistButton", "STEERING HELP   ON", Color.white, Theme.Ink, Theme.Ink, 130f, out var assistLabel, 46);
+            var zoomButton = MenuButton(card, "ZoomButton", "CAMERA   NORMAL", Color.white, Theme.Ink, Theme.Ink, 130f, out var zoomLabel, 46);
             var tutorialButton = MenuButton(card, "TutorialButton", "TUTORIAL", Color.white, Theme.Ink, Theme.Ink, 130f, out _, 46);
             var cupsButton = MenuButton(card, "CupsButton", "UNLOCK ALL   OFF", Color.white, Theme.Ink, Theme.Ink, 130f, out var cupsLabel, 46);
             var resetButton = MenuButton(card, "ResetButton", "RESET GAME", Color.white, Theme.Rust, Theme.Rust, 130f, out var resetLabel, 46);
@@ -979,6 +980,7 @@ namespace SomeGame.EditorTools
             Set(so, "cupsButton", cupsButton); Set(so, "cupsLabel", cupsLabel);
             Set(so, "assistButton", assistButton); Set(so, "assistLabel", assistLabel);
             Set(so, "driftButton", driftButton); Set(so, "driftLabel", driftLabel);
+            Set(so, "zoomButton", zoomButton); Set(so, "zoomLabel", zoomLabel);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             so.ApplyModifiedPropertiesWithoutUndo();
             panel.gameObject.SetActive(false);
@@ -1226,7 +1228,7 @@ namespace SomeGame.EditorTools
             var sceneryRenderer = sceneryMesh != null ? sceneryMesh.GetComponent<MeshRenderer>() : null;
             Configure(renderer, ("snowGround", Mat("SnowGround")), ("snowRoad", Mat("WinterRoad")), ("snowKerbs", Mat("SnowKerb")),
                 ("snowRunoff", Mat("SnowRunoff")), ("snowScenery", Mat("SceneryWinter")), ("scenery", sceneryRenderer), ("snowfall", snowfall),
-                ("snowmobileBody", Sprite("Snowmobile")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
+                ("snowmobileBody", Sprite("Snowmobile")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")), ("snowmobileSki", Sprite("SnowmobileSki")));
         }
 
         // Renderers for the other ways round (TrackBranches) under the track: road branches just under the
