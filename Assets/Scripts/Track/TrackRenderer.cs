@@ -157,6 +157,9 @@ namespace SomeGame.Track
         {
             bool sled = vehicle == TrackLayout.Vehicle.Snowmobile && snowmobileBody != null;
             foreach (var car in FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                // The skis turn only half as far as the car's wheels.
+                if (car.TryGetComponent(out SomeGame.Car.SteerWheels steer)) steer.AngleScale = sled ? 0.5f : 1f;
                 foreach (var sr in car.GetComponentsInChildren<SpriteRenderer>(true))
                 {
                     var sprite = sr.name switch { "Visual" => snowmobileBody, "Details" => snowmobileDetails, "Shadow" => snowmobileShadow, "WheelL" or "WheelR" => snowmobileSki, _ => null };
@@ -164,6 +167,7 @@ namespace SomeGame.Track
                     if (!_carSprites.ContainsKey(sr)) _carSprites[sr] = sr.sprite;
                     sr.sprite = sled ? sprite : _carSprites[sr];
                 }
+            }
         }
 
         void Swap(Component target, Material snowMaterial, bool snow)

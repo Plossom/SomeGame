@@ -281,9 +281,9 @@ MonoBehaviour:
   wheels:
   - {fileID: 2185524170198144778}
   - {fileID: 7479382906331477139}
-  maxAngle: 30
-  turnGain: 0.22
-  smoothTime: 0.06
+  maxAngle: 28
+  turnGain: 0.5
+  smoothTime: 0.07
 --- !u!1 &3861201061229663733
 GameObject:
   m_ObjectHideFlags: 0

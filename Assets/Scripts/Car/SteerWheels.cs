@@ -4,21 +4,34 @@ namespace SomeGame.Car
 {
     /// <summary>
     /// Turns the front wheels (or a snowmobile's skis) with the steering, always into the turn (drifts
-    /// too). Read from how fast the car turns, so it works the same for the player, the rivals and online
-    /// puppets.
+    /// too). The player's car follows the joystick; the rivals (whose AI steers in small steps) and online
+    /// cars turn them by how fast they turn.
     /// </summary>
     public class SteerWheels : MonoBehaviour
     {
         [Tooltip("The front wheels (child sprites), turned about their own centre.")]
         [SerializeField] Transform[] wheels;
-        [SerializeField, Range(0f, 60f)] float maxAngle = 30f;
-        [Tooltip("Wheel angle (degrees) per degree per second the car turns.")]
-        [SerializeField, Min(0f)] float turnGain = 0.22f;
+        [SerializeField, Range(0f, 60f)] float maxAngle = 28f;
+        [Tooltip("Wheel angle per degree between the heading and where the player steers.")]
+        [SerializeField, Min(0f)] float steerGain = 0.7f;
+        [Tooltip("Wheel angle (degrees) per degree per second the car turns (rivals and online cars).")]
+        [SerializeField, Min(0f)] float turnGain = 0.4f;
         [Tooltip("Seconds the wheels take to follow.")]
-        [SerializeField, Min(0.01f)] float smoothTime = 0.06f;
+        [SerializeField, Min(0.01f)] float smoothTime = 0.07f;
 
+        /// <summary>How far the wheels turn compared with the car's (the snowmobile's skis turn less).</summary>
+        public float AngleScale { get; set; } = 1f;
+
+        CarMovement _car;
+        ICarInput _input;
         float _lastHeading, _angle, _velocity;
         bool _started;
+
+        void Awake()
+        {
+            _car = GetComponent<CarMovement>();
+            _input = GetComponent<ICarInput>();
+        }
 
         void LateUpdate()
         {
@@ -34,7 +47,16 @@ namespace SomeGame.Car
             _lastHeading = heading;
 
             float target = yawRate * turnGain;
-            target = Mathf.Clamp(target, -maxAngle, maxAngle);
+            bool driven = _input is SomeGame.Input.PlayerCarInput && _car != null && !_car.IsPuppet && _car.ControlsEnabled;
+            if (driven)
+            {
+                Vector2 steer = _input.SteerDirection;
+                target = steer.sqrMagnitude > 0.0001f
+                    ? Mathf.DeltaAngle(heading, Mathf.Atan2(steer.y, steer.x) * Mathf.Rad2Deg - 90f) * steerGain
+                    : 0f;
+            }
+            float max = maxAngle * AngleScale;
+            target = Mathf.Clamp(target, -max, max);
             _angle = Mathf.SmoothDamp(_angle, target, ref _velocity, smoothTime, Mathf.Infinity, dt);
             var rotation = Quaternion.Euler(0f, 0f, _angle);
             foreach (var wheel in wheels)
