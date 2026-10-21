@@ -3,9 +3,9 @@ using UnityEngine;
 namespace SomeGame.Car
 {
     /// <summary>
-    /// Turns the front wheels (or a snowmobile's skis) with the steering. Read from how fast the car turns,
-    /// so it works the same for the player, the rivals and online puppets; while sliding the wheels point
-    /// along the slide (counter-steer).
+    /// Turns the front wheels (or a snowmobile's skis) with the steering, always into the turn (drifts
+    /// too). Read from how fast the car turns, so it works the same for the player, the rivals and online
+    /// puppets.
     /// </summary>
     public class SteerWheels : MonoBehaviour
     {
@@ -34,16 +34,6 @@ namespace SomeGame.Car
             _lastHeading = heading;
 
             float target = yawRate * turnGain;
-            // Sliding sideways: steer into the slide, towards where the car is actually going.
-            if (TryGetComponent(out Rigidbody2D body) && body.linearVelocity.sqrMagnitude > 4f)
-            {
-                Vector2 local = transform.InverseTransformDirection(body.linearVelocity);
-                if (local.y > 0.5f)
-                {
-                    float slide = -Mathf.Atan2(local.x, local.y) * Mathf.Rad2Deg; // positive = moving to the left
-                    if (Mathf.Abs(slide) > 12f) target = slide;
-                }
-            }
             target = Mathf.Clamp(target, -maxAngle, maxAngle);
             _angle = Mathf.SmoothDamp(_angle, target, ref _velocity, smoothTime, Mathf.Infinity, dt);
             var rotation = Quaternion.Euler(0f, 0f, _angle);
