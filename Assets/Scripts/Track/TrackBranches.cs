@@ -63,7 +63,7 @@ namespace SomeGame.Track
             Assign(roofShadows, shadowData.ToMesh("RoofShadows"));
 
             var roadRenderer = roads != null ? roads.GetComponent<MeshRenderer>() : null;
-            var material = layout.biome == TrackLayout.Biome.Snow && snowRoad != null ? snowRoad : meadowRoad;
+            var material = layout.roadMaterial != null ? layout.roadMaterial : layout.biome == TrackLayout.Biome.Snow && snowRoad != null ? snowRoad : meadowRoad;
             if (roadRenderer != null && material != null) roadRenderer.sharedMaterial = material;
         }
 

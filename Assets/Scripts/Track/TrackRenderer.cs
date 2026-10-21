@@ -75,6 +75,12 @@ namespace SomeGame.Track
         [Tooltip("Snowfall over the race, shown on snow tracks.")]
         [SerializeField] GameObject snowfall;
 
+        [Header("Vehicles")]
+        [Tooltip("Body (tinted), details and shadow of the snowmobile, for tracks raced on snowmobiles.")]
+        [SerializeField] Sprite snowmobileBody;
+        [SerializeField] Sprite snowmobileDetails;
+        [SerializeField] Sprite snowmobileShadow;
+
         [Tooltip("Grass tint range for the large meadow patches.")]
         [SerializeField] Color meadowDark = new(0.8f, 0.88f, 0.8f);
         [SerializeField] Color meadowLight = Color.white;
@@ -129,14 +135,34 @@ namespace SomeGame.Track
 
         void ApplyBiome(bool snow)
         {
-            Swap(road, snowRoad, snow);
+            // A track with its own road surface uses it whatever the biome.
+            var ownRoad = track.Layout != null ? track.Layout.roadMaterial : null;
+            Swap(road, ownRoad != null ? ownRoad : snowRoad, snow || ownRoad != null);
             Swap(kerbs, snowKerbs, snow);
             Swap(runoff, snowRunoff, snow);
             Swap(scenery, snowScenery, snow);
             // A track with its own scenery sheet (the journey race) uses it instead.
             var own = track.Layout != null ? track.Layout.sceneryMaterial : null;
             if (scenery != null && own != null) scenery.GetComponent<Renderer>().sharedMaterial = own;
-            if (snowfall != null && Application.isPlaying) snowfall.SetActive(snow);
+            if (snowfall != null && Application.isPlaying) snowfall.SetActive(snow && (track.Layout == null || !track.Layout.noSnowfall));
+            if (Application.isPlaying) ApplyVehicle(track.Layout != null ? track.Layout.vehicle : TrackLayout.Vehicle.Car);
+        }
+
+        // Every car (player, rivals, online puppets) takes this track's vehicle: its body, details and
+        // shadow sprites swapped in (the car's own are remembered for the next track).
+        readonly System.Collections.Generic.Dictionary<SpriteRenderer, Sprite> _carSprites = new();
+
+        void ApplyVehicle(TrackLayout.Vehicle vehicle)
+        {
+            bool sled = vehicle == TrackLayout.Vehicle.Snowmobile && snowmobileBody != null;
+            foreach (var car in FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                foreach (var sr in car.GetComponentsInChildren<SpriteRenderer>(true))
+                {
+                    var sprite = sr.name switch { "Visual" => snowmobileBody, "Details" => snowmobileDetails, "Shadow" => snowmobileShadow, _ => null };
+                    if (sprite == null) continue;
+                    if (!_carSprites.ContainsKey(sr)) _carSprites[sr] = sr.sprite;
+                    sr.sprite = sled ? sprite : _carSprites[sr];
+                }
         }
 
         void Swap(Component target, Material snowMaterial, bool snow)

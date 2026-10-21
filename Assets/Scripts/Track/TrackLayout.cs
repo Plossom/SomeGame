@@ -204,6 +204,12 @@ namespace SomeGame.Track
         public Material bankMaterial;
         [Tooltip("This track's own scenery sheet (empty = the cup's usual one). The scenery kinds' uv point into it.")]
         public Material sceneryMaterial;
+        [Tooltip("This track's own road surface (empty = the biome's usual asphalt).")]
+        public Material roadMaterial;
+        [Tooltip("What everyone races in on this track.")]
+        public Vehicle vehicle;
+        [Tooltip("No snowfall over the screen on this snow track.")]
+        public bool noSnowfall;
 
         [Header("Water, jumps and oil")]
         [Tooltip("The whole world is water: the road is a causeway, and anything off the road is a splash.")]
@@ -255,6 +261,8 @@ namespace SomeGame.Track
         }
 
         public enum Biome { Meadow, Snow }
+
+        public enum Vehicle { Car, Snowmobile }
 
         public enum SweeperKind { Log, HayBale, Snowball, Boulder, Vacuum, Ball, Curling }
 

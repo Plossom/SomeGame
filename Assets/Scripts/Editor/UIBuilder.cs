@@ -1225,7 +1225,8 @@ namespace SomeGame.EditorTools
             var sceneryMesh = scenery != null ? new SerializedObject(scenery).FindProperty("trees").objectReferenceValue as MeshFilter : null;
             var sceneryRenderer = sceneryMesh != null ? sceneryMesh.GetComponent<MeshRenderer>() : null;
             Configure(renderer, ("snowGround", Mat("SnowGround")), ("snowRoad", Mat("WinterRoad")), ("snowKerbs", Mat("SnowKerb")),
-                ("snowRunoff", Mat("SnowRunoff")), ("snowScenery", Mat("SceneryWinter")), ("scenery", sceneryRenderer), ("snowfall", snowfall));
+                ("snowRunoff", Mat("SnowRunoff")), ("snowScenery", Mat("SceneryWinter")), ("scenery", sceneryRenderer), ("snowfall", snowfall),
+                ("snowmobileBody", Sprite("Snowmobile")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
         }
 
         // Renderers for the other ways round (TrackBranches) under the track: road branches just under the

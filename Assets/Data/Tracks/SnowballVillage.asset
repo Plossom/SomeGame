@@ -565,6 +565,9 @@ MonoBehaviour:
   props: []
   bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 2100000, guid: 8b05ac13ff75b4d71a81933a3e3fcdfe, type: 2}
+  roadMaterial: {fileID: 2100000, guid: ac5ff673fb0614880b0fb8f2a1293c04, type: 2}
+  vehicle: 1
+  noSnowfall: 1
   waterWorld: 0
   biome: 1
   gaps: []
