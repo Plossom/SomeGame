@@ -88,6 +88,15 @@ namespace SomeGame.Track
             return false;
         }
 
+        /// <summary>True on a patch of glare ice on the road: little grip.</summary>
+        public bool OnIcePatch(Vector2 p)
+        {
+            if (layout.icePatches == null) return false;
+            foreach (var patch in layout.icePatches)
+                if (patch.Contains(p)) return true;
+            return false;
+        }
+
         /// <summary>Lap distance of section line <paramref name="k"/> (0 = the start/finish line).</summary>
         public float SectionLineDistance(int k) => CheckpointDistance(SectionCheckpoints[k]);
 

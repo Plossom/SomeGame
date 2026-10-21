@@ -329,6 +329,8 @@ namespace SomeGame.Track
         public List<Penguins> penguins = new();
         [Tooltip("Dash panels on the road: a boost for driving over them.")]
         public List<DashPanel> dashPanels = new();
+        [Tooltip("Patches of glare ice on the road (world positions): slippery, little grip like a frozen lake.")]
+        public List<IcePatch> icePatches = new();
 
         [Tooltip("Scenery for this track. Empty = the scene's default scenery.")]
         public List<TrackScenery.Kind> scenery = new();
@@ -434,6 +436,26 @@ namespace SomeGame.Track
             public Vector2 radii = new(8f, 5f);
             [Tooltip("Rotation in degrees.")]
             public float angle;
+        }
+
+        [Serializable]
+        public class IcePatch
+        {
+            public Vector2 position;
+            [Tooltip("Length (along the road) and width of the patch.")]
+            public Vector2 size = new(10f, 7f);
+            [Tooltip("Direction of its length (degrees, 0 = east, 90 = north).")]
+            public float angle;
+
+            /// <summary>Inside the patch's oval.</summary>
+            public bool Contains(Vector2 p)
+            {
+                Vector2 d = p - position;
+                float a = angle * Mathf.Deg2Rad, c = Mathf.Cos(a), s = Mathf.Sin(a);
+                float along = d.x * c + d.y * s, across = -d.x * s + d.y * c;
+                float u = along / (size.x * 0.5f), v = across / (size.y * 0.5f);
+                return u * u + v * v <= 1f;
+            }
         }
 
         [Serializable]

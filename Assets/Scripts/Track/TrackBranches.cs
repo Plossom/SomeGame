@@ -16,6 +16,8 @@ namespace SomeGame.Track
         [SerializeField] MeshFilter ice;
         [SerializeField] MeshFilter roofs;
         [SerializeField] MeshFilter roofShadows;
+        [Tooltip("Patches of glare ice on the road (TrackLayout.icePatches), drawn over the road.")]
+        [SerializeField] MeshFilter icePatches;
         [Tooltip("Length of one house along a roof row (one roof texture repeat).")]
         [SerializeField, Min(1f)] float houseLength = 12f;
         [SerializeField] Vector2 roofShadowOffset = new(0.9f, -1.2f);
@@ -61,6 +63,20 @@ namespace SomeGame.Track
             Assign(ice, iceData.ToMesh("BranchIce"));
             Assign(roofs, roofData.ToMesh("Roofs"));
             Assign(roofShadows, shadowData.ToMesh("RoofShadows"));
+            if (icePatches != null)
+            {
+                var patchData = new MeshData();
+                if (layout.icePatches != null)
+                    foreach (var patch in layout.icePatches)
+                    {
+                        float a = patch.angle * Mathf.Deg2Rad;
+                        Vector2 along = new Vector2(Mathf.Cos(a), Mathf.Sin(a)), across = new(-along.y, along.x);
+                        // The texture's oval fills about 90 % of it, so the quad is a little bigger than the patch.
+                        Vector2 hx = along * (patch.size.x * 0.56f), hy = across * (patch.size.y * 0.56f);
+                        patchData.Quad(patch.position - hx - hy, patch.position + hx - hy, patch.position + hx + hy, patch.position - hx + hy);
+                    }
+                Assign(icePatches, patchData.ToMesh("IcePatches"));
+            }
 
             var roadRenderer = roads != null ? roads.GetComponent<MeshRenderer>() : null;
             var material = layout.roadMaterial != null ? layout.roadMaterial : layout.biome == TrackLayout.Biome.Snow && snowRoad != null ? snowRoad : meadowRoad;
@@ -100,6 +116,16 @@ namespace SomeGame.Track
             public readonly List<Color32> Colors = new();
 
             public Mesh ToMesh(string name) => TrackMeshes.Quads(name, Vertices, Uvs, Triangles, Colors);
+
+            /// <summary>A quad through four corners with the whole texture on it (drawn from both sides).</summary>
+            public void Quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+            {
+                int i = Vertices.Count;
+                Vertices.Add(a); Vertices.Add(b); Vertices.Add(c); Vertices.Add(d);
+                Uvs.Add(new Vector2(0f, 0f)); Uvs.Add(new Vector2(1f, 0f)); Uvs.Add(new Vector2(1f, 1f)); Uvs.Add(new Vector2(0f, 1f));
+                for (int k = 0; k < 4; k++) Colors.Add(new Color32(255, 255, 255, 255));
+                Triangles.AddRange(new[] { i, i + 1, i + 2, i, i + 2, i + 3, i, i + 2, i + 1, i, i + 3, i + 2 });
+            }
         }
     }
 }

@@ -35,9 +35,9 @@ namespace SomeGame.Track
         /// <summary>On a banked wall: how far up it (0 = not on a wall, up to 1 at the top).</summary>
         public float BankHeight { get; private set; }
         public bool OnBank => BankHeight > 0f;
-        /// <summary>True on an ice branch (frozen lake): little grip.</summary>
+        /// <summary>True on an ice branch (frozen lake), an ice floor or a patch of ice on the road: little grip.</summary>
         public bool OnIce => Branch >= 0 && track.Branches[Branch].Kind == TrackLayout.BranchKind.Ice
-            || track != null && track.OnIceFloor(_body.position);
+            || track != null && (track.OnIceFloor(_body.position) || track.OnIcePatch(_body.position));
 
         /// <summary>
         /// True for the step in which the car was re-located on a different part of the circuit
