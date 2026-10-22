@@ -45,9 +45,6 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image wipeEdge;
         [Tooltip("Panels above the frozen picture (the globe button): their colours blend over as the new cup comes in.")]
         [SerializeField] Transform[] fadeRoots;
-        [Tooltip("Share of the screen width a drag must pass to switch cup.")]
-        [SerializeField, Range(0.05f, 0.6f)] float switchDistance = 0.2f;
-        [SerializeField, Min(0.05f)] float slideIn = 0.45f;
         [Tooltip("Blurred copy of the frozen picture and a dark veil: the old cup blurs and dims away as the new one comes in.")]
         [SerializeField] UnityEngine.UI.RawImage wipeBlur;
         [SerializeField] UnityEngine.UI.Image wipeDim;
@@ -392,36 +389,70 @@ namespace SomeGame.UI
         float PageWidth => ((RectTransform)transform).rect.width;
 
         // Every part of the page moves by the offset (times its depth factor) and shrinks a little.
-        void SetPage(float offset, float scale = 1f)
+        void SetPage(float offset, float scale = 1f, bool parallax = true)
         {
             if (page == null || _pageHome == null) return;
             for (int i = 0; i < page.Length; i++)
             {
-                float k = pageParallax != null && i < pageParallax.Length ? pageParallax[i] : 1f;
+                float k = parallax && pageParallax != null && i < pageParallax.Length ? pageParallax[i] : 1f;
                 page[i].anchoredPosition = _pageHome[i] + new Vector2(offset * k, 0f);
                 page[i].localScale = Vector3.one * scale;
             }
         }
 
-        // Switching works like laying a new card over the old one: the old page is frozen as a picture
-        // (the "wipe"), the new cup is put on the page underneath, and the picture is cut back from the
-        // side the new cup comes from, so the new cup seems to slide in over the old one, which stays put.
+        // Switching works like the pages of a phone's home screen: the old page is frozen as a picture of its
+        // sliding parts (drawn straight into a texture on the graphics card, so a swipe starts at once), the
+        // new cup is put on the page, and both move together under the finger: the old picture out to one
+        // side, the new page in from the other. Let go, they glide on with the finger's speed and settle.
 
         CupDefinition _wipeFrom;
         int _wipeDirection;
-        bool _wipeReady, _wipeStarting;
-        float _reveal;
-        float? _pendingRelease;
-        Texture2D _snapshot, _blurred, _incoming;
+        float _reveal, _revealVelocity;
+        RenderTexture _snapshot;
+        List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _fadePlan;
 
-        // Renders the page as it is now into a texture without showing anything on screen: the canvas is
-        // drawn once by a hidden camera (the frozen picture left out), then goes back to normal.
-        Texture2D RenderPage()
+        void OnDestroy()
+        {
+            if (_snapshot != null) { _snapshot.Release(); Destroy(_snapshot); }
+        }
+
+        // Draws the page's sliding parts as they are now into _snapshot (the fixed buttons, menus and the
+        // cup column left out): the canvas is drawn once by a hidden camera, then goes back to normal.
+        bool CapturePage()
         {
             var canvas = GetComponent<Canvas>();
-            if (canvas == null) return null;
-            int w = Screen.width, h = Screen.height;
-            var rt = RenderTexture.GetTemporary(w, h, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            if (canvas == null || page == null) return false;
+            // The canvas's own size in pixels (the screen; in the editor the game view).
+            int w = Mathf.Max(1, Mathf.RoundToInt(canvas.pixelRect.width)), h = Mathf.Max(1, Mathf.RoundToInt(canvas.pixelRect.height));
+            if (_snapshot == null || _snapshot.width != w || _snapshot.height != h)
+            {
+                if (_snapshot != null) { _snapshot.Release(); Destroy(_snapshot); }
+                _snapshot = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB) { name = "CupPage" };
+                _snapshot.Create();
+            }
+            // Only what slides is in the picture: everything else is see-through for this one drawing.
+            var keep = new HashSet<Transform>();
+            foreach (var part in page)
+                for (Transform t = part; t != null && t != transform; t = t.parent) keep.Add(t);
+            var faded = new List<(CanvasGroup group, float alpha, bool added)>();
+            void Fade(Transform parent)
+            {
+                foreach (Transform child in parent)
+                {
+                    if (keep.Contains(child))
+                    {
+                        if (System.Array.IndexOf(page, child as RectTransform) < 0) Fade(child); // a holder: fade its other children
+                        continue;
+                    }
+                    if (!child.gameObject.activeInHierarchy) continue;
+                    bool added = !child.TryGetComponent(out CanvasGroup group);
+                    if (added) group = child.gameObject.AddComponent<CanvasGroup>();
+                    faded.Add((group, group.alpha, added));
+                    group.alpha = 0f;
+                }
+            }
+            Fade(transform);
+
             var go = new GameObject("PageCamera");
             var cam = go.AddComponent<Camera>();
             cam.enabled = false;
@@ -430,18 +461,23 @@ namespace SomeGame.UI
             cam.backgroundColor = Camera.main != null ? Camera.main.backgroundColor : Color.black;
             cam.cullingMask = 1 << canvas.gameObject.layer;
             cam.nearClipPlane = 0.1f; cam.farClipPlane = 100f;
-            cam.targetTexture = rt;
-            bool wipeShown = wipe.gameObject.activeSelf, blurShown = incomingBlur != null && incomingBlur.gameObject.activeSelf;
+            // Drawn into a temporary target, then copied on the graphics card into the kept picture (the render
+            // pipeline does not keep a camera target's contents past the frame).
+            var target = RenderTexture.GetTemporary(w, h, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            cam.targetTexture = target;
+            bool wipeShown = wipe.gameObject.activeSelf;
             wipe.gameObject.SetActive(false);
-            if (incomingBlur != null) incomingBlur.gameObject.SetActive(false);
             var mode = canvas.renderMode;
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = cam;
             canvas.planeDistance = 10f;
             Canvas.ForceUpdateCanvases();
-            var request = new UnityEngine.Rendering.Universal.UniversalRenderPipeline.SingleCameraRequest { destination = rt };
+            var request = new UnityEngine.Rendering.Universal.UniversalRenderPipeline.SingleCameraRequest { destination = target };
             if (UnityEngine.Rendering.RenderPipeline.SupportsRenderRequest(cam, request)) UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(cam, request);
             else cam.Render();
+            cam.targetTexture = null;
+            Graphics.Blit(target, _snapshot);
+            RenderTexture.ReleaseTemporary(target);
             canvas.renderMode = mode;
             canvas.worldCamera = null;
             // Switching this canvas's mode and back leaves the other overlay canvases (the online screens)
@@ -449,72 +485,20 @@ namespace SomeGame.UI
             foreach (var other in FindObjectsByType<Canvas>(FindObjectsInactive.Exclude))
                 if (other != canvas && other.isRootCanvas && other.enabled) { other.enabled = false; other.enabled = true; }
             wipe.gameObject.SetActive(wipeShown);
-            if (incomingBlur != null) incomingBlur.gameObject.SetActive(blurShown);
+            foreach (var (group, alpha, added) in faded)
+            {
+                if (group == null) continue;
+                if (added) Destroy(group);
+                else group.alpha = alpha;
+            }
             Canvas.ForceUpdateCanvases();
-
-            var previous = RenderTexture.active;
-            RenderTexture.active = rt;
-            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false, false);
-            tex.ReadPixels(new Rect(0, 0, w, h), 0, 0, false);
-            tex.Apply(false);
-            RenderTexture.active = previous;
-            RenderTexture.ReleaseTemporary(rt);
             Destroy(go);
-            return tex;
+            return true;
         }
-
-        // A soft, blurred copy: block-averaged down to 1/factor size, box-blurred twice, shown smoothed.
-        static Texture2D Blurred(Texture2D source, int factor)
-        {
-            int w = Mathf.Max(1, source.width / factor), h = Mathf.Max(1, source.height / factor);
-            var src = source.GetPixels32();
-            var small = new Color[w * h];
-            for (int y = 0; y < h; y++)
-                for (int x = 0; x < w; x++)
-                {
-                    float r = 0f, g = 0f, b = 0f; int n = 0;
-                    for (int dy = 0; dy < factor; dy += 2)
-                        for (int dx = 0; dx < factor; dx += 2)
-                        {
-                            int sx = x * factor + dx, sy = y * factor + dy;
-                            if (sx >= source.width || sy >= source.height) continue;
-                            var c = src[sy * source.width + sx];
-                            r += c.r; g += c.g; b += c.b; n++;
-                        }
-                    small[y * w + x] = new Color(r / n / 255f, g / n / 255f, b / n / 255f, 1f);
-                }
-            for (int pass = 0; pass < 2; pass++) small = Box(small, w, h, 2);
-            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false, source.isDataSRGB == false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
-            tex.SetPixels(small);
-            tex.Apply(false);
-            return tex;
-        }
-
-        static Color[] Box(Color[] px, int w, int h, int r)
-        {
-            var tmp = new Color[px.Length];
-            var outp = new Color[px.Length];
-            for (int y = 0; y < h; y++)
-                for (int x = 0; x < w; x++)
-                {
-                    Color sum = Color.clear; int n = 0;
-                    for (int k = -r; k <= r; k++) { int xx = Mathf.Clamp(x + k, 0, w - 1); sum += px[y * w + xx]; n++; }
-                    tmp[y * w + x] = sum / n;
-                }
-            for (int y = 0; y < h; y++)
-                for (int x = 0; x < w; x++)
-                {
-                    Color sum = Color.clear; int n = 0;
-                    for (int k = -r; k <= r; k++) { int yy = Mathf.Clamp(y + k, 0, h - 1); sum += tmp[yy * w + x]; n++; }
-                    outp[y * w + x] = sum / n;
-                }
-            return outp;
-        }
-        List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _fadePlan;
 
         /// <summary>
-        /// While dragging: towards another cup it slides in over the current one under the finger; past
-        /// the first or last cup the page only stretches a little.
+        /// While dragging: the next cup's page comes in beside the old one, both following the finger 1:1;
+        /// past the first or last cup the page only stretches a little.
         /// </summary>
         public void DragPage(float dx)
         {
@@ -522,13 +506,14 @@ namespace SomeGame.UI
             int direction = dx < 0f ? 1 : -1;
             if (_wipeFrom != null)
             {
-                if (_wipeReady) SetWipe(Mathf.Max(0f, -_wipeDirection * dx));
+                SetWipe(Mathf.Max(0f, -_wipeDirection * dx));
                 return;
             }
             var next = Neighbour(direction);
-            if (next != null && Mathf.Abs(dx) > 8f)
+            if (next != null && Mathf.Abs(dx) > 6f)
             {
-                StartCoroutine(BeginWipe(next, direction));
+                BeginWipe(next, direction);
+                if (_wipeFrom != null) SetWipe(Mathf.Max(0f, -_wipeDirection * dx));
                 return;
             }
             if (next != null) return;
@@ -537,7 +522,10 @@ namespace SomeGame.UI
             SetPage(offset, 1f);
         }
 
-        /// <summary>Released: far or fast enough, the new cup slides fully over; otherwise it slides back off.</summary>
+        /// <summary>
+        /// Let go: the pages glide on with the finger's speed. Flicked towards the new cup, or past half way
+        /// once the glide is counted in, it settles on the new cup; otherwise back on the old one.
+        /// </summary>
         public void ReleasePage(float dx, float velocity)
         {
             if (_switching) return;
@@ -546,28 +534,32 @@ namespace SomeGame.UI
                 _spring = StartCoroutine(SpringBack(dx));
                 return;
             }
-            float reveal = Mathf.Max(0f, -_wipeDirection * dx);
-            bool flick = Mathf.Abs(velocity) > 1600f && Mathf.Sign(velocity) == -_wipeDirection;
-            float decision = reveal > PageWidth * switchDistance || flick ? 1f : 0f;
-            if (!_wipeReady) { _pendingRelease = decision; return; }
-            _finishing = StartCoroutine(FinishWipe(decision > 0.5f, slideIn));
+            float speed = -_wipeDirection * velocity; // how fast the new cup was coming in
+            float projected = _reveal + speed * 0.15f;
+            bool go = speed > 500f || speed > -500f && projected > PageWidth * 0.5f;
+            _revealVelocity = speed;
+            _finishing = StartCoroutine(FinishWipe(go));
         }
 
-        /// <summary>Slides <paramref name="cup"/> in over the current one (from the cup menu).</summary>
+        /// <summary>Slides <paramref name="cup"/> in (from the cup column).</summary>
         public void SwitchTo(CupDefinition cup)
         {
-            if (_switching || _celebrating || _wipeFrom != null || cup == null || cup == _cup) return;
+            if (_celebrating || cup == null || cup == _cup) return;
+            if (_switching || _wipeFrom != null) HurrySwitch();
+            if (_switching || _wipeFrom != null) return;
             var cups = Switchable();
             int direction = cups.IndexOf(cup) >= cups.IndexOf(_cup) ? 1 : -1;
-            _pendingRelease = 1f;
-            StartCoroutine(BeginWipe(cup, direction));
+            BeginWipe(cup, direction);
+            if (_wipeFrom == null) return;
+            _revealVelocity = 0f;
+            _finishing = StartCoroutine(FinishWipe(true));
         }
 
         System.Collections.IEnumerator SpringBack(float from)
         {
             _springing = true;
             _switching = true;
-            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.35f)
+            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.3f)
             {
                 SetPage(Mathf.Lerp(from, 0f, 1f - Mathf.Pow(1f - t, 3f)));
                 yield return null;
@@ -581,12 +573,12 @@ namespace SomeGame.UI
         bool _finishGo, _springing;
 
         /// <summary>
-        /// A new swipe while the last switch is still sliding: that switch jumps to its end at once, so the
-        /// next one can start straight away (swiping quickly through the cups feels immediate).
+        /// A new swipe while the last switch is still gliding: that switch jumps to its end at once, so the
+        /// next one starts straight away (swiping quickly through the cups, like a phone's home screen).
         /// </summary>
         public bool HurrySwitch()
         {
-            if (_celebrating || _wipeStarting) return false;
+            if (_celebrating) return false;
             if (_springing)
             {
                 StopAllSpring();
@@ -610,130 +602,73 @@ namespace SomeGame.UI
             _switching = _springing = false;
         }
 
-        // Freezes the current page as a picture over everything, then puts the next cup underneath.
-        System.Collections.IEnumerator BeginWipe(CupDefinition next, int direction)
+        // Freezes the current page's sliding parts as a picture, then puts the next cup on the page.
+        void BeginWipe(CupDefinition next, int direction)
         {
-            if (wipe == null || wipeImage == null) yield break;
-            _wipeStarting = true;
+            if (wipe == null || wipeImage == null) return;
             OpenCups(); // the cup column unfolds and shows the switch
-            _wipeFrom = _cup;
             _wipeTargetSlot = Switchable().IndexOf(next);
             _wipeCovering = 0f;
             _wipeDirection = direction;
-            _wipeReady = false;
+            _reveal = _revealVelocity = 0f;
             SetPage(0f);
-            yield return new WaitForEndOfFrame();
-            if (_snapshot != null) Destroy(_snapshot);
-            // The capture holds sRGB colours; copied into an sRGB texture it shows exactly as on screen
-            // (as captured it would be gamma-corrected twice and look washed out).
-            var capture = ScreenCapture.CaptureScreenshotAsTexture();
-            _snapshot = new Texture2D(capture.width, capture.height, TextureFormat.RGBA32, false, QualitySettings.activeColorSpace == ColorSpace.Gamma);
-            _snapshot.SetPixels32(capture.GetPixels32());
-            _snapshot.Apply(false);
-            Destroy(capture);
+            if (!CapturePage()) return;
+            _wipeFrom = _cup;
+            wipe.anchorMin = Vector2.zero; wipe.anchorMax = Vector2.one;
+            wipe.offsetMin = wipe.offsetMax = Vector2.zero;
             wipeImage.texture = _snapshot;
-            if (wipeBlur != null) wipeBlur.texture = _blurred = Blurred(_snapshot, 10);
+            foreach (var g in new UnityEngine.UI.Graphic[] { wipeBlur, wipeDim, wipeEdge, incomingBlur })
+                if (g != null) g.gameObject.SetActive(false);
             wipe.gameObject.SetActive(true);
-            SetWipe(0f);
             ShowCup(next, fadeAbove: true);
-            // A blurred picture of the new cup, which sharpens as it slides in.
-            if (incomingBlur != null)
-            {
-                SetPage(0f);
-                var page = RenderPage();
-                if (page != null)
-                {
-                    if (_incoming != null) Destroy(_incoming);
-                    _incoming = Blurred(page, 10);
-                    Destroy(page);
-                    incomingBlur.texture = _incoming;
-                    incomingBlur.gameObject.SetActive(true);
-                }
-            }
-            _wipeReady = true;
-            SetWipe(_reveal);
-            if (_pendingRelease.HasValue)
-            {
-                bool go = _pendingRelease.Value > 0.5f;
-                _pendingRelease = null;
-                _finishing = StartCoroutine(FinishWipe(go, slideIn * 1.2f));
-            }
-            _wipeStarting = false;
+            SetWipe(0f);
         }
 
-        // Shows <paramref name="reveal"/> canvas units of the new cup from the side it comes from.
+        // <paramref name="reveal"/> canvas units of the new cup are in: the old picture has moved that far out
+        // to one side, the new page sits right beside it.
         void SetWipe(float reveal)
         {
             float w = PageWidth, h = ((RectTransform)transform).rect.height;
             _reveal = Mathf.Clamp(reveal, 0f, w);
-            float covered = w - _reveal;
-            bool fromRight = _wipeDirection > 0;
-            float side = fromRight ? 0f : 1f; // the old picture keeps the side opposite to where the new cup comes from
-            wipe.anchorMin = new Vector2(side, 0f);
-            wipe.anchorMax = new Vector2(side, 1f);
-            wipe.pivot = new Vector2(side, 0.5f);
-            wipe.anchoredPosition = Vector2.zero;
-            wipe.sizeDelta = new Vector2(covered, 0f);
-            // The old page blurs, dims and sinks back a little as the new cup covers it.
-            float covering = _reveal / w;
-            _wipeCovering = covering;
-            foreach (var g in new UnityEngine.UI.Graphic[] { wipeImage, wipeBlur, wipeDim })
-            {
-                if (g == null) continue;
-                var image = g.rectTransform;
-                image.anchorMin = image.anchorMax = image.pivot = new Vector2(side, 0.5f);
-                image.anchoredPosition = Vector2.zero;
-                image.sizeDelta = new Vector2(w, h);
-                image.localScale = Vector3.one; // the old page stays exactly in place (no gaps at its edges)
-            }
-            if (wipeBlur != null) wipeBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(covering * 2.2f));
-            if (wipeDim != null) wipeDim.color = new Color(0f, 0f, 0f, 0.35f * covering);
-            if (wipeEdge != null)
-            {
-                // The new cup's edge casts a soft shadow onto the old page.
-                var edge = wipeEdge.rectTransform;
-                edge.anchorMin = edge.anchorMax = edge.pivot = new Vector2(1f - side, 0.5f);
-                edge.anchoredPosition = Vector2.zero;
-                edge.sizeDelta = new Vector2(70f, h);
-                edge.localScale = new Vector3(fromRight ? 1f : -1f, 1f, 1f);
-                wipeEdge.color = new Color(0f, 0f, 0f, 0.35f * Mathf.Clamp01(_reveal / 40f) * Mathf.Clamp01(covered / 40f));
-            }
-            // The new page glides in and settles from a slight zoom as it is uncovered (it seems to slide in on top).
-            float offset = _wipeDirection * covered * 0.25f, zoom = 1f + 0.05f * covered / w;
-            SetPage(offset, zoom);
-            if (incomingBlur != null && incomingBlur.gameObject.activeSelf)
-            {
-                // The blurred new page moves with it and fades out as it comes in: it sharpens.
-                var blurRt = incomingBlur.rectTransform;
-                blurRt.anchoredPosition = new Vector2(offset, 0f);
-                blurRt.localScale = Vector3.one * zoom;
-                incomingBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(1f - covering * 1.15f));
-            }
+            _wipeCovering = _reveal / w;
+            var picture = wipeImage.rectTransform;
+            picture.anchorMin = picture.anchorMax = picture.pivot = new Vector2(0.5f, 0.5f);
+            picture.sizeDelta = new Vector2(w, h);
+            picture.localScale = Vector3.one;
+            picture.anchoredPosition = new Vector2(-_wipeDirection * _reveal, 0f);
+            SetPage(_wipeDirection * (w - _reveal), 1f, parallax: false);
             if (_fadePlan != null)
-            {
-                float c = _reveal / w;
-                foreach (var (graphic, a, b) in _fadePlan) if (graphic != null) graphic.color = Color.Lerp(a, b, c);
-            }
+                foreach (var (graphic, a, b) in _fadePlan) if (graphic != null) graphic.color = Color.Lerp(a, b, _wipeCovering);
         }
 
-        // Slides the new cup fully over the old one, or back off it (then the old cup is put back).
-        System.Collections.IEnumerator FinishWipe(bool go, float duration)
+        // Glides to the new cup (or back to the old one) from the release speed, slowing smoothly to a stop
+        // there without overshooting (a critically damped spring).
+        System.Collections.IEnumerator FinishWipe(bool go)
         {
             _switching = true;
             _finishGo = go;
-            float from = _reveal, to = go ? PageWidth : 0f;
-            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / duration)
+            const float omega = 15f;
+            float target = go ? PageWidth : 0f;
+            float x = _reveal, v = _revealVelocity;
+            // Faster than the spring can take in without shooting past: capped, so it still eases in.
+            float toward = Mathf.Sign(target - x);
+            if (v * toward > omega * Mathf.Abs(target - x)) v = toward * omega * Mathf.Abs(target - x);
+            while (Mathf.Abs(x - target) > 0.5f || Mathf.Abs(v) > 30f)
             {
-                float e = 1f - Mathf.Pow(1f - t, 3f);
-                SetWipe(Mathf.Lerp(from, to, e));
+                float dt = Mathf.Min(Time.unscaledDeltaTime, 1f / 30f);
+                float a = -omega * omega * (x - target) - 2f * omega * v;
+                v += a * dt;
+                x += v * dt;
+                if ((x - target) * toward > 0f) break; // arrived
+                SetWipe(x);
                 yield return null;
             }
-            SetWipe(to);
+            SetWipe(target);
             _finishing = null;
             CompleteWipe(go);
         }
 
-        // The end of a switch: the new cup (or the old one, if it slid back) is the page, the picture is gone.
+        // The end of a switch: the new cup (or the old one, if it went back) is the page, the picture is gone.
         void CompleteWipe(bool go)
         {
             if (_fadePlan != null) foreach (var (graphic, _, b) in _fadePlan) if (graphic != null) graphic.color = b;
@@ -741,18 +676,12 @@ namespace SomeGame.UI
             if (!go) ShowCup(_wipeFrom, fadeAbove: false);
             wipe.gameObject.SetActive(false);
             wipeImage.texture = null;
-            if (wipeBlur != null) wipeBlur.texture = null;
-            if (incomingBlur != null) { incomingBlur.texture = null; incomingBlur.gameObject.SetActive(false); }
-            if (_incoming != null) { Destroy(_incoming); _incoming = null; }
-            if (_snapshot != null) { Destroy(_snapshot); _snapshot = null; }
-            if (_blurred != null) { Destroy(_blurred); _blurred = null; }
             SetPage(0f);
             bool open = CupList.IsPlayable(_cup);
             if (open) Refresh();
             _wipeFrom = null;
             _wipeTargetSlot = -1;
             _collapseAt = Time.unscaledTime + 0.9f; // folds back up after a moment
-            _wipeReady = false;
             _switching = false;
             // Races of this cup that opened since you last looked unlock now.
             if (go && open && _pendingRaces != null && _pendingRaces.Count > 0) StartCoroutine(Celebrate(_pendingRaces, false));
@@ -987,8 +916,7 @@ namespace SomeGame.UI
         float _carDistance = -1f;
         Coroutine _drive;
 
-        // carOffset before the stop, or half way back to the stop before where they are closer. The car is
-        // drawn over the stops, so it is never hidden.
+        // carOffset before the stop, or half way back to the stop before where they are closer.
         float CarTarget(int index)
         {
             float stop = MapLayout.StopDistance(index);
@@ -1001,8 +929,8 @@ namespace SomeGame.UI
             if (_drive != null) { StopCoroutine(_drive); _drive = null; }
             BuildProgress();
             SetCar(CarTarget(_selected), 1f);
-            foreach (var node in _nodes) node.transform.SetAsLastSibling(); // stops stay on top of the line
-            car.SetAsLastSibling(); // and the car on top of them, never hidden
+            car.SetAsLastSibling();
+            foreach (var node in _nodes) node.transform.SetAsLastSibling(); // stops stay on top of the line and the car
         }
 
         void DriveTo(int index)
@@ -1013,29 +941,16 @@ namespace SomeGame.UI
             _drive = StartCoroutine(Drive(_carDistance, to));
         }
 
+        // Drives along the road to the stop; back to an earlier race it reverses, still facing up the road.
         System.Collections.IEnumerator Drive(float from, float to)
         {
             float duration = Mathf.Clamp(Mathf.Abs(to - from) / 1500f, 0.3f, 0.95f);
-            float dir = Mathf.Sign(to - from);
             for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / duration)
             {
-                SetCar(Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, t)), dir);
+                SetCar(Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, t)), 1f);
                 yield return null;
             }
-            SetCar(to, dir);
-            if (dir < 0f)
-            {
-                // Came back down the road: turn round smoothly to face up it again.
-                var from180 = car.localRotation;
-                SetCar(to, 1f);
-                var up = car.localRotation;
-                for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.35f)
-                {
-                    car.localRotation = Quaternion.Slerp(from180, up, Mathf.SmoothStep(0f, 1f, t));
-                    yield return null;
-                }
-                car.localRotation = up;
-            }
+            SetCar(to, 1f);
             _drive = null;
         }
 
