@@ -150,6 +150,7 @@ namespace SomeGame.UI
 
         void Start()
         {
+            _openedAt = Time.unscaledTime;
             // First launch (or after a reset): straight into the practice drive.
             if (GameSession.TutorialPending)
             {
@@ -409,42 +410,112 @@ namespace SomeGame.UI
         CupDefinition _wipeFrom;
         int _wipeDirection;
         float _reveal, _revealVelocity;
-        RenderTexture _snapshot, _oldBlur, _newBlur;
+        RenderTexture _snapshot, _newBlur;
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _fadePlan;
 
         void OnDestroy()
         {
-            foreach (var rt in new[] { _snapshot, _oldBlur, _newBlur })
+            foreach (var rt in new[] { _snapshot, _newBlur })
+                if (rt != null) { rt.Release(); Destroy(rt); }
+            foreach (var rt in _pictures.Values)
                 if (rt != null) { rt.Release(); Destroy(rt); }
         }
 
-        // A soft blurred copy of a page picture, made on the graphics card: halved again and again (each
-        // step averages the pixels) down to 1/16 size, then doubled back up to 1/4 size step by step with
-        // smoothing (so it is soft, not blocky), and shown smoothed over the whole screen.
+        // A smoothly blurred copy of a page picture, made on the graphics card: reduced to a quarter of its
+        // size (averaging the pixels), then blurred across and down a few times with a Gaussian blur.
+        static Material _blur;
+
         static void BlurInto(Texture source, ref RenderTexture blurred)
         {
-            int Size(int full, int k) => Mathf.Max(1, full / k);
-            int w = Size(source.width, 4), h = Size(source.height, 4);
+            if (_blur == null)
+            {
+                var shader = Resources.Load<Shader>("CupBlur");
+                if (shader != null) _blur = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            }
+            int w = Mathf.Max(1, source.width / 4), h = Mathf.Max(1, source.height / 4);
             if (blurred == null || blurred.width != w || blurred.height != h)
             {
                 if (blurred != null) { blurred.Release(); Destroy(blurred); }
                 blurred = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB) { name = "CupBlur", filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
                 blurred.Create();
             }
-            Texture from = source;
-            var temps = new List<RenderTexture>();
-            foreach (int k in new[] { 2, 4, 8, 16, 8 })
+            RenderTexture Temp(int tw, int th)
             {
-                var next = RenderTexture.GetTemporary(Size(source.width, k), Size(source.height, k), 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
-                next.filterMode = FilterMode.Bilinear;
-                next.wrapMode = TextureWrapMode.Clamp;
-                Graphics.Blit(from, next);
-                temps.Add(next);
-                from = next;
+                var t = RenderTexture.GetTemporary(tw, th, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+                t.filterMode = FilterMode.Bilinear;
+                t.wrapMode = TextureWrapMode.Clamp;
+                return t;
             }
-            Graphics.Blit(from, blurred);
-            foreach (var t in temps) RenderTexture.ReleaseTemporary(t);
+            var half = Temp(Mathf.Max(1, source.width / 2), Mathf.Max(1, source.height / 2));
+            Graphics.Blit(source, half);
+            Graphics.Blit(half, blurred);
+            RenderTexture.ReleaseTemporary(half);
+            if (_blur == null) return;
+            var other = Temp(w, h);
+            for (int pass = 0; pass < 3; pass++)
+            {
+                _blur.SetFloat("_Spread", 1.5f);
+                _blur.SetVector("_Direction", new Vector4(1f, 0f, 0f, 0f));
+                Graphics.Blit(blurred, other, _blur);
+                _blur.SetVector("_Direction", new Vector4(0f, 1f, 0f, 0f));
+                Graphics.Blit(other, blurred, _blur);
+            }
+            RenderTexture.ReleaseTemporary(other);
         }
+
+        // A blurred picture of each cup's page as it last stood on screen: a cup slides in as its own page,
+        // blurred, sharpening as it arrives (until a cup has been seen, its landscape stands in).
+        readonly Dictionary<CupDefinition, RenderTexture> _pictures = new();
+
+        // Pictures the page (the cup column left out for that frame) once the screen shows just it.
+        bool _remembering;
+        float _openedAt = -1f;
+
+        System.Collections.IEnumerator RememberOnce()
+        {
+            _remembering = true;
+            yield return RememberPage();
+            _remembering = false;
+        }
+
+        System.Collections.IEnumerator RememberPage()
+        {
+            yield return null;
+            var cup = _cup;
+            if (cup == null || _wipeStarting || _wipeFrom != null) yield break;
+            var hidden = HideColumn();
+            yield return new WaitForEndOfFrame();
+            if (_wipeStarting || _wipeFrom != null || _cup != cup) { ShowColumn(hidden); yield break; }
+            var full = RenderTexture.GetTemporary(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            ScreenCapture.CaptureScreenshotIntoRenderTexture(full);
+            ShowColumn(hidden);
+            _pictures.TryGetValue(cup, out var picture);
+            BlurInto(full, ref picture);
+            _pictures[cup] = picture;
+            RenderTexture.ReleaseTemporary(full);
+        }
+
+        List<(CanvasGroup group, float alpha)> HideColumn()
+        {
+            var hidden = new List<(CanvasGroup, float)>();
+            if (fadeRoots == null) return hidden;
+            foreach (var root in fadeRoots)
+            {
+                if (root == null) continue;
+                if (!root.TryGetComponent(out CanvasGroup group)) group = root.gameObject.AddComponent<CanvasGroup>();
+                hidden.Add((group, group.alpha));
+                group.alpha = 0f;
+            }
+            return hidden;
+        }
+
+        static void ShowColumn(List<(CanvasGroup group, float alpha)> hidden)
+        {
+            foreach (var (group, alpha) in hidden) if (group != null) group.alpha = alpha;
+        }
+
+        // A captured screen comes upside down where the graphics card counts rows from the top.
+        static Rect CaptureUv => SystemInfo.graphicsUVStartsAtTop ? new Rect(0f, 1f, 1f, -1f) : new Rect(0f, 0f, 1f, 1f);
 
         /// <summary>
         /// While dragging: the next cup's page comes in beside the old one, both following the finger 1:1;
@@ -554,10 +625,10 @@ namespace SomeGame.UI
         }
 
         bool _wipeStarting, _pendingGo;
+        Color _incomingTint = Color.white;
         int _wipeFromSelected;
         float _pendingDx;
         float? _pendingRelease;
-        readonly List<(CanvasGroup group, float alpha)> _hiddenForPicture = new();
 
         void BeginWipe(CupDefinition next, int direction)
         {
@@ -577,15 +648,7 @@ namespace SomeGame.UI
             _wipeDirection = direction;
             _reveal = _revealVelocity = 0f;
             SetPage(0f);
-            _hiddenForPicture.Clear();
-            if (fadeRoots != null)
-                foreach (var root in fadeRoots)
-                {
-                    if (root == null) continue;
-                    if (!root.TryGetComponent(out CanvasGroup group)) group = root.gameObject.AddComponent<CanvasGroup>();
-                    _hiddenForPicture.Add((group, group.alpha));
-                    group.alpha = 0f;
-                }
+            var hidden = HideColumn();
             yield return new WaitForEndOfFrame();
 
             int w = Screen.width, h = Screen.height;
@@ -596,35 +659,45 @@ namespace SomeGame.UI
                 _snapshot.Create();
             }
             ScreenCapture.CaptureScreenshotIntoRenderTexture(_snapshot);
-            foreach (var (group, alpha) in _hiddenForPicture) if (group != null) group.alpha = alpha;
-            _hiddenForPicture.Clear();
+            ShowColumn(hidden);
 
             _wipeFrom = _cup;
             _wipeFromSelected = _selected;
             wipe.anchorMin = Vector2.zero; wipe.anchorMax = Vector2.one;
             wipe.offsetMin = wipe.offsetMax = Vector2.zero;
-            // The capture comes upside down where the graphics card counts rows from the top.
-            var uv = SystemInfo.graphicsUVStartsAtTop ? new Rect(0f, 1f, 1f, -1f) : new Rect(0f, 0f, 1f, 1f);
+            var uv = CaptureUv;
             wipeImage.texture = _snapshot;
             wipeImage.uvRect = uv;
-            // The old page blurs and dims away as the new cup comes in.
-            BlurInto(_snapshot, ref _oldBlur);
-            if (wipeBlur != null) { wipeBlur.texture = _oldBlur; wipeBlur.uvRect = uv; wipeBlur.gameObject.SetActive(true); }
+            // The old page blurs and dims away as the new cup comes in (and this is its picture from now on).
+            _pictures.TryGetValue(_cup, out var oldPicture);
+            BlurInto(_snapshot, ref oldPicture);
+            _pictures[_cup] = oldPicture;
+            if (wipeBlur != null) { wipeBlur.texture = oldPicture; wipeBlur.uvRect = uv; wipeBlur.gameObject.SetActive(true); }
             if (wipeDim != null) wipeDim.gameObject.SetActive(true);
             if (wipeEdge != null) wipeEdge.gameObject.SetActive(false);
             wipe.gameObject.SetActive(true);
             ShowCup(next, fadeAbove: true);
-            // The new cup comes in blurred (its landscape, softened) and sharpens as it settles.
+            // The new cup comes in blurred (its page as last seen, or else its landscape) and sharpens as it settles.
             if (incomingBlur != null)
             {
-                bool open = CupList.IsPlayable(next) && next.mapBackground != null;
-                if (open)
+                bool shown = false;
+                if (_pictures.TryGetValue(next, out var picture) && picture != null)
+                {
+                    incomingBlur.texture = picture;
+                    incomingBlur.uvRect = uv;
+                    shown = true;
+                }
+                else if (CupList.IsPlayable(next) && next.mapBackground != null)
                 {
                     BlurInto(next.mapBackground.texture, ref _newBlur);
                     incomingBlur.texture = _newBlur;
                     incomingBlur.uvRect = new Rect(0f, 0f, 1f, 1f);
+                    shown = true;
                 }
-                incomingBlur.gameObject.SetActive(open);
+                // Not seen yet and no landscape (coming soon): a veil in its own colour fades away instead.
+                _incomingTint = shown ? Color.white : Camera.main != null ? Camera.main.backgroundColor : Color.grey;
+                if (!shown) incomingBlur.texture = null;
+                incomingBlur.gameObject.SetActive(true);
             }
             _wipeStarting = false;
             SetWipe(Mathf.Max(0f, -_wipeDirection * _pendingDx));
@@ -671,7 +744,9 @@ namespace SomeGame.UI
                 blurRt.offsetMin = blurRt.offsetMax = Vector2.zero;
                 blurRt.anchoredPosition = new Vector2(offset, 0f);
                 blurRt.localScale = Vector3.one;
-                incomingBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(1f - _wipeCovering * 1.15f));
+                var tint = _incomingTint;
+                tint.a = Mathf.Clamp01(1f - _wipeCovering * 1.15f);
+                incomingBlur.color = tint;
             }
             if (_fadePlan != null)
                 foreach (var (graphic, a, b) in _fadePlan) if (graphic != null) graphic.color = Color.Lerp(a, b, _wipeCovering);
@@ -730,6 +805,7 @@ namespace SomeGame.UI
             _wipeTargetSlot = -1;
             _collapseAt = Time.unscaledTime + 0.9f; // folds back up after a moment
             _switching = false;
+            if (go) StartCoroutine(RememberPage());
             // Races of this cup that opened since you last looked unlock now.
             if (go && open && _pendingRaces != null && _pendingRaces.Count > 0) StartCoroutine(Celebrate(_pendingRaces, false));
             _pendingRaces = null;
@@ -904,7 +980,14 @@ namespace SomeGame.UI
             }
         }
 
-        void Update() => UpdateDots(true);
+        void Update()
+        {
+            UpdateDots(true);
+            // A cup without a picture yet (the map just opened) gets one once the page has settled.
+            if (!_remembering && _openedAt >= 0f && _cup != null && !_pictures.ContainsKey(_cup) && !Busy && !_wipeStarting && !_springing
+                && Time.unscaledTime - _openedAt > 1.2f)
+                StartCoroutine(RememberOnce());
+        }
 
         void LateUpdate() => FitWorld();
 
