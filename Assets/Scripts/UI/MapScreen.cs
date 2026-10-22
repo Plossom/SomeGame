@@ -419,10 +419,12 @@ namespace SomeGame.UI
         }
 
         // A soft blurred copy of a page picture, made on the graphics card: halved again and again (each
-        // step averages the pixels) down to 1/16 size, then shown smoothed over the whole screen.
+        // step averages the pixels) down to 1/16 size, then doubled back up to 1/4 size step by step with
+        // smoothing (so it is soft, not blocky), and shown smoothed over the whole screen.
         static void BlurInto(Texture source, ref RenderTexture blurred)
         {
-            int w = Mathf.Max(1, source.width / 16), h = Mathf.Max(1, source.height / 16);
+            int Size(int full, int k) => Mathf.Max(1, full / k);
+            int w = Size(source.width, 4), h = Size(source.height, 4);
             if (blurred == null || blurred.width != w || blurred.height != h)
             {
                 if (blurred != null) { blurred.Release(); Destroy(blurred); }
@@ -430,17 +432,18 @@ namespace SomeGame.UI
                 blurred.Create();
             }
             Texture from = source;
-            RenderTexture step = null;
-            for (int k = 2; k <= 8; k *= 2)
+            var temps = new List<RenderTexture>();
+            foreach (int k in new[] { 2, 4, 8, 16, 8 })
             {
-                var next = RenderTexture.GetTemporary(Mathf.Max(1, source.width / k), Mathf.Max(1, source.height / k), 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+                var next = RenderTexture.GetTemporary(Size(source.width, k), Size(source.height, k), 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
                 next.filterMode = FilterMode.Bilinear;
+                next.wrapMode = TextureWrapMode.Clamp;
                 Graphics.Blit(from, next);
-                if (step != null) RenderTexture.ReleaseTemporary(step);
-                from = step = next;
+                temps.Add(next);
+                from = next;
             }
             Graphics.Blit(from, blurred);
-            if (step != null) RenderTexture.ReleaseTemporary(step);
+            foreach (var t in temps) RenderTexture.ReleaseTemporary(t);
         }
 
         /// <summary>
