@@ -446,13 +446,18 @@ namespace SomeGame.Car
         /// <summary>True while the car is being carried back through the air to a checkpoint it missed.</summary>
         public bool IsCarried => _carried && IsAirborne;
 
+        /// <summary>True while carried out of the water (rather than back to a missed checkpoint).</summary>
+        public bool CarriedFromWater { get; private set; }
+
         /// <summary>
         /// Lifts the car up and carries it through the air (over cars and scenery) to <paramref name="pose"/>,
-        /// where it is set down driving on at <paramref name="speedAfter"/>.
+        /// where it is set down driving on at <paramref name="speedAfter"/>. False if it cannot be carried
+        /// (an online puppet, or already in the air).
         /// </summary>
-        public void CarryBack(Pose pose, float speedAfter)
+        public bool CarryBack(Pose pose, float speedAfter, bool fromWater = false)
         {
-            if (IsPuppet || IsAirborne) return;
+            if (IsPuppet || IsAirborne) return false;
+            CarriedFromWater = fromWater;
             EndDrift();
             _trick = false;
             _exitTimer = _calmTimer = 0f;
@@ -470,6 +475,7 @@ namespace SomeGame.Car
             _body.angularVelocity = 0f;
             if (_collider != null) _collider.enabled = false;
             CarryStarted?.Invoke();
+            return true;
         }
 
         void Carry(float dt)

@@ -171,6 +171,9 @@ namespace SomeGame.Race
         /// <summary>True while the car is being carried back to the checkpoint it missed.</summary>
         public bool CarryingBack => _car != null && _car.IsCarried;
 
+        /// <summary>True while being carried out of the water back onto the road.</summary>
+        public bool CarryingFromWater => CarryingBack && _car.CarriedFromWater;
+
         // The player never has to drive back: a moment after missing a checkpoint, the car is lifted up and
         // carried through the air to just before it, and set down driving on (most of its speed kept).
         void CarryBackIfMissed(float dt)

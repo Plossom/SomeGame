@@ -31,8 +31,11 @@ namespace SomeGame.Car
         [Tooltip("Seconds the car blinks after a restart (rivals; the player only blinks briefly).")]
         [SerializeField, Min(0f)] float blinkSeconds = 1.2f;
         [SerializeField, Min(0f)] float playerBlinkSeconds = 0.8f;
-        [Tooltip("Seconds the player has to wait before driving on after a splash (the penalty).")]
+        [Tooltip("Seconds the player has to wait before driving on after a splash (only if it cannot be carried out).")]
         [SerializeField, Min(0f)] float playerWait = 0.5f;
+        [Tooltip("After a splash the car is lifted out and carried back onto the road (like a missed checkpoint), " +
+                 "set down at this fraction of its top speed (the penalty).")]
+        [SerializeField, Range(0f, 1f)] float waterCarrySpeed = 0.45f;
         [SerializeField] int sortingOrder = 13;
         [Tooltip("Boost strength (0-1) from a dash panel.")]
         [SerializeField, Range(0f, 1f)] float dashBoost = 0.85f;
@@ -125,7 +128,7 @@ namespace SomeGame.Car
         void OnCarryStarted()
         {
             _dust.transform.position = _car.Body.position;
-            _dust.Emit(16);
+            if (!_car.CarriedFromWater) _dust.Emit(16); // out of the water the splash is enough
             StopAllCoroutines();
             foreach (var s in _sprites) if (s != null) s.enabled = true;
         }
@@ -451,17 +454,21 @@ namespace SomeGame.Car
             float d = _sensor.Current.Distance;
             _repeatSplashes = Mathf.Abs(track.Path.DeltaDistance(_lastSplashAt, d)) < 40f ? _repeatSplashes + 1 : 1;
             _lastSplashAt = d;
+            Pose pose;
             if (_isRival && _repeatSplashes >= 3)
             {
                 // Rivals never get stuck for good: after a few failed tries they are put down past the water.
                 _repeatSplashes = 0;
-                var past = track.RespawnAfterWater(d);
-                _car.Respawn(past);
+                pose = track.RespawnAfterWater(d);
                 // The checkpoints over the water count (a long gap can hold one).
-                if (_progress != null) _progress.CreditFlight(track.Path.WrapDistance(d - 40f), track.Path.Project(past.position).Distance);
+                if (_progress != null) _progress.CreditFlight(track.Path.WrapDistance(d - 40f), track.Path.Project(pose.position).Distance);
             }
-            else _car.Respawn(track.RespawnBefore(d, respawnBack)); // always back before the water, never ahead
+            else pose = track.RespawnBefore(d, respawnBack); // always back before the water, never ahead
             if (!dry) Splashed?.Invoke();
+            // Lifted out and carried back onto the road through the air, as after a missed checkpoint.
+            float top = _car.Stats != null ? _car.Stats.topSpeed : 18f;
+            if (_car.CarryBack(pose, top * waterCarrySpeed, fromWater: true)) return;
+            _car.Respawn(pose);
             StopAllCoroutines();
             StartCoroutine(Blink());
         }

@@ -19,9 +19,6 @@ namespace SomeGame.Car
         [Tooltip("Seconds the wheels take to follow.")]
         [SerializeField, Min(0.01f)] float smoothTime = 0.1f;
 
-        /// <summary>How far the wheels turn compared with the car's (the snowmobile's skis turn less).</summary>
-        public float AngleScale { get; set; } = 1f;
-
         CarMovement _car;
         ICarInput _input;
         float _lastHeading, _angle, _velocity;
@@ -55,8 +52,7 @@ namespace SomeGame.Car
                     ? Mathf.DeltaAngle(heading, Mathf.Atan2(steer.y, steer.x) * Mathf.Rad2Deg - 90f) * steerGain
                     : 0f;
             }
-            float max = maxAngle * AngleScale;
-            target = Mathf.Clamp(target, -max, max);
+            target = Mathf.Clamp(target, -maxAngle, maxAngle);
             _angle = Mathf.SmoothDamp(_angle, target, ref _velocity, smoothTime, Mathf.Infinity, dt);
             var rotation = Quaternion.Euler(0f, 0f, _angle);
             foreach (var wheel in wheels)

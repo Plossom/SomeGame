@@ -158,8 +158,6 @@ namespace SomeGame.Track
             bool sled = vehicle == TrackLayout.Vehicle.Snowmobile && snowmobileBody != null;
             foreach (var car in FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
-                // The skis turn only about half as far as the car's wheels.
-                if (car.TryGetComponent(out SomeGame.Car.SteerWheels steer)) steer.AngleScale = sled ? 0.55f : 1f;
                 foreach (var sr in car.GetComponentsInChildren<SpriteRenderer>(true))
                 {
                     var sprite = sr.name switch { "Visual" => snowmobileBody, "Details" => snowmobileDetails, "Shadow" => snowmobileShadow, "WheelL" or "WheelR" => snowmobileSki, _ => null };

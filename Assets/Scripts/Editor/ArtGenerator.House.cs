@@ -101,8 +101,6 @@ namespace SomeGame.EditorTools
             if (u > 0.82f) return Hex("8ACB52");
             Color c = Color.Lerp(Hex("3E7A31"), Hex("6FB04A"), Mathf.SmoothStep(0f, 1f, u / 0.82f));
             c = Color.Lerp(c, Shade(c, 0.88f), Noise(x / 8f, y / 8f, 8) * 0.6f);
-            float cx = 32f, chevron = Mathf.Abs(Mathf.Abs(x - cx) * 0.9f + (y - 40f)) - 4f;
-            if (Mathf.Abs(x - cx) < 18f && chevron < 0f) c = Color.Lerp(c, Hex("E4F5C8"), 0.7f);
             return c;
         }
 
