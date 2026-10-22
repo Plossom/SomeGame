@@ -168,18 +168,14 @@ namespace SomeGame.EditorTools
         static void WinterRoad()
         {
             var points = RoadPoints();
-            // Snow banks with a blue shadow, a dark edge, asphalt dusted at the sides, a faint centre line.
+            // Snow banks with a blue shadow, then the packed-snow road of the winter races: a blue-grey edge,
+            // white edge lines and trodden blue-grey snow, a little lighter along the middle.
             foreach (var (p, _) in points) Disc(p + new Vector2(0f, -4f), RoadWidth(p.y) * 0.5f + 17f, SnowShade);
             foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f + 14f, SnowWhite);
-            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f + 4f, Hex("3B4759"));
-            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f, Hex("5A6679"));
-            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.36f, Hex("626F83"));
-            foreach (var (p, dist) in points)
-            {
-                float w = RoadWidth(p.y);
-                float period = Mathf.Max(18f, w * 0.75f);
-                if (Mathf.Repeat(dist, period) < period * 0.5f) Disc(p, Mathf.Max(1.6f, w * 0.045f), new Color(0.93f, 0.96f, 1f, 0.8f));
-            }
+            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f + 4f, Hex("6F86A3"));
+            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f + 1f, Hex("F4F8FC"));
+            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f - 3f, Hex("AFBFD1"));
+            foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.3f, Hex("BCCAD9"));
         }
 
         // The road densified, in painting space, with the distance along it.

@@ -97,8 +97,8 @@ namespace SomeGame.UI
 
         [Header("Road progress")]
         [SerializeField, Min(1f)] float progressWidth = 22f;
-        [Tooltip("How far before its race stop the car waits (canvas units along the road).")]
-        [SerializeField] float carOffset = 95f;
+        [Tooltip("How far before its race stop the car waits at least (canvas units along the road); further where the road bends in under the stop.")]
+        [SerializeField] float carOffset = 140f;
 
         readonly List<MapNode> _nodes = new();
         readonly List<RectTransform> _badges = new();
@@ -987,7 +987,22 @@ namespace SomeGame.UI
         float _carDistance = -1f;
         Coroutine _drive;
 
-        float CarTarget(int index) => Mathf.Max(0f, MapLayout.StopDistance(index) - carOffset);
+        // At least carOffset before the stop, and further back where the road bends in under the stop or its
+        // star badge, so the car always waits in plain sight (stop circle: radius 75 with its selection ring
+        // 107; badge: 222 x 60 centred 122 below; the car itself about 50 round).
+        float CarTarget(int index)
+        {
+            float stop = MapLayout.StopDistance(index);
+            Vector2 at = MapLayout.StopPosition(index);
+            for (float back = carOffset; back < carOffset + 400f; back += 5f)
+            {
+                float d = Mathf.Max(0f, stop - back);
+                Vector2 o = MapLayout.PointAt(d, out _) - at;
+                bool underBadge = Mathf.Abs(o.x) < 160f && o.y < -45f && o.y > -200f;
+                if (d <= 0f || o.magnitude > 150f && !underBadge) return d;
+            }
+            return Mathf.Max(0f, stop - carOffset);
+        }
 
         void PlaceCar()
         {
@@ -1016,14 +1031,19 @@ namespace SomeGame.UI
                 yield return null;
             }
             SetCar(to, dir);
-            // A little settle at the stop.
-            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.25f)
+            if (dir < 0f)
             {
-                car.localScale = Vector3.one * (1f + 0.08f * Mathf.Sin(t * Mathf.PI));
-                yield return null;
+                // Came back down the road: turn round smoothly to face up it again.
+                var from180 = car.localRotation;
+                SetCar(to, 1f);
+                var up = car.localRotation;
+                for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.35f)
+                {
+                    car.localRotation = Quaternion.Slerp(from180, up, Mathf.SmoothStep(0f, 1f, t));
+                    yield return null;
+                }
+                car.localRotation = up;
             }
-            car.localScale = Vector3.one;
-            if (dir < 0f) SetCar(to, 1f); // face up the road again
             _drive = null;
         }
 
