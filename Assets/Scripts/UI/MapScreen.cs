@@ -97,8 +97,8 @@ namespace SomeGame.UI
 
         [Header("Road progress")]
         [SerializeField, Min(1f)] float progressWidth = 22f;
-        [Tooltip("How far before its race stop the car waits at least (canvas units along the road); further where the road bends in under the stop.")]
-        [SerializeField] float carOffset = 140f;
+        [Tooltip("How far before its race stop the car waits (canvas units along the road; less where the stops are close).")]
+        [SerializeField] float carOffset = 100f;
 
         readonly List<MapNode> _nodes = new();
         readonly List<RectTransform> _badges = new();
@@ -987,21 +987,13 @@ namespace SomeGame.UI
         float _carDistance = -1f;
         Coroutine _drive;
 
-        // At least carOffset before the stop, and further back where the road bends in under the stop or its
-        // star badge, so the car always waits in plain sight (stop circle: radius 75 with its selection ring
-        // 107; badge: 222 x 60 centred 122 below; the car itself about 50 round).
+        // carOffset before the stop, or half way back to the stop before where they are closer. The car is
+        // drawn over the stops, so it is never hidden.
         float CarTarget(int index)
         {
             float stop = MapLayout.StopDistance(index);
-            Vector2 at = MapLayout.StopPosition(index);
-            for (float back = carOffset; back < carOffset + 400f; back += 5f)
-            {
-                float d = Mathf.Max(0f, stop - back);
-                Vector2 o = MapLayout.PointAt(d, out _) - at;
-                bool underBadge = Mathf.Abs(o.x) < 160f && o.y < -45f && o.y > -200f;
-                if (d <= 0f || o.magnitude > 150f && !underBadge) return d;
-            }
-            return Mathf.Max(0f, stop - carOffset);
+            float gap = index > 0 ? stop - MapLayout.StopDistance(index - 1) : stop;
+            return Mathf.Max(0f, stop - Mathf.Min(carOffset, gap * 0.5f));
         }
 
         void PlaceCar()
@@ -1009,8 +1001,8 @@ namespace SomeGame.UI
             if (_drive != null) { StopCoroutine(_drive); _drive = null; }
             BuildProgress();
             SetCar(CarTarget(_selected), 1f);
-            car.SetAsLastSibling();
             foreach (var node in _nodes) node.transform.SetAsLastSibling(); // stops stay on top of the line
+            car.SetAsLastSibling(); // and the car on top of them, never hidden
         }
 
         void DriveTo(int index)
