@@ -95,7 +95,7 @@ namespace SomeGame.UI
         [Header("Road progress")]
         [SerializeField, Min(1f)] float progressWidth = 22f;
         [Tooltip("How far before its race stop the car waits (canvas units along the road; less where the stops are close).")]
-        [SerializeField] float carOffset = 100f;
+        [SerializeField] float carOffset = 115f;
 
         readonly List<MapNode> _nodes = new();
         readonly List<RectTransform> _badges = new();

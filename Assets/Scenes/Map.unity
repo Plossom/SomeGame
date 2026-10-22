@@ -38065,7 +38065,7 @@ MonoBehaviour:
   startLabel: {fileID: 1028965887}
   startRing: {fileID: 355451100}
   progressWidth: 22
-  carOffset: 100
+  carOffset: 115
 --- !u!223 &1427918097
 Canvas:
   m_ObjectHideFlags: 0
