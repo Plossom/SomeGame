@@ -53,6 +53,9 @@ namespace SomeGame.UI
             details.text = level != null ? $"{level.LapsText}  ·  {level.rivalCount} rivals" : "";
             preview.sprite = level != null ? level.preview : null;
             preview.enabled = preview.sprite != null;
+            // A snowmobile rides the bar to a Winter Cup race.
+            if (barCar != null && barCar.TryGetComponent(out VehicleIcon vehicle))
+                vehicle.Show(level != null && level.track != null && level.track.biome == SomeGame.Track.TrackLayout.Biome.Snow);
             SetProgress(0f);
             group.alpha = 0f;
             for (float t = 0f; t < 0.2f; t += Time.unscaledDeltaTime) { group.alpha = t / 0.2f; yield return null; }

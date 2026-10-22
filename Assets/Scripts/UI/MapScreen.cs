@@ -127,6 +127,12 @@ namespace SomeGame.UI
             ApplyLook(cup != null ? cup.look : CupLook.Valley, cup != null ? cup.mapBackground : null);
         }
 
+        // The car on the map road: a snowmobile on the Winter Cup.
+        void ShowVehicle(CupLook look)
+        {
+            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Show(look == CupLook.Winter);
+        }
+
         static LevelCatalog CatalogOf(CupDefinition cup) =>
             cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
 
@@ -135,6 +141,7 @@ namespace SomeGame.UI
         void ApplyLook(CupLook look, Sprite landscape)
         {
             MapLayout.Current = MapLayout.Of(look);
+            ShowVehicle(look);
             Theme.Use(Theme.Of(look));
             Theme.Recolor(transform, Theme.Valley);
             var cam = Camera.main;
@@ -799,6 +806,7 @@ namespace SomeGame.UI
             CupList.Selected = cup;
             catalog = CatalogOf(cup);
             MapLayout.Current = MapLayout.Of(cup.look);
+            ShowVehicle(cup.look);
             Theme.Use(newPalette);
             if (cup.mapBackground != null && background != null) background.sprite = cup.mapBackground;
             if (snow != null) snow.SetActive(cup.look == CupLook.Winter);

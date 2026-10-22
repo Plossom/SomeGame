@@ -87,8 +87,10 @@ namespace SomeGame.EditorTools
             var car = At("Car", track, new Vector2(0f, 0.5f), new Vector2(0f, 74f), new Vector2(70f, 122f));
             car.pivot = new Vector2(0.5f, 0.5f);
             car.localRotation = Quaternion.Euler(0f, 0f, -90f);
-            Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
-            Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
+            var barBody = Img(Stretch("Body", car), "Car", Theme.Orange); barBody.preserveAspect = false;
+            var barDetails = Img(Stretch("Details", car), "CarDetails", Color.white); barDetails.preserveAspect = false;
+            Configure(car.gameObject.AddComponent<VehicleIcon>(), ("body", barBody), ("details", barDetails),
+                ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")));
             var percent = Txt(At("Percent", safe, new Vector2(0.5f, 0f), new Vector2(0f, 120f), new Vector2(900f, 70f)), "LOADING 30%", 48, Theme.Ink, _condItalic);
             percent.characterSpacing = 6f;
 
@@ -139,9 +141,12 @@ namespace SomeGame.EditorTools
             var lockedPage = BuildLockedPage(map);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));
             car.pivot = new Vector2(0.5f, 0.5f);
-            Img(At("Shadow", car, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(70f, 120f)), "CarShadow", new Color(0f, 0f, 0f, 0.45f)).preserveAspect = false;
-            Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
-            Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
+            var mapShadow = Img(At("Shadow", car, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(70f, 120f)), "CarShadow", new Color(0f, 0f, 0f, 0.45f)); mapShadow.preserveAspect = false;
+            var mapBody = Img(Stretch("Body", car), "Car", Theme.Orange); mapBody.preserveAspect = false;
+            var mapDetails = Img(Stretch("Details", car), "CarDetails", Color.white); mapDetails.preserveAspect = false;
+            // A snowmobile on the Winter Cup's map.
+            Configure(car.gameObject.AddComponent<VehicleIcon>(), ("body", mapBody), ("details", mapDetails), ("shadow", mapShadow),
+                ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
 
             // Snowfall over the landscape (under the header), switched on by the winter map.
             var snow = Stretch("Snow", canvas);

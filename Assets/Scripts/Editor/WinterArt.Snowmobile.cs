@@ -18,6 +18,12 @@ namespace SomeGame.EditorTools
             // One ski centred in its own sprite, turned with the steering like the buggy's front wheels and
             // put in their place (centre x 28 / 164, y 266 of the body sprite).
             Write(ArtGenerator.Folder, "SnowmobileSki", 40, 112, (x, y) => SkiPixel(x - 20f + 28f, y - 56f + 266f), 192, false);
+            // The whole snowmobile with its skis in one picture, for the map and the loading bar.
+            Write(ArtGenerator.Folder, "SnowmobileIcon", 192, 336, (x, y) =>
+            {
+                Color skis = Over(SkiPixel(x, y), SkiPixel(x - 136f, y), 1f);
+                return Over(skis, SnowmobileBodyPixel(x, y), 1f);
+            }, 192, false);
             Write(ArtGenerator.Folder, "SnowmobileShadow", 192, 336, (x, y) =>
             {
                 float d = Mathf.Min(Mathf.Min(SledBodySdf(x, y), SledTrackSdf(x, y)), Mathf.Min(SkiAt(x, y, 28f), SkiAt(x, y, 164f)));
