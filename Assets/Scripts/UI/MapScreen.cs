@@ -403,55 +403,85 @@ namespace SomeGame.UI
         // Switching works like the pages of a phone's home screen: the old page is frozen as a picture of its
         // sliding parts (drawn straight into a texture on the graphics card, so a swipe starts at once), the
         // new cup is put on the page, and both move together under the finger: the old picture out to one
-        // side, the new page in from the other. Let go, they glide on with the finger's speed and settle.
+        // side (blurring and dimming away), the new page in from the other (coming in blurred and
+        // sharpening). Let go, they glide on with the finger's speed and settle.
 
         CupDefinition _wipeFrom;
         int _wipeDirection;
         float _reveal, _revealVelocity;
-        RenderTexture _snapshot;
+        RenderTexture _snapshot, _oldBlur, _newBlur, _incomingPage;
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _fadePlan;
 
         void OnDestroy()
         {
-            if (_snapshot != null) { _snapshot.Release(); Destroy(_snapshot); }
+            foreach (var rt in new[] { _snapshot, _oldBlur, _newBlur, _incomingPage })
+                if (rt != null) { rt.Release(); Destroy(rt); }
+        }
+
+        // A soft blurred copy of a page picture, made on the graphics card: halved again and again (each
+        // step averages the pixels) down to 1/16 size, then shown smoothed over the whole screen.
+        static void BlurInto(Texture source, ref RenderTexture blurred)
+        {
+            int w = Mathf.Max(1, source.width / 16), h = Mathf.Max(1, source.height / 16);
+            if (blurred == null || blurred.width != w || blurred.height != h)
+            {
+                if (blurred != null) { blurred.Release(); Destroy(blurred); }
+                blurred = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB) { name = "CupBlur", filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+                blurred.Create();
+            }
+            Texture from = source;
+            RenderTexture step = null;
+            for (int k = 2; k <= 8; k *= 2)
+            {
+                var next = RenderTexture.GetTemporary(Mathf.Max(1, source.width / k), Mathf.Max(1, source.height / k), 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+                next.filterMode = FilterMode.Bilinear;
+                Graphics.Blit(from, next);
+                if (step != null) RenderTexture.ReleaseTemporary(step);
+                from = step = next;
+            }
+            Graphics.Blit(from, blurred);
+            if (step != null) RenderTexture.ReleaseTemporary(step);
         }
 
         // Draws the page's sliding parts as they are now into _snapshot (the fixed buttons, menus and the
         // cup column left out): the canvas is drawn once by a hidden camera, then goes back to normal.
-        bool CapturePage()
+        bool CapturePage() => CapturePage(ref _snapshot);
+
+        bool CapturePage(ref RenderTexture picture)
         {
             var canvas = GetComponent<Canvas>();
             if (canvas == null || page == null) return false;
             // The canvas's own size in pixels (the screen; in the editor the game view).
             int w = Mathf.Max(1, Mathf.RoundToInt(canvas.pixelRect.width)), h = Mathf.Max(1, Mathf.RoundToInt(canvas.pixelRect.height));
-            if (_snapshot == null || _snapshot.width != w || _snapshot.height != h)
+            if (picture == null || picture.width != w || picture.height != h)
             {
-                if (_snapshot != null) { _snapshot.Release(); Destroy(_snapshot); }
-                _snapshot = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB) { name = "CupPage" };
-                _snapshot.Create();
+                if (picture != null) { picture.Release(); Destroy(picture); }
+                picture = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB) { name = "CupPage" };
+                picture.Create();
             }
-            // Only what slides is in the picture: everything else is see-through for this one drawing.
+            // Only what slides is in the picture: everything else is left out of this one drawing.
             var keep = new HashSet<Transform>();
             foreach (var part in page)
                 for (Transform t = part; t != null && t != transform; t = t.parent) keep.Add(t);
-            var faded = new List<(CanvasGroup group, float alpha, bool added)>();
-            void Fade(Transform parent)
+            var culled = new List<(CanvasRenderer renderer, bool cull)>();
+            void Leave(Transform parent)
             {
                 foreach (Transform child in parent)
                 {
                     if (keep.Contains(child))
                     {
-                        if (System.Array.IndexOf(page, child as RectTransform) < 0) Fade(child); // a holder: fade its other children
+                        if (System.Array.IndexOf(page, child as RectTransform) < 0) Leave(child); // a holder: leave out its other children
                         continue;
                     }
                     if (!child.gameObject.activeInHierarchy) continue;
-                    bool added = !child.TryGetComponent(out CanvasGroup group);
-                    if (added) group = child.gameObject.AddComponent<CanvasGroup>();
-                    faded.Add((group, group.alpha, added));
-                    group.alpha = 0f;
+                    foreach (var r in child.GetComponentsInChildren<CanvasRenderer>())
+                    {
+                        culled.Add((r, r.cull));
+                        r.cull = true;
+                    }
                 }
             }
-            Fade(transform);
+            Leave(transform);
 
             var go = new GameObject("PageCamera");
             var cam = go.AddComponent<Camera>();
@@ -476,7 +506,7 @@ namespace SomeGame.UI
             if (UnityEngine.Rendering.RenderPipeline.SupportsRenderRequest(cam, request)) UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(cam, request);
             else cam.Render();
             cam.targetTexture = null;
-            Graphics.Blit(target, _snapshot);
+            Graphics.Blit(target, picture);
             RenderTexture.ReleaseTemporary(target);
             canvas.renderMode = mode;
             canvas.worldCamera = null;
@@ -485,12 +515,7 @@ namespace SomeGame.UI
             foreach (var other in FindObjectsByType<Canvas>(FindObjectsInactive.Exclude))
                 if (other != canvas && other.isRootCanvas && other.enabled) { other.enabled = false; other.enabled = true; }
             wipe.gameObject.SetActive(wipeShown);
-            foreach (var (group, alpha, added) in faded)
-            {
-                if (group == null) continue;
-                if (added) Destroy(group);
-                else group.alpha = alpha;
-            }
+            foreach (var (r, cull) in culled) if (r != null) r.cull = cull;
             Canvas.ForceUpdateCanvases();
             Destroy(go);
             return true;
@@ -617,11 +642,34 @@ namespace SomeGame.UI
             wipe.anchorMin = Vector2.zero; wipe.anchorMax = Vector2.one;
             wipe.offsetMin = wipe.offsetMax = Vector2.zero;
             wipeImage.texture = _snapshot;
-            foreach (var g in new UnityEngine.UI.Graphic[] { wipeBlur, wipeDim, wipeEdge, incomingBlur })
-                if (g != null) g.gameObject.SetActive(false);
+            // The old page blurs and dims away as the new cup comes in.
+            BlurInto(_snapshot, ref _oldBlur);
+            if (wipeBlur != null) { wipeBlur.texture = _oldBlur; wipeBlur.gameObject.SetActive(true); }
+            if (wipeDim != null) wipeDim.gameObject.SetActive(true);
+            if (wipeEdge != null) wipeEdge.gameObject.SetActive(false);
+            if (incomingBlur != null) incomingBlur.gameObject.SetActive(false);
             wipe.gameObject.SetActive(true);
             ShowCup(next, fadeAbove: true);
             SetWipe(0f);
+            if (incomingBlur != null) StartCoroutine(BlurIncoming(next));
+        }
+
+        // The new cup comes in blurred and sharpens as it settles. Its picture is taken a frame later (two
+        // pictures in one frame spoil the first one).
+        System.Collections.IEnumerator BlurIncoming(CupDefinition next)
+        {
+            yield return null;
+            if (_wipeFrom == null || _cup != next || incomingBlur == null) yield break;
+            float reveal = _reveal;
+            SetPage(0f);
+            bool ok = CapturePage(ref _incomingPage);
+            if (ok)
+            {
+                BlurInto(_incomingPage, ref _newBlur);
+                incomingBlur.texture = _newBlur;
+                incomingBlur.gameObject.SetActive(true);
+            }
+            SetWipe(reveal);
         }
 
         // <paramref name="reveal"/> canvas units of the new cup are in: the old picture has moved that far out
@@ -631,12 +679,30 @@ namespace SomeGame.UI
             float w = PageWidth, h = ((RectTransform)transform).rect.height;
             _reveal = Mathf.Clamp(reveal, 0f, w);
             _wipeCovering = _reveal / w;
-            var picture = wipeImage.rectTransform;
-            picture.anchorMin = picture.anchorMax = picture.pivot = new Vector2(0.5f, 0.5f);
-            picture.sizeDelta = new Vector2(w, h);
-            picture.localScale = Vector3.one;
-            picture.anchoredPosition = new Vector2(-_wipeDirection * _reveal, 0f);
-            SetPage(_wipeDirection * (w - _reveal), 1f, parallax: false);
+            // The old picture (sharp, its blurred copy and a dark veil over it) moves out together.
+            foreach (var g in new UnityEngine.UI.Graphic[] { wipeImage, wipeBlur, wipeDim })
+            {
+                if (g == null) continue;
+                var picture = g.rectTransform;
+                picture.anchorMin = picture.anchorMax = picture.pivot = new Vector2(0.5f, 0.5f);
+                picture.sizeDelta = new Vector2(w, h);
+                picture.localScale = Vector3.one;
+                picture.anchoredPosition = new Vector2(-_wipeDirection * _reveal, 0f);
+            }
+            if (wipeBlur != null) wipeBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(_wipeCovering * 2.2f));
+            if (wipeDim != null) wipeDim.color = new Color(0f, 0f, 0f, 0.35f * _wipeCovering);
+            float offset = _wipeDirection * (w - _reveal);
+            SetPage(offset, 1f, parallax: false);
+            if (incomingBlur != null && incomingBlur.gameObject.activeSelf)
+            {
+                // The blurred new page moves with it and fades out as it comes in: it sharpens.
+                var blurRt = incomingBlur.rectTransform;
+                blurRt.anchorMin = Vector2.zero; blurRt.anchorMax = Vector2.one;
+                blurRt.offsetMin = blurRt.offsetMax = Vector2.zero;
+                blurRt.anchoredPosition = new Vector2(offset, 0f);
+                blurRt.localScale = Vector3.one;
+                incomingBlur.color = new Color(1f, 1f, 1f, Mathf.Clamp01(1f - _wipeCovering * 1.15f));
+            }
             if (_fadePlan != null)
                 foreach (var (graphic, a, b) in _fadePlan) if (graphic != null) graphic.color = Color.Lerp(a, b, _wipeCovering);
         }
@@ -676,6 +742,8 @@ namespace SomeGame.UI
             if (!go) ShowCup(_wipeFrom, fadeAbove: false);
             wipe.gameObject.SetActive(false);
             wipeImage.texture = null;
+            if (wipeBlur != null) wipeBlur.texture = null;
+            if (incomingBlur != null) { incomingBlur.texture = null; incomingBlur.gameObject.SetActive(false); }
             SetPage(0f);
             bool open = CupList.IsPlayable(_cup);
             if (open) Refresh();
