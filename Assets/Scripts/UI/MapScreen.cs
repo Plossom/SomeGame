@@ -150,7 +150,6 @@ namespace SomeGame.UI
 
         void Start()
         {
-            _openedAt = Time.unscaledTime;
             // First launch (or after a reset): straight into the practice drive.
             if (GameSession.TutorialPending)
             {
@@ -463,57 +462,11 @@ namespace SomeGame.UI
             RenderTexture.ReleaseTemporary(other);
         }
 
-        // A blurred picture of each cup's page as it last stood on screen: a cup slides in as its own page,
-        // blurred, sharpening as it arrives (until a cup has been seen, its landscape stands in).
+        // A blurred picture of each cup's page as it last stood on screen (taken when you swipe away from it):
+        // a cup slides in as its own page, blurred, sharpening as it arrives (until then its landscape stands in).
         readonly Dictionary<CupDefinition, RenderTexture> _pictures = new();
 
         // Pictures the page (the cup column left out for that frame) once the screen shows just it.
-        bool _remembering;
-        float _openedAt = -1f;
-
-        System.Collections.IEnumerator RememberOnce()
-        {
-            _remembering = true;
-            yield return RememberPage();
-            _remembering = false;
-        }
-
-        System.Collections.IEnumerator RememberPage()
-        {
-            yield return null;
-            var cup = _cup;
-            if (cup == null || _wipeStarting || _wipeFrom != null) yield break;
-            var hidden = HideColumn();
-            yield return new WaitForEndOfFrame();
-            if (_wipeStarting || _wipeFrom != null || _cup != cup) { ShowColumn(hidden); yield break; }
-            var full = RenderTexture.GetTemporary(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
-            ScreenCapture.CaptureScreenshotIntoRenderTexture(full);
-            ShowColumn(hidden);
-            _pictures.TryGetValue(cup, out var picture);
-            BlurInto(full, ref picture);
-            _pictures[cup] = picture;
-            RenderTexture.ReleaseTemporary(full);
-        }
-
-        List<(CanvasGroup group, float alpha)> HideColumn()
-        {
-            var hidden = new List<(CanvasGroup, float)>();
-            if (fadeRoots == null) return hidden;
-            foreach (var root in fadeRoots)
-            {
-                if (root == null) continue;
-                if (!root.TryGetComponent(out CanvasGroup group)) group = root.gameObject.AddComponent<CanvasGroup>();
-                hidden.Add((group, group.alpha));
-                group.alpha = 0f;
-            }
-            return hidden;
-        }
-
-        static void ShowColumn(List<(CanvasGroup group, float alpha)> hidden)
-        {
-            foreach (var (group, alpha) in hidden) if (group != null) group.alpha = alpha;
-        }
-
         // A captured screen comes upside down where the graphics card counts rows from the top.
         static Rect CaptureUv => SystemInfo.graphicsUVStartsAtTop ? new Rect(0f, 1f, 1f, -1f) : new Rect(0f, 0f, 1f, 1f);
 
@@ -636,8 +589,9 @@ namespace SomeGame.UI
             StartCoroutine(BeginWipeRoutine(next, direction));
         }
 
-        // Pictures the current page as it is on screen (taken on the graphics card at the end of this frame,
-        // the cup column left out for that one frame), then puts the next cup on the page.
+        // Pictures the current page as it is on screen (taken on the graphics card at the end of this frame;
+        // the cup column in it slides away with the old page while the real one stays), then puts the next
+        // cup on the page.
         System.Collections.IEnumerator BeginWipeRoutine(CupDefinition next, int direction)
         {
             _wipeStarting = true;
@@ -648,7 +602,6 @@ namespace SomeGame.UI
             _wipeDirection = direction;
             _reveal = _revealVelocity = 0f;
             SetPage(0f);
-            var hidden = HideColumn();
             yield return new WaitForEndOfFrame();
 
             int w = Screen.width, h = Screen.height;
@@ -659,7 +612,6 @@ namespace SomeGame.UI
                 _snapshot.Create();
             }
             ScreenCapture.CaptureScreenshotIntoRenderTexture(_snapshot);
-            ShowColumn(hidden);
 
             _wipeFrom = _cup;
             _wipeFromSelected = _selected;
@@ -805,7 +757,6 @@ namespace SomeGame.UI
             _wipeTargetSlot = -1;
             _collapseAt = Time.unscaledTime + 0.9f; // folds back up after a moment
             _switching = false;
-            if (go) StartCoroutine(RememberPage());
             // Races of this cup that opened since you last looked unlock now.
             if (go && open && _pendingRaces != null && _pendingRaces.Count > 0) StartCoroutine(Celebrate(_pendingRaces, false));
             _pendingRaces = null;
@@ -980,14 +931,7 @@ namespace SomeGame.UI
             }
         }
 
-        void Update()
-        {
-            UpdateDots(true);
-            // A cup without a picture yet (the map just opened) gets one once the page has settled.
-            if (!_remembering && _openedAt >= 0f && _cup != null && !_pictures.ContainsKey(_cup) && !Busy && !_wipeStarting && !_springing
-                && Time.unscaledTime - _openedAt > 1.2f)
-                StartCoroutine(RememberOnce());
-        }
+        void Update() => UpdateDots(true);
 
         void LateUpdate() => FitWorld();
 
