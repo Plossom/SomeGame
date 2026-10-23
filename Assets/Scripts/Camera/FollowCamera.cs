@@ -26,8 +26,14 @@ namespace SomeGame.CameraRig
         [SerializeField, Range(0f, 0.5f)] float minCarScreenHeight = 0.44f;
         [SerializeField, Min(0f)] float lookAheadSmoothTime = 0.5f;
 
+        [Tooltip("How much further the camera pulls back at top speed, and again while boosting (a sense of speed).")]
+        [SerializeField, Range(0f, 0.3f)] float speedZoom = 0.07f;
+        [SerializeField, Range(0f, 0.3f)] float boostZoom = 0.06f;
+
         Camera _camera;
         Vector2 _focus, _focusVelocity, _lookAhead, _lookAheadVelocity;
+        SomeGame.Car.CarMovement _targetCar;
+        float _speedZoom = 1f, _speedZoomVelocity;
 
         /// <summary>Extra offset added after smoothing (camera shake).</summary>
         public Vector2 Offset { get; set; }
@@ -75,6 +81,15 @@ namespace SomeGame.CameraRig
             Vector2 desiredLookAhead = Vector2.ClampMagnitude(target.linearVelocity * lookAheadTime, maxLookAhead);
             desiredLookAhead.x *= horizontalLookAheadFactor;
             _lookAhead = Vector2.SmoothDamp(_lookAhead, desiredLookAhead, ref _lookAheadVelocity, lookAheadSmoothTime, Mathf.Infinity, dt);
+            // Faster (and boosting) the camera eases back a little, so speed is felt.
+            if (_targetCar == null || _targetCar.Body != target) _targetCar = target.GetComponent<SomeGame.Car.CarMovement>();
+            float wanted = 1f;
+            if (_targetCar != null && _targetCar.Stats != null)
+            {
+                float fraction = Mathf.Clamp01(target.linearVelocity.magnitude / Mathf.Max(1f, _targetCar.Stats.topSpeed));
+                wanted = 1f + speedZoom * fraction * fraction + (_targetCar.IsBoosting ? boostZoom : 0f);
+            }
+            _speedZoom = Mathf.SmoothDamp(_speedZoom, wanted, ref _speedZoomVelocity, 0.6f, Mathf.Infinity, dt);
             _focus = Vector2.SmoothDamp(_focus, (Vector2)target.transform.position, ref _focusVelocity, followSmoothTime, Mathf.Infinity, dt);
             Apply();
         }
@@ -84,7 +99,7 @@ namespace SomeGame.CameraRig
             Vector2 p = _focus + _lookAhead + framingOffset;
             // Keep the car at or above minCarScreenHeight: limit how far the camera sits above it.
             float carY = target != null ? target.transform.position.y : p.y;
-            float size = orthographicSize * SomeGame.Input.ControlSettings.CameraZoomFactor; // the player's zoom setting
+            float size = orthographicSize * SomeGame.Input.ControlSettings.CameraZoomFactor * _speedZoom; // the player's zoom setting, eased back with speed
             p.y = Mathf.Min(p.y, carY + size * (1f - 2f * minCarScreenHeight));
             p += Offset;
             transform.SetPositionAndRotation(new Vector3(p.x, p.y, transform.position.z), Quaternion.identity);

@@ -155,7 +155,12 @@ namespace SomeGame.Race
             return progress;
         }
 
-        void Start() => StartCoroutine(Countdown());
+        void Start()
+        {
+            // Rocket starts, slipstreams and overtakes for the player.
+            if (Player != null) Player.gameObject.AddComponent<RaceFeel>().Init(this);
+            StartCoroutine(Countdown());
+        }
 
         IEnumerator Countdown()
         {

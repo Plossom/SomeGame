@@ -111,26 +111,44 @@ namespace SomeGame.Track
             mesh.Quad(centre, right * (size * 0.5f), forward * (size * 0.5f), new Rect(0f, 0f, 1f, 1f));
         }
 
+        readonly bool[] _bankBroken = new bool[2];
+
         void River(TrackLayout.River river, MeshData waterMesh, MeshData bankMesh)
         {
-            var pts = river.points;
-            if (pts.Length < 2) return;
-            float half = river.width * 0.5f;
-            for (int i = 0; i < pts.Length; i++)
+            if (river.points.Length < 2) return;
+            // Every 2 m along the river, so the banks can stop right at a lake's shore.
+            var pts = new List<Vector2> { river.points[0] };
+            for (int k = 1; k < river.points.Length; k++)
             {
-                Vector2 dir = (pts[Mathf.Min(i + 1, pts.Length - 1)] - pts[Mathf.Max(i - 1, 0)]).normalized;
+                Vector2 a = river.points[k - 1], b = river.points[k];
+                int steps = Mathf.Max(1, Mathf.CeilToInt(Vector2.Distance(a, b) / 2f));
+                for (int j = 1; j <= steps; j++) pts.Add(Vector2.Lerp(a, b, j / (float)steps));
+            }
+            _bankBroken[0] = _bankBroken[1] = true;
+            float half = river.width * 0.5f;
+            for (int i = 0; i < pts.Count; i++)
+            {
+                Vector2 dir = (pts[Mathf.Min(i + 1, pts.Count - 1)] - pts[Mathf.Max(i - 1, 0)]).normalized;
                 Vector2 n = new(-dir.y, dir.x);
                 Vector2 p = pts[i];
-                // Water: one strip; banks: a strip on each side fading out into the grass (u 0 → 1).
+                // Water: one strip; banks: a strip on each side fading out into the grass (u 0 → 1). Where the
+                // river runs into a lake its banks go up to the lake's water, where the lake's shore takes over.
                 waterMesh.StripPoint(p - n * half, p + n * half, WorldUv(p - n * half), WorldUv(p + n * half), i > 0);
-                bankMesh.StripPoint(p + n * (half - 0.05f), p + n * (half + bankWidth), new Vector2(0f, i), new Vector2(0.96f, i), i > 0, 0);
-                bankMesh.StripPoint(p - n * (half - 0.05f), p - n * (half + bankWidth), new Vector2(0f, i), new Vector2(0.96f, i), i > 0, 1);
+                for (int side = 0; side < 2; side++)
+                {
+                    float sign = side == 0 ? 1f : -1f;
+                    Vector2 inner = p + sign * n * (half - 0.05f), outer = p + sign * n * (half + bankWidth);
+                    bool inLake = track.LakeDistance(inner) < 0.2f || track.LakeDistance(outer) < 0f;
+                    if (inLake) { _bankBroken[side] = true; continue; }
+                    bankMesh.StripPoint(inner, outer, new Vector2(0f, i), new Vector2(0.96f, i), i > 0 && !_bankBroken[side], side);
+                    _bankBroken[side] = false;
+                }
             }
         }
 
         void Lake(TrackLayout.Lake lake, MeshData waterMesh, MeshData bankMesh)
         {
-            const int segments = 48;
+            const int segments = 96;
             var rot = Quaternion.Euler(0f, 0f, lake.angle);
             Vector2 Edge(float a, float grow) =>
                 lake.center + (Vector2)(rot * new Vector2(Mathf.Cos(a) * (lake.radii.x + grow), Mathf.Sin(a) * (lake.radii.y + grow)));
@@ -140,6 +158,8 @@ namespace SomeGame.Track
                 Vector2 p0 = Edge(a0, 0f), p1 = Edge(a1, 0f);
                 waterMesh.Triangle(lake.center, p1, p0, WorldUv(lake.center), WorldUv(p1), WorldUv(p0));
                 Vector2 q0 = Edge(a0, bankWidth), q1 = Edge(a1, bankWidth);
+                // Where a river flows in, the shore opens for it (the river's own banks run up to the water).
+                if (track.RiverDistance((p0 + p1 + q0 + q1) * 0.25f) < bankWidth) continue;
                 bankMesh.QuadPoints(p0, p1, q1, q0, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0.96f, 1f), new Vector2(0.96f, 0f));
             }
         }

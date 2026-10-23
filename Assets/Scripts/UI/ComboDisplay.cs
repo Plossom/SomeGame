@@ -160,6 +160,12 @@ namespace SomeGame.UI
             comboRoot.gameObject.SetActive(false);
         }
 
+        /// <summary>Shows a racing moment (rocket start, slipstream, overtake) like a trick; it counts in combos.</summary>
+        public void Announce(string text, Color color)
+        {
+            if (race != null && race.State == RaceState.Racing) Trick(text, color);
+        }
+
         void Trick(string text, Color color)
         {
             _combo = Time.time - _lastTrickAt <= comboWindow ? _combo + 1 : 1;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level08
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
   displayName: Lagoon Leap
-  chapter: "VALLEY CUP \xB7 RACE 9"
+  chapter: "VALLEY CUP \xB7 RACE 8"
   track: {fileID: 11400000, guid: a45cf6bff5b64b1bb958e015a5b1436b, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: d23a5565c2fbc49459c7ec75832ab65b, type: 3}
@@ -23,7 +23,7 @@ MonoBehaviour:
   rivalCount: 7
   rivalSpeedScale: 0.99
   rivalCornerScale: 1.1
-  starsRequired: 16
+  starsRequired: 14
   starTimes:
   - 138
   - 123

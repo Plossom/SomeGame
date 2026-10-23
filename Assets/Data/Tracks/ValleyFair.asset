@@ -365,6 +365,9 @@ MonoBehaviour:
     size: 36
   bankMaterial: {fileID: 2100000, guid: a655625dfb973417bb8d666b2a38e344, type: 2}
   sceneryMaterial: {fileID: 2100000, guid: a287821da9ec34b80997806bd7dc43ef, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 0
+  noSnowfall: 0
   waterWorld: 0
   biome: 0
   gaps:
@@ -375,12 +378,7 @@ MonoBehaviour:
     raised: 0
     offset: 0
   elevatedRoad: 0
-  bouncers:
-  - position: {x: 149.52061, y: 64.11898}
-    radius: 1.8
-    airTime: 1
-    speedBoost: 1.12
-    target: {x: 127.946976, y: 100.41581}
+  bouncers: []
   geysers: []
   sweepers: []
   skyLife: 0.7
@@ -414,10 +412,6 @@ MonoBehaviour:
     lateral: 2
     length: 4
     width: 3.2
-  - distance: 605
-    lateral: 0
-    length: 4
-    width: 3.2
   - distance: 722
     lateral: -1.8
     length: 4
@@ -426,6 +420,7 @@ MonoBehaviour:
     lateral: 1.8
     length: 4
     width: 3.2
+  icePatches: []
   scenery:
   - name: Stall
     uv:

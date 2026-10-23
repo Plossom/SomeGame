@@ -102,7 +102,7 @@ namespace SomeGame.UI
         {
             new(40f, -184f), new(190f, 345f), new(255f, 590f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
             new(800f, 1346f), new(500f, 1483f), new(410f, 1656f),
-        }, 1, 8, 9);
+        }, 1, 8, 8);
 
         /// <summary>The mountain road: comes in from the bottom left and climbs in switchbacks towards the peaks.</summary>
         public static readonly MapRoad Winter = new(new Vector2[]

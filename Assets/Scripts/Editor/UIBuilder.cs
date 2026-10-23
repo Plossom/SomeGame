@@ -1273,7 +1273,14 @@ namespace SomeGame.EditorTools
                     ("dashPanelSprite", Sprite("DashPanel")));
             var features = Object.FindFirstObjectByType<SomeGame.Track.TrackFeatures>();
             if (features != null) Configure(features, ("snowShore", Mat("SnowShore")));
-            var bankLayer = Layer("Banks", "IceWall", -47);
+            // The banked walls have their own layer; "Banks" is the river banks' layer (TrackFeatures), in sand.
+            var bankLayer = Layer("BankWalls", "IceWall", -47);
+            var riverBanks = track.transform.Find("Banks");
+            if (riverBanks != null && riverBanks.TryGetComponent(out MeshRenderer riverBankRenderer))
+            {
+                riverBankRenderer.sharedMaterial = Mat("Sand");
+                riverBankRenderer.sortingOrder = -45;
+            }
             var banks = track.GetComponent<SomeGame.Track.TrackBanks>();
             if (banks == null) banks = track.gameObject.AddComponent<SomeGame.Track.TrackBanks>();
             Configure(banks, ("track", track), ("walls", bankLayer));
