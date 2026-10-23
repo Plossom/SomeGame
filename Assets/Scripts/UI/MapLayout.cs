@@ -16,8 +16,8 @@ namespace SomeGame.UI
         /// <summary>Race stops on this road (the cup's races, or its races and a "coming soon" stop).</summary>
         public int Stops { get; }
 
-        /// <summary>Moves just the first stop along the road (negative: further down, towards the bottom).</summary>
-        public float FirstStopShift { get; set; }
+        /// <summary>Nudges single stops along the road (by stop index; negative: further down, towards the bottom).</summary>
+        public float[] StopShifts { get; set; }
         List<Vector2> _samples;
         List<float> _distances;
 
@@ -45,7 +45,8 @@ namespace SomeGame.UI
             float first = _distances[_firstStopPoint * Steps], last = _distances[_lastStopPoint * Steps];
             int stops = Stops;
             float d = Mathf.Lerp(first, last, stops > 1 ? index / (float)(stops - 1) : 0f);
-            return index == 0 ? Mathf.Max(0f, d + FirstStopShift) : d;
+            if (StopShifts != null && index < StopShifts.Length) d += StopShifts[index];
+            return Mathf.Max(0f, d);
         }
 
         public Vector2 StopPosition(int index) => PointAt(StopDistance(index), out _);
@@ -107,7 +108,7 @@ namespace SomeGame.UI
             new(40f, -184f), new(170f, 330f), new(470f, 400f), new(830f, 520f), new(860f, 660f), new(560f, 770f),
             new(230f, 860f), new(260f, 1010f), new(600f, 1060f), new(880f, 1150f), new(800f, 1346f), new(500f, 1483f),
             new(410f, 1656f),
-        }, 1, 12, 8);
+        }, 1, 12, 8) { StopShifts = new[] { 0f, 0f, 0f, -55f, 60f } }; // 4 and 5 apart round the left bend
 
         /// <summary>The mountain road: comes in from the bottom left and climbs in switchbacks towards the peaks.</summary>
         public static readonly MapRoad Winter = new(new Vector2[]
