@@ -28,7 +28,7 @@ namespace SomeGame.Race
         [SerializeField, Min(0f)] float carryBackLead = 5f;
         [Header("Staying on the track")]
         [Tooltip("Metres a car may drive off the road in one go (on the ground; jumps don't count) before it is set back to where it left the road.")]
-        [SerializeField, Min(1f)] float offRoadLimit = 12f;
+        [SerializeField, Min(1f)] float offRoadLimit = 15f;
         [Tooltip("Seconds of driving the wrong way before the car is set back to the furthest point it had reached.")]
         [SerializeField, Min(0.2f)] float wrongWaySetBack = 1.2f;
         [Tooltip("Progress may not jump ahead by more than this (metres) without a jump: no hopping across to another part of the road.")]
