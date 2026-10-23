@@ -101,12 +101,13 @@ namespace SomeGame.UI
 
         // The landscape pictures are stretched upward by MapArtGenerator.Stretch; these points include it.
 
-        /// <summary>The forest road: winds up from the bottom past the lake and ends at the last race.</summary>
+        /// <summary>The forest road: switchbacks up from the bottom (like the mountain road), past the lake to the last race.</summary>
         public static readonly MapRoad Valley = new(new Vector2[]
         {
-            new(40f, -184f), new(190f, 345f), new(255f, 590f), new(330f, 828f), new(640f, 1012f), new(890f, 1104f),
-            new(800f, 1346f), new(500f, 1483f), new(410f, 1656f),
-        }, 1, 8, 8) { FirstStopShift = -35f };
+            new(40f, -184f), new(170f, 330f), new(470f, 400f), new(830f, 520f), new(860f, 660f), new(560f, 770f),
+            new(230f, 860f), new(260f, 1010f), new(600f, 1060f), new(880f, 1150f), new(800f, 1346f), new(500f, 1483f),
+            new(410f, 1656f),
+        }, 1, 12, 8);
 
         /// <summary>The mountain road: comes in from the bottom left and climbs in switchbacks towards the peaks.</summary>
         public static readonly MapRoad Winter = new(new Vector2[]
