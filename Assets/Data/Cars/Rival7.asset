@@ -22,7 +22,7 @@ MonoBehaviour:
   grip: 7
   highSpeedGripLoss: 0.5
   slideThreshold: 3
-  offRoadSlowdown: 0.4
+  offRoadSlowdown: 0.33
   offRoadDeceleration: 22
   offRoadGrip: 0.6
   driftMinSpeed: 10

@@ -18,7 +18,7 @@ namespace SomeGame.UI
         [Tooltip("Optional background shown and hidden together with the lap flash.")]
         [SerializeField] GameObject lapFlashRoot;
         [SerializeField, Min(0f)] float lapFlashSeconds = 2.5f;
-        [Tooltip("Blinking warning: WRONG WAY or MISSED CHECKPOINT.")]
+        [Tooltip("Blinking warning: WRONG WAY or BACK ON THE ROAD! (off-road for too long).")]
         [SerializeField, FormerlySerializedAs("wrongWayLabel")] TMP_Text warningLabel;
 
         static readonly string Muted = Theme.Html(Theme.Stone);
@@ -55,7 +55,7 @@ namespace SomeGame.UI
             {
                 string warning = race.State != RaceState.Racing ? null
                     : player.IsWrongWay ? "WRONG WAY"
-                    : player.MissedCheckpoint || player.CarryingBack && !player.CarryingFromWater ? "MISSED CHECKPOINT"
+                    : player.OffRoadShare > 0.35f ? "BACK ON THE ROAD!"
                     : null;
                 bool show = warning != null;
                 if (warningLabel.gameObject.activeSelf != show) warningLabel.gameObject.SetActive(show);

@@ -21,8 +21,12 @@ namespace SomeGame.Race
         readonly List<SpriteRenderer[]> _gates = new();
         int _highlighted = -1;
 
+        [Tooltip("Show the posts. Off: the track rules (off-road limit, wrong way, no hopping across) keep cars on course, so no gates are needed.")]
+        [SerializeField] bool showGates;
+
         void Start()
         {
+            if (!showGates) { enabled = false; return; }
             for (int k = 0; k < track.CheckpointCount; k++)
             {
                 float d = track.CheckpointDistance(k);

@@ -6,9 +6,11 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>
-    /// Per-car checkpoint and lap tracking, derived from the track data via the car's
-    /// <see cref="TrackSensor"/>. Checkpoints count only in order; checkpoint 0 is the start line.
-    /// Cars start just behind the line, so the first crossing begins lap 1 and is not a lap.
+    /// Per-car lap tracking, derived from the track data via the car's <see cref="TrackSensor"/>: progress is
+    /// counted in invisible steps (checkpoints, in order; 0 is the start line). Cars start just behind the
+    /// line, so the first crossing begins lap 1 and is not a lap. The track rules keep every car on course:
+    /// too far off the road in one go, the wrong way, or hopping across to another part of the road, and the
+    /// car is carried back.
     /// </summary>
     [RequireComponent(typeof(TrackSensor))]
     public class RaceProgress : MonoBehaviour
@@ -24,6 +26,15 @@ namespace SomeGame.Race
         [SerializeField, Min(0f)] float carryBackDelay = 0.35f;
         [Tooltip("Units before the missed checkpoint where the car is set down again.")]
         [SerializeField, Min(0f)] float carryBackLead = 5f;
+        [Header("Staying on the track")]
+        [Tooltip("Metres a car may drive off the road in one go (on the ground; jumps don't count) before it is set back to where it left the road.")]
+        [SerializeField, Min(1f)] float offRoadLimit = 12f;
+        [Tooltip("Seconds of driving the wrong way before the car is set back to the furthest point it had reached.")]
+        [SerializeField, Min(0.2f)] float wrongWaySetBack = 1.2f;
+        [Tooltip("Progress may not jump ahead by more than this (metres) without a jump: no hopping across to another part of the road.")]
+        [SerializeField, Min(2f)] float skipLimit = 12f;
+        [Tooltip("Share of its top speed a car is set down with after being set back (the penalty).")]
+        [SerializeField, Range(0f, 1f)] float setBackSpeed = 0.35f;
 
         TrackSensor _sensor;
         Rigidbody2D _body;
@@ -34,6 +45,7 @@ namespace SomeGame.Race
         bool _tracking;
         bool _rival;
         float _missedTimer;
+        float _offRoadRun, _leftRoadAt, _furthest;
         readonly List<float> _lapTimes = new();
 
         public event Action<RaceProgress, float> LapCompleted;
@@ -49,6 +61,9 @@ namespace SomeGame.Race
         public bool MissedCheckpoint =>
             _tracking && !IsFinished && !(_car != null && _car.IsAirborne) && // mid-jump: the landing credits what was flown over
             Circuit.Path.DeltaDistance(Circuit.CheckpointDistance(NextCheckpoint), _sensor.Current.Distance) > missedCheckpointMargin;
+
+        /// <summary>How much of the allowed off-road stretch is used up (0-1): the warning grows, then the car is set back.</summary>
+        public float OffRoadShare => _offRoadRun / offRoadLimit;
 
         /// <summary>True while the car has been driving against the track direction for a moment.</summary>
         public bool IsWrongWay => _wrongWayTimer >= wrongWayDelay;
@@ -92,7 +107,8 @@ namespace SomeGame.Race
             _lapTimes.Clear();
             _lapStartTime = startTime;
             _sensor.Sample();
-            _lastDistance = _sensor.Current.Distance;
+            _lastDistance = _furthest = _sensor.Current.Distance;
+            _offRoadRun = 0f;
             _tracking = true;
         }
 
@@ -138,15 +154,56 @@ namespace SomeGame.Race
             {
                 float toCheckpoint = path.DeltaDistance(_lastDistance, Circuit.CheckpointDistance(NextCheckpoint));
                 // Riding a banked wall or taking another way round counts as passing between the posts.
-                bool betweenPosts = Mathf.Abs(_sensor.Current.Lateral) <= Circuit.OffRoadAt(distance) + gateMargin || _sensor.OnBank || _sensor.Branch >= 0;
+                // No gates any more: anywhere a car may legally be (the road, or a short way off it) counts.
+                bool betweenPosts = Mathf.Abs(_sensor.Current.Lateral) <= Circuit.OffRoadAt(distance) + gateMargin + offRoadLimit || _sensor.OnBank || _sensor.Branch >= 0;
                 if (moved > 0f && toCheckpoint > 0f && toCheckpoint <= moved && betweenPosts)
                     PassCheckpoint();
             }
             // Rivals never turn back: one that went past a checkpoint beside the road (a wild landing) gets it.
             for (int guard = 0; _rival && guard < 3 && MissedCheckpoint && Mathf.Abs(_sensor.Current.Lateral) <= Circuit.OffRoadAt(distance); guard++)
                 PassCheckpoint();
+            StayOnTrack(distance, moved, Time.fixedDeltaTime);
             CarryBackIfMissed(Time.fixedDeltaTime);
             _lastDistance = distance;
+        }
+
+        // The rules of the track: not too far off the road in one go, not the wrong way, no hopping across to
+        // another part of the road. Breaking one, the car is lifted and carried back (and set down slowly).
+        void StayOnTrack(float distance, float moved, float dt)
+        {
+            if (_car == null || CarryingBack) { _offRoadRun = 0f; return; }
+            var path = Circuit.Path;
+            bool grounded = !_car.IsAirborne;
+            // The furthest point reached on the way round (where a wrong-way drive started).
+            if (grounded && !_sensor.Jumped && moved > 0f && moved < 25f && path.DeltaDistance(_furthest, distance) > 0f
+                && path.DeltaDistance(_furthest, distance) < 40f)
+                _furthest = distance;
+            if (!grounded) return; // jumps and flights are fine
+            // Hopped across to another part of the road (or far ahead): back to where it was.
+            if (_sensor.Jumped && moved > skipLimit)
+            {
+                SetBack(_lastDistance);
+                return;
+            }
+            bool offRoad = _sensor.IsOffRoad && !_car.OnRamp && !Circuit.InRoom(_body.position);
+            if (offRoad)
+            {
+                if (_offRoadRun <= 0f) _leftRoadAt = _lastDistance;
+                _offRoadRun += _body.linearVelocity.magnitude * dt;
+                if (_offRoadRun > offRoadLimit) { SetBack(_leftRoadAt); return; }
+            }
+            else _offRoadRun = 0f;
+            if (_wrongWayTimer >= wrongWaySetBack) SetBack(_furthest);
+        }
+
+        void SetBack(float distance)
+        {
+            _offRoadRun = 0f;
+            _wrongWayTimer = 0f;
+            var pose = Circuit.RespawnBefore(distance, 1f);
+            float top = _car.Stats != null ? _car.Stats.topSpeed : 18f;
+            if (!_car.CarryBack(pose, top * setBackSpeed)) _car.Respawn(pose);
+            _furthest = Circuit.Path.Project(pose.position).Distance;
         }
 
         /// <summary>
