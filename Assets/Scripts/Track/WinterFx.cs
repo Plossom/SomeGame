@@ -68,9 +68,9 @@ namespace SomeGame.Track
                 bool show = car.isActiveAndEnabled && !car.IsAirborne && car.gameObject.activeInHierarchy;
                 float speed = car.Body.linearVelocity.magnitude;
                 float top = car.Stats != null ? car.Stats.topSpeed : 18f;
-                float rate = show ? Mathf.Clamp01((speed - 3f) / top) * (_snowmobiles ? 34f : 18f) : 0f;
-                if (show && car.IsDrifting) rate += _snowmobiles ? 60f : 35f; // a big plume in the drift
-                if (show && car.IsOffRoad) rate += 25f;                      // deep snow off the road
+                float rate = show ? Mathf.Clamp01((speed - 5f) / top) * (_snowmobiles ? 10f : 6f) : 0f;
+                if (show && car.IsDrifting) rate += _snowmobiles ? 18f : 10f; // a plume in the drift
+                if (show && car.IsOffRoad) rate += 8f;                       // deep snow off the road
                 emission.rateOverTime = rate;
             }
             if (_camera == null || _glitter == null) return;
@@ -105,22 +105,22 @@ namespace SomeGame.Track
             var main = system.main;
             main.startLifetime = new ParticleSystem.MinMaxCurve(0.35f, 0.75f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(1.5f, 4f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.35f, 0.8f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.25f, 0.55f);
             main.startColor = Powder;
             var shape = system.shape;
             shape.shapeType = ParticleSystemShapeType.Cone;
             shape.angle = 35f;
             shape.radius = 0.35f;
             shape.rotation = new Vector3(90f, 0f, 0f); // backwards (the car faces +y)
-            Grow(system, 2.2f);
-            Fade(system, 0.85f);
+            Grow(system, 1.8f);
+            Fade(system, 0.6f);
             return system;
         }
 
         void Puff(SomeGame.Car.CarMovement car)
         {
             foreach (var (c, spray) in _sprays)
-                if (c == car && spray != null) spray.Emit(_snowmobiles ? 26 : 16);
+                if (c == car && spray != null) spray.Emit(_snowmobiles ? 10 : 6);
         }
 
         // Tiny sparkles winking on the snow all over the view.

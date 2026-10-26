@@ -939,7 +939,7 @@ MonoBehaviour:
     width: 3.2
   icePatches:
   - position: {x: -61.513317, y: 39.75838}
-    size: {x: 16, y: 12}
+    size: {x: 26, y: 12}
     angle: -80.92912
   scenery:
   - name: FrostBush

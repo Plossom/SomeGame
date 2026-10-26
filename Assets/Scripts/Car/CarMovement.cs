@@ -77,6 +77,9 @@ namespace SomeGame.Car
         public bool IsWallRiding => sensor != null && sensor.OnBank && !IsAirborne && _body.linearVelocity.magnitude >= stats.wallRideSpeed;
         /// <summary>On an ice branch (frozen lake): little grip, the car slides.</summary>
         public bool OnIce => sensor != null && sensor.OnIce && !IsAirborne;
+        /// <summary>On a patch of glare ice on the road: the tail swings out side to side (steer against it).</summary>
+        public bool OnIcePatch => sensor != null && sensor.Track != null && !IsAirborne && sensor.Track.OnIcePatch(_body.position);
+        float _wobbleTime, _wobblePhase;
         /// <summary>Set while the car is on a shortcut ramp beside the road: the ramp counts as road.</summary>
         public bool OnRamp { get; set; }
 
@@ -203,6 +206,7 @@ namespace SomeGame.Car
                 sidewaysSpeed = 0f;
             }
             else Steer(steer, forwardSpeed, dt);
+            Fishtail(forwardSpeed, ref sidewaysSpeed, dt);
             _calmTimer = Mathf.Max(0f, _calmTimer - dt);
             if (throttle < 0f)
                 forwardSpeed = Mathf.MoveTowards(forwardSpeed, 0f, stats.brakeDeceleration * -throttle * dt);
@@ -230,6 +234,23 @@ namespace SomeGame.Car
             SidewaysSpeed = sidewaysSpeed;
         }
 
+        // Glare ice: the tail swings out, left and right, harder the faster the car goes; the steering only
+        // half answers, so the driver has to catch every swing to keep the car pointing where it should.
+        void Fishtail(float forwardSpeed, ref float sidewaysSpeed, float dt)
+        {
+            if (!OnIcePatch)
+            {
+                _wobbleTime = 0f;
+                return;
+            }
+            if (_wobbleTime <= 0f) _wobblePhase = UnityEngine.Random.value < 0.5f ? 0f : Mathf.PI; // first swing to either side
+            _wobbleTime += dt;
+            float speed = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(1f, stats.topSpeed));
+            float swing = Mathf.Sin(_wobbleTime * Mathf.PI * 2f * 1.5f + _wobblePhase) * Mathf.Clamp01(_wobbleTime * 4f);
+            _body.angularVelocity = _body.angularVelocity * 0.4f + swing * 210f * speed;
+            sidewaysSpeed += -swing * 14f * speed * dt; // the tail slides out with it
+        }
+
         void Steer(Vector2 direction, float forwardSpeed, float dt)
         {
             if (direction.sqrMagnitude < 0.0001f)
@@ -243,7 +264,7 @@ namespace SomeGame.Car
             float speedFactor = Mathf.Lerp(stats.standstillTurnFactor, 1f,
                 Mathf.Clamp01(Mathf.Abs(forwardSpeed) / stats.fullTurnSpeed));
             float recovery = _hitTimer > 0f ? 0.3f : 1f;
-            float maxStep = stats.turnRate * speedFactor * recovery * dt;
+            float maxStep = stats.turnRate * speedFactor * recovery * (OnIcePatch ? 0.45f : 1f) * dt; // glare ice: the steering only half answers
             // Calm phase after a drift: turn smoothly towards the stick (no snapping, no overshoot).
             if (_calmTimer > 0f) maxStep = Mathf.Min(maxStep, Mathf.Abs(delta) * stats.driftCalmSteer * dt);
             _body.angularVelocity = Mathf.Clamp(delta, -maxStep, maxStep) / dt;
