@@ -22,6 +22,9 @@ namespace SomeGame.Car
         CarMovement _car;
         TrailRenderer[] _active;
 
+        /// <summary>The marks' colour from now on (pale ruts on snow instead of dark rubber).</summary>
+        public Color Tint { get => color; set => color = value; }
+
         void Awake()
         {
             _car = GetComponent<CarMovement>();

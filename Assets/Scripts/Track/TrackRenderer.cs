@@ -147,6 +147,14 @@ namespace SomeGame.Track
             if (scenery != null && own != null) scenery.GetComponent<Renderer>().sharedMaterial = own;
             if (snowfall != null && Application.isPlaying) snowfall.SetActive(snow && (track.Layout == null || !track.Layout.noSnowfall));
             if (Application.isPlaying) ApplyVehicle(track.Layout != null ? track.Layout.vehicle : TrackLayout.Vehicle.Car);
+            // Powder spray, pale ruts, glitter and gusts on the snow (not on a winter night, which has its own).
+            if (Application.isPlaying)
+            {
+                bool fx = snow && track.Layout != null && !track.Layout.dusk;
+                var winter = GetComponent<WinterFx>();
+                if (fx && winter == null) gameObject.AddComponent<WinterFx>().Init(null, track.Layout.vehicle == TrackLayout.Vehicle.Snowmobile);
+                else if (!fx && winter != null) Destroy(winter);
+            }
         }
 
         // Every car (player, rivals, online puppets) takes this track's vehicle: its body, details, shadow

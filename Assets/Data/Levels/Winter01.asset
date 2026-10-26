@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 12598919c42c64f7d921ff00d10a4f14, type: 3}
   laps: 3
-  description: 'Three sections through the snow: down the village street past the Christmas market (or bounce up and race over the rooftops), up the ski slope between the slalom gates, ride the ice wall and fly the ski jump, then round the frozen lake past the penguins (or slide straight across the ice).'
+  description: 'Three laps round the snowy village on snowmobiles: along the Christmas market, ride the ice wall round the long sweep below the ski slope, past the big Christmas tree, and mind the ice by the frozen pond!'
   difficulty: 1
   rivalCount: 7
   rivalSpeedScale: 0.87
   rivalCornerScale: 1
   starsRequired: 0
   starTimes:
-  - 77
-  - 68
-  - 65
+  - 104
+  - 93
+  - 86
