@@ -19,7 +19,7 @@ namespace SomeGame.Track
         [SerializeField] MeshFilter lakeBanks;
         [Tooltip("Lake shore on winter tracks (instead of sand).")]
         [SerializeField] Material snowShore;
-        Material _sandShore;
+        Material _sandShore, _sandBank;
         [Tooltip("White arrows on the road shortly before every ramp.")]
         [SerializeField] MeshFilter arrows;
         [SerializeField, Min(0.5f)] float arrowSize = 1.8f;
@@ -93,6 +93,13 @@ namespace SomeGame.Track
             }
             Assign(ramps, r.ToMesh("Ramps"));
             Assign(banks, b.ToMesh("Banks"));
+            // River banks: sand, snow on winter tracks (like the lake shores).
+            var bankRenderer = banks != null ? banks.GetComponent<MeshRenderer>() : null;
+            if (bankRenderer != null)
+            {
+                if (_sandBank == null) _sandBank = bankRenderer.sharedMaterial;
+                bankRenderer.sharedMaterial = layout.biome == TrackLayout.Biome.Snow && snowShore != null ? snowShore : _sandBank;
+            }
 
             var o = new MeshData();
             foreach (var spot in layout.oil)

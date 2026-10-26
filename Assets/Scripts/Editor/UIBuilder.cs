@@ -1270,7 +1270,7 @@ namespace SomeGame.EditorTools
             var hazards = Object.FindAnyObjectByType<SomeGame.Track.TrackHazards>();
             if (hazards != null)
                 Configure(hazards, ("snowballSprite", Sprite("Snowball")), ("jumpPadSprite", Sprite("JumpPad")), ("penguinSprite", Sprite("Penguin")),
-                    ("dashPanelSprite", Sprite("DashPanel")));
+                    ("dashPanelSprite", Sprite("DashPanel")), ("snowPileSprite", Sprite("SnowPile")));
             var features = Object.FindFirstObjectByType<SomeGame.Track.TrackFeatures>();
             if (features != null) Configure(features, ("snowShore", Mat("SnowShore")));
             // The banked walls have their own layer; "Banks" is the river banks' layer (TrackFeatures), in sand.

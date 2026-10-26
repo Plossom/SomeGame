@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 087d39038291043538d290130c0c0c0d, type: 3}
   laps: 3
-  description: 'Up the mountain in three sections: through the ski valley past the ice-fishing holes (or take the forest path), up the switchbacks of the pass under the gondola, ride the ice wall and leap the crevasse, then slide through the hall of the ice palace and race down home. Somewhere on the way down a pad flies you across a bend.'
+  description: 'Three laps up to the glacier on snowmobiles: blast through the snow piles (or dodge them), past the reindeer and the ice sculptures, round the hairpin onto glare ice, mind the yeti''s snowballs and jump the frozen creek home!'
   difficulty: 2
   rivalCount: 7
   rivalSpeedScale: 0.9
   rivalCornerScale: 1
   starsRequired: 22
   starTimes:
-  - 83
-  - 71
-  - 66
+  - 130
+  - 118
+  - 112

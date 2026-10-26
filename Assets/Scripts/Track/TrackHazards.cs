@@ -37,6 +37,8 @@ namespace SomeGame.Track
         [SerializeField] Sprite trampolineSprite;
         [SerializeField, Min(0.3f)] float penguinSize = 2f;
         [SerializeField] Sprite dashPanelSprite;
+        [Tooltip("A heap of snow on the road (SnowPiles).")]
+        [SerializeField] Sprite snowPileSprite;
         [SerializeField] Material particleMaterial;
         [Tooltip("Seconds of bubbling before a fish leaps.")]
         [SerializeField, Min(0f)] float geyserWarning = 0.7f;
@@ -190,6 +192,15 @@ namespace SomeGame.Track
                     Vector2 size = dashPanelSprite.bounds.size;
                     sr.transform.localScale = new Vector3(panel.width / size.x, panel.length / size.y, 1f);
                 }
+
+            // Heaps of snow to blast through.
+            if (layout.snowPiles != null && layout.snowPiles.Count > 0 && Application.isPlaying)
+            {
+                var go = new GameObject("SnowPiles");
+                go.transform.SetParent(transform, false);
+                go.AddComponent<SnowPiles>().Init(track, snowPileSprite, particleMaterial, sortingOrder + 1);
+                _spawned.Add(go);
+            }
         }
 
         void FixedUpdate()

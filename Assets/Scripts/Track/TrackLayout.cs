@@ -331,6 +331,18 @@ namespace SomeGame.Track
         public List<DashPanel> dashPanels = new();
         [Tooltip("Patches of glare ice on the road (world positions): slippery, little grip like a frozen lake.")]
         public List<IcePatch> icePatches = new();
+        [Tooltip("Heaps of snow on the road: blast through one and it bursts into powder (you lose a little speed); it builds up again.")]
+        public List<SnowPile> snowPiles = new();
+
+        [Serializable]
+        public class SnowPile
+        {
+            [Tooltip("Lap distance.")]
+            public float distance;
+            [Tooltip("Sideways from the centre line (positive = left).")]
+            public float lateral;
+            [Min(0.5f)] public float radius = 1.6f;
+        }
 
         [Tooltip("Scenery for this track. Empty = the scene's default scenery.")]
         public List<TrackScenery.Kind> scenery = new();
