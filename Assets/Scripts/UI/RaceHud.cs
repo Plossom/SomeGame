@@ -21,7 +21,7 @@ namespace SomeGame.UI
         [Tooltip("Blinking warning: WRONG WAY or BACK ON THE ROAD! (off-road for too long).")]
         [SerializeField, FormerlySerializedAs("wrongWayLabel")] TMP_Text warningLabel;
 
-        static readonly string Muted = Theme.Html(Theme.Stone);
+        static string Muted => Theme.Html(Theme.Stone);
 
         float _hideFlashAt;
 
@@ -32,6 +32,18 @@ namespace SomeGame.UI
 
         void Start()
         {
+            // The race screens (HUD, countdown, combos, results...) take the colours of the race's cup; they are
+            // built in the Valley colours. The pause menu keeps its own (KeepPalette); online uses its own screens.
+            if (!GameSession.Online && race != null)
+            {
+                var palette = Theme.OfLevel(race.Level);
+                if (palette != Theme.Valley)
+                {
+                    Theme.Use(palette);
+                    foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                        if (canvas.isRootCanvas) Theme.Recolor(canvas.transform, Theme.Valley);
+                }
+            }
             LapFlash.SetActive(false);
             if (warningLabel != null) warningLabel.gameObject.SetActive(false);
         }
