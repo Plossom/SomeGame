@@ -77,7 +77,7 @@ namespace SomeGame.Car
         public bool IsWallRiding => sensor != null && sensor.OnBank && !IsAirborne && _body.linearVelocity.magnitude >= stats.wallRideSpeed;
         /// <summary>On an ice branch (frozen lake): little grip, the car slides.</summary>
         public bool OnIce => sensor != null && sensor.OnIce && !IsAirborne;
-        /// <summary>On a patch of glare ice on the road: the tail swings out side to side (steer against it).</summary>
+        /// <summary>On a patch of glare ice on the road: knocked off line on entering, little grip, slow steering.</summary>
         public bool OnIcePatch => sensor != null && sensor.Track != null && !IsAirborne && sensor.Track.OnIcePatch(_body.position);
         float _wobbleTime, _wobblePhase;
         /// <summary>Set while the car is on a shortcut ramp beside the road: the ramp counts as road.</summary>
@@ -234,8 +234,8 @@ namespace SomeGame.Car
             SidewaysSpeed = sidewaysSpeed;
         }
 
-        // Glare ice: the tail swings out, left and right, harder the faster the car goes; the steering only
-        // half answers, so the driver has to catch every swing to keep the car pointing where it should.
+        // Glare ice: driving onto it knocks the car off line once (the tail kicks out to one side), then it
+        // slides on with little grip and the steering only half answers: steer it back yourself.
         void Fishtail(float forwardSpeed, ref float sidewaysSpeed, float dt)
         {
             if (!OnIcePatch)
@@ -243,12 +243,14 @@ namespace SomeGame.Car
                 _wobbleTime = 0f;
                 return;
             }
-            if (_wobbleTime <= 0f) _wobblePhase = UnityEngine.Random.value < 0.5f ? 0f : Mathf.PI; // first swing to either side
+            if (_wobbleTime <= 0f) _wobblePhase = UnityEngine.Random.value < 0.5f ? 1f : -1f; // the side it kicks to
             _wobbleTime += dt;
+            const float kick = 0.3f; // seconds the kick lasts
+            if (_wobbleTime > kick) return;
             float speed = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(1f, stats.topSpeed));
-            float swing = Mathf.Sin(_wobbleTime * Mathf.PI * 2f * 1.5f + _wobblePhase) * Mathf.Clamp01(_wobbleTime * 4f);
-            _body.angularVelocity = _body.angularVelocity * 0.4f + swing * 210f * speed;
-            sidewaysSpeed += -swing * 14f * speed * dt; // the tail slides out with it
+            float k = Mathf.Sin(_wobbleTime / kick * Mathf.PI); // in and out
+            _body.angularVelocity = _wobblePhase * 150f * speed * k;
+            sidewaysSpeed += -_wobblePhase * 22f * speed * k * dt; // the tail slides out with it
         }
 
         void Steer(Vector2 direction, float forwardSpeed, float dt)
