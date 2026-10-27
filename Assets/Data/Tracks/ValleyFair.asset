@@ -377,6 +377,7 @@ MonoBehaviour:
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 0
   bouncers: []
   geysers: []
@@ -421,6 +422,8 @@ MonoBehaviour:
     length: 4
     width: 3.2
   icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: Stall
     uv:
@@ -5273,4 +5276,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: a05d939842a9ed72
+  bakedSignature: 57badd7155d0452a

@@ -844,6 +844,9 @@ MonoBehaviour:
   props: []
   bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 2100000, guid: 223b0c0eb7cc54bf4b555dbe294faa35, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 0
+  noSnowfall: 0
   waterWorld: 0
   biome: 1
   gaps:
@@ -853,6 +856,7 @@ MonoBehaviour:
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: 60.6008, y: 119.54037}
@@ -935,6 +939,9 @@ MonoBehaviour:
     lateral: -1.6
     length: 4
     width: 3.2
+  icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: WinterCrowd
     uv:
@@ -6325,4 +6332,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 241c3cbbf37590ed
+  bakedSignature: 359eeddfcf106e75

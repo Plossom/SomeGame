@@ -45,7 +45,17 @@ namespace SomeGame.Race
         bool _tracking;
         bool _rival;
         float _missedTimer;
-        float _offRoadRun, _leftRoadAt, _furthest;
+        float _offRoadRun, _leftRoadAt, _furthest, _liftArrivedAt = -10f;
+
+        /// <summary>A lift set the car down: the checkpoints it rode over count, and the track rules start afresh.</summary>
+        public void LiftArrived(float from, float to)
+        {
+            _liftArrivedAt = Time.time;
+            CreditFlight(from, to);
+            _furthest = _lastDistance;
+            _offRoadRun = 0f;
+            _wrongWayTimer = 0f;
+        }
         readonly List<float> _lapTimes = new();
 
         public event Action<RaceProgress, float> LapCompleted;
@@ -179,6 +189,7 @@ namespace SomeGame.Race
                 && path.DeltaDistance(_furthest, distance) < 40f)
                 _furthest = distance;
             if (!grounded) return; // jumps and flights are fine
+            if (Time.time - _liftArrivedAt < 0.3f) return; // just set down by a lift
             // Hopped across to another part of the road (or far ahead): back to where it was.
             if (_sensor.Jumped && moved > skipLimit)
             {
@@ -226,7 +237,7 @@ namespace SomeGame.Race
         }
 
         /// <summary>True while the car is being carried back to the checkpoint it missed.</summary>
-        public bool CarryingBack => _car != null && _car.IsCarried;
+        public bool CarryingBack => _car != null && (_car.IsCarried || _car.IsRiding);
 
         /// <summary>True while being carried out of the water back onto the road.</summary>
         public bool CarryingFromWater => CarryingBack && _car.CarriedFromWater;

@@ -659,6 +659,9 @@ MonoBehaviour:
   props: []
   bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 2100000, guid: fa25f706c99774560ab678365c61926a, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 0
+  noSnowfall: 0
   waterWorld: 0
   biome: 1
   gaps:
@@ -668,6 +671,7 @@ MonoBehaviour:
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: 197.97168, y: 338.76196}
@@ -752,6 +756,9 @@ MonoBehaviour:
     lateral: -1.6
     length: 4
     width: 3.2
+  icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: GingerHouse
     uv:
@@ -6858,4 +6865,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: dc87d1ca2e57cad4
+  bakedSignature: 6c1ff4966c52e710

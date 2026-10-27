@@ -613,6 +613,7 @@ MonoBehaviour:
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 0
   bouncers: []
   geysers:
@@ -691,6 +692,8 @@ MonoBehaviour:
     length: 4
     width: 3.2
   icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: Crowd
     uv:
@@ -17936,4 +17939,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 1fc1115483753de2
+  bakedSignature: 1781ab7701a8c99a

@@ -821,6 +821,9 @@ MonoBehaviour:
   props: []
   bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 2100000, guid: 9887aa8586d9c40d79393368297a57ef, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 0
+  noSnowfall: 0
   waterWorld: 0
   biome: 1
   gaps:
@@ -830,6 +833,7 @@ MonoBehaviour:
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: -59.24213, y: 127.38709}
@@ -902,6 +906,9 @@ MonoBehaviour:
     lateral: -1.6
     length: 4
     width: 3.2
+  icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: AdBoard
     uv:
@@ -7796,4 +7803,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 6cbafe8ca29ea59f
+  bakedSignature: 591cceffde133165

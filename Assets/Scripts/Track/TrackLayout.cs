@@ -331,6 +331,17 @@ namespace SomeGame.Track
         public List<DashPanel> dashPanels = new();
         [Tooltip("Patches of glare ice on the road (world positions): slippery, little grip like a frozen lake.")]
         public List<IcePatch> icePatches = new();
+        [Tooltip("Downhill stretches (lap distances): cars run faster than their top speed there.")]
+        public List<Slope> slopes = new();
+
+        [Serializable]
+        public class Slope
+        {
+            public float from, to;
+            [Tooltip("Top speed there, as a share of the normal top speed.")]
+            [Range(1f, 1.6f)] public float speed = 1.25f;
+        }
+
         [Tooltip("Heaps of snow on the road: blast through one and it bursts into powder (you lose a little speed); it builds up again.")]
         public List<SnowPile> snowPiles = new();
 
@@ -377,6 +388,8 @@ namespace SomeGame.Track
             [Min(0f)] public float raised;
             [Tooltip("Drawbridge: shifts its rhythm (seconds).")]
             public float offset;
+            [Tooltip("A cable car carries cars across (no ramp): drive into its valley station before the gap.")]
+            public bool lift;
             public bool IsDrawbridge => period > 0f;
         }
 

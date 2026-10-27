@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Winter07
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Penguin Bay
+  displayName: Gondola Peak
   chapter: "WINTER CUP \xB7 RACE 3"
   track: {fileID: 11400000, guid: 3baabfb3ed43b416a80d241191aefc78, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 89081d97108664b77853a75f08c5531d, type: 3}
   laps: 3
-  description: 'Three laps round the penguin bay: along the beach past the research station, round the penguin colony (or down the penguin slide), hop the cove on ice floes and swing back round the bay. Mind the penguins waddling across!'
-  difficulty: 2
+  description: 'Three laps round Gondola Peak: up the switchbacks, drive onto the valley station and the gondola carries you over the mountain lake to the summit, round the mountain hut on glare ice, then race down the slope faster than ever and blast through the snow piles!'
+  difficulty: 3
   rivalCount: 7
-  rivalSpeedScale: 0.95
+  rivalSpeedScale: 0.92
   rivalCornerScale: 1
   starsRequired: 23
   starTimes:
-  - 76
-  - 68
-  - 65
+  - 112
+  - 98
+  - 94

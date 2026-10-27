@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SomeGame.Track;
 using UnityEngine;
 
@@ -77,6 +78,8 @@ namespace SomeGame.Car
         public bool IsWallRiding => sensor != null && sensor.OnBank && !IsAirborne && _body.linearVelocity.magnitude >= stats.wallRideSpeed;
         /// <summary>On an ice branch (frozen lake): little grip, the car slides.</summary>
         public bool OnIce => sensor != null && sensor.OnIce && !IsAirborne;
+        /// <summary>Running down a slope (faster than top speed).</summary>
+        public bool OnSlope { get; private set; }
         /// <summary>On a patch of glare ice on the road: knocked off line on entering, little grip, slow steering.</summary>
         public bool OnIcePatch => sensor != null && sensor.Track != null && !IsAirborne && sensor.Track.OnIcePatch(_body.position);
         float _wobbleTime, _wobblePhase;
@@ -177,9 +180,12 @@ namespace SomeGame.Car
             float boostBonus = Mathf.Lerp(stats.boostMinSpeedBonus, stats.boostMaxSpeedBonus, BoostStrength) * boost;
 
             // Longitudinal: accelerate up to the surface's top speed, brake hard above it, coast otherwise.
+            // Downhill on a slope the car runs faster than its top speed (and picks speed up quicker).
+            float slope = !offRoad && sensor != null && sensor.Track != null && sensor.Branch < 0 ? sensor.Track.SlopeAt(sensor.Current.Distance) : 1f;
+            OnSlope = slope > 1f;
             float maxSpeed = stats.topSpeed * (offRoad ? stats.offRoadSlowdown : 1f)
-                           * (IsDrifting ? stats.driftSpeedFactor : 1f) * (1f + boostBonus);
-            float acceleration = stats.acceleration + stats.boostAcceleration * boost;
+                           * (IsDrifting ? stats.driftSpeedFactor : 1f) * (1f + boostBonus) * slope;
+            float acceleration = (stats.acceleration + stats.boostAcceleration * boost) * (OnSlope ? 1.6f : 1f);
 
             if (IsDrifting)
             {
@@ -418,6 +424,11 @@ namespace SomeGame.Car
                 Carry(dt);
                 return;
             }
+            if (_riding)
+            {
+                Ride(dt);
+                return;
+            }
             _airTimer -= dt;
             // A trick: the hop button pressed in the air (not right at take-off, not just before landing).
             bool held = ControlsEnabled && _input != null && _input.DriftHeld;
@@ -458,6 +469,84 @@ namespace SomeGame.Car
                 GiveBoost(TrickBoost);
             }
             Landed?.Invoke();
+        }
+
+        // ------------------------------------------------------------------ riding a lift (cable car)
+
+        bool _riding;
+        readonly List<Vector2> _ridePath = new();
+        readonly List<float> _rideAt = new();
+        Pose _rideArrival;
+        float _rideSpeed, _rideLeave;
+        Action _rideArrived;
+
+        /// <summary>True while hanging on a lift, carried along its cable.</summary>
+        public bool IsRiding => _riding && IsAirborne;
+
+        /// <summary>Fires when the car is hooked onto a lift.</summary>
+        public event Action LiftStarted;
+
+        /// <summary>
+        /// Hooks the car onto a lift: carried along <paramref name="cable"/> at <paramref name="speed"/>, up and
+        /// over and down again, then set down at <paramref name="arrival"/> driving on at <paramref name="speedAfter"/>.
+        /// </summary>
+        public bool RideLift(IReadOnlyList<Vector2> cable, Pose arrival, float speed, float speedAfter, Action arrived = null)
+        {
+            if (IsPuppet || IsAirborne || cable == null || cable.Count < 2) return false;
+            EndDrift();
+            _trick = false;
+            _exitTimer = _calmTimer = _slipTimer = _boostTimer = 0f;
+            _ridePath.Clear(); _rideAt.Clear();
+            _ridePath.Add(_body.position);
+            _rideAt.Add(0f);
+            foreach (var p in cable)
+            {
+                _rideAt.Add(_rideAt[^1] + Vector2.Distance(_ridePath[^1], p));
+                _ridePath.Add(p);
+            }
+            _rideAt.Add(_rideAt[^1] + Vector2.Distance(_ridePath[^1], arrival.position));
+            _ridePath.Add(arrival.position);
+            _rideArrival = arrival;
+            _rideSpeed = Mathf.Max(1f, speed);
+            _rideLeave = speedAfter;
+            _rideArrived = arrived;
+            _riding = true;
+            _airLocked = true;
+            _airTurnTo = null;
+            _airDuration = _airTimer = _rideAt[^1] / _rideSpeed;
+            _body.angularVelocity = 0f;
+            if (_collider != null) _collider.enabled = false;
+            LiftStarted?.Invoke();
+            return true;
+        }
+
+        void Ride(float dt)
+        {
+            _airTimer -= dt;
+            float along = Mathf.Clamp01(1f - Mathf.Max(0f, _airTimer) / _airDuration) * _rideAt[^1];
+            int i = 1;
+            while (i < _rideAt.Count - 1 && _rideAt[i] < along) i++;
+            float t = Mathf.InverseLerp(_rideAt[i - 1], _rideAt[i], along);
+            Vector2 goal = Vector2.Lerp(_ridePath[i - 1], _ridePath[i], t);
+            Vector2 dir = _ridePath[i] - _ridePath[i - 1];
+            _body.linearVelocity = (goal - _body.position) / dt;
+            if (dir.sqrMagnitude > 0.001f)
+            {
+                float heading = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+                _body.angularVelocity = Mathf.DeltaAngle(_body.rotation, Mathf.MoveTowardsAngle(_body.rotation, heading, 180f * dt)) / dt;
+            }
+            ForwardSpeed = _body.linearVelocity.magnitude;
+            SidewaysSpeed = 0f;
+            if (_airTimer > 0f) return;
+
+            _riding = false;
+            Respawn(_rideArrival);
+            _body.linearVelocity = (Vector2)transform.up * _rideLeave;
+            ForwardSpeed = _rideLeave;
+            Landed?.Invoke();
+            var arrived = _rideArrived;
+            _rideArrived = null;
+            arrived?.Invoke();
         }
 
         // ------------------------------------------------------------------ carried back (missed checkpoint)
@@ -588,6 +677,7 @@ namespace SomeGame.Car
         {
             _trick = false;
             _carried = false;
+            _riding = false;
             _exitTimer = _calmTimer = 0f;
             _airTimer = 0f;
             _slipTimer = 0f;

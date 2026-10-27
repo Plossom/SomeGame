@@ -88,6 +88,18 @@ namespace SomeGame.Track
             return false;
         }
 
+        /// <summary>Top-speed factor at a lap distance: above 1 running down a slope.</summary>
+        public float SlopeAt(float distance)
+        {
+            if (layout.slopes == null) return 1f;
+            foreach (var slope in layout.slopes)
+            {
+                float into = Path.DeltaDistance(slope.from, distance);
+                if (into >= 0f && into <= Path.DeltaDistance(slope.from, slope.to)) return slope.speed;
+            }
+            return 1f;
+        }
+
         /// <summary>True on a patch of glare ice on the road: little grip.</summary>
         public bool OnIcePatch(Vector2 p)
         {
@@ -548,6 +560,7 @@ namespace SomeGame.Track
             for (int g = 0; g < layout.gaps.Count; g++)
             {
                 var gap = layout.gaps[g];
+                if (gap.lift) continue; // a cable car carries cars across: no ramp
                 // A drawbridge's raised leaf is the ramp itself (over the water, from its hinge).
                 jumps.Add(gap.IsDrawbridge
                     ? new Jump { RampStart = path.WrapDistance(gap.from), Lip = path.WrapDistance(gap.from + DrawbridgeRamp), FarBank = path.WrapDistance(gap.to + 1.5f), Lateral = 0f, Gap = g }

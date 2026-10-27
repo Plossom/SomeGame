@@ -782,6 +782,9 @@ MonoBehaviour:
   props: []
   bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 2100000, guid: aedbdad66082c454e8c7fead38cb9bc8, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 0
+  noSnowfall: 0
   waterWorld: 0
   biome: 1
   gaps:
@@ -791,12 +794,14 @@ MonoBehaviour:
     period: 9
     raised: 3.2
     offset: 0
+    lift: 0
   - from: 615.80347
     to: 650.80347
     rampLateral: 0
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: 161.19516, y: 274.55795}
@@ -877,6 +882,9 @@ MonoBehaviour:
     lateral: -1.6
     length: 4
     width: 3.2
+  icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: Crates
     uv:
@@ -5871,4 +5879,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 0f3790257fe73af3
+  bakedSignature: d7972948c6f1696d

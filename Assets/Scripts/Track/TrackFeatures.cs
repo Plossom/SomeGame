@@ -69,6 +69,18 @@ namespace SomeGame.Track
                     Arrow(a, path.PointAt(d) + path.NormalAt(d) * lateral, fwd, arrowSize);
                 }
             }
+            // Downhill slopes: chevrons down the road, pointing the way.
+            if (layout.slopes != null)
+                foreach (var slope in layout.slopes)
+                {
+                    float span = path.DeltaDistance(slope.from, slope.to);
+                    for (float s = 3f; s < span - 2f; s += 8f)
+                    {
+                        float d = slope.from + s;
+                        foreach (float lat in new[] { 1.8f, -1.8f })
+                            Arrow(a, path.PointAt(d) + path.NormalAt(d) * lat, path.TangentAt(d), arrowSize * 1.1f);
+                    }
+                }
             if (arrows != null) Assign(arrows, a.ToMesh("Arrows"));
 
             var r = new MeshData();

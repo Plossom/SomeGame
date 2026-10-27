@@ -101,6 +101,7 @@ MonoBehaviour:
   coasters: []
   buntings: []
   padLook: 0
+  boats: []
   fireworks: 0
   cows: []
   fences: []
@@ -108,6 +109,9 @@ MonoBehaviour:
   props: []
   bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 0}
+  roadMaterial: {fileID: 0}
+  vehicle: 0
+  noSnowfall: 0
   waterWorld: 1
   biome: 0
   gaps:
@@ -117,24 +121,28 @@ MonoBehaviour:
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   - from: 251.85152
     to: 271.6803
     rampLateral: 0
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   - from: 335.80328
     to: 345.80295
     rampLateral: -0.8
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   - from: 462.11243
     to: 472.1114
     rampLateral: 0.8
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 1
   bouncers:
   - position: {x: 56, y: 56}
@@ -189,6 +197,9 @@ MonoBehaviour:
   banks: []
   penguins: []
   dashPanels: []
+  icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: Island
     uv:
@@ -2103,4 +2114,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 10979c249a897e0f
+  bakedSignature: 8587a047dde77161

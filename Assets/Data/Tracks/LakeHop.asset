@@ -975,18 +975,21 @@ MonoBehaviour:
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   - from: 203.38522
     to: 260.38522
     rampLateral: 0
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   - from: 461.48975
     to: 474.48975
     rampLateral: 0
     period: 0
     raised: 0
     offset: 0
+    lift: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: 102.29506, y: 125.475746}
@@ -1077,6 +1080,8 @@ MonoBehaviour:
     length: 4
     width: 3.2
   icePatches: []
+  slopes: []
+  snowPiles: []
   scenery:
   - name: Crowd
     uv:
@@ -8736,4 +8741,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 555f5a0e31e1da28
+  bakedSignature: cd2ae3583dc543ee

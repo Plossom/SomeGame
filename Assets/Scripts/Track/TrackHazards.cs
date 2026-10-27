@@ -39,6 +39,8 @@ namespace SomeGame.Track
         [SerializeField] Sprite dashPanelSprite;
         [Tooltip("A heap of snow on the road (SnowPiles).")]
         [SerializeField] Sprite snowPileSprite;
+        [Tooltip("The cable car (TrackLift): station platform, tower, cable, the hanger round a riding car.")]
+        [SerializeField] Sprite liftStationSprite, liftTowerSprite, liftCableSprite, liftHangerSprite;
         [SerializeField] Material particleMaterial;
         [Tooltip("Seconds of bubbling before a fish leaps.")]
         [SerializeField, Min(0f)] float geyserWarning = 0.7f;
@@ -199,6 +201,17 @@ namespace SomeGame.Track
                 var go = new GameObject("SnowPiles");
                 go.transform.SetParent(transform, false);
                 go.AddComponent<SnowPiles>().Init(track, snowPileSprite, particleMaterial, sortingOrder + 1);
+                _spawned.Add(go);
+            }
+
+            // Cable cars across ravines.
+            if (layout.gaps.Exists(g => g.lift))
+            {
+                var go = new GameObject("Lifts");
+                go.transform.SetParent(transform, false);
+                var lift = go.AddComponent<TrackLift>();
+                lift.Init(track, liftStationSprite, liftTowerSprite, liftCableSprite, liftHangerSprite, sortingOrder);
+                if (!Application.isPlaying) lift.enabled = false;
                 _spawned.Add(go);
             }
         }
