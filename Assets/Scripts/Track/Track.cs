@@ -383,6 +383,9 @@ namespace SomeGame.Track
 
         // ------------------------------------------------------------------ phases: the track changes lap by lap
 
+        /// <summary>Something big in the way at a point (a passing train): rivals stop for it. Set by the track's set pieces.</summary>
+        public static System.Func<Vector2, bool> Obstacle;
+
         /// <summary>The lap the race leader is on (set by <see cref="FjordIce"/>; 1 outside a race). Branches open and the fjord breaks up by it.</summary>
         public static int PhaseLap = 1;
         /// <summary>Race-clock time the fjord started cracking (the icebreaker sails from then).</summary>

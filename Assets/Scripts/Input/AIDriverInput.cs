@@ -176,6 +176,20 @@ namespace SomeGame.Input
                     break;
                 }
             }
+            // A train across the road ahead (the level crossing): stop and let it pass.
+            if (SomeGame.Track.Track.Obstacle != null && !_sensor.Aboard && !_car.IsAirborne)
+                for (float x = 3f; x <= 18f; x += 3f)
+                {
+                    if (!SomeGame.Track.Track.Obstacle(path.PointAt(distance + x) + path.NormalAt(distance + x) * Mathf.Clamp(_sensor.Current.Lateral, -2f, 2f))) continue;
+                    targetSpeed = Mathf.Min(targetSpeed, x < 9f ? 0f : (x - 9f) * 1.6f);
+                    break;
+                }
+            // Up on a train: ride it along, driving forward over the wagons (TrackTrain says where).
+            if (_sensor.Aboard && SomeGame.Track.TrackTrain.Instance != null)
+            {
+                aim = SomeGame.Track.TrackTrain.Instance.AimAboard(_car.Body.position, look, out float room);
+                targetSpeed = room < 4f ? 0f : Mathf.Min(_car.Stats.topSpeed, room * 1.5f);
+            }
             if (_car.IsAirborne && _wasAirborne) aim = _airAim;
             SteerDirection = (aim - _car.Body.position).normalized;
             Throttle = speed < targetSpeed - 0.3f ? 1f : speed > targetSpeed + 1.5f ? -1f : 0f;
@@ -245,6 +259,17 @@ namespace SomeGame.Input
                 float dodge = Mathf.Clamp(at.Lateral > 0f ? at.Lateral - clear : at.Lateral + clear, -limit, limit);
                 lateral = Mathf.Lerp(lateral, dodge, Mathf.InverseLerp(oilLookAhead, oilLookAhead * 0.4f, to));
             }
+            // A kicker onto the train, if the train will be there when this rival lands: line up with it.
+            if (SomeGame.Track.TrackTrain.Instance != null && layout0.train != null && layout0.train.enabled)
+                for (int i = 0; i < layout0.train.ramps.Count; i++)
+                {
+                    var ramp = layout0.train.ramps[i];
+                    float to = path.DeltaDistance(distance, ramp.x);
+                    if (to < -1f || to > 26f || !Takes(5000 + i)) continue;
+                    float speed = Mathf.Max(8f, _car.ForwardSpeed);
+                    if (!SomeGame.Track.TrackTrain.Instance.TrainWillBeThere(i, to / speed)) continue;
+                    lateral = Mathf.Lerp(lateral, ramp.y, Mathf.InverseLerp(26f, 12f, to));
+                }
             // A ride this rival takes this lap (a flume's mouth, a rail's kicker): line up with its entrance.
             if (layout0.rides != null)
                 for (int i = 0; i < layout0.rides.Count; i++)

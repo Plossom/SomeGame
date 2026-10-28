@@ -26,6 +26,8 @@ namespace SomeGame.Track
         public float BranchAlong { get; private set; }
         /// <summary>Direction of the road under the car (the branch's on a branch).</summary>
         public Vector2 RoadDirection { get; private set; } = Vector2.up;
+        /// <summary>Riding on top of a train (set by TrackTrain): counts as road, the ground's rules do not apply.</summary>
+        public bool Aboard { get; set; }
         /// <summary>Up on the roofs (set by CarTerrain when the car lands on one): only roofs count as road.</summary>
         public bool Elevated { get; set; }
         /// <summary>On an upper floor of a house (only drawn higher; no rooftop rules).</summary>
@@ -120,7 +122,7 @@ namespace SomeGame.Track
             float bankHeight = 0f;
             bool onBank = Branch < 0 && !Elevated && track.BankAt(point.Distance, point.Lateral, out bankHeight) != null;
             BankHeight = onBank ? Mathf.Max(0.01f, bankHeight) : 0f;
-            IsOffRoad = Branch < 0 && !onBank && track.IsOffRoad(point.Distance, point.Lateral);
+            IsOffRoad = Branch < 0 && !onBank && !Aboard && track.IsOffRoad(point.Distance, point.Lateral);
         }
     }
 }

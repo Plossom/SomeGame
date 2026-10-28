@@ -345,6 +345,30 @@ namespace SomeGame.Track
         [Tooltip("Heaps of snow on the road: blast through one and it bursts into powder (you lose a little speed); it builds up again.")]
         public List<SnowPile> snowPiles = new();
 
+        [Header("The express")]
+        [Tooltip("A steam train on its own loop of rails: kicker ramps beside the road launch cars up onto its flat wagons, " +
+                 "where they ride along (and can drive forward over the wagons), leaping back down to the road further on.")]
+        public TrainLine train = new();
+        [Serializable]
+        public class TrainLine
+        {
+            public bool enabled;
+            [Tooltip("The rails: a closed loop of points.")]
+            public Vector2[] points = { };
+            [Min(2f)] public float speed = 12f;
+            [Tooltip("Trains on the loop, evenly spaced.")]
+            [Min(1)] public int trains = 2;
+            [Tooltip("Flat wagons behind each locomotive.")]
+            [Min(1)] public int wagons = 6;
+            [Tooltip("Kicker ramps onto the train: (lap distance, sideways position) on the road.")]
+            public List<Vector2> ramps = new();
+            [Tooltip("Lap distance where riders leap off the train back down onto the road.")]
+            public float leapAt;
+        }
+        [Tooltip("Loose gift boxes lying about (they scatter when you drive through).")]
+        public List<Vector2> gifts = new();
+        [Tooltip("Night: the whole scene in a deep blue, windows glowing warm.")]
+        public bool night;
         [Header("Freestyle park")]
         [Tooltip("Rides beside the road: an ice flume (a see-through tube you shoot along) or a grind rail (hop on from its kicker). " +
                  "Steer into the entrance to take it; it sets you down further on with a boost.")]

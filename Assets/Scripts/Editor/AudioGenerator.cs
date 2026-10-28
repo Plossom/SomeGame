@@ -293,6 +293,46 @@ namespace SomeGame.EditorTools
             AssetDatabase.SaveAssets();
         }
 
+        /// <summary>Only the express's whistle, hooked into the audio library.</summary>
+        public static void GenerateExpressSounds()
+        {
+            Directory.CreateDirectory(Folder);
+            Write("TrainWhistle", TrainWhistle());
+            AssetDatabase.Refresh();
+            var importer = (AudioImporter)AssetImporter.GetAtPath($"{Folder}/TrainWhistle.wav");
+            var settings = importer.defaultSampleSettings;
+            settings.loadType = AudioClipLoadType.DecompressOnLoad;
+            settings.compressionFormat = AudioCompressionFormat.ADPCM;
+            importer.defaultSampleSettings = settings;
+            importer.SaveAndReimport();
+            var library = AssetDatabase.LoadAssetAtPath<SomeGame.Audio.AudioLibrary>("Assets/Resources/AudioLibrary.asset");
+            if (library == null) return;
+            library.trainWhistle = AssetDatabase.LoadAssetAtPath<AudioClip>($"{Folder}/TrainWhistle.wav");
+            EditorUtility.SetDirty(library);
+            AssetDatabase.SaveAssets();
+        }
+
+        // A steam whistle: a breathy chord (three notes) rising into place, with the hiss of steam.
+        static float[] TrainWhistle()
+        {
+            int n = (int)(1.3f * Rate);
+            var s = new float[n];
+            var noise = new Noise(31);
+            float lp = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                float env = Mathf.Min(1f, t / 0.08f) * Mathf.Clamp01((1.3f - t) / 0.3f);
+                float bend = 1f - 0.06f * Mathf.Exp(-t * 10f);
+                float v = 0f;
+                foreach (float f in new[] { 587.33f, 739.99f, 880f }) v += Mathf.Sin(2f * Mathf.PI * f * bend * t) + 0.3f * Mathf.Sin(4f * Mathf.PI * f * bend * t);
+                float white = noise.Next();
+                lp += (white - lp) * 0.3f;
+                s[i] = (v * 0.3f + (white - lp) * 0.35f) * env;
+            }
+            return Normalize(s, 0.6f);
+        }
+
         // A pinball bumper: a springy "boing" (a pitch that drops fast) with a bright ding on top.
         static float[] Bumper()
         {

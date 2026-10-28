@@ -116,6 +116,20 @@ MonoBehaviour:
   icePatches: []
   slopes: []
   snowPiles: []
+  train:
+    enabled: 0
+    points: []
+    speed: 12
+    trains: 2
+    wagons: 6
+    ramps: []
+    leapAt: 0
+  gifts: []
+  night: 0
+  rides: []
+  pinball: []
+  rinks: []
+  slalom: []
   fjord:
     enabled: 0
     center: {x: 0, y: 0}
@@ -8079,4 +8093,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4293328875
     canopy: 0
-  bakedSignature: 1fcf7e433ca59486
+  bakedSignature: ad20b40f621d59f5

@@ -54,10 +54,57 @@ namespace SomeGame.Track
                 _gusts = Gusts(_camera.transform);
             }
             _nextGust = Time.time + Random.Range(2f, 5f);
+            var track = FindAnyObjectByType<Track>();
+            if (track != null && track.Layout != null && track.Layout.night) BuildNight(track.Layout);
+        }
+
+        SpriteRenderer _night;
+        readonly List<GameObject> _nightParts = new();
+
+        // Night: a deep blue over everything, and a warm glow over every house, church and stall (their windows),
+        // shining through it.
+        void BuildNight(TrackLayout layout)
+        {
+            var white = Texture2D.whiteTexture;
+            _night = NightSprite("Night", UnityEngine.Sprite.Create(white, new Rect(0, 0, white.width, white.height), new Vector2(0.5f, 0.5f), white.width), 70);
+            _night.color = new Color(0.04f, 0.07f, 0.2f, 0.36f);
+            const int size = 64;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(size * 0.5f, size * 0.5f)) / (size * 0.5f);
+                    float a = Mathf.Clamp01(1f - d);
+                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, a * a));
+                }
+            tex.Apply();
+            var glow = UnityEngine.Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
+            if (layout.decor == null) return;
+            foreach (var d in layout.decor)
+            {
+                if (d.cell == null) continue;
+                bool house = d.cell.StartsWith("TownHouse") || d.cell == "Church", stall = d.cell.StartsWith("Stall") || d.cell == "XmasTree";
+                if (!house && !stall) continue;
+                var sr = NightSprite("WindowGlow", glow, 71);
+                sr.transform.position = d.position;
+                sr.transform.localScale = Vector3.one * d.size * (house ? 1.3f : 1.1f);
+                sr.color = stall ? new Color(1f, 0.82f, 0.5f, 0.35f) : new Color(1f, 0.72f, 0.38f, 0.42f);
+            }
+        }
+
+        SpriteRenderer NightSprite(string name, Sprite sprite, int order)
+        {
+            var go = new GameObject(name);
+            _nightParts.Add(go);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.sortingOrder = order;
+            return sr;
         }
 
         void OnDestroy()
         {
+            foreach (var go in _nightParts) if (go != null) Destroy(go);
             if (_glitter != null) Destroy(_glitter.gameObject);
             if (_gusts != null) Destroy(_gusts.gameObject);
         }
@@ -79,6 +126,11 @@ namespace SomeGame.Track
             if (_camera == null || _glitter == null) return;
             // The glitter and the gusts cover what the camera sees.
             float h = _camera.orthographicSize * 2f, w = h * _camera.aspect;
+            if (_night != null)
+            {
+                _night.transform.position = new Vector3(_camera.transform.position.x, _camera.transform.position.y, 0f);
+                _night.transform.localScale = new Vector3(w * 1.2f, h * 1.2f, 1f);
+            }
             var shape = _glitter.shape;
             shape.scale = new Vector3(w * 1.1f, h * 1.1f, 0f);
             var glitter = _glitter.emission;

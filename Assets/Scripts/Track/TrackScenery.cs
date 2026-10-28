@@ -91,7 +91,7 @@ namespace SomeGame.Track
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
                 margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps, sections = layout.sections,
-                rooms = layout.rooms, houses = layout.houses, decor = layout.decor, chasms = layout.chasms, caves = layout.caves, fjord = layout.fjord,
+                rooms = layout.rooms, houses = layout.houses, decor = layout.decor, chasms = layout.chasms, caves = layout.caves, fjord = layout.fjord, train = layout.train,
                 shortcuts = layout.shortcuts, branches = layout.branches, banks = layout.banks, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
@@ -123,6 +123,7 @@ namespace SomeGame.Track
             public List<TrackLayout.Chasm> chasms;
             public List<TrackLayout.Cave> caves;
             public TrackLayout.Fjord fjord;
+            public TrackLayout.TrainLine train;
             public Vector4 runoff;
         }
 
@@ -310,6 +311,9 @@ namespace SomeGame.Track
         }
 
         // The other ways round stay clear too (ice: also its frozen margin).
+        TrackPath _rails;
+        Vector2[] _railsFor;
+
         // Nothing grows in a chasm, nor on a cave's rock walls.
         bool InMountain(TrackLayout layout, Vector2 p, float size)
         {
@@ -329,6 +333,12 @@ namespace SomeGame.Track
                 Vector2 local = Quaternion.Euler(0f, 0f, -f.angle) * (p - f.center);
                 float rx = f.radii.x + r + 2f, ry = f.radii.y + r + 2f;
                 if ((local.x / rx) * (local.x / rx) + (local.y / ry) * (local.y / ry) <= 1f) return true;
+            }
+            // Nor on the railway.
+            if (layout.train != null && layout.train.enabled && layout.train.points != null && layout.train.points.Length >= 3)
+            {
+                if (_rails == null || _railsFor != layout.train.points) { _rails = new TrackPath(layout.train.points, 1f); _railsFor = layout.train.points; }
+                if (Mathf.Abs(_rails.Project(p).Lateral) < 2.6f + r) return true;
             }
             if (layout.caves == null) return false;
             foreach (var cave in layout.caves)

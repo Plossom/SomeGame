@@ -80,7 +80,7 @@ namespace SomeGame.Car
         void Update()
         {
             // Upstairs in a house the car rests on that floor, so it looks the same as downstairs.
-            bool up = _sensor != null && _sensor.Elevated;
+            bool up = _sensor != null && (_sensor.Elevated || _sensor.Aboard); // on the roofs or up on a train
             _elevation = Mathf.MoveTowards(_elevation, up ? 1f : 0f, Time.deltaTime * 4f);
             // On a banked wall the car leans on its side, more the higher up it rides.
             float lean = _sensor != null && _sensor.OnBank ? Mathf.Lerp(0.5f, 1f, _sensor.BankHeight) : 0f;

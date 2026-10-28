@@ -1332,6 +1332,11 @@ namespace SomeGame.EditorTools
                 ("road", Mat("WinterRoad")), ("line", Mat("Line")), ("particleMaterial", particles),
                 ("shipSprite", Sprite("Icebreaker")), ("floeSprite", Sprite("FjordFloe")), ("snowBankSprite", Sprite("SnowPile")));
             if (hazards != null) Configure(hazards, ("sealSprite", Sprite("Seal")));
+            // The express: trains to ride, the level crossing, gift boxes.
+            var express = track.GetComponent<SomeGame.Track.TrackTrain>();
+            if (express == null) express = track.gameObject.AddComponent<SomeGame.Track.TrackTrain>();
+            Configure(express, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles),
+                ("locoSprite", Sprite("SteamLoco")), ("wagonSprite", Sprite("FlatWagon")), ("giftSprite", Sprite("GiftBox")));
             // The freestyle park: flumes, grind rails, the pinball rink, slalom gates.
             var rides = track.GetComponent<SomeGame.Track.TrackRides>();
             if (rides == null) rides = track.gameObject.AddComponent<SomeGame.Track.TrackRides>();

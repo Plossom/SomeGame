@@ -42,6 +42,7 @@ namespace SomeGame.Audio
         public AudioClip iceCrack;
         public AudioClip shipHorn;
         public AudioClip bumper;
+        public AudioClip trainWhistle;
         public AudioClip trick;
         public AudioClip unlock;
         public AudioClip fanfare;

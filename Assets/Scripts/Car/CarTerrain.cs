@@ -195,6 +195,7 @@ namespace SomeGame.Car
                 OnTheRoofs(track);
                 return;
             }
+            if (_sensor.Aboard) return; // up on a train: nothing on the ground touches it
             // Off the far end of an ice branch: the lake was crossed.
             if (_sensor.Branch < 0 && _lastBranch >= 0 && _lastBranch < track.Branches.Count)
             {
