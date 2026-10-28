@@ -63,6 +63,8 @@ namespace SomeGame.Car
 
         /// <summary>The car fell into water and is being put back on the road.</summary>
         public event Action Splashed;
+        /// <summary>The car went over the edge into a chasm and is being put back on the road.</summary>
+        public event Action Fell;
         /// <summary>The car rode the whole row of roofs and landed back on the road.</summary>
         public event Action RoofRun;
         /// <summary>The car rode a banked wall far enough and came off it with a boost.</summary>
@@ -82,6 +84,8 @@ namespace SomeGame.Car
         public event Action<int> CowHit;
         /// <summary>The car drove over a dash panel (boost).</summary>
         public event Action DashPanel;
+        /// <summary>Landed a corner-cut jump on the road (boost).</summary>
+        public event Action CornerCut;
         float _logAt = -10f;
         /// <summary>The car landed up on a row of roofs.</summary>
         public event Action RoofLanded;
@@ -362,7 +366,11 @@ namespace SomeGame.Car
             if (_shortcutFrom.HasValue && dry)
             {
                 if (_progress != null) _progress.CreditFlight(_shortcutFrom.Value, _sensor.Current.Distance);
-                if (_fromCornerCut && !_car.IsOffRoad) _car.GiveBoost(shortcutBoost); // landed the cut on the road: reward
+                if (_fromCornerCut && !_car.IsOffRoad)
+                {
+                    _car.GiveBoost(shortcutBoost); // landed the cut on the road: reward
+                    CornerCut?.Invoke();
+                }
             }
             _fromCornerCut = false;
             _shortcutFrom = null;
@@ -446,11 +454,13 @@ namespace SomeGame.Car
 
         void Splash(SomeGame.Track.Track track)
         {
+            // Over the edge of a chasm: the car tumbles down into the depths (no splash, no dust).
+            bool chasm = track.ChasmAt(_car.Body.position) && track.WaterDistance(_car.Body.position) > 0f;
             // Short of a window jump: a fall into the garden (dust), not a splash.
             bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld;
             var burst = dry ? _dust : _splash;
             burst.transform.position = _car.Body.position;
-            burst.Emit(40);
+            if (!chasm) burst.Emit(40);
             float d = _sensor.Current.Distance;
             _repeatSplashes = Mathf.Abs(track.Path.DeltaDistance(_lastSplashAt, d)) < 40f ? _repeatSplashes + 1 : 1;
             _lastSplashAt = d;
@@ -464,10 +474,11 @@ namespace SomeGame.Car
                 if (_progress != null) _progress.CreditFlight(track.Path.WrapDistance(d - 40f), track.Path.Project(pose.position).Distance);
             }
             else pose = track.RespawnBefore(d, respawnBack); // always back before the water, never ahead
-            if (!dry) Splashed?.Invoke();
+            if (chasm) Fell?.Invoke();
+            else if (!dry) Splashed?.Invoke();
             // Lifted out and carried back onto the road through the air, as after a missed checkpoint.
             float top = _car.Stats != null ? _car.Stats.topSpeed : 18f;
-            if (_car.CarryBack(pose, top * waterCarrySpeed, fromWater: true)) return;
+            if (_car.CarryBack(pose, top * waterCarrySpeed, fromWater: true, fall: chasm)) return;
             _car.Respawn(pose);
             StopAllCoroutines();
             StartCoroutine(Blink());

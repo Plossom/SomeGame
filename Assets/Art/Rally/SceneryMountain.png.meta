@@ -1,0 +1,873 @@
+fileFormatVersion: 2
+guid: 9322ae17c581f4751bb893b5c2529993
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8346945421037080119
+    second: SceneryMountain_0
+  - first:
+      213: -6335842092385783722
+    second: SceneryMountain_1
+  - first:
+      213: 7787393433033800530
+    second: SceneryMountain_2
+  - first:
+      213: 5225921076767400129
+    second: SceneryMountain_3
+  - first:
+      213: 978497983478179857
+    second: SceneryMountain_4
+  - first:
+      213: 4071915781072853912
+    second: SceneryMountain_5
+  - first:
+      213: 832307846635440911
+    second: SceneryMountain_6
+  - first:
+      213: 7291076416198554358
+    second: SceneryMountain_7
+  - first:
+      213: -3905950778437225731
+    second: SceneryMountain_8
+  - first:
+      213: 7862494030674402668
+    second: SceneryMountain_9
+  - first:
+      213: 7752469194116441140
+    second: SceneryMountain_10
+  - first:
+      213: 152697763167111477
+    second: SceneryMountain_11
+  - first:
+      213: 3210502841432127627
+    second: SceneryMountain_12
+  - first:
+      213: -8037732514536256852
+    second: SceneryMountain_13
+  - first:
+      213: -2596797689233828420
+    second: SceneryMountain_14
+  - first:
+      213: -7642861405495347171
+    second: SceneryMountain_15
+  - first:
+      213: 1920797455216445509
+    second: SceneryMountain_16
+  - first:
+      213: -4068092517131789167
+    second: SceneryMountain_17
+  - first:
+      213: -1490532572229679997
+    second: SceneryMountain_18
+  - first:
+      213: -4299832766771817583
+    second: SceneryMountain_19
+  - first:
+      213: 567454288412131420
+    second: SceneryMountain_20
+  - first:
+      213: -3738380851610855372
+    second: SceneryMountain_21
+  - first:
+      213: -8326344006716399883
+    second: SceneryMountain_22
+  - first:
+      213: 5477592884460176185
+    second: SceneryMountain_23
+  - first:
+      213: -8961043454840373200
+    second: SceneryMountain_24
+  - first:
+      213: 6857269100232948882
+    second: SceneryMountain_25
+  - first:
+      213: -8422458744660142765
+    second: SceneryMountain_26
+  - first:
+      213: -7899732641087982103
+    second: SceneryMountain_27
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryMountain_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1328
+        width: 257
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73e0d7ce2ae46d370800000000000000
+      internalID: 8346945421037080119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_1
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 1304
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 650b06a8f219218a0800000000000000
+      internalID: -6335842092385783722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_2
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 1279
+        width: 191
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25b70366111621c60800000000000000
+      internalID: 7787393433033800530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_3
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 1299
+        width: 214
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c0a2fcf783368840800000000000000
+      internalID: 5225921076767400129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_4
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 1200
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11827ae4bb2549d00800000000000000
+      internalID: 978497983478179857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_5
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 1060
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89b972634d9528830800000000000000
+      internalID: 4071915781072853912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_6
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 1054
+        width: 233
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0bc976a393fc8b00800000000000000
+      internalID: 832307846635440911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_7
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 1177
+        width: 211
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f23eb9ee5b1f2560800000000000000
+      internalID: 7291076416198554358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_8
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 1148
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df2b61d26764bc9c0800000000000000
+      internalID: -3905950778437225731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_9
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 1089
+        width: 218
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6d1af2e9a03d1d60800000000000000
+      internalID: 7862494030674402668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_10
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 1075
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 434287f58ad469b60800000000000000
+      internalID: 7752469194116441140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_11
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 807
+        width: 203
+        height: 183
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 539829b7ecd7e1200800000000000000
+      internalID: 152697763167111477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_12
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 812
+        width: 179
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b88b1f5035ffd8c20800000000000000
+      internalID: 3210502841432127627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_13
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 796
+        width: 246
+        height: 182
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caa857f1ddc347090800000000000000
+      internalID: -8037732514536256852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_14
+      rect:
+        serializedVersion: 2
+        x: 770
+        y: 772
+        width: 253
+        height: 248
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb599a3924256fbd0800000000000000
+      internalID: -2596797689233828420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_15
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 535
+        width: 224
+        height: 212
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1838e99b0a1fe590800000000000000
+      internalID: -7642861405495347171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_16
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 552
+        width: 182
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54886a3db1b08aa10800000000000000
+      internalID: 1920797455216445509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_17
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 518
+        width: 217
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19c5feac86b3b87c0800000000000000
+      internalID: -4068092517131789167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_18
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 574
+        width: 200
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 384c912d580905be0800000000000000
+      internalID: -1490532572229679997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_19
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 255
+        width: 239
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1931bfe41ece354c0800000000000000
+      internalID: -4299832766771817583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_20
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 261
+        width: 246
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c50c3173ba000e700800000000000000
+      internalID: 567454288412131420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_21
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 303
+        width: 246
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 438dc981c6a9e1cc0800000000000000
+      internalID: -3738380851610855372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_22
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fe57f1ad32e27c80800000000000000
+      internalID: -8326344006716399883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_23
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 933c476f4b1540c40800000000000000
+      internalID: 5477592884460176185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_24
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0308669947af3a380800000000000000
+      internalID: -8961043454840373200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_25
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29cb5a05ae9e92f50800000000000000
+      internalID: 6857269100232948882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_26
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 18
+        width: 205
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3555625556a6d1b80800000000000000
+      internalID: -8422458744660142765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryMountain_27
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 156
+        width: 75
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e5746b74038e5290800000000000000
+      internalID: -7899732641087982103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryMountain_0: 8346945421037080119
+      SceneryMountain_1: -6335842092385783722
+      SceneryMountain_10: 7752469194116441140
+      SceneryMountain_11: 152697763167111477
+      SceneryMountain_12: 3210502841432127627
+      SceneryMountain_13: -8037732514536256852
+      SceneryMountain_14: -2596797689233828420
+      SceneryMountain_15: -7642861405495347171
+      SceneryMountain_16: 1920797455216445509
+      SceneryMountain_17: -4068092517131789167
+      SceneryMountain_18: -1490532572229679997
+      SceneryMountain_19: -4299832766771817583
+      SceneryMountain_2: 7787393433033800530
+      SceneryMountain_20: 567454288412131420
+      SceneryMountain_21: -3738380851610855372
+      SceneryMountain_22: -8326344006716399883
+      SceneryMountain_23: 5477592884460176185
+      SceneryMountain_24: -8961043454840373200
+      SceneryMountain_25: 6857269100232948882
+      SceneryMountain_26: -8422458744660142765
+      SceneryMountain_27: -7899732641087982103
+      SceneryMountain_3: 5225921076767400129
+      SceneryMountain_4: 978497983478179857
+      SceneryMountain_5: 4071915781072853912
+      SceneryMountain_6: 832307846635440911
+      SceneryMountain_7: 7291076416198554358
+      SceneryMountain_8: -3905950778437225731
+      SceneryMountain_9: 7862494030674402668
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

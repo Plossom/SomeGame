@@ -91,7 +91,7 @@ namespace SomeGame.Track
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
                 margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps, sections = layout.sections,
-                rooms = layout.rooms, houses = layout.houses, decor = layout.decor,
+                rooms = layout.rooms, houses = layout.houses, decor = layout.decor, chasms = layout.chasms, caves = layout.caves,
                 shortcuts = layout.shortcuts, branches = layout.branches, banks = layout.banks, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
@@ -120,6 +120,8 @@ namespace SomeGame.Track
             public List<TrackLayout.Room> rooms;
             public List<TrackLayout.House> houses;
             public List<TrackLayout.Decor> decor;
+            public List<TrackLayout.Chasm> chasms;
+            public List<TrackLayout.Cave> caves;
             public Vector4 runoff;
         }
 
@@ -194,6 +196,7 @@ namespace SomeGame.Track
                     if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
                     if (InShortcutPath(p, size)) continue;
                     if (OnBranch(p, size)) continue;
+                    if (InMountain(layout, p, size)) continue;
                     if (InPool(layout, p, size)) continue;
                     if (NearPad(layout, p, size, kind.canopy)) continue;
                     if (track.BankAt(projection.Distance, projection.Lateral - Mathf.Sign(projection.Lateral) * (size * 0.5f + 1f), out _) != null) continue; // banked walls stay clear
@@ -306,6 +309,40 @@ namespace SomeGame.Track
         }
 
         // The other ways round stay clear too (ice: also its frozen margin).
+        // Nothing grows in a chasm, nor on a cave's rock walls.
+        bool InMountain(TrackLayout layout, Vector2 p, float size)
+        {
+            float r = size * 0.5f + 1f;
+            if (layout.chasms is { Count: > 0 })
+            {
+                if (track.ChasmAt(p)) return true;
+                for (int k = 0; k < 8; k++)
+                {
+                    float a = k * Mathf.PI * 0.25f;
+                    if (track.ChasmAt(p + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r)) return true;
+                }
+            }
+            if (layout.caves == null) return false;
+            foreach (var cave in layout.caves)
+            {
+                float reach = track.Layout.roadWidth * 0.5f + track.Layout.kerbWidth + 11f + r;
+                if (cave.branch < 0)
+                {
+                    var on = track.Path.Project(p);
+                    if (track.Path.DeltaDistance(cave.from - 3f, on.Distance) >= 0f && track.Path.DeltaDistance(on.Distance, cave.to + 3f) >= 0f
+                        && Mathf.Abs(on.Lateral) < reach) return true;
+                }
+                else if (cave.branch < track.Branches.Count)
+                {
+                    var route = track.Branches[cave.branch];
+                    route.Project(p, out float along, out float lateral);
+                    float to = cave.to <= 0f ? route.Length + cave.to : cave.to;
+                    if (along >= cave.from - 3f && along <= to + 3f && Mathf.Abs(lateral) < route.HalfWidth + track.Layout.kerbWidth + 11f + r) return true;
+                }
+            }
+            return false;
+        }
+
         bool OnBranch(Vector2 p, float size)
         {
             foreach (var branch in track.Branches)

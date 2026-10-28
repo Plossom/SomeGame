@@ -34,7 +34,7 @@ namespace SomeGame.Car
         float _time = -1f;
         float _elevation;
         float _tilt;
-        Vector3 _visualScale = Vector3.one;
+        Vector3 _visualScale = Vector3.one, _shadowScale = Vector3.one;
 
         /// <summary>True while the car is in the air (visually).</summary>
         public bool IsHopping => _time >= 0f;
@@ -44,6 +44,7 @@ namespace SomeGame.Car
             _car = GetComponent<CarMovement>();
             _sensor = GetComponent<SomeGame.Track.TrackSensor>();
             if (visual != null) _visualScale = visual.localScale;
+            if (shadow != null) _shadowScale = shadow.localScale;
         }
         void OnEnable()
         {
@@ -87,10 +88,16 @@ namespace SomeGame.Car
             if (_car.IsAirborne)
             {
                 float h = _car.AirHeight;
-                if (visual != null) visual.localScale = BaseScale * Mathf.Lerp(1f, jumpScale, h);
-                if (shadow != null) shadow.localPosition = BaseShadow + jumpShadowLift * h;
+                // Fallen into a chasm: the car shrinks away into the depths, tumbling, its shadow gone.
+                float fall = _car.FallDepth;
+                if (visual != null) visual.localScale = BaseScale * Mathf.Lerp(1f, jumpScale, h) * Mathf.Lerp(1f, 0.25f, fall);
+                if (shadow != null)
+                {
+                    shadow.localPosition = BaseShadow + jumpShadowLift * h;
+                    shadow.localScale = _shadowScale * (1f - fall);
+                }
                 float spin = Mathf.Clamp01((Time.time - _trickAt) / _car.TrickSpin);
-                if (visual != null) visual.localRotation = Quaternion.Euler(0f, 0f, spin < 1f ? 360f * (1f - (1f - spin) * (1f - spin)) : 0f);
+                if (visual != null) visual.localRotation = Quaternion.Euler(0f, 0f, (spin < 1f ? 360f * (1f - (1f - spin) * (1f - spin)) : 0f) + fall * 150f);
                 _time = -1f;
                 return;
             }
@@ -113,6 +120,7 @@ namespace SomeGame.Car
 
         void Apply(float height)
         {
+            if (shadow != null && shadow.localScale != _shadowScale) shadow.localScale = _shadowScale;
             if (visual != null) visual.localScale = BaseScale * Mathf.Lerp(1f, peakScale, height);
             if (shadow != null) shadow.localPosition = BaseShadow + shadowLift * height;
         }

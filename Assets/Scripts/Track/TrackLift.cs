@@ -55,6 +55,16 @@ namespace SomeGame.Track
                         if (tower != null) post.transform.localScale = Vector3.one * (3.2f / tower.bounds.size.x);
                     }
                 }
+                // A long cable has pylons along the way (bigger: they stand tall up the mountain).
+                float span = path.DeltaDistance(gap.from, gap.to);
+                int pylons = Mathf.FloorToInt(span / 34f);
+                for (int k = 1; k <= pylons; k++)
+                {
+                    float d = gap.from + span * k / (pylons + 1f);
+                    Vector2 tan = path.TangentAt(d);
+                    var pylon = Place("LiftPylon", tower, path.PointAt(d), Mathf.Atan2(tan.y, tan.x) * Mathf.Rad2Deg - 90f, order + 18);
+                    if (tower != null) pylon.transform.localScale = Vector3.one * (4.4f / tower.bounds.size.x);
+                }
                 // Cable: two lines either side of the road's centre (up and down), above everything.
                 var line = new List<Vector2> { path.PointAt(gap.from - StationLength - 1f) };
                 line.AddRange(lift.cable);
@@ -113,7 +123,10 @@ namespace SomeGame.Track
         {
             float top = car.Stats != null ? car.Stats.topSpeed : 18f;
             var progress = car.GetComponent<SomeGame.Race.RaceProgress>();
-            bool ok = car.RideLift(lift.cable, lift.arrival, RideSpeed, top * LeaveShare, () =>
+            // A long ride goes faster (about five seconds up the mountain).
+            float length = 0f;
+            for (int i = 1; i < lift.cable.Count; i++) length += Vector2.Distance(lift.cable[i - 1], lift.cable[i]);
+            bool ok = car.RideLift(lift.cable, lift.arrival, Mathf.Max(RideSpeed, length / 5.5f), top * LeaveShare, () =>
             {
                 if (progress != null) progress.LiftArrived(from, lift.arrive);
                 ShowHanger(car, false);

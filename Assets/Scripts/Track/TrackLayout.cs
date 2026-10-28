@@ -345,6 +345,37 @@ namespace SomeGame.Track
         [Tooltip("Heaps of snow on the road: blast through one and it bursts into powder (you lose a little speed); it builds up again.")]
         public List<SnowPile> snowPiles = new();
 
+        [Tooltip("Chasms (closed outlines, world positions): off the road inside one you fall into the depths and are carried back. " +
+                 "The road may run across one on a ledge or jump it through a gap.")]
+        public List<Chasm> chasms = new();
+        [Serializable]
+        public class Chasm
+        {
+            public Vector2[] points = { };
+            /// <summary>Inside the outline (even-odd).</summary>
+            public bool Contains(Vector2 p)
+            {
+                bool inside = false;
+                for (int i = 0, j = points.Length - 1; i < points.Length; j = i++)
+                {
+                    Vector2 a = points[i], b = points[j];
+                    if ((a.y > p.y) != (b.y > p.y) && p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+                }
+                return inside;
+            }
+        }
+        [Tooltip("Caves: stretches of road (the main road, or a branch) running through the mountain: rock walls on both sides, " +
+                 "the mountain on top (it fades away while you are inside), dark with glowing ice crystals and headlights on.")]
+        public List<Cave> caves = new();
+        [Serializable]
+        public class Cave
+        {
+            [Tooltip("-1 = on the main road (from/to are lap distances); else the branch's index (from/to along the branch, to <= 0 = its end).")]
+            public int branch = -1;
+            public float from, to;
+            [Tooltip("Ice stalagmites standing in the cave (solid), as (along, lateral) pairs.")]
+            public Vector2[] stalagmites = { };
+        }
         [Serializable]
         public class SnowPile
         {
@@ -390,6 +421,8 @@ namespace SomeGame.Track
             public float offset;
             [Tooltip("A cable car carries cars across (no ramp): drive into its valley station before the gap.")]
             public bool lift;
+            [Tooltip("A cliff drop: the whole width of the road is the take-off (no narrow kicker), you sail off the edge down to the road below.")]
+            public bool drop;
             public bool IsDrawbridge => period > 0f;
         }
 

@@ -63,7 +63,7 @@ namespace SomeGame.UI
             _car.TrickLanded -= OnTrickLanded;
             _car.Slipped -= Break;
             _car.Crashed -= OnCrash;
-            if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; _terrain.IceRun -= OnIceRun; }
+            if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; _terrain.IceRun -= OnIceRun; _terrain.CornerCut -= OnCornerCut; _terrain.RingHit -= OnRing; }
         }
 
         bool Bind()
@@ -80,7 +80,7 @@ namespace SomeGame.UI
             _car.Slipped += Break;
             _car.Crashed += OnCrash;
             _terrain = race.Player.GetComponent<CarTerrain>();
-            if (_terrain != null) { _terrain.RoofRun += OnRoofRun; _terrain.WallRide += OnWallRide; _terrain.IceRun += OnIceRun; }
+            if (_terrain != null) { _terrain.RoofRun += OnRoofRun; _terrain.WallRide += OnWallRide; _terrain.IceRun += OnIceRun; _terrain.CornerCut += OnCornerCut; _terrain.RingHit += OnRing; }
             return true;
         }
 
@@ -116,7 +116,17 @@ namespace SomeGame.UI
                 Trick(tier == 3 ? "ULTRA DRIFT!" : tier == 2 ? "SUPER DRIFT!" : "DRIFT!", DriftColors[tier]);
                 _tierSeen = 0;
             }
-            else Trick("SHORTCUT!", ShortcutColor); // the boost for landing a corner cut on the road
+            // Other boosts (dash panels, rings, slipstream, wall rides) are announced by what gave them, if at all.
+        }
+
+        void OnCornerCut()
+        {
+            if (race.State == RaceState.Racing) Trick("SHORTCUT!", ShortcutColor); // landed a corner cut on the road
+        }
+
+        void OnRing(int ring)
+        {
+            if (race.State == RaceState.Racing) Trick("BOOST RING!", AirColor);
         }
 
         void OnLaunch(float duration) => _airTime = duration;

@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Winter03
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Santa's Workshop
+  displayName: Avalanche Peak
   chapter: "WINTER CUP \xB7 RACE 4"
   track: {fileID: 11400000, guid: c614b76c218d64c73b033f593cdbd5c1, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: a7ba80b6c3e664addaf4207b63cb8b20, type: 3}
-  laps: 3
-  description: 'A very silly ride in three sections: down the high street of Santa''s village (or slide across the skating rink), straight through the toy factory past the toy train, the rolling balls and the robot vacuum, then bounce across the hot chocolate lake on trampolines and race home through Candy Land. Mind the penguins!'
-  difficulty: 3
+  laps: 1
+  description: 'One big run down Avalanche Peak in three sections: ride the gondola up over the gorge to the summit, race along the knife-edge ridge (don''t fall off!), jump the crevasse, fly off the cliff, then choose: the dark ice cave through the mountain or the ledge round the outside - and down through the tunnel to the finish!'
+  difficulty: 4
   rivalCount: 7
-  rivalSpeedScale: 0.92
+  rivalSpeedScale: 0.93
   rivalCornerScale: 1
   starsRequired: 24
   starTimes:
-  - 75
-  - 66
-  - 63
+  - 94
+  - 89
+  - 86

@@ -69,16 +69,15 @@ namespace SomeGame.Track
                     Arrow(a, path.PointAt(d) + path.NormalAt(d) * lateral, fwd, arrowSize);
                 }
             }
-            // Downhill slopes: chevrons down the road, pointing the way.
+            // Downhill slopes: a short row of chevrons in the middle of the road where each one starts.
             if (layout.slopes != null)
                 foreach (var slope in layout.slopes)
                 {
                     float span = path.DeltaDistance(slope.from, slope.to);
-                    for (float s = 3f; s < span - 2f; s += 8f)
+                    for (float s = 1f; s < Mathf.Min(span - 2f, 8f); s += 3f)
                     {
                         float d = slope.from + s;
-                        foreach (float lat in new[] { 1.8f, -1.8f })
-                            Arrow(a, path.PointAt(d) + path.NormalAt(d) * lat, path.TangentAt(d), arrowSize * 1.1f);
+                        Arrow(a, path.PointAt(d), path.TangentAt(d), arrowSize * 1.1f);
                     }
                 }
             if (arrows != null) Assign(arrows, a.ToMesh("Arrows"));
@@ -91,7 +90,7 @@ namespace SomeGame.Track
                 float mid = jump.RampStart + length * 0.5f;
                 Vector2 forward = path.TangentAt(mid), side = path.NormalAt(mid);
                 Vector2 centre = path.PointAt(mid) + side * jump.Lateral;
-                r.Quad(centre, side * (layout.rampWidth * 0.5f), forward * (length * 0.5f), new Rect(0f, 0f, 1f, 1f));
+                r.Quad(centre, side * (jump.Width * 0.5f), forward * (length * 0.5f), new Rect(0f, 0f, 1f, 1f));
             }
             foreach (var ramp in track.Shortcuts)
             {

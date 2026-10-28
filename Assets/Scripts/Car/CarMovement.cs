@@ -114,7 +114,19 @@ namespace SomeGame.Car
         public float AirTimeLeft => IsPuppet || !IsAirborne ? 0f : _airTimer;
         /// <summary>How long the current trick's spin lasts: it always ends before the car lands.</summary>
         public float TrickSpin { get; private set; } = 0.45f;
-        public float AirHeight => IsPuppet ? _puppetAir : IsAirborne ? Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration)) : 0f;
+        public float AirHeight => IsPuppet ? _puppetAir : !IsAirborne ? 0f : _riding ? RideHeight : _carried && _fallTime > 0f ? CarryHeight
+            : Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration));
+        /// <summary>0 normally; up to 1 while the car tumbles down into a chasm (it looks smaller, further away).</summary>
+        public float FallDepth
+        {
+            get
+            {
+                if (!_carried || _fallTime <= 0f || !IsAirborne) return 0f;
+                float elapsed = _airDuration - _airTimer;
+                if (elapsed < _fallTime) return Mathf.SmoothStep(0f, 1f, elapsed / _fallTime);
+                return 1f - Mathf.SmoothStep(0f, 1f, (elapsed - _fallTime) / ((_airDuration - _fallTime) * 0.45f));
+            }
+        }
         public bool IsSlipping => _slipTimer > 0f;
         /// <summary>Strength (0..1) of the boost currently running.</summary>
         public float BoostStrength { get; private set; }
@@ -520,6 +532,19 @@ namespace SomeGame.Car
             return true;
         }
 
+        // Up off the station, high along the cable, down onto the top station (short rides: up and straight down).
+        float RideHeight
+        {
+            get
+            {
+                float total = _rideAt.Count > 0 ? _rideAt[^1] : 0f;
+                if (total <= 0f) return 0f;
+                float along = Mathf.Clamp01(1f - _airTimer / _airDuration) * total;
+                float ramp = Mathf.Min(14f, total * 0.5f);
+                return Mathf.SmoothStep(0f, 1f, Mathf.Min(along, total - along) / ramp);
+            }
+        }
+
         void Ride(float dt)
         {
             _airTimer -= dt;
@@ -566,10 +591,11 @@ namespace SomeGame.Car
         /// where it is set down driving on at <paramref name="speedAfter"/>. False if it cannot be carried
         /// (an online puppet, or already in the air).
         /// </summary>
-        public bool CarryBack(Pose pose, float speedAfter, bool fromWater = false)
+        public bool CarryBack(Pose pose, float speedAfter, bool fromWater = false, bool fall = false)
         {
             if (IsPuppet || IsAirborne) return false;
             CarriedFromWater = fromWater;
+            _fallTime = fall ? FallSeconds : 0f;
             EndDrift();
             _trick = false;
             _exitTimer = _calmTimer = 0f;
@@ -583,17 +609,43 @@ namespace SomeGame.Car
             _carrySpeed = speedAfter;
             _airLocked = true;
             _airTurnTo = null;
-            _airDuration = _airTimer = Mathf.Clamp(0.75f + Vector2.Distance(_carryFrom, _carryTo) / 60f, 0.85f, 1.5f);
+            _airDuration = _airTimer = Mathf.Clamp(0.75f + Vector2.Distance(_carryFrom, _carryTo) / 60f, 0.85f, 1.5f) + _fallTime;
             _body.angularVelocity = 0f;
             if (_collider != null) _collider.enabled = false;
             CarryStarted?.Invoke();
             return true;
         }
 
+        // Seconds a car tumbles down into a chasm before it is lifted out.
+        const float FallSeconds = 0.6f;
+        float _fallTime;
+
+        // Up and down on the way back (after the fall, if it fell).
+        float CarryHeight
+        {
+            get
+            {
+                float elapsed = _airDuration - _airTimer;
+                return elapsed < _fallTime ? 0f : Mathf.Sin(Mathf.PI * Mathf.Clamp01((elapsed - _fallTime) / (_airDuration - _fallTime)));
+            }
+        }
+
         void Carry(float dt)
         {
             _airTimer -= dt;
-            float t = 1f - Mathf.Max(0f, _airTimer) / _airDuration;
+            float elapsed = _airDuration - Mathf.Max(0f, _airTimer);
+            if (elapsed < _fallTime)
+            {
+                // Over the edge: the car slides on, slowing, as it drops away into the depths.
+                _body.linearVelocity *= Mathf.Pow(0.2f, dt);
+                _body.angularVelocity = 0f;
+                ForwardSpeed = _body.linearVelocity.magnitude;
+                SidewaysSpeed = 0f;
+                _carryFrom = _body.position + _body.linearVelocity * dt;
+                _carryFromHeading = _body.rotation;
+                return;
+            }
+            float t = Mathf.Clamp01((elapsed - _fallTime) / (_airDuration - _fallTime));
             float eased = t * t * (3f - 2f * t);
             Vector2 goal = Vector2.Lerp(_carryFrom, _carryTo, eased);
             _body.linearVelocity = (goal - _body.position) / dt;

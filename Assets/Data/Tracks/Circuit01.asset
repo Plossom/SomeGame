@@ -54,10 +54,23 @@ MonoBehaviour:
   stairs: []
   decor: []
   logJumps: []
+  rings: []
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings: []
+  padLook: 0
+  boats: []
+  fireworks: 0
+  cows: []
+  fences: []
   trains: []
   props: []
   bankMaterial: {fileID: 0}
   sceneryMaterial: {fileID: 0}
+  roadMaterial: {fileID: 0}
+  vehicle: 0
+  noSnowfall: 0
   waterWorld: 0
   biome: 0
   gaps: []
@@ -100,6 +113,11 @@ MonoBehaviour:
   banks: []
   penguins: []
   dashPanels: []
+  icePatches: []
+  slopes: []
+  snowPiles: []
+  chasms: []
+  caves: []
   scenery: []
   bakedScenery:
   - position: {x: 91.62334, y: 91.7702}
@@ -8046,4 +8064,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4293328875
     canopy: 0
-  bakedSignature: 0f2f2fc2c56f8598
+  bakedSignature: e06f9e62316f6937

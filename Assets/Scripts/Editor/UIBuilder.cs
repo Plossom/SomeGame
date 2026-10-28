@@ -1319,6 +1319,12 @@ namespace SomeGame.EditorTools
                 ("headlightSprite", Sprite("Headlight")), ("auroraSprite", Sprite("Aurora")), ("waterfallMaterial", Mat("Waterfall")),
                 ("toyLocoSprite", Sprite("ToyLoco")), ("toyWagonSprite", Sprite("ToyWagon")), ("toyRailsMaterial", Mat("ToyRails")),
                 ("particleMaterial", particles), ("font", _black));
+            // The mountain: chasms to fall into, caves through the rock.
+            var mountain = track.GetComponent<SomeGame.Track.TrackMountain>();
+            if (mountain == null) mountain = track.gameObject.AddComponent<SomeGame.Track.TrackMountain>();
+            Configure(mountain, ("track", track), ("plain", Mat("Plain")), ("floorMaterial", Mat("FloorRock")),
+                ("crystalSprite", Sprite("IceCrystal")), ("stalagmiteSprite", Sprite("Stalagmite")), ("glowSprite", Sprite("Glow")),
+                ("boulderSprite", Sprite("CaveBoulder")), ("particleMaterial", particles));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
                 ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")), ("curlingSprite", Sprite("CurlingStone")), ("reindeerSprite", Sprite("Reindeer")), ("iceFloeSprite", Sprite("IceFloe")),
                 ("mushroomPadSprite", Sprite("MushroomPad")), ("trampolineSprite", Sprite("Trampoline")));

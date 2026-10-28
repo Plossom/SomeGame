@@ -69,6 +69,7 @@ namespace SomeGame.Car
             if (_terrain != null)
             {
                 _terrain.Splashed += OnSplashed;
+                _terrain.Fell += OnFell;
                 _terrain.PenguinHit += OnPenguin;
                 _terrain.CowHit += OnCow;
                 _terrain.RingHit += OnRing;
@@ -89,6 +90,7 @@ namespace SomeGame.Car
             if (_terrain != null)
             {
                 _terrain.Splashed -= OnSplashed;
+                _terrain.Fell -= OnFell;
                 _terrain.PenguinHit -= OnPenguin;
                 _terrain.CowHit -= OnCow;
                 _terrain.RingHit -= OnRing;
@@ -156,6 +158,8 @@ namespace SomeGame.Car
         void OnLanded() => PlayOneShot(Library.land, 0.8f);
         void OnSlipped() => PlayOneShot(Library.oilSpin, 0.75f);
         void OnSplashed() => PlayOneShot(Library.splash, 0.9f);
+
+        void OnFell() => PlayOneShot(Library.wallWhoosh, 0.8f);
 
         void OnCrashed(float impact)
         {

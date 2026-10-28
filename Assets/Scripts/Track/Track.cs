@@ -149,6 +149,8 @@ namespace SomeGame.Track
             public float Lateral;
             /// <summary>The layout gap this jump crosses, or -1 (a river).</summary>
             public int Gap;
+            /// <summary>Width of the take-off (the kicker, or the whole road at a cliff drop).</summary>
+            public float Width;
         }
 
         /// <summary>The race clock the drawbridges keep time by (the same for every player); Time.time until a race sets it.</summary>
@@ -414,7 +416,7 @@ namespace SomeGame.Track
         {
             bool river = RiverDistance(p) < 0f;
             if (river && Jumps != null && _bridges.Count == 0) return true;
-            bool lake = LakeDistance(p) < 0f;
+            bool lake = LakeDistance(p) < 0f || ChasmAt(p);
             if (!river && !lake && !layout.waterWorld && layout.gaps.Count == 0) return false;
             var point = Path.Project(p);
             bool roadHere = Mathf.Abs(point.Lateral) <= OffRoadAt(point.Distance) + 0.15f;
@@ -423,6 +425,15 @@ namespace SomeGame.Track
             bool gap = OpenGapAt(point.Distance) >= 0;
             if (roadHere && !gap) return false;
             return river || lake || layout.waterWorld || gap && roadHere;
+        }
+
+        /// <summary>True inside a chasm's outline (whether or not the road crosses there).</summary>
+        public bool ChasmAt(Vector2 p)
+        {
+            if (layout.chasms == null) return false;
+            foreach (var chasm in layout.chasms)
+                if (chasm.points != null && chasm.points.Length >= 3 && chasm.Contains(p)) return true;
+            return false;
         }
 
         /// <summary>The gummiboat under a point, if any.</summary>
@@ -523,7 +534,7 @@ namespace SomeGame.Track
             {
                 if (jump.Gap >= 0 && !GapOpen(layout.gaps[jump.Gap])) continue; // a drawbridge that is down
                 float into = Path.DeltaDistance(jump.RampStart, distance);
-                if (into >= 0f && into <= jump.Lip - jump.RampStart && Mathf.Abs(lateral - jump.Lateral) <= layout.rampWidth * 0.5f)
+                if (into >= 0f && into <= Path.DeltaDistance(jump.RampStart, jump.Lip) && Mathf.Abs(lateral - jump.Lateral) <= jump.Width * 0.5f)
                     return jump;
             }
             return null;
@@ -551,7 +562,7 @@ namespace SomeGame.Track
                         if (river.bridged != null && System.Array.IndexOf(river.bridged, crossing) >= 0)
                             _bridges.Add((path.WrapDistance(enter - 2f), path.WrapDistance(d + 2f)));
                         else
-                            jumps.Add(new Jump { RampStart = path.WrapDistance(enter - 1f - layout.rampLength), Lip = path.WrapDistance(enter - 1f), FarBank = path.WrapDistance(d + 1f), Lateral = lateral, Gap = -1 });
+                            jumps.Add(new Jump { RampStart = path.WrapDistance(enter - 1f - layout.rampLength), Lip = path.WrapDistance(enter - 1f), FarBank = path.WrapDistance(d + 1f), Lateral = lateral, Gap = -1, Width = layout.rampWidth });
                         crossing++;
                     }
                     wasIn = isIn;
@@ -562,12 +573,14 @@ namespace SomeGame.Track
                 var gap = layout.gaps[g];
                 if (gap.lift) continue; // a cable car carries cars across: no ramp
                 // A drawbridge's raised leaf is the ramp itself (over the water, from its hinge).
+                // A cliff drop takes off across the whole road.
                 jumps.Add(gap.IsDrawbridge
-                    ? new Jump { RampStart = path.WrapDistance(gap.from), Lip = path.WrapDistance(gap.from + DrawbridgeRamp), FarBank = path.WrapDistance(gap.to + 1.5f), Lateral = 0f, Gap = g }
+                    ? new Jump { RampStart = path.WrapDistance(gap.from), Lip = path.WrapDistance(gap.from + DrawbridgeRamp), FarBank = path.WrapDistance(gap.to + 1.5f), Lateral = 0f, Gap = g, Width = layout.rampWidth }
                     : new Jump
                     {
                         RampStart = path.WrapDistance(gap.from - layout.rampLength), Lip = path.WrapDistance(gap.from),
-                        FarBank = path.WrapDistance(gap.to), Lateral = gap.rampLateral, Gap = g,
+                        FarBank = path.WrapDistance(gap.to), Lateral = gap.drop ? 0f : gap.rampLateral, Gap = g,
+                        Width = gap.drop ? OffRoadAt(gap.from) * 2f : layout.rampWidth,
                     });
             }
             // Forest logs across the road: a little ramp right before each one.
@@ -576,7 +589,7 @@ namespace SomeGame.Track
                     jumps.Add(new Jump
                     {
                         RampStart = path.WrapDistance(log - 1.4f - layout.rampLength), Lip = path.WrapDistance(log - 1.4f),
-                        FarBank = path.WrapDistance(log + 1.4f), Lateral = 0f, Gap = -1,
+                        FarBank = path.WrapDistance(log + 1.4f), Lateral = 0f, Gap = -1, Width = layout.rampWidth,
                     });
             jumps.Sort((a, b) => a.RampStart.CompareTo(b.RampStart));
             return jumps;

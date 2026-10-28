@@ -29,6 +29,8 @@ namespace SomeGame.CameraRig
         [Tooltip("How much further the camera pulls back at top speed, and again while boosting (a sense of speed).")]
         [SerializeField, Range(0f, 0.3f)] float speedZoom = 0.07f;
         [SerializeField, Range(0f, 0.3f)] float boostZoom = 0.06f;
+        [Tooltip("Zoom while riding a gondola (the view widens to show the mountain).")]
+        [SerializeField, Range(1f, 2f)] float rideZoom = 1.45f;
 
         Camera _camera;
         Vector2 _focus, _focusVelocity, _lookAhead, _lookAheadVelocity;
@@ -88,6 +90,7 @@ namespace SomeGame.CameraRig
             {
                 float fraction = Mathf.Clamp01(target.linearVelocity.magnitude / Mathf.Max(1f, _targetCar.Stats.topSpeed));
                 wanted = 1f + speedZoom * fraction * fraction + (_targetCar.IsBoosting ? boostZoom : 0f);
+                if (_targetCar.IsRiding) wanted = rideZoom; // up on the gondola: look out over the mountain
             }
             _speedZoom = Mathf.SmoothDamp(_speedZoom, wanted, ref _speedZoomVelocity, 0.6f, Mathf.Infinity, dt);
             _focus = Vector2.SmoothDamp(_focus, (Vector2)target.transform.position, ref _focusVelocity, followSmoothTime, Mathf.Infinity, dt);

@@ -18,7 +18,10 @@ namespace SomeGame.EditorTools
         const int LongSide = 1000;
 
         [MenuItem("SomeGame/Generate Track Previews")]
-        public static string Generate()
+        public static string Generate() => Generate(null);
+
+        /// <summary>The pictures of every race, or only of the level named <paramref name="only"/>.</summary>
+        public static string Generate(string only)
         {
             EditorSceneManager.SaveOpenScenes();
             EditorSceneManager.OpenScene(UIBuilder.RaceScenePath);
@@ -41,6 +44,7 @@ namespace SomeGame.EditorTools
             var log = new System.Text.StringBuilder();
             foreach (var level in levels)
             {
+                if (only != null && level.name != only) continue;
                 var layout = level.track;
                 layoutField.SetValue(track, layout);
                 invalidate.Invoke(track, null);
