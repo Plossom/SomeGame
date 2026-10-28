@@ -252,12 +252,19 @@ namespace SomeGame.Input
                     var ride = layout0.rides[i];
                     float to = path.DeltaDistance(distance, ride.from);
                     if (to < -1f || to > 28f || !Takes(3000 + i)) continue;
-                    lateral = Mathf.Lerp(lateral, ride.lateral, Mathf.InverseLerp(28f, 12f, to));
+                    lateral = Mathf.Lerp(lateral, ride.lateral, Mathf.InverseLerp(30f, 16f, to));
                 }
             // Steer around oil puddles and cows ahead: pass on whichever side needs the smaller move.
             var layout = _sensor.Track.Layout;
             foreach (var spot in layout.oil) lateral = Dodge(path, distance, lateral, spot.distance, spot.lateral, spot.radius);
             foreach (var cow in layout.cows) lateral = Dodge(path, distance, lateral, cow.distance, cow.lateral, cow.radius);
+            // Pinball bumpers: weave between them.
+            if (layout.pinball != null)
+                foreach (var bumper in layout.pinball)
+                {
+                    var at = path.Project(bumper.position);
+                    lateral = Dodge(path, distance, lateral, at.Distance, at.Lateral, bumper.radius + 0.4f);
+                }
             return lateral;
         }
 

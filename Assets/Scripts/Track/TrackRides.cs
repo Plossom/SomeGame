@@ -21,7 +21,10 @@ namespace SomeGame.Track
 
         const int ShadowOrder = -44, RinkOrder = -46, KickerOrder = -45, BoardOrder = -40, PostOrder = 6, RailOrder = 8,
                   GateOrder = 10, BumperOrder = 11, TubeOrder = 25, MouthOrder = 26;
-        const float TubeHalf = 2.3f, EntranceHalf = 2f;
+        const float TubeHalf = 2.3f;
+        // How far off the entrance's middle a car may be (the rail's kicker is narrow), the speed it needs, and how
+        // straight it must be heading (no swerving in sideways).
+        const float RailHalf = 1.1f, FlumeHalf = 1.3f, RailSpeed = 14f, FlumeSpeed = 8f, MaxEntryAngle = 22f;
 
         static Color Lin(float r, float g, float b, float a = 1f) { var c = new Color(r, g, b).linear; c.a = a; return c; }
         static readonly Color TubeEdge = Lin(0.32f, 0.6f, 0.82f, 0.9f), TubeMid = Lin(0.72f, 0.9f, 1f, 0.42f), TubeCore = Lin(0.88f, 0.97f, 1f, 0.22f),
@@ -176,7 +179,7 @@ namespace SomeGame.Track
             {
                 Vector2 p0 = lip - tan * (4f - q * 0.67f), p1 = lip - tan * (4f - (q + 1) * 0.67f);
                 Color col = q % 2 == 0 ? Hazard : HazardDark;
-                AddQuad(p0 - nn * EntranceHalf * 0.8f, p1 - nn * EntranceHalf * 0.8f, p1 + nn * EntranceHalf * 0.8f, p0 + nn * EntranceHalf * 0.8f, col, kv, kc, kt);
+                AddQuad(p0 - nn * RailHalf, p1 - nn * RailHalf, p1 + nn * RailHalf, p0 + nn * RailHalf, col, kv, kc, kt);
             }
             Part("RailKicker", MakeMesh("RailKicker", kv, kc, kt), plain, KickerOrder);
         }
@@ -282,9 +285,12 @@ namespace SomeGame.Track
                 {
                     float to = path.DeltaDistance(d, ride.Data.from);
                     bool rail = ride.Data.type == TrackLayout.RideType.Rail;
-                    // The flume's mouth is a little wider than the rail's kicker.
-                    if (to < -0.5f || to > 1.5f || Mathf.Abs(lat - ride.Data.lateral) > (rail ? EntranceHalf : EntranceHalf + 0.6f)) continue;
-                    if (speed < (rail ? 9f : 4f)) continue;
+                    // Rivals line up by script, not by thumb: a little more room for them.
+                    bool rival = car.GetComponent<SomeGame.Input.PlayerCarInput>() == null;
+                    float window = (rail ? RailHalf : FlumeHalf) + (rival ? 0.9f : 0f);
+                    if (to < -0.5f || to > 1.5f || Mathf.Abs(lat - ride.Data.lateral) > window) continue;
+                    if (speed < (rail ? RailSpeed : FlumeSpeed) * (rival ? 0.8f : 1f)) continue;
+                    if (Vector2.Angle(car.Body.linearVelocity, path.TangentAt(d)) > MaxEntryAngle * (rival ? 1.8f : 1f)) continue;
                     BoardRide(car, ride);
                     break;
                 }
@@ -294,7 +300,7 @@ namespace SomeGame.Track
                     var t = _bumpers[b].t;
                     float r = track.Layout.pinball[b].radius;
                     Vector2 away = car.Body.position - (Vector2)t.position;
-                    if (away.magnitude > r + 1.1f) continue;
+                    if (away.magnitude > r + 1.8f) continue; // touching it (the car's nose reaches this far)
                     if (_bumpedAt.TryGetValue(car, out float last) && Time.time - last < 0.35f) continue;
                     _bumpedAt[car] = Time.time;
                     Bump(car, t, away.normalized);
