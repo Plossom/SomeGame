@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Winter04
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Winter Games
+  displayName: Thin Ice
   chapter: "WINTER CUP \xB7 RACE 5"
   track: {fileID: 11400000, guid: 56e39c38ebff84174a9a4308603f1710, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 599f093c156d84f708541d46aaad0661, type: 3}
   laps: 3
-  description: 'Go for gold in three sections: out of the stadium and off the big ski jump through the boost rings, down the bobsleigh run from ice wall to ice wall, past the biathlon range (or along the cross-country trail), then across the slippery ice arena between the curling stones and home past the podium. Fireworks for the winner!'
+  description: 'Three laps round the frozen fjord at the Midwinter Ice Festival - and the ice won''t last! Lap 1: race the ice road straight across. Lap 2: the ice cracks, panels sink behind you and the icebreaker cuts through. Lap 3: the ice is gone - hop the drifting floes, or take the cliff ledge that just opened!'
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.95
   rivalCornerScale: 1
   starsRequired: 26
   starTimes:
-  - 84
-  - 75
-  - 69
+  - 100
+  - 96
+  - 88

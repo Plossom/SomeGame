@@ -39,6 +39,8 @@ namespace SomeGame.Audio
         public AudioClip moo;
         public AudioClip dashPanel;
         public AudioClip snowPoof;
+        public AudioClip iceCrack;
+        public AudioClip shipHorn;
         public AudioClip trick;
         public AudioClip unlock;
         public AudioClip fanfare;

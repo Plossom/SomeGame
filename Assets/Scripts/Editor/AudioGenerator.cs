@@ -42,6 +42,8 @@ namespace SomeGame.EditorTools
             Write("Moo", Moo());
             Write("DashPanel", DashPanel());
             Write("SnowPoof", SnowPoof());
+            Write("IceCrack", IceCrack());
+            Write("ShipHorn", ShipHorn());
             Write("Unlock", Unlock());
             Write("Fanfare", Fanfare());
             Write("Trick", Chime(new[] { 1318.5f, 1975.5f }, 0.06f, 0.35f, bright: true));
@@ -244,6 +246,72 @@ namespace SomeGame.EditorTools
                 float t = (float)i / Rate;
                 lp += (noise.Next() - lp) * 0.08f;
                 s[i] = lp * Mathf.Exp(-t * 12f) * Mathf.Min(1f, t * 200f) + Mathf.Sin(2f * Mathf.PI * 80f * t) * Mathf.Exp(-t * 20f) * 0.5f;
+            }
+            return Normalize(s, 0.7f);
+        }
+
+        /// <summary>Only the fjord's sounds (cracking ice, the icebreaker's horn), hooked into the audio library.</summary>
+        public static void GenerateFjordSounds()
+        {
+            Directory.CreateDirectory(Folder);
+            Write("IceCrack", IceCrack());
+            Write("ShipHorn", ShipHorn());
+            AssetDatabase.Refresh();
+            foreach (var name in new[] { "IceCrack", "ShipHorn" })
+            {
+                var importer = (AudioImporter)AssetImporter.GetAtPath($"{Folder}/{name}.wav");
+                var settings = importer.defaultSampleSettings;
+                settings.loadType = AudioClipLoadType.DecompressOnLoad;
+                settings.compressionFormat = AudioCompressionFormat.ADPCM;
+                importer.defaultSampleSettings = settings;
+                importer.SaveAndReimport();
+            }
+            var library = AssetDatabase.LoadAssetAtPath<SomeGame.Audio.AudioLibrary>("Assets/Resources/AudioLibrary.asset");
+            if (library == null) return;
+            library.iceCrack = AssetDatabase.LoadAssetAtPath<AudioClip>($"{Folder}/IceCrack.wav");
+            library.shipHorn = AssetDatabase.LoadAssetAtPath<AudioClip>($"{Folder}/ShipHorn.wav");
+            EditorUtility.SetDirty(library);
+            AssetDatabase.SaveAssets();
+        }
+
+        // Ice cracking: sharp snaps (clicks with a bright ring) running into a low groan.
+        static float[] IceCrack()
+        {
+            int n = (int)(0.9f * Rate);
+            var s = new float[n];
+            var noise = new Noise(23);
+            float[] snaps = { 0f, 0.07f, 0.11f, 0.19f, 0.26f, 0.38f };
+            float lp = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate, v = 0f;
+                float white = noise.Next();
+                foreach (float at in snaps)
+                {
+                    if (t < at) continue;
+                    float u = t - at;
+                    v += white * Mathf.Exp(-u * 90f) * 0.9f + Mathf.Sin(2f * Mathf.PI * (2600f - at * 2000f) * u) * Mathf.Exp(-u * 60f) * 0.35f;
+                }
+                lp += (white - lp) * 0.01f;
+                float groan = Mathf.Sin(2f * Mathf.PI * (70f + 25f * Mathf.Sin(t * 9f)) * t) * Mathf.Exp(-t * 3f) * Mathf.Min(1f, t * 8f) * 0.5f;
+                s[i] = v + groan + lp * 2f * Mathf.Exp(-t * 2f);
+            }
+            return Normalize(s, 0.75f);
+        }
+
+        // The icebreaker's horn: two deep tones together, swelling in, holding, dying away.
+        static float[] ShipHorn()
+        {
+            int n = (int)(1.6f * Rate);
+            var s = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                float env = Mathf.Min(1f, t / 0.12f) * Mathf.Clamp01((1.6f - t) / 0.35f);
+                float v = 0f;
+                foreach (float f in new[] { 110f, 138.6f })
+                    for (int h = 1; h <= 6; h++) v += Mathf.Sin(2f * Mathf.PI * f * h * t + h) / (h * 1.3f);
+                s[i] = v * env * (1f + 0.05f * Mathf.Sin(t * 30f));
             }
             return Normalize(s, 0.7f);
         }

@@ -359,7 +359,7 @@ namespace SomeGame.Track
         /// and sideways offset. If several overlap, the nearest centre line wins. <paramref name="roofs"/> and
         /// <paramref name="ground"/> choose which branches count (a car on the street is not on a roof).
         /// </summary>
-        public int BranchAt(Vector2 position, out float along, out float lateral, bool roofs = true, bool ground = true)
+        public int BranchAt(Vector2 position, out float along, out float lateral, bool roofs = true, bool ground = true, int keep = -1)
         {
             int found = -1;
             along = 0f;
@@ -370,6 +370,7 @@ namespace SomeGame.Track
             {
                 bool roof = branches[i].Kind == TrackLayout.BranchKind.Roof;
                 if (roof ? !roofs : !ground) continue;
+                if (i != keep && !BranchOpen(i)) continue; // still closed this lap (a car already on it keeps it)
                 branches[i].Project(position, out float a, out float l);
                 if (Mathf.Abs(l) > branches[i].HalfWidth + layout.kerbWidth || Mathf.Abs(l) >= best) continue;
                 best = Mathf.Abs(l);
@@ -379,6 +380,153 @@ namespace SomeGame.Track
             }
             return found;
         }
+
+        // ------------------------------------------------------------------ phases: the track changes lap by lap
+
+        /// <summary>The lap the race leader is on (set by <see cref="FjordIce"/>; 1 outside a race). Branches open and the fjord breaks up by it.</summary>
+        public static int PhaseLap = 1;
+        /// <summary>Race-clock time the fjord started cracking (the icebreaker sails from then).</summary>
+        public static float CrackStart = float.PositiveInfinity;
+        /// <summary>Race-clock time the fjord broke up (open water from then).</summary>
+        public static float BreakStart = float.PositiveInfinity;
+
+        /// <summary>Whether a branch is open on the current lap.</summary>
+        public bool BranchOpen(int i) =>
+            layout == null || layout.branches == null || i < 0 || i >= layout.branches.Count || layout.branches[i].openFromLap <= PhaseLap;
+
+        bool FjordOn => layout != null && layout.fjord != null && layout.fjord.enabled;
+
+        /// <summary>The fjord is cracked (the panels crumble, the icebreaker sails) / broken up (open water and floes).</summary>
+        public bool FjordCracked => FjordOn && Clock >= CrackStart;
+        public bool FjordBroken => FjordOn && Clock >= BreakStart;
+
+        const float PanelSink = 0.8f, PanelRefreeze = 3.5f;
+        float[] _panelCrack;
+
+        /// <summary>The crumbling panel of the ice road under a point, or -1.</summary>
+        public int PanelAt(Vector2 p)
+        {
+            var f = layout.fjord;
+            if (!FjordOn || f.panels == null || f.panels.Length == 0 || f.iceRoad < 0 || f.iceRoad >= Branches.Count) return -1;
+            var road = Branches[f.iceRoad];
+            road.Project(p, out float along, out float lateral);
+            if (Mathf.Abs(lateral) > road.HalfWidth + layout.kerbWidth + 0.5f) return -1;
+            for (int i = 0; i < f.panels.Length; i++)
+                if (along >= f.panels[i].x && along <= f.panels[i].y) return i;
+            return -1;
+        }
+
+        /// <summary>0 whole, 1 cracking (about to sink), 2 sunk (open water), for a panel now.</summary>
+        public int PanelState(int i)
+        {
+            if (_panelCrack == null || i < 0 || i >= _panelCrack.Length) return 0;
+            float since = Clock - _panelCrack[i];
+            return since < 0f ? 0 : since < PanelSink ? 1 : since < PanelSink + PanelRefreeze ? 2 : 0;
+        }
+
+        /// <summary>Seconds since the panel last cracked (large when never).</summary>
+        public float PanelAge(int i) => _panelCrack == null || i < 0 || i >= _panelCrack.Length ? 1000f : Clock - _panelCrack[i];
+
+        /// <summary>A car drove onto a whole panel while the fjord is cracked: it cracks, and sinks a moment later. True if it cracked now.</summary>
+        public bool CrackPanel(int i)
+        {
+            if (!FjordCracked || FjordBroken || i < 0) return false;
+            var f = layout.fjord;
+            if (_panelCrack == null || _panelCrack.Length != f.panels.Length)
+            {
+                _panelCrack = new float[f.panels.Length];
+                for (int k = 0; k < _panelCrack.Length; k++) _panelCrack[k] = -1000f;
+            }
+            if (PanelState(i) != 0) return false;
+            _panelCrack[i] = Clock;
+            return true;
+        }
+
+        /// <summary>Resets the fjord for a new race.</summary>
+        public void ResetFjord()
+        {
+            _panelCrack = null;
+            PhaseLap = 1;
+            CrackStart = BreakStart = float.PositiveInfinity;
+        }
+
+        /// <summary>Where the icebreaker is (0 = shipFrom .. 1 = shipTo) and which way it sails (+1 out, -1 back, 0 waiting).</summary>
+        public float ShipAlong(out int direction)
+        {
+            var f = layout.fjord;
+            direction = 0;
+            float t = Clock - CrackStart;
+            if (!FjordOn || t < 0f || float.IsInfinity(t)) return 0f;
+            float travel = Vector2.Distance(f.shipFrom, f.shipTo) / Mathf.Max(0.5f, f.shipSpeed), cycle = 2f * (travel + f.shipWait);
+            float c = Mathf.Repeat(t, cycle);
+            if (c < travel) { direction = 1; return c / travel; }
+            if (c < travel + f.shipWait) return 1f;
+            if (c < 2f * travel + f.shipWait) { direction = -1; return 1f - (c - travel - f.shipWait) / travel; }
+            return 0f;
+        }
+
+        /// <summary>Seconds since the icebreaker last passed this point of its line (0..1), or infinity.</summary>
+        public float SinceShipPassed(float u)
+        {
+            var f = layout.fjord;
+            float t = Clock - CrackStart;
+            if (!FjordOn || t < 0f || float.IsInfinity(t)) return float.PositiveInfinity;
+            float travel = Vector2.Distance(f.shipFrom, f.shipTo) / Mathf.Max(0.5f, f.shipSpeed), cycle = 2f * (travel + f.shipWait);
+            float k = Mathf.Floor(t / cycle) * cycle, best = float.PositiveInfinity;
+            foreach (float start in new[] { k - cycle, k })
+                foreach (float pass in new[] { start + u * travel, start + travel + f.shipWait + (1f - u) * travel })
+                    if (pass <= t && pass >= 0f) best = Mathf.Min(best, t - pass);
+            return best;
+        }
+
+        /// <summary>Open water in the icebreaker's channel at a point (freshly cut, not frozen over yet).</summary>
+        public bool InChannel(Vector2 p)
+        {
+            var f = layout.fjord;
+            if (!FjordCracked) return false;
+            Vector2 a = f.shipFrom, ab = f.shipTo - f.shipFrom;
+            float u = Mathf.Clamp01(Vector2.Dot(p - a, ab) / Mathf.Max(0.01f, ab.sqrMagnitude));
+            if (Vector2.Distance(p, a + ab * u) > ChannelHalfWidth) return false;
+            return SinceShipPassed(u) < f.refreeze;
+        }
+
+        public const float ChannelHalfWidth = 3.4f;
+
+        /// <summary>Where a drifting floe is now.</summary>
+        public Vector2 FloePosition(int i)
+        {
+            var floe = layout.fjord.floes[i];
+            float a = (Clock / floe.period + floe.phase) * Mathf.PI * 2f;
+            return floe.position + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * floe.drift;
+        }
+
+        /// <summary>The floe under a point (once the fjord has broken up), or -1.</summary>
+        public int FloeAt(Vector2 p, float shrink = 0.92f)
+        {
+            if (!FjordBroken || layout.fjord.floes == null) return -1;
+            for (int i = 0; i < layout.fjord.floes.Count; i++)
+            {
+                float r = layout.fjord.floes[i].radius * shrink;
+                if ((p - FloePosition(i)).sqrMagnitude < r * r) return i;
+            }
+            return -1;
+        }
+
+        /// <summary>Water of the fjord at a point now: the broken fjord except its floes, the icebreaker's fresh channel, a sunk panel.</summary>
+        public bool FjordWater(Vector2 p)
+        {
+            if (!FjordOn || !layout.fjord.Contains(p)) return false;
+            if (FjordBroken) return FloeAt(p) < 0;
+            if (!FjordCracked) return false;
+            return InChannel(p) || PanelState(PanelAt(p)) == 2;
+        }
+
+        /// <summary>Water that will freeze over again soon (the channel, a sunk panel): rivals wait for it.</summary>
+        public bool FjordBlocked(Vector2 p) => FjordOn && FjordCracked && layout.fjord.Contains(p)
+            && ((p - ShipPosition).sqrMagnitude < 8f * 8f || !FjordBroken && (InChannel(p) || PanelState(PanelAt(p)) == 2));
+
+        /// <summary>Where the icebreaker is now.</summary>
+        public Vector2 ShipPosition => Vector2.Lerp(layout.fjord.shipFrom, layout.fjord.shipTo, ShipAlong(out _));
 
         /// <summary>Distance from a point to the nearest water edge, rivers and lakes (negative inside water).</summary>
         public float WaterDistance(Vector2 p) => Mathf.Min(RiverDistance(p), LakeDistance(p));
@@ -414,6 +562,7 @@ namespace SomeGame.Track
         /// </summary>
         public bool IsWater(Vector2 p)
         {
+            if (FjordOn && FjordWater(p)) return true;
             bool river = RiverDistance(p) < 0f;
             if (river && Jumps != null && _bridges.Count == 0) return true;
             bool lake = LakeDistance(p) < 0f || ChasmAt(p);

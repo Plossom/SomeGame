@@ -132,6 +132,19 @@ namespace SomeGame.Input
                 float a = _sensor.BranchAlong + look;
                 aim = a <= route.Length ? route.PointAt(a) : path.PointAt(route.To + a - route.Length);
                 if (route.Kind == TrackLayout.BranchKind.Ice) targetSpeed = Mathf.Min(targetSpeed, iceSpeed);
+                // The fjord's ice road: wait for open water ahead (a fresh channel, a sunk panel) to freeze over and
+                // let the icebreaker pass; across the floes, a steady pace for the hops.
+                if (route.Kind == TrackLayout.BranchKind.Fjord)
+                {
+                    for (float x = 2f; x <= 16f; x += 2f)
+                    {
+                        if (_sensor.BranchAlong + x > route.Length) break;
+                        if (!track.FjordBlocked(route.PointAt(_sensor.BranchAlong + x))) continue;
+                        targetSpeed = Mathf.Min(targetSpeed, x < 7f ? 0f : (x - 7f) * 1.5f);
+                        break;
+                    }
+                    if (track.FjordBroken) targetSpeed = Mathf.Min(targetSpeed, 15f);
+                }
             }
             else if (!_sensor.Elevated)
             {
@@ -140,7 +153,7 @@ namespace SomeGame.Input
                 {
                     var route = track.Branches[i];
                     float to = path.DeltaDistance(distance, route.From);
-                    if (!Takes(i)) continue;
+                    if (!Takes(i) || !track.BranchOpen(i)) continue;
                     if (route.Kind == TrackLayout.BranchKind.Roof)
                     {
                         if (to < -2f || to > 30f) continue;

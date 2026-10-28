@@ -116,6 +116,21 @@ MonoBehaviour:
   icePatches: []
   slopes: []
   snowPiles: []
+  fjord:
+    enabled: 0
+    center: {x: 0, y: 0}
+    radii: {x: 40, y: 20}
+    angle: 0
+    iceRoad: -1
+    crackLap: 2
+    breakLap: 3
+    panels: []
+    shipFrom: {x: 0, y: 0}
+    shipTo: {x: 0, y: 0}
+    shipSpeed: 7
+    shipWait: 4
+    refreeze: 6
+    floes: []
   chasms: []
   caves: []
   scenery: []
@@ -8064,4 +8079,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4293328875
     canopy: 0
-  bakedSignature: e06f9e62316f6937
+  bakedSignature: 1fcf7e433ca59486

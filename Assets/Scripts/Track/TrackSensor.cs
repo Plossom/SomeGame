@@ -90,11 +90,12 @@ namespace SomeGame.Track
             }
 
             // Off the main road but on a branch: the branch is the road, and progress runs along it.
+            int previous = Branch;
             Branch = -1;
             RoadDirection = path.TangentAt(point.Distance);
             if (track.Branches.Count > 0 && (Elevated || Mathf.Abs(point.Lateral) > track.HalfWidthAt(point.Distance)))
             {
-                int branch = track.BranchAt(position, out float along, out float lateral, roofs: Elevated, ground: !Elevated);
+                int branch = track.BranchAt(position, out float along, out float lateral, roofs: Elevated, ground: !Elevated, keep: previous);
                 if (branch >= 0)
                 {
                     var route = track.Branches[branch];

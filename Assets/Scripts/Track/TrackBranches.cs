@@ -48,6 +48,7 @@ namespace SomeGame.Track
                     Strip(shadowData, shifted, -hw - 0.6f, hw + 0.6f, 1f, 4f, new Color(0.05f, 0.1f, 0.2f, 0.35f));
                     continue;
                 }
+                if (branch.Kind == TrackLayout.BranchKind.Fjord) continue; // drawn by FjordIce (it breaks up)
                 if (branch.Kind == TrackLayout.BranchKind.Ice)
                 {
                     Strip(iceData, branch.Points, -hw - iceMargin, hw + iceMargin, 1f, iceTile);

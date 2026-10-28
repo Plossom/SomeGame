@@ -266,7 +266,7 @@ namespace SomeGame.Track
 
         public enum SweeperKind { Log, HayBale, Snowball, Boulder, Vacuum, Ball, Curling }
 
-        public enum CrossingKind { Penguins, Sheep, Cat, Reindeer }
+        public enum CrossingKind { Penguins, Sheep, Cat, Reindeer, Seals }
 
         /// <summary>A little line of penguins that waddles across the road, waits, and waddles back.</summary>
         [Serializable]
@@ -345,6 +345,49 @@ namespace SomeGame.Track
         [Tooltip("Heaps of snow on the road: blast through one and it bursts into powder (you lose a little speed); it builds up again.")]
         public List<SnowPile> snowPiles = new();
 
+        [Tooltip("A frozen fjord that breaks up lap by lap (FjordIce): thick ice, then cracks, crumbling panels on the ice road and an " +
+                 "icebreaker cutting a channel, then open water with drifting floes.")]
+        public Fjord fjord = new();
+        [Serializable]
+        public class Fjord
+        {
+            public bool enabled;
+            [Tooltip("The fjord's water: an ellipse (centre, radii, degrees).")]
+            public Vector2 center;
+            public Vector2 radii = new(40f, 20f);
+            public float angle;
+            [Tooltip("The ice road across it (a branch of kind Fjord).")]
+            public int iceRoad = -1;
+            [Tooltip("From this lap the ice cracks: the panels crumble and the icebreaker sails.")]
+            [Min(1)] public int crackLap = 2;
+            [Tooltip("From this lap the ice is gone: open water with drifting floes.")]
+            [Min(1)] public int breakLap = 3;
+            [Tooltip("Crumbling panels on the ice road: (from, to) along it.")]
+            public Vector2[] panels = { };
+            [Tooltip("The icebreaker's line across the fjord (it sails to and fro).")]
+            public Vector2 shipFrom, shipTo;
+            [Min(1f)] public float shipSpeed = 7f;
+            [Tooltip("Seconds it waits at each end.")]
+            [Min(0f)] public float shipWait = 4f;
+            [Tooltip("Seconds the channel behind it stays open before it freezes over again.")]
+            [Min(0.5f)] public float refreeze = 6f;
+            public List<Floe> floes = new();
+            public bool Contains(Vector2 p)
+            {
+                Vector2 local = Quaternion.Euler(0f, 0f, -angle) * (p - center);
+                return (local.x / radii.x) * (local.x / radii.x) + (local.y / radii.y) * (local.y / radii.y) <= 1f;
+            }
+        }
+        [Serializable]
+        public class Floe
+        {
+            public Vector2 position;
+            [Min(1f)] public float radius = 4.5f;
+            [Tooltip("Drifts round a small circle this big (seconds per turn: period).")]
+            public float drift = 1.2f;
+            [Min(1f)] public float period = 9f;
+            public float phase;
+        }
         [Tooltip("Chasms (closed outlines, world positions): off the road inside one you fall into the depths and are carried back. " +
                  "The road may run across one on a ledge or jump it through a gap.")]
         public List<Chasm> chasms = new();
@@ -455,7 +498,7 @@ namespace SomeGame.Track
             [Min(1f)] public float width = 4.5f;
         }
 
-        public enum BranchKind { Road, Ice, Roof }
+        public enum BranchKind { Road, Ice, Roof, Fjord }
 
         /// <summary>
         /// Another way round: leaves the main road at lap distance <see cref="from"/>, runs through
@@ -474,6 +517,8 @@ namespace SomeGame.Track
             [Tooltip("Points the branch runs through between leaving and rejoining (world positions).")]
             public Vector2[] points = { };
             [Min(2f)] public float width = 7f;
+            [Tooltip("Closed (buried under snow, a wall of snow across its mouth) until the race leader starts this lap (0 or 1 = always open).")]
+            [Min(0)] public int openFromLap;
         }
 
         [Serializable]

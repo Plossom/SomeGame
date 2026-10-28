@@ -19,6 +19,9 @@ namespace SomeGame.Track
         float _gustUntil, _nextGust;
         Vector2 _wind = new(1f, -0.15f);
 
+        /// <summary>0 calm .. 1 a storm: gusts come more often and blow harder (set by the race, e.g. the fjord breaking up).</summary>
+        public static float Storm;
+
         static readonly Color Powder = new(0.94f, 0.97f, 1f, 0.9f);
         static readonly Color Rut = new(0.55f, 0.66f, 0.8f, 0.5f);
 
@@ -83,8 +86,8 @@ namespace SomeGame.Track
             // Now and then a gust: fine snow streams across the ground for a few seconds.
             if (Time.time >= _nextGust)
             {
-                _gustUntil = Time.time + Random.Range(2.5f, 4.5f);
-                _nextGust = _gustUntil + Random.Range(4f, 9f);
+                _gustUntil = Time.time + Random.Range(2.5f, 4.5f) * (1f + Storm);
+                _nextGust = _gustUntil + Random.Range(4f, 9f) * (1f - 0.8f * Storm);
                 float a = Random.Range(-25f, 25f) * Mathf.Deg2Rad;
                 _wind = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * (Random.value < 0.5f ? 1f : -1f);
                 var velocity = _gusts.velocityOverLifetime;
@@ -95,7 +98,7 @@ namespace SomeGame.Track
             gustShape.scale = new Vector3(w * 1.3f, h * 1.2f, 0f);
             var gusts = _gusts.emission;
             float strength = Time.time < _gustUntil ? Mathf.Sin(Mathf.InverseLerp(_gustUntil - 4.5f, _gustUntil, Time.time) * Mathf.PI) : 0f;
-            gusts.rateOverTime = Mathf.Max(0f, strength) * w * h * 0.035f;
+            gusts.rateOverTime = Mathf.Max(0f, strength) * w * h * 0.035f * (1f + 2f * Storm);
         }
 
         // Powder kicked up behind the vehicle, drifting back and spreading.

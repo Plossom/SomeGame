@@ -30,7 +30,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite penguinSprite;
         [SerializeField] Sprite sheepSprite;
         [SerializeField] Sprite boulderSprite;
-        [SerializeField] Sprite catSprite, vacuumSprite, ballSprite, curlingSprite, reindeerSprite;
+        [SerializeField] Sprite catSprite, vacuumSprite, ballSprite, curlingSprite, reindeerSprite, sealSprite;
         [Tooltip("Jump pad on dry ground in the meadows and woods (a bouncy mushroom).")]
         [SerializeField] Sprite mushroomPadSprite;
         [Tooltip("Jump pad on the fairground (a trampoline).")]
@@ -177,6 +177,7 @@ namespace SomeGame.Track
                         TrackLayout.CrossingKind.Sheep when sheepSprite != null => ("Sheep", sheepSprite, 1.15f),
                         TrackLayout.CrossingKind.Cat when catSprite != null => ("Cat", catSprite, 2.2f),
                         TrackLayout.CrossingKind.Reindeer when reindeerSprite != null => ("Reindeer", reindeerSprite, 1.7f),
+                        TrackLayout.CrossingKind.Seals when sealSprite != null => ("Seal", sealSprite, 1.5f),
                         _ => ("Penguin", penguinSprite, 1f),
                     };
                     for (int k = 0; k < line.count; k++)

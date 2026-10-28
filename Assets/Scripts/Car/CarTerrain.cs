@@ -86,6 +86,8 @@ namespace SomeGame.Car
         public event Action DashPanel;
         /// <summary>Landed a corner-cut jump on the road (boost).</summary>
         public event Action CornerCut;
+        /// <summary>Hopped from one drifting floe to the next.</summary>
+        public event Action FloeHop;
         float _logAt = -10f;
         /// <summary>The car landed up on a row of roofs.</summary>
         public event Action RoofLanded;
@@ -290,6 +292,8 @@ namespace SomeGame.Car
                     break;
                 }
 
+            // On a drifting floe, fast, about to drive off its edge with another floe ahead: hop across.
+            if (track.FjordBroken && !_car.OnRamp && FloeHopAhead(track, position)) return;
             if (!_car.OnRamp && track.IsWater(position))
             {
                 Splash(track);
@@ -452,12 +456,32 @@ namespace SomeGame.Car
             AnyBounce?.Invoke(bouncer.position);
         }
 
+        bool FloeHopAhead(SomeGame.Track.Track track, Vector2 position)
+        {
+            int floe = track.FloeAt(position, 1f);
+            if (floe < 0) return false;
+            Vector2 velocity = _car.Body.linearVelocity;
+            float speed = velocity.magnitude;
+            if (speed < 7f) return false;
+            Vector2 dir = velocity / speed;
+            if (!track.FjordWater(position + dir * 1.3f)) return false;
+            for (float x = 2f; x <= 9f; x += 0.5f)
+            {
+                int next = track.FloeAt(position + dir * x, 0.8f);
+                if (next < 0 || next == floe) continue;
+                _car.Launch((x + 1.2f) / speed);
+                FloeHop?.Invoke();
+                return true;
+            }
+            return false;
+        }
+
         void Splash(SomeGame.Track.Track track)
         {
             // Over the edge of a chasm: the car tumbles down into the depths (no splash, no dust).
             bool chasm = track.ChasmAt(_car.Body.position) && track.WaterDistance(_car.Body.position) > 0f;
             // Short of a window jump: a fall into the garden (dust), not a splash.
-            bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld;
+            bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld && !track.FjordWater(_car.Body.position);
             var burst = dry ? _dust : _splash;
             burst.transform.position = _car.Body.position;
             if (!chasm) burst.Emit(40);
@@ -465,7 +489,23 @@ namespace SomeGame.Car
             _repeatSplashes = Mathf.Abs(track.Path.DeltaDistance(_lastSplashAt, d)) < 40f ? _repeatSplashes + 1 : 1;
             _lastSplashAt = d;
             Pose pose;
-            if (_isRival && _repeatSplashes >= 3)
+            int branch = _sensor.Branch;
+            if (branch >= 0 && branch < track.Branches.Count)
+            {
+                // Off another way round (the ice road): back to the road before it - or, for a rival that keeps
+                // falling in, on past it.
+                var route = track.Branches[branch];
+                if (_isRival && _repeatSplashes >= 2)
+                {
+                    _repeatSplashes = 0;
+                    float after = track.Path.WrapDistance(route.To + 4f);
+                    Vector2 fwd = track.Path.TangentAt(after);
+                    pose = new Pose(track.Path.PointAt(after), Quaternion.Euler(0f, 0f, Mathf.Atan2(fwd.y, fwd.x) * Mathf.Rad2Deg - 90f));
+                    if (_progress != null) _progress.CreditFlight(route.From, after);
+                }
+                else pose = track.RespawnBefore(route.From, 4f);
+            }
+            else if (_isRival && _repeatSplashes >= 3)
             {
                 // Rivals never get stuck for good: after a few failed tries they are put down past the water.
                 _repeatSplashes = 0;

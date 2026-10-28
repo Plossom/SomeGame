@@ -63,7 +63,7 @@ namespace SomeGame.UI
             _car.TrickLanded -= OnTrickLanded;
             _car.Slipped -= Break;
             _car.Crashed -= OnCrash;
-            if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; _terrain.IceRun -= OnIceRun; _terrain.CornerCut -= OnCornerCut; _terrain.RingHit -= OnRing; }
+            if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; _terrain.IceRun -= OnIceRun; _terrain.CornerCut -= OnCornerCut; _terrain.RingHit -= OnRing; _terrain.FloeHop -= OnFloeHop; }
         }
 
         bool Bind()
@@ -80,7 +80,7 @@ namespace SomeGame.UI
             _car.Slipped += Break;
             _car.Crashed += OnCrash;
             _terrain = race.Player.GetComponent<CarTerrain>();
-            if (_terrain != null) { _terrain.RoofRun += OnRoofRun; _terrain.WallRide += OnWallRide; _terrain.IceRun += OnIceRun; _terrain.CornerCut += OnCornerCut; _terrain.RingHit += OnRing; }
+            if (_terrain != null) { _terrain.RoofRun += OnRoofRun; _terrain.WallRide += OnWallRide; _terrain.IceRun += OnIceRun; _terrain.CornerCut += OnCornerCut; _terrain.RingHit += OnRing; _terrain.FloeHop += OnFloeHop; }
             return true;
         }
 
@@ -122,6 +122,11 @@ namespace SomeGame.UI
         void OnCornerCut()
         {
             if (race.State == RaceState.Racing) Trick("SHORTCUT!", ShortcutColor); // landed a corner cut on the road
+        }
+
+        void OnFloeHop()
+        {
+            if (race.State == RaceState.Racing) Trick("FLOE HOP!", IceColor);
         }
 
         void OnRing(int ring)
@@ -176,10 +181,16 @@ namespace SomeGame.UI
             if (race != null && race.State == RaceState.Racing) Trick(text, color);
         }
 
-        void Trick(string text, Color color)
+        /// <summary>A headline about the race itself (ROUTE CHANGED!): shown like a trick, but not a trick (no combo).</summary>
+        public void Banner(string text, Color color) => Trick(text, color, counts: false);
+
+        void Trick(string text, Color color, bool counts = true)
         {
-            _combo = Time.time - _lastTrickAt <= comboWindow ? _combo + 1 : 1;
-            _lastTrickAt = Time.time;
+            if (counts)
+            {
+                _combo = Time.time - _lastTrickAt <= comboWindow ? _combo + 1 : 1;
+                _lastTrickAt = Time.time;
+            }
 
             trickLabel.text = text;
             trickLabel.color = Color.white;
@@ -190,7 +201,7 @@ namespace SomeGame.UI
             _trickShownAt = Time.time;
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.trick, _combo >= 2 ? 0.75f : 0.55f);
 
-            if (_combo >= 2)
+            if (counts && _combo >= 2)
             {
                 comboLabel.text = $"COMBO <size=140%>x{_combo}</size>";
                 comboRoot.gameObject.SetActive(true);

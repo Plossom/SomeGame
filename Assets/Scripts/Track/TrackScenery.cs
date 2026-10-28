@@ -91,7 +91,7 @@ namespace SomeGame.Track
             {
                 waypoints = layout.waypoints, roadWidth = layout.roadWidth, kerbWidth = layout.kerbWidth, spacing = layout.sampleSpacing,
                 margin = layout.boundaryMargin, widths = layout.widths, rivers = layout.rivers, lakes = layout.lakes, gaps = layout.gaps, sections = layout.sections,
-                rooms = layout.rooms, houses = layout.houses, decor = layout.decor, chasms = layout.chasms, caves = layout.caves,
+                rooms = layout.rooms, houses = layout.houses, decor = layout.decor, chasms = layout.chasms, caves = layout.caves, fjord = layout.fjord,
                 shortcuts = layout.shortcuts, branches = layout.branches, banks = layout.banks, waterWorld = layout.waterWorld,
                 kinds = new List<Kind>(layout.scenery is { Count: > 0 } ? layout.scenery.ToArray() : kinds),
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
@@ -122,6 +122,7 @@ namespace SomeGame.Track
             public List<TrackLayout.Decor> decor;
             public List<TrackLayout.Chasm> chasms;
             public List<TrackLayout.Cave> caves;
+            public TrackLayout.Fjord fjord;
             public Vector4 runoff;
         }
 
@@ -321,6 +322,13 @@ namespace SomeGame.Track
                     float a = k * Mathf.PI * 0.25f;
                     if (track.ChasmAt(p + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r)) return true;
                 }
+            }
+            if (layout.fjord != null && layout.fjord.enabled)
+            {
+                var f = layout.fjord;
+                Vector2 local = Quaternion.Euler(0f, 0f, -f.angle) * (p - f.center);
+                float rx = f.radii.x + r + 2f, ry = f.radii.y + r + 2f;
+                if ((local.x / rx) * (local.x / rx) + (local.y / ry) * (local.y / ry) <= 1f) return true;
             }
             if (layout.caves == null) return false;
             foreach (var cave in layout.caves)

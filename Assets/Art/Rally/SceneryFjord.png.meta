@@ -1,0 +1,847 @@
+fileFormatVersion: 2
+guid: 3dd13af3db91641f0a18e634414a946a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5895413129729043156
+    second: SceneryFjord_0
+  - first:
+      213: -1521466627957146627
+    second: SceneryFjord_1
+  - first:
+      213: 5197585725482958866
+    second: SceneryFjord_2
+  - first:
+      213: -1627049811656354712
+    second: SceneryFjord_3
+  - first:
+      213: 9116621197369227653
+    second: SceneryFjord_4
+  - first:
+      213: -2580758546420469470
+    second: SceneryFjord_5
+  - first:
+      213: -4393276779894670996
+    second: SceneryFjord_6
+  - first:
+      213: -6997658353019957623
+    second: SceneryFjord_7
+  - first:
+      213: -2157742203171567004
+    second: SceneryFjord_8
+  - first:
+      213: 6914124795274282549
+    second: SceneryFjord_9
+  - first:
+      213: 8445317839224340528
+    second: SceneryFjord_10
+  - first:
+      213: 4880927452613473959
+    second: SceneryFjord_11
+  - first:
+      213: 3233874864745998076
+    second: SceneryFjord_12
+  - first:
+      213: -2452482426828755665
+    second: SceneryFjord_13
+  - first:
+      213: -5929246956884150699
+    second: SceneryFjord_14
+  - first:
+      213: 3120008839795107956
+    second: SceneryFjord_15
+  - first:
+      213: 3545296516739463734
+    second: SceneryFjord_16
+  - first:
+      213: -5187258985083163881
+    second: SceneryFjord_17
+  - first:
+      213: 418025463478030812
+    second: SceneryFjord_18
+  - first:
+      213: 7119848298823683467
+    second: SceneryFjord_19
+  - first:
+      213: -5622990795406284502
+    second: SceneryFjord_20
+  - first:
+      213: 6543402648924320252
+    second: SceneryFjord_21
+  - first:
+      213: -4187856495269649518
+    second: SceneryFjord_22
+  - first:
+      213: -7321152746176544514
+    second: SceneryFjord_23
+  - first:
+      213: -2343885565018567951
+    second: SceneryFjord_24
+  - first:
+      213: 7982910527945416612
+    second: SceneryFjord_25
+  - first:
+      213: 8270117145128077719
+    second: SceneryFjord_26
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryFjord_0
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 1308
+        width: 173
+        height: 173
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4da6ca99107b0d150800000000000000
+      internalID: 5895413129729043156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_1
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 1334
+        width: 76
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfbb007b92aa2eae0800000000000000
+      internalID: -1521466627957146627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_2
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 1317
+        width: 121
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2108d09eda8812840800000000000000
+      internalID: 5197585725482958866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_3
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 1285
+        width: 246
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8645b5811de8b69e0800000000000000
+      internalID: -1627049811656354712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_4
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 1325
+        width: 195
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5893df45daeb48e70800000000000000
+      internalID: 9116621197369227653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_5
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 1043
+        width: 210
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 221fd8586cd4f2cd0800000000000000
+      internalID: -2580758546420469470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_6
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 1043
+        width: 210
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c69f7669b02f703c0800000000000000
+      internalID: -4393276779894670996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_7
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 1043
+        width: 210
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98e43b89dc253ee90800000000000000
+      internalID: -6997658353019957623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_8
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 1047
+        width: 198
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46a071ff5e82e02e0800000000000000
+      internalID: -2157742203171567004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_9
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 769
+        width: 230
+        height: 238
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5364b036ed7e3ff50800000000000000
+      internalID: 6914124795274282549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_10
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 780
+        width: 215
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0308c3e54dbc33570800000000000000
+      internalID: 8445317839224340528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_11
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 806
+        width: 223
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a67a7b68a98cb340800000000000000
+      internalID: 4880927452613473959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_12
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 811
+        width: 233
+        height: 172
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf6ef314e0801ec20800000000000000
+      internalID: 3233874864745998076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_13
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 559
+        width: 217
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2debf20a3807fdd0800000000000000
+      internalID: -2452482426828755665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_14
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 559
+        width: 217
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 556ba55ae4517bda0800000000000000
+      internalID: -5929246956884150699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_15
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 559
+        width: 217
+        height: 198
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 478e010628f7c4b20800000000000000
+      internalID: 3120008839795107956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_16
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 554
+        width: 221
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63a7fafe56c633130800000000000000
+      internalID: 3545296516739463734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_17
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 292
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71b2a24bf672308b0800000000000000
+      internalID: -5187258985083163881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_18
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 432
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd11da9b1ff1dc500800000000000000
+      internalID: 418025463478030812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_19
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8d0e022e48cec260800000000000000
+      internalID: 7119848298823683467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_20
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 255
+        width: 191
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a296488d9af17f1b0800000000000000
+      internalID: -5622990795406284502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_21
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 380
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf1fb7f6a06deca50800000000000000
+      internalID: 6543402648924320252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_22
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 307
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 293e32da4beb1e5c0800000000000000
+      internalID: -4187856495269649518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_23
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef085c1dd5a066a90800000000000000
+      internalID: -7321152746176544514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_24
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fa07ee3f78d87fd0800000000000000
+      internalID: -2343885565018567951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_25
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4af99e374def8ce60800000000000000
+      internalID: 7982910527945416612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryFjord_26
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7990a3ef9bb55c270800000000000000
+      internalID: 8270117145128077719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryFjord_0: 5895413129729043156
+      SceneryFjord_1: -1521466627957146627
+      SceneryFjord_10: 8445317839224340528
+      SceneryFjord_11: 4880927452613473959
+      SceneryFjord_12: 3233874864745998076
+      SceneryFjord_13: -2452482426828755665
+      SceneryFjord_14: -5929246956884150699
+      SceneryFjord_15: 3120008839795107956
+      SceneryFjord_16: 3545296516739463734
+      SceneryFjord_17: -5187258985083163881
+      SceneryFjord_18: 418025463478030812
+      SceneryFjord_19: 7119848298823683467
+      SceneryFjord_2: 5197585725482958866
+      SceneryFjord_20: -5622990795406284502
+      SceneryFjord_21: 6543402648924320252
+      SceneryFjord_22: -4187856495269649518
+      SceneryFjord_23: -7321152746176544514
+      SceneryFjord_24: -2343885565018567951
+      SceneryFjord_25: 7982910527945416612
+      SceneryFjord_26: 8270117145128077719
+      SceneryFjord_3: -1627049811656354712
+      SceneryFjord_4: 9116621197369227653
+      SceneryFjord_5: -2580758546420469470
+      SceneryFjord_6: -4393276779894670996
+      SceneryFjord_7: -6997658353019957623
+      SceneryFjord_8: -2157742203171567004
+      SceneryFjord_9: 6914124795274282549
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1325,6 +1325,13 @@ namespace SomeGame.EditorTools
             Configure(mountain, ("track", track), ("plain", Mat("Plain")), ("floorMaterial", Mat("FloorRock")),
                 ("crystalSprite", Sprite("IceCrystal")), ("stalagmiteSprite", Sprite("Stalagmite")), ("glowSprite", Sprite("Glow")),
                 ("boulderSprite", Sprite("CaveBoulder")), ("particleMaterial", particles));
+            // The fjord that breaks up lap by lap, and the ways round that open on later laps.
+            var fjord = track.GetComponent<SomeGame.Track.FjordIce>();
+            if (fjord == null) fjord = track.gameObject.AddComponent<SomeGame.Track.FjordIce>();
+            Configure(fjord, ("track", track), ("plain", Mat("Plain")), ("water", Mat("Water")), ("ice", Mat("FloorIce")), ("shore", Mat("SnowShore")),
+                ("road", Mat("WinterRoad")), ("line", Mat("Line")), ("particleMaterial", particles),
+                ("shipSprite", Sprite("Icebreaker")), ("floeSprite", Sprite("FjordFloe")), ("snowBankSprite", Sprite("SnowPile")));
+            if (hazards != null) Configure(hazards, ("sealSprite", Sprite("Seal")));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
                 ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")), ("curlingSprite", Sprite("CurlingStone")), ("reindeerSprite", Sprite("Reindeer")), ("iceFloeSprite", Sprite("IceFloe")),
                 ("mushroomPadSprite", Sprite("MushroomPad")), ("trampolineSprite", Sprite("Trampoline")));
