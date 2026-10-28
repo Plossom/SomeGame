@@ -627,8 +627,8 @@ namespace SomeGame.Track
             var path = track.Path;
             Vector2 at = path.PointAt(ring.distance) + path.NormalAt(ring.distance) * ring.lateral, along = path.TangentAt(ring.distance);
             // Stands across the road: its long axis across, so the cars fly through it.
-            var sr = Sprite("BoostRing", ringSprite, transform, at, 5.2f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f, 36);
-            var shadow = Sprite("BoostRingShadow", ringSprite, transform, at + new Vector2(1.6f, -2.2f), 5.2f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f, 2);
+            var sr = Sprite("BoostRing", ringSprite, transform, at, 6f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f, 36);
+            var shadow = Sprite("BoostRingShadow", ringSprite, transform, at + new Vector2(1.6f, -2.2f), 6f, Mathf.Atan2(along.y, along.x) * Mathf.Rad2Deg - 90f, 2);
             shadow.color = new Color(0f, 0f, 0f, 0.25f);
             _rings.Add(new RingView { T = sr.transform, Sprite = sr, Scale = sr.transform.localScale.x });
         }

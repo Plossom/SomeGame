@@ -24,7 +24,7 @@ namespace SomeGame.Track
         const float TubeHalf = 2.3f;
         // How far off the entrance's middle a car may be (the rail's kicker is narrow), the speed it needs, and how
         // straight it must be heading (no swerving in sideways).
-        const float RailHalf = 1.1f, FlumeHalf = 1.3f, RailSpeed = 14f, FlumeSpeed = 8f, MaxEntryAngle = 22f;
+        const float RailHalf = 1.5f, FlumeHalf = 1.3f, RailSpeed = 12f, FlumeSpeed = 8f, MaxEntryAngle = 22f, RailEntryAngle = 28f;
 
         static Color Lin(float r, float g, float b, float a = 1f) { var c = new Color(r, g, b).linear; c.a = a; return c; }
         static readonly Color TubeEdge = Lin(0.32f, 0.6f, 0.82f, 0.9f), TubeMid = Lin(0.72f, 0.9f, 1f, 0.42f), TubeCore = Lin(0.88f, 0.97f, 1f, 0.22f),
@@ -290,7 +290,7 @@ namespace SomeGame.Track
                     float window = (rail ? RailHalf : FlumeHalf) + (rival ? 0.9f : 0f);
                     if (to < -0.5f || to > 1.5f || Mathf.Abs(lat - ride.Data.lateral) > window) continue;
                     if (speed < (rail ? RailSpeed : FlumeSpeed) * (rival ? 0.8f : 1f)) continue;
-                    if (Vector2.Angle(car.Body.linearVelocity, path.TangentAt(d)) > MaxEntryAngle * (rival ? 1.8f : 1f)) continue;
+                    if (Vector2.Angle(car.Body.linearVelocity, path.TangentAt(d)) > (rail ? RailEntryAngle : MaxEntryAngle) * (rival ? 1.8f : 1f)) continue;
                     BoardRide(car, ride);
                     break;
                 }

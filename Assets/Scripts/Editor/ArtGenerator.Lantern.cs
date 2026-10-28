@@ -73,12 +73,14 @@ namespace SomeGame.EditorTools
         static Color BoostRing(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            float outer = Ellipse(x, y, 128, 128, 120, 46), inner = Ellipse(x, y, 128, 128, 96, 26);
+            // Kept well inside the picture, so the glow fades out before its edges (no cut-off box round it).
+            float outer = Ellipse(x, y, 128, 128, 104, 40), inner = Ellipse(x, y, 128, 128, 83, 23);
             float hoop = Mathf.Max(outer, -inner);
-            c = Over(c, new Color(1f, 0.85f, 0.3f, 0.35f), Mathf.Clamp01(1f - Mathf.Abs(outer) / 18f) * 0.8f);
+            float edge = Mathf.Clamp01(Mathf.Min(Mathf.Min(x, 256f - x), Mathf.Min(y, 256f - y)) / 8f);
+            c = Over(c, new Color(1f, 0.85f, 0.3f, 0.35f), Mathf.Clamp01(1f - Mathf.Abs(outer) / 14f) * 0.8f * edge);
             c = Over(c, Hex("E8A520"), Fill(hoop));
             c = Over(c, Hex("FFD54A"), Fill(Mathf.Max(hoop, -(y - 128f))) * 0.9f);
-            c = Over(c, Hex("FFF4C2"), Fill(Ellipse(x, y, 92, 160, 26, 6)));
+            c = Over(c, Hex("FFF4C2"), Fill(Ellipse(x, y, 98, 154, 22, 5)));
             c = Over(c, Hex("8A5A10"), Stroke(hoop, 4f) * 0.85f);
             return c;
         }
