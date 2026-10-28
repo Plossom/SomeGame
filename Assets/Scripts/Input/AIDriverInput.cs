@@ -208,6 +208,7 @@ namespace SomeGame.Input
         // The car's own lane, except before a jump (it lines up with the kicker ramp) and near oil (it goes round).
         float LateralFor(TrackPath path, float distance)
         {
+            var layout0 = _sensor.Track.Layout;
             // On a water track the edge of the road is the water: stay nearer the middle.
             // Narrow road: shrink the lane with it.
             var track = _sensor.Track;
@@ -244,6 +245,15 @@ namespace SomeGame.Input
                 float dodge = Mathf.Clamp(at.Lateral > 0f ? at.Lateral - clear : at.Lateral + clear, -limit, limit);
                 lateral = Mathf.Lerp(lateral, dodge, Mathf.InverseLerp(oilLookAhead, oilLookAhead * 0.4f, to));
             }
+            // A ride this rival takes this lap (a flume's mouth, a rail's kicker): line up with its entrance.
+            if (layout0.rides != null)
+                for (int i = 0; i < layout0.rides.Count; i++)
+                {
+                    var ride = layout0.rides[i];
+                    float to = path.DeltaDistance(distance, ride.from);
+                    if (to < -1f || to > 28f || !Takes(3000 + i)) continue;
+                    lateral = Mathf.Lerp(lateral, ride.lateral, Mathf.InverseLerp(28f, 12f, to));
+                }
             // Steer around oil puddles and cows ahead: pass on whichever side needs the smaller move.
             var layout = _sensor.Track.Layout;
             foreach (var spot in layout.oil) lateral = Dodge(path, distance, lateral, spot.distance, spot.lateral, spot.radius);

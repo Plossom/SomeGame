@@ -1332,6 +1332,11 @@ namespace SomeGame.EditorTools
                 ("road", Mat("WinterRoad")), ("line", Mat("Line")), ("particleMaterial", particles),
                 ("shipSprite", Sprite("Icebreaker")), ("floeSprite", Sprite("FjordFloe")), ("snowBankSprite", Sprite("SnowPile")));
             if (hazards != null) Configure(hazards, ("sealSprite", Sprite("Seal")));
+            // The freestyle park: flumes, grind rails, the pinball rink, slalom gates.
+            var rides = track.GetComponent<SomeGame.Track.TrackRides>();
+            if (rides == null) rides = track.gameObject.AddComponent<SomeGame.Track.TrackRides>();
+            Configure(rides, ("track", track), ("plain", Mat("Plain")), ("iceFloor", Mat("FloorIce")), ("particleMaterial", particles),
+                ("bumperSprite", Sprite("PinballBumper")), ("gateRedSprite", Sprite("GateRed")), ("gateBlueSprite", Sprite("GateBlue")), ("glowSprite", Sprite("Glow")));
             if (hazards != null) Configure(hazards, ("sheepSprite", Sprite("Sheep")), ("boulderSprite", Sprite("Boulder")),
                 ("catSprite", Sprite("Cat")), ("vacuumSprite", Sprite("Vacuum")), ("ballSprite", Sprite("BeachBall")), ("curlingSprite", Sprite("CurlingStone")), ("reindeerSprite", Sprite("Reindeer")), ("iceFloeSprite", Sprite("IceFloe")),
                 ("mushroomPadSprite", Sprite("MushroomPad")), ("trampolineSprite", Sprite("Trampoline")));

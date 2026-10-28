@@ -90,7 +90,9 @@ namespace SomeGame.CameraRig
             {
                 float fraction = Mathf.Clamp01(target.linearVelocity.magnitude / Mathf.Max(1f, _targetCar.Stats.topSpeed));
                 wanted = 1f + speedZoom * fraction * fraction + (_targetCar.IsBoosting ? boostZoom : 0f);
-                if (_targetCar.IsRiding) wanted = rideZoom; // up on the gondola: look out over the mountain
+                // Up on the gondola: look out over the mountain; shooting along a flume: a little wider for the speed.
+                if (_targetCar.IsRiding)
+                    wanted = _targetCar.CurrentRide == SomeGame.Car.RideKind.Lift ? rideZoom : _targetCar.CurrentRide == SomeGame.Car.RideKind.Flume ? 1.25f : wanted;
             }
             _speedZoom = Mathf.SmoothDamp(_speedZoom, wanted, ref _speedZoomVelocity, 0.6f, Mathf.Infinity, dt);
             _focus = Vector2.SmoothDamp(_focus, (Vector2)target.transform.position, ref _focusVelocity, followSmoothTime, Mathf.Infinity, dt);

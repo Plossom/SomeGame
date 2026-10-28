@@ -40,6 +40,7 @@ MonoBehaviour:
   snowPoof: {fileID: 8300000, guid: 28f1b245dd5434c358564f58e38b4616, type: 3}
   iceCrack: {fileID: 8300000, guid: 072c20c44571e44009bb4c76fe5a6718, type: 3}
   shipHorn: {fileID: 8300000, guid: 460db471174c849c8822dcbfb07b0bd8, type: 3}
+  bumper: {fileID: 8300000, guid: f2934dd00120740b7aca41ed1f35042b, type: 3}
   trick: {fileID: 8300000, guid: 88f56a4d049c344ac874b295f2bc95d6, type: 3}
   unlock: {fileID: 8300000, guid: 742bc3de8291c4e6eb3ba89140e0e741, type: 3}
   fanfare: {fileID: 8300000, guid: 13ce50ce1f111435d82a4c07023d44da, type: 3}

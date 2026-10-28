@@ -345,6 +345,41 @@ namespace SomeGame.Track
         [Tooltip("Heaps of snow on the road: blast through one and it bursts into powder (you lose a little speed); it builds up again.")]
         public List<SnowPile> snowPiles = new();
 
+        [Header("Freestyle park")]
+        [Tooltip("Rides beside the road: an ice flume (a see-through tube you shoot along) or a grind rail (hop on from its kicker). " +
+                 "Steer into the entrance to take it; it sets you down further on with a boost.")]
+        public List<Ride> rides = new();
+        public enum RideType { Flume, Rail }
+        [Serializable]
+        public class Ride
+        {
+            public RideType type;
+            [Tooltip("Lap distance and sideways position of the entrance (the flume's mouth, the rail's kicker).")]
+            public float from, lateral;
+            [Tooltip("Lap distance and sideways position where it sets you down.")]
+            public float to, toLateral;
+            [Tooltip("World points of its course between.")]
+            public Vector2[] points = { };
+            [Min(5f)] public float speed = 28f;
+        }
+        [Tooltip("Pinball bumpers: bounce off them with a boost.")]
+        public List<PinballBumper> pinball = new();
+        [Serializable]
+        public class PinballBumper
+        {
+            public Vector2 position;
+            [Min(0.5f)] public float radius = 1.5f;
+        }
+        [Tooltip("Ice rinks on the road (lap distances from, to): an ice floor with hockey boards along both sides.")]
+        public List<Vector2> rinks = new();
+        [Tooltip("Slalom gates: pass through them one after another and every gate in the chain gives a bigger boost.")]
+        public List<SlalomGate> slalom = new();
+        [Serializable]
+        public class SlalomGate
+        {
+            public float distance, lateral;
+            [Min(1f)] public float width = 3.6f;
+        }
         [Tooltip("A frozen fjord that breaks up lap by lap (FjordIce): thick ice, then cracks, crumbling panels on the ice road and an " +
                  "icebreaker cutting a channel, then open water with drifting floes.")]
         public Fjord fjord = new();

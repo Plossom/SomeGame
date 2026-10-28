@@ -274,6 +274,43 @@ namespace SomeGame.EditorTools
             AssetDatabase.SaveAssets();
         }
 
+        /// <summary>Only the freestyle park's bumper, hooked into the audio library.</summary>
+        public static void GenerateParkSounds()
+        {
+            Directory.CreateDirectory(Folder);
+            Write("Bumper", Bumper());
+            AssetDatabase.Refresh();
+            var importer = (AudioImporter)AssetImporter.GetAtPath($"{Folder}/Bumper.wav");
+            var settings = importer.defaultSampleSettings;
+            settings.loadType = AudioClipLoadType.DecompressOnLoad;
+            settings.compressionFormat = AudioCompressionFormat.ADPCM;
+            importer.defaultSampleSettings = settings;
+            importer.SaveAndReimport();
+            var library = AssetDatabase.LoadAssetAtPath<SomeGame.Audio.AudioLibrary>("Assets/Resources/AudioLibrary.asset");
+            if (library == null) return;
+            library.bumper = AssetDatabase.LoadAssetAtPath<AudioClip>($"{Folder}/Bumper.wav");
+            EditorUtility.SetDirty(library);
+            AssetDatabase.SaveAssets();
+        }
+
+        // A pinball bumper: a springy "boing" (a pitch that drops fast) with a bright ding on top.
+        static float[] Bumper()
+        {
+            int n = (int)(0.45f * Rate);
+            var s = new float[n];
+            float phase = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate;
+                float f = 260f + 520f * Mathf.Exp(-t * 18f) + 20f * Mathf.Sin(t * 90f);
+                phase += 2f * Mathf.PI * f / Rate;
+                float boing = Mathf.Sin(phase) * Mathf.Exp(-t * 7f);
+                float ding = (Mathf.Sin(2f * Mathf.PI * 1568f * t) + 0.5f * Mathf.Sin(2f * Mathf.PI * 2349f * t)) * Mathf.Exp(-t * 14f) * 0.35f;
+                s[i] = boing * 0.8f + ding;
+            }
+            return Normalize(s, 0.75f);
+        }
+
         // Ice cracking: sharp snaps (clicks with a bright ring) running into a low groan.
         static float[] IceCrack()
         {

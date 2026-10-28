@@ -146,7 +146,8 @@ namespace SomeGame.UI
             if (_tricked)
             {
                 _tricked = false;
-                Trick(air >= 0.9f ? "BIG TRICK!" : "TRICK!", TrickColor);
+                int spins = _car != null ? _car.Spins : 1;
+                Trick(spins >= 4 ? $"INSANE x{spins}!" : spins == 3 ? "TRIPLE SPIN!" : spins == 2 ? "DOUBLE SPIN!" : air >= 0.9f ? "BIG TRICK!" : "TRICK!", TrickColor);
                 return;
             }
             Trick(air >= 1.6f ? "MEGA AIR!" : air >= 0.9f ? "BIG AIR!" : "JUMP!", AirColor);

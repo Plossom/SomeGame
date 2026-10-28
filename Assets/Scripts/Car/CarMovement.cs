@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace SomeGame.Car
 {
+    /// <summary>Things a car can be carried along: a cable car, an ice flume (a tube), a grind rail.</summary>
+    public enum RideKind { Lift, Flume, Rail }
+
     /// <summary>
     /// Arcade top-down car handling on a Rigidbody2D, shared by the player and AI cars.
     /// Reads an <see cref="ICarInput"/> on the same GameObject and all tuning from <see cref="CarStats"/>.
@@ -55,6 +58,9 @@ namespace SomeGame.Car
         public event Action CarriedBack;
 
         bool _trick;
+        float _spinStartedAt;
+        /// <summary>Spins in the current (or last landed) trick: 1, or more on a long jump.</summary>
+        public int Spins { get; private set; }
         /// <summary>Boost strength for landing a trick.</summary>
         const float TrickBoost = 0.55f;
 
@@ -444,9 +450,14 @@ namespace SomeGame.Car
             _airTimer -= dt;
             // A trick: the hop button pressed in the air (not right at take-off, not just before landing).
             bool held = ControlsEnabled && _input != null && _input.DriftHeld;
-            if (held && !_driftHeldLastStep && !_trick && _airDuration - _airTimer > 0.1f && _airTimer > 0.3f)
+            // On a long jump, another press once a spin is done spins again (double, triple...).
+            float flown = _airDuration - _airTimer;
+            bool spinDone = !_trick || flown - _spinStartedAt >= TrickSpin;
+            if (held && !_driftHeldLastStep && spinDone && flown > 0.1f && _airTimer > 0.3f)
             {
+                Spins = _trick ? Spins + 1 : 1;
                 _trick = true;
+                _spinStartedAt = flown;
                 TrickSpin = Mathf.Min(0.45f, _airTimer - 0.06f);
                 TrickStarted?.Invoke();
             }
@@ -478,7 +489,7 @@ namespace SomeGame.Car
             {
                 _trick = false;
                 TrickLanded?.Invoke();
-                GiveBoost(TrickBoost);
+                GiveBoost(Mathf.Min(1f, TrickBoost + 0.2f * (Spins - 1)));
             }
             Landed?.Invoke();
         }
@@ -502,7 +513,7 @@ namespace SomeGame.Car
         /// Hooks the car onto a lift: carried along <paramref name="cable"/> at <paramref name="speed"/>, up and
         /// over and down again, then set down at <paramref name="arrival"/> driving on at <paramref name="speedAfter"/>.
         /// </summary>
-        public bool RideLift(IReadOnlyList<Vector2> cable, Pose arrival, float speed, float speedAfter, Action arrived = null)
+        public bool RideLift(IReadOnlyList<Vector2> cable, Pose arrival, float speed, float speedAfter, Action arrived = null, RideKind kind = RideKind.Lift)
         {
             if (IsPuppet || IsAirborne || cable == null || cable.Count < 2) return false;
             EndDrift();
@@ -523,6 +534,7 @@ namespace SomeGame.Car
             _rideLeave = speedAfter;
             _rideArrived = arrived;
             _riding = true;
+            CurrentRide = kind;
             _airLocked = true;
             _airTurnTo = null;
             _airDuration = _airTimer = _rideAt[^1] / _rideSpeed;
@@ -532,7 +544,11 @@ namespace SomeGame.Car
             return true;
         }
 
-        // Up off the station, high along the cable, down onto the top station (short rides: up and straight down).
+        /// <summary>What the car is riding (while <see cref="IsRiding"/>).</summary>
+        public RideKind CurrentRide { get; private set; }
+
+        // Lift: up off the station, high along the cable, down onto the top station (short rides: up and straight
+        // down). Flume: in the tube, a little above the ground. Rail: up on the rail, hopping on and dropping off.
         float RideHeight
         {
             get
@@ -540,8 +556,13 @@ namespace SomeGame.Car
                 float total = _rideAt.Count > 0 ? _rideAt[^1] : 0f;
                 if (total <= 0f) return 0f;
                 float along = Mathf.Clamp01(1f - _airTimer / _airDuration) * total;
-                float ramp = Mathf.Min(14f, total * 0.5f);
-                return Mathf.SmoothStep(0f, 1f, Mathf.Min(along, total - along) / ramp);
+                float ends = Mathf.Min(along, total - along);
+                return CurrentRide switch
+                {
+                    RideKind.Flume => 0.12f * Mathf.SmoothStep(0f, 1f, ends / 3f),
+                    RideKind.Rail => 0.3f * Mathf.SmoothStep(0f, 1f, ends / 2.5f),
+                    _ => Mathf.SmoothStep(0f, 1f, ends / Mathf.Min(14f, total * 0.5f)),
+                };
             }
         }
 
