@@ -61,6 +61,72 @@ namespace SomeGame.Input
                 Throttle = raw == Vector2.zero ? 0f : 1f;
             }
             DriftHeld = manual;
+            Tricks();
+        }
+
+        // ------------------------------------------------------------------ tricks in the air
+
+        // Every finger on the screen, where it was when its current flick began and when.
+        readonly System.Collections.Generic.Dictionary<int, (Vector2 at, float time)> _anchors = new();
+        Vector2 _mouseAnchor;
+        float _mouseAnchorTime;
+        const float FlickTime = 0.25f, FlickShare = 0.07f; // fast enough, far enough (share of the screen height)
+
+        /// <summary>A swipe was made in the air (the trick it asked for), whether or not the car could do it.</summary>
+        public event System.Action<TrickKind> TrickSwiped;
+
+        // In the air a quick flick of any finger is a trick: left or right spins, up a front flip, down a back flip.
+        // (Arrow keys / WASD in the Editor.) The same finger can flick again straight away in another direction.
+        void Tricks()
+        {
+            if (_car == null || !_car.IsAirborne || _car.IsCarried || _car.IsRiding)
+            {
+                _anchors.Clear();
+                _mouseAnchorTime = -1f;
+                return;
+            }
+            float far = Screen.height * FlickShare;
+            var screen = Touchscreen.current;
+            if (screen != null)
+                foreach (var touch in screen.touches)
+                {
+                    int id = touch.touchId.ReadValue();
+                    if (!touch.press.isPressed) { _anchors.Remove(id); continue; }
+                    Vector2 pos = touch.position.ReadValue();
+                    if (!_anchors.TryGetValue(id, out var anchor) || Time.unscaledTime - anchor.time > FlickTime)
+                    {
+                        _anchors[id] = (pos, Time.unscaledTime);
+                        continue;
+                    }
+                    if ((pos - anchor.at).magnitude < far) continue;
+                    Swipe(pos - anchor.at);
+                    _anchors[id] = (pos, Time.unscaledTime);
+                }
+            var mouse = Mouse.current;
+            if (mouse != null && mouse.leftButton.isPressed)
+            {
+                Vector2 pos = mouse.position.ReadValue();
+                if (_mouseAnchorTime < 0f || Time.unscaledTime - _mouseAnchorTime > FlickTime) { _mouseAnchor = pos; _mouseAnchorTime = Time.unscaledTime; }
+                else if ((pos - _mouseAnchor).magnitude >= far) { Swipe(pos - _mouseAnchor); _mouseAnchor = pos; _mouseAnchorTime = Time.unscaledTime; }
+            }
+            else _mouseAnchorTime = -1f;
+            var keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                if (keyboard.leftArrowKey.wasPressedThisFrame || keyboard.aKey.wasPressedThisFrame) Trick(TrickKind.SpinLeft);
+                if (keyboard.rightArrowKey.wasPressedThisFrame || keyboard.dKey.wasPressedThisFrame) Trick(TrickKind.SpinRight);
+                if (keyboard.upArrowKey.wasPressedThisFrame || keyboard.wKey.wasPressedThisFrame) Trick(TrickKind.FrontFlip);
+                if (keyboard.downArrowKey.wasPressedThisFrame || keyboard.sKey.wasPressedThisFrame) Trick(TrickKind.BackFlip);
+            }
+        }
+
+        void Swipe(Vector2 delta) =>
+            Trick(Mathf.Abs(delta.x) > Mathf.Abs(delta.y) ? (delta.x < 0f ? TrickKind.SpinLeft : TrickKind.SpinRight) : (delta.y > 0f ? TrickKind.FrontFlip : TrickKind.BackFlip));
+
+        void Trick(TrickKind kind)
+        {
+            TrickSwiped?.Invoke(kind);
+            _car.DoTrick(kind);
         }
 
         // Smart steering. Only when the aim roughly follows the road (a clear steer elsewhere always wins).

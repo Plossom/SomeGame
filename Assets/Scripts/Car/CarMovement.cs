@@ -8,6 +8,9 @@ namespace SomeGame.Car
     /// <summary>Things a car can be carried along: a cable car, an ice flume (a tube), a grind rail.</summary>
     public enum RideKind { Lift, Flume, Rail }
 
+    /// <summary>Tricks in the air: swipe left or right to spin, up for a front flip, down for a back flip.</summary>
+    public enum TrickKind { SpinLeft, SpinRight, FrontFlip, BackFlip }
+
     /// <summary>
     /// Arcade top-down car handling on a Rigidbody2D, shared by the player and AI cars.
     /// Reads an <see cref="ICarInput"/> on the same GameObject and all tuning from <see cref="CarStats"/>.
@@ -59,8 +62,39 @@ namespace SomeGame.Car
 
         bool _trick;
         float _spinStartedAt;
-        /// <summary>Spins in the current (or last landed) trick: 1, or more on a long jump.</summary>
+        /// <summary>Tricks in the current (or last landed) jump: 1, or more on a long jump.</summary>
         public int Spins { get; private set; }
+        /// <summary>The trick being done (or done last).</summary>
+        public TrickKind LastTrick { get; private set; }
+        /// <summary>A trick in the air (swiped, or the hop button): which one.</summary>
+        public event Action<TrickKind> TrickPerformed;
+
+        /// <summary>
+        /// A trick in the air: a spin left or right, a front or back flip. Tricks can follow each other as fast as
+        /// they come (each one starts at once); every one makes the boost on landing bigger. Not right at take-off,
+        /// nor in the last moment before landing.
+        /// </summary>
+        public bool DoTrick(TrickKind kind)
+        {
+            if (IsPuppet || !IsAirborne || _carried || _riding) return false;
+            float flown = _airDuration - _airTimer;
+            if (flown < 0.05f || _airTimer < 0.12f) return false;
+            Spins = _trick ? Spins + 1 : 1;
+            _trick = true;
+            _spinStartedAt = flown;
+            LastTrick = kind;
+            TrickSpin = Mathf.Min(0.32f, _airTimer - 0.06f);
+            TrickStarted?.Invoke();
+            TrickPerformed?.Invoke(kind);
+            return true;
+        }
+
+        /// <summary>Ends a flight sooner: it comes down in <paramref name="seconds"/> (a trick jump gone wrong).</summary>
+        public void CutFlight(float seconds)
+        {
+            if (!IsAirborne || _carried || _riding) return;
+            _airTimer = Mathf.Min(_airTimer, Mathf.Max(0.01f, seconds));
+        }
         /// <summary>Boost strength for landing a trick.</summary>
         const float TrickBoost = 0.55f;
 
@@ -453,14 +487,7 @@ namespace SomeGame.Car
             // On a long jump, another press once a spin is done spins again (double, triple...).
             float flown = _airDuration - _airTimer;
             bool spinDone = !_trick || flown - _spinStartedAt >= TrickSpin;
-            if (held && !_driftHeldLastStep && spinDone && flown > 0.1f && _airTimer > 0.3f)
-            {
-                Spins = _trick ? Spins + 1 : 1;
-                _trick = true;
-                _spinStartedAt = flown;
-                TrickSpin = Mathf.Min(0.45f, _airTimer - 0.06f);
-                TrickStarted?.Invoke();
-            }
+            if (held && !_driftHeldLastStep && spinDone && flown > 0.1f && _airTimer > 0.3f) DoTrick(TrickKind.SpinRight);
             _driftHeldLastStep = held;
             Vector2 steer = ControlsEnabled && _input != null && !_airLocked && !_airTurnTo.HasValue ? _input.SteerDirection : Vector2.zero;
             if (_airTurnTo.HasValue)
@@ -489,7 +516,7 @@ namespace SomeGame.Car
             {
                 _trick = false;
                 TrickLanded?.Invoke();
-                GiveBoost(Mathf.Min(1f, TrickBoost + 0.2f * (Spins - 1)));
+                GiveBoost(Mathf.Min(1f, TrickBoost + 0.15f * (Spins - 1)));
             }
             Landed?.Invoke();
         }

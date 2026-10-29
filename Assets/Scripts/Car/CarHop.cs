@@ -96,12 +96,29 @@ namespace SomeGame.Car
                     shadow.localPosition = BaseShadow + jumpShadowLift * h;
                     shadow.localScale = _shadowScale * (1f - fall);
                 }
-                float spin = Mathf.Clamp01((Time.time - _trickAt) / _car.TrickSpin);
-                if (visual != null) visual.localRotation = Quaternion.Euler(0f, 0f, (spin < 1f ? 360f * (1f - (1f - spin) * (1f - spin)) : 0f) + fall * 150f);
+                // The trick: a spin turns the car round once (left or right); a flip squeezes it end over end
+                // (front: its nose dips away first; back: its tail), showing the underside half way.
+                float spin = Mathf.Clamp01((Time.time - _trickAt) / Mathf.Max(0.05f, _car.TrickSpin));
+                float eased = 1f - (1f - spin) * (1f - spin);
+                var kind = _car.LastTrick;
+                bool flip = spin < 1f && (kind == TrickKind.FrontFlip || kind == TrickKind.BackFlip);
+                float turn = spin < 1f && !flip ? 360f * eased * (kind == TrickKind.SpinLeft ? 1f : -1f) : 0f;
+                if (visual != null)
+                {
+                    visual.localRotation = Quaternion.Euler(0f, 0f, turn + fall * 150f);
+                    if (flip)
+                    {
+                        var sc = visual.localScale;
+                        visual.localScale = new Vector3(sc.x, sc.y * Mathf.Cos(eased * Mathf.PI * 2f), sc.z);
+                        visual.localPosition = new Vector3(0f, Mathf.Sin(eased * Mathf.PI) * (kind == TrickKind.FrontFlip ? 0.6f : -0.6f), 0f);
+                    }
+                    else if (visual.localPosition != Vector3.zero) visual.localPosition = Vector3.zero;
+                }
                 _time = -1f;
                 return;
             }
             if (visual != null && visual.localRotation != Quaternion.identity) visual.localRotation = Quaternion.identity;
+            if (visual != null && visual.localPosition != Vector3.zero) visual.localPosition = Vector3.zero;
             if (_time < 0f)
             {
                 Apply(0f);

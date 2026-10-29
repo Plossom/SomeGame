@@ -1345,6 +1345,10 @@ namespace SomeGame.EditorTools
             if (avalanche == null) avalanche = track.gameObject.AddComponent<SomeGame.Track.TrackAvalanche>();
             Configure(avalanche, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles),
                 ("pineSprite", Sprite("StandingPine")), ("fallenPineSprite", Sprite("FallenPine")));
+            // Trick jumps: swipe the tricks or fall.
+            var tricks = track.GetComponent<SomeGame.Track.TrackTricks>();
+            if (tricks == null) tricks = track.gameObject.AddComponent<SomeGame.Track.TrackTricks>();
+            Configure(tricks, ("track", track));
             // The town's life: Santa's sleigh dropping presents, snowball fights.
             var town = track.GetComponent<SomeGame.Track.TrackTown>();
             if (town == null) town = track.gameObject.AddComponent<SomeGame.Track.TrackTown>();

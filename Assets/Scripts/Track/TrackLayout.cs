@@ -557,6 +557,10 @@ namespace SomeGame.Track
             public bool collapse;
             [Tooltip("The big one: time slows down for a moment at the top of the player's flight.")]
             public bool slowMotion;
+            [Tooltip("A trick jump: in slow motion, swipe the tricks shown (fast and in order) or come down short into the chasm.")]
+            public bool trickJump;
+            [Tooltip("How many tricks it asks for.")]
+            [Min(1)] public int tricks = 3;
             public bool IsDrawbridge => period > 0f;
         }
 
