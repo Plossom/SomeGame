@@ -180,6 +180,7 @@ namespace SomeGame.Input
             if (SomeGame.Track.Track.Obstacle != null && !_sensor.Aboard && !_car.IsAirborne)
                 for (float x = 3f; x <= 18f; x += 3f)
                 {
+                    if (track.InGap(distance + x)) continue; // jumped over, not driven into
                     if (!SomeGame.Track.Track.Obstacle(path.PointAt(distance + x) + path.NormalAt(distance + x) * Mathf.Clamp(_sensor.Current.Lateral, -2f, 2f))) continue;
                     targetSpeed = Mathf.Min(targetSpeed, x < 9f ? 0f : (x - 9f) * 1.6f);
                     break;

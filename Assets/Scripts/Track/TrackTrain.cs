@@ -28,6 +28,7 @@ namespace SomeGame.Track
         readonly List<GameObject> _parts = new();
         TrackPath _rails;
         TrackLayout.TrainLine _line;
+        float _leapOnRails; // where along the rails riders leap off
         // Each train: its vehicles (loco first), each a kinematic body.
         readonly List<List<(Transform t, Rigidbody2D body, Collider2D collider, SpriteRenderer shadow, bool loco)>> _trains = new();
         readonly List<Collider2D> _allColliders = new();
@@ -55,6 +56,7 @@ namespace SomeGame.Track
             _rails = null;
             if (_line == null || !_line.enabled || _line.points == null || _line.points.Length < 3) { BuildGifts(layout); return; }
             _rails = new TrackPath(_line.points, 1f);
+            _leapOnRails = _rails.Project(path.PointAt(_line.leapAt)).Distance;
             BuildRails();
             foreach (var ramp in _line.ramps) BuildRamp(path, ramp);
             BuildGifts(layout);
@@ -321,14 +323,12 @@ namespace SomeGame.Track
             car.Body.rotation += turn;
             car.Body.linearVelocity = Quaternion.Euler(0f, 0f, turn) * car.Body.linearVelocity;
             if (car.IsAirborne) return; // a hop on the train: still over it
-            // The leap: back down onto the road ahead.
-            var path = track.Path;
-            float d = sensor.Current.Distance;
-            float past = path.DeltaDistance(_line.leapAt, d);
-            bool farFromRoad = Mathf.Abs(path.Project(car.Body.position).Lateral) > 26f;
-            if (past >= 0f && past < 40f || farFromRoad)
+            // The leap: once the car (riding along the rails) reaches the leap, back down onto the road there - always
+            // the same spot, whatever the road nearest to it (the train curves away from the road after it).
+            float past = _rails.DeltaDistance(_leapOnRails, _rails.Project(car.Body.position).Distance);
+            if (past >= 0f && past < 60f)
             {
-                Leap(car, sensor, d, rider);
+                Leap(car, sensor, rider);
                 return;
             }
             if (TrainUnder(car.Body.position, false, 0.2f) == rider.Train) return;
@@ -338,9 +338,10 @@ namespace SomeGame.Track
             car.Launch(0.35f);
         }
 
-        void Leap(SomeGame.Car.CarMovement car, TrackSensor sensor, float d, Rider rider)
+        void Leap(SomeGame.Car.CarMovement car, TrackSensor sensor, Rider rider)
         {
             var path = track.Path;
+            float d = _line.leapAt;
             Vector2 target = path.PointAt(d + 16f);
             Vector2 train = _rails.TangentAt(_rails.Project(car.Body.position).Distance) * _line.speed;
             float speed = Mathf.Max(16f, (car.Body.linearVelocity + train).magnitude);

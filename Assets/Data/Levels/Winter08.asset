@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 10608c13b8a3a4c9094b7ec7b2cc2648, type: 3}
   laps: 3
-  description: 'Three laps of the mountain town on Christmas Eve: plough through the presents on the market street, then hit a kicker beside the railway and land on the Midnight Express - ride it, race forward over the wagons and leap off for a boost! Mind the trains at the level crossings.'
+  description: 'Three laps of the mountain town on Christmas Eve: plough through the presents Santa drops on the market street, hit a kicker beside the railway and land on the Midnight Express - ride it, race over the wagons and leap off for a boost - then jump the train at the top crossing and dodge the kids'' snowballs!'
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.96
   rivalCornerScale: 1
   starsRequired: 27
   starTimes:
-  - 126
+  - 131
   - 114
-  - 110
+  - 104

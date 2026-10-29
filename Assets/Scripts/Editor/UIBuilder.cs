@@ -1337,6 +1337,10 @@ namespace SomeGame.EditorTools
             if (express == null) express = track.gameObject.AddComponent<SomeGame.Track.TrackTrain>();
             Configure(express, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles),
                 ("locoSprite", Sprite("SteamLoco")), ("wagonSprite", Sprite("FlatWagon")), ("giftSprite", Sprite("GiftBox")));
+            // The town's life: Santa's sleigh dropping presents, snowball fights.
+            var town = track.GetComponent<SomeGame.Track.TrackTown>();
+            if (town == null) town = track.gameObject.AddComponent<SomeGame.Track.TrackTown>();
+            Configure(town, ("track", track), ("sleighSprite", Sprite("SantaSleigh")), ("giftSprite", Sprite("GiftBox")), ("snowballSprite", Sprite("Snowball")), ("particleMaterial", particles));
             // The freestyle park: flumes, grind rails, the pinball rink, slalom gates.
             var rides = track.GetComponent<SomeGame.Track.TrackRides>();
             if (rides == null) rides = track.gameObject.AddComponent<SomeGame.Track.TrackRides>();

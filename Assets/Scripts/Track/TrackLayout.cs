@@ -369,6 +369,10 @@ namespace SomeGame.Track
         public List<Vector2> gifts = new();
         [Tooltip("Night: the whole scene in a deep blue, windows glowing warm.")]
         public bool night;
+        [Tooltip("Santa's sleigh flies over now and then and drops presents onto the road (they land as gift boxes).")]
+        public bool santa;
+        [Tooltip("Snowball fights (lap distances from, to): kids on both sides throw snowballs across the road; a hit slows you.")]
+        public List<Vector2> snowballFights = new();
         [Header("Freestyle park")]
         [Tooltip("Rides beside the road: an ice flume (a see-through tube you shoot along) or a grind rail (hop on from its kicker). " +
                  "Steer into the entrance to take it; it sets you down further on with a boost.")]

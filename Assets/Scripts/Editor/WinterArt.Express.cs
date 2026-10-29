@@ -16,6 +16,7 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "SteamLoco", 192, 448, SteamLocoPixel, 56, false);
             Write(ArtGenerator.Folder, "FlatWagon", 192, 368, FlatWagonPixel, 56, false);
             Write(ArtGenerator.Folder, "GiftBox", 96, 96, GiftBoxPixel, 96, false);
+            Write(ArtGenerator.Folder, "SantaSleigh", 192, 448, SantaSleighPixel, 64, false);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
@@ -90,6 +91,51 @@ namespace SomeGame.EditorTools
             foreach (float s in new[] { -1f, 1f }) c = Over(c, Hex("F5C842"), Fill(Ellipse(x, y, 48 + s * 11f, 52, 10, 6)));
             c = Over(c, Hex("C9952A"), Fill(Circle(x, y, 48, 50, 5)));
             return Over(c, Outline, Stroke(box, 3f));
+        }
+
+        // Santa's sleigh from above, flying up the picture: four reindeer in pairs on their harness, the red
+        // sleigh with its gold runners, Santa in red with his white beard, a sack of presents behind him.
+        static Color SantaSleighPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            // The harness lines from the sleigh to the leading pair.
+            foreach (float sx in new[] { 76f, 116f }) c = Over(c, Hex("6B4426"), Fill(SegDist(new Vector2(x, y), new Vector2(sx, 170), new Vector2(sx, 420)) - 1.5f));
+            // Reindeer: two pairs, a body, a head with antlers, the leader's red nose.
+            for (int pair = 0; pair < 2; pair++)
+                foreach (float sx in new[] { 64f, 128f })
+                {
+                    float by = 250f + pair * 100f;
+                    float body = Ellipse(x, y, sx, by, 15, 32);
+                    c = Over(c, Fur, Fill(body));
+                    c = Over(c, FurLight, Fill(Ellipse(x, y, sx - 4, by - 4, 6, 18)) * 0.5f);
+                    float head = Circle(x, y, sx, by + 38, 10);
+                    c = Over(c, FurDark, Fill(head));
+                    foreach (float side in new[] { -1f, 1f })
+                    {
+                        float antler = Mathf.Min(SegDist(new Vector2(x, y), new Vector2(sx + side * 6, by + 40), new Vector2(sx + side * 20, by + 54)) - 2f,
+                            SegDist(new Vector2(x, y), new Vector2(sx + side * 14, by + 47), new Vector2(sx + side * 12, by + 60)) - 2f);
+                        c = Over(c, Antler, Fill(antler));
+                    }
+                    if (pair == 1 && sx < 100f) c = Over(c, Hex("E2393F"), Fill(Circle(x, y, sx, by + 48, 5)));
+                    c = Over(c, Outline, Stroke(Mathf.Min(body, head), 2.5f));
+                }
+            // The sleigh: gold runners, a red body curling up at the front.
+            foreach (float sx in new[] { 50f, 142f }) c = Over(c, Hex("D9A441"), Fill(Capsule(x, y, sx, 20, sx, 190, 5)));
+            float sleigh = RoundRect(x, y, 96, 100, 46, 70, 22);
+            c = Over(c, Hex("C0392B"), Fill(sleigh));
+            c = Over(c, Hex("E25445"), Fill(RoundRect(x, y, 86, 110, 30, 54, 16)) * 0.6f);
+            c = Over(c, Hex("D9A441"), Stroke(sleigh, 5f));
+            c = Over(c, Outline, Stroke(sleigh, 2f));
+            // The sack of presents at the back, Santa at the front.
+            c = Over(c, Hex("8A6A40"), Fill(Circle(x, y, 96, 62, 26)));
+            foreach (var (gx, gy, col) in new[] { (84f, 70f, "3D7DD8"), (106f, 58f, "2E9A57"), (98f, 78f, "F5C842") })
+                c = Over(c, Hex(col), Fill(RoundRect(x, y, gx, gy, 9, 9, 2)));
+            c = Over(c, Hex("C0392B"), Fill(Circle(x, y, 96, 128, 24)));
+            c = Over(c, Color.white, Fill(Ellipse(x, y, 96, 146, 16, 10)));
+            c = Over(c, Hex("F2C9A0"), Fill(Circle(x, y, 96, 136, 9)));
+            c = Over(c, Hex("C0392B"), Fill(Circle(x, y, 96, 130, 7)));
+            c = Over(c, Color.white, Fill(Circle(x, y, 96, 124, 4)));
+            return c;
         }
     }
 }
