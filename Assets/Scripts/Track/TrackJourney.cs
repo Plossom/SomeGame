@@ -305,12 +305,14 @@ namespace SomeGame.Track
                     text.transform.SetParent(banner, false);
                     text.transform.localPosition = new Vector2(0f, 0.22f);
                     text.font = font;
-                    text.text = k == 0 ? "FINISH" : $"SECTION {k + 1}";
+                    // A journey that finishes at its last line starts at its start line.
+                    bool atLast = track.Layout.finishAtLastLine;
+                    text.text = atLast ? (k == 0 ? "START" : k == sections - 1 ? "FINISH" : $"SECTION {k + 1}") : k == 0 ? "FINISH" : $"SECTION {k + 1}";
                     text.fontSize = 7.5f;
                     text.fontStyle = FontStyles.Italic;
                     text.characterSpacing = 8f;
                     text.alignment = TextAlignmentOptions.Center;
-                    text.color = k == 0 ? new Color(1f, 0.78f, 0.25f) : new Color(0.96f, 0.9f, 0.78f);
+                    text.color = (atLast ? k == sections - 1 : k == 0) ? new Color(1f, 0.78f, 0.25f) : new Color(0.96f, 0.9f, 0.78f);
                     text.rectTransform.sizeDelta = new Vector2(half * 2f, 1.4f);
                     text.sortingOrder = GroundOrder + 3;
                 }

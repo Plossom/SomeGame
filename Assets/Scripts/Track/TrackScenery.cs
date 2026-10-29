@@ -188,6 +188,8 @@ namespace SomeGame.Track
                     if (kind.along != Vector2.zero && !Within(projection.Distance, kind.along, path.Length)) continue;
                     if (!Indoors(layout, p, size, kind.indoor)) continue;
                     float fromKerb = Mathf.Abs(projection.Lateral) - track.OffRoadAt(projection.Distance) - size * 0.5f;
+                    // The unraced way back (a hidden gap) is not there at all: things grow over it.
+                    if (HiddenAt(layout, projection.Distance)) fromKerb = Mathf.Max(fromKerb, 1000f);
                     float turn = path.TurnAtDistance(projection.Distance, runoffSpan);
                     bool outside = turn * projection.Lateral < 0f; // left turn: the right side is outside
                     if (kind.cornerOnly && Mathf.Abs(turn) < cornerTurn) continue;
@@ -311,6 +313,13 @@ namespace SomeGame.Track
         }
 
         // The other ways round stay clear too (ice: also its frozen margin).
+        bool HiddenAt(TrackLayout layout, float distance)
+        {
+            foreach (var gap in layout.gaps)
+                if (gap.hidden && track.Path.DeltaDistance(gap.from, distance) >= 0f && track.Path.DeltaDistance(distance, gap.to) >= 0f) return true;
+            return false;
+        }
+
         TrackPath _rails;
         Vector2[] _railsFor;
 

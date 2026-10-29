@@ -50,7 +50,21 @@ namespace SomeGame.EditorTools
                 invalidate.Invoke(track, null);
                 foreach (var part in parts) build.Invoke(part, new object[] { track.Path, layout });
 
+                // The picture frames what is raced: not the hidden way back of a journey.
                 Rect b = track.Path.Bounds();
+                if (layout.gaps.Exists(g => g.hidden))
+                {
+                    var line = track.Path;
+                    float xMin = float.MaxValue, yMin = float.MaxValue, xMax = float.MinValue, yMax = float.MinValue;
+                    for (float d = 0f; d < line.Length; d += 2f)
+                    {
+                        bool hidden = layout.gaps.Exists(g => g.hidden && line.DeltaDistance(g.from, d) >= 0f && line.DeltaDistance(d, g.to) >= 0f);
+                        if (hidden) continue;
+                        Vector2 p = line.PointAt(d);
+                        xMin = Mathf.Min(xMin, p.x); yMin = Mathf.Min(yMin, p.y); xMax = Mathf.Max(xMax, p.x); yMax = Mathf.Max(yMax, p.y);
+                    }
+                    b = Rect.MinMaxRect(xMin - 8f, yMin - 8f, xMax + 8f, yMax + 8f);
+                }
                 foreach (var branch in track.Branches) // the other ways round are in the picture too
                     foreach (var p in branch.Points) b = Rect.MinMaxRect(Mathf.Min(b.xMin, p.x), Mathf.Min(b.yMin, p.y), Mathf.Max(b.xMax, p.x), Mathf.Max(b.yMax, p.y));
                 // The ground reaches well beyond this margin, so the picture is filled to its edges.

@@ -1,0 +1,1081 @@
+fileFormatVersion: 2
+guid: a28c0baafe26543889305bbf2c352287
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3247876300892902819
+    second: SceneryAvalanche_0
+  - first:
+      213: -5801183666994915313
+    second: SceneryAvalanche_1
+  - first:
+      213: 6722413274305832486
+    second: SceneryAvalanche_2
+  - first:
+      213: 1486063848379371041
+    second: SceneryAvalanche_3
+  - first:
+      213: -4172745998322127780
+    second: SceneryAvalanche_4
+  - first:
+      213: -6139794877627430320
+    second: SceneryAvalanche_5
+  - first:
+      213: -7009304316338725958
+    second: SceneryAvalanche_6
+  - first:
+      213: -7993612943121206227
+    second: SceneryAvalanche_7
+  - first:
+      213: -2247972330916837907
+    second: SceneryAvalanche_8
+  - first:
+      213: 7041448727474534847
+    second: SceneryAvalanche_9
+  - first:
+      213: -2959058299705969005
+    second: SceneryAvalanche_10
+  - first:
+      213: -8031780116289740534
+    second: SceneryAvalanche_11
+  - first:
+      213: -41649447406724212
+    second: SceneryAvalanche_12
+  - first:
+      213: 531137633095909248
+    second: SceneryAvalanche_13
+  - first:
+      213: 2711925894168194533
+    second: SceneryAvalanche_14
+  - first:
+      213: -9141872225245299119
+    second: SceneryAvalanche_15
+  - first:
+      213: 5150207709376771586
+    second: SceneryAvalanche_16
+  - first:
+      213: 6345470469393485677
+    second: SceneryAvalanche_17
+  - first:
+      213: -8510245051518379009
+    second: SceneryAvalanche_18
+  - first:
+      213: 1178937034434364785
+    second: SceneryAvalanche_19
+  - first:
+      213: 4474859880620326891
+    second: SceneryAvalanche_20
+  - first:
+      213: -3587768909041817329
+    second: SceneryAvalanche_21
+  - first:
+      213: -4481279463936418408
+    second: SceneryAvalanche_22
+  - first:
+      213: 8511620020238015234
+    second: SceneryAvalanche_23
+  - first:
+      213: 8603757678241894628
+    second: SceneryAvalanche_24
+  - first:
+      213: 1301506450635174186
+    second: SceneryAvalanche_25
+  - first:
+      213: -4308531111630363476
+    second: SceneryAvalanche_26
+  - first:
+      213: -4079143707185769360
+    second: SceneryAvalanche_27
+  - first:
+      213: 342677210413606693
+    second: SceneryAvalanche_28
+  - first:
+      213: 8408290414061861066
+    second: SceneryAvalanche_29
+  - first:
+      213: -526351667633952425
+    second: SceneryAvalanche_30
+  - first:
+      213: -4968498993965503314
+    second: SceneryAvalanche_31
+  - first:
+      213: -4257936072697465587
+    second: SceneryAvalanche_32
+  - first:
+      213: -7634490809261369396
+    second: SceneryAvalanche_33
+  - first:
+      213: 7261231261329761068
+    second: SceneryAvalanche_34
+  - first:
+      213: -2048910011242929757
+    second: SceneryAvalanche_35
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryAvalanche_0
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 1299
+        width: 226
+        height: 237
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5a6eda56b93de2d0800000000000000
+      internalID: -3247876300892902819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_1
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 1320
+        width: 116
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0858fbd03e0e7fa0800000000000000
+      internalID: -5801183666994915313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_2
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 1415
+        width: 122
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 626ae50914fca4d50800000000000000
+      internalID: 6722413274305832486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_3
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 1306
+        width: 203
+        height: 203
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12ec334523f8f9410800000000000000
+      internalID: 1486063848379371041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_4
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 1326
+        width: 232
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5ca3186f9d6716c0800000000000000
+      internalID: -4172745998322127780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_5
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 1048
+        width: 177
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05a014db6111bcaa0800000000000000
+      internalID: -6139794877627430320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_6
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 1067
+        width: 205
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abb94067cd2f9be90800000000000000
+      internalID: -7009304316338725958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_7
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 1200
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d24bb45516bf01190800000000000000
+      internalID: -7993612943121206227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_8
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 1134
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de58bc643199dc0e0800000000000000
+      internalID: -2247972330916837907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_9
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1134
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb9fe397f4048b160800000000000000
+      internalID: 7041448727474534847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_10
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 1148
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 396ba5877205fe6d0800000000000000
+      internalID: -2959058299705969005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_11
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 1064
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a012186d982698090800000000000000
+      internalID: -8031780116289740534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_12
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 1064
+        width: 59
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8b1b3a5c080c6ff0800000000000000
+      internalID: -41649447406724212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_13
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 1075
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08ff58bfcdafe5700800000000000000
+      internalID: 531137633095909248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_14
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 797
+        width: 252
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ed241b7b32b2a520800000000000000
+      internalID: 2711925894168194533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_15
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 896
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15e7e3895ab812180800000000000000
+      internalID: -9141872225245299119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_16
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 896
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20671ecef96397740800000000000000
+      internalID: 5150207709376771586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_17
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 822
+        width: 244
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6f0eeca5c3af0850800000000000000
+      internalID: 6345470469393485677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_18
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 771
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffb98b0073985e980800000000000000
+      internalID: -8510245051518379009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_19
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 806
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 175430e8cfc6c5010800000000000000
+      internalID: 1178937034434364785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_20
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 806
+        width: 70
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bef75044a55e91e30800000000000000
+      internalID: 4474859880620326891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_21
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 809
+        width: 37
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f092f50af2fa53ec0800000000000000
+      internalID: -3587768909041817329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_22
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 535
+        width: 224
+        height: 212
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89d11d4021c4fc1c0800000000000000
+      internalID: -4481279463936418408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_23
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 552
+        width: 182
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20bd369df495f1670800000000000000
+      internalID: 8511620020238015234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_24
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 573
+        width: 189
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e0d5211600b66770800000000000000
+      internalID: 8603757678241894628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_25
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 535
+        width: 200
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a213dfe9831ef0210800000000000000
+      internalID: 1301506450635174186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_26
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 255
+        width: 239
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca4ad8318c50534c0800000000000000
+      internalID: -4308531111630363476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_27
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 303
+        width: 246
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0741c691968f367c0800000000000000
+      internalID: -4079143707185769360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_28
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52723577b1f61c400800000000000000
+      internalID: 342677210413606693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_29
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 409
+        width: 211
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac8ba72259f30b470800000000000000
+      internalID: 8408290414061861066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_30
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 321
+        width: 218
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7596ebf62f502b8f0800000000000000
+      internalID: -526351667633952425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_31
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaceccd3d785c0bb0800000000000000
+      internalID: -4968498993965503314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_32
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d05bb8e83b5c8e4c0800000000000000
+      internalID: -4257936072697465587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_33
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc7ddf8ee07dc0690800000000000000
+      internalID: -7634490809261369396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_34
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 18
+        width: 205
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c23a58b4c5315c460800000000000000
+      internalID: 7261231261329761068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryAvalanche_35
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 156
+        width: 75
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a1af1b433fc093e0800000000000000
+      internalID: -2048910011242929757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryAvalanche_0: -3247876300892902819
+      SceneryAvalanche_1: -5801183666994915313
+      SceneryAvalanche_10: -2959058299705969005
+      SceneryAvalanche_11: -8031780116289740534
+      SceneryAvalanche_12: -41649447406724212
+      SceneryAvalanche_13: 531137633095909248
+      SceneryAvalanche_14: 2711925894168194533
+      SceneryAvalanche_15: -9141872225245299119
+      SceneryAvalanche_16: 5150207709376771586
+      SceneryAvalanche_17: 6345470469393485677
+      SceneryAvalanche_18: -8510245051518379009
+      SceneryAvalanche_19: 1178937034434364785
+      SceneryAvalanche_2: 6722413274305832486
+      SceneryAvalanche_20: 4474859880620326891
+      SceneryAvalanche_21: -3587768909041817329
+      SceneryAvalanche_22: -4481279463936418408
+      SceneryAvalanche_23: 8511620020238015234
+      SceneryAvalanche_24: 8603757678241894628
+      SceneryAvalanche_25: 1301506450635174186
+      SceneryAvalanche_26: -4308531111630363476
+      SceneryAvalanche_27: -4079143707185769360
+      SceneryAvalanche_28: 342677210413606693
+      SceneryAvalanche_29: 8408290414061861066
+      SceneryAvalanche_3: 1486063848379371041
+      SceneryAvalanche_30: -526351667633952425
+      SceneryAvalanche_31: -4968498993965503314
+      SceneryAvalanche_32: -4257936072697465587
+      SceneryAvalanche_33: -7634490809261369396
+      SceneryAvalanche_34: 7261231261329761068
+      SceneryAvalanche_35: -2048910011242929757
+      SceneryAvalanche_4: -4172745998322127780
+      SceneryAvalanche_5: -6139794877627430320
+      SceneryAvalanche_6: -7009304316338725958
+      SceneryAvalanche_7: -7993612943121206227
+      SceneryAvalanche_8: -2247972330916837907
+      SceneryAvalanche_9: 7041448727474534847
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

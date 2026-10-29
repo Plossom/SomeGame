@@ -37,6 +37,9 @@ namespace SomeGame.Track
         [Tooltip("1 = a circuit raced in laps. 3 = one long journey in three sections: the loop is split into equal parts " +
                  "and each section line counts like a lap line (Mario Kart style). checkpointCount must be a multiple of it.")]
         [Min(1)] public int sections = 1;
+        [Tooltip("A journey that ends at its last section line (FINISH there, START at the start line): the way from it back to the " +
+                 "start is never raced (make it a hidden gap).")]
+        public bool finishAtLastLine;
         [Tooltip("Optional: lap distances of the section lines after the start, for sections of different lengths " +
                  "(each snaps to the nearest checkpoint). Empty = equal parts.")]
         public float[] sectionLines = { };
@@ -345,6 +348,25 @@ namespace SomeGame.Track
         [Tooltip("Heaps of snow on the road: blast through one and it bursts into powder (you lose a little speed); it builds up again.")]
         public List<SnowPile> snowPiles = new();
 
+        [Header("Avalanche")]
+        [Tooltip("Viaducts (lap distances from, to): the road up on a bridge, over the road below - cars up there and below pass each other.")]
+        public List<Span> viaducts = new();
+        [Tooltip("Pines that come crashing down across half the road just before the leader gets there: (lap distance, side +1 left / -1 right).")]
+        public List<Vector2> fallingTrees = new();
+        public AvalancheChase avalanche = new();
+        [Serializable]
+        public class AvalancheChase
+        {
+            [Tooltip("A wall of snow roars down the track behind the pack: caught, you tumble and are spat out ahead of it, slowed.")]
+            public bool enabled;
+            [Tooltip("Lap distance where it sets off (behind the grid: negative), seconds after GO.")]
+            public float from = -60f, delay = 2f;
+            [Min(1f)] public float speed = 13f;
+            [Tooltip("Never further than this behind the last car.")]
+            [Min(10f)] public float maxBehind = 90f;
+            [Tooltip("Lap distance where it stops (it crashes into the foot of the last jump).")]
+            public float stopAt;
+        }
         [Header("The express")]
         [Tooltip("A steam train on its own loop of rails: kicker ramps beside the road launch cars up onto its flat wagons, " +
                  "where they ride along (and can drive forward over the wagons), leaping back down to the road further on.")]
@@ -529,6 +551,12 @@ namespace SomeGame.Track
             public bool lift;
             [Tooltip("A cliff drop: the whole width of the road is the take-off (no narrow kicker), you sail off the edge down to the road below.")]
             public bool drop;
+            [Tooltip("Not raced and not drawn (the way back from a journey's finish to its start).")]
+            public bool hidden;
+            [Tooltip("An ice bridge over the gap that collapses just after the first car has crossed it: everyone after jumps it.")]
+            public bool collapse;
+            [Tooltip("The big one: time slows down for a moment at the top of the player's flight.")]
+            public bool slowMotion;
             public bool IsDrawbridge => period > 0f;
         }
 

@@ -312,6 +312,74 @@ namespace SomeGame.EditorTools
             AssetDatabase.SaveAssets();
         }
 
+        /// <summary>Only the avalanche's sounds (its rumble, the thunderclap), hooked into the audio library.</summary>
+        public static void GenerateAvalancheSounds()
+        {
+            Directory.CreateDirectory(Folder);
+            Write("AvalancheRumble", AvalancheRumble());
+            Write("Thunder", Thunder());
+            AssetDatabase.Refresh();
+            foreach (var name in new[] { "AvalancheRumble", "Thunder" })
+            {
+                var importer = (AudioImporter)AssetImporter.GetAtPath($"{Folder}/{name}.wav");
+                var settings = importer.defaultSampleSettings;
+                settings.loadType = AudioClipLoadType.DecompressOnLoad;
+                settings.compressionFormat = AudioCompressionFormat.ADPCM;
+                importer.defaultSampleSettings = settings;
+                importer.SaveAndReimport();
+            }
+            var library = AssetDatabase.LoadAssetAtPath<SomeGame.Audio.AudioLibrary>("Assets/Resources/AudioLibrary.asset");
+            if (library == null) return;
+            library.avalancheRumble = AssetDatabase.LoadAssetAtPath<AudioClip>($"{Folder}/AvalancheRumble.wav");
+            library.thunder = AssetDatabase.LoadAssetAtPath<AudioClip>($"{Folder}/Thunder.wav");
+            EditorUtility.SetDirty(library);
+            AssetDatabase.SaveAssets();
+        }
+
+        // Two seconds of deep roaring rumble that loops seamlessly: low-passed noise, slowly swelling, with a
+        // hiss of snow on top (the ends cross-faded into each other).
+        static float[] AvalancheRumble()
+        {
+            int n = 2 * Rate, fade = Rate / 4;
+            var raw = new float[n + fade];
+            var noise = new Noise(41);
+            float lp1 = 0f, lp2 = 0f, hp = 0f;
+            for (int i = 0; i < raw.Length; i++)
+            {
+                float white = noise.Next();
+                lp1 += (white - lp1) * 0.02f;
+                lp2 += (lp1 - lp2) * 0.05f;
+                hp += (white - hp) * 0.5f;
+                float t = (float)i / Rate;
+                raw[i] = lp2 * 6f * (0.8f + 0.2f * Mathf.Sin(t * Mathf.PI * 2f * 0.5f)) + (white - hp) * 0.08f;
+            }
+            var s = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                s[i] = raw[i];
+                if (i < fade) { float k = (float)i / fade; s[i] = raw[i] * k + raw[n + i] * (1f - k); }
+            }
+            return Normalize(s, 0.7f);
+        }
+
+        // A thunderclap: a sharp crack, then a long rolling rumble dying away.
+        static float[] Thunder()
+        {
+            int n = (int)(2.4f * Rate);
+            var s = new float[n];
+            var noise = new Noise(53);
+            float lp = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / Rate, white = noise.Next();
+                lp += (white - lp) * 0.03f;
+                float crack = white * Mathf.Exp(-t * 18f);
+                float roll = lp * 5f * Mathf.Exp(-t * 1.3f) * (0.7f + 0.3f * Mathf.Sin(t * 9f + Mathf.Sin(t * 3f)));
+                s[i] = crack * 0.8f + roll;
+            }
+            return Normalize(s, 0.85f);
+        }
+
         // A steam whistle: a breathy chord (three notes) rising into place, with the hiss of steam.
         static float[] TrainWhistle()
         {

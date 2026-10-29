@@ -284,6 +284,8 @@ namespace SomeGame.Input
             var layout = _sensor.Track.Layout;
             foreach (var spot in layout.oil) lateral = Dodge(path, distance, lateral, spot.distance, spot.lateral, spot.radius);
             foreach (var cow in layout.cows) lateral = Dodge(path, distance, lateral, cow.distance, cow.lateral, cow.radius);
+            // Trunks of fallen trees across the road: round them.
+            foreach (var log in SomeGame.Track.Track.Logs) lateral = Dodge(path, distance, lateral, log.x, log.y, log.z);
             // Pinball bumpers: weave between them.
             if (layout.pinball != null)
                 foreach (var bumper in layout.pinball)

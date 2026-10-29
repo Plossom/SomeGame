@@ -174,7 +174,51 @@ namespace SomeGame.Track
             return t < gap.raised + 0.8f ? 0f : gap.period - t;
         }
 
-        public bool GapOpen(TrackLayout.Gap gap) => BridgeLift(gap, Clock) > 0.6f;
+        public bool GapOpen(TrackLayout.Gap gap)
+        {
+            if (gap.collapse) return Clock >= CollapseAt(layout.gaps.IndexOf(gap)); // an ice bridge until it falls
+            return BridgeLift(gap, Clock) > 0.6f;
+        }
+
+        float[] _collapseAt;
+
+        /// <summary>Race-clock time an ice bridge (a gap marked collapse) falls; infinity while it stands.</summary>
+        public float CollapseAt(int gap)
+        {
+            if (_collapseAt == null || gap < 0 || gap >= _collapseAt.Length) return float.PositiveInfinity;
+            return _collapseAt[gap];
+        }
+
+        /// <summary>Sets an ice bridge falling at a time (once).</summary>
+        public void Collapse(int gap, float at)
+        {
+            if (layout == null || gap < 0 || gap >= layout.gaps.Count) return;
+            if (_collapseAt == null || _collapseAt.Length != layout.gaps.Count)
+            {
+                _collapseAt = new float[layout.gaps.Count];
+                for (int i = 0; i < _collapseAt.Length; i++) _collapseAt[i] = float.PositiveInfinity;
+            }
+            if (float.IsPositiveInfinity(_collapseAt[gap])) _collapseAt[gap] = at;
+        }
+
+        /// <summary>Ice bridges standing again, the fallen trees cleared (a new race).</summary>
+        public void ResetAvalanche()
+        {
+            _collapseAt = null;
+            Logs.Clear();
+        }
+
+        /// <summary>Trunks lying across the road (lap distance, sideways centre, half length): rivals steer round them.</summary>
+        public static readonly List<Vector3> Logs = new();
+
+        /// <summary>True on a viaduct (the upper road over another).</summary>
+        public bool OnViaduct(float distance)
+        {
+            if (layout == null || layout.viaducts == null) return false;
+            foreach (var span in layout.viaducts)
+                if (Path.DeltaDistance(span.from, distance) >= 0f && Path.DeltaDistance(distance, span.to) >= 0f) return true;
+            return false;
+        }
 
         /// <summary>Index of the gap whose water is under this lap distance right now (a lowered drawbridge has none), or -1.</summary>
         public int OpenGapAt(float distance)
@@ -182,6 +226,7 @@ namespace SomeGame.Track
             for (int i = 0; i < layout.gaps.Count; i++)
             {
                 var gap = layout.gaps[i];
+                if (gap.hidden) continue; // the unraced way back: nothing to fall into
                 float from = gap.IsDrawbridge ? gap.from + DrawbridgeRamp : gap.from;
                 float into = Path.DeltaDistance(from, distance);
                 if (into >= 0f && into <= Path.DeltaDistance(from, gap.to) && GapOpen(gap)) return i;
@@ -723,7 +768,7 @@ namespace SomeGame.Track
             for (int g = 0; g < layout.gaps.Count; g++)
             {
                 var gap = layout.gaps[g];
-                if (gap.lift) continue; // a cable car carries cars across: no ramp
+                if (gap.lift || gap.hidden) continue; // a cable car carries cars across / never raced: no ramp
                 // A drawbridge's raised leaf is the ramp itself (over the water, from its hinge).
                 // A cliff drop takes off across the whole road.
                 jumps.Add(gap.IsDrawbridge

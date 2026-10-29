@@ -42,6 +42,8 @@ MonoBehaviour:
   shipHorn: {fileID: 8300000, guid: 460db471174c849c8822dcbfb07b0bd8, type: 3}
   bumper: {fileID: 8300000, guid: f2934dd00120740b7aca41ed1f35042b, type: 3}
   trainWhistle: {fileID: 8300000, guid: c6b6a0effd88e4692ba875738b8d6344, type: 3}
+  avalancheRumble: {fileID: 8300000, guid: 8d2ae7de3175f403992b5b3b564aa387, type: 3}
+  thunder: {fileID: 8300000, guid: efd464958fc13438dbb84845a898f77f, type: 3}
   trick: {fileID: 8300000, guid: 88f56a4d049c344ac874b295f2bc95d6, type: 3}
   unlock: {fileID: 8300000, guid: 742bc3de8291c4e6eb3ba89140e0e741, type: 3}
   fanfare: {fileID: 8300000, guid: 13ce50ce1f111435d82a4c07023d44da, type: 3}

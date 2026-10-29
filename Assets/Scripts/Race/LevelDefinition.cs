@@ -45,7 +45,8 @@ namespace SomeGame.Race
         public bool Sectioned => track != null && (track.sections > 1 || track.sectionLines is { Length: > 0 });
 
         /// <summary>Laps raced: the sections of a journey track, else <see cref="laps"/>.</summary>
-        public int RaceLaps => !Sectioned ? laps : track.sectionLines is { Length: > 0 } ? track.sectionLines.Length + 1 : track.sections;
+        public int RaceLaps => !Sectioned ? laps
+            : track.sectionLines is { Length: > 0 } ? track.sectionLines.Length + (track.finishAtLastLine ? 0 : 1) : track.sections;
 
         /// <summary>"3 laps" or "3 sections".</summary>
         public string LapsText => Sectioned ? $"{RaceLaps} sections" : (laps == 1 ? "1 lap" : $"{laps} laps");

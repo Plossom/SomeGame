@@ -107,7 +107,7 @@ namespace SomeGame.Track
             if (centerLine != null)
             {
                 float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / centerLineCycle));
-                Assign(centerLine, TrackMeshes.Strip(path, -centerLineWidth * 0.5f, centerLineWidth * 0.5f, 1f, cycle, "CenterLine"));
+                Assign(centerLine, TrackMeshes.Strip(path, d => -centerLineWidth * 0.5f, d => centerLineWidth * 0.5f, 1f, cycle, "CenterLine", Color.white, keep));
             }
 
             bool snow = layout.biome == TrackLayout.Biome.Snow && !water;
@@ -239,6 +239,13 @@ namespace SomeGame.Track
 
         // Sand strips from the kerb outwards in the corners: wide on the outside (where a car that runs wide
         // ends up), narrower on the inside, none on straights. U runs 0 at the kerb to 1 at the outer edge.
+        bool HiddenAt(float distance)
+        {
+            foreach (var gap in track.Layout.gaps)
+                if (gap.hidden && track.Path.DeltaDistance(gap.from, distance) >= 0f && track.Path.DeltaDistance(distance, gap.to) >= 0f) return true;
+            return false;
+        }
+
         Mesh BuildRunoff(TrackPath path)
         {
             int n = path.Count;
@@ -251,6 +258,7 @@ namespace SomeGame.Track
                 widths[0, i] = turn < 0f ? extra : inside; // left side is outside in a right turn
                 widths[1, i] = turn > 0f ? extra : inside;
                 if (track.InRoom(path[i])) widths[0, i] = widths[1, i] = 0f; // indoors the floor runs up to the kerb
+                if (HiddenAt(path.DistanceAt(i))) widths[0, i] = widths[1, i] = 0f; // the unraced way back: nothing drawn
             }
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
