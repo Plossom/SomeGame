@@ -175,10 +175,10 @@ namespace SomeGame.Track
                 float d2 = d + Random.Range(-4f, 4f);
                 Vector2 to = path.PointAt(d2) - path.NormalAt(d2) * reach * _throwSide;
                 var ball = Sprite("Snowball", snowballSprite, 20);
-                ball.transform.localScale = Vector3.one * Scale(snowballSprite, 0.8f);
+                ball.transform.localScale = Vector3.one * Scale(snowballSprite, 1.3f);
                 var shadow = Sprite("SnowballShadow", snowballSprite, 3);
                 shadow.color = new Color(0f, 0.02f, 0.1f, 0.3f);
-                shadow.transform.localScale = Vector3.one * Scale(snowballSprite, 0.7f);
+                shadow.transform.localScale = Vector3.one * Scale(snowballSprite, 1.1f);
                 _balls.Add(new Ball { From = from, To = to, Start = Time.time, Duration = Vector2.Distance(from, to) / 14f, Visual = ball.transform, Shadow = shadow.transform });
             }
             for (int i = _balls.Count - 1; i >= 0; i--)
