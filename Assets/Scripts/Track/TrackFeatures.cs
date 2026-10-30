@@ -54,6 +54,7 @@ namespace SomeGame.Track
                 foreach (float back in new[] { 8f, 15f })
                 {
                     float d = jump.RampStart - back;
+                    if (track.InGap(d)) continue; // (platform to platform: not out over the void)
                     Vector2 fwd = path.TangentAt(d);
                     Arrow(a, path.PointAt(d) + path.NormalAt(d) * jump.Lateral, fwd, arrowSize);
                 }
@@ -69,17 +70,7 @@ namespace SomeGame.Track
                     Arrow(a, path.PointAt(d) + path.NormalAt(d) * lateral, fwd, arrowSize);
                 }
             }
-            // Downhill slopes: a short row of chevrons in the middle of the road where each one starts.
-            if (layout.slopes != null)
-                foreach (var slope in layout.slopes)
-                {
-                    float span = path.DeltaDistance(slope.from, slope.to);
-                    for (float s = 1f; s < Mathf.Min(span - 2f, 8f); s += 3f)
-                    {
-                        float d = slope.from + s;
-                        Arrow(a, path.PointAt(d), path.TangentAt(d), arrowSize * 1.1f);
-                    }
-                }
+            // (downhill slopes are shown by the groomed lines down them: TrackPark)
             if (arrows != null) Assign(arrows, a.ToMesh("Arrows"));
 
             var r = new MeshData();
@@ -92,7 +83,21 @@ namespace SomeGame.Track
                 float mid = jump.RampStart + length * 0.5f;
                 Vector2 forward = path.TangentAt(mid), side = path.NormalAt(mid);
                 Vector2 centre = path.PointAt(mid) + side * jump.Lateral;
-                r.Quad(centre, side * (jump.Width * 0.5f), forward * (length * 0.5f), new Rect(0f, 0f, 1f, 1f));
+                // A wide ramp is several lanes side by side, each with its own arrows (not one stretched): the red and
+                // white edge only on the outside two.
+                int lanes = Mathf.Max(1, Mathf.RoundToInt(jump.Width / (layout.rampWidth * 1.15f)));
+                if (lanes == 1) r.Quad(centre, side * (jump.Width * 0.5f), forward * (length * 0.5f), new Rect(0f, 0f, 1f, 1f));
+                else
+                {
+                    const float Edge = 0.16f; // the striped edge's share of the ramp texture, each side
+                    float lane = jump.Width / lanes;
+                    for (int k = 0; k < lanes; k++)
+                    {
+                        float u0 = k == 0 ? 0f : Edge, u1 = k == lanes - 1 ? 1f : 1f - Edge;
+                        Vector2 c = centre + side * ((k - (lanes - 1) * 0.5f) * lane);
+                        r.Quad(c, side * (lane * 0.5f), forward * (length * 0.5f), new Rect(u0, 0f, u1 - u0, 1f));
+                    }
+                }
             }
             foreach (var ramp in track.Shortcuts)
             {

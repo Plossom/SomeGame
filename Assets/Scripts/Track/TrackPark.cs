@@ -13,7 +13,7 @@ namespace SomeGame.Track
     {
         [SerializeField] Material plain;
 
-        const int MoundOrder = -43, NetOrder = -41, TunnelOrder = 60, LiftShadowOrder = -39, LiftOrder = 70, ChairOrder = 71;
+        const int GroomOrder = -49, MoundOrder = -43, NetOrder = -41, TunnelOrder = 60, LiftShadowOrder = -39, LiftOrder = 70, ChairOrder = 71;
         static readonly Color SnowLit = new Color(0.99f, 0.99f, 1f).linear, SnowMid = new Color(0.86f, 0.9f, 0.97f).linear,
             SnowShade = new Color(0.7f, 0.77f, 0.88f).linear, Lip = new Color(0.5f, 0.6f, 0.75f).linear,
             Net = new Color(0.12f, 0.45f, 0.85f).linear, NetDark = new Color(0.08f, 0.3f, 0.62f).linear, Pole = new Color(0.9f, 0.92f, 0.95f).linear,
@@ -42,6 +42,31 @@ namespace SomeGame.Track
             if (v.Count > 0) Part("Nets", Mesh("Nets", v, c, t), NetOrder, transform);
             if (layout.snowTunnels != null) foreach (var span in layout.snowTunnels) SnowTunnel(path, span);
             if (layout.chairlifts != null) foreach (var lift in layout.chairlifts) Chairlift(lift);
+            v = new List<Vector3>(); c = new List<Color>(); t = new List<int>();
+            if (layout.slopes != null) foreach (var slope in layout.slopes) Groomed(path, slope, v, c, t);
+            if (v.Count > 0) Part("Groomed", Mesh("Groomed", v, c, t), GroomOrder, transform);
+        }
+
+        // ------------------------------------------------------------------ downhill
+
+        // A slope is a groomed piste: the snowcat's corduroy runs straight down it, fine ridges side by side (they
+        // fade in at the top and out at the bottom), so you can see the fall line.
+        void Groomed(TrackPath path, TrackLayout.Slope slope, List<Vector3> v, List<Color> c, List<int> t)
+        {
+            const float Spacing = 0.75f, Ridge = 0.16f, Fade = 8f;
+            float span = path.DeltaDistance(slope.from, slope.to);
+            var groove = new Color(SnowShade.r, SnowShade.g, SnowShade.b, 0.55f);
+            for (float s = 0f; s < span; s += 1f)
+            {
+                float d0 = slope.from + s, d1 = slope.from + Mathf.Min(span, s + 1f);
+                if (track.InGap(d0) || track.InGap(d1)) continue;
+                float a0 = Mathf.Clamp01(Mathf.Min(s, span - s) / Fade), a1 = Mathf.Clamp01(Mathf.Min(s + 1f, span - s - 1f) / Fade);
+                Color g0 = new Color(groove.r, groove.g, groove.b, groove.a * a0), g1 = new Color(groove.r, groove.g, groove.b, groove.a * a1);
+                Vector2 p0 = path.PointAt(d0), p1 = path.PointAt(d1), n0 = path.NormalAt(d0), n1 = path.NormalAt(d1);
+                float w0 = track.OffRoadAt(d0) - 0.6f, w1 = track.OffRoadAt(d1) - 0.6f;
+                for (float lat = -Mathf.Floor(Mathf.Min(w0, w1) / Spacing) * Spacing; lat <= Mathf.Min(w0, w1); lat += Spacing)
+                    Quad(p0 + n0 * (lat - Ridge), p1 + n1 * (lat - Ridge), p1 + n1 * (lat + Ridge), p0 + n0 * (lat + Ridge), g0, g1, g1, g0, v, c, t);
+            }
         }
 
         // ------------------------------------------------------------------ kickers
