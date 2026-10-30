@@ -61,6 +61,7 @@ namespace SomeGame.UI
             _car.Launched -= OnLaunch;
             _car.Landed -= OnLand;
             _car.TrickLanded -= OnTrickLanded;
+            _car.TrickBotched -= OnTrickBotched;
             _car.Slipped -= Break;
             _car.Crashed -= OnCrash;
             if (_terrain != null) { _terrain.RoofRun -= OnRoofRun; _terrain.WallRide -= OnWallRide; _terrain.IceRun -= OnIceRun; _terrain.CornerCut -= OnCornerCut; _terrain.RingHit -= OnRing; _terrain.FloeHop -= OnFloeHop; }
@@ -77,6 +78,7 @@ namespace SomeGame.UI
             _car.Launched += OnLaunch;
             _car.Landed += OnLand;
             _car.TrickLanded += OnTrickLanded;
+            _car.TrickBotched += OnTrickBotched;
             _car.Slipped += Break;
             _car.Crashed += OnCrash;
             _terrain = race.Player.GetComponent<CarTerrain>();
@@ -98,6 +100,11 @@ namespace SomeGame.UI
             if (_combo > 0 && Time.time - _lastTrickAt > comboWindow) _combo = 0;
             Animate();
         }
+
+        // Tapped for more spins than the jump had air for.
+        // (Shown on the landing that follows; the combo is lost.)
+        void OnTrickBotched() => _botched = true;
+        bool _botched;
 
         void OnTrickLanded()
         {
@@ -140,6 +147,14 @@ namespace SomeGame.UI
         {
             float air = _airTime;
             _airTime = 0f;
+            if (_botched)
+            {
+                _botched = false;
+                _tricked = false;
+                Break();
+                Banner("SLOPPY LANDING!", new Color(1f, 0.45f, 0.35f));
+                return;
+            }
             if (race.State != RaceState.Racing || air < 0.35f) return;
             // A splash is not a jump.
             if (_sensor != null && _sensor.Track != null && _sensor.Track.IsWater(_car.transform.position)) { Break(); return; }

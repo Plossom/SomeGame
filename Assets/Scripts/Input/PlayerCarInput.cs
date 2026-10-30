@@ -75,14 +75,29 @@ namespace SomeGame.Input
         /// <summary>A swipe was made in the air (the trick it asked for), whether or not the car could do it.</summary>
         public event System.Action<TrickKind> TrickSwiped;
 
-        // In the air a quick flick of any finger is a trick: left or right spins, up a front flip, down a back flip.
-        // (Arrow keys / WASD in the Editor.) The same finger can flick again straight away in another direction.
+        /// <summary>
+        /// Set by the trick jumps while they ask for their tricks: then swipes are the tricks. On any other jump a tap
+        /// is a spin.
+        /// </summary>
+        [System.NonSerialized] public bool SwipeMode;
+
+        // In the air: on a normal jump every tap (a second finger while steering, or a tap without steering; Space or
+        // a click in the Editor) asks for a spin - tap twice and it tries two, one after the other. On a trick jump a
+        // quick flick of any finger is a trick: left or right spins, up a front flip, down a back flip (arrow keys /
+        // WASD in the Editor); the same finger can flick again straight away in another direction.
         void Tricks()
         {
             if (_car == null || !_car.IsAirborne || _car.IsCarried || _car.IsRiding)
             {
                 _anchors.Clear();
                 _mouseAnchorTime = -1f;
+                return;
+            }
+            if (!SwipeMode)
+            {
+                _anchors.Clear();
+                _mouseAnchorTime = -1f;
+                Taps();
                 return;
             }
             float far = Screen.height * FlickShare;
@@ -118,6 +133,28 @@ namespace SomeGame.Input
                 if (keyboard.upArrowKey.wasPressedThisFrame || keyboard.wKey.wasPressedThisFrame) Trick(TrickKind.FrontFlip);
                 if (keyboard.downArrowKey.wasPressedThisFrame || keyboard.sKey.wasPressedThisFrame) Trick(TrickKind.BackFlip);
             }
+        }
+
+        void Taps()
+        {
+            int taps = 0;
+            var screen = Touchscreen.current;
+            if (screen != null)
+            {
+                foreach (var touch in screen.touches)
+                    if (touch.press.wasPressedThisFrame) taps++;
+            }
+            else
+            {
+                var mouse = Mouse.current;
+                if (mouse != null && (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame)) taps++;
+            }
+            var keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame) taps++;
+            if (taps == 0) return;
+            // Spinning the way you steer (to the right when you do not).
+            float side = SteerDirection.sqrMagnitude > 0.01f ? Vector3.Cross(_car.transform.up, SteerDirection).z : 0f;
+            for (int k = 0; k < taps; k++) _car.QueueTrick(side > 0.15f ? TrickKind.SpinLeft : TrickKind.SpinRight);
         }
 
         void Swipe(Vector2 delta) =>

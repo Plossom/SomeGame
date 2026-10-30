@@ -181,6 +181,8 @@ namespace SomeGame.Track
                     if (a.Done >= a.Sequence.Count) a.Succeeded = true;
                 }
             }
+            // While the arrows are up, swipes are the tricks (on any other jump a tap spins).
+            if (_playerInput != null) _playerInput.SwipeMode = _shown != null && !_shown.Ended && !_shown.Failed && !_shown.Succeeded;
             DrawUi();
         }
 

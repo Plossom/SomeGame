@@ -89,6 +89,23 @@ namespace SomeGame.Car
             return true;
         }
 
+        int _queuedTricks;
+        TrickKind _queuedKind;
+
+        /// <summary>Raised on landing with tricks still asked for (tapped too often for this jump): no boost, slowed.</summary>
+        public event Action TrickBotched;
+
+        /// <summary>
+        /// A tap in the air: one more spin to do. They are done one after another as each spin finishes; one still
+        /// waiting when the car comes down spoils the landing.
+        /// </summary>
+        public void QueueTrick(TrickKind kind)
+        {
+            if (IsPuppet || !IsAirborne || _carried || _riding) return;
+            _queuedTricks++;
+            _queuedKind = kind;
+        }
+
         /// <summary>Ends a flight sooner: it comes down in <paramref name="seconds"/> (a trick jump gone wrong).</summary>
         public void CutFlight(float seconds)
         {
@@ -451,6 +468,7 @@ namespace SomeGame.Car
             _airTurnTo = landingHeading;
             EndDrift();
             _trick = false;
+            _queuedTricks = 0;
             _exitTimer = _calmTimer = 0f;
             _airLocked = locked;
             if (direction.HasValue)
@@ -482,12 +500,11 @@ namespace SomeGame.Car
                 return;
             }
             _airTimer -= dt;
-            // A trick: the hop button pressed in the air (not right at take-off, not just before landing).
+            // Tapped spins: each one starts once the one before is done (double, triple...), if there is air left for it.
             bool held = ControlsEnabled && _input != null && _input.DriftHeld;
-            // On a long jump, another press once a spin is done spins again (double, triple...).
             float flown = _airDuration - _airTimer;
             bool spinDone = !_trick || flown - _spinStartedAt >= TrickSpin;
-            if (held && !_driftHeldLastStep && spinDone && flown > 0.1f && _airTimer > 0.3f) DoTrick(TrickKind.SpinRight);
+            if (_queuedTricks > 0 && spinDone && flown > 0.05f && _airTimer > 0.3f && DoTrick(_queuedKind)) _queuedTricks--;
             _driftHeldLastStep = held;
             Vector2 steer = ControlsEnabled && _input != null && !_airLocked && !_airTurnTo.HasValue ? _input.SteerDirection : Vector2.zero;
             if (_airTurnTo.HasValue)
@@ -512,7 +529,15 @@ namespace SomeGame.Car
             if (_collider != null) _collider.enabled = true;
             _body.linearVelocity *= stats.landingSpeedKeep;
             Collided?.Invoke(stats.landingImpact); // a little camera shake
-            if (_trick)
+            if (_queuedTricks > 0)
+            {
+                // Tapped for more than this jump had air for: a sloppy landing - no boost, and it costs speed.
+                _queuedTricks = 0;
+                _trick = false;
+                _body.linearVelocity *= 0.6f;
+                TrickBotched?.Invoke();
+            }
+            else if (_trick)
             {
                 _trick = false;
                 TrickLanded?.Invoke();
