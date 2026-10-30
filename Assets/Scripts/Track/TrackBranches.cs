@@ -74,7 +74,19 @@ namespace SomeGame.Track
                         Vector2 along = new Vector2(Mathf.Cos(a), Mathf.Sin(a)), across = new(-along.y, along.x);
                         // The texture's oval fills about 90 % of it, so the quad is a little bigger than the patch.
                         Vector2 hx = along * (patch.size.x * 0.56f), hy = across * (patch.size.y * 0.56f);
-                        patchData.Quad(patch.position - hx - hy, patch.position + hx - hy, patch.position + hx + hy, patch.position - hx + hy);
+                        // In small cells, leaving out those over a chasm (the ice stops at the edge).
+                        int nx = Mathf.Clamp(Mathf.CeilToInt(patch.size.x * 1.12f), 2, 48), ny = Mathf.Clamp(Mathf.CeilToInt(patch.size.y * 1.12f), 2, 48);
+                        Vector2 Corner(float u, float v) => patch.position + hx * (u * 2f - 1f) + hy * (v * 2f - 1f);
+                        for (int i = 0; i < nx; i++)
+                            for (int j = 0; j < ny; j++)
+                            {
+                                float u0 = i / (float)nx, u1 = (i + 1f) / nx, v0 = j / (float)ny, v1 = (j + 1f) / ny;
+                                float cu = (u0 + u1) - 1f, cv = (v0 + v1) - 1f;
+                                if (cu * cu + cv * cv > 1.05f) continue; // outside the oval: nothing to draw
+                                Vector2 a0 = Corner(u0, v0), a1 = Corner(u1, v0), a2 = Corner(u1, v1), a3 = Corner(u0, v1);
+                                if (track.ChasmAt(a0) || track.ChasmAt(a1) || track.ChasmAt(a2) || track.ChasmAt(a3) || track.ChasmAt((a0 + a2) * 0.5f)) continue;
+                                patchData.QuadPoints(a0, a1, a2, a3, new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1));
+                            }
                     }
                 Assign(icePatches, patchData.ToMesh("IcePatches"));
             }
@@ -119,11 +131,15 @@ namespace SomeGame.Track
             public Mesh ToMesh(string name) => TrackMeshes.Quads(name, Vertices, Uvs, Triangles, Colors);
 
             /// <summary>A quad through four corners with the whole texture on it (drawn from both sides).</summary>
-            public void Quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+            public void Quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d) =>
+                QuadPoints(a, b, c, d, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f));
+
+            /// <summary>A quad through four corners with its own piece of the texture (drawn from both sides).</summary>
+            public void QuadPoints(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Vector2 ua, Vector2 ub, Vector2 uc, Vector2 ud)
             {
                 int i = Vertices.Count;
                 Vertices.Add(a); Vertices.Add(b); Vertices.Add(c); Vertices.Add(d);
-                Uvs.Add(new Vector2(0f, 0f)); Uvs.Add(new Vector2(1f, 0f)); Uvs.Add(new Vector2(1f, 1f)); Uvs.Add(new Vector2(0f, 1f));
+                Uvs.Add(ua); Uvs.Add(ub); Uvs.Add(uc); Uvs.Add(ud);
                 for (int k = 0; k < 4; k++) Colors.Add(new Color32(255, 255, 255, 255));
                 Triangles.AddRange(new[] { i, i + 1, i + 2, i, i + 2, i + 3, i, i + 2, i + 1, i, i + 3, i + 2 });
             }

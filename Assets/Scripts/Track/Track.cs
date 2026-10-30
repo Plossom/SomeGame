@@ -105,7 +105,7 @@ namespace SomeGame.Track
         {
             if (layout.icePatches == null) return false;
             foreach (var patch in layout.icePatches)
-                if (patch.Contains(p)) return true;
+                if (patch.Contains(p)) return !ChasmAt(p);
             return false;
         }
 

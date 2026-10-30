@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 9ed1e55917f3a4c0e84ae0e5a4536149, type: 3}
   laps: 1
-  description: The last and hardest race of the Winter Cup - everything at once, from afternoon into the night under the northern lights. Chain the slalom, ride the gondola, cross the needle ridge (mind the boulder!), land two trick jumps, beat the ice bridge, shoot out of the tunnel over the gorge, drift the glare-ice serpentine (don't overshoot!), fly the crevasse, race the long tunnel under the mountains, spiral under the viaduct, grind the rail, ride the half-pipe, dodge the falling pines and bounce through the pinball rink to the finish - through blizzards, side-wind gusts, snow twisters and thundersnow!
+  description: The last and hardest race of the Winter Cup - everything at once, from afternoon into the night under the northern lights. Chain the slalom, ride the gondola, cross the needle ridge (mind the boulder!), land two trick jumps, beat the ice bridge, shoot out of the tunnel over the gorge, drift the glare-ice serpentine (don't overshoot!), fly the crevasse, race the long tunnel under the mountains, spiral under the viaduct, grind the rail, survive the abyss run (a ledge over the void, boulders, a glare-ice corner, two jumps and a tiny island), land six tricks and bounce through the pinball rink to the finish - through blizzards, side-wind gusts, snow twisters and thundersnow!
   difficulty: 5
   rivalCount: 7
   rivalSpeedScale: 1.03
   rivalCornerScale: 1.05
   starsRequired: 30
   starTimes:
-  - 218
-  - 189
-  - 183
+  - 217
+  - 196
+  - 188
