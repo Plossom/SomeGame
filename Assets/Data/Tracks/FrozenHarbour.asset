@@ -93,6 +93,12 @@ MonoBehaviour:
   - distance: 534.9809
     width: 4.2
   - distance: 544.9809
+    width: 5.5
+  - distance: 566.9481
+    width: 4.5
+  - distance: 651.6372
+    width: 4.5
+  - distance: 661.6372
     width: 8
   kerbWidth: 0.7
   sampleSpacing: 1
@@ -238,17 +244,6 @@ MonoBehaviour:
     size: 11
     angle: 40
     flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: 82.5, y: -30}
-    size: 9
-    angle: 200
-    flat: 0
   - cell: Boulders
     uv:
       serializedVersion: 2
@@ -271,16 +266,27 @@ MonoBehaviour:
     size: 14
     angle: 0
     flat: 0
-  - cell: BrokenTree
+  - cell: AvalancheSign
     uv:
       serializedVersion: 2
       x: 0.5
-      y: 0.8333333
+      y: 0.33333334
       width: 0.25
       height: 0.16666667
-    position: {x: 52.5, y: -37.5}
-    size: 11
-    angle: 20
+    position: {x: 105.248375, y: -13.195854}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: AvalancheSign
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    position: {x: 101.34643, y: 1.2877488}
+    size: 6
+    angle: 0
     flat: 0
   - cell: AvalancheSign
     uv:
@@ -355,42 +361,9 @@ MonoBehaviour:
       y: 0
       width: 0.25
       height: 0.16666667
-    position: {x: 104.71168, y: 6.458643}
+    position: {x: 105.15774, y: 5.028819}
     size: 5
     angle: 84.98763
-    flat: 0
-  - cell: Signpost
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.33333334
-      width: 0.25
-      height: 0.16666667
-    position: {x: 78.987305, y: -22.271914}
-    size: 5
-    angle: 54.13194
-    flat: 0
-  - cell: SnowRock
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 52.25213, y: -8.038099}
-    size: 5
-    angle: 186.0276
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 27.91289, y: -35.154045}
-    size: 7
-    angle: 191.57848
     flat: 0
   - cell: AvalancheSign
     uv:
@@ -486,10 +459,31 @@ MonoBehaviour:
     slowMotion: 0
     trickJump: 1
     tricks: 4
+  - from: 610.12946
+    to: 618.12946
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 0
+    tricks: 3
   elevatedRoad: 0
   bouncers: []
   geysers: []
-  sweepers: []
+  sweepers:
+  - kind: 3
+    distance: 586.9456
+    period: 2.6
+    offset: 0
+  - kind: 3
+    distance: 633.44904
+    period: 2.2
+    offset: 1.1
   skyLife: 0.3
   rivers: []
   lakes: []
@@ -523,23 +517,14 @@ MonoBehaviour:
   - position: {x: 120.149994, y: 36.75}
     size: {x: 16, y: 10}
     angle: -74.375
+  - position: {x: 20.988213, y: -25.264181}
+    size: {x: 18, y: 10}
+    angle: -173.9762
   slopes:
   - from: 543.59
     to: 628.8884
     speed: 1.3
-  snowPiles:
-  - distance: 560.6021
-    lateral: 1.8
-    radius: 1.6
-  - distance: 570.6021
-    lateral: -1.8
-    radius: 1.6
-  - distance: 580.6021
-    lateral: 1.4
-    radius: 1.9
-  - distance: 590.6021
-    lateral: -1.6
-    radius: 1.6
+  snowPiles: []
   viaducts: []
   fallingTrees: []
   avalanche:
@@ -1002,6 +987,215 @@ MonoBehaviour:
     - {x: 65.78899, y: 112.86752}
     - {x: 64.90202, y: 116.12778}
   - points:
+    - {x: 94.44416, y: -12.208959}
+    - {x: 92.43047, y: -12.637593}
+    - {x: 90.42341, y: -13.035112}
+    - {x: 88.42379, y: -13.409149}
+    - {x: 86.43231, y: -13.766395}
+    - {x: 84.44953, y: -14.112824}
+    - {x: 82.47613, y: -14.453865}
+    - {x: 80.512665, y: -14.794581}
+    - {x: 78.55991, y: -15.139776}
+    - {x: 76.61882, y: -15.49412}
+    - {x: 74.690605, y: -15.862227}
+    - {x: 72.77667, y: -16.248814}
+    - {x: 70.878784, y: -16.658733}
+    - {x: 68.999115, y: -17.097103}
+    - {x: 67.14016, y: -17.569874}
+    - {x: 65.28201, y: -18.083767}
+    - {x: 63.42084, y: -18.633581}
+    - {x: 61.555756, y: -19.213018}
+    - {x: 59.68546, y: -19.81606}
+    - {x: 57.80843, y: -20.436836}
+    - {x: 55.922997, y: -21.06957}
+    - {x: 54.027344, y: -21.708477}
+    - {x: 52.119415, y: -22.347736}
+    - {x: 50.19707, y: -22.981335}
+    - {x: 48.258163, y: -23.602968}
+    - {x: 46.300407, y: -24.205988}
+    - {x: 44.321484, y: -24.783255}
+    - {x: 42.31928, y: -25.326998}
+    - {x: 40.291946, y: -25.828712}
+    - {x: 38.208267, y: -26.284761}
+    - {x: 36.234596, y: -26.684122}
+    - {x: 34.25066, y: -27.076931}
+    - {x: 32.255455, y: -27.458563}
+    - {x: 30.248024, y: -27.824213}
+    - {x: 28.227377, y: -28.168833}
+    - {x: 26.192587, y: -28.487051}
+    - {x: 24.142881, y: -28.773066}
+    - {x: 22.077518, y: -29.020609}
+    - {x: 19.996128, y: -29.222826}
+    - {x: 20.215202, y: -31.906979}
+    - {x: 22.611998, y: -34.085594}
+    - {x: 25.121113, y: -36.498154}
+    - {x: 27.863432, y: -40.006157}
+    - {x: 30.73864, y: -43.77901}
+    - {x: 33.353966, y: -45.655716}
+    - {x: 35.83168, y: -46.785965}
+    - {x: 38.037224, y: -46.647987}
+    - {x: 39.92088, y: -45.15819}
+    - {x: 41.544403, y: -42.70026}
+    - {x: 43.646, y: -39.83416}
+    - {x: 45.537384, y: -37.519745}
+    - {x: 47.609394, y: -36.327415}
+    - {x: 50.00032, y: -36.451637}
+    - {x: 52.687637, y: -37.621838}
+    - {x: 55.491123, y: -39.204475}
+    - {x: 58.144226, y: -40.426365}
+    - {x: 60.40393, y: -40.643093}
+    - {x: 62.152687, y: -39.561157}
+    - {x: 63.448032, y: -37.33978}
+    - {x: 64.49991, y: -34.53852}
+    - {x: 65.586624, y: -31.928062}
+    - {x: 66.94142, y: -30.228264}
+    - {x: 68.66075, y: -29.86109}
+    - {x: 70.67008, y: -30.803709}
+    - {x: 72.78049, y: -32.58761}
+    - {x: 74.87612, y: -34.427948}
+    - {x: 76.810326, y: -35.539616}
+    - {x: 78.52508, y: -35.396885}
+    - {x: 80.05214, y: -33.918873}
+    - {x: 81.49024, y: -31.497908}
+    - {x: 82.96847, y: -28.860876}
+    - {x: 84.6099, y: -26.811821}
+    - {x: 86.50139, y: -25.9472}
+    - {x: 88.673805, y: -26.444305}
+    - {x: 90.509735, y: -24.805744}
+    - {x: 92.24934, y: -22.5329}
+    - {x: 93.74984, y: -19.083717}
+    - {x: 94.98255, y: -14.649128}
+  - points:
+    - {x: 92.785164, y: -4.689803}
+    - {x: 90.88647, y: -5.0939837}
+    - {x: 88.96972, y: -5.473579}
+    - {x: 87.03747, y: -5.8349757}
+    - {x: 85.09172, y: -6.1839933}
+    - {x: 83.13413, y: -6.5260134}
+    - {x: 81.16599, y: -6.8661404}
+    - {x: 79.18837, y: -7.209317}
+    - {x: 77.20217, y: -7.560426}
+    - {x: 75.20825, y: -7.924422}
+    - {x: 73.207466, y: -8.306415}
+    - {x: 71.2007, y: -8.711816}
+    - {x: 69.18884, y: -9.146471}
+    - {x: 67.173096, y: -9.616752}
+    - {x: 65.15568, y: -10.1299925}
+    - {x: 63.158646, y: -10.682327}
+    - {x: 61.18369, y: -11.265736}
+    - {x: 59.228867, y: -11.87302}
+    - {x: 57.29217, y: -12.497441}
+    - {x: 55.371418, y: -13.13266}
+    - {x: 53.464676, y: -13.772539}
+    - {x: 51.56984, y: -14.411171}
+    - {x: 49.684967, y: -15.042706}
+    - {x: 47.808323, y: -15.661233}
+    - {x: 45.93828, y: -16.260752}
+    - {x: 44.073357, y: -16.835085}
+    - {x: 42.212315, y: -17.377756}
+    - {x: 40.354267, y: -17.881952}
+    - {x: 38.498642, y: -18.34045}
+    - {x: 36.674736, y: -18.739016}
+    - {x: 34.72786, y: -19.132982}
+    - {x: 32.788006, y: -19.517128}
+    - {x: 30.854473, y: -19.887087}
+    - {x: 28.926712, y: -20.238428}
+    - {x: 27.004377, y: -20.56658}
+    - {x: 25.08727, y: -20.866796}
+    - {x: 23.17555, y: -21.13407}
+    - {x: 21.26947, y: -21.363127}
+    - {x: 19.369751, y: -21.548346}
+    - {x: 19.150677, y: -18.864193}
+    - {x: 20.734991, y: -16.298141}
+    - {x: 22.197319, y: -13.408981}
+    - {x: 23.416426, y: -9.347692}
+    - {x: 24.493114, y: -4.956402}
+    - {x: 25.82077, y: -2.406927}
+    - {x: 27.278248, y: -0.55968475}
+    - {x: 29.001442, y: 0.053930283}
+    - {x: 31.041576, y: -0.65891266}
+    - {x: 33.3386, y: -2.3235168}
+    - {x: 35.14459, y: -4.335005}
+    - {x: 37.13616, y: -5.689204}
+    - {x: 38.924404, y: -5.8335953}
+    - {x: 40.373444, y: -4.5894346}
+    - {x: 41.508804, y: -2.2418823}
+    - {x: 42.51427, y: 0.5619106}
+    - {x: 43.660156, y: 3.035923}
+    - {x: 45.193253, y: 4.523445}
+    - {x: 47.234985, y: 4.7190456}
+    - {x: 49.731815, y: 3.7702827}
+    - {x: 52.477722, y: 2.2250214}
+    - {x: 55.198, y: 0.8420229}
+    - {x: 57.663105, y: 0.3289461}
+    - {x: 59.779903, y: 1.0949955}
+    - {x: 61.625755, y: 3.1038418}
+    - {x: 63.391727, y: 5.8737535}
+    - {x: 65.191505, y: 8.622745}
+    - {x: 67.167046, y: 10.578987}
+    - {x: 69.37299, y: 11.228244}
+    - {x: 71.77493, y: 10.500332}
+    - {x: 74.27184, y: 8.797705}
+    - {x: 76.73257, y: 6.8569775}
+    - {x: 79.03222, y: 5.4918165}
+    - {x: 81.082275, y: 5.308362}
+    - {x: 82.85023, y: 6.4939165}
+    - {x: 84.95152, y: 5.561618}
+    - {x: 87.14379, y: 4.024208}
+    - {x: 89.5671, y: 1.3521414}
+    - {x: 92.24677, y: -2.2496343}
+  - points:
+    - {x: 44.86738, y: -1.1533947}
+    - {x: 45.47799, y: -2.5310078}
+    - {x: 44.489098, y: -4.4371815}
+    - {x: 43.07022, y: -6.4699173}
+    - {x: 43.075287, y: -8.041637}
+    - {x: 43.64117, y: -9.435703}
+    - {x: 45.965584, y: -10.266751}
+    - {x: 44.132202, y: -12.425118}
+    - {x: 44.885616, y: -13.761787}
+    - {x: 46.16147, y: -14.931758}
+    - {x: 46.791805, y: -16.304853}
+    - {x: 47.25101, y: -17.732834}
+    - {x: 47.710217, y: -19.160816}
+    - {x: 48.16942, y: -20.588797}
+    - {x: 48.628624, y: -22.016779}
+    - {x: 49.08783, y: -23.44476}
+    - {x: 49.31965, y: -24.945543}
+    - {x: 49.027092, y: -26.611076}
+    - {x: 47.488644, y: -28.652355}
+    - {x: 51.118546, y: -29.094336}
+    - {x: 51.487743, y: -30.551258}
+    - {x: 52.442467, y: -31.819895}
+    - {x: 51.211582, y: -33.786327}
+    - {x: 52.928688, y: -34.814835}
+    - {x: 56.24139, y: -35.30939}
+    - {x: 59.34112, y: -34.26926}
+    - {x: 60.214848, y: -32.39188}
+    - {x: 60.144085, y: -30.833248}
+    - {x: 58.32986, y: -29.861286}
+    - {x: 59.777195, y: -27.791893}
+    - {x: 61.14672, y: -25.756178}
+    - {x: 57.857456, y: -25.271893}
+    - {x: 57.733704, y: -23.731089}
+    - {x: 57.76108, y: -22.139639}
+    - {x: 56.726803, y: -20.904575}
+    - {x: 56.249447, y: -19.482557}
+    - {x: 55.772095, y: -18.060541}
+    - {x: 55.29474, y: -16.638523}
+    - {x: 54.817383, y: -15.216507}
+    - {x: 54.34003, y: -13.79449}
+    - {x: 53.873264, y: -12.368917}
+    - {x: 55.611813, y: -10.207752}
+    - {x: 53.81848, y: -9.223188}
+    - {x: 51.559795, y: -8.399507}
+    - {x: 53.389957, y: -6.2035875}
+    - {x: 52.47896, y: -4.9262533}
+    - {x: 50.361477, y: -4.0547047}
+    - {x: 49.291996, y: -2.832183}
+    - {x: 48.23504, y: -1.6056404}
+    - {x: 46.9786, y: -0.44615555}
+  - points:
     - {x: 81.44724, y: 73.5}
     - {x: 81.44724, y: 72}
     - {x: 81.44724, y: 70.5}
@@ -1200,20 +1394,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -46.605724, y: 166.5654}
-    right: {x: -1.1490237, y: 3.4442894}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 141.219, y: 166.14844}
-    right: {x: -0.93187046, y: 4.82599}
+  - position: {x: -46.974964, y: 166.31526}
+    right: {x: -1.4795285, y: -4.6453123}
     uv:
       serializedVersion: 2
       x: 0
@@ -1260,8 +1442,44 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 100.566666, y: 161.35437}
-    right: {x: 4.3973618, y: -1.3178314}
+  - position: {x: 143.979, y: 160.59073}
+    right: {x: -4.693844, y: 0.09050456}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 153.81808, y: 160.16444}
+    right: {x: 1.8809038, y: 4.506735}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 95.225075, y: 159.95053}
+    right: {x: -4.943528, y: -0.53199154}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 135.11801, y: 159.94548}
+    right: {x: -3.2168303, y: 2.16689}
     uv:
       serializedVersion: 2
       x: 0
@@ -1308,32 +1526,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 139.48547, y: 156.96332}
-    right: {x: -3.4352605, y: -2.5123804}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 90.1703, y: 156.73396}
-    right: {x: -1.0650735, y: -3.0176084}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 147.15894, y: 156.375}
-    right: {x: -3.4269497, y: -1.3966067}
+  - position: {x: 64.0869, y: 156.67276}
+    right: {x: -3.9204009, y: -1.5534077}
     uv:
       serializedVersion: 2
       x: 0
@@ -1346,18 +1540,6 @@ MonoBehaviour:
     canopy: 0
   - position: {x: -90.759415, y: 155.94583}
     right: {x: 3.6923265, y: 0.031037275}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -13.224677, y: 155.77287}
-    right: {x: -1.2105646, y: -3.5503798}
     uv:
       serializedVersion: 2
       x: 0
@@ -1404,18 +1586,6 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 24.026812, y: 154.71008}
-    right: {x: 2.8787618, y: -1.0638406}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: 122.44884, y: 154.55972}
     right: {x: -4.195713, y: 1.0678403}
     uv:
@@ -1430,6 +1600,18 @@ MonoBehaviour:
     canopy: 0
   - position: {x: 103.82555, y: 153.9388}
     right: {x: -2.012798, y: -3.8846295}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 22.817102, y: 153.17917}
+    right: {x: -2.776598, y: 2.056846}
     uv:
       serializedVersion: 2
       x: 0
@@ -1464,6 +1646,30 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -13.283809, y: 152.29584}
+    right: {x: 3.1965325, y: -3.3040257}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -5.0655866, y: 152.25482}
+    right: {x: -2.6946936, y: 2.5081472}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 1.5859615, y: 151.52646}
     right: {x: 0.4743198, y: -3.1772065}
     uv:
@@ -1476,8 +1682,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 11.895682, y: 150.87474}
-    right: {x: -2.35043, y: 3.702234}
+  - position: {x: 145.71614, y: 150.78967}
+    right: {x: -3.4237895, y: 3.2273479}
     uv:
       serializedVersion: 2
       x: 0
@@ -1490,30 +1696,6 @@ MonoBehaviour:
     canopy: 0
   - position: {x: 57.09214, y: 149.86537}
     right: {x: 1.1963229, y: -4.3809624}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -8.461714, y: 148.00278}
-    right: {x: 3.8410046, y: 2.1170933}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 145.13942, y: 147.94815}
-    right: {x: 0.88084006, y: -3.6924708}
     uv:
       serializedVersion: 2
       x: 0
@@ -1560,8 +1742,32 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 106.69939, y: 145.94836}
+    right: {x: 4.4172997, y: 0.024183575}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: -19.760946, y: 145.80566}
     right: {x: -2.9283915, y: -3.506083}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 14.796642, y: 145.19173}
+    right: {x: -1.3904418, y: 3.6300375}
     uv:
       serializedVersion: 2
       x: 0
@@ -1596,8 +1802,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 103.405, y: 144.19165}
-    right: {x: 4.262967, y: 2.4925718}
+  - position: {x: -41.840717, y: 143.31615}
+    right: {x: 1.6607808, y: -3.8860905}
     uv:
       serializedVersion: 2
       x: 0
@@ -1608,20 +1814,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 16.700468, y: 144.14514}
-    right: {x: 1.4915732, y: -3.195932}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -41.840717, y: 143.31615}
-    right: {x: 1.6607808, y: -3.8860905}
+  - position: {x: 139.93512, y: 142.11215}
+    right: {x: 3.0592575, y: 2.2380862}
     uv:
       serializedVersion: 2
       x: 0
@@ -1661,18 +1855,6 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 141.07426, y: 138.62262}
-    right: {x: 0.73267895, y: -3.2938435}
-    uv:
-      serializedVersion: 2
-      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -1752,8 +1934,32 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -62.858707, y: 133.17809}
+    right: {x: 0.06804122, y: 3.1559837}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 147.13953, y: 132.97708}
     right: {x: -0.8226734, y: -3.125396}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 120.62875, y: 131.10733}
+    right: {x: 2.865883, y: 2.1653059}
     uv:
       serializedVersion: 2
       x: 0
@@ -1788,8 +1994,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 132.62543, y: 130.27231}
-    right: {x: 2.2744255, y: -2.8946972}
+  - position: {x: 113.052765, y: 129.83696}
+    right: {x: 2.8341799, y: 3.3742023}
     uv:
       serializedVersion: 2
       x: 0
@@ -1800,8 +2006,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 113.8042, y: 127.983955}
-    right: {x: 3.9642818, y: -0.53675926}
+  - position: {x: 132.55894, y: 125.93928}
+    right: {x: 2.1887286, y: 3.62327}
     uv:
       serializedVersion: 2
       x: 0
@@ -1812,20 +2018,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 168.29852, y: 126.06399}
-    right: {x: 0.09633595, y: -3.5703535}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -94.5075, y: 124.4074}
-    right: {x: -1.4261293, y: 4.5867333}
+  - position: {x: 174.63823, y: 123.68405}
+    right: {x: 2.5967524, y: -3.1043575}
     uv:
       serializedVersion: 2
       x: 0
@@ -1848,8 +2042,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 127.61001, y: 121.8723}
-    right: {x: -2.4589558, y: 4.0321245}
+  - position: {x: -96.06578, y: 121.42605}
+    right: {x: -2.1489615, y: -3.8836527}
     uv:
       serializedVersion: 2
       x: 0
@@ -1860,23 +2054,35 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -44.0731, y: 118.40247}
-    right: {x: -1.9999243, y: -1.858272}
+  - position: {x: 163.21841, y: 120.981155}
+    right: {x: 1.1659852, y: 4.668057}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 139.82114, y: 120.04507}
+    right: {x: 1.2397624, y: 3.621253}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -42.839695, y: 116.87542}
+    right: {x: -2.7697554, y: -0.5265249}
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 137.85257, y: 117.544525}
-    right: {x: -3.0271091, y: 0.9672997}
-    uv:
-      serializedVersion: 2
-      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -1908,8 +2114,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 162.31543, y: 114.74111}
-    right: {x: -4.0771794, y: 1.6491417}
+  - position: {x: 155.57474, y: 114.4667}
+    right: {x: -2.9678004, y: -2.6925282}
     uv:
       serializedVersion: 2
       x: 0
@@ -1922,6 +2128,30 @@ MonoBehaviour:
     canopy: 0
   - position: {x: 173.4689, y: 114.20916}
     right: {x: -2.0914438, y: 2.5494444}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -56.960167, y: 114.000694}
+    right: {x: -2.6450336, y: 0.19646348}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 132.50235, y: 113.4465}
+    right: {x: -1.8546835, y: 4.060255}
     uv:
       serializedVersion: 2
       x: 0
@@ -1956,18 +2186,6 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 134.86555, y: 110.49486}
-    right: {x: -0.009597209, y: -3.3685083}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: -67.153984, y: 109.77078}
     right: {x: -4.652727, y: 1.229203}
     uv:
@@ -1992,6 +2210,18 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 139.91963, y: 108.739975}
+    right: {x: 4.0196424, y: -0.15467589}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 100.96237, y: 107.639946}
     right: {x: 0.059450626, y: 1.9944278}
     uv:
@@ -2004,8 +2234,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -75.709625, y: 105.78637}
-    right: {x: 2.1985612, y: -3.7017245}
+  - position: {x: 161.68097, y: 107.60912}
+    right: {x: -1.1167939, y: -3.955014}
     uv:
       serializedVersion: 2
       x: 0
@@ -2016,8 +2246,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 111.251236, y: 104.81956}
-    right: {x: -1.7898381, y: -2.8312056}
+  - position: {x: -75.709625, y: 105.78637}
+    right: {x: 2.1985612, y: -3.7017245}
     uv:
       serializedVersion: 2
       x: 0
@@ -2064,6 +2294,30 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -92.07168, y: 101.34624}
+    right: {x: 4.1008415, y: 0.69785523}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -84.58936, y: 100.499695}
+    right: {x: -2.9161627, y: -2.1916807}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 152.97305, y: 100.21174}
     right: {x: -1.0444967, y: -4.1576705}
     uv:
@@ -2100,11 +2354,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -91.555435, y: 98.37863}
-    right: {x: -2.002093, y: 3.2120183}
+  - position: {x: 56.91461, y: 98.6817}
+    right: {x: 1.8990594, y: -2.570127}
     uv:
       serializedVersion: 2
-      x: 0
+      x: 0.75
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2148,8 +2402,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -81.41225, y: 97.01745}
-    right: {x: 1.69468, y: -3.2665148}
+  - position: {x: -100.534706, y: 96.331764}
+    right: {x: 2.8328369, y: -1.2563828}
     uv:
       serializedVersion: 2
       x: 0
@@ -2172,8 +2426,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 144.6583, y: 92.70125}
-    right: {x: 2.1340873, y: 3.3372462}
+  - position: {x: 142.14825, y: 95.7764}
+    right: {x: -0.7488589, y: 3.1221628}
     uv:
       serializedVersion: 2
       x: 0
@@ -2196,6 +2450,18 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -92.21216, y: 92.57244}
+    right: {x: 3.0713286, y: 2.1781352}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 27.473375, y: 92.23626}
     right: {x: -3.2885735, y: -1.4557964}
     uv:
@@ -2208,20 +2474,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -101.467384, y: 91.36041}
-    right: {x: 3.4841602, y: 2.9152582}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -88.87693, y: 91.02821}
-    right: {x: -2.3398445, y: 2.6866355}
+  - position: {x: 1.9926375, y: 91.142784}
+    right: {x: 2.6971414, y: -1.509389}
     uv:
       serializedVersion: 2
       x: 0
@@ -2280,11 +2534,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 57.020576, y: 86.84126}
-    right: {x: 2.88017, y: -0.51442707}
+  - position: {x: -100.9129, y: 89.68376}
+    right: {x: -2.0093257, y: 3.1677384}
     uv:
       serializedVersion: 2
-      x: 0.25
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2297,18 +2551,6 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 140.90141, y: 85.48427}
-    right: {x: 2.46825, y: -1.7510074}
-    uv:
-      serializedVersion: 2
-      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2364,11 +2606,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 124.90235, y: 84.946236}
-    right: {x: 2.8810468, y: 0.9571583}
+  - position: {x: 149.2354, y: 84.6104}
+    right: {x: 2.0121925, y: 2.7374244}
     uv:
       serializedVersion: 2
-      x: 0.25
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2436,6 +2678,42 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 42.44209, y: 82.17308}
+    right: {x: -3.9696643, y: 1.3292024}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 60.031624, y: 81.54764}
+    right: {x: 2.6910083, y: 0.9356418}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 99.5717, y: 81.26451}
+    right: {x: -1.7563466, y: 0.4066797}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: -77.74929, y: 79.86963}
     right: {x: -0.24631758, y: 1.5505795}
     uv:
@@ -2450,18 +2728,6 @@ MonoBehaviour:
     canopy: 0
   - position: {x: -21.087105, y: 77.88016}
     right: {x: 2.3857622, y: 2.272926}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 40.476864, y: 75.975716}
-    right: {x: -2.58023, y: 1.7721388}
     uv:
       serializedVersion: 2
       x: 0
@@ -2496,6 +2762,18 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -30, y: 75}
+    right: {x: 4.330127, y: 2.5}
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.16666667
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 22.5, y: 75}
     right: {x: 6.5, y: 0}
     uv:
@@ -2508,12 +2786,36 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -30, y: 75}
-    right: {x: 4.330127, y: 2.5}
+  - position: {x: 31.590384, y: 74.667534}
+    right: {x: 0.51232004, y: 4.572849}
     uv:
       serializedVersion: 2
-      x: 0.75
-      y: 0.16666667
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -94.81442, y: 74.103836}
+    right: {x: -2.708176, y: -3.7722743}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 43.903152, y: 73.65144}
+    right: {x: -3.0606997, y: 0.24333538}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
       width: 0.25
       height: 0.16666667
     tint:
@@ -2532,8 +2834,20 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 37.561497, y: 69.08587}
-    right: {x: -4.318061, y: -0.7025186}
+  - position: {x: -70.38003, y: 69.38704}
+    right: {x: -2.6310506, y: 0.46032178}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 43.732616, y: 68.05159}
+    right: {x: 1.2479185, y: -2.8199234}
     uv:
       serializedVersion: 2
       x: 0
@@ -2556,11 +2870,23 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 14.59949, y: 67.04449}
-    right: {x: 0.08524015, y: -3.6562624}
+  - position: {x: 13.64107, y: 67.342026}
+    right: {x: -2.408788, y: -3.7903893}
     uv:
       serializedVersion: 2
-      x: 0
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -32.59648, y: 66.839294}
+    right: {x: -0.32715732, y: 2.307211}
+    uv:
+      serializedVersion: 2
+      x: 0.25
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2592,24 +2918,24 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -96.16556, y: 63.52059}
-    right: {x: 0.20460151, y: 3.5037107}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: -29.178642, y: 62.88381}
     right: {x: -0.24206677, y: -3.491619}
     uv:
       serializedVersion: 2
       x: 0.5
       y: 0.6666667
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 41.27675, y: 62.193798}
+    right: {x: -0.38508713, y: -3.1743739}
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
       width: 0.25
       height: 0.16666667
     tint:
@@ -2640,35 +2966,23 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -62.397987, y: 60.911144}
-    right: {x: -1.5821795, y: -1.817032}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 42.43973, y: 59.347958}
-    right: {x: 0.92956525, y: 2.7820344}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -70.05456, y: 57.190426}
-    right: {x: -0.25061893, y: 4.5489516}
+  - position: {x: -98.40284, y: 60.39802}
+    right: {x: -3.6246586, y: -0.7029371}
     uv:
       serializedVersion: 2
       x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -65.778, y: 57.17351}
+    right: {x: 2.935734, y: 1.2819364}
+    uv:
+      serializedVersion: 2
+      x: 0.25
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2693,6 +3007,18 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -93.28861, y: 56.447803}
+    right: {x: 1.7334876, y: 2.7197187}
+    uv:
+      serializedVersion: 2
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2796,6 +3122,30 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 96.04258, y: 49.98281}
+    right: {x: -1.0860001, y: -2.6179962}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -53.523815, y: 49.912178}
+    right: {x: 2.270895, y: -2.1504588}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 102.91605, y: 46.94927}
     right: {x: 2.2238631, y: -2.014553}
     uv:
@@ -2832,6 +3182,18 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -85.63429, y: 41.99883}
+    right: {x: 2.7264185, y: 2.9765708}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: -72.88046, y: 41.798244}
     right: {x: -0.6249402, y: 3.1930583}
     uv:
@@ -2856,11 +3218,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -42.85418, y: 39.87869}
-    right: {x: -2.0958881, y: 3.8713229}
+  - position: {x: -95.53962, y: 40.908348}
+    right: {x: -2.3457243, y: -2.3212678}
     uv:
       serializedVersion: 2
-      x: 0.75
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -2868,8 +3230,32 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 96.114456, y: 37.99567}
-    right: {x: -2.9920576, y: 2.3831582}
+  - position: {x: 105.6779, y: 40.251575}
+    right: {x: 2.0026383, y: 1.0898311}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -34.767513, y: 40.208347}
+    right: {x: 0.04379711, y: 2.3399882}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 95.61331, y: 37.834675}
+    right: {x: 2.9690275, y: -0.8186132}
     uv:
       serializedVersion: 2
       x: 0
@@ -2916,6 +3302,18 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -54.316998, y: 33.820583}
+    right: {x: 0.5788632, y: -3.8287518}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 108.73673, y: 32.740265}
     right: {x: 1.8335373, y: -1.4452589}
     uv:
@@ -2928,32 +3326,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 103.35236, y: 32.06053}
-    right: {x: -0.17859814, y: -2.4304934}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -51.770508, y: 30.638664}
-    right: {x: 3.237446, y: -2.0352087}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 91.87806, y: 29.597654}
-    right: {x: 3.8626328, y: -0.14527343}
+  - position: {x: -32.54443, y: 29.588818}
+    right: {x: -0.59760803, y: -3.8049753}
     uv:
       serializedVersion: 2
       x: 0.75
@@ -2976,18 +3350,6 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -40.959415, y: 28.56532}
-    right: {x: -3.1285326, y: 0.47946197}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: -84.92912, y: 28.470612}
     right: {x: -0.32295838, y: -3.5099108}
     uv:
@@ -3000,11 +3362,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -30.641022, y: 28.162884}
-    right: {x: 0.3550245, y: -3.5798845}
+  - position: {x: 86.296234, y: 27.907682}
+    right: {x: 2.7383893, y: 1.1480656}
     uv:
       serializedVersion: 2
-      x: 0
+      x: 0.25
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3012,8 +3374,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -59.162254, y: 27.272236}
-    right: {x: -2.5676563, y: 3.9127493}
+  - position: {x: -46.51341, y: 26.620943}
+    right: {x: 4.5884333, y: 1.8512753}
     uv:
       serializedVersion: 2
       x: 0
@@ -3036,35 +3398,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -91.41387, y: 25.933107}
-    right: {x: -1.1299546, y: -3.0953605}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: 98.72496, y: 25.896616}
     right: {x: -1.2687991, y: 4.100491}
     uv:
       serializedVersion: 2
       x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -0.43798158, y: 25.37167}
-    right: {x: 1.294125, y: -2.828439}
-    uv:
-      serializedVersion: 2
-      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3120,18 +3458,6 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 55.08026, y: 23.868902}
-    right: {x: 0.60526013, y: -2.322913}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: -26.670343, y: 23.676796}
     right: {x: 1.4281704, y: 1.2023135}
     uv:
@@ -3180,8 +3506,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -51.949062, y: 21.608418}
-    right: {x: -3.3926463, y: -2.3708546}
+  - position: {x: -30.8637, y: 20.92763}
+    right: {x: 0.93208337, y: -3.5299995}
     uv:
       serializedVersion: 2
       x: 0
@@ -3197,6 +3523,18 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -68.71433, y: 19.957888}
+    right: {x: -4.2180853, y: -0.41448104}
+    uv:
+      serializedVersion: 2
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3264,6 +3602,18 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 117.19813, y: 16.483034}
+    right: {x: 2.59426, y: -1.1830263}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 2.1304884, y: 15.012651}
     right: {x: -5.4302444, y: 0.8731806}
     uv:
@@ -3288,8 +3638,32 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 110.91043, y: 14.834091}
+    right: {x: 3.3003154, y: -2.1420033}
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 87.47972, y: 14.646479}
     right: {x: -1.7897556, y: 3.7330644}
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 7.9720273, y: 14.533641}
+    right: {x: -2.5959866, y: 2.0286853}
     uv:
       serializedVersion: 2
       x: 0.75
@@ -3337,10 +3711,10 @@ MonoBehaviour:
       rgba: 4294967295
     canopy: 0
   - position: {x: 104.47337, y: 11.466076}
-    right: {x: -0.43172842, y: -3.5794353}
+    right: {x: -0.24002798, y: -1.9900581}
     uv:
       serializedVersion: 2
-      x: 0.75
+      x: 0.5
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3372,11 +3746,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 95.13129, y: 6.998385}
-    right: {x: 2.4599462, y: 1.7270262}
+  - position: {x: 94.06, y: 8.034604}
+    right: {x: -4.5102324, y: 0.48144326}
     uv:
       serializedVersion: 2
-      x: 0.25
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3384,47 +3758,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 84.70784, y: 6.500137}
-    right: {x: 2.5700674, y: 1.7101336}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 104.71168, y: 6.458643}
+  - position: {x: 105.15774, y: 5.028819}
     right: {x: 0.21842687, y: 2.4904397}
     uv:
       serializedVersion: 2
       x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 75.51187, y: 5.1334734}
-    right: {x: 2.237928, y: -0.94649374}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -63.300068, y: 4.0049973}
-    right: {x: 1.2642382, y: -4.7741323}
-    uv:
-      serializedVersion: 2
-      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3456,11 +3794,47 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 101.34643, y: 1.2877488}
+    right: {x: 3, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -57.89305, y: 0.02626101}
+    right: {x: -1.3200834, y: 2.7837033}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 141.37224, y: -1.8208579}
     right: {x: 2.2806249, y: 0.17970063}
     uv:
       serializedVersion: 2
       x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 161.16356, y: -3.5759864}
+    right: {x: -3.202148, y: 0.09667594}
+    uv:
+      serializedVersion: 2
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3504,11 +3878,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 52.25213, y: -8.038099}
-    right: {x: -2.4861786, y: -0.26251906}
+  - position: {x: -68.901596, y: -6.880319}
+    right: {x: -3.3572326, y: 1.2615689}
     uv:
       serializedVersion: 2
-      x: 0.5
+      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3516,11 +3890,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -62.458126, y: -8.689093}
-    right: {x: -1.3440084, y: 4.5178595}
+  - position: {x: 3.3154497, y: -7.9704633}
+    right: {x: 2.150042, y: -2.3691676}
     uv:
       serializedVersion: 2
-      x: 0
+      x: 0.25
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3552,35 +3926,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 135.09177, y: -11.6564865}
-    right: {x: 3.3075159, y: 2.1106365}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: 18.820164, y: -12.0858755}
     right: {x: -0.642495, y: 1.4431958}
     uv:
       serializedVersion: 2
       x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -54.858105, y: -12.864464}
-    right: {x: 2.4469469, y: 3.9921746}
-    uv:
-      serializedVersion: 2
-      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3612,6 +3962,18 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 105.248375, y: -13.195854}
+    right: {x: 3, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.33333334
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 0.16440272, y: -13.3575945}
     right: {x: 2.0138264, y: 1.4813855}
     uv:
@@ -3624,8 +3986,44 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: 122.782196, y: -14.856705}
+    right: {x: 2.7707102, y: -0.6380659}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 149.29977, y: -15.189397}
     right: {x: 4.1650586, y: 0.9507086}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 134.81511, y: -15.76506}
+    right: {x: 4.694373, y: 1.1090295}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 114.741585, y: -16.483541}
+    right: {x: -3.0349934, y: -0.1994827}
     uv:
       serializedVersion: 2
       x: 0
@@ -3661,10 +4059,10 @@ MonoBehaviour:
       rgba: 4294967295
     canopy: 0
   - position: {x: -37.340393, y: -18.839231}
-    right: {x: -3.062728, y: -0.51164395}
+    right: {x: -4.2242174, y: -0.7056766}
     uv:
       serializedVersion: 2
-      x: 0.25
+      x: 0.75
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3672,8 +4070,20 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 129.37103, y: -21.329523}
-    right: {x: -1.5788239, y: 4.306932}
+  - position: {x: -59.322464, y: -19.675909}
+    right: {x: 1.866975, y: -4.2565465}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 127.872284, y: -21.645512}
+    right: {x: 3.9713137, y: -0.7620497}
     uv:
       serializedVersion: 2
       x: 0
@@ -3696,18 +4106,6 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 78.987305, y: -22.271914}
-    right: {x: 1.4648019, y: 2.0259209}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.33333334
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: 103.26763, y: -22.651196}
     right: {x: 1.6767721, y: -1.9985669}
     uv:
@@ -3720,44 +4118,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 90.73015, y: -23.744646}
-    right: {x: -0.02583081, y: -3.000436}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: -84.595184, y: -23.981855}
     right: {x: -3.1700218, y: 1.6456028}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -63.54891, y: -24.156227}
-    right: {x: -1.3086647, y: 3.5008008}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 113.86713, y: -24.399307}
-    right: {x: -4.7333493, y: 1.1795126}
     uv:
       serializedVersion: 2
       x: 0
@@ -3792,20 +4154,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 69.235306, y: -26.797964}
-    right: {x: -2.9133599, y: -0.331893}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 120.80016, y: -27.477966}
-    right: {x: 1.1864526, y: 3.0359614}
+  - position: {x: 115.51587, y: -27.737535}
+    right: {x: -1.1955966, y: -4.4899263}
     uv:
       serializedVersion: 2
       x: 0
@@ -3816,8 +4166,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 77.373856, y: -29.662565}
-    right: {x: -1.9055624, y: 3.6692119}
+  - position: {x: 123.15359, y: -27.867739}
+    right: {x: -2.3338234, y: -2.572594}
     uv:
       serializedVersion: 2
       x: 0
@@ -3834,18 +4184,6 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0.75
       y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 82.5, y: -30}
-    right: {x: -4.2286167, y: -1.5390906}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
       width: 0.25
       height: 0.16666667
     tint:
@@ -3876,54 +4214,6 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -46.882248, y: -30.989582}
-    right: {x: 0.3105024, y: 3.2948253}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 56.08677, y: -32.24681}
-    right: {x: -2.5263858, y: 0.88328254}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 65.248245, y: -32.69033}
-    right: {x: 2.4558136, y: -2.760328}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 113.60552, y: -33.396305}
-    right: {x: -0.4801796, y: -3.509544}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: 90.42598, y: -33.658215}
     right: {x: -3.7862926, y: 0.7617177}
     uv:
@@ -3936,35 +4226,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 27.91289, y: -35.154045}
-    right: {x: -3.4287777, y: -0.70248455}
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: -87.54712, y: -35.97703}
     right: {x: 3.9567192, y: -0.9086507}
     uv:
       serializedVersion: 2
       x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 33.58669, y: -36.095726}
-    right: {x: -1.1815249, y: 2.0452487}
-    uv:
-      serializedVersion: 2
-      x: 0.5
       y: 0
       width: 0.25
       height: 0.16666667
@@ -3984,44 +4250,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -26.458586, y: -36.773243}
-    right: {x: -3.485481, y: -0.6675671}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 52.5, y: -37.5}
-    right: {x: 5.168309, y: 1.8811107}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 49.466816, y: -38.406544}
-    right: {x: -1.7270502, y: 1.4634228}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -40.78963, y: -38.581593}
-    right: {x: -0.1377305, y: 4.6964073}
+  - position: {x: -38.368443, y: -37.816544}
+    right: {x: 3.424127, y: 2.7828326}
     uv:
       serializedVersion: 2
       x: 0
@@ -4068,18 +4298,6 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 97.04826, y: -39.62085}
-    right: {x: 0.8124847, y: -3.9654467}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: 67.64065, y: -39.742435}
     right: {x: -3.7509909, y: 0.09526193}
     uv:
@@ -4097,18 +4315,6 @@ MonoBehaviour:
     uv:
       serializedVersion: 2
       x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 29.671293, y: -40.080257}
-    right: {x: 1.8746058, y: -1.7699261}
-    uv:
-      serializedVersion: 2
-      x: 0.25
       y: 0
       width: 0.25
       height: 0.16666667
@@ -4152,20 +4358,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -16.62327, y: -42.594315}
-    right: {x: -2.4686043, y: -2.3014152}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 56.081165, y: -42.935802}
-    right: {x: -2.870649, y: 3.8556287}
+  - position: {x: -0.45987362, y: -42.791473}
+    right: {x: 3.4603436, y: -3.1836383}
     uv:
       serializedVersion: 2
       x: 0
@@ -4188,8 +4382,20 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 91.29677, y: -43.8011}
-    right: {x: 3.574829, y: -0.027108328}
+  - position: {x: 164.31981, y: -43.394066}
+    right: {x: -3.536557, y: 2.515912}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 93.32414, y: -43.91424}
+    right: {x: -3.4159558, y: -3.581516}
     uv:
       serializedVersion: 2
       x: 0
@@ -4212,47 +4418,11 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 37.974693, y: -44.180557}
-    right: {x: -0.9666368, y: 3.276851}
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -6.8295035, y: -44.228928}
-    right: {x: 2.475059, y: -1.9648952}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
   - position: {x: 18.416323, y: -44.26984}
     right: {x: -3.7464602, y: -2.0857477}
     uv:
       serializedVersion: 2
       x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 165.03499, y: -44.749542}
-    right: {x: -1.3624467, y: -2.7588806}
-    uv:
-      serializedVersion: 2
-      x: 0
       y: 0
       width: 0.25
       height: 0.16666667
@@ -4274,6 +4444,18 @@ MonoBehaviour:
     canopy: 0
   - position: {x: 127.71124, y: -46.667164}
     right: {x: -3.639906, y: -0.21549378}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -15.910204, y: -47.303555}
+    right: {x: 0.80655277, y: 4.043801}
     uv:
       serializedVersion: 2
       x: 0
@@ -4344,6 +4526,30 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
+  - position: {x: -75.00892, y: -51.285645}
+    right: {x: -4.2505126, y: 0.3400853}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -10.188516, y: -51.947716}
+    right: {x: 3.1035094, y: -1.9540609}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   - position: {x: 138.7481, y: -51.992416}
     right: {x: -2.2437778, y: -2.844958}
     uv:
@@ -4356,20 +4562,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 67.63652, y: -52.243156}
-    right: {x: -3.674481, y: 2.3448925}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -71.99209, y: -53.254}
-    right: {x: -2.9866025, y: 1.6184934}
+  - position: {x: 65.79042, y: -52.006634}
+    right: {x: 3.201746, y: -2.9057333}
     uv:
       serializedVersion: 2
       x: 0
@@ -4416,8 +4610,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -78.787056, y: -54.900276}
-    right: {x: 0.9437762, y: 4.205047}
+  - position: {x: -91.73282, y: -54.70358}
+    right: {x: -0.5432205, y: 4.410464}
     uv:
       serializedVersion: 2
       x: 0
@@ -4452,8 +4646,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -7.0793996, y: -56.352665}
-    right: {x: 4.2507577, y: 1.5859836}
+  - position: {x: -60.45204, y: -56.468773}
+    right: {x: -0.5688196, y: -3.5351324}
     uv:
       serializedVersion: 2
       x: 0
@@ -4488,20 +4682,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -96.86566, y: -58.538982}
-    right: {x: -3.607907, y: -0.14107914}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 25.314602, y: -59.17912}
-    right: {x: 0.7585139, y: 4.2081776}
+  - position: {x: -70.16203, y: -59.038143}
+    right: {x: -2.3527434, y: 2.788818}
     uv:
       serializedVersion: 2
       x: 0
@@ -4526,6 +4708,18 @@ MonoBehaviour:
     canopy: 0
   - position: {x: -86.68779, y: -60.149204}
     right: {x: -1.5862017, y: 2.6444397}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.16666667
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -9.8642645, y: -60.230194}
+    right: {x: -2.521628, y: 3.7981985}
     uv:
       serializedVersion: 2
       x: 0
@@ -4596,32 +4790,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 82.09345, y: -63.67699}
-    right: {x: -3.1861498, y: -0.68630964}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 0.2042484, y: -66.110085}
-    right: {x: 2.6352496, y: 1.5673566}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -10.785536, y: -66.33536}
-    right: {x: 3.6029751, y: 1.150184}
+  - position: {x: 77.978424, y: -65.926956}
+    right: {x: -3.302209, y: 0.45209143}
     uv:
       serializedVersion: 2
       x: 0
@@ -4644,20 +4814,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 28.258497, y: -67.60221}
-    right: {x: -3.572855, y: 2.4306831}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -39.272396, y: -67.89245}
-    right: {x: 2.1613379, y: -3.2796874}
+  - position: {x: 30.462612, y: -67.582466}
+    right: {x: -3.2263908, y: -0.5557048}
     uv:
       serializedVersion: 2
       x: 0
@@ -4716,4 +4874,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: df0ec672492adaa2
+  bakedSignature: 1648ecfd92830c7f
