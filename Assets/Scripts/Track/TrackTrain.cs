@@ -262,7 +262,10 @@ namespace SomeGame.Track
                     Vector2 p = _rails.PointAt(centre), d = _rails.TangentAt(centre);
                     float angle = Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg - 90f;
                     var v = _trains[k][j];
-                    if (Application.isPlaying && v.body != null) { v.body.MovePosition(p); v.body.MoveRotation(angle); }
+                    // A big jump (the clock reset at the start): put straight there - a kinematic body swept that far in
+                    // one step would fling every car in its way.
+                    if (Application.isPlaying && v.body != null && (v.body.position - p).sqrMagnitude > 4f) { v.body.position = p; v.body.rotation = angle; v.t.SetPositionAndRotation(p, Quaternion.Euler(0f, 0f, angle)); }
+                    else if (Application.isPlaying && v.body != null) { v.body.MovePosition(p); v.body.MoveRotation(angle); }
                     else v.t.SetPositionAndRotation(p, Quaternion.Euler(0f, 0f, angle));
                     v.shadow.transform.SetPositionAndRotation(p + new Vector2(0.9f, -1.3f), Quaternion.Euler(0f, 0f, angle));
                 }

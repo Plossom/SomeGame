@@ -55,6 +55,9 @@ namespace SomeGame.Track
         bool _winterNight;
         ParticleSystem _skyLanterns, _fireflies;
         float _darkness;
+
+        /// <summary>0 day .. 1 night, on a race that runs into the night (for the weather to dim with it).</summary>
+        public static float Darkness { get; private set; }
         float _nextFirework;
         readonly List<SomeGame.Car.CarTerrain> _listening = new();
         float _carsCheckedAt = -10f;
@@ -140,6 +143,7 @@ namespace SomeGame.Track
         void OnDestroy()
         {
             if (track != null) track.Rebuilt -= Build;
+            Darkness = 0f;
             if (_race != null) _race.PlayerLapCompleted -= OnPlayerSection;
             foreach (var t in _listening) if (t != null) { t.CowHit -= OnCowHit; t.RingHit -= OnRingHit; }
         }
@@ -852,6 +856,7 @@ namespace SomeGame.Track
                 if (phase <= sky[i].at) { tint = Color.Lerp(sky[i - 1].tint, sky[i].tint, Mathf.InverseLerp(sky[i - 1].at, sky[i].at, phase)); break; }
             _night.color = Color.Lerp(_night.color, tint, Time.deltaTime * 2f);
             _darkness = Mathf.InverseLerp(0.15f, _winterNight ? 0.48f : 0.6f, _night.color.a);
+            Darkness = _darkness;
             UpdateAurora();
             foreach (var (glow, strength) in _glows)
                 if (glow != null) glow.color = new Color(1f, 0.85f, 0.5f, _darkness * strength * (0.85f + Mathf.Sin(Time.time * 3f + glow.transform.position.x) * 0.15f));
@@ -874,7 +879,7 @@ namespace SomeGame.Track
                 }
             }
             // Headlights on every car, brighter as it gets dark.
-            if (headlightSprite != null)
+            if (headlightSprite != null && !track.Layout.noHeadlights)
             {
                 foreach (var car in FindObjectsByType<SomeGame.Car.CarMovement>())
                 {

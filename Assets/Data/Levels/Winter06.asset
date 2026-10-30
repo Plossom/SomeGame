@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Winter06
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Northern Lights
+  displayName: The Grand Finale
   chapter: "WINTER CUP \xB7 RACE 8"
   track: {fileID: 11400000, guid: 2bcd544d4f8ca4c5e938bd57184475f6, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 9ed1e55917f3a4c0e84ae0e5a4536149, type: 3}
-  laps: 3
-  description: 'Race from sunset into the polar night: through the Lapland village (mind the reindeer) or down the husky trail, ride the wall of the frozen waterfall, dash through the yeti''s cave and jump the ice hole, then under the northern lights round the frozen lake (or straight across the ice) and the observatory, home by headlight.'
-  difficulty: 4
+  laps: 1
+  description: The last and hardest race of the Winter Cup - everything at once, from afternoon into the night under the northern lights. Chain the slalom, ride the gondola, cross the needle ridge (mind the boulder!), land two trick jumps, beat the ice bridge, race through the cave, surf the train, spiral under the viaduct, grind the rail, ride the half-pipe, dodge the falling pines and bounce through the pinball rink to the finish - through blizzards, side-wind gusts, snow twisters and thundersnow!
+  difficulty: 5
   rivalCount: 7
-  rivalSpeedScale: 0.98
-  rivalCornerScale: 1
+  rivalSpeedScale: 1.03
+  rivalCornerScale: 1.05
   starsRequired: 30
   starTimes:
-  - 79
-  - 69
-  - 65
+  - 154
+  - 149
+  - 142

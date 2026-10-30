@@ -65,6 +65,10 @@ namespace SomeGame.EditorTools
                     }
                     b = Rect.MinMaxRect(xMin - 8f, yMin - 8f, xMax + 8f, yMax + 8f);
                 }
+                if (layout.chasms != null) // and the chasms beside the road, whole
+                    foreach (var chasm in layout.chasms)
+                        if (chasm.points != null)
+                            foreach (var p in chasm.points) b = Rect.MinMaxRect(Mathf.Min(b.xMin, p.x), Mathf.Min(b.yMin, p.y), Mathf.Max(b.xMax, p.x), Mathf.Max(b.yMax, p.y));
                 foreach (var branch in track.Branches) // the other ways round are in the picture too
                     foreach (var p in branch.Points) b = Rect.MinMaxRect(Mathf.Min(b.xMin, p.x), Mathf.Min(b.yMin, p.y), Mathf.Max(b.xMax, p.x), Mathf.Max(b.yMax, p.y));
                 // The ground reaches well beyond this margin, so the picture is filled to its edges.

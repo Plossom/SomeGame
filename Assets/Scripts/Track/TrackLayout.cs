@@ -395,6 +395,23 @@ namespace SomeGame.Track
         public bool santa;
         [Tooltip("Snowball fights (lap distances from, to): kids on both sides throw snowballs across the road; a hit slows you.")]
         public List<Vector2> snowballFights = new();
+        [Header("Snowstorm")]
+        [Tooltip("Storms (lap distances from, to): driving snow and a whiteout, side-wind gusts that shove the cars across the road " +
+                 "(warned a moment before), and with lightning: thundersnow strikes on the road just ahead of you (a ring marks the spot).")]
+        public List<Storm> storms = new();
+        [Serializable]
+        public class Storm
+        {
+            public float from, to;
+            [Range(0f, 1f)] public float strength = 0.7f;
+            public bool lightning;
+        }
+        [Tooltip("Snow twisters (lap distances from, to): a whirlwind patrolling that stretch, crossing and recrossing the road; touch it and you spin out.")]
+        public List<Vector2> twisters = new();
+        [Tooltip("Snow falling everywhere outside the storms too (0 none .. 1 heavy).")]
+        [Range(0f, 1f)] public float snowBase;
+        [Tooltip("No headlights on the cars when it gets dark.")]
+        public bool noHeadlights;
         [Header("Freestyle park")]
         [Tooltip("Rides beside the road: an ice flume (a see-through tube you shoot along) or a grind rail (hop on from its kicker). " +
                  "Steer into the entrance to take it; it sets you down further on with a boost.")]

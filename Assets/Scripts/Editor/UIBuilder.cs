@@ -1349,6 +1349,10 @@ namespace SomeGame.EditorTools
             var tricks = track.GetComponent<SomeGame.Track.TrackTricks>();
             if (tricks == null) tricks = track.gameObject.AddComponent<SomeGame.Track.TrackTricks>();
             Configure(tricks, ("track", track));
+            // The weather: storms (whiteout, gusts, lightning), snow twisters.
+            var storm = track.GetComponent<SomeGame.Track.TrackStorm>();
+            if (storm == null) storm = track.gameObject.AddComponent<SomeGame.Track.TrackStorm>();
+            Configure(storm, ("track", track), ("particleMaterial", particles));
             // The town's life: Santa's sleigh dropping presents, snowball fights.
             var town = track.GetComponent<SomeGame.Track.TrackTown>();
             if (town == null) town = track.gameObject.AddComponent<SomeGame.Track.TrackTown>();
