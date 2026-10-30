@@ -8,8 +8,9 @@ namespace SomeGame.Track
 {
     /// <summary>
     /// Trick jumps (<see cref="TrackLayout.Gap.trickJump"/>): you only make it across if you pull off the tricks.
-    /// Off the lip time slows right down and a row of arrows appears - swipe them, fast and in order (left and right
-    /// spin, up a front flip, down a back flip). All of them before the time runs out: PERFECT!, a big boost, and
+    /// Off the lip time slows right down and the tricks appear one at a time, a big arrow each - swipe it (left and right
+    /// spin, up a front flip, down a back flip), and the next one comes up; a bar shows the time left, a row of dots the
+    /// tricks done and still to do. All of them before the time runs out: PERFECT!, a big boost, and
     /// you land on the far side. One wrong, or too slow: you come down short, into the chasm. Rivals try too
     /// (most of the time they make it).
     /// </summary>
@@ -41,13 +42,15 @@ namespace SomeGame.Track
         float _scaleBefore = 1f;
         bool _slow;
 
-        // The arrows on screen.
+        // On screen: the trick to do (one big arrow), the time left, a dot per trick.
         Canvas _canvas;
-        readonly List<Image> _arrows = new();
+        Image _arrow;
+        readonly List<Image> _dots = new();
         Image _bar, _barBack;
         TextMeshProUGUI _caption;
-        Sprite _arrowSprite, _square;
-        float _shakeAt = -10f;
+        Sprite _arrowSprite, _square, _dot;
+        float _shakeAt = -10f, _nextAt = -10f;
+        int _lastDone = -1;
 
         void Start()
         {
@@ -220,19 +223,23 @@ namespace SomeGame.Track
             scaler.referenceResolution = new Vector2(1170, 2532);
             scaler.matchWidthOrHeight = 0.5f;
             _arrowSprite = ArrowSprite();
+            _dot = DotSprite();
             _square = UnityEngine.Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 4f);
+            _arrow = Img(go.transform, "Arrow", _arrowSprite, new Vector2(ArrowSize, ArrowSize));
+            _arrow.rectTransform.anchoredPosition = new Vector2(0f, ArrowY);
+            _arrow.gameObject.SetActive(false);
+            _barBack = Img(go.transform, "TimeBack", _square, new Vector2(BarWidth + 12f, 46f));
+            _barBack.color = new Color(0.08f, 0.12f, 0.25f, 0.7f);
+            _barBack.rectTransform.anchoredPosition = new Vector2(0f, BarY);
+            _bar = Img(go.transform, "Time", _square, new Vector2(BarWidth, 34f));
+            _bar.rectTransform.pivot = new Vector2(0f, 0.5f);
+            _bar.rectTransform.anchoredPosition = new Vector2(-BarWidth * 0.5f, BarY);
             for (int k = 0; k < MaxTricks; k++)
             {
-                var img = Img(go.transform, "Arrow", _arrowSprite, new Vector2(170f, 170f));
-                img.gameObject.SetActive(false);
-                _arrows.Add(img);
+                var dot = Img(go.transform, "Trick" + (k + 1), _dot, new Vector2(56f, 56f));
+                dot.gameObject.SetActive(false);
+                _dots.Add(dot);
             }
-            _barBack = Img(go.transform, "TimeBack", _square, new Vector2(700f, 26f));
-            _barBack.color = new Color(0.08f, 0.12f, 0.25f, 0.6f);
-            _barBack.rectTransform.anchoredPosition = new Vector2(0f, 190f);
-            _bar = Img(go.transform, "Time", _square, new Vector2(700f, 26f));
-            _bar.rectTransform.pivot = new Vector2(0f, 0.5f);
-            _bar.rectTransform.anchoredPosition = new Vector2(-350f, 190f);
             var label = new GameObject("Caption", typeof(RectTransform));
             label.transform.SetParent(go.transform, false);
             _caption = label.AddComponent<TextMeshProUGUI>();
@@ -246,7 +253,7 @@ namespace SomeGame.Track
             _caption.outlineWidth = 0.25f;
             _caption.outlineColor = new Color32(20, 30, 60, 255);
             _caption.rectTransform.sizeDelta = new Vector2(1000f, 100f);
-            _caption.rectTransform.anchoredPosition = new Vector2(0f, 480f);
+            _caption.rectTransform.anchoredPosition = new Vector2(0f, ArrowY + ArrowSize * 0.5f + 70f);
             _caption.text = "";
             _barBack.gameObject.SetActive(false);
             _bar.gameObject.SetActive(false);
@@ -263,6 +270,8 @@ namespace SomeGame.Track
             return img;
         }
 
+        const float ArrowSize = 380f, ArrowY = 640f, BarWidth = 760f, BarY = 390f, DotsY = 305f, DotSpacing = 72f;
+
         void DrawUi()
         {
             if (_canvas == null) return;
@@ -271,40 +280,66 @@ namespace SomeGame.Track
             bool show = a != null && !(a.Ended && !a.Failed) && !(a.Failed && Time.unscaledTime - _shakeAt > 0.9f);
             if (!show)
             {
-                foreach (var img in _arrows) img.gameObject.SetActive(false);
+                _arrow.gameObject.SetActive(false);
+                foreach (var dot in _dots) dot.gameObject.SetActive(false);
                 _bar.gameObject.SetActive(false);
                 _barBack.gameObject.SetActive(false);
                 _caption.text = "";
+                _lastDone = -1;
                 return;
             }
             int n = a.Sequence.Count;
-            // More than six: two rows (the first on top).
-            int perRow = n > 6 ? (n + 1) / 2 : n;
-            _caption.rectTransform.anchoredPosition = new Vector2(0f, n > perRow ? 680f : 480f); // above the arrows
-            float spacing = 190f, shake = Time.unscaledTime - _shakeAt < 0.4f ? Mathf.Sin(Time.unscaledTime * 80f) * 14f : 0f;
-            for (int k = 0; k < _arrows.Count; k++)
+            if (a.Done != _lastDone) { _lastDone = a.Done; _nextAt = Time.unscaledTime; }
+            float shake = Time.unscaledTime - _shakeAt < 0.4f ? Mathf.Sin(Time.unscaledTime * 80f) * 18f : 0f;
+            // The trick to do now: one big arrow (it pops up as each one comes; red if it was the wrong swipe).
+            int k = Mathf.Min(a.Done, n - 1);
+            _arrow.gameObject.SetActive(!a.Succeeded);
+            _arrow.rectTransform.anchoredPosition = new Vector2(shake, ArrowY);
+            _arrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, a.Sequence[k] switch
             {
-                var img = _arrows[k];
-                img.gameObject.SetActive(k < n);
-                if (k >= n) continue;
-                int row = k / perRow, col = k % perRow, inRow = Mathf.Min(perRow, n - row * perRow);
-                img.rectTransform.anchoredPosition = new Vector2((col - (inRow - 1) * 0.5f) * spacing + shake, n > perRow ? (row == 0 ? 530f : 330f) : 330f);
-                img.rectTransform.localRotation = Quaternion.Euler(0f, 0f, a.Sequence[k] switch
-                {
-                    TrickKind.SpinLeft => 180f, TrickKind.SpinRight => 0f, TrickKind.FrontFlip => 90f, _ => -90f,
-                });
-                bool done = k < a.Done, current = k == a.Done && !a.Failed;
-                float pulse = current ? 1f + 0.12f * Mathf.Sin(Time.unscaledTime * 14f) : 1f;
-                img.rectTransform.localScale = Vector3.one * (done ? 0.85f : pulse);
-                img.color = a.Failed && k == a.Done ? new Color(1f, 0.3f, 0.25f) : done ? new Color(0.45f, 0.95f, 0.5f) : current ? new Color(1f, 0.85f, 0.3f) : new Color(1f, 1f, 1f, 0.85f);
-            }
+                TrickKind.SpinLeft => 180f, TrickKind.SpinRight => 0f, TrickKind.FrontFlip => 90f, _ => -90f,
+            });
+            float pop = Mathf.Clamp01((Time.unscaledTime - _nextAt) / 0.12f);
+            float pulse = 1f + 0.06f * Mathf.Sin(Time.unscaledTime * 12f);
+            _arrow.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.55f, 1f, 1f - (1f - pop) * (1f - pop)) * (a.Failed ? 1f : pulse);
+            _arrow.color = a.Failed ? new Color(1f, 0.3f, 0.25f) : new Color(1f, 0.85f, 0.3f);
             // The time left, as a bar shrinking towards the landing.
             float left = Mathf.Clamp01((a.Car.AirTimeLeft - 0.35f) / Mathf.Max(0.01f, a.Total - 0.35f));
             _barBack.gameObject.SetActive(!a.Failed && !a.Succeeded);
             _bar.gameObject.SetActive(!a.Failed && !a.Succeeded);
-            _bar.rectTransform.sizeDelta = new Vector2(700f * left, 26f);
+            _bar.rectTransform.sizeDelta = new Vector2(BarWidth * left, 34f);
             _bar.color = Color.Lerp(new Color(1f, 0.35f, 0.3f), new Color(0.45f, 0.9f, 1f), left);
-            _caption.text = a.Failed ? "" : a.Succeeded ? "" : "SWIPE THE TRICKS!";
+            // A dot per trick: green the ones done, the one to do now big and pulsing, the rest still to come.
+            for (int i = 0; i < _dots.Count; i++)
+            {
+                var dot = _dots[i];
+                dot.gameObject.SetActive(i < n);
+                if (i >= n) continue;
+                dot.rectTransform.anchoredPosition = new Vector2((i - (n - 1) * 0.5f) * DotSpacing + shake * 0.5f, DotsY);
+                bool done = i < a.Done, current = i == a.Done && !a.Succeeded;
+                dot.rectTransform.localScale = Vector3.one * (current ? 1.15f + 0.1f * Mathf.Sin(Time.unscaledTime * 12f) : done ? 1f : 0.8f);
+                dot.color = a.Failed && i == a.Done ? new Color(1f, 0.3f, 0.25f) : done ? new Color(0.45f, 0.95f, 0.5f)
+                    : current ? new Color(1f, 0.85f, 0.3f) : new Color(1f, 1f, 1f, 0.45f);
+            }
+            _caption.text = a.Failed || a.Succeeded ? "" : $"SWIPE!  {a.Done}/{n}";
+        }
+
+        // A round dot with a dark rim (tinted per state).
+        static Sprite DotSprite()
+        {
+            const int size = 64;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(32f, 32f)) - 22f;
+                    float fill = Mathf.Clamp01(0.5f - d), rim = Mathf.Clamp01(0.5f - (d - 6f)) - fill;
+                    var c = Color.white * fill + new Color(0.08f, 0.12f, 0.25f, 1f) * rim;
+                    c.a = Mathf.Clamp01(fill + rim);
+                    tex.SetPixel(x, y, c);
+                }
+            tex.Apply();
+            return UnityEngine.Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
         }
 
         // A thick white arrow pointing right, with a dark rim (tinted per state; turned for each direction).
