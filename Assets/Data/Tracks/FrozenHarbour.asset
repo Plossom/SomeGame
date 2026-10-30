@@ -535,6 +535,18 @@ MonoBehaviour:
   night: 0
   santa: 0
   snowballFights: []
+  storms:
+  - from: 49.65837
+    to: 305.70694
+    strength: 0.5
+    lightning: 0
+  - from: 315.21643
+    to: 401.751
+    strength: 0.4
+    lightning: 0
+  twisters: []
+  snowBase: 0.3
+  noHeadlights: 0
   rides: []
   pinball: []
   rinks: []

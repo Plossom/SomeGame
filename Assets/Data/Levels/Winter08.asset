@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Winter08
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: The Midnight Express
+  displayName: Midnight Market
   chapter: "WINTER CUP \xB7 RACE 6"
   track: {fileID: 11400000, guid: fb9c35901eee14ffd82308e664b8da4a, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 10608c13b8a3a4c9094b7ec7b2cc2648, type: 3}
   laps: 3
-  description: 'Three laps of the mountain town on Christmas Eve: plough through the presents Santa drops on the market street, hit a kicker beside the railway and land on the Midnight Express - ride it, race over the wagons and leap off for a boost - then jump the train at the top crossing and dodge the kids'' snowballs!'
+  description: 'Three laps of the mountain town on Christmas Eve: plough through the presents Santa drops on the market street, race up the valley past the church, fly the frozen gorge at the top street (through the ring!) and dodge the kids'' snowballs!'
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.96
   rivalCornerScale: 1
   starsRequired: 27
   starTimes:
-  - 131
-  - 114
-  - 104
+  - 120
+  - 109
+  - 103

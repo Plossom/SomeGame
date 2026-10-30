@@ -96,6 +96,9 @@ namespace SomeGame.Track
             lightning = false;
             float best = 0f;
             var path = track.Path;
+            // Sheltered in a tunnel.
+            foreach (var cave in track.Layout.caves)
+                if (cave.branch < 0 && path.DeltaDistance(cave.from, d) >= 0f && path.DeltaDistance(d, cave.to) >= 0f) return 0f;
             foreach (var s in track.Layout.storms)
             {
                 float into = path.DeltaDistance(s.from, d), span = path.DeltaDistance(s.from, s.to);
