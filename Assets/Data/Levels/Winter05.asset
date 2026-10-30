@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 277620e0da9264018ad294b3b7cfd24f, type: 3}
   laps: 3
-  description: 'Three hard laps on the ledges of Daredevil Peak. Two trick jumps a lap: off the lip time slows down - swipe the tricks shown, fast and in the right order (left or right to spin, up for a front flip, down for a back flip), or you come down short into the chasm! Narrow ledges, glare ice on the hairpins, a long drop either side of the ridge and the needle bridge - fall off and you are going down!'
+  description: 'Three hard laps on the ledges of Daredevil Peak. Two trick jumps a lap: off the lip time slows down - swipe the tricks shown, fast and in the right order (left or right to spin, up for a front flip, down for a back flip), or you come down short into the chasm! Narrow ledges, glare ice on the hairpins, a long drop either side of the ridge and the needle bridge, and the squiggly cliff road down the face of the mountain - fall off and you are going down!'
   difficulty: 5
   rivalCount: 7
   rivalSpeedScale: 1
   rivalCornerScale: 1
   starsRequired: 28
   starTimes:
-  - 161
-  - 131
-  - 119
+  - 160
+  - 141
+  - 137
