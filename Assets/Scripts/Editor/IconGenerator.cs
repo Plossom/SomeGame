@@ -8,61 +8,66 @@ using static SomeGame.EditorTools.Sdf;
 namespace SomeGame.EditorTools
 {
     /// <summary>
-    /// Paints the app icon (1024 x 1024): a close, bold shot of the orange buggy drifting through a bend,
-    /// seen from above like in the game. The road fills most of the picture, with kerbs on both sides,
-    /// puffy tyre smoke and purple drift sparks behind the rear wheels and a few trees in the corners;
-    /// the light falls on the car in the middle and the edges darken.
-    /// Saves it to Assets/Art/AppIcon.png and sets it as the app icon for iOS and as the default icon.
-    /// iOS rounds the corners itself, so the picture fills the square.
+    /// Paints the app icon (1024 x 1024): the orange snowmobile flying high off a snow-park kicker in the middle of
+    /// a spin, seen from above like in the game - a groomed piste running up the picture between blue nets, the
+    /// kicker with its blue lip below, the powder it threw up, white trick arcs round the sled, its shadow far
+    /// below on the snow, sparkles, snowflakes and snowy pines in the corners; the light falls on the middle and
+    /// the edges darken. Saves it to Assets/Art/AppIcon.png and sets it as the app icon for iOS and as the default
+    /// icon. iOS rounds the corners itself, so the picture fills the square.
     /// </summary>
     public static class IconGenerator
     {
         const int Size = 1024;
         const string IconPath = "Assets/Art/AppIcon.png";
 
-        // The bend: a circle around C (bottom right) sweeping from the bottom left to the top right.
-        static readonly Vector2 C = new(1180f, -110f);
-        const float R = 900f, HalfWidth = 300f;
-        // The buggy sits on the bend at this angle (degrees around C), its nose turned into the corner.
-        const float CarAt = 138f, DriftAngle = 22f, CarScale = 1.95f;
+        // The piste runs diagonally up the picture (along D), PisteHalf wide each side of the middle.
+        static readonly Vector2 O = new(512f, 512f), D = new Vector2(1f, 1f).normalized, N = new Vector2(-1f, 1f).normalized;
+        const float PisteHalf = 300f, Lip = -300f, KickerHalf = 165f;
+        // The sled: up in the air past the lip, turned 30 degrees into its spin, big (close to the camera).
+        const float SledAlong = 95f, Spin = 32f, SledScale = 1.6f;
 
-        static readonly Color Outline = Hex("14231E");
-        static readonly Color TreeShadow = new(0.05f, 0.12f, 0.08f, 0.32f);
+        static readonly Color Outline = Hex("1B2A44");
+        static readonly Color TreeShadow = new(0.1f, 0.2f, 0.4f, 0.25f);
 
         [MenuItem("SomeGame/Generate App Icon")]
         public static void Generate()
         {
-            var car = LoadPixels(ArtGenerator.Folder + "/Car.png", out int cw, out int ch);
-            var details = LoadPixels(ArtGenerator.Folder + "/CarDetails.png", out _, out _);
+            var body = LoadPixels(ArtGenerator.Folder + "/SnowmobileIcon.png", out int cw, out int ch);
+            var details = LoadPixels(ArtGenerator.Folder + "/SnowmobileDetails.png", out _, out _);
 
-            float t = CarAt * Mathf.Deg2Rad;
-            Vector2 centre = C + R * new Vector2(Mathf.Cos(t), Mathf.Sin(t));
-            // Driving clockwise round C; the nose points into the bend by the drift angle.
-            float heading = Mathf.Atan2(-Mathf.Cos(t), Mathf.Sin(t)) * Mathf.Rad2Deg - DriftAngle;
+            Vector2 centre = O + D * SledAlong;
+            float heading = Mathf.Atan2(D.y, D.x) * Mathf.Rad2Deg + Spin;
             float angle = (heading - 90f) * Mathf.Deg2Rad; // the sprite's nose points up
-            Vector2 Local(float x, float y) => centre + CarScale * new Vector2(x * Mathf.Cos(angle) - y * Mathf.Sin(angle), x * Mathf.Sin(angle) + y * Mathf.Cos(angle));
-            Vector2 rearLeft = Local(-70f, -112f), rearRight = Local(70f, -112f);
-            var puffs = Puffs(rearLeft, rearRight);
+            Vector2 tail = centre - new Vector2(Mathf.Cos(heading * Mathf.Deg2Rad), Mathf.Sin(heading * Mathf.Deg2Rad)) * 150f * SledScale;
+            var puffs = Puffs(tail);
 
             var px = new Color[Size * Size];
             for (int y = 0; y < Size; y++)
                 for (int x = 0; x < Size; x++)
                 {
                     float fx = x + 0.5f, fy = y + 0.5f;
-                    px[y * Size + x] = Smoke(Background(fx, fy, rearLeft, rearRight), fx, fy, puffs);
+                    px[y * Size + x] = Spray(Background(fx, fy), fx, fy, puffs);
                 }
 
             Color orange = Hex("FF7A1A");
-            Stamp(px, car, details, cw, ch, centre + new Vector2(22f, -30f), angle, CarScale, orange, shadow: true);
-            Stamp(px, car, details, cw, ch, centre, angle, CarScale, orange, shadow: false);
+            // High up: its shadow lies far below on the snow, smaller and soft.
+            Stamp(px, body, details, cw, ch, centre + new Vector2(70f, -230f), angle, SledScale * 0.7f, orange, shadow: true);
             for (int y = 0; y < Size; y++)
                 for (int x = 0; x < Size; x++)
                 {
                     int i = y * Size + x;
-                    px[i] = Sparks(px[i], x + 0.5f, y + 0.5f, rearLeft, rearRight, heading + 180f);
-                    // Light on the middle, darker edges.
-                    float v = Dist(x + 0.5f, y + 0.5f, 540f, 520f) / 720f;
-                    px[i] = Over(px[i], new Color(0.02f, 0.06f, 0.05f, 1f), Mathf.Clamp01(v * v - 0.12f) * 0.55f);
+                    px[i] = Arcs(px[i], x + 0.5f, y + 0.5f, centre, heading);
+                    px[i] = Snowflakes(px[i], x + 0.5f, y + 0.5f); // (under the sled: it is flying through them)
+                }
+            Stamp(px, body, details, cw, ch, centre, angle, SledScale, orange, shadow: false);
+            for (int y = 0; y < Size; y++)
+                for (int x = 0; x < Size; x++)
+                {
+                    int i = y * Size + x;
+                    px[i] = Sparkles(px[i], x + 0.5f, y + 0.5f);
+                    // Light on the middle, darker (night-blue) edges.
+                    float v = Dist(x + 0.5f, y + 0.5f, 540f, 540f) / 720f;
+                    px[i] = Over(px[i], new Color(0.04f, 0.08f, 0.2f, 1f), Mathf.Clamp01(v * v - 0.1f) * 0.6f);
                 }
 
             var tex = new Texture2D(Size, Size, TextureFormat.RGBA32, false);
@@ -94,153 +99,144 @@ namespace SomeGame.EditorTools
             Debug.Log("App icon generated and set");
         }
 
-        static Color Background(float x, float y, Vector2 rearLeft, Vector2 rearRight)
+        static Color Background(float x, float y)
         {
-            float r = Dist(x, y, C.x, C.y);
-            float theta = Mathf.Atan2(y - C.y, x - C.x) * Mathf.Rad2Deg;
-            float off = r - R; // across the road: negative is the inside of the bend
+            Vector2 p = new Vector2(x, y) - O;
+            float u = Vector2.Dot(p, D), v = Vector2.Dot(p, N);
 
-            // Grass with soft patches and speckles, as on the tracks.
-            float patch = Noise(x / 90f, y / 90f, 64);
-            Color c = Color.Lerp(Hex("58A535"), Hex("6DBA43"), patch);
-            float speck = Hash((int)(x / 9f), (int)(y / 9f));
-            if (speck > 0.993f) c = Over(c, Hex("F2D46B"), 0.8f);
-            else if (speck < 0.01f) c = Over(c, Hex("9AD164"), 0.8f);
+            // Deep powder off the piste: soft blue drifts.
+            float drift = Noise(x / 110f, y / 110f, 64) * 0.7f + Noise(x / 35f, y / 35f, 128) * 0.3f;
+            Color c = Color.Lerp(Hex("C9D9EE"), Hex("E6EFFA"), drift);
 
-            // Asphalt with white edge lines, a red and cream kerb on both sides, a dark outline.
-            float road = Mathf.Abs(off) - HalfWidth;
-            c = Over(c, Hex("3F4A3E"), Fill(road - 16f) * 0.4f);
-            Color asphalt = Color.Lerp(Hex("55595A"), Hex("62666A"), Noise(x / 8f, y / 8f, 256));
-            c = Over(c, asphalt, Fill(road));
-            c = Over(c, Hex("F4EEDC"), Fill(Shell(Mathf.Abs(off) - (HalfWidth - 30f), 9f)));
-            float kerb = Shell(Mathf.Abs(off) - HalfWidth - 24f, 24f);
-            float run = theta * Mathf.Deg2Rad * (R + Mathf.Sign(off) * (HalfWidth + 24f));
-            bool stripe = Mathf.Repeat(run / 58f, 2f) < 1f;
-            c = Over(c, stripe ? Hex("E8402E") : Hex("F4EEDC"), Fill(kerb));
-            c = Over(c, Outline, Stroke(kerb, 4f) * 0.5f);
-            c = Over(c, Outline, Stroke(Mathf.Abs(off) - HalfWidth - 48f, 6f) * 0.6f);
+            // The groomed piste: brighter, its corduroy running straight down it, a soft shadow along its edges.
+            float edge = Mathf.Abs(v) - PisteHalf;
+            c = Over(c, Hex("9DB3D3"), Fill(edge - 14f) * 0.35f);
+            Color piste = Color.Lerp(Hex("EEF4FC"), Hex("FBFDFF"), Noise(x / 60f, y / 60f, 64));
+            c = Over(c, piste, Fill(edge));
+            float groove = Mathf.Abs(Mathf.Repeat(v, 30f) - 15f) - 2.5f;
+            c = Over(c, Hex("C3D3EA"), Fill(groove) * Fill(edge + 8f) * 0.3f);
 
-            // Skid marks from the rear wheels, back along the bend and fading out.
-            c = Skid(c, x, y, r, theta, rearLeft);
-            c = Skid(c, x, y, r, theta, rearRight);
+            // Blue safety nets along both sides: dashes on poles.
+            foreach (float side in new[] { -1f, 1f })
+            {
+                float net = Mathf.Abs(v - side * (PisteHalf + 22f)) - 6f;
+                bool dash = Mathf.Repeat(u, 64f) < 46f;
+                if (dash) c = Over(c, Hex("1E6FD9"), Fill(net));
+                float pole = Dist(Mathf.Repeat(u + 9f, 64f), v, 0f, side * (PisteHalf + 22f)) - 8f;
+                c = Over(c, Hex("F4F7FB"), Fill(pole));
+                c = Over(c, Outline, Stroke(pole, 3f) * 0.6f);
+            }
 
-            // A few trees in the corners, off the road.
-            foreach (var (tx, ty, s, pine) in Trees)
+            // The kicker below the sled: a snow table top, its take-off shaded up to the hard blue lip.
+            float kickerSide = Mathf.Abs(v) - KickerHalf, kickerAlong = Mathf.Max(Lip - 330f - u, u - Lip);
+            float kicker = Mathf.Max(kickerSide, kickerAlong);
+            c = Over(c, Hex("8FA8CC"), Fill(Mathf.Max(Mathf.Abs(v - 14f) - KickerHalf - 18f, Mathf.Max(Lip - 330f - u, u - Lip - 26f))) * 0.4f);
+            float up = Mathf.Clamp01((u - (Lip - 330f)) / 330f);
+            Color ramp = Color.Lerp(Hex("D3E0F2"), Hex("FFFFFF"), up * up);
+            c = Over(c, ramp, Fill(kicker));
+            c = Over(c, Hex("AFC3DF"), Fill(Mathf.Max(Mathf.Abs(Mathf.Abs(v) - KickerHalf + 14f) - 14f, kickerAlong)) * 0.6f); // its side walls
+            c = Over(c, Hex("1E6FD9"), Fill(Mathf.Max(kickerSide, Mathf.Abs(u - Lip + 12f) - 12f)));               // the lip
+            c = Over(c, Outline, Stroke(kicker, 5f) * 0.55f);
+
+            // Snowy pines in the corners, off the piste.
+            foreach (var (tx, ty, s) in Trees)
             {
                 if (Mathf.Abs(x - tx) > 160f * s || Mathf.Abs(y - ty) > 160f * s) continue;
-                c = pine ? Pine(c, x, y, tx, ty, s) : RoundTree(c, x, y, tx, ty, s);
+                c = Pine(c, x, y, tx, ty, s);
             }
             return c;
         }
 
-        static readonly (float x, float y, float s, bool pine)[] Trees =
+        static readonly (float x, float y, float s)[] Trees =
         {
-            (40f, 1000f, 1.3f, true), (220f, 1060f, 1f, false), (-10f, 800f, 0.9f, false),
-            (1010f, 150f, 1.1f, false), (1070f, 330f, 0.8f, true), (850f, -20f, 0.85f, true),
+            (60f, 980f, 1.25f), (250f, 1060f, 0.95f), (-20f, 770f, 1.05f), (170f, 830f, 0.7f),
+            (980f, 60f, 1.25f), (1060f, 270f, 0.95f), (780f, -30f, 1f), (870f, 200f, 0.7f),
         };
 
-        static Color Skid(Color c, float x, float y, float r, float theta, Vector2 wheel)
-        {
-            float wr = Dist(wheel.x, wheel.y, C.x, C.y);
-            float wt = Mathf.Atan2(wheel.y - C.y, wheel.x - C.x) * Mathf.Rad2Deg;
-            float behind = theta - wt; // the car drives clockwise, so the marks lie at larger angles
-            if (behind < -1f || behind > 40f) return c;
-            float fade = Mathf.Clamp01(1.3f - behind / 30f) * Mathf.Clamp01((behind + 1f) / 3f);
-            float width = Mathf.Lerp(40f, 30f, behind / 40f);
-            return Over(c, Hex("2A2E2E"), Fill(Mathf.Abs(r - wr) - width * 0.5f) * 0.8f * fade);
-        }
-
-        // Tyre smoke: puffs trailing back along the bend from both rear wheels, growing as they drift off.
-        static List<(Vector2 p, float r)> Puffs(Vector2 rearLeft, Vector2 rearRight)
+        // Powder thrown up off the lip, trailing after the sled: soft white clouds, blue in their shade.
+        static List<(Vector2 p, float r)> Puffs(Vector2 tail)
         {
             var list = new List<(Vector2, float)>();
-            for (int k = 0; k < 6; k++)
-                foreach (var w in new[] { rearLeft, rearRight })
-                {
-                    int side = w == rearLeft ? 1 : -1;
-                    float wr = Vector2.Distance(w, C), wt = Mathf.Atan2(w.y - C.y, w.x - C.x);
-                    float a = wt + 0.045f + k * 0.055f + (Hash(k, side + 5) - 0.5f) * 0.03f;
-                    float rr = wr + side * (6f + k * 16f) + (Hash(k, side + 9) - 0.5f) * 40f;
-                    list.Add((C + rr * new Vector2(Mathf.Cos(a), Mathf.Sin(a)), 30f + k * 9f + Hash(k, side + 13) * 12f));
-                }
+            Vector2 lip = O + D * Lip;
+            for (int k = 0; k < 9; k++)
+            {
+                float t = k / 8f;
+                Vector2 p = Vector2.Lerp(lip, tail, t) + N * ((Hash(k, 3) - 0.5f) * 170f * (1f - t * 0.5f)) - D * 20f;
+                list.Add((p, Mathf.Lerp(78f, 26f, t) + Hash(k, 7) * 14f));
+            }
             return list;
         }
 
-        // One soft cartoon cloud from all the puffs: light grey body, white tops (light from the top left),
-        // a single outline around the whole cloud, thinning out towards its far end.
-        static Color Smoke(Color c, float x, float y, List<(Vector2 p, float r)> puffs)
+        static Color Spray(Color c, float x, float y, List<(Vector2 p, float r)> puffs)
         {
-            float d = 1e6f, light = 0f, age = 0f;
-            for (int i = 0; i < puffs.Count; i++)
+            float d = 1e6f, light = 0f;
+            foreach (var (p, r) in puffs)
             {
-                var (p, r) = puffs[i];
-                float di = Circle(x, y, p.x, p.y, r);
-                if (di < d) age = i / (float)puffs.Count;
-                d = SMin(d, di, 18f);
-                light = Mathf.Max(light, Fill(Circle(x, y, p.x - r * 0.25f, p.y + r * 0.25f, r * 0.62f) / 3f));
+                d = SMin(d, Circle(x, y, p.x, p.y, r), 20f);
+                light = Mathf.Max(light, Fill(Circle(x, y, p.x - r * 0.25f, p.y + r * 0.25f, r * 0.65f) / 3f));
             }
             if (d > 6f) return c;
-            float alpha = Mathf.Lerp(0.97f, 0.7f, age);
-            c = Over(c, Hex("CCD3D9"), Fill(d) * alpha);
-            c = Over(c, Color.white, light * Fill(d + 3f) * alpha);
-            return Over(c, Hex("56616B"), Stroke(d, 4f) * 0.5f * alpha);
+            c = Over(c, Hex("CFDDF0"), Fill(d) * 0.95f);
+            c = Over(c, Color.white, light * Fill(d + 3f));
+            return Over(c, Hex("6F86AA"), Stroke(d, 4f) * 0.6f);
         }
 
-        // Purple drift sparks spraying back from the rear wheels, with a glow (the top drift tier).
-        static Color Sparks(Color c, float x, float y, Vector2 rearLeft, Vector2 rearRight, float back)
+        // The spin: two white swooshes curving round the sled (the way it turns), outlined, thinning to their tails.
+        static Color Arcs(Color c, float x, float y, Vector2 centre, float heading)
         {
-            Color purple = Hex("B66BFF"), light = Hex("E9D4FF");
-            foreach (var w in new[] { rearLeft, rearRight })
+            float r = Dist(x, y, centre.x, centre.y);
+            if (r < 280f || r > 400f) return c;
+            float a = Mathf.Atan2(y - centre.y, x - centre.x) * Mathf.Rad2Deg;
+            foreach (float start in new[] { heading + 25f, heading + 205f })
             {
-                float d = Dist(x, y, w.x, w.y);
-                if (d > 220f) continue;
-                c = Over(c, purple, Gauss(d, 70f) * 0.7f);
-                c = Over(c, light, Gauss(d, 22f) * 0.95f);
-                // A few sparks thrown backwards and outwards.
-                for (int k = 0; k < 5; k++)
-                {
-                    float a = (back - 50f + k * 25f + (w == rearLeft ? -8f : 8f)) * Mathf.Deg2Rad;
-                    float len = 100f + 45f * Hash(k, w == rearLeft ? 1 : 2);
-                    Vector2 a0 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 36f, a1 = w + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * len;
-                    float seg = SegDist(new Vector2(x, y), a0, a1) - 7f;
-                    c = Over(c, purple, Fill(seg - 4f));
-                    c = Over(c, Color.white, Fill(seg + 1.5f));
-                }
+                float into = Mathf.Repeat(a - start, 360f);
+                if (into > 95f) continue;
+                float t = into / 95f, half = Mathf.Lerp(16f, 3f, t); // thick at its head, thin at its tail
+                float band = Mathf.Abs(r - 340f) - half;
+                c = Over(c, Outline, Fill(band - 5f) * 0.7f * (1f - t * 0.6f));
+                c = Over(c, Color.white, Fill(band));
             }
             return c;
         }
 
+        static readonly Vector3[] Stars = { new(820f, 830f, 46f), new(300f, 690f, 30f), new(905f, 600f, 26f), new(700f, 960f, 22f), new(420f, 330f, 20f) };
+
+        // Golden sparkles round the jump.
+        static Color Sparkles(Color c, float x, float y)
+        {
+            foreach (var s in Stars)
+            {
+                if (Mathf.Abs(x - s.x) > s.z * 2.5f || Mathf.Abs(y - s.y) > s.z * 2.5f) continue;
+                c = Over(c, Hex("FFE680"), Gauss(Dist(x, y, s.x, s.y), s.z * 0.5f) * 0.5f);
+                float star = Star(x, y, s.x, s.y, s.z, s.z * 0.28f, 4);
+                c = Over(c, Outline, Stroke(star, 5f) * 0.7f);
+                c = Over(c, Hex("FFD23F"), Fill(star));
+                c = Over(c, Color.white, Fill(Star(x, y, s.x, s.y, s.z * 0.5f, s.z * 0.14f, 4)));
+            }
+            return c;
+        }
+
+        static Color Snowflakes(Color c, float x, float y)
+        {
+            const float Cell = 64f;
+            int gx = Mathf.FloorToInt(x / Cell), gy = Mathf.FloorToInt(y / Cell);
+            if (Hash(gx, gy + 50) > 0.55f) return c;
+            float fx = (gx + 0.15f + 0.7f * Hash(gx, gy)) * Cell, fy = (gy + 0.15f + 0.7f * Hash(gx + 9, gy)) * Cell;
+            float r = 3.5f + 4f * Hash(gx, gy + 3);
+            return Over(c, Color.white, Fill(Circle(x, y, fx, fy, r)) * 0.9f);
+        }
+
+        // A dark pine with snow on its boughs.
         static Color Pine(Color c, float x, float y, float cx, float cy, float s)
         {
             float lx = (x - cx) / s, ly = (y - cy) / s;
-            c = Over(c, TreeShadow, Mathf.Clamp01(0.5f - Star(lx, ly, 18f, -22f, 104f, 80f, 11, 0.2f) / 10f));
+            c = Over(c, TreeShadow, Mathf.Clamp01(0.5f - Star(lx, ly, 20f, -24f, 104f, 80f, 11, 0.2f) / 10f));
             float outer = Star(lx, ly, 0f, 0f, 104f, 80f, 11, 0.2f);
-            c = Over(c, Hex("2F6A4A"), Fill(outer * s));
-            c = Over(c, Hex("3E7A57"), Fill(Star(lx, ly, -4f, 5f, 74f, 56f, 10, 0.5f) * s));
-            c = Over(c, Hex("4F8F62"), Fill(Star(lx, ly, -7f, 9f, 44f, 33f, 8, 0.1f) * s));
-            c = Over(c, Hex("6FAE74"), Fill(Circle(lx, ly, -9f, 12f, 11f) * s));
+            c = Over(c, Hex("24584A"), Fill(outer * s));
+            c = Over(c, Hex("FFFFFF"), Fill(Star(lx, ly, -10f, 10f, 84f, 58f, 11, 0.45f) * s) * Fill((outer + 14f) * s) * 0.85f);
+            c = Over(c, Hex("2F6A57"), Fill(Star(lx, ly, -4f, 5f, 64f, 46f, 10, 0.5f) * s));
+            c = Over(c, Hex("F4F8FF"), Fill(Star(lx, ly, -9f, 9f, 40f, 28f, 8, 0.1f) * s));
             return Over(c, Outline, Stroke(outer * s, 5f) * 0.8f);
-        }
-
-        static Color RoundTree(Color c, float x, float y, float cx, float cy, float s)
-        {
-            float lx = (x - cx) / s, ly = (y - cy) / s;
-            float Blob(float ox, float oy)
-            {
-                float d = Circle(lx, ly, ox, oy, 62f);
-                for (int i = 0; i < 7; i++)
-                {
-                    float a = i * Mathf.PI * 2f / 7f + 0.4f;
-                    d = SMin(d, Circle(lx, ly, ox + Mathf.Cos(a) * 60f, oy + Mathf.Sin(a) * 60f, 40f), 14f);
-                }
-                return d;
-            }
-            c = Over(c, TreeShadow, Mathf.Clamp01(0.5f - Blob(18f, -18f) / 10f));
-            float crown = Blob(0f, 0f);
-            c = Over(c, Hex("3E8A35"), Fill(crown * s));
-            c = Over(c, Hex("5BAA3F"), Fill(Circle(lx, ly, -16f, 16f, 70f) * s) * Fill((crown + 10f) * s));
-            c = Over(c, Hex("8ACB52"), Fill(Circle(lx, ly, -28f, 30f, 30f) * s) * Fill((crown + 20f) * s));
-            return Over(c, Outline, Stroke(crown * s, 5f) * 0.8f);
         }
 
         static Color[] LoadPixels(string path, out int w, out int h)
@@ -269,7 +265,7 @@ namespace SomeGame.EditorTools
                     int i = y * Size + x;
                     if (shadow)
                     {
-                        px[i] = Over(px[i], new Color(0.05f, 0.12f, 0.08f, 0.35f), b.a);
+                        px[i] = Over(px[i], new Color(0.08f, 0.16f, 0.36f, 0.4f), b.a);
                         continue;
                     }
                     px[i] = Over(px[i], new Color(b.r * tint.r, b.g * tint.g, b.b * tint.b, 1f), b.a);
