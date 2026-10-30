@@ -18,6 +18,7 @@ namespace SomeGame.Track
         [SerializeField] Track track;
 
         const float SlowScale = 0.4f, RivalSkill = 0.74f;
+        const int MaxTricks = 10;
 
         class Attempt
         {
@@ -91,7 +92,7 @@ namespace SomeGame.Track
                 _attempts.RemoveAll(a => a.Car == car);
                 var attempt = new Attempt { Car = car, Gap = g, Sequence = new List<TrickKind>(), Total = Mathf.Max(0.1f, car.AirTimeLeft),
                     Player = car.GetComponent<SomeGame.Input.PlayerCarInput>() != null };
-                int count = Mathf.Clamp(gap.tricks, 1, 6);
+                int count = Mathf.Clamp(gap.tricks, 1, MaxTricks);
                 for (int k = 0; k < count; k++) attempt.Sequence.Add((TrickKind)Random.Range(0, 4));
                 if (attempt.Player)
                 {
@@ -220,7 +221,7 @@ namespace SomeGame.Track
             scaler.matchWidthOrHeight = 0.5f;
             _arrowSprite = ArrowSprite();
             _square = UnityEngine.Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 4f);
-            for (int k = 0; k < 6; k++)
+            for (int k = 0; k < MaxTricks; k++)
             {
                 var img = Img(go.transform, "Arrow", _arrowSprite, new Vector2(170f, 170f));
                 img.gameObject.SetActive(false);
@@ -277,13 +278,17 @@ namespace SomeGame.Track
                 return;
             }
             int n = a.Sequence.Count;
+            // More than six: two rows (the first on top).
+            int perRow = n > 6 ? (n + 1) / 2 : n;
+            _caption.rectTransform.anchoredPosition = new Vector2(0f, n > perRow ? 680f : 480f); // above the arrows
             float spacing = 190f, shake = Time.unscaledTime - _shakeAt < 0.4f ? Mathf.Sin(Time.unscaledTime * 80f) * 14f : 0f;
             for (int k = 0; k < _arrows.Count; k++)
             {
                 var img = _arrows[k];
                 img.gameObject.SetActive(k < n);
                 if (k >= n) continue;
-                img.rectTransform.anchoredPosition = new Vector2((k - (n - 1) * 0.5f) * spacing + shake, 330f);
+                int row = k / perRow, col = k % perRow, inRow = Mathf.Min(perRow, n - row * perRow);
+                img.rectTransform.anchoredPosition = new Vector2((col - (inRow - 1) * 0.5f) * spacing + shake, n > perRow ? (row == 0 ? 530f : 330f) : 330f);
                 img.rectTransform.localRotation = Quaternion.Euler(0f, 0f, a.Sequence[k] switch
                 {
                     TrickKind.SpinLeft => 180f, TrickKind.SpinRight => 0f, TrickKind.FrontFlip => 90f, _ => -90f,

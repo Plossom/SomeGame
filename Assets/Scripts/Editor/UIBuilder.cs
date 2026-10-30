@@ -1353,6 +1353,18 @@ namespace SomeGame.EditorTools
             var turntables = track.GetComponent<SomeGame.Track.TrackTurntables>();
             if (turntables == null) turntables = track.gameObject.AddComponent<SomeGame.Track.TrackTurntables>();
             Configure(turntables, ("track", track), ("plain", Mat("Plain")));
+            // The snow park: snow kickers, nets, snow tunnels, chairlifts.
+            var park = track.GetComponent<SomeGame.Track.TrackPark>();
+            if (park == null) park = track.gameObject.AddComponent<SomeGame.Track.TrackPark>();
+            Configure(park, ("track", track), ("plain", Mat("Plain")));
+            // The helix inside a mountain: stacked loops, each car on its level.
+            var helix = track.GetComponent<SomeGame.Track.TrackHelix>();
+            if (helix == null) helix = track.gameObject.AddComponent<SomeGame.Track.TrackHelix>();
+            Configure(helix, ("track", track), ("plain", Mat("Plain")));
+            // Wooden platforms, holes in the ice, hatches.
+            var platforms = track.GetComponent<SomeGame.Track.TrackPlatforms>();
+            if (platforms == null) platforms = track.gameObject.AddComponent<SomeGame.Track.TrackPlatforms>();
+            Configure(platforms, ("track", track), ("plain", Mat("Plain")));
             // The weather: storms (whiteout, gusts, lightning), snow twisters.
             var storm = track.GetComponent<SomeGame.Track.TrackStorm>();
             if (storm == null) storm = track.gameObject.AddComponent<SomeGame.Track.TrackStorm>();

@@ -39,6 +39,10 @@ namespace SomeGame.Track
 
         readonly List<CaveView> _caves = new();
 
+        /// <summary>Each cave's wall colliders and everything drawn for it (their GameObjects), for the helix's levels.</summary>
+        public readonly List<(TrackLayout.Cave cave, GameObject walls, GameObject visuals)> CaveWalls = new();
+        Transform _group; // where the cave being built puts what it draws
+
         // A stretch of road (main road or branch) as a function of distance along it.
         struct Route
         {
@@ -52,6 +56,7 @@ namespace SomeGame.Track
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
             _parts.Clear();
             _caves.Clear();
+            CaveWalls.Clear();
             if (layout.chasms != null)
                 foreach (var chasm in layout.chasms)
                     if (chasm.points != null && chasm.points.Length >= 3) BuildChasm(chasm);
@@ -60,6 +65,7 @@ namespace SomeGame.Track
                 {
                     var route = RouteOf(path, layout, cave);
                     if (route.HasValue && route.Value.Span > 2f) BuildCave(cave, route.Value);
+                    _group = null;
                 }
             if (Application.isPlaying && layout.chasms is { Count: > 0 } && particleMaterial != null) BuildMist(layout);
         }
@@ -189,6 +195,10 @@ namespace SomeGame.Track
 
         void BuildCave(TrackLayout.Cave cave, Route r)
         {
+            var group = new GameObject("Cave") { hideFlags = HideFlags.DontSave };
+            group.transform.SetParent(transform, false);
+            _parts.Add(group);
+            _group = group.transform;
             var view = new CaveView { Data = cave };
             int steps = Mathf.Max(2, Mathf.CeilToInt(r.Span));
             var walls = new List<Vector3>(); var wc = new List<Color>(); var wt = new List<int>();
@@ -209,7 +219,7 @@ namespace SomeGame.Track
                 Vector2 p = r.Point(d), n = r.Normal(d);
                 float half = r.Half(d) + FloorMargin;
                 float mouth = Mathf.Min(s, r.Span - s);
-                float flare = mouth < 5f ? 2.2f * (1f - mouth / 5f) * (1f - mouth / 5f) : 0f;
+                float flare = mouth < 5f && !cave.seamless ? 2.2f * (1f - mouth / 5f) * (1f - mouth / 5f) : 0f;
                 for (int side = 0; side < 2; side++)
                 {
                     float sign = side == 0 ? 1f : -1f;
@@ -241,6 +251,8 @@ namespace SomeGame.Track
                 edge.points = a.ToArray();
                 edge.edgeRadius = 0.35f;
             }
+            CaveWalls.Add((cave, collider, group));
+            if (cave.wallsOnly) return; // a helix level under the one drawn: the walls stop its cars, nothing more
             Part("CaveWalls", MakeMesh("CaveWalls", walls, wc, wt, both: true), plain, WallOrder);
             // Boulders heaped along both walls: a rough, natural rock face (over the wall's band).
             if (boulderSprite != null)
@@ -254,6 +266,7 @@ namespace SomeGame.Track
                         Vector2 inPt = Vector2.Lerp(a[k], a[k + 1], f), outPt = Vector2.Lerp(b[k], b[k + 1], f);
                         float h = Hash(u * 3.1f, seed + side * 7f);
                         Vector2 at = Vector2.Lerp(inPt, outPt, 0.3f + h * 0.5f);
+                        if (OnRoad(at, 1.2f + h * 0.8f)) continue; // not on another stretch of road (a spiral of tunnels)
                         Sprite("CaveBoulder", boulderSprite, at, 2.4f + h * 1.6f, Hash(u * 1.7f, seed) * 360f, WallOrder + 1 + (h > 0.5f ? 1 : 0));
                     }
                 }
@@ -330,9 +343,18 @@ namespace SomeGame.Track
                         float h = Hash(u * 2.3f, seed + 40f + side);
                         // Most of them along the ragged edge, the rest over the flank.
                         Vector2 at = Vector2.Lerp(inPt, edgePt, h < 0.6f ? 0.85f + h * 0.2f : 0.25f + h * 0.5f);
-                        Sprite("FlankBoulder", boulderSprite, at, (h < 0.6f ? 3.2f : 2.4f) + Hash(u * 5.1f, seed) * 1.6f, Hash(u * 1.3f, seed + side) * 360f, FlankOrder + 1);
+                        float size = (h < 0.6f ? 3.2f : 2.4f) + Hash(u * 5.1f, seed) * 1.6f;
+                        if (OnRoad(at, size * 0.5f)) continue;
+                        Sprite("FlankBoulder", boulderSprite, at, size, Hash(u * 1.3f, seed + side) * 360f, FlankOrder + 1);
                     }
             _caves.Add(view);
+        }
+
+        // A boulder of this radius here would lie on the road (somewhere else along it: where tunnels run side by side).
+        bool OnRoad(Vector2 at, float radius)
+        {
+            var on = track.Path.Project(at);
+            return Mathf.Abs(on.Lateral) < track.OffRoadAt(on.Distance) + radius * 0.6f;
         }
 
         static Vector2 Tangent(Route r, float d)
@@ -358,7 +380,7 @@ namespace SomeGame.Track
         SpriteRenderer Sprite(string name, Sprite sprite, Vector2 position, float size, float angle, int order)
         {
             var go = new GameObject(name) { hideFlags = HideFlags.DontSave };
-            go.transform.SetParent(transform, false);
+            go.transform.SetParent(_group != null ? _group : transform, false);
             go.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, angle));
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
@@ -371,7 +393,7 @@ namespace SomeGame.Track
         void Part(string name, Mesh mesh, Material material, int order)
         {
             var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer)) { hideFlags = HideFlags.DontSave };
-            go.transform.SetParent(transform, false);
+            go.transform.SetParent(_group != null ? _group : transform, false);
             Assign(go.GetComponent<MeshFilter>(), mesh);
             var r = go.GetComponent<MeshRenderer>();
             r.sharedMaterial = material;

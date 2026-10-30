@@ -100,6 +100,51 @@ namespace SomeGame.Track
             return 1f;
         }
 
+        /// <summary>
+        /// In the helix the loops lie on top of each other, so the nearest road is any of them: the one nearest (along
+        /// the lap) to <paramref name="near"/> - where the car was - is the one it is on.
+        /// </summary>
+        public TrackPoint HelixResolve(TrackPoint point, Vector2 position, float near)
+        {
+            var h = layout.helix;
+            if (h == null || !h.enabled || h.Loop <= 1f) return point;
+            if (point.Distance < h.from - 1f || point.Distance > h.to + 1f) return point;
+            float best = point.Distance, bestErr = Mathf.Abs(Path.DeltaDistance(near, best));
+            for (int k = -h.turns; k <= h.turns; k++)
+            {
+                float d = point.Distance + k * h.Loop;
+                if (k == 0 || d < h.from - 1f || d > h.to + 1f) continue;
+                float e = Mathf.Abs(Path.DeltaDistance(near, d));
+                if (e < bestErr) { bestErr = e; best = d; }
+            }
+            if (best == point.Distance) return point;
+            int segment = Mathf.Clamp(Mathf.RoundToInt(best / Path.Length * Path.Count), 0, Path.Count - 1);
+            return Path.Project(position, segment, 12);
+        }
+
+        /// <summary>The helix level at a lap distance: -1 in the entry tunnel, 0.. up the loops, turns in the exit tunnel; null outside.</summary>
+        public int? HelixLevel(float distance)
+        {
+            var h = layout.helix;
+            if (h == null || !h.enabled) return null;
+            if (distance < h.entry || distance > h.exit) return null;
+            if (distance < h.from) return -1;
+            if (distance >= h.to) return h.turns;
+            return Mathf.Clamp(Mathf.FloorToInt((distance - h.from) / h.Loop), 0, h.turns - 1);
+        }
+
+        /// <summary>True in a hole in the ice (water, even on the road).</summary>
+        public bool HoleAt(Vector2 p)
+        {
+            if (layout.holes == null || layout.holes.Count == 0) return false;
+            foreach (var h in layout.holes)
+            {
+                Vector2 c = Path.PointAt(h.distance) + Path.NormalAt(h.distance) * h.lateral;
+                if ((p - c).sqrMagnitude <= h.radius * h.radius) return true;
+            }
+            return false;
+        }
+
         /// <summary>The turntable under a point, if any.</summary>
         public TrackLayout.Turntable TurntableAt(Vector2 p)
         {
@@ -235,7 +280,7 @@ namespace SomeGame.Track
             for (int i = 0; i < layout.gaps.Count; i++)
             {
                 var gap = layout.gaps[i];
-                if (gap.hidden) continue; // the unraced way back: nothing to fall into
+                if (gap.hidden || gap.kicker) continue; // the unraced way back / a table top: nothing to fall into
                 float from = gap.IsDrawbridge ? gap.from + DrawbridgeRamp : gap.from;
                 float into = Path.DeltaDistance(from, distance);
                 if (into >= 0f && into <= Path.DeltaDistance(from, gap.to) && GapOpen(gap)) return i;
@@ -617,14 +662,22 @@ namespace SomeGame.Track
         /// water track only count off the road, so the road can cross them on a causeway. Gaps in the road
         /// are water too.
         /// </summary>
-        public bool IsWater(Vector2 p)
+        public bool IsWater(Vector2 p) => IsWater(p, null);
+
+        /// <summary>
+        /// As <see cref="IsWater(Vector2)"/>, measured from <paramref name="near"/> - where a car's own sensor puts it on
+        /// the road - instead of the nearest road anywhere (where the road crosses under a jump, the nearest road can be
+        /// the jump's gap).
+        /// </summary>
+        public bool IsWater(Vector2 p, TrackPoint? near)
         {
+            if (HoleAt(p)) return true;
             if (FjordOn && FjordWater(p)) return true;
             bool river = RiverDistance(p) < 0f;
             if (river && Jumps != null && _bridges.Count == 0) return true;
             bool lake = LakeDistance(p) < 0f || ChasmAt(p);
             if (!river && !lake && !layout.waterWorld && layout.gaps.Count == 0) return false;
-            var point = Path.Project(p);
+            var point = near ?? Path.Project(p);
             bool roadHere = Mathf.Abs(point.Lateral) <= OffRoadAt(point.Distance) + 0.15f;
             // A river is water everywhere except where a bridge carries the road over it.
             if (river && !(roadHere && OnBridge(point.Distance))) return true;
@@ -682,6 +735,7 @@ namespace SomeGame.Track
         {
             foreach (var gap in layout.gaps)
             {
+                if (gap.kicker) continue; // a table top: the road carries on under the flight
                 float into = Path.DeltaDistance(gap.from, distance);
                 if (into >= 0f && into <= Path.DeltaDistance(gap.from, gap.to)) return true;
             }
@@ -785,8 +839,8 @@ namespace SomeGame.Track
                     : new Jump
                     {
                         RampStart = path.WrapDistance(gap.from - layout.rampLength), Lip = path.WrapDistance(gap.from),
-                        FarBank = path.WrapDistance(gap.to), Lateral = gap.drop ? 0f : gap.rampLateral, Gap = g,
-                        Width = gap.drop ? OffRoadAt(gap.from) * 2f : layout.rampWidth,
+                        FarBank = path.WrapDistance(gap.to), Lateral = gap.drop || (gap.kicker && gap.width <= 0f) ? 0f : gap.rampLateral, Gap = g,
+                        Width = gap.kicker && gap.width > 0f ? gap.width : gap.drop || gap.kicker ? OffRoadAt(gap.from) * 2f : layout.rampWidth,
                     });
             }
             // Forest logs across the road: a little ramp right before each one.

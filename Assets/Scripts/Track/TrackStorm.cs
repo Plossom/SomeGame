@@ -60,7 +60,7 @@ namespace SomeGame.Track
         {
             if (track == null) track = FindAnyObjectByType<Track>();
             var layout = track != null ? track.Layout : null;
-            if (layout == null || (layout.storms.Count == 0 && layout.twisters.Count == 0 && layout.snowBase <= 0f)) { enabled = false; return; }
+            if (layout == null || (layout.storms.Count == 0 && layout.twisters.Count == 0 && layout.snowBase <= 0f && (layout.vortices == null || layout.vortices.Count == 0))) { enabled = false; return; }
             _race = FindAnyObjectByType<SomeGame.Race.RaceManager>();
             _combo = FindAnyObjectByType<SomeGame.UI.ComboDisplay>();
             _shake = FindAnyObjectByType<SomeGame.CameraRig.CameraShake>();
@@ -78,6 +78,7 @@ namespace SomeGame.Track
             _burst = Burst();
             BuildBolt();
             foreach (var span in layout.twisters) BuildTwister(span);
+            if (layout.vortices != null) foreach (var vortex in layout.vortices) BuildVortex(vortex);
             BuildUi();
             _nextGust = Time.time + 3f;
             _nextStrike = Time.time + 3f;
@@ -137,6 +138,7 @@ namespace SomeGame.Track
         {
             if (!Racing) return;
             MoveTwisters(Time.fixedDeltaTime);
+            PullIntoVortices(Time.fixedDeltaTime);
             // A gust: every car out in the storm is shoved across the road.
             float since = Time.time - _gustAt;
             if (since < 0f || since > GustLength) return;
@@ -266,6 +268,61 @@ namespace SomeGame.Track
             _bolt.startColor = _bolt.endColor = c;
             if (a <= 0f) _bolt.positionCount = 0;
             if (_flash != null) _flash.color = new Color(0.9f, 0.95f, 1f, a * 0.55f);
+        }
+
+        // ------------------------------------------------------------------ the tornado wall
+
+        // A huge whirl of snow round the eye, its shadow on the ground.
+        void BuildVortex(TrackLayout.Vortex data)
+        {
+            var root = new GameObject("Vortex").transform;
+            _parts.Add(root.gameObject);
+            root.position = data.position;
+            var shadow = Part("VortexShadow", _discSprite, Vector2.zero, data.radius * 2.2f, TwisterOrder - 30);
+            shadow.color = new Color(0.16f, 0.2f, 0.32f, 0.45f);
+            shadow.transform.SetParent(root, false);
+            var system = Create("VortexSwirl", root, ParticleSystemSimulationSpace.Local, TwisterOrder, 3500);
+            var main = system.main;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(2.5f, 4.5f);
+            main.startSpeed = 0f;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.9f, 3f);
+            main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.5f, 0.58f, 0.74f, 0.9f).linear, new Color(0.95f, 0.97f, 1f, 0.85f));
+            var shape = system.shape;
+            shape.shapeType = ParticleSystemShapeType.Circle;
+            shape.radius = data.radius;
+            shape.radiusThickness = 1f;
+            var velocity = system.velocityOverLifetime;
+            velocity.enabled = true;
+            velocity.space = ParticleSystemSimulationSpace.Local;
+            velocity.orbitalZ = new ParticleSystem.MinMaxCurve(0.9f, 1.6f);
+            velocity.radial = new ParticleSystem.MinMaxCurve(-3f, -1f);
+            velocity.x = velocity.y = velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
+            var renderer = system.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Stretch;
+            renderer.velocityScale = 0.08f;
+            renderer.lengthScale = 2.5f;
+            Fade(system, 0.75f);
+            var emission = system.emission;
+            emission.rateOverTime = 800f;
+        }
+
+        // Every car out in a vortex is dragged towards its eye (hardest close in).
+        void PullIntoVortices(float dt)
+        {
+            var list = track.Layout.vortices;
+            if (list == null || list.Count == 0) return;
+            foreach (var car in _cars)
+            {
+                var s = car != null ? car.GetComponent<TrackSensor>() : null;
+                if (!Exposed(car, s)) continue;
+                foreach (var v in list)
+                {
+                    Vector2 to = v.position - car.Body.position;
+                    float d = to.magnitude;
+                    if (d > v.radius || d < 0.5f) continue;
+                    car.Body.linearVelocity += to / d * (v.pull * (0.35f + 0.65f * (1f - d / v.radius)) * dt);
+                }
+            }
         }
 
         // ------------------------------------------------------------------ twisters

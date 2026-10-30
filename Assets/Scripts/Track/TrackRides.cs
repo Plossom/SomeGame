@@ -31,6 +31,9 @@ namespace SomeGame.Track
             TubeRing = Lin(0.38f, 0.66f, 0.88f, 0.7f), Shadow = new(0f, 0.05f, 0.15f, 0.18f), Steel = Lin(0.34f, 0.37f, 0.43f),
             SteelLight = Lin(0.82f, 0.86f, 0.92f), Board = Lin(0.97f, 0.98f, 1f), BoardRed = Lin(0.85f, 0.22f, 0.22f), BoardBlue = Lin(0.2f, 0.42f, 0.78f),
             Hazard = Lin(0.96f, 0.76f, 0.19f), HazardDark = Lin(0.16f, 0.16f, 0.18f), Mouth = Lin(0.08f, 0.2f, 0.32f);
+        static readonly Color BoxTop = Lin(0.95f, 0.96f, 0.98f), BoxSide = Lin(0.62f, 0.66f, 0.74f), BoxEdge = Lin(0.14f, 0.14f, 0.17f),
+            PipeLight = Lin(0.97f, 0.98f, 1f), PipeMid = Lin(0.72f, 0.76f, 0.84f), PipeDark = Lin(0.3f, 0.33f, 0.4f), PipeEnd = Lin(0.07f, 0.07f, 0.09f),
+            Plinth = Lin(0.25f, 0.27f, 0.33f), KickSnow = Lin(0.98f, 0.99f, 1f), KickShade = Lin(0.78f, 0.84f, 0.93f), Lipline = Lin(0.15f, 0.42f, 0.85f);
 
         readonly List<GameObject> _parts = new();
 
@@ -87,6 +90,7 @@ namespace SomeGame.Track
             };
             _rides.Add(view);
             if (ride.type == TrackLayout.RideType.Flume) BuildFlume(path, ride, course);
+            else if (ride.jib != TrackLayout.Jib.Rail) BuildJib(path, ride, course);
             else BuildRail(path, layout, ride, course);
         }
 
@@ -183,6 +187,100 @@ namespace SomeGame.Track
             }
             Part("RailKicker", MakeMesh("RailKicker", kv, kc, kt), plain, KickerOrder);
         }
+
+        // A snow park's jib: a box (flat, flat-down, banana), a tube (on its own, on a plinth, two side by side, a
+        // transfer of two, the fat gasser) or the monster rail - with a little snow kicker up onto it.
+        void BuildJib(TrackPath path, TrackLayout.Ride ride, List<Vector2> course)
+        {
+            var v = new List<Vector3>(); var c = new List<Color>(); var t = new List<int>();
+            var sv = new List<Vector3>(); var sc = new List<Color>(); var st = new List<int>();
+            float total = 0f;
+            for (int i = 1; i < course.Count; i++) total += Vector2.Distance(course[i - 1], course[i]);
+            var jib = ride.jib;
+            bool box = jib == TrackLayout.Jib.Box || jib == TrackLayout.Jib.FlatDownBox || jib == TrackLayout.Jib.BananaBox;
+            float half = jib == TrackLayout.Jib.Gasser ? 1.3f : box ? 0.75f : jib == TrackLayout.Jib.MonsterRail ? 0.2f : 0.5f;
+            Vector2 so = jib == TrackLayout.Jib.MonsterRail ? new Vector2(2.2f, -2.8f) : new Vector2(1f, -1.3f);
+            float along = 0f;
+            for (int i = 1; i < course.Count; i++)
+            {
+                Vector2 a = course[i - 1], b = course[i], n0 = Left(Dir(course, i - 1)), n1 = Left(Dir(course, i));
+                float s0 = along; along += Vector2.Distance(a, b);
+                float u = s0 / Mathf.Max(1f, total);
+                // the transfer: two tubes, the second set off to the side, a gap between them
+                if (jib == TrackLayout.Jib.Transfer && u > 0.45f && u < 0.55f) continue;
+                Vector2 off = jib == TrackLayout.Jib.Transfer && u >= 0.55f ? n0 * 1.2f : Vector2.zero;
+                if (jib == TrackLayout.Jib.DoubleStall)
+                {
+                    foreach (float side in new[] { -0.75f, 0.75f }) Pipe(a + n0 * side, b + n1 * side, n0, n1, 0.4f, v, c, t);
+                    AddQuad(a - n0 * 1.3f + so, b - n1 * 1.3f + so, b + n1 * 1.3f + so, a + n0 * 1.3f + so, Shadow, sv, sc, st);
+                    continue;
+                }
+                if (jib == TrackLayout.Jib.Plinth) AddQuad(a - n0 * 0.9f, b - n1 * 0.9f, b + n1 * 0.9f, a + n0 * 0.9f, Plinth, v, c, t);
+                if (box)
+                {
+                    // the flat-down box tips down half way along: its top a shade darker from there
+                    Color top = jib == TrackLayout.Jib.FlatDownBox && u > 0.5f ? BoxSide : BoxTop;
+                    AddQuad(a - n0 * (half + 0.12f), b - n1 * (half + 0.12f), b + n1 * (half + 0.12f), a + n0 * (half + 0.12f), BoxEdge, v, c, t);
+                    AddQuad(a - n0 * half, b - n1 * half, b + n1 * half, a + n0 * half, top, v, c, t);
+                    AddQuad(a - n0 * half, b - n1 * half, b - n1 * (half - 0.2f), a - n0 * (half - 0.2f), BoxSide, v, c, t);
+                }
+                else if (jib == TrackLayout.Jib.MonsterRail)
+                {
+                    AddQuad(a - n0 * half, b - n1 * half, b + n1 * half, a + n0 * half, Steel, v, c, t);
+                    AddQuad(a + n0 * 0.02f, b + n1 * 0.02f, b + n1 * 0.1f, a + n0 * 0.1f, SteelLight, v, c, t);
+                }
+                else Pipe(a + off, b + off, n0, n1, half, v, c, t);
+                AddQuad(a - n0 * (half + 0.1f) + off + so, b - n1 * (half + 0.1f) + off + so, b + n1 * (half + 0.1f) + off + so, a + n0 * (half + 0.1f) + off + so, Shadow, sv, sc, st);
+            }
+            // dark ends on the tubes
+            if (!box && jib != TrackLayout.Jib.MonsterRail && course.Count > 1)
+            {
+                Vector2 d0 = Dir(course, 0), d1 = Dir(course, course.Count - 1);
+                float r = jib == TrackLayout.Jib.DoubleStall ? 0.4f : half;
+                foreach (var (p, d) in new[] { (course[0], d0), (course[course.Count - 1], d1) })
+                    foreach (float side in jib == TrackLayout.Jib.DoubleStall ? new[] { -0.75f, 0.75f } : new[] { 0f })
+                    {
+                        Vector2 n = Left(d), e = p + n * side;
+                        AddQuad(e - n * r - d * 0.15f, e - n * r + d * 0.15f, e + n * r + d * 0.15f, e + n * r - d * 0.15f, PipeEnd, v, c, t);
+                    }
+            }
+            // posts under the monster rail
+            if (jib == TrackLayout.Jib.MonsterRail)
+                for (float a = 1f; a < total - 0.5f; a += 2.5f)
+                {
+                    Vector2 p = At(course, a, out Vector2 d), n = Left(d);
+                    AddQuad(p - n * 0.15f - d * 0.15f, p - n * 0.15f + d * 0.15f + so, p + n * 0.15f + d * 0.15f + so, p + n * 0.15f - d * 0.15f, Steel, sv, sc, st);
+                }
+            Part("JibShadow", MakeMesh("JibShadow", sv, sc, st), plain, ShadowOrder);
+            Part("Jib", MakeMesh("Jib", v, c, t), plain, RailOrder);
+            // the snow kicker up onto it, a blue line at its lip
+            var kv = new List<Vector3>(); var kc = new List<Color>(); var kt = new List<int>();
+            Vector2 tan = path.TangentAt(ride.from), nn = path.NormalAt(ride.from);
+            Vector2 lip = path.PointAt(ride.from) + nn * ride.lateral;
+            for (int q = 0; q < 6; q++)
+            {
+                Vector2 p0 = lip - tan * (4f - q * 0.67f), p1 = lip - tan * (4f - (q + 1) * 0.67f);
+                Color col = Color.Lerp(KickShade, KickSnow, q / 5f);
+                AddQuad(p0 - nn * RailHalf, p1 - nn * RailHalf, p1 + nn * RailHalf, p0 + nn * RailHalf, col, kv, kc, kt);
+            }
+            AddQuad(lip - tan * 0.3f - nn * RailHalf, lip - nn * RailHalf, lip + nn * RailHalf, lip - tan * 0.3f + nn * RailHalf, Lipline, kv, kc, kt);
+            Part("JibKicker", MakeMesh("JibKicker", kv, kc, kt), plain, KickerOrder);
+        }
+
+        // A round tube seen from above: dark at its sides, lit along the top.
+        static void Pipe(Vector2 a, Vector2 b, Vector2 n0, Vector2 n1, float r, List<Vector3> v, List<Color> c, List<int> t)
+        {
+            AddQuad(a - n0 * r, b - n1 * r, b + n1 * r, a + n0 * r, PipeDark, v, c, t);
+            AddQuad(a - n0 * r * 0.7f, b - n1 * r * 0.7f, b + n1 * r * 0.7f, a + n0 * r * 0.7f, PipeMid, v, c, t);
+            AddQuad(a + n0 * r * 0.05f, b + n1 * r * 0.05f, b + n1 * r * 0.45f, a + n0 * r * 0.45f, PipeLight, v, c, t);
+        }
+
+        public static string JibName(TrackLayout.Jib jib) => jib switch
+        {
+            TrackLayout.Jib.Box => "BOX SLIDE!", TrackLayout.Jib.Tube => "TUBE SLIDE!", TrackLayout.Jib.DoubleStall => "DOUBLE STALL!",
+            TrackLayout.Jib.MonsterRail => "MONSTER RAIL!", TrackLayout.Jib.FlatDownBox => "FLAT-DOWN BOX!", TrackLayout.Jib.BananaBox => "BANANA BOX!",
+            TrackLayout.Jib.Plinth => "PLINTH TUBE!", TrackLayout.Jib.Gasser => "GASSER!", TrackLayout.Jib.Transfer => "TRANSFER!", _ => "RAIL GRIND!",
+        };
 
         // ------------------------------------------------------------------ rink, bumpers, gates
 
@@ -320,7 +418,7 @@ namespace SomeGame.Track
                 if (progress != null) progress.LiftArrived(ride.Data.from, ride.Data.to);
                 car.GiveBoost(0.8f);
                 if (car.GetComponent<SomeGame.Input.PlayerCarInput>() != null && _combo != null)
-                    _combo.Announce(rail ? "RAIL GRIND!" : "FLUME RIDE!", rail ? new Color(1f, 0.75f, 0.3f) : new Color(0.5f, 0.85f, 1f));
+                    _combo.Announce(rail ? JibName(ride.Data.jib) : "FLUME RIDE!", rail ? new Color(1f, 0.75f, 0.3f) : new Color(0.5f, 0.85f, 1f));
             }, rail ? SomeGame.Car.RideKind.Rail : SomeGame.Car.RideKind.Flume);
             if (!ok || car.GetComponent<SomeGame.Input.PlayerCarInput>() == null) return;
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.8f);

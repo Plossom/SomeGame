@@ -283,6 +283,7 @@ namespace SomeGame.Input
             // Steer around oil puddles and cows ahead: pass on whichever side needs the smaller move.
             var layout = _sensor.Track.Layout;
             foreach (var spot in layout.oil) lateral = Dodge(path, distance, lateral, spot.distance, spot.lateral, spot.radius);
+            if (layout.holes != null) foreach (var hole in layout.holes) lateral = Dodge(path, distance, lateral, hole.distance, hole.lateral, hole.radius + 0.6f);
             foreach (var cow in layout.cows) lateral = Dodge(path, distance, lateral, cow.distance, cow.lateral, cow.radius);
             // Trunks of fallen trees across the road: round them.
             foreach (var log in SomeGame.Track.Track.Logs) lateral = Dodge(path, distance, lateral, log.x, log.y, log.z);

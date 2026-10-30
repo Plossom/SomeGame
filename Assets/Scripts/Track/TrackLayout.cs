@@ -405,6 +405,60 @@ namespace SomeGame.Track
             [Min(3f)] public float radius = 10f;
             public float speed = 40f;
         }
+        [Header("Snow park")]
+        [Tooltip("Blue safety nets along both sides of the piste (lap distances from, to).")]
+        public List<Span> nets = new();
+        [Tooltip("Snow tunnels over the piste (lap distances from, to): a snow roof with red arches at both ends; you drive under it.")]
+        public List<Span> snowTunnels = new();
+        [Tooltip("Chairlifts overhead: a line of towers and the cable (points), chairs going round it.")]
+        public List<Chairlift> chairlifts = new();
+        [Serializable]
+        public class Chairlift
+        {
+            public Vector2[] points = { };
+            [Min(2)] public int chairs = 14;
+        }
+        [Tooltip("A helix inside a mountain: the road climbs round and round on one small circle, the loops stacked on top of " +
+                 "each other. Each car is on its own level (the caves with that level): it only meets the walls and the cars of its level, " +
+                 "the cars on the others are hidden. From outside, the mountain's top covers it all.")]
+        public Helix helix = new();
+        [Serializable]
+        public class Helix
+        {
+            public bool enabled;
+            public Vector2 centre;
+            [Tooltip("The road's circle (centre line).")]
+            public float radius = 12f;
+            [Tooltip("Lap distances: where the first loop starts and where the climb ends; the entry tunnel starts at 'entry', the exit tunnel ends at 'exit'.")]
+            public float entry, from, to, exit;
+            [Min(1)] public int turns = 6;
+            [Tooltip("How far out the mountain reaches (its top, drawn over everything from outside).")]
+            public float mountainRadius = 40f;
+            /// <summary>Length of one loop (lap distance).</summary>
+            public float Loop => (to - from) / turns;
+        }
+        [Tooltip("Holes in the ice (over the underground river): water even on the road - steer round them. (lap distance, lateral, radius)")]
+        public List<Hole> holes = new();
+        [Serializable]
+        public class Hole
+        {
+            public float distance, lateral;
+            [Min(0.5f)] public float radius = 1.6f;
+        }
+        [Tooltip("Wooden platforms (lap distances from, to): the road there is a deck of planks (out over the void).")]
+        public List<Span> platforms = new();
+        [Tooltip("Hatches (lap distances of gaps): a trapdoor in the ground, its doors flung open either side of the hole you drop into.")]
+        public List<float> hatches = new();
+        [Tooltip("Giant vortices (a tornado wall): a huge whirl of snow that pulls every car in it towards its eye.")]
+        public List<Vortex> vortices = new();
+        [Serializable]
+        public class Vortex
+        {
+            public Vector2 position;
+            [Min(5f)] public float radius = 40f;
+            [Tooltip("Pull towards the eye (m/s per second, strongest near the eye).")]
+            public float pull = 5f;
+        }
         [Header("Snowstorm")]
         [Tooltip("Storms (lap distances from, to): driving snow and a whiteout, side-wind gusts that shove the cars across the road " +
                  "(warned a moment before), and with lightning: thundersnow strikes on the road just ahead of you (a ring marks the spot).")]
@@ -427,6 +481,8 @@ namespace SomeGame.Track
                  "Steer into the entrance to take it; it sets you down further on with a boost.")]
         public List<Ride> rides = new();
         public enum RideType { Flume, Rail }
+        /// <summary>What a grind ride looks like (a snow park's jibs).</summary>
+        public enum Jib { Rail, Box, Tube, DoubleStall, MonsterRail, FlatDownBox, BananaBox, Plinth, Gasser, Transfer }
         [Serializable]
         public class Ride
         {
@@ -438,6 +494,8 @@ namespace SomeGame.Track
             [Tooltip("World points of its course between.")]
             public Vector2[] points = { };
             [Min(5f)] public float speed = 28f;
+            [Tooltip("A grind ride's look: a steel rail, or one of the snow park's boxes and tubes (they get a snow kicker).")]
+            public Jib jib;
         }
         [Tooltip("Pinball bumpers: bounce off them with a boost.")]
         public List<PinballBumper> pinball = new();
@@ -530,6 +588,12 @@ namespace SomeGame.Track
             public float from, to;
             [Tooltip("Ice stalagmites standing in the cave (solid), as (along, lateral) pairs.")]
             public Vector2[] stalagmites = { };
+            [Tooltip("A level of the helix (see TrackLayout.helix): its walls only stop cars on that level. -99 = not part of it.")]
+            public int level = -99;
+            [Tooltip("Only the walls (they stop the cars), nothing drawn: a helix level stacked under one that is drawn.")]
+            public bool wallsOnly;
+            [Tooltip("No flared mouths: it carries straight on into the next cave (the loops of a helix).")]
+            public bool seamless;
         }
         [Serializable]
         public class SnowPile
@@ -586,6 +650,10 @@ namespace SomeGame.Track
             public bool slowMotion;
             [Tooltip("A trick jump: in slow motion, swipe the tricks shown (fast and in order) or come down short into the chasm.")]
             public bool trickJump;
+            [Tooltip("A kicker on the road (a snow-park table top): the ramp throws you to 'to', the road carries on underneath - nothing to fall into.")]
+            public bool kicker;
+            [Tooltip("A kicker's width (0 = the whole road), centred at rampLateral: drawn as a snow table top (take-off, deck, landing).")]
+            [Min(0f)] public float width;
             [Tooltip("How many tricks it asks for.")]
             [Min(1)] public int tricks = 3;
             public bool IsDrawbridge => period > 0f;

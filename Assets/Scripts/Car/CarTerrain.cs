@@ -277,6 +277,10 @@ namespace SomeGame.Car
                         else
                             air = Mathf.Max(air, (track.Path.DeltaDistance(ramp.Value.Lip, ramp.Value.FarBank) + 1.6f) / along);
                     }
+                    // Never past the next jump's take-off (platform to platform: you come down on the next one).
+                    float clear = (track.Path.DeltaDistance(ramp.Value.Lip, ramp.Value.FarBank) + 1.6f) / Mathf.Max(1f, along);
+                    float room = NextTakeOff(track, ramp.Value);
+                    if (room > 0f) air = Mathf.Max(Mathf.Min(air, (room - 2.5f) / Mathf.Max(1f, along)), along >= minClearSpeed ? clear : 0f);
                     _car.Launch(air);
                     return;
                 }
@@ -295,7 +299,7 @@ namespace SomeGame.Car
 
             // On a drifting floe, fast, about to drive off its edge with another floe ahead: hop across.
             if (track.FjordBroken && !_car.OnRamp && FloeHopAhead(track, position)) return;
-            if (!_car.OnRamp && track.IsWater(position))
+            if (!_car.OnRamp && track.IsWater(position, _sensor.Branch < 0 ? _sensor.Current : null))
             {
                 Splash(track);
                 return;
@@ -367,7 +371,7 @@ namespace SomeGame.Car
                 Bounce(bouncer); // chains: ramp -> gummiboat -> next road
                 return;
             }
-            bool dry = track != null && !track.IsWater(_car.Body.position);
+            bool dry = track != null && !track.IsWater(_car.Body.position, _sensor.Branch < 0 ? _sensor.Current : null);
             if (_shortcutFrom.HasValue && dry)
             {
                 if (_progress != null) _progress.CreditFlight(_shortcutFrom.Value, _sensor.Current.Distance);
@@ -384,7 +388,7 @@ namespace SomeGame.Car
                 _roofExit = false;
                 if (dry) RoofRun?.Invoke();
             }
-            if (track != null && track.IsWater(_car.Body.position)) Splash(track);
+            if (track != null && track.IsWater(_car.Body.position, _sensor.Branch < 0 ? _sensor.Current : null)) Splash(track);
             else _dust.Emit(18);
         }
 
@@ -392,6 +396,20 @@ namespace SomeGame.Car
         public static event Action<Vector2> AnyBounce;
 
         // The lap distance of the first gummiboat lying in a jump's gap, if any.
+        // Distance from this jump's lip to the next jump's lip after its far bank, if one comes within 60 m (else 0).
+        static float NextTakeOff(SomeGame.Track.Track track, SomeGame.Track.Track.Jump jump)
+        {
+            float best = 0f;
+            foreach (var other in track.Jumps)
+            {
+                float after = track.Path.DeltaDistance(jump.FarBank, other.Lip);
+                if (after <= 0f || after > 60f) continue;
+                float span = track.Path.DeltaDistance(jump.Lip, other.Lip);
+                if (best == 0f || span < best) best = span;
+            }
+            return best;
+        }
+
         static float? BouncerInGap(SomeGame.Track.Track track, SomeGame.Track.Track.Jump jump)
         {
             float? best = null;

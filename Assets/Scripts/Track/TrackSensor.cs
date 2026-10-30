@@ -76,7 +76,7 @@ namespace SomeGame.Track
             TrackPoint point;
             if (_hint < 0)
             {
-                point = path.Project(position);
+                point = track.HelixResolve(path.Project(position), position, Current.Distance);
             }
             else
             {
@@ -84,7 +84,7 @@ namespace SomeGame.Track
                 // Lost the local match (cut across grass to another section): re-acquire globally.
                 if (Mathf.Abs(point.Lateral) > track.WidthAt(point.Distance))
                 {
-                    var global = path.Project(position);
+                    var global = track.HelixResolve(path.Project(position), position, Current.Distance);
                     if (Mathf.Abs(global.Lateral) < Mathf.Abs(point.Lateral) - 0.5f)
                     {
                         point = global;

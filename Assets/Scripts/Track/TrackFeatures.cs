@@ -86,6 +86,7 @@ namespace SomeGame.Track
             var pads = b;
             foreach (var jump in track.Jumps)
             {
+                if (jump.Gap >= 0 && layout.gaps[jump.Gap].kicker) continue; // a snow kicker: drawn by TrackPark
                 float length = path.DeltaDistance(jump.RampStart, jump.Lip);
                 float mid = jump.RampStart + length * 0.5f;
                 Vector2 forward = path.TangentAt(mid), side = path.NormalAt(mid);
