@@ -91,7 +91,8 @@ namespace SomeGame.Track
             float hw = layout.HalfWidth, outer = hw + layout.kerbWidth;
 
             bool water = layout.waterWorld;
-            Func<float, bool> keep = d => !track.InGap(d);
+            // (the helix's road is drawn apart: see ShowHelix)
+            Func<float, bool> keep = d => !InHelix(d) && !track.InGap(d);
             Func<float, float> edge = d => track.OffRoadAt(d);
             Assign(road, TrackMeshes.Strip(path, d => -edge(d) - 0.02f, d => edge(d) + 0.02f, outer * 2f / roadTile, roadTile, "Road", Color.white, keep));
             // On a water track the road stands above the water and casts a soft shadow onto it.
@@ -99,8 +100,8 @@ namespace SomeGame.Track
                 Assign(roadShadow, water || layout.elevatedRoad
                     ? TrackMeshes.Strip(path, d => -edge(d) - 0.1f, d => edge(d) + 0.1f, 1f, 4f, "RoadShadow", new Color(0f, 0.05f, 0.1f, 0.3f), keep, roadShadowOffset)
                     : new Mesh { name = "RoadShadow", hideFlags = HideFlags.DontSave });
-            Assign(kerbs, BuildKerbs(path));
-            if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path));
+            Assign(kerbs, BuildKerbs(path, keep));
+            if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path, keep));
             Assign(startLine, BuildStartLine(path, hw));
             if (gridLines != null) Assign(gridLines, BuildGrid(path, layout));
             if (runoff != null) Assign(runoff, water ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path));
@@ -118,6 +119,7 @@ namespace SomeGame.Track
             if (groundRenderer != null && grassMaterial != null && waterMaterial != null)
                 groundRenderer.sharedMaterial = water ? waterMaterial : snow && snowGround != null ? snowGround : grassMaterial;
             ApplyBiome(snow);
+            BuildHelix();
             if (boundary != null && Application.isPlaying)
             {
                 Rect wall = Expand(area, -1f);
@@ -187,12 +189,13 @@ namespace SomeGame.Track
         }
 
         // Red-and-white kerbs on both sides, only where the road turns enough.
-        Mesh BuildKerbs(TrackPath path)
+        Mesh BuildKerbs(TrackPath path, Func<float, bool> keep, bool helix = false)
         {
             int n = path.Count;
             float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / kerbCycle));
+            Func<float, float> v = helix ? HelixV(cycle) : d => d / cycle;
             var corner = new bool[n];
-            for (int i = 0; i < n; i++) corner[i] = Mathf.Abs(path.TurnAt(i, runoffSpan)) >= kerbTurn && !track.InGap(path.DistanceAt(i) + 0.5f);
+            for (int i = 0; i < n; i++) corner[i] = keep(path.DistanceAt(i) + 0.5f) && Mathf.Abs(path.TurnAt(i, runoffSpan)) >= kerbTurn;
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
             var triangles = new List<int>();
@@ -210,8 +213,8 @@ namespace SomeGame.Track
                         if (k == 1) d += path.SegmentLength(i);
                         vertices.Add(p + normal * track.HalfWidthAt(d));
                         vertices.Add(p + normal * track.OffRoadAt(d));
-                        uvs.Add(new Vector2(0f, d / cycle));
-                        uvs.Add(new Vector2(1f, d / cycle));
+                        uvs.Add(new Vector2(0f, v(d)));
+                        uvs.Add(new Vector2(1f, v(d)));
                     }
                     if (side == 0) triangles.AddRange(new[] { a, a + 2, a + 1, a + 1, a + 2, a + 3 });
                     else triangles.AddRange(new[] { a, a + 1, a + 2, a + 1, a + 3, a + 2 });
@@ -220,12 +223,12 @@ namespace SomeGame.Track
             return TrackMeshes.Quads("Kerbs", vertices, uvs, triangles);
         }
 
-        Mesh BuildEdgeLines(TrackPath path)
+        Mesh BuildEdgeLines(TrackPath path, Func<float, bool> keep, bool helix = false)
         {
-            Func<float, bool> keep = d => !track.InGap(d);
             Func<float, float> outer = d => track.OffRoadAt(d), inner = d => track.OffRoadAt(d) - edgeLineWidth;
-            var left = TrackMeshes.Strip(path, inner, outer, 1f, 4f, "EdgeLeft", Color.white, keep);
-            var right = TrackMeshes.Strip(path, d => -inner(d), d => -outer(d), 1f, 4f, "EdgeRight", Color.white, keep);
+            var v = helix ? HelixV(4f) : null;
+            var left = TrackMeshes.Strip(path, inner, outer, 1f, 4f, "EdgeLeft", Color.white, keep, default, v);
+            var right = TrackMeshes.Strip(path, d => -inner(d), d => -outer(d), 1f, 4f, "EdgeRight", Color.white, keep, default, v);
             var combined = new Mesh { name = "EdgeLines", hideFlags = HideFlags.DontSave };
             combined.CombineMeshes(new[]
             {
@@ -235,6 +238,105 @@ namespace SomeGame.Track
             DestroyTemp(left);
             DestroyTemp(right);
             return combined;
+        }
+
+        // ------------------------------------------------------------------ the helix
+
+        // The helix's loops lie exactly on top of each other, so its road is drawn apart from the rest of the track: only
+        // one loop's worth of it at a time, round the player (TrackHelix moves it along as they climb), never the loops
+        // above or below. The tunnel in and the tunnel out are drawn only while they are on the player's level.
+        float _helixFrom = float.NaN, _helixTo;
+        bool _helixEntry = true, _helixExit = true;
+        readonly List<(MeshFilter source, MeshFilter copy)> _helixLayers = new();
+
+        bool InHelix(float d)
+        {
+            var h = track.Layout != null ? track.Layout.helix : null;
+            return h != null && h.enabled && d >= h.entry && d <= h.exit;
+        }
+
+        /// <summary>Draws the helix's road from <paramref name="from"/> to <paramref name="to"/> (lap distances on its loops), and its tunnels in and out if asked.</summary>
+        public void ShowHelix(float from, float to, bool entry, bool exit)
+        {
+            if (from == _helixFrom && to == _helixTo && entry == _helixEntry && exit == _helixExit) return;
+            _helixFrom = from;
+            _helixTo = to;
+            _helixEntry = entry;
+            _helixExit = exit;
+            BuildHelix();
+        }
+
+        void BuildHelix()
+        {
+            var h = track.Layout != null ? track.Layout.helix : null;
+            if (h == null || !h.enabled)
+            {
+                foreach (var (_, copy) in _helixLayers) if (copy != null) copy.gameObject.SetActive(false);
+                return;
+            }
+            var path = track.Path;
+            if (float.IsNaN(_helixFrom))
+            {
+                _helixFrom = h.from;
+                _helixTo = h.from + (h.to - h.from) / Mathf.Max(1, h.turns);
+            }
+            // (a little past the window's end, so the loop closes without a crack)
+            Func<float, bool> shown = d => d >= h.entry && d <= h.exit && !track.InGap(d)
+                && (d >= _helixFrom && d < _helixTo + 0.6f || _helixEntry && d < h.from || _helixExit && d >= h.to);
+            Func<float, float> edge = d => track.OffRoadAt(d);
+            float outer = track.Layout.HalfWidth + track.Layout.kerbWidth;
+            Layer(road, TrackMeshes.Strip(path, d => -edge(d) - 0.02f, d => edge(d) + 0.02f, outer * 2f / roadTile, roadTile, "RoadHelix", Color.white, shown, default, HelixV(roadTile)));
+            Layer(kerbs, BuildKerbs(path, shown, true));
+            if (edgeLines != null) Layer(edgeLines, BuildEdgeLines(path, shown, true));
+            if (centerLine != null)
+            {
+                float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / centerLineCycle));
+                Layer(centerLine, TrackMeshes.Strip(path, d => -centerLineWidth * 0.5f, d => centerLineWidth * 0.5f, 1f, cycle, "CenterLineHelix", Color.white, shown, default, HelixV(cycle)));
+            }
+        }
+
+        // Texture runs along the helix: each loop a whole number of repeats (so the road and kerbs meet themselves
+        // seamlessly where the window closes), meeting the rest of the track's at the tunnel in and the tunnel out.
+        Func<float, float> HelixV(float tile)
+        {
+            var h = track.Layout.helix;
+            float loop = (h.to - h.from) / Mathf.Max(1, h.turns);
+            float ringTile = loop / Mathf.Max(1f, Mathf.Round(loop / tile));
+            float vTo = h.from / tile + (h.to - h.from) / ringTile;
+            float tail = (h.exit / tile + Mathf.Round(vTo - h.to / tile) - vTo) / Mathf.Max(0.01f, h.exit - h.to);
+            return d => d < h.from ? d / tile : d <= h.to ? h.from / tile + (d - h.from) / ringTile : vTo + (d - h.to) * tail;
+        }
+
+        // The helix's own copy of a road layer: same material and draw order, its own mesh.
+        void Layer(MeshFilter source, Mesh mesh)
+        {
+            if (source == null) { DestroyTemp(mesh); return; }
+            MeshFilter copy = null;
+            foreach (var (s, c) in _helixLayers) if (s == source) copy = c;
+            if (copy == null)
+            {
+                string name = source.name + "Helix";
+                var parent = source.transform.parent;
+                var existing = parent != null ? parent.Find(name) : null;
+                var go = existing != null ? existing.gameObject : new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer)) { hideFlags = HideFlags.DontSave };
+                go.transform.SetParent(parent, false);
+                go.transform.SetLocalPositionAndRotation(source.transform.localPosition, source.transform.localRotation);
+                go.transform.localScale = source.transform.localScale;
+                copy = go.GetComponent<MeshFilter>();
+                _helixLayers.Add((source, copy));
+            }
+            copy.gameObject.SetActive(source.gameObject.activeSelf);
+            var from = source.GetComponent<MeshRenderer>();
+            var to = copy.GetComponent<MeshRenderer>();
+            if (from != null && to != null)
+            {
+                to.sharedMaterial = from.sharedMaterial;
+                to.sortingLayerID = from.sortingLayerID;
+                to.sortingOrder = from.sortingOrder;
+                to.enabled = from.enabled;
+            }
+            if (copy.sharedMesh != null) DestroyTemp(copy.sharedMesh);
+            copy.sharedMesh = mesh;
         }
 
         // Sand strips from the kerb outwards in the corners: wide on the outside (where a car that runs wide

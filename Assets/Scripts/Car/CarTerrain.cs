@@ -263,6 +263,17 @@ namespace SomeGame.Car
             {
                 float toLip = track.Path.DeltaDistance(point.Distance, ramp.Value.Lip);
                 float along = Vector2.Dot(_car.Body.linearVelocity, track.Path.TangentAt(point.Distance));
+                // A hatch: whatever the speed, the car drops in, down through it, and comes out on the road below.
+                if (ramp.Value.Gap >= 0 && track.Layout.gaps[ramp.Value.Gap].plunge)
+                {
+                    if (toLip >= 0.8f) return;
+                    float fall = Mathf.Max(along, 9f);
+                    Vector2 down = track.Path.TangentAt(ramp.Value.Lip);
+                    _car.Body.linearVelocity = down * fall;
+                    _shortcutFrom = point.Distance;
+                    _car.Launch(Mathf.Max(0.8f, (track.Path.DeltaDistance(ramp.Value.Lip, ramp.Value.FarBank) + 2.5f) / fall), down, locked: true, plunge: true);
+                    return;
+                }
                 if (toLip < 0.8f && along > minLaunchSpeed)
                 {
                     var stats = _car.Stats;

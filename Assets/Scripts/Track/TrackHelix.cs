@@ -161,8 +161,17 @@ namespace SomeGame.Track
                 _shown[car] = show;
                 foreach (var r in car.GetComponentsInChildren<Renderer>(true)) r.enabled = show;
             }
-            // The tunnel in only on the bottom level, the tunnel out only at the top (the loops above and below have plain walls there).
-            ShowTunnels(meInside ? me : -1);
+            // Only your own loop of the road (one loop's worth round you), never the ones above or below; the tunnel in
+            // only until you are half way round the bottom loop, the tunnel out only from half way round the top one
+            // (the loops above and below have plain walls there).
+            var sensor = _player.GetComponent<TrackSensor>();
+            float d = sensor != null ? sensor.Current.Distance : h.from;
+            float loop = (h.to - h.from) / Mathf.Max(1, h.turns);
+            bool entry = !meInside || d <= h.from + loop * 0.5f, exit = !meInside || d >= h.to - loop * 0.5f;
+            float centre = Mathf.Clamp(meInside ? Mathf.Round(d * 0.5f) * 2f : h.from, h.from + loop * 0.5f, h.to - loop * 0.5f);
+            if (_renderer == null) _renderer = FindAnyObjectByType<TrackRenderer>();
+            if (_renderer != null) _renderer.ShowHelix(centre - loop * 0.5f, centre + loop * 0.5f, entry, exit);
+            ShowTunnels(entry, exit);
             // The mountain's top: gone while you are inside it.
             float target = meInside ? 0f : 1f;
             float alpha = Mathf.MoveTowards(_roofAlpha, target, Time.deltaTime * 2.5f);
@@ -174,7 +183,6 @@ namespace SomeGame.Track
                 _roof.colors = cols;
             }
             // The rock round you lightens, level by level, as you climb (smoothly, all the way up).
-            var sensor = _player.GetComponent<TrackSensor>();
             float climb = sensor != null ? Mathf.Clamp01((sensor.Current.Distance - h.from) / Mathf.Max(1f, h.to - h.from)) : 0f;
             if (Mathf.Abs(climb - _tint) > 0.004f && _interior != null)
             {
@@ -187,13 +195,14 @@ namespace SomeGame.Track
         }
 
         int _tunnelsFor = int.MinValue;
+        TrackRenderer _renderer;
 
-        void ShowTunnels(int level)
+        void ShowTunnels(bool inShown, bool outShown)
         {
-            if (level == _tunnelsFor) return;
-            _tunnelsFor = level;
+            int key = (inShown ? 1 : 0) + (outShown ? 2 : 0);
+            if (key == _tunnelsFor) return;
+            _tunnelsFor = key;
             var h = track.Layout.helix;
-            bool inShown = level <= 0, outShown = level < 0 || level >= h.turns - 1;
             var mountain = GetComponent<TrackMountain>();
             if (mountain != null)
                 foreach (var (cave, _, visuals) in mountain.CaveWalls)

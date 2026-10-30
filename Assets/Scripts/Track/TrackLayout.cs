@@ -656,6 +656,8 @@ namespace SomeGame.Track
             [Min(0f)] public float width;
             [Tooltip("How many tricks it asks for.")]
             [Min(1)] public int tricks = 3;
+            [Tooltip("A hatch in the road: no ramp - drive in and you drop down through it, onto the road below at 'to' (into the mines).")]
+            public bool plunge;
             public bool IsDrawbridge => period > 0f;
         }
 

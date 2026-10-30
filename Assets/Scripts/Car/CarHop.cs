@@ -105,7 +105,7 @@ namespace SomeGame.Car
                 float turn = spin < 1f && !flip ? 360f * eased * (kind == TrickKind.SpinLeft ? 1f : -1f) : 0f;
                 if (visual != null)
                 {
-                    visual.localRotation = Quaternion.Euler(0f, 0f, turn + fall * 150f);
+                    visual.localRotation = Quaternion.Euler(0f, 0f, turn + fall * (_car.IsPlunging ? 25f : 150f));
                     if (flip)
                     {
                         var sc = visual.localScale;

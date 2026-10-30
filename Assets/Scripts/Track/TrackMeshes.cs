@@ -46,7 +46,7 @@ namespace SomeGame.Track
 
         /// <summary>A strip whose two edges may change their sideways offset along the lap (road width changes).</summary>
         public static Mesh Strip(TrackPath path, System.Func<float, float> lateralA, System.Func<float, float> lateralB, float uMax, float vLength,
-            string name, Color color, System.Func<float, bool> keep, Vector2 offset = default)
+            string name, Color color, System.Func<float, bool> keep, Vector2 offset = default, System.Func<float, float> vOf = null)
         {
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
@@ -60,7 +60,7 @@ namespace SomeGame.Track
                 {
                     Vector2 p = path[i + k], normal = path.SampleNormal(i + k);
                     float d = k == 0 ? d0 : d1;
-                    float v = d / vLength;
+                    float v = vOf != null ? vOf(d) : d / vLength;
                     vertices.Add(p + normal * lateralA(d) + offset);
                     vertices.Add(p + normal * lateralB(d) + offset);
                     uvs.Add(new Vector2(0f, v));

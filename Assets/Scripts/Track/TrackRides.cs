@@ -374,7 +374,13 @@ namespace SomeGame.Track
                     }
                     continue;
                 }
-                if (car.IsAirborne) continue;
+                if (car.IsAirborne)
+                {
+                    _flying.Add(car);
+                    continue;
+                }
+                // Just landed off a kicker: come down right in front of a rail (or just onto it) and you are on it.
+                bool landed = _flying.Remove(car);
                 var sensor = car.GetComponent<TrackSensor>();
                 if (sensor == null || sensor.Branch >= 0) continue;
                 // Into a ride's entrance?
@@ -385,8 +391,8 @@ namespace SomeGame.Track
                     bool rail = ride.Data.type == TrackLayout.RideType.Rail;
                     // Rivals line up by script, not by thumb: a little more room for them.
                     bool rival = car.GetComponent<SomeGame.Input.PlayerCarInput>() == null;
-                    float window = (rail ? RailHalf : FlumeHalf) + (rival ? 0.9f : 0f);
-                    if (to < -0.5f || to > 1.5f || Mathf.Abs(lat - ride.Data.lateral) > window) continue;
+                    float window = (rail ? RailHalf : FlumeHalf) + (rival ? 0.9f : 0f) + (landed && rail ? 0.8f : 0f);
+                    if (to < (landed && rail ? -4f : -0.5f) || to > (landed && rail ? 7f : 1.5f) || Mathf.Abs(lat - ride.Data.lateral) > window) continue;
                     if (speed < (rail ? RailSpeed : FlumeSpeed) * (rival ? 0.8f : 1f)) continue;
                     if (Vector2.Angle(car.Body.linearVelocity, path.TangentAt(d)) > (rail ? RailEntryAngle : MaxEntryAngle) * (rival ? 1.8f : 1f)) continue;
                     BoardRide(car, ride);
@@ -405,6 +411,8 @@ namespace SomeGame.Track
                 }
             }
         }
+
+        readonly HashSet<SomeGame.Car.CarMovement> _flying = new();
 
         void BoardRide(SomeGame.Car.CarMovement car, RideView ride)
         {

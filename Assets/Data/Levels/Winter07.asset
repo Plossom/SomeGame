@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 89081d97108664b77853a75f08c5531d, type: 3}
   laps: 1
-  description: 'One run down Spiral Peak: drive into the mountain and climb three tight loops inside it, stacked on top of each other, out on the top into the snow park - the kicker line, rollers, boxes, tubes, a double stall, the gasser and the snow tunnel all the way down the piste - build up speed through the forest, swipe TEN tricks on the giant jump, hop the wooden platforms over the void, survive the tornado wall, drop through the hatch into the mines - holes in the ice, floes to hop on the underground river - and jump out of the mines over the finish line!'
+  description: 'One run down Spiral Peak: drive into the mountain and climb three tight loops inside it, stacked on top of each other, out on the top into the snow park - the kicker line, the huge kicker onto the monster rail, boxes, tubes, a double stall, the gasser and the snow tunnel all the way down the piste - build up speed through the forest (and its kickers), swipe TEN tricks on the giant jump, hop the wooden platforms over the void, survive the tornado wall, drop through the hatch into the mines - floes to hop on the underground river, holes in the ice - and jump out of the mines over the finish line!'
   difficulty: 3
   rivalCount: 7
   rivalSpeedScale: 0.95
   rivalCornerScale: 1
   starsRequired: 23
   starTimes:
-  - 142
-  - 129
-  - 122
+  - 144
+  - 121
+  - 112

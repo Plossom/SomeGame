@@ -839,8 +839,8 @@ namespace SomeGame.Track
                     : new Jump
                     {
                         RampStart = path.WrapDistance(gap.from - layout.rampLength), Lip = path.WrapDistance(gap.from),
-                        FarBank = path.WrapDistance(gap.to), Lateral = gap.drop || (gap.kicker && gap.width <= 0f) ? 0f : gap.rampLateral, Gap = g,
-                        Width = gap.kicker && gap.width > 0f ? gap.width : gap.drop || gap.kicker ? OffRoadAt(gap.from) * 2f : layout.rampWidth,
+                        FarBank = path.WrapDistance(gap.to), Lateral = gap.drop || gap.plunge || (gap.kicker && gap.width <= 0f) ? 0f : gap.rampLateral, Gap = g,
+                        Width = gap.kicker && gap.width > 0f ? gap.width : gap.drop || gap.plunge || gap.kicker ? OffRoadAt(gap.from) * 2f : layout.rampWidth,
                     });
             }
             // Forest logs across the road: a little ramp right before each one.

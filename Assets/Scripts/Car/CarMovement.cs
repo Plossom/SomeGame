@@ -172,12 +172,21 @@ namespace SomeGame.Car
         /// <summary>How long the current trick's spin lasts: it always ends before the car lands.</summary>
         public float TrickSpin { get; private set; } = 0.45f;
         public float AirHeight => IsPuppet ? _puppetAir : !IsAirborne ? 0f : _riding ? RideHeight : _carried && _fallTime > 0f ? CarryHeight
-            : Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration));
+            : _plunge ? 0f : Mathf.Sin(Mathf.PI * (1f - _airTimer / _airDuration));
+        /// <summary>True while the car drops down through a hatch (<see cref="SomeGame.Track.TrackLayout.Gap.plunge"/>).</summary>
+        public bool IsPlunging => _plunge && IsAirborne && !_carried && !_riding;
+        bool _plunge;
         /// <summary>0 normally; up to 1 while the car tumbles down into a chasm (it looks smaller, further away).</summary>
         public float FallDepth
         {
             get
             {
+                if (IsPlunging)
+                {
+                    // Down through the hatch and away into the dark, then up close again on the road below.
+                    float t = 1f - _airTimer / _airDuration;
+                    return t < 0.6f ? Mathf.SmoothStep(0f, 1f, t / 0.6f) : 1f - Mathf.SmoothStep(0f, 1f, (t - 0.6f) / 0.4f);
+                }
                 if (!_carried || _fallTime <= 0f || !IsAirborne) return 0f;
                 float elapsed = _airDuration - _airTimer;
                 if (elapsed < _fallTime) return Mathf.SmoothStep(0f, 1f, elapsed / _fallTime);
@@ -462,9 +471,10 @@ namespace SomeGame.Car
         /// Sends the car into the air (off a ramp) for <paramref name="duration"/> seconds. With a
         /// direction, the car is turned to fly that way (big shortcut ramps).
         /// </summary>
-        public void Launch(float duration, Vector2? direction = null, bool locked = false, float? landingHeading = null)
+        public void Launch(float duration, Vector2? direction = null, bool locked = false, float? landingHeading = null, bool plunge = false)
         {
             if (IsPuppet || IsAirborne || duration <= 0f) return;
+            _plunge = plunge;
             _airTurnTo = landingHeading;
             EndDrift();
             _trick = false;
