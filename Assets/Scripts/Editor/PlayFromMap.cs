@@ -35,7 +35,19 @@ namespace SomeGame.EditorTools
             return true;
         }
 
-        static void Apply() =>
-            EditorSceneManager.playModeStartScene = Enabled ? AssetDatabase.LoadAssetAtPath<SceneAsset>(UIBuilder.MapScenePath) : null;
+        static void Apply() => EditorSceneManager.playModeStartScene = Enabled ? MapScene() : null;
+
+        // The map scene where it belongs - or, if it has been moved, wherever it is now (by its name).
+        static SceneAsset MapScene()
+        {
+            var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(UIBuilder.MapScenePath);
+            if (scene != null) return scene;
+            foreach (var guid in AssetDatabase.FindAssets("Map t:SceneAsset"))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                if (System.IO.Path.GetFileNameWithoutExtension(path) == "Map") return AssetDatabase.LoadAssetAtPath<SceneAsset>(path);
+            }
+            return null;
+        }
     }
 }
