@@ -23,7 +23,7 @@ MonoBehaviour:
   rivalCount: 7
   rivalSpeedScale: 0.93
   rivalCornerScale: 1
-  starsRequired: 24
+  starsRequired: 23
   starTimes:
   - 94
   - 89
