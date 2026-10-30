@@ -395,6 +395,16 @@ namespace SomeGame.Track
         public bool santa;
         [Tooltip("Snowball fights (lap distances from, to): kids on both sides throw snowballs across the road; a hit slows you.")]
         public List<Vector2> snowballFights = new();
+        [Tooltip("Turntables the road crosses (giant spinning carousel floors): they carry the cars round with them - " +
+                 "position, radius, degrees per second (negative = clockwise). All of the floor counts as road.")]
+        public List<Turntable> turntables = new();
+        [Serializable]
+        public class Turntable
+        {
+            public Vector2 position;
+            [Min(3f)] public float radius = 10f;
+            public float speed = 40f;
+        }
         [Header("Snowstorm")]
         [Tooltip("Storms (lap distances from, to): driving snow and a whiteout, side-wind gusts that shove the cars across the road " +
                  "(warned a moment before), and with lightning: thundersnow strikes on the road just ahead of you (a ring marks the spot).")]

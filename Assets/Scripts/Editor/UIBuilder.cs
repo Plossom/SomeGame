@@ -1349,6 +1349,10 @@ namespace SomeGame.EditorTools
             var tricks = track.GetComponent<SomeGame.Track.TrackTricks>();
             if (tricks == null) tricks = track.gameObject.AddComponent<SomeGame.Track.TrackTricks>();
             Configure(tricks, ("track", track));
+            // Turntables: spinning carousel floors the road crosses.
+            var turntables = track.GetComponent<SomeGame.Track.TrackTurntables>();
+            if (turntables == null) turntables = track.gameObject.AddComponent<SomeGame.Track.TrackTurntables>();
+            Configure(turntables, ("track", track), ("plain", Mat("Plain")));
             // The weather: storms (whiteout, gusts, lightning), snow twisters.
             var storm = track.GetComponent<SomeGame.Track.TrackStorm>();
             if (storm == null) storm = track.gameObject.AddComponent<SomeGame.Track.TrackStorm>();

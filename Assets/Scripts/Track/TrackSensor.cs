@@ -125,7 +125,7 @@ namespace SomeGame.Track
             float bankHeight = 0f;
             bool onBank = Branch < 0 && !Elevated && track.BankAt(point.Distance, point.Lateral, out bankHeight) != null;
             BankHeight = onBank ? Mathf.Max(0.01f, bankHeight) : 0f;
-            IsOffRoad = Branch < 0 && !onBank && !Aboard && track.IsOffRoad(point.Distance, point.Lateral);
+            IsOffRoad = Branch < 0 && !onBank && !Aboard && track.IsOffRoad(point.Distance, point.Lateral) && track.TurntableAt(position) == null;
         }
     }
 }

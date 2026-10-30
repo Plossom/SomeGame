@@ -100,6 +100,15 @@ namespace SomeGame.Track
             return 1f;
         }
 
+        /// <summary>The turntable under a point, if any.</summary>
+        public TrackLayout.Turntable TurntableAt(Vector2 p)
+        {
+            if (layout.turntables == null) return null;
+            foreach (var t in layout.turntables)
+                if ((p - t.position).sqrMagnitude <= t.radius * t.radius) return t;
+            return null;
+        }
+
         /// <summary>True on a patch of glare ice on the road: little grip.</summary>
         public bool OnIcePatch(Vector2 p)
         {

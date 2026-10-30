@@ -18,13 +18,13 @@ MonoBehaviour:
   isTutorial: 0
   preview: {fileID: 21300000, guid: 10608c13b8a3a4c9094b7ec7b2cc2648, type: 3}
   laps: 3
-  description: 'Three laps of the mountain town on Christmas Eve: plough through the presents Santa drops on the market street, race up the valley past the church, fly the frozen gorge at the top street (through the ring!) and dodge the kids'' snowballs!'
+  description: 'Three laps of the mountain town on Christmas Eve: plough through the presents Santa drops on the market street, dodge the giant snowballs rolling down the hill, fly the big ski jump over the frozen gorge (tap in the air to spin - tap again for a double!), dodge the snowball fight, cross the twin turntables spinning in the square (they carry you round - steer against them!), swipe the tricks over the frozen canal and squeeze through the icy alleys!'
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.96
   rivalCornerScale: 1
   starsRequired: 27
   starTimes:
-  - 120
-  - 109
-  - 103
+  - 139
+  - 133
+  - 114
