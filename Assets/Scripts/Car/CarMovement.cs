@@ -31,7 +31,7 @@ namespace SomeGame.Car
         float _boostTimer, _boostDuration;
         bool _driftHeldLastStep;
         float _hopTimer;       // > 0 right after the drift button was pressed: the stick may pick a side
-        float _driftTightness; // 0 = widest drift, 1 = tightest, smoothed
+        float _driftTightness; // -1 = opened right up (stick out of the corner), 0 = the usual wide line, 1 = tightest; smoothed
         float _laggedHeading;  // where the car was pointing a moment ago (smoothed), for steering intent
         float _airTimer, _airDuration;
         float _slipTimer, _slipDuration, _slipDirection, _slipStartSpeed;
@@ -421,19 +421,22 @@ namespace SomeGame.Car
             float inside = steer.sqrMagnitude > 0.0001f
                 ? Mathf.DeltaAngle(travel, HeadingOf(steer)) * _driftDirection
                 : 0f;
-            // (eased in: a little stick into the corner keeps the drift wide, so long sweeping bends can be drifted)
-            float tightness = Mathf.Pow(Mathf.Clamp01(inside / stats.driftFullInsideAngle), 1.5f);
+            // Into the corner tightens it; out of the corner opens it up beyond the usual line, to almost straight
+            // (-1..0), so you can move in and out during a drift and take the long sweeping bends too.
+            float tightness = inside >= 0f ? Mathf.Pow(Mathf.Clamp01(inside / stats.driftFullInsideAngle), 1.2f)
+                                           : -Mathf.Clamp01(-inside / stats.driftFullInsideAngle);
             _driftTightness = Mathf.MoveTowards(_driftTightness, tightness, stats.driftTightnessResponse * dt);
 
             // Entry: the car tilts quickly into the corner (slightly past the drift angle) while its
             // path stays almost straight; the curve fades in as the entry settles.
             float entry = 1f - Mathf.Clamp01(_driftCharge / stats.driftEntryTime);
-            float curve = Mathf.Lerp(stats.driftWideTurnRate, stats.driftTightTurnRate, _driftTightness) * (1f - entry);
+            float curve = (_driftTightness >= 0f ? Mathf.Lerp(stats.driftWideTurnRate, stats.driftTightTurnRate, _driftTightness)
+                                                 : Mathf.Lerp(stats.driftWideTurnRate, stats.driftWideTurnRate * 0.15f, -_driftTightness)) * (1f - entry);
             travel += _driftDirection * curve * dt;
             float rad = (travel + 90f) * Mathf.Deg2Rad;
             _body.linearVelocity = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * speed;
 
-            float angle = Mathf.Lerp(stats.driftAngleWide, stats.driftAngleTight, _driftTightness)
+            float angle = Mathf.Lerp(stats.driftAngleWide, stats.driftAngleTight, Mathf.Max(0f, _driftTightness)) * (1f + 0.25f * Mathf.Min(0f, _driftTightness))
                         + stats.driftEntryKick * entry * entry;
             float bodyStep = Mathf.DeltaAngle(_body.rotation, travel + _driftDirection * angle);
             float bodyRate = stats.driftEntryRotationSpeed * (entry > 0f ? 1f : 0.5f);
