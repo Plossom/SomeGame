@@ -24,17 +24,17 @@ namespace SomeGame.UI
         {
             panel.SetActive(false);
             tileTemplate.gameObject.SetActive(false);
-            worldButton.onClick.AddListener(() => { if (panel.activeSelf) Close(); else Open(); });
+            worldButton.onClick.AddListener(() => { if (PopIn.IsShown(panel)) Close(); else Open(); });
             closeArea.onClick.AddListener(Close);
         }
 
         void Open()
         {
             Build();
-            panel.SetActive(true);
+            PopIn.Show(panel);
         }
 
-        void Close() => panel.SetActive(false);
+        void Close() => PopIn.Hide(panel);
 
         void Build()
         {

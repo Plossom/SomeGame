@@ -42,17 +42,16 @@ namespace SomeGame.Race
             Load(MapScene);
         }
 
-        /// <summary>Starts the practice drive and remembers that the tutorial has been seen.</summary>
+        /// <summary>Starts the practice drive (it counts as done once it has been finished or skipped: until then the app opens on it).</summary>
         public static void StartTutorial()
         {
             var tutorial = UnityEngine.Resources.Load<LevelDefinition>("Tutorial");
             if (tutorial == null) return;
-            UnityEngine.PlayerPrefs.SetInt(GameReset.TutorialDoneKey, 1);
             UnityEngine.PlayerPrefs.Save();
             StartRace(tutorial);
         }
 
-        /// <summary>True until the tutorial has been started once (first launch, or after a reset).</summary>
+        /// <summary>True until the tutorial has been finished or skipped (first launch, after a reset, or quit half way).</summary>
         public static bool TutorialPending => UnityEngine.PlayerPrefs.GetInt(GameReset.TutorialDoneKey, 0) == 0;
 
         // Loads in the background, so the current screen stays responsive (and can say "loading").

@@ -10,6 +10,8 @@ namespace SomeGame.Race
     {
         /// <summary>Set once the tutorial has been played; cleared by a reset so it plays again.</summary>
         public const string TutorialDoneKey = "Tutorial.Done";
+        /// <summary>The tutorial step reached (quit half way, it picks up there); cleared when it is done.</summary>
+        public const string TutorialStepKey = "Tutorial.Step";
 
         public static void ResetAll(LevelCatalog catalog)
         {
@@ -18,6 +20,7 @@ namespace SomeGame.Race
                 foreach (var level in catalog.levels)
                     if (level != null && level.track != null) BestLapStore.Clear(level.track.name);
             PlayerPrefs.DeleteKey(TutorialDoneKey);
+            PlayerPrefs.DeleteKey(TutorialStepKey);
             UnlockLog.Clear();
             // The map counters count up from what they last showed: start again from zero.
             PlayerPrefs.DeleteKey("Shown.Stars");

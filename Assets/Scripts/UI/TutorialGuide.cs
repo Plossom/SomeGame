@@ -117,7 +117,7 @@ namespace SomeGame.UI
         {
             if (_steps == null) return;
             if (race.State != RaceState.Racing) return;
-            if (_index < 0) Show(0);
+            if (_index < 0) Show(Mathf.Clamp(PlayerPrefs.GetInt(GameReset.TutorialStepKey, 0), 0, _steps.Length - 1)); // where it was left
             if (_index >= _steps.Length) return;
 
             if (_input != null && _input.SteerDirection.sqrMagnitude > 0.01f && _car.ForwardSpeed > 4f) _steerTime += Time.deltaTime;
@@ -143,6 +143,8 @@ namespace SomeGame.UI
                 Finish();
                 return;
             }
+            PlayerPrefs.SetInt(GameReset.TutorialStepKey, index);
+            PlayerPrefs.Save();
             // Only events that happen while a step is shown count for it.
             _hopped = _drifted = _boosted = _jumped = false;
             card.SetActive(true);
@@ -236,6 +238,10 @@ namespace SomeGame.UI
 
         void Finish()
         {
+            // Done (or skipped): from now on the app opens on the map.
+            PlayerPrefs.SetInt(GameReset.TutorialDoneKey, 1);
+            PlayerPrefs.DeleteKey(GameReset.TutorialStepKey);
+            PlayerPrefs.Save();
             if (demo != null) demo.Hide();
             _index = _steps.Length;
             card.SetActive(false);

@@ -44,7 +44,7 @@ namespace SomeGame.Track
 
         // On screen: the trick to do (one big arrow), the time left, a dot per trick.
         Canvas _canvas;
-        Image _arrow;
+        Image _arrow, _next;
         readonly List<Image> _dots = new();
         Image _bar, _barBack;
         TextMeshProUGUI _caption;
@@ -164,7 +164,8 @@ namespace SomeGame.Track
                     _attempts.RemoveAt(i);
                     continue;
                 }
-                if (a.Ended || a.Succeeded) continue;
+                if (a.Succeeded && !a.Ended) { Guide(a); continue; }
+                if (a.Ended) continue;
                 if (a.Player)
                 {
                     // Out of time with tricks still to do: it comes down short.
@@ -188,6 +189,22 @@ namespace SomeGame.Track
             // While the arrows are up, swipes are the tricks (on any other jump a tap spins).
             if (_playerInput != null) _playerInput.SwipeMode = _shown != null && !_shown.Ended && !_shown.Failed && !_shown.Succeeded;
             DrawUi();
+        }
+
+        // All the tricks done: the flight is brought round onto the landing (on the road, facing along it), so a
+        // crooked take-off never costs a perfect run.
+        void Guide(Attempt a)
+        {
+            var gap = track.Layout.gaps[a.Gap];
+            var body = a.Car.Body;
+            var at = track.Path.Project(body.position);
+            float half = Mathf.Max(0.5f, track.HalfWidthAt(gap.to + 2f) - 1.2f);
+            float target = Mathf.Clamp(at.Lateral, -half, half);
+            float k = Mathf.Clamp01(Time.deltaTime * 6f);
+            if (Mathf.Abs(at.Lateral - target) > 0.01f) body.position += track.Path.NormalAt(at.Distance) * ((target - at.Lateral) * k);
+            Vector2 along = track.Path.TangentAt(gap.to);
+            float speed = body.linearVelocity.magnitude;
+            body.linearVelocity = Vector2.Lerp(body.linearVelocity.normalized, along, k).normalized * speed;
         }
 
         void Slow(bool on)
@@ -228,6 +245,10 @@ namespace SomeGame.Track
             _arrow = Img(go.transform, "Arrow", _arrowSprite, new Vector2(ArrowSize, ArrowSize));
             _arrow.rectTransform.anchoredPosition = new Vector2(0f, ArrowY);
             _arrow.gameObject.SetActive(false);
+            // the one after it, faint and smaller beside it, so you can get ready for it
+            _next = Img(go.transform, "NextArrow", _arrowSprite, new Vector2(ArrowSize * 0.5f, ArrowSize * 0.5f));
+            _next.rectTransform.anchoredPosition = new Vector2(NextX, ArrowY);
+            _next.gameObject.SetActive(false);
             _barBack = Img(go.transform, "TimeBack", _square, new Vector2(BarWidth + 12f, 46f));
             _barBack.color = new Color(0.08f, 0.12f, 0.25f, 0.7f);
             _barBack.rectTransform.anchoredPosition = new Vector2(0f, BarY);
@@ -270,7 +291,7 @@ namespace SomeGame.Track
             return img;
         }
 
-        const float ArrowSize = 380f, ArrowY = 640f, BarWidth = 760f, BarY = 390f, DotsY = 305f, DotSpacing = 72f;
+        const float ArrowSize = 380f, NextX = 330f, ArrowY = 640f, BarWidth = 760f, BarY = 390f, DotsY = 305f, DotSpacing = 72f;
 
         void DrawUi()
         {
@@ -281,6 +302,7 @@ namespace SomeGame.Track
             if (!show)
             {
                 _arrow.gameObject.SetActive(false);
+                _next.gameObject.SetActive(false);
                 foreach (var dot in _dots) dot.gameObject.SetActive(false);
                 _bar.gameObject.SetActive(false);
                 _barBack.gameObject.SetActive(false);
@@ -303,6 +325,18 @@ namespace SomeGame.Track
             float pulse = 1f + 0.06f * Mathf.Sin(Time.unscaledTime * 12f);
             _arrow.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.55f, 1f, 1f - (1f - pop) * (1f - pop)) * (a.Failed ? 1f : pulse);
             _arrow.color = a.Failed ? new Color(1f, 0.3f, 0.25f) : new Color(1f, 0.85f, 0.3f);
+            // The next one, faint, beside it.
+            bool next = !a.Failed && !a.Succeeded && a.Done + 1 < n;
+            _next.gameObject.SetActive(next);
+            if (next)
+            {
+                _next.rectTransform.anchoredPosition = new Vector2(NextX + shake, ArrowY);
+                _next.rectTransform.localRotation = Quaternion.Euler(0f, 0f, a.Sequence[a.Done + 1] switch
+                {
+                    TrickKind.SpinLeft => 180f, TrickKind.SpinRight => 0f, TrickKind.FrontFlip => 90f, _ => -90f,
+                });
+                _next.color = new Color(0.82f, 0.88f, 1f, 0.6f * pop);
+            }
             // The time left, as a bar shrinking towards the landing.
             float left = Mathf.Clamp01((a.Car.AirTimeLeft - 0.35f) / Mathf.Max(0.01f, a.Total - 0.35f));
             _barBack.gameObject.SetActive(!a.Failed && !a.Succeeded);

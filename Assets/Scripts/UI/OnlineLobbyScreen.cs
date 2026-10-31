@@ -151,7 +151,7 @@ namespace SomeGame.UI
         {
             if (OnlineSession.Active) { ShowRoom(); return; }
             Redraw();
-            entryPanel.SetActive(true); // first: the card always opens
+            PopIn.Show(entryPanel); // first: the card always opens
             nameField.SetTextWithoutNotify(OnlineSession.PlayerName);
             SetStatus("", false);
             ShowCode();
@@ -170,7 +170,7 @@ namespace SomeGame.UI
         void CloseEntry()
         {
             if (_session.State == OnlineSession.Status.Connecting) _session.Cancel();
-            entryPanel.SetActive(false);
+            PopIn.Hide(entryPanel);
         }
 
         void Create()

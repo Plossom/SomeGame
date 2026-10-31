@@ -49,7 +49,7 @@ namespace SomeGame.UI
         int _slide;
         readonly List<GameObject> _badges = new();
 
-        public bool IsOpen => panel.activeSelf;
+        public bool IsOpen => PopIn.IsShown(panel);
 
         void Awake()
         {
@@ -86,12 +86,12 @@ namespace SomeGame.UI
             startShadow.color = canEnter ? Theme.OrangeDeep : Theme.StoneDark;
             startLabel.text = canEnter ? "START" : "LOCKED";
             startLabel.color = canEnter ? Theme.White : Theme.StoneDark;
-            panel.SetActive(true);
+            PopIn.Show(panel);
         }
 
         public void Close()
         {
-            panel.SetActive(false);
+            PopIn.Hide(panel);
             _slide = 0;
         }
 

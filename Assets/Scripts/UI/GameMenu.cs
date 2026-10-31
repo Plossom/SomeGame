@@ -61,7 +61,7 @@ namespace SomeGame.UI
 
         bool _joystickWasInteractable;
 
-        public bool IsOpen => panel.activeSelf;
+        public bool IsOpen => PopIn.IsShown(panel);
 
         void Awake()
         {
@@ -160,7 +160,7 @@ namespace SomeGame.UI
             _confirmReset = false;
             if (resetLabel != null) resetLabel.text = "RESET GAME";
             RefreshSettings();
-            panel.SetActive(true);
+            PopIn.Show(panel);
             if (race == null || GameSession.Online) return; // an online race goes on for the others
 
             Time.timeScale = 0f;
@@ -175,7 +175,7 @@ namespace SomeGame.UI
         public void Close()
         {
             if (!IsOpen) return;
-            panel.SetActive(false);
+            PopIn.Hide(panel);
             if (race == null || GameSession.Online) return;
             Unpause();
             if (joystick != null) joystick.Interactable = _joystickWasInteractable && race.State != RaceState.Finished;

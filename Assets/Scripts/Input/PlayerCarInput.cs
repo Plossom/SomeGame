@@ -68,8 +68,11 @@ namespace SomeGame.Input
 
         // Every finger on the screen, where it was when its current flick began and when.
         readonly System.Collections.Generic.Dictionary<int, (Vector2 at, float time)> _anchors = new();
+        // Fingers that have made their swipe: one trick per touch, lift and swipe again for the next.
+        readonly System.Collections.Generic.HashSet<int> _swiped = new();
         Vector2 _mouseAnchor;
         float _mouseAnchorTime;
+        bool _mouseSwiped;
         const float FlickTime = 0.25f, FlickShare = 0.07f; // fast enough, far enough (share of the screen height)
 
         /// <summary>A swipe was made in the air (the trick it asked for), whether or not the car could do it.</summary>
@@ -84,19 +87,24 @@ namespace SomeGame.Input
         // In the air: on a normal jump every tap (a second finger while steering, or a tap without steering; Space or
         // a click in the Editor) asks for a spin - tap twice and it tries two, one after the other. On a trick jump a
         // quick flick of any finger is a trick: left or right spins, up a front flip, down a back flip (arrow keys /
-        // WASD in the Editor); the same finger can flick again straight away in another direction.
+        // WASD in the Editor); one trick per touch - lift the finger and swipe again for the next (holding on, or
+        // swiping a little too long, never counts twice).
         void Tricks()
         {
             if (_car == null || !_car.IsAirborne || _car.IsCarried || _car.IsRiding)
             {
                 _anchors.Clear();
+                _swiped.Clear();
                 _mouseAnchorTime = -1f;
+                _mouseSwiped = false;
                 return;
             }
             if (!SwipeMode)
             {
                 _anchors.Clear();
+                _swiped.Clear();
                 _mouseAnchorTime = -1f;
+                _mouseSwiped = false;
                 Taps();
                 return;
             }
@@ -106,7 +114,8 @@ namespace SomeGame.Input
                 foreach (var touch in screen.touches)
                 {
                     int id = touch.touchId.ReadValue();
-                    if (!touch.press.isPressed) { _anchors.Remove(id); continue; }
+                    if (!touch.press.isPressed) { _anchors.Remove(id); _swiped.Remove(id); continue; }
+                    if (_swiped.Contains(id)) continue;
                     Vector2 pos = touch.position.ReadValue();
                     if (!_anchors.TryGetValue(id, out var anchor) || Time.unscaledTime - anchor.time > FlickTime)
                     {
@@ -115,16 +124,17 @@ namespace SomeGame.Input
                     }
                     if ((pos - anchor.at).magnitude < far) continue;
                     Swipe(pos - anchor.at);
-                    _anchors[id] = (pos, Time.unscaledTime);
+                    _swiped.Add(id);
                 }
             var mouse = Mouse.current;
             if (mouse != null && mouse.leftButton.isPressed)
             {
                 Vector2 pos = mouse.position.ReadValue();
-                if (_mouseAnchorTime < 0f || Time.unscaledTime - _mouseAnchorTime > FlickTime) { _mouseAnchor = pos; _mouseAnchorTime = Time.unscaledTime; }
-                else if ((pos - _mouseAnchor).magnitude >= far) { Swipe(pos - _mouseAnchor); _mouseAnchor = pos; _mouseAnchorTime = Time.unscaledTime; }
+                if (_mouseSwiped) { }
+                else if (_mouseAnchorTime < 0f || Time.unscaledTime - _mouseAnchorTime > FlickTime) { _mouseAnchor = pos; _mouseAnchorTime = Time.unscaledTime; }
+                else if ((pos - _mouseAnchor).magnitude >= far) { Swipe(pos - _mouseAnchor); _mouseSwiped = true; }
             }
-            else _mouseAnchorTime = -1f;
+            else { _mouseAnchorTime = -1f; _mouseSwiped = false; }
             var keyboard = Keyboard.current;
             if (keyboard != null)
             {

@@ -346,7 +346,15 @@ namespace SomeGame.Car
                 return;
             }
 
-            float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(direction));
+            float goal = HeadingOf(direction);
+            // Just after a drift the stick is usually still deep in the corner: the aim eases over from where the car
+            // is going to the stick (no swerve into the corner and back, no wiggle).
+            if (_calmTimer > 0f && _body.linearVelocity.sqrMagnitude > 1f)
+            {
+                float settled = 1f - Mathf.Clamp01(_calmTimer / Mathf.Max(0.01f, stats.driftExitTime + stats.driftCalmTime));
+                goal = Mathf.LerpAngle(HeadingOf(_body.linearVelocity), goal, settled * settled);
+            }
+            float delta = Mathf.DeltaAngle(_body.rotation, goal);
             float speedFactor = Mathf.Lerp(stats.standstillTurnFactor, 1f,
                 Mathf.Clamp01(Mathf.Abs(forwardSpeed) / stats.fullTurnSpeed));
             float recovery = _hitTimer > 0f ? 0.3f : 1f;
@@ -413,7 +421,8 @@ namespace SomeGame.Car
             float inside = steer.sqrMagnitude > 0.0001f
                 ? Mathf.DeltaAngle(travel, HeadingOf(steer)) * _driftDirection
                 : 0f;
-            float tightness = Mathf.Clamp01(inside / stats.driftFullInsideAngle);
+            // (eased in: a little stick into the corner keeps the drift wide, so long sweeping bends can be drifted)
+            float tightness = Mathf.Pow(Mathf.Clamp01(inside / stats.driftFullInsideAngle), 1.5f);
             _driftTightness = Mathf.MoveTowards(_driftTightness, tightness, stats.driftTightnessResponse * dt);
 
             // Entry: the car tilts quickly into the corner (slightly past the drift angle) while its
