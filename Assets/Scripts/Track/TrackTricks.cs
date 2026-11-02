@@ -245,8 +245,8 @@ namespace SomeGame.Track
             _arrow = Img(go.transform, "Arrow", _arrowSprite, new Vector2(ArrowSize, ArrowSize));
             _arrow.rectTransform.anchoredPosition = new Vector2(0f, ArrowY);
             _arrow.gameObject.SetActive(false);
-            // the one after it, faint and smaller beside it, so you can get ready for it
-            _next = Img(go.transform, "NextArrow", _arrowSprite, new Vector2(ArrowSize * 0.5f, ArrowSize * 0.5f));
+            // the one after it, paler and smaller beside it, so you can get ready for it
+            _next = Img(go.transform, "NextArrow", _arrowSprite, new Vector2(ArrowSize * 0.6f, ArrowSize * 0.6f));
             _next.rectTransform.anchoredPosition = new Vector2(NextX, ArrowY);
             _next.gameObject.SetActive(false);
             _barBack = Img(go.transform, "TimeBack", _square, new Vector2(BarWidth + 12f, 46f));
@@ -325,7 +325,7 @@ namespace SomeGame.Track
             float pulse = 1f + 0.06f * Mathf.Sin(Time.unscaledTime * 12f);
             _arrow.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.55f, 1f, 1f - (1f - pop) * (1f - pop)) * (a.Failed ? 1f : pulse);
             _arrow.color = a.Failed ? new Color(1f, 0.3f, 0.25f) : new Color(1f, 0.85f, 0.3f);
-            // The next one, faint, beside it.
+            // The next one, paler, beside it.
             bool next = !a.Failed && !a.Succeeded && a.Done + 1 < n;
             _next.gameObject.SetActive(next);
             if (next)
@@ -335,7 +335,7 @@ namespace SomeGame.Track
                 {
                     TrickKind.SpinLeft => 180f, TrickKind.SpinRight => 0f, TrickKind.FrontFlip => 90f, _ => -90f,
                 });
-                _next.color = new Color(0.82f, 0.88f, 1f, 0.6f * pop);
+                _next.color = new Color(1f, 0.94f, 0.72f, 0.92f * pop);
             }
             // The time left, as a bar shrinking towards the landing.
             float left = Mathf.Clamp01((a.Car.AirTimeLeft - 0.35f) / Mathf.Max(0.01f, a.Total - 0.35f));
