@@ -47,9 +47,9 @@ MonoBehaviour:
   driftMinCharge: 0.6
   driftMaxCharge: 2.4
   driftExitTime: 0.2
-  driftCalmTime: 0.8
+  driftCalmTime: 0.5
   driftCalmGrip: 2.2
-  driftCalmSteer: 8
+  driftCalmSteer: 10
   boostMinDuration: 0.5
   boostMaxDuration: 1.5
   boostMinSpeedBonus: 0.15

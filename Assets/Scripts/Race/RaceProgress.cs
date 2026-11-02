@@ -29,6 +29,8 @@ namespace SomeGame.Race
         [Header("Staying on the track")]
         [Tooltip("Metres a car may drive off the road in one go (on the ground; jumps don't count) before it is set back to where it left the road.")]
         [SerializeField, Min(1f)] float offRoadLimit = 15f;
+        [Tooltip("Just beside the road (this many metres past its edge) the off-road stretch fills up much slower: a drift that ran a little wide is no crime.")]
+        [SerializeField, Min(0f)] float nearRoad = 3f;
         [Tooltip("Seconds of driving the wrong way before the car is set back to the furthest point it had reached.")]
         [SerializeField, Min(0.2f)] float wrongWaySetBack = 1.2f;
         [Tooltip("Progress may not jump ahead by more than this (metres) without a jump: no hopping across to another part of the road.")]
@@ -200,7 +202,11 @@ namespace SomeGame.Race
             if (offRoad)
             {
                 if (_offRoadRun <= 0f) _leftRoadAt = _lastDistance;
-                _offRoadRun += _body.linearVelocity.magnitude * dt;
+                // Close beside the road it counts for little (least running along it, like after a wide drift).
+                float beyond = Mathf.Abs(_sensor.Current.Lateral) - Circuit.OffRoadAt(distance);
+                bool along = Vector2.Angle(_body.linearVelocity, path.TangentAt(distance)) < 30f;
+                float weight = beyond <= nearRoad ? (along ? 0.2f : 0.5f) : 1f;
+                _offRoadRun += _body.linearVelocity.magnitude * dt * weight;
                 if (_offRoadRun > offRoadLimit) { SetBack(_leftRoadAt); return; }
             }
             else _offRoadRun = 0f;

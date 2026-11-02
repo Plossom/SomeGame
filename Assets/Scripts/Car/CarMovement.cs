@@ -97,14 +97,19 @@ namespace SomeGame.Car
 
         /// <summary>
         /// A tap in the air: one more spin to do. They are done one after another as each spin finishes; one still
-        /// waiting when the car comes down spoils the landing.
+        /// waiting when the car comes down spoils the landing. Just before landing a tap is no trick any more: hold
+        /// it (and steer) and the car lands straight into a drift.
         /// </summary>
         public void QueueTrick(TrickKind kind)
         {
             if (IsPuppet || !IsAirborne || _carried || _riding) return;
+            if (_airTimer < LandingWindow) return;
             _queuedTricks++;
             _queuedKind = kind;
         }
+
+        // Seconds before touching down in which a tap no longer asks for a trick (it is the drift to land into).
+        const float LandingWindow = 0.35f;
 
         /// <summary>Ends a flight sooner: it comes down in <paramref name="seconds"/> (a trick jump gone wrong).</summary>
         public void CutFlight(float seconds)
@@ -304,7 +309,7 @@ namespace SomeGame.Car
             // Lateral: grip bleeds off sideways velocity; less grip at speed lets the car slide in fast corners.
             float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(0.01f, stats.topSpeed));
             float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f) * (OnIce ? stats.iceGrip : 1f)
-                         * (IsWallRiding ? stats.wallGrip : 1f) * (_calmTimer > 0f ? stats.driftCalmGrip : 1f); // calm after a drift
+                         * (IsWallRiding ? stats.wallGrip : 1f) * (_calmTimer > 0f ? stats.driftCalmGrip : _boostTimer > 0f ? 1.4f : 1f); // calm after a drift, steady on a boost
             sidewaysSpeed *= Mathf.Exp(-grip * dt);
 
             _body.linearVelocity = forward * forwardSpeed + right * sidewaysSpeed;
@@ -337,6 +342,9 @@ namespace SomeGame.Car
             sidewaysSpeed += -_wobblePhase * 22f * speed * k * dt; // the tail slides out with it
         }
 
+        // Seconds after a drift over which the aim goes from the travel direction over to the stick.
+        const float AimEase = 0.35f;
+
         void Steer(Vector2 direction, float forwardSpeed, float dt)
         {
             if (direction.sqrMagnitude < 0.0001f)
@@ -347,20 +355,21 @@ namespace SomeGame.Car
             }
 
             float goal = HeadingOf(direction);
-            // Just after a drift the stick is usually still deep in the corner: the aim eases over from where the car
-            // is going to the stick (no swerve into the corner and back, no wiggle).
+            // Just after a drift the stick is usually still deep in the corner: for a moment the aim eases over from
+            // where the car is going to the stick (no swerve into the corner), then the stick has it all again.
             if (_calmTimer > 0f && _body.linearVelocity.sqrMagnitude > 1f)
             {
-                float settled = 1f - Mathf.Clamp01(_calmTimer / Mathf.Max(0.01f, stats.driftExitTime + stats.driftCalmTime));
-                goal = Mathf.LerpAngle(HeadingOf(_body.linearVelocity), goal, settled * settled);
+                float since = stats.driftExitTime + stats.driftCalmTime - _calmTimer;
+                goal = Mathf.LerpAngle(HeadingOf(_body.linearVelocity), goal, Mathf.Clamp01(since / AimEase));
             }
             float delta = Mathf.DeltaAngle(_body.rotation, goal);
             float speedFactor = Mathf.Lerp(stats.standstillTurnFactor, 1f,
                 Mathf.Clamp01(Mathf.Abs(forwardSpeed) / stats.fullTurnSpeed));
             float recovery = _hitTimer > 0f ? 0.3f : 1f;
             float maxStep = stats.turnRate * speedFactor * recovery * (OnIcePatch ? 0.45f : 1f) * dt; // glare ice: the steering only half answers
-            // Calm phase after a drift: turn smoothly towards the stick (no snapping, no overshoot).
-            if (_calmTimer > 0f) maxStep = Mathf.Min(maxStep, Mathf.Abs(delta) * stats.driftCalmSteer * dt);
+            // Calm phase after a drift, and while a boost runs: turn smoothly towards the stick - quick, but never a
+            // snap, so it cannot start rocking left and right at speed.
+            if (_calmTimer > 0f || _boostTimer > 0f) maxStep = Mathf.Min(maxStep, Mathf.Abs(delta) * stats.driftCalmSteer * dt);
             _body.angularVelocity = Mathf.Clamp(delta, -maxStep, maxStep) / dt;
         }
 
@@ -565,6 +574,8 @@ namespace SomeGame.Car
                 TrickLanded?.Invoke();
                 GiveBoost(Mathf.Min(1f, TrickBoost + 0.15f * (Spins - 1)));
             }
+            // Coming down with the drift finger held: the stick can pick a drift side right away (land into a drift).
+            if (ControlsEnabled && _input != null && _input.DriftHeld) _hopTimer = stats.driftHopTime;
             Landed?.Invoke();
         }
 
