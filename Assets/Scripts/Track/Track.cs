@@ -821,7 +821,7 @@ namespace SomeGame.Track
                         float lateral = river.rampLaterals is { Length: > 0 } ? river.rampLaterals[Mathf.Min(crossing, river.rampLaterals.Length - 1)] : 0f;
                         if (river.bridged != null && System.Array.IndexOf(river.bridged, crossing) >= 0)
                             _bridges.Add((path.WrapDistance(enter - 2f), path.WrapDistance(d + 2f)));
-                        else
+                        else if (!GapCovers(enter, d)) // (a gap of its own over the crossing - a trick jump - is its jump)
                             jumps.Add(new Jump { RampStart = path.WrapDistance(enter - 1f - layout.rampLength), Lip = path.WrapDistance(enter - 1f), FarBank = path.WrapDistance(d + 1f), Lateral = lateral, Gap = -1, Width = layout.rampWidth });
                         crossing++;
                     }
@@ -853,6 +853,13 @@ namespace SomeGame.Track
                     });
             jumps.Sort((a, b) => a.RampStart.CompareTo(b.RampStart));
             return jumps;
+        }
+
+        bool GapCovers(float from, float to)
+        {
+            foreach (var gap in layout.gaps)
+                if (!gap.hidden && Path.DeltaDistance(gap.from - 3f, from) >= 0f && Path.DeltaDistance(to, gap.to + 3f) >= 0f) return true;
+            return false;
         }
 
         static bool InRiver(TrackLayout.River river, Vector2 p)
