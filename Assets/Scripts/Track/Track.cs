@@ -672,6 +672,7 @@ namespace SomeGame.Track
         public bool IsWater(Vector2 p, TrackPoint? near)
         {
             if (HoleAt(p)) return true;
+            if (Hazards.Count > 0 && HazardVoid(p, near ?? Path.Project(p))) return true;
             if (FjordOn && FjordWater(p)) return true;
             bool river = RiverDistance(p) < 0f;
             if (river && Jumps != null && _bridges.Count == 0) return true;
@@ -684,6 +685,43 @@ namespace SomeGame.Track
             bool gap = OpenGapAt(point.Distance) >= 0;
             if (roadHere && !gap) return false;
             return river || lake || layout.waterWorld || gap && roadHere;
+        }
+
+        // ------------------------------------------------------------------ hazards that come and go (the high mountains)
+
+        /// <summary>
+        /// Something on the track that opens a hole now and then (thin ice that breaks, a cornice that falls away, a
+        /// swaying bridge deck you can drive off): it says where a car falls right now, and how a rival gets past it.
+        /// </summary>
+        public interface IHazard
+        {
+            /// <summary>True if a car on the ground at <paramref name="p"/> (on the road at <paramref name="near"/>) falls now.</summary>
+            bool VoidAt(Vector2 p, TrackPoint near);
+            /// <summary>
+            /// A rival at lap distance <paramref name="distance"/>, steering for <paramref name="ahead"/>: where across the road to
+            /// aim there (<paramref name="lateral"/>) and how fast to go (<paramref name="speed"/>). <paramref name="skill"/> 0..1:
+            /// how well it reads the hazard (the weaker ones make mistakes).
+            /// </summary>
+            void Guide(SomeGame.Car.CarMovement car, float skill, float distance, float ahead, ref float lateral, ref float speed);
+        }
+
+        /// <summary>The hazards on this track (they add themselves).</summary>
+        public readonly List<IHazard> Hazards = new();
+
+        bool HazardVoid(Vector2 p, TrackPoint near)
+        {
+            foreach (var hazard in Hazards)
+                if (hazard.VoidAt(p, near)) return true;
+            return false;
+        }
+
+        /// <summary>True where the road is not drawn (a rope bridge's deck takes its place, drawn by the bridge).</summary>
+        public bool RoadHidden(float distance)
+        {
+            if (layout == null || layout.ropeBridges == null) return false;
+            foreach (var bridge in layout.ropeBridges)
+                if (Path.DeltaDistance(bridge.from, distance) >= 0f && Path.DeltaDistance(distance, bridge.to) >= 0f) return true;
+            return false;
         }
 
         /// <summary>True inside a chasm's outline (whether or not the road crosses there).</summary>

@@ -92,7 +92,7 @@ namespace SomeGame.Track
 
             bool water = layout.waterWorld;
             // (the helix's road is drawn apart: see ShowHelix)
-            Func<float, bool> keep = d => !InHelix(d) && !track.InGap(d);
+            Func<float, bool> keep = d => !InHelix(d) && !track.InGap(d) && !track.RoadHidden(d);
             Func<float, float> edge = d => track.OffRoadAt(d);
             Assign(road, TrackMeshes.Strip(path, d => -edge(d) - 0.02f, d => edge(d) + 0.02f, outer * 2f / roadTile, roadTile, "Road", Color.white, keep));
             // On a water track the road stands above the water and casts a soft shadow onto it.
@@ -360,7 +360,7 @@ namespace SomeGame.Track
                 widths[0, i] = turn < 0f ? extra : inside; // left side is outside in a right turn
                 widths[1, i] = turn > 0f ? extra : inside;
                 if (track.InRoom(path[i])) widths[0, i] = widths[1, i] = 0f; // indoors the floor runs up to the kerb
-                if (HiddenAt(path.DistanceAt(i))) widths[0, i] = widths[1, i] = 0f; // the unraced way back: nothing drawn
+                if (HiddenAt(path.DistanceAt(i)) || track.RoadHidden(path.DistanceAt(i))) widths[0, i] = widths[1, i] = 0f; // the unraced way back / a rope bridge: nothing drawn
             }
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();

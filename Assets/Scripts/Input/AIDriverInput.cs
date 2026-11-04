@@ -89,6 +89,20 @@ namespace SomeGame.Input
             set => adventurous = Mathf.Clamp01(value);
         }
 
+        /// <summary>
+        /// How well this rival reads the track's hazards (0..1, from its seed): the weaker ones brake on thin ice, react
+        /// late to a swaying bridge, land wide off the ski jump.
+        /// </summary>
+        public float Skill
+        {
+            get
+            {
+                uint h = (uint)(_seed * 2654435761u ^ 0x9E3779B9u);
+                h = (h ^ (h >> 15)) * 2246822519u;
+                return 0.3f + 0.7f * ((h ^ (h >> 13)) & 0xFFFF) / 65535f;
+            }
+        }
+
         /// <summary>Makes this rival's route choices its own (rivals with the same taste still differ).</summary>
         public int Seed
         {
@@ -121,10 +135,14 @@ namespace SomeGame.Input
 
             float look = lookAheadBase + speed * lookAheadPerSpeed;
             float ahead = distance + look;
-            Vector2 aim = path.PointAt(ahead) + path.NormalAt(ahead) * LateralFor(path, distance);
+            float lateral = LateralFor(path, distance);
             float targetSpeed = TargetSpeed(path, distance);
-
             var track = _sensor.Track;
+            // Thin ice, cornices, swaying bridges...: each tells the rival where to drive and how fast.
+            if (track.Hazards.Count > 0 && _sensor.Branch < 0 && !_car.IsAirborne)
+                foreach (var hazard in track.Hazards) hazard.Guide(_car, Skill, distance, ahead, ref lateral, ref targetSpeed);
+            Vector2 aim = path.PointAt(ahead) + path.NormalAt(ahead) * lateral;
+
             if (_sensor.Branch >= 0)
             {
                 // On a branch: follow it, then the road after it rejoins.

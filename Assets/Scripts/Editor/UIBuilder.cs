@@ -1365,6 +1365,19 @@ namespace SomeGame.EditorTools
             var platforms = track.GetComponent<SomeGame.Track.TrackPlatforms>();
             if (platforms == null) platforms = track.gameObject.AddComponent<SomeGame.Track.TrackPlatforms>();
             Configure(platforms, ("track", track), ("plain", Mat("Plain")));
+            // The high mountains: thin ice, cornices, rope bridges, the ski-flying hill.
+            var thinIce = track.GetComponent<SomeGame.Track.TrackThinIce>();
+            if (thinIce == null) thinIce = track.gameObject.AddComponent<SomeGame.Track.TrackThinIce>();
+            Configure(thinIce, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
+            var cornices = track.GetComponent<SomeGame.Track.TrackCornices>();
+            if (cornices == null) cornices = track.gameObject.AddComponent<SomeGame.Track.TrackCornices>();
+            Configure(cornices, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
+            var ropeBridges = track.GetComponent<SomeGame.Track.TrackRopeBridges>();
+            if (ropeBridges == null) ropeBridges = track.gameObject.AddComponent<SomeGame.Track.TrackRopeBridges>();
+            Configure(ropeBridges, ("track", track), ("plain", Mat("Plain")));
+            var skiHill = track.GetComponent<SomeGame.Track.TrackSkiFlying>();
+            if (skiHill == null) skiHill = track.gameObject.AddComponent<SomeGame.Track.TrackSkiFlying>();
+            Configure(skiHill, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
             // The weather: storms (whiteout, gusts, lightning), snow twisters.
             var storm = track.GetComponent<SomeGame.Track.TrackStorm>();
             if (storm == null) storm = track.gameObject.AddComponent<SomeGame.Track.TrackStorm>();

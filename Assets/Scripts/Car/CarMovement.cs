@@ -143,6 +143,15 @@ namespace SomeGame.Car
             _queuedTricks = 0;
         }
 
+        /// <summary>No more steering for the rest of this flight (it comes down where it is headed).</summary>
+        public void LockFlight()
+        {
+            if (IsAirborne) _airLocked = true;
+        }
+
+        // How strongly the stick steers in this flight (the ski hill: much more than a normal jump).
+        float _airSteer = 1f;
+
         Vector2? _aimTarget;
         float _aimSpeed, _aimTotal;
         /// <summary>Boost strength for landing a trick.</summary>
@@ -520,10 +529,11 @@ namespace SomeGame.Car
         /// Sends the car into the air (off a ramp) for <paramref name="duration"/> seconds. With a
         /// direction, the car is turned to fly that way (big shortcut ramps).
         /// </summary>
-        public void Launch(float duration, Vector2? direction = null, bool locked = false, float? landingHeading = null, bool plunge = false)
+        public void Launch(float duration, Vector2? direction = null, bool locked = false, float? landingHeading = null, bool plunge = false, float steer = 1f)
         {
             if (IsPuppet || IsAirborne || duration <= 0f) return;
             _plunge = plunge;
+            _airSteer = steer;
             _airTurnTo = landingHeading;
             _aimTarget = null;
             EndDrift();
@@ -578,7 +588,8 @@ namespace SomeGame.Car
             else if (steer.sqrMagnitude > 0.0001f)
             {
                 float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(steer));
-                _body.angularVelocity = Mathf.Clamp(delta, -stats.turnRate * stats.airSteering * dt, stats.turnRate * stats.airSteering * dt) / dt;
+                float most = stats.turnRate * stats.airSteering * _airSteer * dt;
+                _body.angularVelocity = Mathf.Clamp(delta, -most, most) / dt;
             }
             else _body.angularVelocity = 0f;
             float speed = _body.linearVelocity.magnitude;
