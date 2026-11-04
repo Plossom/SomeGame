@@ -37,7 +37,7 @@ One lap, about **3,100 m**, ~3:00 for a good run (a journey from the valley gate
 | # | Section | Lap m | Width | What happens |
 |---|---------|-------|-------|--------------|
 | A | **Valley gate** | 0–400 | 10 → 8 | Across a frozen lake through the outer gate, ice-knight statues, the citadel towering ahead (camera reveal). Boost pad 1 at ~150. |
-| B | **Citadel serpentine** | 400–900 | 7 | Tight switchbacks up the citadel rock, open drop on the outside of every hairpin (chasms). Pure driving test. |
+| B | **Citadel serpentine** | 400–900 | 7 | Tight switchbacks up the citadel rock, open drop on the outside of every hairpin (chasms), in a **thundersnow storm** (rare, small strikes) that clears at the gate. |
 | C | **Icicle gates** | 900–1,250 | 7 | Through the fortress: three **icicle portcullises** (new mechanic 1) in a row, each with its own rhythm, then the throne hall (cave stretch). |
 | D | **Tilting slabs** | 1,250–1,600 | 6 | Over the moat on **tilting ice slabs** (new mechanic 2): five seesaw slabs on pivots; hit them off-centre and they tip you off. |
 | E | **Shuttle floes** | 1,600–1,950 | 6 | Across the frozen abyss on **shuttle floes** (new mechanic 3): ice slabs gliding between stone pillars; time the jump-on, ride, and get off. Boost pad 2 at ~1,990 (solid ground after the floes, well before the bobsled start). |
@@ -110,6 +110,14 @@ section from B on.
 - **Code:** `TrackLayout.groomers`, `TrackGroomers` (kinematic movers with colliders, lane plan),
   snowcat art (top-down, animated tracks), corduroy trail decal.
 
+### Thundersnow on the serpentine (existing storm + lightning, made gentler)
+- A storm hangs over the **citadel serpentine** (450–880): slate clouds, gusts (strength 0.55) and
+  **thundersnow strikes**, then it tears open as you pass the gate into the citadel (the sun breaks
+  through, a big visual moment).
+- Gentle settings, like race 7: one strike every **6–9 s**, radius **2.2 m**, warning ring **1.4 s**, one at
+  a time, never in a hairpin apex. Each flash lights up the citadel's silhouette ahead.
+- **Code:** the same per-storm settings (`strikeRadius`, `strikeEvery`, `strikeWarn`) as race 7.
+
 ### Reused as glue
 `chasms` (open edges, carried back), `caves` (throne hall), `platforms`/`viaducts` (drawbridge, rock
 paths), `slopes` (fast descent), `dashPanels` (4 boost pads), `snowTunnels` (bobsled start house).
@@ -126,6 +134,29 @@ paths), `slopes` (fast descent), `dashPanels` (4 boost pads), `snowTunnels` (bob
 - **Snowcats** (orange, animated tracks and tiller) and corduroy trails.
 - **Finish arena**: stands, flags, confetti.
 
+## 3b. Visual upgrade (the grand finale: the best-looking race in the game)
+
+- **Golden hour:** the race runs into sunset. The valley in warm low sun with pink snow and very long shadows,
+  the storm on the serpentine dark slate, then the sun breaking through at the gate; the bobsled run and arena in
+  deep evening blue with the last orange light on the peaks. (No aurora, no lit lamps.)
+- **A citadel with real height:** layered walls and towers with drop shadows and parallax (the towers lean
+  slightly with the camera, as if seen from above), battlements, waving banners, icicles along every edge.
+- **Throne hall:** crystal ice pillars that throw coloured light patterns on the floor from the sun outside,
+  frost ferns on the walls, the frozen throne.
+- **The abyss:** under the slabs and floes, layers of mist drifting at different speeds, frozen chains
+  vanishing into the dark, tiny lights of nothing (no lamps): pure depth.
+- **Bobsled run:** glossy ice reflecting the channel walls, speed streaks on the walls at high speed,
+  snow spray off the lip, crowds waving at the Kreisel.
+- **Snowcats:** animated tracks, tiller spray, fresh corduroy stripes behind them.
+- **Car effects:** ice shards when hit by a portcullis, sparks of frost when scraping the bobsled wall,
+  powder trails on the descent.
+- **Camera moments:** the citadel reveal from the valley; a high wide view over the moat as you reach the slabs;
+  a dive-in zoom at the bobsled start; the camera pulls out over the arena at the finish.
+- **Post-processing (URP Volume, per section):** warm grade in the valley, cold desaturated storm with a white
+  flash on each strike, rich blue citadel, contrasty evening on the bobsled; subtle bloom only on sun
+  glints, ice reflections and confetti.
+- **Finish:** confetti, the crowd on its feet, flags; a short slow-motion as you cross the line.
+
 ## 4. Build phases (each ends playable, tested on autopilot with screenshots, committed)
 
 1. **P1 Road & world:** waypoints, widths, slopes, chasms, citadel walls as scenery; autopilot run.
@@ -134,8 +165,10 @@ paths), `slopes` (fast descent), `dashPanels` (4 boost pads), `snowTunnels` (bob
 4. **P4 Shuttle floes** (M3) + AI.
 5. **P5 Bobsled** (M4) + AI.
 6. **P6 Snowcats** (M5) + AI.
-7. **P7 Props & polish:** citadel, statues, arena, camera reveals, combo words, sounds.
-8. **P8 Balance:** 4 boost pads, rival runs → star times (6th ×0.95 / 3rd ×0.95 / fastest ×0.95),
+7. **P7 Storm:** the storm on the serpentine with the gentle lightning settings, sun breaking through.
+8. **P8 Props & visuals:** citadel, statues, throne hall, abyss mist, golden-hour light, bobsled gloss,
+   snowcat effects, camera moments, per-section post-processing, finish celebration, combo words, sounds.
+9. **P9 Balance:** 4 boost pads, rival runs → star times (6th ×0.95 / 3rd ×0.95 / fastest ×0.95),
    preview `PreviewGenerator.Generate("Winter06")`, info text, new display name.
 
 Guard rails as always: check Play mode before every Editor step; back up and restore saves around

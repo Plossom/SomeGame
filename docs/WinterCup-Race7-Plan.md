@@ -36,7 +36,7 @@ Distances are first targets; they get tuned when the road exists.
 |---|---------|-------|-------|--------------|
 | A | **Glacier approach** | 0–520 | 10 → 8 | Big sweeping S-bends climbing the glacier tongue, moraine rocks, a rope team of climbers walking beside the road. Boost pad 1 at ~180. Warm-up, but already a few open chasm edges on the outside of the bends. |
 | B | **Serac icefall** | 520–1,050 | 8 → 7 | Weaving between huge blue serac blocks. **Thin-ice fields** (new mechanic 1) in the gaps between seracs; aluminium ladders over two crevasses (open edges, 6.5 m). Boost pad 2 at ~600 (on solid ground, before the first field). |
-| C | **The Spine** | 1,050–1,650 | 6.5 → 6 | The knife-edge ridge from summit A along the crest: sheer drops both sides (chasms right up to the kerb), **collapsing cornices** (new mechanic 2) on the outside of three bends. Summit A: ice tower and summit cross, camera reveal of the whole route ahead. |
+| C | **The Spine** | 1,050–1,650 | 6.5 → 6 | The knife-edge ridge from summit A along the crest: sheer drops both sides (chasms right up to the kerb), **collapsing cornices** (new mechanic 2) on the outside of three bends, a **thundersnow storm** over it (rare, small strikes). Summit A: ice tower and summit cross, camera reveal of the whole route ahead. |
 | D | **Rope bridges** | 1,650–2,050 | 6 | Three **swaying suspension bridges** (new mechanic 3) over the bergschrund, from rock pillar to rock pillar. Short solid rock islands between them. Boost pad 3 at ~2,000 on summit B (well after the bridges, well before the jump). |
 | E | **Ski flying** | 2,050–2,500 | 7 → 30 | The in-run of a giant ski-flying hill (judges' tower, flag line, stands far below). Big take-off → **ski flying** (new mechanic 4): long hang time, you steer in the air onto the narrow K-line landing strip. Miss it = down the cliff, carried back to the in-run. |
 | F | **Outrun & finish** | 2,500–2,800 | 12 | Wide curved outrun into the valley stadium, crowd and flags, FINISH. Boost pad 4 at ~2,560 (after the landing). |
@@ -98,6 +98,15 @@ Difficulty curve: A easy-medium → B medium (learn the thin ice) → C hard (na
   (`Launch(..., airSteer)`), `CarTerrain` landing check against the strip, `TrackFeatures` in-run and
   hill drawing, landing-shadow marker.
 
+### Thundersnow on the Spine (existing storm + lightning, made gentler)
+- A storm sits over **The Spine** (1,100–1,600): whiteout gusts (strength 0.45, lower than usual
+  because the ridge is narrow) and **thundersnow strikes**.
+- Fewer and smaller than in the earlier storm race: one strike every **6–9 s** (now 2.6–5 s), a radius of
+  **2.2 m** (now 3.4 m), a slightly longer warning ring (**1.4 s**), never more than one at a time, and
+  never on a cornice bend that's breaking or on a bridge. So you can always steer round it on a 6 m road.
+- **Code:** per-storm settings in `TrackLayout.Storm` (`strikeRadius`, `strikeEvery` min/max,
+  `strikeWarn`; defaults keep the current storm race exactly as it is), read by `TrackStorm`.
+
 ### Reused as glue
 `chasms` (open edges everywhere, carried back), `platforms` (ladder decks), `slopes` (fast in-run and
 glacier descent), `dashPanels` (4 boost pads), `rides` style rope team as scenery only.
@@ -116,6 +125,27 @@ glacier descent), `dashPanels` (4 boost pads), `rides` style rope team as scener
 - **Cornices**: curled snow lips with crack lines; jagged blue break edges after the collapse.
 - Distant peaks around the edge of the map (camera reveals at summit A and at the ski-flying take-off).
 
+## 3b. Visual upgrade (this race must look a level above everything before it)
+
+- **Sea of clouds:** below the Spine and the rope bridges, a slowly drifting layer of clouds with its own
+  parallax (it moves slower than the ground), so the ridge really floats high above the world. The road and
+  the bridges cast soft shadows on the clouds; tiny glacier and peaks show through the gaps far below.
+- **Real depth at the edges:** every drop has a layered rock face (lit top, dark gradient down), wisps of mist,
+  and a parallax floor far below, never a flat dark fill.
+- **Light:** crisp high-altitude morning, low sun from one side: long blue shadows from seracs, the summit
+  cross and the hill tower; cloud shadows sweeping across the glacier.
+- **Ice that shines:** glacier ice with blue depth, flow lines, and glints that sparkle as the camera moves
+  (sun reflections, not lamps); crevasses fade from turquoise to deep navy.
+- **Wind made visible:** spindrift streaming off the crest and the cornices, prayer-flag pennants and the
+  ski-hill flags snapping in the wind.
+- **Car effects:** ice shavings and crack sparks on thin ice, powder spray when drifting in snow, ski-flying
+  vapour trail, a big powder burst and "TELEMARK!" on landing.
+- **Camera moments:** a slow zoom-out at summit A that reveals the whole ridge and bridges; at the ski-flying
+  take-off the camera pulls back to show the full hill and landing strip; a light shake when a cornice goes.
+- **Post-processing (URP Volume, per section):** cold crisp colour grade on the glacier, vignette and
+  desaturated whiteout in the storm with a white screen flash on each strike, warm-bright grade on the
+  sunlit outrun; very subtle bloom only on sun glints and snow sparkle.
+
 ## 4. Build phases (each ends playable, tested on autopilot with screenshots, committed)
 
 1. **P1 Road & world:** new waypoints, widths, slopes, chasms, glacier ground and scenery, the journey
@@ -124,8 +154,10 @@ glacier descent), `dashPanels` (4 boost pads), `rides` style rope team as scener
 3. **P3 Cornices:** M2 + AI. ✔ leader gets full width, later laps narrower, fall works.
 4. **P4 Rope bridges:** M3 + AI. ✔ carried with the deck, falls fair, rivals cross mostly.
 5. **P5 Ski flying:** M4 + AI. ✔ steer onto strip, boost; miss = back to in-run.
-6. **P6 Props & polish:** all props, camera reveals, combo words, sounds.
-7. **P7 Balance:** 4 boost pads in place, rival runs → star times (6th ×0.95 / 3rd ×0.95 /
+6. **P6 Storm:** per-storm lightning settings, the storm on the Spine. ✔ strikes rare and dodgeable.
+7. **P7 Props & visuals:** all props, sea of clouds, layered drops, light and shadows, ice glints,
+   spindrift, car effects, camera moments, per-section post-processing, combo words, sounds.
+8. **P8 Balance:** 4 boost pads in place, rival runs → star times (6th ×0.95 / 3rd ×0.95 /
    fastest ×0.95), preview `PreviewGenerator.Generate("Winter07")`, info text.
 
 Guard rails as always: check Play mode before every Editor step; back up and restore saves around
