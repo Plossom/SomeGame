@@ -729,12 +729,14 @@ namespace SomeGame.Track
             return false;
         }
 
-        /// <summary>True where the road is not drawn (a rope bridge's deck takes its place, drawn by the bridge).</summary>
+        /// <summary>True where the road is not drawn: a rope bridge's deck, a tilting slab or the shuttle floes take its place (and draw themselves).</summary>
         public bool RoadHidden(float distance)
         {
-            if (layout == null || layout.ropeBridges == null) return false;
-            foreach (var bridge in layout.ropeBridges)
-                if (Path.DeltaDistance(bridge.from, distance) >= 0f && Path.DeltaDistance(distance, bridge.to) >= 0f) return true;
+            if (layout == null) return false;
+            bool In(float from, float to) => Path.DeltaDistance(from, distance) >= 0f && Path.DeltaDistance(distance, to) >= 0f;
+            if (layout.ropeBridges != null) foreach (var b in layout.ropeBridges) if (In(b.from, b.to)) return true;
+            if (layout.tiltSlabs != null) foreach (var s in layout.tiltSlabs) if (In(s.from, s.to)) return true;
+            if (layout.shuttles != null) foreach (var s in layout.shuttles) if (In(s.from, s.to)) return true;
             return false;
         }
 

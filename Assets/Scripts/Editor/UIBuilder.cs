@@ -1378,6 +1378,19 @@ namespace SomeGame.EditorTools
             var skiHill = track.GetComponent<SomeGame.Track.TrackSkiFlying>();
             if (skiHill == null) skiHill = track.gameObject.AddComponent<SomeGame.Track.TrackSkiFlying>();
             Configure(skiHill, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
+            // The citadel: icicle gates, tilting slabs, shuttle floes, the bobsled channel, snowcats.
+            void Citadel<T>(bool withParticles) where T : Component
+            {
+                var c = track.GetComponent<T>();
+                if (c == null) c = track.gameObject.AddComponent<T>();
+                if (withParticles) Configure(c, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
+                else Configure(c, ("track", track), ("plain", Mat("Plain")));
+            }
+            Citadel<SomeGame.Track.TrackPortcullis>(true);
+            Citadel<SomeGame.Track.TrackTiltSlabs>(false);
+            Citadel<SomeGame.Track.TrackShuttles>(false);
+            Citadel<SomeGame.Track.TrackBobsled>(true);
+            Citadel<SomeGame.Track.TrackGroomers>(false);
             // The high-mountain look: the sea of clouds, cloud shadows, glints, spindrift, camera reveals, grading.
             var alpine = track.GetComponent<SomeGame.Track.TrackAlpineFx>();
             if (alpine == null) alpine = track.gameObject.AddComponent<SomeGame.Track.TrackAlpineFx>();

@@ -20946,6 +20946,11 @@ GameObject:
   - component: {fileID: 1295174599}
   - component: {fileID: 1295174598}
   - component: {fileID: 1295174602}
+  - component: {fileID: 1295174607}
+  - component: {fileID: 1295174606}
+  - component: {fileID: 1295174605}
+  - component: {fileID: 1295174604}
+  - component: {fileID: 1295174603}
   m_Layer: 0
   m_Name: Track
   m_TagString: Untagged
@@ -21698,6 +21703,78 @@ MonoBehaviour:
   plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
   particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
   grade: {fileID: 136372164}
+--- !u!114 &1295174603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db8c660cad5564790b19a17014ef6c1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackGroomers
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+--- !u!114 &1295174604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 808cbda7200de45b8bfb8fec6ff5bfe9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackBobsled
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+  particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
+--- !u!114 &1295174605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45acbfce9b46b4c4f82f74fc165daaa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackShuttles
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+--- !u!114 &1295174606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21e819e695a3648feb4829c1357b7126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackTiltSlabs
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+--- !u!114 &1295174607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8dea11801d45401f8f2e95e45b6d394, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackPortcullis
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+  particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
 --- !u!1 &1298191705
 GameObject:
   m_ObjectHideFlags: 0

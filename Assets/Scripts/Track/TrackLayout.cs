@@ -463,6 +463,63 @@ namespace SomeGame.Track
             [Tooltip("How much of the road's width breaks away.")]
             [Min(0.5f)] public float width = 2.4f;
         }
+        [Header("The citadel")]
+        [Tooltip("Icicle gates (portcullises) across the road: a curtain of giant icicles that drops onto the road in a rhythm and " +
+                 "lifts again. Caught under it, you are smashed back out of the gate.")]
+        public List<Portcullis> portcullis = new();
+        [Serializable]
+        public class Portcullis
+        {
+            [Tooltip("Lap distance of the gate.")]
+            public float distance;
+            [Tooltip("Seconds for one cycle (up, a shiver, down, back up).")]
+            [Min(3f)] public float period = 5f;
+            [Tooltip("Shifts its rhythm (0-1 of a cycle).")]
+            public float phase;
+        }
+        [Tooltip("Tilting ice slabs (lap distances from, to): seesaws over the void on a pivot along the road. A car off the middle " +
+                 "tips the slab and slides off its low side; the slab is the road (off it you fall).")]
+        public List<Span> tiltSlabs = new();
+        [Tooltip("Shuttle floes: a gap in the road (lap distances from, to) crossed on ice slabs gliding to and fro between the " +
+                 "pillars. Drive onto one while it is docked, ride it across, get off when it docks at the far side.")]
+        public List<Shuttle> shuttles = new();
+        [Serializable]
+        public class Shuttle
+        {
+            public float from, to;
+            [Tooltip("One slab across the whole gap, or two meeting in the middle (hop from one to the other).")]
+            [Range(1, 2)] public int slabs = 1;
+            [Min(3f)] public float slabLength = 11f;
+            [Tooltip("Seconds a slab waits at each end.")]
+            [Min(0.2f)] public float dwell = 1.6f;
+            [Tooltip("Seconds it takes to glide across.")]
+            [Min(0.5f)] public float travel = 2.6f;
+            public float phase;
+        }
+        [Tooltip("Bobsled channels (lap distances from, to): an ice floor between two curved ice walls. In a bend the cars ride up " +
+                 "the outer wall with their speed; too fast and they fly over its lip.")]
+        public List<Bobsled> bobsleds = new();
+        [Serializable]
+        public class Bobsled
+        {
+            public float from, to;
+            [Min(2f)] public float floor = 5.5f;
+            [Min(0.5f)] public float wall = 2.5f;
+        }
+        [Tooltip("Snowcats grooming the piste (lap distances from, to): big, heavy, slow, changing lanes now and then. They come out " +
+                 "of a snow tunnel at 'from' and go into one at 'to'.")]
+        public List<Groomers> groomers = new();
+        [Serializable]
+        public class Groomers
+        {
+            public float from, to;
+            [Min(1)] public int count = 5;
+            [Tooltip("Their speed (m/s).")]
+            [Min(1f)] public float speed = 7f;
+            [Tooltip("Sideways positions of their lanes.")]
+            public float[] lanes = { -2f, 2f };
+        }
+
         [Header("The high-mountain look")]
         [Tooltip("A sea of clouds far below in every chasm (drifting, with depth: it moves slower than the ground), with a glacier valley glimpsed through it.")]
         public bool cloudSea;
