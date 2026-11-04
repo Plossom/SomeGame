@@ -144,7 +144,7 @@ paths), `slopes` (fast descent), `dashPanels` (4 boost pads), `snowTunnels` (bob
 - **Throne hall:** crystal ice pillars that throw coloured light patterns on the floor from the sun outside,
   frost ferns on the walls, the frozen throne.
 - **The abyss:** under the slabs and floes, layers of mist drifting at different speeds, frozen chains
-  vanishing into the dark, tiny lights of nothing (no lamps): pure depth.
+  vanishing into the dark: pure depth.
 - **Bobsled run:** glossy ice reflecting the channel walls, speed streaks on the walls at high speed,
   snow spray off the lip, crowds waving at the Kreisel.
 - **Snowcats:** animated tracks, tiller spray, fresh corduroy stripes behind them.
