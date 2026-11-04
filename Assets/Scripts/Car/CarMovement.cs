@@ -117,6 +117,34 @@ namespace SomeGame.Car
             if (!IsAirborne || _carried || _riding) return;
             _airTimer = Mathf.Min(_airTimer, Mathf.Max(0.01f, seconds));
         }
+
+        /// <summary>
+        /// Takes over the rest of a flight: the car glides in a straight line to <paramref name="target"/> and comes
+        /// down exactly there, its nose turning smoothly round to <paramref name="landingDirection"/> on the way. A
+        /// target too far for the time left stretches the flight (the car keeps its speed).
+        /// </summary>
+        public void AimLanding(Vector2 target, Vector2 landingDirection)
+        {
+            if (!IsAirborne || _carried || _riding) return;
+            float speed = Mathf.Max(1f, _body.linearVelocity.magnitude);
+            float need = (target - _body.position).magnitude / speed;
+            if (need > _airTimer)
+            {
+                // Same point in the arc, just a longer arc: the height carries on without a jump.
+                _airDuration *= need / _airTimer;
+                _airTimer = need;
+            }
+            _aimTarget = target;
+            _aimSpeed = speed;
+            _aimTotal = _airTimer;
+            _airLocked = true;
+            _airTurnFrom = _body.rotation;
+            _airTurnTo = HeadingOf(landingDirection);
+            _queuedTricks = 0;
+        }
+
+        Vector2? _aimTarget;
+        float _aimSpeed, _aimTotal;
         /// <summary>Boost strength for landing a trick.</summary>
         const float TrickBoost = 0.55f;
 
@@ -497,6 +525,7 @@ namespace SomeGame.Car
             if (IsPuppet || IsAirborne || duration <= 0f) return;
             _plunge = plunge;
             _airTurnTo = landingHeading;
+            _aimTarget = null;
             EndDrift();
             _trick = false;
             _queuedTricks = 0;
@@ -541,7 +570,9 @@ namespace SomeGame.Car
             if (_airTurnTo.HasValue)
             {
                 // Curving round onto the road it lands on.
-                float goal = Mathf.LerpAngle(_airTurnFrom, _airTurnTo.Value, 1f - Mathf.Max(0f, _airTimer - dt) / _airDuration);
+                float total = _aimTarget.HasValue ? _aimTotal : _airDuration;
+                float u = 1f - Mathf.Max(0f, _airTimer - dt) / total;
+                float goal = Mathf.LerpAngle(_airTurnFrom, _airTurnTo.Value, _aimTarget.HasValue ? Mathf.SmoothStep(0f, 1f, u) : u);
                 _body.angularVelocity = Mathf.DeltaAngle(_body.rotation, goal) / dt;
             }
             else if (steer.sqrMagnitude > 0.0001f)
@@ -551,12 +582,25 @@ namespace SomeGame.Car
             }
             else _body.angularVelocity = 0f;
             float speed = _body.linearVelocity.magnitude;
-            _body.linearVelocity = (Vector2)transform.up * speed;
+            if (_aimTarget.HasValue)
+            {
+                // An aimed glide: straight at the landing spot, there right as the flight ends.
+                speed = _aimSpeed;
+                if (_airTimer > dt) _body.linearVelocity = (_aimTarget.Value - _body.position) / _airTimer;
+            }
+            else _body.linearVelocity = (Vector2)transform.up * speed;
             ForwardSpeed = speed;
             SidewaysSpeed = 0f;
             if (_airTimer > 0f) return;
 
             _airTimer = 0f;
+            if (_aimTarget.HasValue)
+            {
+                // Down on the road, rolling on along it at the speed it flew.
+                _aimTarget = null;
+                _airTurnTo = null;
+                _body.linearVelocity = (Vector2)(Quaternion.Euler(0f, 0f, _body.rotation) * Vector3.up) * _aimSpeed;
+            }
             if (_collider != null) _collider.enabled = true;
             _body.linearVelocity *= stats.landingSpeedKeep;
             Collided?.Invoke(stats.landingImpact); // a little camera shake

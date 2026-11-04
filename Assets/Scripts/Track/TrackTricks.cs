@@ -27,7 +27,7 @@ namespace SomeGame.Track
             public int Gap;
             public List<TrickKind> Sequence;
             public int Done;
-            public bool Player, Failed, Succeeded, Ended;
+            public bool Player, Failed, Succeeded, Ended, Guided;
             public float NextShow; // rivals: when they do their next trick
             public float Total;    // the flight's length (game seconds), for the bar and a rival's fall
         }
@@ -164,7 +164,7 @@ namespace SomeGame.Track
                     _attempts.RemoveAt(i);
                     continue;
                 }
-                if (a.Succeeded && !a.Ended) { Guide(a); continue; }
+                if (a.Succeeded && !a.Ended) { if (!a.Guided) Guide(a); continue; }
                 if (a.Ended) continue;
                 if (a.Player)
                 {
@@ -195,16 +195,17 @@ namespace SomeGame.Track
         // crooked take-off never costs a perfect run.
         void Guide(Attempt a)
         {
+            a.Guided = true;
             var gap = track.Layout.gaps[a.Gap];
             var body = a.Car.Body;
-            var at = track.Path.Project(body.position);
-            float half = Mathf.Max(0.5f, track.HalfWidthAt(gap.to + 2f) - 1.2f);
-            float target = Mathf.Clamp(at.Lateral, -half, half);
-            float k = Mathf.Clamp01(Time.deltaTime * 6f);
-            if (Mathf.Abs(at.Lateral - target) > 0.01f) body.position += track.Path.NormalAt(at.Distance) * ((target - at.Lateral) * k);
-            Vector2 along = track.Path.TangentAt(gap.to);
-            float speed = body.linearVelocity.magnitude;
-            body.linearVelocity = Vector2.Lerp(body.linearVelocity.normalized, along, k).normalized * speed;
+            var path = track.Path;
+            var at = path.Project(body.position);
+            // Where it would come down along the road, but never short of the landing.
+            float ahead = Mathf.Max(path.DeltaDistance(at.Distance, gap.to + 2.5f), body.linearVelocity.magnitude * a.Car.AirTimeLeft);
+            float land = path.WrapDistance(at.Distance + ahead);
+            float half = Mathf.Max(0.5f, track.HalfWidthAt(land) - 1.2f);
+            Vector2 target = path.PointAt(land) + path.NormalAt(land) * Mathf.Clamp(at.Lateral, -half, half);
+            a.Car.AimLanding(target, path.TangentAt(land));
         }
 
         void Slow(bool on)
