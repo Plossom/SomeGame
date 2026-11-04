@@ -705,6 +705,20 @@ namespace SomeGame.Track
             void Guide(SomeGame.Car.CarMovement car, float skill, float distance, float ahead, ref float lateral, ref float speed);
         }
 
+        /// <summary>A hazard whose holes are water (a car falling through splashes, as in a lake).</summary>
+        public interface IWetHazard
+        {
+            bool WetAt(Vector2 p);
+        }
+
+        /// <summary>True where a hazard has opened water under a point (broken thin ice).</summary>
+        public bool HazardWet(Vector2 p)
+        {
+            foreach (var hazard in Hazards)
+                if (hazard is IWetHazard wet && wet.WetAt(p)) return true;
+            return false;
+        }
+
         /// <summary>The hazards on this track (they add themselves).</summary>
         public readonly List<IHazard> Hazards = new();
 

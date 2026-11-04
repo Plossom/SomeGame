@@ -11,7 +11,7 @@ namespace SomeGame.Track
     /// car sinks and is carried back. A few seconds later it freezes over again. Holes a rival broke stay open for a
     /// moment: steer round them.
     /// </summary>
-    public class TrackThinIce : TrackDerivedBehaviour, Track.IHazard
+    public class TrackThinIce : TrackDerivedBehaviour, Track.IHazard, Track.IWetHazard
     {
         [SerializeField] Material plain;
         [SerializeField] Material particleMaterial;
@@ -252,6 +252,13 @@ namespace SomeGame.Track
             return false;
         }
 
+        public bool WetAt(Vector2 p)
+        {
+            foreach (var patch in _patches)
+                if (State(patch) != 0 && Contains(patch, p, 1.05f)) return true;
+            return false;
+        }
+
         public void Guide(CarMovement car, float skill, float distance, float ahead, ref float lateral, ref float speed)
         {
             var path = track.Path;
@@ -275,7 +282,7 @@ namespace SomeGame.Track
                     continue;
                 }
                 // Whole ice ahead or under it: keep the speed up (a weak rival sometimes lifts off - and goes in).
-                bool nervous = MeshKit.Hash(p.Distance, (car.name.GetHashCode() & 0xFFFF) + Mathf.Floor(Track.Clock / 30f)) > skill + 0.2f;
+                bool nervous = MeshKit.Hash(p.Distance, (car.name.GetHashCode() & 0xFFFF) + Mathf.Floor(Track.Clock / 30f)) > skill + 0.05f;
                 if (to >= 14f) continue;
                 speed = nervous ? Mathf.Min(speed, top * 0.42f) : Mathf.Max(speed, top * Mathf.Lerp(0.7f, 0.9f, skill));
             }

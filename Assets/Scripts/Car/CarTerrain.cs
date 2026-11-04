@@ -526,7 +526,7 @@ namespace SomeGame.Car
             // Over the edge of a chasm: the car tumbles down into the depths (no splash, no dust).
             bool chasm = track.ChasmAt(_car.Body.position) && track.WaterDistance(_car.Body.position) > 0f;
             // Short of a window jump: a fall into the garden (dust), not a splash.
-            bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld && !track.FjordWater(_car.Body.position);
+            bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld && !track.FjordWater(_car.Body.position) && !track.HazardWet(_car.Body.position);
             var burst = dry ? _dust : _splash;
             burst.transform.position = _car.Body.position;
             if (!chasm) burst.Emit(40);

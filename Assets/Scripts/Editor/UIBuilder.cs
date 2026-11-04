@@ -1378,6 +1378,16 @@ namespace SomeGame.EditorTools
             var skiHill = track.GetComponent<SomeGame.Track.TrackSkiFlying>();
             if (skiHill == null) skiHill = track.gameObject.AddComponent<SomeGame.Track.TrackSkiFlying>();
             Configure(skiHill, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
+            // The high-mountain look: the sea of clouds, cloud shadows, glints, spindrift, camera reveals, grading.
+            var alpine = track.GetComponent<SomeGame.Track.TrackAlpineFx>();
+            if (alpine == null) alpine = track.gameObject.AddComponent<SomeGame.Track.TrackAlpineFx>();
+            var gradeGo = GameObject.Find("TrackGrade");
+            if (gradeGo == null) gradeGo = new GameObject("TrackGrade", typeof(UnityEngine.Rendering.Volume));
+            var gradeVolume = gradeGo.GetComponent<UnityEngine.Rendering.Volume>();
+            gradeVolume.isGlobal = true;
+            gradeVolume.weight = 0f;
+            gradeVolume.sharedProfile = AssetDatabase.LoadAssetAtPath<UnityEngine.Rendering.VolumeProfile>("Assets/Settings/TrackGradeProfile.asset");
+            Configure(alpine, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles), ("grade", gradeVolume));
             // The weather: storms (whiteout, gusts, lightning), snow twisters.
             var storm = track.GetComponent<SomeGame.Track.TrackStorm>();
             if (storm == null) storm = track.gameObject.AddComponent<SomeGame.Track.TrackStorm>();

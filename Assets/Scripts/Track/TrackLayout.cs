@@ -463,6 +463,37 @@ namespace SomeGame.Track
             [Tooltip("How much of the road's width breaks away.")]
             [Min(0.5f)] public float width = 2.4f;
         }
+        [Header("The high-mountain look")]
+        [Tooltip("A sea of clouds far below in every chasm (drifting, with depth: it moves slower than the ground), with a glacier valley glimpsed through it.")]
+        public bool cloudSea;
+        [Tooltip("Tint of the clouds below (the light of the day: white at noon, gold at sunset, slate in a storm).")]
+        public Color cloudTint = Color.white;
+        [Tooltip("Soft shadows of clouds drifting over the ground, sun glints sparkling on the snow and ice, snow streaming off the ridges.")]
+        public bool alpineFx;
+        [Tooltip("Where the camera pulls back to show what lies ahead (lap distances from, to; how much wider).")]
+        public List<CameraZone> cameraZones = new();
+        [Serializable]
+        public class CameraZone
+        {
+            public float from, to;
+            [Range(1f, 2f)] public float zoom = 1.35f;
+        }
+        [Tooltip("Colour grading by stretch of the lap (blended between them): the light of each part of the race.")]
+        public List<Grade> grades = new();
+        [Serializable]
+        public class Grade
+        {
+            [Tooltip("Lap distance where this light is fully in (it blends from the previous one over 'blend' metres).")]
+            public float from;
+            [Min(1f)] public float blend = 60f;
+            public Color filter = Color.white;
+            [Range(-100f, 100f)] public float saturation;
+            [Range(-100f, 100f)] public float contrast;
+            [Range(-2f, 2f)] public float exposure;
+            [Range(0f, 0.6f)] public float vignette = 0.2f;
+            [Range(0f, 2f)] public float bloom = 0.3f;
+        }
+
         [Tooltip("Rope bridges (lap distances from, to; straight stretches): a deck of planks on ropes over the void that sways from " +
                  "side to side, carrying the cars on it with it. Off the deck you fall.")]
         public List<RopeBridge> ropeBridges = new();

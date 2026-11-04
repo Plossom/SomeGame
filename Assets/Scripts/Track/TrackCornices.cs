@@ -227,7 +227,7 @@ namespace SomeGame.Track
                 if (to > 6f || past > 2f) continue;
                 bool fallen = Track.Clock >= chunk.FallAt - Sag;
                 // A careful rival keeps off the lip altogether; a careless one only once it has gone.
-                if (!fallen && MeshKit.Hash(chunk.From, (car.name.GetHashCode() & 0xFFFF)) > skill + 0.25f) continue;
+                if (!fallen && MeshKit.Hash(chunk.From, (car.name.GetHashCode() & 0xFFFF)) > skill + 0.1f) continue;
                 float limit = track.HalfWidthAt(ahead) - chunk.Width - 1.4f;
                 if (lateral * chunk.Side > limit) lateral = chunk.Side * limit;
             }

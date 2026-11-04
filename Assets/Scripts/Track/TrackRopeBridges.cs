@@ -17,8 +17,8 @@ namespace SomeGame.Track
         const int ShadowOrder = -52, PillarOrder = -51, DeckOrder = -45, RopeOrder = -44;
         static readonly Color Plank = MeshKit.Hex("9C6B3E"), PlankDark = MeshKit.Hex("7E5530"), PlankLight = MeshKit.Hex("B5814E"),
             Seam = MeshKit.Hex("2A1A0E"), Rope = MeshKit.Hex("D9C29A"), RopeDark = MeshKit.Hex("8C7550"), Post = MeshKit.Hex("5A3B20"),
-            Rock = MeshKit.Hex("6E7684"), RockLight = MeshKit.Hex("9AA3B2"), RockDark = MeshKit.Hex("434A57"), SnowCap = MeshKit.Hex("F4F8FC"),
-            Shadow = new Color(0.02f, 0.04f, 0.1f, 0.28f);
+            Rock = MeshKit.Hex("8A93A3"), RockLight = MeshKit.Hex("B4BCC8"), RockDark = MeshKit.Hex("5E6676"), SnowCap = MeshKit.Hex("F4F8FC"),
+            Shadow = new Color(0.02f, 0.04f, 0.1f, 0.16f);
 
         class Bridge
         {
@@ -75,8 +75,18 @@ namespace SomeGame.Track
                     float dir = end == data.from ? -1f : 1f;
                     Vector2 c = path.PointAt(end + dir * 3.5f), n = path.NormalAt(end);
                     float r = Mathf.Max(half + data.sway, track.HalfWidthAt(end - dir * 2f)) + 2.2f;
-                    kit.Disc(c, new Vector2(5.5f, r), Mathf.Atan2(path.TangentAt(end).y, path.TangentAt(end).x) * Mathf.Rad2Deg, RockLight, RockDark, 26);
-                    kit.Disc(c + n * 0.6f, new Vector2(3.6f, r * 0.75f), Mathf.Atan2(path.TangentAt(end).y, path.TangentAt(end).x) * Mathf.Rad2Deg, SnowCap, Rock, 20);
+                    // a ragged outcrop: lit rock, darker towards its foot, snow lying on top
+                    float ang = Mathf.Atan2(path.TangentAt(end).y, path.TangentAt(end).x);
+                    Vector2 ax = new(Mathf.Cos(ang), Mathf.Sin(ang)), ay = new(-ax.y, ax.x);
+                    const int m = 22;
+                    for (int q = 0; q < m; q++)
+                    {
+                        float u0 = q * Mathf.PI * 2f / m, u1 = (q + 1) * Mathf.PI * 2f / m;
+                        float j0 = 1f + 0.16f * Mathf.Sin(q * 2.7f + end), j1 = 1f + 0.16f * Mathf.Sin((q + 1) * 2.7f + end);
+                        Vector2 e0 = c + ax * Mathf.Cos(u0) * 6f * j0 + ay * Mathf.Sin(u0) * r * j0, e1 = c + ax * Mathf.Cos(u1) * 6f * j1 + ay * Mathf.Sin(u1) * r * j1;
+                        kit.Tri(c, e0, e1, RockLight, Mathf.Sin(u0) < 0f ? RockDark : Rock, Mathf.Sin(u1) < 0f ? RockDark : Rock);
+                    }
+                    kit.Disc(c + ay * 0.8f + ax * 0.5f, new Vector2(4.2f, r * 0.7f), ang * Mathf.Rad2Deg, SnowCap, new Color(SnowCap.r, SnowCap.g, SnowCap.b, 0.85f), 20);
                 }
                 MeshKit.Part(root, "BridgePillars", kit.Build("BridgePillars"), plain, PillarOrder, out _);
 
@@ -225,7 +235,7 @@ namespace SomeGame.Track
                 // Aim where the deck will be when the car gets there: a skilled rival reads the swing ahead, a weak one
                 // follows it late (and sometimes drops off).
                 float lead = Mathf.Max(0f, path.DeltaDistance(distance, ahead)) / v;
-                float when = Track.Clock + Mathf.Lerp(-0.35f, lead, skill);
+                float when = Track.Clock + Mathf.Lerp(-0.9f, lead, skill);
                 float target = Offset(b.Data, when);
                 lateral = to > 0f ? Mathf.Lerp(lateral, target, Mathf.InverseLerp(14f, 0f, to)) : target;
                 speed = Mathf.Min(speed, top * Mathf.Lerp(0.72f, 0.92f, skill));
