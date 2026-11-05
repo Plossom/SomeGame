@@ -1324,7 +1324,7 @@ namespace SomeGame.EditorTools
             if (mountain == null) mountain = track.gameObject.AddComponent<SomeGame.Track.TrackMountain>();
             Configure(mountain, ("track", track), ("plain", Mat("Plain")), ("floorMaterial", Mat("FloorRock")),
                 ("crystalSprite", Sprite("IceCrystal")), ("stalagmiteSprite", Sprite("Stalagmite")), ("glowSprite", Sprite("Glow")),
-                ("boulderSprite", Sprite("CaveBoulder")), ("particleMaterial", particles));
+                ("boulderSprite", Sprite("CaveBoulder")), ("particleMaterial", particles), ("snowMaterial", Mat("SnowGround")));
             // The fjord that breaks up lap by lap, and the ways round that open on later laps.
             var fjord = track.GetComponent<SomeGame.Track.FjordIce>();
             if (fjord == null) fjord = track.gameObject.AddComponent<SomeGame.Track.FjordIce>();

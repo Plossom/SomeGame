@@ -21,7 +21,7 @@ namespace SomeGame.Track
 
         const int RunnerOrder = -47, InlayOrder = -46, GlassOrder = -46, CrackOrder = -45, DoorOrder = 46, LampOrder = 47, // doors over the roof: seen from outside
             PinOrder = 6, BallOrder = 7;
-        const float PaneLength = 3f, PaneWidth = 2.6f, CrackTime = 0.35f, BrokenTime = 7f, DoorSlide = 0.45f, DoorThickness = 0.55f,
+        const float PaneLength = 3.5f, PaneWidth = 2.6f, CrackTime = 0.35f, BrokenTime = 7f, DoorSlide = 0.45f, DoorThickness = 0.55f,
             PinRadius = 0.3f, PinSpacing = 0.72f, BowlRadius = 0.85f, CarRadius = 0.95f;
 
         // Vertex colours are linear (the project renders in linear space): these are the colours as seen on screen.
@@ -88,7 +88,7 @@ namespace SomeGame.Track
             public TrackLayout.GlassFloor Floor;
             public int Row, Column, Columns;
             public float From, To, Left, Right; // lap distances, laterals (left > right)
-            public bool Cracked;
+            public bool Cracked, Lane;
             public float BreakAt = float.PositiveInfinity, BrokenUntil = -1f;
             public bool Broken => BrokenUntil > Track.Clock;
             public bool Breaking => !float.IsPositiveInfinity(BreakAt);
@@ -124,6 +124,7 @@ namespace SomeGame.Track
             base.OnDisable();
             Track.Guides.Remove(this);
             if (Track.GlassHole == (System.Func<Vector2, bool>)GlassHoleAt) Track.GlassHole = null;
+            if (Track.NoRespawn == (System.Func<float, bool>)OnGlass) Track.NoRespawn = null;
         }
 
         protected override void Start()
@@ -141,6 +142,7 @@ namespace SomeGame.Track
             _parts.Clear(); _doors.Clear(); System.Array.Clear(_billiardMeshes, 0, _billiardMeshes.Length); _ballMesh = null; _lanes.Clear(); _balls.Clear(); _billiards.Clear(); _panes.Clear(); _windows.Clear();
             _glassMesh = _crackMesh = null;
             if (Track.GlassHole == (System.Func<Vector2, bool>)GlassHoleAt) Track.GlassHole = null;
+            if (Track.NoRespawn == (System.Func<float, bool>)OnGlass) Track.NoRespawn = null;
             bool any = layout.houses != null && layout.houses.Exists(h => h.roof == TrackLayout.RoofKind.Chalet)
                        || layout.slidingDoors is { Count: > 0 } || layout.pools is { Count: > 0 } || layout.bowling is { Count: > 0 }
                        || layout.billiards is { Count: > 0 } || layout.glassFloors is { Count: > 0 };
@@ -742,6 +744,7 @@ namespace SomeGame.Track
         void BuildGlass(TrackPath path, TrackLayout layout)
         {
             float xMin = float.MaxValue, yMin = float.MaxValue, xMax = float.MinValue, yMax = float.MinValue;
+            int lane = 0;
             foreach (var floor in layout.glassFloors)
             {
                 float length = path.DeltaDistance(floor.from, floor.to);
@@ -752,20 +755,21 @@ namespace SomeGame.Track
                     float d0 = floor.from + row * rowLength, d1 = d0 + rowLength;
                     float w = track.OffRoadAt(d0 + rowLength * 0.5f);
                     int columns = Mathf.Max(2, Mathf.RoundToInt(2f * w / PaneWidth));
-                    int crackedInRow = 0;
-                    var rowPanes = new List<Pane>();
+                    // A line of sound panes winds across the floor (a column at most every other row): read it and you
+                    // get across; everything else may be cracked.
+                    if (row == 0) lane = (int)(Hash(floor.seed * 31 + 5) * columns) % columns;
+                    else if (row % 2 == 0)
+                    {
+                        float h = Hash(floor.seed * 17 + row * 7);
+                        lane = Mathf.Clamp(lane + (h < 0.4f ? -1 : h > 0.6f ? 1 : 0), 0, columns - 1);
+                    }
                     for (int col = 0; col < columns; col++)
                     {
                         float left = w - col * 2f * w / columns, right = left - 2f * w / columns;
                         float h = Hash(floor.seed * 7919 + row * 131 + col * 17);
-                        bool cracked = row > 0 && row < rows - 1 && h < floor.cracked;
-                        var pane = new Pane { Floor = floor, Row = row, Column = col, Columns = columns, From = d0, To = d1, Left = left, Right = right, Cracked = cracked };
-                        if (cracked) crackedInRow++;
-                        rowPanes.Add(pane);
+                        bool cracked = row > 0 && row < rows - 1 && col != lane && h < floor.cracked;
+                        _panes.Add(new Pane { Floor = floor, Row = row, Column = col, Columns = columns, From = d0, To = d1, Left = left, Right = right, Cracked = cracked, Lane = col == lane });
                     }
-                    // Never a whole row cracked: one pane always holds.
-                    if (crackedInRow == columns) rowPanes[(int)(Hash(floor.seed + row * 3) * columns) % columns].Cracked = false;
-                    _panes.AddRange(rowPanes);
                     for (float s = d0; s <= d1; s += 2f)
                     {
                         Vector2 p = path.PointAt(s);
@@ -778,7 +782,7 @@ namespace SomeGame.Track
             _glassMesh = Part("GlassFloor", new Mesh(), plain, GlassOrder).GetComponent<MeshFilter>();
             _crackMesh = Part("GlassCracks", new Mesh(), plain, CrackOrder).GetComponent<MeshFilter>();
             RebuildGlass();
-            if (Application.isPlaying) Track.GlassHole = GlassHoleAt;
+            if (Application.isPlaying) { Track.GlassHole = GlassHoleAt; Track.NoRespawn = OnGlass; }
         }
 
         static float Hash(int n)
@@ -820,22 +824,23 @@ namespace SomeGame.Track
                 }
                 else
                 {
-                    Color tint = pane.Breaking ? new Color(1f, 1f, 1f, 0.35f) : Glass;
+                    // Cracked panes are frosted white (you can tell them from the clear ones); one about to go flashes.
+                    Color tint = pane.Breaking ? new Color(1f, 1f, 1f, 0.55f) : pane.Cracked ? new Color(0.9f, 0.96f, 1f, 0.34f) : Glass;
                     glass.Quad(a, b, c, e, tint);
                     glass.Quad(Vector2.Lerp(a, b, 0.1f), Vector2.Lerp(a, b, 0.24f), Vector2.Lerp(e, c, 0.56f), Vector2.Lerp(e, c, 0.42f), GlassShine);
                     if (pane.Cracked)
                     {
                         // A star of cracks from a point off the middle.
                         Vector2 hit = Vector2.Lerp(Vector2.Lerp(a, b, 0.3f + 0.4f * Frac(seed * 2.3f)), Vector2.Lerp(e, c, 0.3f + 0.4f * Frac(seed * 2.3f)), 0.3f + 0.4f * Frac(seed * 3.1f));
-                        int rays = pane.Breaking ? 9 : 6;
+                        int rays = pane.Breaking ? 8 : 5;
                         for (int r = 0; r < rays; r++)
                         {
                             float ang = r * Mathf.PI * 2f / rays + Frac(seed + r) * 0.6f;
                             Vector2 dir = new(Mathf.Cos(ang), Mathf.Sin(ang));
                             float len = 0.7f + 0.8f * Frac(seed * 1.3f + r * 0.7f);
                             Vector2 bend = hit + dir * len * 0.5f + new Vector2(-dir.y, dir.x) * 0.12f;
-                            cracks.Line(hit, bend, 0.05f, Crack);
-                            cracks.Line(bend, hit + dir * len, 0.04f, Crack);
+                            cracks.Line(hit, bend, 0.09f, Crack);
+                            cracks.Line(bend, hit + dir * len, 0.07f, Crack);
                         }
                         cracks.Ring(hit, 0.22f, 0.27f, Crack, 10);
                     }
@@ -865,6 +870,15 @@ namespace SomeGame.Track
                 if (path.DeltaDistance(pane.From, d) >= 0f && path.DeltaDistance(d, pane.To) >= 0f && lateral <= pane.Left && lateral >= pane.Right)
                     return pane;
             return null;
+        }
+
+        // On a glass floor (or just before one): no place to set a car down after a fall.
+        bool OnGlass(float d)
+        {
+            var path = track.Path;
+            foreach (var floor in track.Layout.glassFloors)
+                if (path.DeltaDistance(floor.from - 3f, d) >= 0f && path.DeltaDistance(d, floor.to + 1f) >= 0f) return true;
+            return false;
         }
 
         bool GlassHoleAt(Vector2 p)
@@ -1052,12 +1066,12 @@ namespace SomeGame.Track
                 float bestScore = float.MaxValue;
                 foreach (var pane in _panes)
                 {
-                    // The row a few metres ahead: the pane to aim for.
+                    // The row a few metres ahead: the sound pane to aim for (the line of them, unless one has broken).
                     float to = path.DeltaDistance(distance, (pane.From + pane.To) * 0.5f);
-                    if (to < 3f || to > 11f) continue;
+                    if (to < 2f || to > 9f) continue;
                     if (bestPane != null && bestPane.Row != pane.Row) continue;
                     if (pane.Cracked || pane.Broken) continue;
-                    float score = Mathf.Abs((pane.Left + pane.Right) * 0.5f - lateral);
+                    float score = (pane.Lane ? 0f : 10f) + Mathf.Abs((pane.Left + pane.Right) * 0.5f - lateral);
                     if (bestPane == null || score < bestScore) { bestPane = pane; bestScore = score; }
                 }
                 if (bestPane != null)

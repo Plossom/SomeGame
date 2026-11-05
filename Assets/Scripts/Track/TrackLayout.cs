@@ -463,6 +463,11 @@ namespace SomeGame.Track
             [Tooltip("Pull towards the eye (m/s per second, strongest near the eye).")]
             public float pull = 5f;
         }
+        [Header("The abyss")]
+        [Tooltip("The whole world is the abyss: only the road, the chalets and the islands stand - drive off anywhere else and you fall.")]
+        public bool abyss;
+        [Tooltip("Islands of snowy rock in the abyss (outlines): plateaus, pillars; the scenery stands on them.")]
+        public List<Chasm> islands = new();
         [Header("Split landings")]
         [Tooltip("The road forks round a drop in its middle (lap distances from, to): the drop is 'width' wide at 'from' and closes " +
                  "to a point at 'to', where the two narrow roads either side meet again (a Y junction). Land in the middle and you fall.")]

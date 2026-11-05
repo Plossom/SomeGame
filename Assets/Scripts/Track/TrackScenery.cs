@@ -327,7 +327,7 @@ namespace SomeGame.Track
         bool InMountain(TrackLayout layout, Vector2 p, float size)
         {
             float r = size * 0.5f + 1f;
-            if (layout.chasms is { Count: > 0 })
+            if (layout.chasms is { Count: > 0 } || layout.abyss)
             {
                 if (track.ChasmAt(p)) return true;
                 for (int k = 0; k < 8; k++)

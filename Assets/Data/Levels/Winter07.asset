@@ -19,12 +19,12 @@ MonoBehaviour:
   preview: {fileID: 21300000, guid: 89081d97108664b77853a75f08c5531d, type: 3}
   laps: 1
   description: 'Freeride through the mountains and straight through three luxury chalets: dodge the robot vacuums in the Lodge, time the sliding doors and fly out of the gallery''s panoramic window; carve the snow park''s kickers and rails and swipe four tricks over the gorge; bounce through the bumper bowl, hop the floating platforms over the river, slide across the Spa''s marble between the hot tubs and swipe three tricks over the indoor pool; on the stormy ridge steer in the air onto one fork of the split landing, swipe five tricks, then bowl a STRIKE in the Party Chalet, spin across the disco floor and steer the last split jump home!'
-  difficulty: 3
+  difficulty: 4
   rivalCount: 7
-  rivalSpeedScale: 0.95
+  rivalSpeedScale: 1
   rivalCornerScale: 1
   starsRequired: 28
   starTimes:
-  - 144
-  - 121
-  - 112
+  - 149
+  - 136
+  - 125

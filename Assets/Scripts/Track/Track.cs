@@ -695,6 +695,9 @@ namespace SomeGame.Track
             return false;
         }
 
+        /// <summary>Lap distances where a car is never set down after a fall (a glass floor: it would be put on a cracked pane).</summary>
+        public static System.Func<float, bool> NoRespawn;
+
         /// <summary>A cracked pane of a glass floor that has shattered: the abyss, open (set by the chalets).</summary>
         public static System.Func<Vector2, bool> GlassHole;
 
@@ -763,6 +766,15 @@ namespace SomeGame.Track
             {
                 var point = Path.Project(p);
                 if (Mathf.Abs(point.Lateral) < SplitHalf(point.Distance)) return true;
+            }
+            if (layout.abyss)
+            {
+                // Everything is the drop but the rooms and the islands.
+                if (InRoom(p)) return false;
+                if (layout.islands != null)
+                    foreach (var island in layout.islands)
+                        if (island.points != null && island.points.Length >= 3 && island.Contains(p)) return false;
+                return true;
             }
             if (layout.chasms == null) return false;
             if (InRoom(p)) return false; // a chalet over the abyss stands on its own floor (a glass one too)
@@ -961,7 +973,7 @@ namespace SomeGame.Track
                 float to = Path.DeltaDistance(distance, jump.RampStart);
                 if (to > -25f && to < 40f) { d = jump.FarBank + 3f; break; }
             }
-            for (int i = 0; i < 40 && (IsWater(Path.PointAt(d)) || InGap(d) || OilNear(d)); i++) d += 2f;
+            for (int i = 0; i < 40 && (IsWater(Path.PointAt(d)) || InGap(d) || OilNear(d) || NoRespawn != null && NoRespawn(d)); i++) d += 2f;
             Vector2 forward = Path.TangentAt(d);
             return new Pose(Path.PointAt(d), Quaternion.Euler(0f, 0f, Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg - 90f));
         }
@@ -975,7 +987,7 @@ namespace SomeGame.Track
             float d = distance - back;
             for (int i = 0; i < 40; i++)
             {
-                bool blocked = IsWater(Path.PointAt(d)) || OilNear(d);
+                bool blocked = IsWater(Path.PointAt(d)) || OilNear(d) || NoRespawn != null && NoRespawn(d);
                 foreach (var jump in Jumps)
                     if (Path.DeltaDistance(jump.RampStart - runUp, d) >= 0f && Path.DeltaDistance(d, jump.FarBank) >= 0f) blocked = true;
                 if (!blocked) break;

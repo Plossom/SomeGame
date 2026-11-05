@@ -117,8 +117,8 @@ namespace SomeGame.Track
         bool Racing => _race != null && _race.State == SomeGame.Race.RaceState.Racing;
 
         // Cars the weather can get at: on the ground, on the road (not up on a train, riding, being carried, in a cave).
-        static bool Exposed(CarMovement car, TrackSensor sensor) =>
-            car != null && car.isActiveAndEnabled && sensor != null && !car.IsAirborne && !sensor.Aboard && sensor.Branch < 0;
+        bool Exposed(CarMovement car, TrackSensor sensor) =>
+            car != null && car.isActiveAndEnabled && sensor != null && !car.IsAirborne && !sensor.Aboard && sensor.Branch < 0 && !track.InRoom(car.Body.position);
 
         void Update()
         {
@@ -127,6 +127,7 @@ namespace SomeGame.Track
             float d = sensor != null ? sensor.Current.Distance : 0f;
             float here = StormAt(d, out bool lightning, out var storm);
             if (track.InGap(d) && here <= 0f) here = _intensity; // over a gap: no change
+            if (track.InRoom(_player.Body.position)) here = 0f; // indoors (a chalet): sheltered
             _intensity = Mathf.MoveTowards(_intensity, here, Time.deltaTime * 0.6f);
             WinterFx.Storm = _intensity;
             float dark = TrackJourney.Darkness;
@@ -182,7 +183,7 @@ namespace SomeGame.Track
             float speed = Mathf.Max(8f, _player.Body.linearVelocity.magnitude);
             // Where the player will be when it hits (give or take): a fair chance to steer round it.
             float d = path.WrapDistance(sensor.Current.Distance + speed * StrikeWarn * Random.Range(0.85f, 1.1f));
-            if (track.InGap(d)) return;
+            if (track.InGap(d) || track.InRoom(path.PointAt(d))) return;
             float lat = Mathf.Clamp(sensor.Current.Lateral + Random.Range(-1.5f, 1.5f), -track.HalfWidthAt(d), track.HalfWidthAt(d));
             var at = path.PointAt(d) + path.NormalAt(d) * lat;
             var ring = Part("StrikeRing", _ringSprite, at, radius * 2.3f, RingOrder);

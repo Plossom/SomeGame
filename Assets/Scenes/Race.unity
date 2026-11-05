@@ -21382,6 +21382,7 @@ MonoBehaviour:
   glowSprite: {fileID: 21300000, guid: dcd2f204b8e2340f8a6162136def2c45, type: 3}
   boulderSprite: {fileID: 21300000, guid: 315dbce43124b4a00a8cad83638be581, type: 3}
   particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
+  snowMaterial: {fileID: 2100000, guid: 9e2a182a1e9174a4f9f5d9bee32406b1, type: 2}
 --- !u!114 &1295174586
 MonoBehaviour:
   m_ObjectHideFlags: 0

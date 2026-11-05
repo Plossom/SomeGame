@@ -53,7 +53,7 @@ namespace SomeGame.Track
                 if (room.upper) Part("UpperShadow", Quad(room.min + new Vector2(0.8f, -1.6f), room.max + new Vector2(0.8f, -1.6f), new Color(0f, 0f, 0f, 0.35f)), plain, FloorOrder - 1);
                 int k = Mathf.Clamp((int)room.floor, 0, floors.Length - 1);
                 // An ice floor (ice palace hall) covers the road too: the car slides over the bare ice.
-                // A glass floor lies over the abyss below it (drawn over the chasm, under the road).
+                // A glass floor lies over the abyss below it (drawn over the chasm, under the road; nothing stands on it).
                 int order = room.floor == TrackLayout.FloorKind.Ice ? IceFloorOrder : room.floor == TrackLayout.FloorKind.Glass ? GlassFloorOrder : FloorOrder;
                 Part("Floor", Floor(room.min, room.max, room.upper ? 1f : 0.93f), floors[k], order);
             }

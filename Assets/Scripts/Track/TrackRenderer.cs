@@ -104,7 +104,7 @@ namespace SomeGame.Track
             if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path, keep));
             Assign(startLine, BuildStartLine(path, hw));
             if (gridLines != null) Assign(gridLines, BuildGrid(path, layout));
-            if (runoff != null) Assign(runoff, water ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path));
+            if (runoff != null) Assign(runoff, water || layout.abyss ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path));
             if (centerLine != null)
             {
                 float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / centerLineCycle));
@@ -114,7 +114,8 @@ namespace SomeGame.Track
             bool snow = layout.biome == TrackLayout.Biome.Snow && !water;
             Rect area = Expand(path.Bounds(), layout.boundaryMargin);
             Assign(grass, BuildGrass(Expand(area, grassOverscan), water, snow));
-            if (Application.isPlaying && Camera.main != null) Camera.main.backgroundColor = water ? waterBackground : snow ? snowBackground : grassBackground;
+            if (Application.isPlaying && Camera.main != null)
+                Camera.main.backgroundColor = layout.abyss ? new Color(0.14f, 0.18f, 0.27f) : water ? waterBackground : snow ? snowBackground : grassBackground;
             var groundRenderer = grass != null ? grass.GetComponent<MeshRenderer>() : null;
             if (groundRenderer != null && grassMaterial != null && waterMaterial != null)
                 groundRenderer.sharedMaterial = water ? waterMaterial : snow && snowGround != null ? snowGround : grassMaterial;

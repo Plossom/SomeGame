@@ -19,8 +19,10 @@ namespace SomeGame.Track
         [SerializeField] Material floorMaterial;
         [SerializeField] Sprite crystalSprite, stalagmiteSprite, glowSprite, boulderSprite;
         [SerializeField] Material particleMaterial;
+        [Tooltip("Snow (tiled): the islands in an abyss world.")]
+        [SerializeField] Material snowMaterial;
 
-        const int ChasmOrder = -54, ChasmRimOrder = -53, SplitOrder = -45, FloorOrder = -53, WallOrder = -40,
+        const int ChasmOrder = -54, ChasmRimOrder = -53, SplitOrder = -45, AbyssOrder = -98, IslandOrder = -97, FloorOrder = -53, WallOrder = -40,
                   StalagmiteOrder = 7, DarkOrder = 50, CrystalOrder = 51, GlowOrder = 52, FlankOrder = -42;
         const float FloorMargin = 1.2f, WallWidth = 2.4f, DuskAlpha = 0.2f;
 
@@ -70,7 +72,8 @@ namespace SomeGame.Track
                     if (route.HasValue && route.Value.Span > 2f) BuildCave(cave, route.Value);
                     _group = null;
                 }
-            if (Application.isPlaying && layout.chasms is { Count: > 0 } && particleMaterial != null) BuildMist(layout);
+            if (layout.abyss) BuildAbyss(path, layout);
+            if (Application.isPlaying && (layout.chasms is { Count: > 0 } || layout.abyss) && particleMaterial != null) BuildMist(layout);
         }
 
         Route? RouteOf(TrackPath path, TrackLayout layout, TrackLayout.Cave cave)
@@ -90,6 +93,82 @@ namespace SomeGame.Track
         }
 
         // ------------------------------------------------------------------ chasms
+
+        // An abyss world: the depths everywhere (faint streaks of rock far below), the islands of snowy rock standing in it,
+        // each with its snow cornice and the cliff dropping away round it.
+        void BuildAbyss(TrackPath path, TrackLayout layout)
+        {
+            Rect area = path.Bounds();
+            float m = layout.boundaryMargin + 80f;
+            area = Rect.MinMaxRect(area.xMin - m, area.yMin - m, area.xMax + m, area.yMax + m);
+            var v = new List<Vector3>(); var c = new List<Color>(); var t = new List<int>();
+            AddQuad(new Vector2(area.xMin, area.yMin), new Vector2(area.xMax, area.yMin), new Vector2(area.xMax, area.yMax), new Vector2(area.xMin, area.yMax), Depth, Depth, Depth, Depth, v, c, t);
+            // Far below: long pale ribs of rock and drifts of mist, all one way (it reads as depth).
+            var random = new System.Random(layout.islands != null ? layout.islands.Count * 97 + 13 : 13);
+            float R() => (float)random.NextDouble();
+            var streak = new Color(0.2f, 0.25f, 0.36f).linear;
+            var haze = new Color(0.27f, 0.33f, 0.46f).linear;
+            int n = Mathf.RoundToInt(area.width * area.height / 900f);
+            for (int i = 0; i < n; i++)
+            {
+                Vector2 p = new(Mathf.Lerp(area.xMin, area.xMax, R()), Mathf.Lerp(area.yMin, area.yMax, R()));
+                float len = 6f + R() * 18f, w = 0.6f + R() * 1.6f;
+                Vector2 dir = new Vector2(0.94f, -0.34f), n2 = new Vector2(-dir.y, dir.x);
+                var col = R() < 0.6f ? streak : haze;
+                var clear = new Color(col.r, col.g, col.b, 0f);
+                AddQuad(p - dir * len - n2 * w, p + dir * len - n2 * w, p + dir * len + n2 * w, p - dir * len + n2 * w, clear, clear, col, col, v, c, t);
+            }
+            Part("AbyssDepth", MakeMesh("AbyssDepth", v, c, t, both: true), plain, AbyssOrder);
+            if (layout.islands == null) return;
+            foreach (var island in layout.islands)
+                if (island.points != null && island.points.Length >= 3) BuildIsland(island);
+        }
+
+        void BuildIsland(TrackLayout.Chasm island)
+        {
+            var outline = Resample(island.points, 1.5f);
+            int n = outline.Count;
+            if (n < 3) return;
+            float area = 0f;
+            for (int i = 0; i < n; i++) area += Cross(outline[i], outline[(i + 1) % n]);
+            float outward = area > 0f ? -1f : 1f; // counter-clockwise: the outside is to the right
+            // The snow on top, tiled like the ground.
+            var v = new List<Vector3>(); var c = new List<Color>(); var t = new List<int>();
+            foreach (var tri in Triangulate(outline))
+            {
+                int k = v.Count;
+                foreach (int idx in tri) { v.Add(outline[idx]); c.Add(Color.white); }
+                t.Add(k); t.Add(k + 1); t.Add(k + 2);
+            }
+            var top = MakeMesh("IslandTop", v, c, t, both: true);
+            var uv = new Vector2[top.vertexCount];
+            var verts = top.vertices;
+            for (int i = 0; i < uv.Length; i++) uv[i] = (Vector2)verts[i] / 4f;
+            top.uv = uv;
+            Part("IslandTop", top, snowMaterial != null ? snowMaterial : plain, IslandOrder);
+            // The cliff round it: a band of rock falling away into the dark, strata in it; the cornice along the top.
+            v.Clear(); c.Clear(); t.Clear();
+            var cliff = new Vector2[n];
+            var lip = new Vector2[n];
+            for (int i = 0; i < n; i++)
+            {
+                Vector2 dir = (outline[(i + 1) % n] - outline[(i - 1 + n) % n]).normalized;
+                Vector2 right = new(dir.y, -dir.x);
+                float jag = Noise1(i * 0.7f, island.points[0].y);
+                cliff[i] = outline[i] + right * outward * (3.2f + jag * 2.2f);
+                lip[i] = outline[i] - right * outward * (0.7f + jag * 0.4f);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                int j = (i + 1) % n;
+                float band = Mathf.Repeat(i * 0.37f, 1f) < 0.5f ? 1f : 0.88f;
+                AddQuad(outline[i], outline[j], cliff[j], cliff[i], RimRock * band, RimRock * band, Depth, Depth, v, c, t);
+                Vector2 e0 = Vector2.Lerp(outline[i], cliff[i], 0.08f), e1 = Vector2.Lerp(outline[j], cliff[j], 0.08f);
+                AddQuad(outline[i], outline[j], e1, e0, Edge, Edge, Edge, Edge, v, c, t);
+                AddQuad(lip[i], lip[j], outline[j], outline[i], Cornice, Cornice, Cornice, Cornice, v, c, t);
+            }
+            Part("IslandCliff", MakeMesh("IslandCliff", v, c, t, both: true), plain, IslandOrder + 1);
+        }
 
         void BuildSplit(TrackPath path, TrackLayout.Split split)
         {
