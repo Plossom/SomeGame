@@ -40,9 +40,6 @@ namespace SomeGame.CameraRig
         /// <summary>Extra offset added after smoothing (camera shake).</summary>
         public Vector2 Offset { get; set; }
 
-        /// <summary>How much wider the track wants the view right now (a reveal of what lies ahead): 1 = normal.</summary>
-        public static float SceneZoom { get; set; } = 1f;
-
         public float OrthographicSize
         {
             get => orthographicSize;
@@ -97,7 +94,6 @@ namespace SomeGame.CameraRig
                 if (_targetCar.IsRiding)
                     wanted = _targetCar.CurrentRide == SomeGame.Car.RideKind.Lift ? rideZoom : _targetCar.CurrentRide == SomeGame.Car.RideKind.Flume ? 1.25f : wanted;
             }
-            wanted *= SceneZoom; // a view over what lies ahead (set by the track)
             _speedZoom = Mathf.SmoothDamp(_speedZoom, wanted, ref _speedZoomVelocity, 0.6f, Mathf.Infinity, dt);
             _focus = Vector2.SmoothDamp(_focus, (Vector2)target.transform.position, ref _focusVelocity, followSmoothTime, Mathf.Infinity, dt);
             Apply();

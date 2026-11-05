@@ -672,7 +672,6 @@ namespace SomeGame.Track
         public bool IsWater(Vector2 p, TrackPoint? near)
         {
             if (HoleAt(p)) return true;
-            if (Hazards.Count > 0 && HazardVoid(p, near ?? Path.Project(p))) return true;
             if (FjordOn && FjordWater(p)) return true;
             bool river = RiverDistance(p) < 0f;
             if (river && Jumps != null && _bridges.Count == 0) return true;
@@ -685,59 +684,6 @@ namespace SomeGame.Track
             bool gap = OpenGapAt(point.Distance) >= 0;
             if (roadHere && !gap) return false;
             return river || lake || layout.waterWorld || gap && roadHere;
-        }
-
-        // ------------------------------------------------------------------ hazards that come and go (the high mountains)
-
-        /// <summary>
-        /// Something on the track that opens a hole now and then (thin ice that breaks, a cornice that falls away, a
-        /// swaying bridge deck you can drive off): it says where a car falls right now, and how a rival gets past it.
-        /// </summary>
-        public interface IHazard
-        {
-            /// <summary>True if a car on the ground at <paramref name="p"/> (on the road at <paramref name="near"/>) falls now.</summary>
-            bool VoidAt(Vector2 p, TrackPoint near);
-            /// <summary>
-            /// A rival at lap distance <paramref name="distance"/>, steering for <paramref name="ahead"/>: where across the road to
-            /// aim there (<paramref name="lateral"/>) and how fast to go (<paramref name="speed"/>). <paramref name="skill"/> 0..1:
-            /// how well it reads the hazard (the weaker ones make mistakes).
-            /// </summary>
-            void Guide(SomeGame.Car.CarMovement car, float skill, float distance, float ahead, ref float lateral, ref float speed);
-        }
-
-        /// <summary>A hazard whose holes are water (a car falling through splashes, as in a lake).</summary>
-        public interface IWetHazard
-        {
-            bool WetAt(Vector2 p);
-        }
-
-        /// <summary>True where a hazard has opened water under a point (broken thin ice).</summary>
-        public bool HazardWet(Vector2 p)
-        {
-            foreach (var hazard in Hazards)
-                if (hazard is IWetHazard wet && wet.WetAt(p)) return true;
-            return false;
-        }
-
-        /// <summary>The hazards on this track (they add themselves).</summary>
-        public readonly List<IHazard> Hazards = new();
-
-        bool HazardVoid(Vector2 p, TrackPoint near)
-        {
-            foreach (var hazard in Hazards)
-                if (hazard.VoidAt(p, near)) return true;
-            return false;
-        }
-
-        /// <summary>True where the road is not drawn: a rope bridge's deck, a tilting slab or the shuttle floes take its place (and draw themselves).</summary>
-        public bool RoadHidden(float distance)
-        {
-            if (layout == null) return false;
-            bool In(float from, float to) => Path.DeltaDistance(from, distance) >= 0f && Path.DeltaDistance(distance, to) >= 0f;
-            if (layout.ropeBridges != null) foreach (var b in layout.ropeBridges) if (In(b.from, b.to)) return true;
-            if (layout.tiltSlabs != null) foreach (var s in layout.tiltSlabs) if (In(s.from, s.to)) return true;
-            if (layout.shuttles != null) foreach (var s in layout.shuttles) if (In(s.from, s.to)) return true;
-            return false;
         }
 
         /// <summary>True inside a chasm's outline (whether or not the road crosses there).</summary>

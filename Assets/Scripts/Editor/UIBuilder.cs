@@ -1365,42 +1365,6 @@ namespace SomeGame.EditorTools
             var platforms = track.GetComponent<SomeGame.Track.TrackPlatforms>();
             if (platforms == null) platforms = track.gameObject.AddComponent<SomeGame.Track.TrackPlatforms>();
             Configure(platforms, ("track", track), ("plain", Mat("Plain")));
-            // The high mountains: thin ice, cornices, rope bridges, the ski-flying hill.
-            var thinIce = track.GetComponent<SomeGame.Track.TrackThinIce>();
-            if (thinIce == null) thinIce = track.gameObject.AddComponent<SomeGame.Track.TrackThinIce>();
-            Configure(thinIce, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
-            var cornices = track.GetComponent<SomeGame.Track.TrackCornices>();
-            if (cornices == null) cornices = track.gameObject.AddComponent<SomeGame.Track.TrackCornices>();
-            Configure(cornices, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
-            var ropeBridges = track.GetComponent<SomeGame.Track.TrackRopeBridges>();
-            if (ropeBridges == null) ropeBridges = track.gameObject.AddComponent<SomeGame.Track.TrackRopeBridges>();
-            Configure(ropeBridges, ("track", track), ("plain", Mat("Plain")));
-            var skiHill = track.GetComponent<SomeGame.Track.TrackSkiFlying>();
-            if (skiHill == null) skiHill = track.gameObject.AddComponent<SomeGame.Track.TrackSkiFlying>();
-            Configure(skiHill, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
-            // The citadel: icicle gates, tilting slabs, shuttle floes, the bobsled channel, snowcats.
-            void Citadel<T>(bool withParticles) where T : Component
-            {
-                var c = track.GetComponent<T>();
-                if (c == null) c = track.gameObject.AddComponent<T>();
-                if (withParticles) Configure(c, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
-                else Configure(c, ("track", track), ("plain", Mat("Plain")));
-            }
-            Citadel<SomeGame.Track.TrackPortcullis>(true);
-            Citadel<SomeGame.Track.TrackTiltSlabs>(false);
-            Citadel<SomeGame.Track.TrackShuttles>(false);
-            Citadel<SomeGame.Track.TrackBobsled>(true);
-            Citadel<SomeGame.Track.TrackGroomers>(false);
-            // The high-mountain look: the sea of clouds, cloud shadows, glints, spindrift, camera reveals, grading.
-            var alpine = track.GetComponent<SomeGame.Track.TrackAlpineFx>();
-            if (alpine == null) alpine = track.gameObject.AddComponent<SomeGame.Track.TrackAlpineFx>();
-            var gradeGo = GameObject.Find("TrackGrade");
-            if (gradeGo == null) gradeGo = new GameObject("TrackGrade", typeof(UnityEngine.Rendering.Volume));
-            var gradeVolume = gradeGo.GetComponent<UnityEngine.Rendering.Volume>();
-            gradeVolume.isGlobal = true;
-            gradeVolume.weight = 0f;
-            gradeVolume.sharedProfile = AssetDatabase.LoadAssetAtPath<UnityEngine.Rendering.VolumeProfile>("Assets/Settings/TrackGradeProfile.asset");
-            Configure(alpine, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles), ("grade", gradeVolume));
             // The weather: storms (whiteout, gusts, lightning), snow twisters.
             var storm = track.GetComponent<SomeGame.Track.TrackStorm>();
             if (storm == null) storm = track.gameObject.AddComponent<SomeGame.Track.TrackStorm>();

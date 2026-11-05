@@ -445,127 +445,6 @@ namespace SomeGame.Track
             public float distance, lateral;
             [Min(0.5f)] public float radius = 1.6f;
         }
-
-        [Header("The high mountains")]
-        [Tooltip("Thin ice on the road (ovals, like ice patches): it carries a car that keeps its speed and drives straight; slow down " +
-                 "or drift on it and it cracks under you and breaks - into the water. It freezes over again a few seconds later.")]
-        public List<IcePatch> thinIce = new();
-        [Tooltip("Cornices: the outer strip of the road on a ridge bend is an overhang of snow. Once the first car has passed, it breaks " +
-                 "away (a wave of falling chunks) and the road there is narrower for the rest of the race.")]
-        public List<Cornice> cornices = new();
-        [Serializable]
-        public class Cornice
-        {
-            [Tooltip("Lap distances where the overhang starts and ends.")]
-            public float from, to;
-            [Tooltip("Which side of the road: +1 left, -1 right (the outside of the bend).")]
-            public float side = 1f;
-            [Tooltip("How much of the road's width breaks away.")]
-            [Min(0.5f)] public float width = 2.4f;
-        }
-        [Header("The citadel")]
-        [Tooltip("Icicle gates (portcullises) across the road: a curtain of giant icicles that drops onto the road in a rhythm and " +
-                 "lifts again. Caught under it, you are smashed back out of the gate.")]
-        public List<Portcullis> portcullis = new();
-        [Serializable]
-        public class Portcullis
-        {
-            [Tooltip("Lap distance of the gate.")]
-            public float distance;
-            [Tooltip("Seconds for one cycle (up, a shiver, down, back up).")]
-            [Min(3f)] public float period = 5f;
-            [Tooltip("Shifts its rhythm (0-1 of a cycle).")]
-            public float phase;
-        }
-        [Tooltip("Tilting ice slabs (lap distances from, to): seesaws over the void on a pivot along the road. A car off the middle " +
-                 "tips the slab and slides off its low side; the slab is the road (off it you fall).")]
-        public List<Span> tiltSlabs = new();
-        [Tooltip("Shuttle floes: a gap in the road (lap distances from, to) crossed on ice slabs gliding to and fro between the " +
-                 "pillars. Drive onto one while it is docked, ride it across, get off when it docks at the far side.")]
-        public List<Shuttle> shuttles = new();
-        [Serializable]
-        public class Shuttle
-        {
-            public float from, to;
-            [Tooltip("One slab across the whole gap, or two meeting in the middle (hop from one to the other).")]
-            [Range(1, 2)] public int slabs = 1;
-            [Min(3f)] public float slabLength = 11f;
-            [Tooltip("Seconds a slab waits at each end.")]
-            [Min(0.2f)] public float dwell = 1.6f;
-            [Tooltip("Seconds it takes to glide across.")]
-            [Min(0.5f)] public float travel = 2.6f;
-            public float phase;
-        }
-        [Tooltip("Bobsled channels (lap distances from, to): an ice floor between two curved ice walls. In a bend the cars ride up " +
-                 "the outer wall with their speed; too fast and they fly over its lip.")]
-        public List<Bobsled> bobsleds = new();
-        [Serializable]
-        public class Bobsled
-        {
-            public float from, to;
-            [Min(2f)] public float floor = 5.5f;
-            [Min(0.5f)] public float wall = 2.5f;
-        }
-        [Tooltip("Snowcats grooming the piste (lap distances from, to): big, heavy, slow, changing lanes now and then. They come out " +
-                 "of a snow tunnel at 'from' and go into one at 'to'.")]
-        public List<Groomers> groomers = new();
-        [Serializable]
-        public class Groomers
-        {
-            public float from, to;
-            [Min(1)] public int count = 5;
-            [Tooltip("Their speed (m/s).")]
-            [Min(1f)] public float speed = 7f;
-            [Tooltip("Sideways positions of their lanes.")]
-            public float[] lanes = { -2f, 2f };
-        }
-
-        [Header("The high-mountain look")]
-        [Tooltip("A sea of clouds far below in every chasm (drifting, with depth: it moves slower than the ground), with a glacier valley glimpsed through it.")]
-        public bool cloudSea;
-        [Tooltip("Tint of the clouds below (the light of the day: white at noon, gold at sunset, slate in a storm).")]
-        public Color cloudTint = Color.white;
-        [Tooltip("Soft shadows of clouds drifting over the ground, sun glints sparkling on the snow and ice, snow streaming off the ridges.")]
-        public bool alpineFx;
-        [Tooltip("Where the camera pulls back to show what lies ahead (lap distances from, to; how much wider).")]
-        public List<CameraZone> cameraZones = new();
-        [Serializable]
-        public class CameraZone
-        {
-            public float from, to;
-            [Range(1f, 2f)] public float zoom = 1.35f;
-        }
-        [Tooltip("Colour grading by stretch of the lap (blended between them): the light of each part of the race.")]
-        public List<Grade> grades = new();
-        [Serializable]
-        public class Grade
-        {
-            [Tooltip("Lap distance where this light is fully in (it blends from the previous one over 'blend' metres).")]
-            public float from;
-            [Min(1f)] public float blend = 60f;
-            public Color filter = Color.white;
-            [Range(-100f, 100f)] public float saturation;
-            [Range(-100f, 100f)] public float contrast;
-            [Range(-2f, 2f)] public float exposure;
-            [Range(0f, 0.6f)] public float vignette = 0.2f;
-            [Range(0f, 2f)] public float bloom = 0.3f;
-        }
-
-        [Tooltip("Rope bridges (lap distances from, to; straight stretches): a deck of planks on ropes over the void that sways from " +
-                 "side to side, carrying the cars on it with it. Off the deck you fall.")]
-        public List<RopeBridge> ropeBridges = new();
-        [Serializable]
-        public class RopeBridge
-        {
-            public float from, to;
-            [Tooltip("How far the deck swings to each side (metres).")]
-            [Min(0f)] public float sway = 2f;
-            [Tooltip("Seconds for one swing there and back.")]
-            [Min(0.5f)] public float period = 3.6f;
-            [Tooltip("Shifts its rhythm (0-1 of a swing).")]
-            public float phase;
-            [Min(2f)] public float deckWidth = 5.5f;
-        }
         [Tooltip("Wooden platforms (lap distances from, to): the road there is a deck of planks (out over the void).")]
         public List<Span> platforms = new();
         [Tooltip("Hatches (lap distances of gaps): a trapdoor in the ground, its doors flung open either side of the hole you drop into.")]
@@ -590,12 +469,6 @@ namespace SomeGame.Track
             public float from, to;
             [Range(0f, 1f)] public float strength = 0.7f;
             public bool lightning;
-            [Tooltip("Lightning: radius of a strike (metres). 0 = the usual.")]
-            [Min(0f)] public float strikeRadius;
-            [Tooltip("Lightning: seconds between strikes (min, max). (0, 0) = the usual.")]
-            public Vector2 strikeEvery;
-            [Tooltip("Lightning: seconds the ring warns before it strikes. 0 = the usual.")]
-            [Min(0f)] public float strikeWarn;
         }
         [Tooltip("Snow twisters (lap distances from, to): a whirlwind patrolling that stretch, crossing and recrossing the road; touch it and you spin out.")]
         public List<Vector2> twisters = new();
@@ -785,11 +658,6 @@ namespace SomeGame.Track
             [Min(1)] public int tricks = 3;
             [Tooltip("A hatch in the road: no ramp - drive in and you drop down through it, onto the road below at 'to' (into the mines).")]
             public bool plunge;
-            [Tooltip("Ski flying: a long flight in which you steer (much more than on other jumps) onto a narrow landing strip " +
-                     "(the road after 'to', as wide as the road there). Beside it you fall; on it, a big boost.")]
-            public bool skiFlying;
-            [Tooltip("Ski flying: how far past 'to' a good flight lands (the middle of the landing strip).")]
-            [Min(0f)] public float landingAt = 14f;
             public bool IsDrawbridge => period > 0f;
         }
 

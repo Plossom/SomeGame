@@ -45,11 +45,6 @@ namespace SomeGame.Car
         [Tooltip("Seconds in the air when a car drives off the edge of a roof.")]
         [SerializeField, Min(0.1f)] float roofDrop = 0.3f;
 
-        /// <summary>Speed off the ski-hill table that reaches the middle of the landing strip; slower comes down short.</summary>
-        public const float SkiSpeed = 17f;
-        /// <summary>How much more the stick steers in a ski-hill flight than on a normal jump.</summary>
-        const float SkiSteer = 2.5f;
-
         CarMovement _car;
         TrackSensor _sensor;
         SomeGame.Race.RaceProgress _progress;
@@ -277,16 +272,6 @@ namespace SomeGame.Car
                     _car.Body.linearVelocity = down * fall;
                     _shortcutFrom = point.Distance;
                     _car.Launch(Mathf.Max(0.8f, (track.Path.DeltaDistance(ramp.Value.Lip, ramp.Value.FarBank) + 2.5f) / fall), down, locked: true, plunge: true);
-                    return;
-                }
-                // The ski hill: a long flight down onto the landing strip, steered all the way. Too slow off the
-                // table and it comes down short of the strip.
-                if (ramp.Value.Gap >= 0 && track.Layout.gaps[ramp.Value.Gap].skiFlying)
-                {
-                    if (toLip >= 0.8f || along <= minLaunchSpeed) return;
-                    var hill = track.Layout.gaps[ramp.Value.Gap];
-                    _shortcutFrom = point.Distance;
-                    _car.Launch((track.Path.DeltaDistance(ramp.Value.Lip, ramp.Value.FarBank) + hill.landingAt) / Mathf.Max(along, SkiSpeed), steer: SkiSteer);
                     return;
                 }
                 if (toLip < 0.8f && along > minLaunchSpeed)
@@ -526,7 +511,7 @@ namespace SomeGame.Car
             // Over the edge of a chasm: the car tumbles down into the depths (no splash, no dust).
             bool chasm = track.ChasmAt(_car.Body.position) && track.WaterDistance(_car.Body.position) > 0f;
             // Short of a window jump: a fall into the garden (dust), not a splash.
-            bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld && !track.FjordWater(_car.Body.position) && !track.HazardWet(_car.Body.position);
+            bool dry = track.WaterDistance(_car.Body.position) > 2f && !track.Layout.waterWorld && !track.FjordWater(_car.Body.position);
             var burst = dry ? _dust : _splash;
             burst.transform.position = _car.Body.position;
             if (!chasm) burst.Emit(40);

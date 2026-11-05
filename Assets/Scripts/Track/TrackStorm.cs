@@ -44,7 +44,7 @@ namespace SomeGame.Track
         int _gustSide = 1;
 
         // Lightning.
-        class Strike { public Vector2 At; public float HitsAt, Radius, Warn; public Transform Ring; public bool Done; }
+        class Strike { public Vector2 At; public float HitsAt; public Transform Ring; public bool Done; }
         readonly List<Strike> _strikes = new();
         float _nextStrike;
         Sprite _ringSprite, _discSprite;
@@ -92,8 +92,6 @@ namespace SomeGame.Track
         }
 
         // How stormy it is at a lap distance (0 calm .. 1 the worst), and whether that storm brings lightning.
-        TrackLayout.Storm _here; // the storm StormAt last found (its lightning settings)
-
         float StormAt(float d, out bool lightning)
         {
             lightning = false;
@@ -108,7 +106,7 @@ namespace SomeGame.Track
                 if (into < 0f || into > span) continue;
                 float edge = Mathf.Min(into, span - into);
                 float v = s.strength * Mathf.SmoothStep(0f, 1f, edge / Ramp);
-                if (v > best) { best = v; lightning = s.lightning && edge > Ramp * 0.5f; _here = s; }
+                if (v > best) { best = v; lightning = s.lightning && edge > Ramp * 0.5f; }
             }
             return best;
         }
@@ -173,29 +171,16 @@ namespace SomeGame.Track
         void Lightning(TrackSensor sensor)
         {
             if (Time.time < _nextStrike || _player.IsAirborne) return;
-            // This storm's own lightning (gentler on the narrow ridges), or the usual.
-            var storm = _here;
-            float radius = storm != null && storm.strikeRadius > 0f ? storm.strikeRadius : StrikeRadius;
-            float warn = storm != null && storm.strikeWarn > 0f ? storm.strikeWarn : StrikeWarn;
-            Vector2 every = storm != null && storm.strikeEvery.y > 0f ? storm.strikeEvery : new Vector2(2.6f, 5f);
-            _nextStrike = Time.time + Random.Range(every.x, every.y);
+            _nextStrike = Time.time + Random.Range(2.6f, 5f);
             var path = track.Path;
             float speed = Mathf.Max(8f, _player.Body.linearVelocity.magnitude);
             // Where the player will be when it hits (give or take): a fair chance to steer round it.
-            float d = path.WrapDistance(sensor.Current.Distance + speed * warn * Random.Range(0.85f, 1.1f));
-            if (track.InGap(d) || track.RoadHidden(d) || OnCornice(d)) return; // never on a swaying bridge or a breaking cornice
+            float d = path.WrapDistance(sensor.Current.Distance + speed * StrikeWarn * Random.Range(0.85f, 1.1f));
+            if (track.InGap(d)) return;
             float lat = Mathf.Clamp(sensor.Current.Lateral + Random.Range(-1.5f, 1.5f), -track.HalfWidthAt(d), track.HalfWidthAt(d));
             var at = path.PointAt(d) + path.NormalAt(d) * lat;
-            var ring = Part("StrikeRing", _ringSprite, at, radius * 2.3f, RingOrder);
-            _strikes.Add(new Strike { At = at, HitsAt = Time.time + warn, Radius = radius, Warn = warn, Ring = ring.transform });
-        }
-
-        bool OnCornice(float d)
-        {
-            if (track.Layout.cornices == null) return false;
-            foreach (var c in track.Layout.cornices)
-                if (track.Path.DeltaDistance(c.from - 6f, d) >= 0f && track.Path.DeltaDistance(d, c.to + 6f) >= 0f) return true;
-            return false;
+            var ring = Part("StrikeRing", _ringSprite, at, StrikeRadius * 2.3f, RingOrder);
+            _strikes.Add(new Strike { At = at, HitsAt = Time.time + StrikeWarn, Ring = ring.transform });
         }
 
         void UpdateStrikes()
@@ -207,9 +192,9 @@ namespace SomeGame.Track
                 if (s.Ring != null)
                 {
                     var sr = s.Ring.GetComponent<SpriteRenderer>();
-                    float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * (14f + 20f * (1f - left / s.Warn)));
+                    float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * (14f + 20f * (1f - left / StrikeWarn)));
                     sr.color = new Color(0.45f, 0.8f, 1f, 0.6f + 0.4f * pulse);
-                    s.Ring.localScale = Vector3.one * s.Radius * 2.3f * (0.8f + 0.2f * Mathf.Clamp01(left / s.Warn));
+                    s.Ring.localScale = Vector3.one * StrikeRadius * 2.3f * (0.8f + 0.2f * Mathf.Clamp01(left / StrikeWarn));
                 }
                 if (left > 0f) continue;
                 if (!s.Done) Hit(s);
@@ -224,7 +209,7 @@ namespace SomeGame.Track
             _boltAt = Time.time;
             DrawBolt(s.At);
             if (_burst != null) { _burst.transform.position = s.At; _burst.Emit(40); }
-            var scorch = Part("Scorch", _discSprite, s.At, s.Radius * 1.6f, ScorchOrder);
+            var scorch = Part("Scorch", _discSprite, s.At, StrikeRadius * 1.6f, ScorchOrder);
             scorch.color = new Color(0.12f, 0.12f, 0.16f, 0.55f);
             Destroy(scorch.gameObject, 8f);
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.thunder, 0.9f);
@@ -232,7 +217,7 @@ namespace SomeGame.Track
             foreach (var car in _cars)
             {
                 var sensor = car != null ? car.GetComponent<TrackSensor>() : null;
-                if (!Exposed(car, sensor) || Vector2.Distance(car.Body.position, s.At) > s.Radius) continue;
+                if (!Exposed(car, sensor) || Vector2.Distance(car.Body.position, s.At) > StrikeRadius) continue;
                 car.Body.linearVelocity *= 0.35f;
                 car.Slip(Random.value < 0.5f ? 1 : -1);
                 if (car == _player && _combo != null) _combo.Banner("ZAPPED!", new Color(0.7f, 0.85f, 1f));

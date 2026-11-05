@@ -20,7 +20,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite crystalSprite, stalagmiteSprite, glowSprite, boulderSprite;
         [SerializeField] Material particleMaterial;
 
-        const int ChasmOrder = -59, ChasmRimOrder = -53, FloorOrder = -53, WallOrder = -40,
+        const int ChasmOrder = -54, ChasmRimOrder = -53, FloorOrder = -53, WallOrder = -40,
                   StalagmiteOrder = 7, DarkOrder = 50, CrystalOrder = 51, GlowOrder = 52, FlankOrder = -42;
         const float FloorMargin = 1.2f, WallWidth = 2.4f, DuskAlpha = 0.2f;
 
@@ -443,7 +443,7 @@ namespace SomeGame.Track
             return h - Mathf.Floor(h);
         }
 
-        internal static List<Vector2> Resample(Vector2[] points, float spacing)
+        static List<Vector2> Resample(Vector2[] points, float spacing)
         {
             var list = new List<Vector2>();
             for (int i = 0; i < points.Length; i++)
@@ -456,7 +456,7 @@ namespace SomeGame.Track
         }
 
         // Ear clipping of a simple polygon: triangles as index triples.
-        internal static List<int[]> Triangulate(List<Vector2> poly)
+        static List<int[]> Triangulate(List<Vector2> poly)
         {
             var result = new List<int[]>();
             var idx = new List<int>();
