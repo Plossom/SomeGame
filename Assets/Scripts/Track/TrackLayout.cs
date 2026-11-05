@@ -146,8 +146,8 @@ namespace SomeGame.Track
         [Tooltip("Wooden fences along both sides of the road on these stretches (lap distances from, to).")]
         public List<Vector2> fences = new();
 
-        public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust, Cobbles, Ice, Rock }
-        public enum RoofKind { Red, Blue, Circus, Slate, Ice, Gingerbread, Cave }
+        public enum FloorKind { Parquet, Tiles, Carpet, Planks, Sawdust, Cobbles, Ice, Rock, Marble, Oak, Glass }
+        public enum RoofKind { Red, Blue, Circus, Slate, Ice, Gingerbread, Cave, Chalet }
 
         [Serializable]
         public class Room
@@ -404,6 +404,8 @@ namespace SomeGame.Track
             public Vector2 position;
             [Min(3f)] public float radius = 10f;
             public float speed = 40f;
+            [Tooltip("A disco dance floor (lit squares changing colour) instead of a carousel.")]
+            public bool disco;
         }
         [Header("Snow park")]
         [Tooltip("Blue safety nets along both sides of the piste (lap distances from, to).")]
@@ -444,6 +446,8 @@ namespace SomeGame.Track
         {
             public float distance, lateral;
             [Min(0.5f)] public float radius = 1.6f;
+            [Tooltip("A hot tub sunk into a chalet's floor (a wooden rim, bubbling water) instead of a hole in the ice.")]
+            public bool tub;
         }
         [Tooltip("Wooden platforms (lap distances from, to): the road there is a deck of planks (out over the void).")]
         public List<Span> platforms = new();
@@ -459,6 +463,69 @@ namespace SomeGame.Track
             [Tooltip("Pull towards the eye (m/s per second, strongest near the eye).")]
             public float pull = 5f;
         }
+        [Header("Split landings")]
+        [Tooltip("The road forks round a drop in its middle (lap distances from, to): the drop is 'width' wide at 'from' and closes " +
+                 "to a point at 'to', where the two narrow roads either side meet again (a Y junction). Land in the middle and you fall.")]
+        public List<Split> splits = new();
+        [Serializable]
+        public class Split
+        {
+            public float from, to;
+            [Min(1f)] public float width = 5f;
+        }
+        [Header("Chalets")]
+        [Tooltip("Sliding doors across the road (lap distance of the doorway): two leaves that slide shut and open again in a rhythm. Shut, they are a wall.")]
+        public List<SlidingDoor> slidingDoors = new();
+        [Serializable]
+        public class SlidingDoor
+        {
+            public float distance;
+            [Tooltip("Seconds per open-and-shut cycle.")]
+            [Min(1f)] public float period = 4f;
+            [Tooltip("Part of each cycle they stand open.")]
+            [Range(0.2f, 0.9f)] public float open = 0.55f;
+            [Tooltip("Shifts the rhythm (seconds).")]
+            public float phase;
+        }
+        [Tooltip("Indoor pools (world rectangles): water - jump them.")]
+        public List<Pool> pools = new();
+        [Serializable]
+        public class Pool
+        {
+            public Vector2 min, max;
+        }
+        [Tooltip("Bowling lanes (lap distances from, to): balls roll down the lanes towards you (hit one and you spin), the pins stand at 'to' - drive through them: STRIKE!")]
+        public List<Bowling> bowling = new();
+        [Serializable]
+        public class Bowling
+        {
+            public float from, to;
+            [Tooltip("Sideways positions of the lanes (positive = left).")]
+            public float[] lanes = { -2.5f, 2.5f };
+            [Tooltip("Seconds between balls on a lane.")]
+            [Min(0.5f)] public float every = 2.4f;
+            [Min(1f)] public float speed = 9f;
+        }
+        [Tooltip("Billiard halls (world rectangles): giant billiard balls rolling about, bouncing off the walls - and off you.")]
+        public List<Billiards> billiards = new();
+        [Serializable]
+        public class Billiards
+        {
+            public Vector2 min, max;
+            [Min(1)] public int balls = 5;
+            [Min(1f)] public float speed = 6f;
+            [Min(0.5f)] public float radius = 1.3f;
+        }
+        [Tooltip("Glass floors over the abyss (lap distances from, to): panes of glass, some cracked - drive onto a cracked one and it shatters under you a moment later (it comes back after a while).")]
+        public List<GlassFloor> glassFloors = new();
+        [Serializable]
+        public class GlassFloor
+        {
+            public float from, to;
+            [Tooltip("Share of the panes that are cracked.")]
+            [Range(0f, 1f)] public float cracked = 0.35f;
+            public int seed;
+        }
         [Header("Snowstorm")]
         [Tooltip("Storms (lap distances from, to): driving snow and a whiteout, side-wind gusts that shove the cars across the road " +
                  "(warned a moment before), and with lightning: thundersnow strikes on the road just ahead of you (a ring marks the spot).")]
@@ -469,6 +536,12 @@ namespace SomeGame.Track
             public float from, to;
             [Range(0f, 1f)] public float strength = 0.7f;
             public bool lightning;
+            [Tooltip("Seconds between thundersnow strikes (min, max); (0, 0) = every 2.6 to 5 s.")]
+            public Vector2 strikeEvery;
+            [Tooltip("How far a strike reaches (0 = 3.4 m).")]
+            [Min(0f)] public float strikeRadius;
+            [Tooltip("How hard the side-wind gusts shove (1 = normal).")]
+            [Min(0f)] public float wind = 1f;
         }
         [Tooltip("Snow twisters (lap distances from, to): a whirlwind patrolling that stretch, crossing and recrossing the road; touch it and you spin out.")]
         public List<Vector2> twisters = new();

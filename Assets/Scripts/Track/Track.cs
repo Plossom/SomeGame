@@ -79,12 +79,12 @@ namespace SomeGame.Track
             return false;
         }
 
-        /// <summary>True on the ice floor of a room (an ice palace hall): little grip, like a frozen lake.</summary>
+        /// <summary>True on the ice floor of a room (an ice palace hall) or a chalet's polished marble: little grip, like a frozen lake.</summary>
         public bool OnIceFloor(Vector2 p)
         {
             if (layout.rooms == null) return false;
             foreach (var room in layout.rooms)
-                if (room.floor == TrackLayout.FloorKind.Ice && p.x >= room.min.x && p.x <= room.max.x && p.y >= room.min.y && p.y <= room.max.y) return true;
+                if ((room.floor == TrackLayout.FloorKind.Ice || room.floor == TrackLayout.FloorKind.Marble) && p.x >= room.min.x && p.x <= room.max.x && p.y >= room.min.y && p.y <= room.max.y) return true;
             return false;
         }
 
@@ -485,6 +485,18 @@ namespace SomeGame.Track
         /// <summary>Something big in the way at a point (a passing train): rivals stop for it. Set by the track's set pieces.</summary>
         public static System.Func<Vector2, bool> Obstacle;
 
+        /// <summary>
+        /// Something on the road that tells the rivals how to get past it (sliding doors, glass floors, rolling balls):
+        /// it may move a rival's line (lateral, + left) and lower the speed it aims for at a lap distance.
+        /// </summary>
+        public interface IGuide
+        {
+            void Guide(SomeGame.Car.CarMovement car, int seed, float distance, ref float lateral, ref float speed);
+        }
+
+        /// <summary>The guides of this track's set pieces (they add and remove themselves).</summary>
+        public static readonly List<IGuide> Guides = new();
+
         /// <summary>The lap the race leader is on (set by <see cref="FjordIce"/>; 1 outside a race). Branches open and the fjord breaks up by it.</summary>
         public static int PhaseLap = 1;
         /// <summary>Race-clock time the fjord started cracking (the icebreaker sails from then).</summary>
@@ -631,7 +643,60 @@ namespace SomeGame.Track
         public Vector2 ShipPosition => Vector2.Lerp(layout.fjord.shipFrom, layout.fjord.shipTo, ShipAlong(out _));
 
         /// <summary>Distance from a point to the nearest water edge, rivers and lakes (negative inside water).</summary>
-        public float WaterDistance(Vector2 p) => Mathf.Min(RiverDistance(p), LakeDistance(p));
+        public float WaterDistance(Vector2 p) => Mathf.Min(Mathf.Min(RiverDistance(p), LakeDistance(p)), PoolDistance(p));
+
+        /// <summary>Distance to the nearest indoor pool (negative inside).</summary>
+        public float PoolDistance(Vector2 p)
+        {
+            float d = float.MaxValue;
+            if (layout.pools == null) return d;
+            foreach (var pool in layout.pools)
+            {
+                Vector2 c = (pool.min + pool.max) * 0.5f, h = (pool.max - pool.min) * 0.5f;
+                Vector2 q = new(Mathf.Abs(p.x - c.x) - h.x, Mathf.Abs(p.y - c.y) - h.y);
+                d = Mathf.Min(d, new Vector2(Mathf.Max(q.x, 0f), Mathf.Max(q.y, 0f)).magnitude + Mathf.Min(Mathf.Max(q.x, q.y), 0f));
+            }
+            return d;
+        }
+
+        /// <summary>True if a split landing starts just past this lap distance (the far side of a jump).</summary>
+        public bool SplitAfter(float distance)
+        {
+            if (layout.splits == null) return false;
+            foreach (var split in layout.splits)
+            {
+                float ahead = Path.DeltaDistance(distance, split.from);
+                if (ahead > -4f && ahead < 8f) return true;
+            }
+            return false;
+        }
+
+        /// <summary>Half the width of a split landing's drop at a lap distance (0 where there is none).</summary>
+        public float SplitHalf(float distance)
+        {
+            if (layout.splits == null) return 0f;
+            foreach (var split in layout.splits)
+            {
+                float into = Path.DeltaDistance(split.from, distance), span = Path.DeltaDistance(split.from, split.to);
+                if (into < 0f || into > span) continue;
+                return split.width * 0.5f * Mathf.Pow(1f - into / span, 0.6f);
+            }
+            return 0f;
+        }
+
+        // Close enough to a split landing to be worth projecting onto the road (a quick test before the slow one).
+        bool NearSplit(Vector2 p)
+        {
+            foreach (var split in layout.splits)
+            {
+                float span = Path.DeltaDistance(split.from, split.to);
+                if ((p - Path.PointAt(split.from + span * 0.5f)).sqrMagnitude < Mathf.Pow(span * 0.5f + split.width + 4f, 2f)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>A cracked pane of a glass floor that has shattered: the abyss, open (set by the chalets).</summary>
+        public static System.Func<Vector2, bool> GlassHole;
 
         public float RiverDistance(Vector2 p)
         {
@@ -673,12 +738,16 @@ namespace SomeGame.Track
         {
             if (HoleAt(p)) return true;
             if (FjordOn && FjordWater(p)) return true;
+            if (GlassHole != null && GlassHole(p)) return true;
             bool river = RiverDistance(p) < 0f;
             if (river && Jumps != null && _bridges.Count == 0) return true;
-            bool lake = LakeDistance(p) < 0f || ChasmAt(p);
-            if (!river && !lake && !layout.waterWorld && layout.gaps.Count == 0) return false;
+            bool lake = LakeDistance(p) < 0f || ChasmAt(p) || PoolDistance(p) < 0f;
+            bool splits = layout.splits is { Count: > 0 };
+            if (!river && !lake && !layout.waterWorld && layout.gaps.Count == 0 && !splits) return false;
             var point = near ?? Path.Project(p);
             bool roadHere = Mathf.Abs(point.Lateral) <= OffRoadAt(point.Distance) + 0.15f;
+            // The drop between the two forks of a split landing.
+            if (splits && roadHere && Mathf.Abs(point.Lateral) < SplitHalf(point.Distance)) return true;
             // A river is water everywhere except where a bridge carries the road over it.
             if (river && !(roadHere && OnBridge(point.Distance))) return true;
             bool gap = OpenGapAt(point.Distance) >= 0;
@@ -689,7 +758,14 @@ namespace SomeGame.Track
         /// <summary>True inside a chasm's outline (whether or not the road crosses there).</summary>
         public bool ChasmAt(Vector2 p)
         {
+            if (GlassHole != null && GlassHole(p)) return true;
+            if (layout.splits is { Count: > 0 } && NearSplit(p))
+            {
+                var point = Path.Project(p);
+                if (Mathf.Abs(point.Lateral) < SplitHalf(point.Distance)) return true;
+            }
             if (layout.chasms == null) return false;
+            if (InRoom(p)) return false; // a chalet over the abyss stands on its own floor (a glass one too)
             foreach (var chasm in layout.chasms)
                 if (chasm.points != null && chasm.points.Length >= 3 && chasm.Contains(p)) return true;
             return false;

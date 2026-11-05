@@ -20,7 +20,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite crystalSprite, stalagmiteSprite, glowSprite, boulderSprite;
         [SerializeField] Material particleMaterial;
 
-        const int ChasmOrder = -54, ChasmRimOrder = -53, FloorOrder = -53, WallOrder = -40,
+        const int ChasmOrder = -54, ChasmRimOrder = -53, SplitOrder = -45, FloorOrder = -53, WallOrder = -40,
                   StalagmiteOrder = 7, DarkOrder = 50, CrystalOrder = 51, GlowOrder = 52, FlankOrder = -42;
         const float FloorMargin = 1.2f, WallWidth = 2.4f, DuskAlpha = 0.2f;
 
@@ -60,6 +60,9 @@ namespace SomeGame.Track
             if (layout.chasms != null)
                 foreach (var chasm in layout.chasms)
                     if (chasm.points != null && chasm.points.Length >= 3) BuildChasm(chasm);
+            // The drop between the forks of a split landing lies in the road: drawn over it.
+            if (layout.splits != null)
+                foreach (var split in layout.splits) BuildSplit(path, split);
             if (layout.caves != null)
                 foreach (var cave in layout.caves)
                 {
@@ -88,7 +91,24 @@ namespace SomeGame.Track
 
         // ------------------------------------------------------------------ chasms
 
-        void BuildChasm(TrackLayout.Chasm chasm)
+        void BuildSplit(TrackPath path, TrackLayout.Split split)
+        {
+            float span = path.DeltaDistance(split.from, split.to);
+            var left = new List<Vector2>();
+            var right = new List<Vector2>();
+            for (float s = 0f; s <= span + 0.01f; s += 1f)
+            {
+                float d = split.from + Mathf.Min(s, span - 0.05f);
+                float half = Mathf.Max(0.15f, track.SplitHalf(d));
+                left.Add(path.PointAt(d) + path.NormalAt(d) * half);
+                right.Add(path.PointAt(d) - path.NormalAt(d) * half);
+            }
+            right.Reverse();
+            left.AddRange(right);
+            BuildChasm(new TrackLayout.Chasm { points = left.ToArray() }, SplitOrder, SplitOrder + 1, 0.4f);
+        }
+
+        void BuildChasm(TrackLayout.Chasm chasm, int depthOrder = ChasmOrder, int rimOrder = ChasmRimOrder, float rimScale = 1f)
         {
             // The outline every metre or so, a little ragged.
             var outline = Resample(chasm.points, 1.5f);
@@ -104,8 +124,8 @@ namespace SomeGame.Track
                 Vector2 dir = (outline[(i + 1) % n] - outline[(i - 1 + n) % n]).normalized;
                 Vector2 left = new(-dir.y, dir.x);
                 float jag = Noise1(i * 0.7f, chasm.points[0].x);
-                rim[i] = outline[i] + left * inward * (2.6f + jag * 1.6f);   // where the cliff wall meets the dark
-                lip[i] = outline[i] - left * inward * (0.8f + jag * 0.5f);   // the snow cornice overhanging the edge
+                rim[i] = outline[i] + left * inward * (2.6f + jag * 1.6f) * rimScale;   // where the cliff wall meets the dark
+                lip[i] = outline[i] - left * inward * (0.8f + jag * 0.5f) * Mathf.Max(0.6f, rimScale);   // the snow cornice overhanging the edge
             }
 
             var v = new List<Vector3>(); var c = new List<Color>(); var t = new List<int>();
@@ -116,7 +136,7 @@ namespace SomeGame.Track
                 foreach (int idx in tri) { v.Add(outline[idx]); c.Add(Depth); }
                 t.Add(k); t.Add(k + 1); t.Add(k + 2);
             }
-            Part("ChasmDepth", MakeMesh("ChasmDepth", v, c, t, both: true), plain, ChasmOrder);
+            Part("ChasmDepth", MakeMesh("ChasmDepth", v, c, t, both: true), plain, depthOrder);
 
             v.Clear(); c.Clear(); t.Clear();
             for (int i = 0; i < n; i++)
@@ -133,7 +153,7 @@ namespace SomeGame.Track
                 var clear = new Color(0.55f, 0.65f, 0.8f, 0f);
                 AddQuad(s0, s1, lip[j], lip[i], clear, clear, new Color(0.55f, 0.65f, 0.8f, 0.35f), new Color(0.55f, 0.65f, 0.8f, 0.35f), v, c, t);
             }
-            Part("ChasmRim", MakeMesh("ChasmRim", v, c, t, both: true), plain, ChasmRimOrder);
+            Part("ChasmRim", MakeMesh("ChasmRim", v, c, t, both: true), plain, rimOrder);
         }
 
         // Faint mist drifting up out of the chasms, round the camera.

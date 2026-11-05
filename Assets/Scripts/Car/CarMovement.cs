@@ -143,6 +143,9 @@ namespace SomeGame.Car
             _queuedTricks = 0;
         }
 
+        /// <summary>How much the stick turns the car in this flight (more off a jump onto a split landing: steer for a fork).</summary>
+        public float AirSteerScale { get; set; } = 1f;
+
         Vector2? _aimTarget;
         float _aimSpeed, _aimTotal;
         /// <summary>Boost strength for landing a trick.</summary>
@@ -524,6 +527,7 @@ namespace SomeGame.Car
         {
             if (IsPuppet || IsAirborne || duration <= 0f) return;
             _plunge = plunge;
+            AirSteerScale = 1f;
             _airTurnTo = landingHeading;
             _aimTarget = null;
             EndDrift();
@@ -578,7 +582,8 @@ namespace SomeGame.Car
             else if (steer.sqrMagnitude > 0.0001f)
             {
                 float delta = Mathf.DeltaAngle(_body.rotation, HeadingOf(steer));
-                _body.angularVelocity = Mathf.Clamp(delta, -stats.turnRate * stats.airSteering * dt, stats.turnRate * stats.airSteering * dt) / dt;
+                float air = stats.turnRate * stats.airSteering * AirSteerScale * dt;
+                _body.angularVelocity = Mathf.Clamp(delta, -air, air) / dt;
             }
             else _body.angularVelocity = 0f;
             float speed = _body.linearVelocity.magnitude;

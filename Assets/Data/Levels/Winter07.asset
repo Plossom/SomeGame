@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
   m_Name: Winter07
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
-  displayName: Spiral Peak
-  chapter: "WINTER CUP \xB7 RACE 3"
+  displayName: Chalet Freeride
+  chapter: "WINTER CUP \xB7 RACE 7"
   track: {fileID: 11400000, guid: 3baabfb3ed43b416a80d241191aefc78, type: 2}
   isTutorial: 0
   preview: {fileID: 21300000, guid: 89081d97108664b77853a75f08c5531d, type: 3}
   laps: 1
-  description: 'One run down Spiral Peak: drive into the mountain and climb three tight loops inside it, stacked on top of each other, out on the top into the snow park - the kicker line, the huge kicker onto the monster rail, boxes, tubes, a double stall, the gasser and the snow tunnel all the way down the piste - build up speed through the forest (and its kickers), swipe TEN tricks on the giant jump, hop the wooden platforms over the void, survive the tornado wall, drop through the hatch into the mines - floes to hop on the underground river, holes in the ice - and jump out of the mines over the finish line!'
+  description: 'Freeride through the mountains and straight through three luxury chalets: dodge the robot vacuums in the Lodge, time the sliding doors and fly out of the gallery''s panoramic window; carve the snow park''s kickers and rails and swipe four tricks over the gorge; bounce through the bumper bowl, hop the floating platforms over the river, slide across the Spa''s marble between the hot tubs and swipe three tricks over the indoor pool; on the stormy ridge steer in the air onto one fork of the split landing, swipe five tricks, then bowl a STRIKE in the Party Chalet, spin across the disco floor and steer the last split jump home!'
   difficulty: 3
   rivalCount: 7
   rivalSpeedScale: 0.95

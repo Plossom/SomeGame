@@ -26,12 +26,17 @@ namespace SomeGame.Track
         [SerializeField] Color windowGlass = new(0.62f, 0.85f, 0.95f);
 
         readonly List<GameObject> _parts = new();
-        class Roof { public Mesh Tiles, Ridge; public Color RidgeColor; public Rect Area; public float Alpha = 1f; }
+        class Roof { public Mesh Tiles, Ridge; public Color[] RidgeColors; public Rect Area; public float Alpha = 1f; }
         readonly List<Roof> _roofs = new();
         Color _top, _edge; // the colours of the walls being built (rock for a cave)
         Transform _player;
 
-        const int FloorOrder = -95, IceFloorOrder = -46, ShadowOrder = -97, WallOrder = -43, StairOrder = -47, RoofOrder = 44;
+        /// <summary>The tiled material of a floor kind (null if there is none).</summary>
+        public Material FloorMaterial(TrackLayout.FloorKind kind) => floors != null && (int)kind < floors.Length ? floors[(int)kind] : null;
+        /// <summary>World metres per floor tile.</summary>
+        public float FloorTile => floorTile;
+
+        const int FloorOrder = -95, IceFloorOrder = -46, GlassFloorOrder = -52, ShadowOrder = -97, WallOrder = -43, StairOrder = -47, RoofOrder = 44;
 
         protected override void Build(TrackPath path, TrackLayout layout)
         {
@@ -48,7 +53,8 @@ namespace SomeGame.Track
                 if (room.upper) Part("UpperShadow", Quad(room.min + new Vector2(0.8f, -1.6f), room.max + new Vector2(0.8f, -1.6f), new Color(0f, 0f, 0f, 0.35f)), plain, FloorOrder - 1);
                 int k = Mathf.Clamp((int)room.floor, 0, floors.Length - 1);
                 // An ice floor (ice palace hall) covers the road too: the car slides over the bare ice.
-                int order = room.floor == TrackLayout.FloorKind.Ice ? IceFloorOrder : FloorOrder;
+                // A glass floor lies over the abyss below it (drawn over the chasm, under the road).
+                int order = room.floor == TrackLayout.FloorKind.Ice ? IceFloorOrder : room.floor == TrackLayout.FloorKind.Glass ? GlassFloorOrder : FloorOrder;
                 Part("Floor", Floor(room.min, room.max, room.upper ? 1f : 0.93f), floors[k], order);
             }
 
@@ -62,10 +68,11 @@ namespace SomeGame.Track
             _parts.Add(colliders);
             foreach (var room in layout.rooms)
             {
-                // A cave (rock floor) has walls of grey rock, frosted on top; houses have plastered walls.
-                bool cave = room.floor == TrackLayout.FloorKind.Rock;
-                _top = cave ? new Color(0.78f, 0.84f, 0.9f) : wallTop;
-                _edge = cave ? new Color(0.24f, 0.27f, 0.33f) : wallEdge;
+                // A cave (rock floor) has walls of grey rock, frosted on top; a chalet walls of honey-coloured logs; houses
+                // have plastered walls.
+                bool cave = room.floor == TrackLayout.FloorKind.Rock, chalet = InChalet(layout, room);
+                _top = cave ? new Color(0.78f, 0.84f, 0.9f) : chalet ? new Color(0.72f, 0.5f, 0.3f) : wallTop;
+                _edge = cave ? new Color(0.24f, 0.27f, 0.33f) : chalet ? new Color(0.24f, 0.14f, 0.07f) : wallEdge;
                 var corners = new[] { room.min, new Vector2(room.max.x, room.min.y), room.max, new Vector2(room.min.x, room.max.y) };
                 for (int e = 0; e < 4; e++)
                 {
@@ -103,14 +110,60 @@ namespace SomeGame.Track
                 var roof = Part("Roof", Floor(house.min - Vector2.one * 0.8f, house.max + Vector2.one * 0.8f, 1f, tile), roofs[k], RoofOrder);
                 // A cave has no ridge (the mountain is all snow and rock).
                 var ridgeColor = house.roof == TrackLayout.RoofKind.Cave ? new Color(0.93f, 0.96f, 1f, 0f) : new Color(0.35f, 0.12f, 0.08f, 0.9f);
-                var ridge = Part("RoofRidge", Quad(new Vector2(house.min.x - 0.8f, (house.min.y + house.max.y) * 0.5f - 0.5f),
-                    new Vector2(house.max.x + 0.8f, (house.min.y + house.max.y) * 0.5f + 0.5f), ridgeColor), plain, RoofOrder + 1);
+                var ridgeMesh = house.roof == TrackLayout.RoofKind.Chalet ? ChaletEaves(house)
+                    : Quad(new Vector2(house.min.x - 0.8f, (house.min.y + house.max.y) * 0.5f - 0.5f),
+                        new Vector2(house.max.x + 0.8f, (house.min.y + house.max.y) * 0.5f + 0.5f), ridgeColor);
+                var ridge = Part("RoofRidge", ridgeMesh, plain, RoofOrder + 1);
                 _roofs.Add(new Roof
                 {
-                    Tiles = roof.GetComponent<MeshFilter>().sharedMesh, Ridge = ridge.GetComponent<MeshFilter>().sharedMesh,
-                    RidgeColor = ridgeColor, Area = Rect.MinMaxRect(house.min.x, house.min.y, house.max.x, house.max.y),
+                    Tiles = roof.GetComponent<MeshFilter>().sharedMesh, Ridge = ridgeMesh, RidgeColors = ridgeMesh.colors,
+                    Area = Rect.MinMaxRect(house.min.x, house.min.y, house.max.x, house.max.y),
                 });
             }
+        }
+
+        // A chalet's roof edge: deep wooden eaves round the snow with a dark outline, the ridge along its length and two
+        // stone chimneys with snow caps.
+        static Mesh ChaletEaves(TrackLayout.House house)
+        {
+            var v = new List<Vector3>(); var c = new List<Color32>(); var t = new List<int>();
+            Vector2 min = house.min - Vector2.one * 0.8f, max = house.max + Vector2.one * 0.8f;
+            Color wood = new(0.56f, 0.36f, 0.23f), dark = new(0.17f, 0.14f, 0.12f), ridge = new(0.73f, 0.8f, 0.87f), stone = new(0.6f, 0.6f, 0.65f);
+            void Frame(Vector2 a, Vector2 b, float w, Color col)
+            {
+                AddQuad(new Vector2(a.x, a.y), new Vector2(b.x, a.y), new Vector2(b.x, a.y + w), new Vector2(a.x, a.y + w), col, v, c, t);
+                AddQuad(new Vector2(a.x, b.y - w), new Vector2(b.x, b.y - w), new Vector2(b.x, b.y), new Vector2(a.x, b.y), col, v, c, t);
+                AddQuad(new Vector2(a.x, a.y), new Vector2(a.x + w, a.y), new Vector2(a.x + w, b.y), new Vector2(a.x, b.y), col, v, c, t);
+                AddQuad(new Vector2(b.x - w, a.y), new Vector2(b.x, a.y), new Vector2(b.x, b.y), new Vector2(b.x - w, b.y), col, v, c, t);
+            }
+            Frame(min - Vector2.one * 0.3f, max + Vector2.one * 0.3f, 1.4f, dark);
+            Frame(min, max, 1.1f, wood);
+            bool wide = max.x - min.x >= max.y - min.y;
+            Vector2 mid = (min + max) * 0.5f;
+            if (wide) AddQuad(new Vector2(min.x + 1.1f, mid.y - 0.35f), new Vector2(max.x - 1.1f, mid.y - 0.35f), new Vector2(max.x - 1.1f, mid.y + 0.35f), new Vector2(min.x + 1.1f, mid.y + 0.35f), ridge, v, c, t);
+            else AddQuad(new Vector2(mid.x - 0.35f, min.y + 1.1f), new Vector2(mid.x + 0.35f, min.y + 1.1f), new Vector2(mid.x + 0.35f, max.y - 1.1f), new Vector2(mid.x - 0.35f, max.y - 1.1f), ridge, v, c, t);
+            foreach (float u in new[] { 0.28f, 0.72f })
+            {
+                Vector2 ch = wide ? new Vector2(Mathf.Lerp(min.x, max.x, u), mid.y + 2.2f) : new Vector2(mid.x + 2.2f, Mathf.Lerp(min.y, max.y, u));
+                AddQuad(ch + new Vector2(-1.3f, -1.3f), ch + new Vector2(1.3f, -1.3f), ch + new Vector2(1.3f, 1.3f), ch + new Vector2(-1.3f, 1.3f), dark, v, c, t);
+                AddQuad(ch + new Vector2(-1.1f, -1.1f), ch + new Vector2(1.1f, -1.1f), ch + new Vector2(1.1f, 1.1f), ch + new Vector2(-1.1f, 1.1f), stone, v, c, t);
+                AddQuad(ch + new Vector2(-0.8f, -0.4f), ch + new Vector2(0.9f, -0.5f), ch + new Vector2(0.8f, 0.9f), ch + new Vector2(-0.9f, 0.8f), Color.white, v, c, t);
+            }
+            var mesh = new Mesh { name = "ChaletEaves" };
+            mesh.SetVertices(v);
+            mesh.SetColors(c);
+            mesh.SetTriangles(t, 0);
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        static bool InChalet(TrackLayout layout, TrackLayout.Room room)
+        {
+            Vector2 c = (room.min + room.max) * 0.5f;
+            foreach (var house in layout.houses)
+                if (house.roof == TrackLayout.RoofKind.Chalet && c.x >= house.min.x && c.x <= house.max.x && c.y >= house.min.y && c.y <= house.max.y)
+                    return true;
+            return false;
         }
 
         // Where the centre line crosses this wall: a doorway as wide as the road, a window if it is a jump.
@@ -262,8 +315,9 @@ namespace SomeGame.Track
                 roof.Alpha = alpha;
                 var tiles = new Color(1f, 1f, 1f, alpha);
                 roof.Tiles.SetColors(new List<Color> { tiles, tiles, tiles, tiles });
-                var ridge = roof.RidgeColor; ridge.a *= alpha;
-                roof.Ridge.SetColors(new List<Color> { ridge, ridge, ridge, ridge });
+                var ridge = new Color[roof.RidgeColors.Length];
+                for (int i = 0; i < ridge.Length; i++) { ridge[i] = roof.RidgeColors[i]; ridge[i].a *= alpha; }
+                roof.Ridge.colors = ridge;
             }
         }
 

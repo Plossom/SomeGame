@@ -65,7 +65,9 @@ namespace SomeGame.Input
                 {
                     var path = _sensor.Track.Path;
                     float land = _sensor.Current.Distance + Mathf.Max(0f, _car.ForwardSpeed) * _car.AirTimeLeft + 8f;
-                    _airAim = path.PointAt(land) + path.NormalAt(land) * Mathf.Clamp(_sensor.Current.Lateral, -1.5f, 1.5f);
+                    // Onto a split landing: steer in the air for this rival's fork.
+                    float? fork = ForkLateral(path, land - 6f) ?? ForkLateral(path, land) ?? ForkLateral(path, land + 6f);
+                    _airAim = path.PointAt(land) + path.NormalAt(land) * (fork ?? Mathf.Clamp(_sensor.Current.Lateral, -1.5f, 1.5f));
                 }
             }
             _wasAirborne = air;
@@ -121,8 +123,13 @@ namespace SomeGame.Input
 
             float look = lookAheadBase + speed * lookAheadPerSpeed;
             float ahead = distance + look;
-            Vector2 aim = path.PointAt(ahead) + path.NormalAt(ahead) * LateralFor(path, distance);
+            float lateral = LateralFor(path, distance);
             float targetSpeed = TargetSpeed(path, distance);
+            // Polished marble (or other glare ice underfoot): a careful pace.
+            if (_sensor.OnIce && _sensor.Branch < 0) targetSpeed = Mathf.Min(targetSpeed, iceSpeed);
+            // The set pieces' advice (sliding doors, rolling balls, cracked glass).
+            foreach (var guide in SomeGame.Track.Track.Guides) guide.Guide(_car, _seed, distance, ref lateral, ref targetSpeed);
+            Vector2 aim = path.PointAt(ahead) + path.NormalAt(ahead) * lateral;
 
             var track = _sensor.Track;
             if (_sensor.Branch >= 0)
@@ -237,6 +244,12 @@ namespace SomeGame.Input
                 float blend = Mathf.InverseLerp(rampLineUp * 1.6f, rampLineUp, toLip);
                 lateral = Mathf.Lerp(lane, jump.Lateral, blend);
             }
+            // On a split landing: keep to this rival's fork until the forks meet (it steers for it in the air).
+            if (layout0.splits is { Count: > 0 })
+            {
+                var inside = ForkLateral(path, distance + 4f);
+                if (inside.HasValue) lateral = inside.Value;
+            }
             // Ride a banked wall: up on it, from a little before it starts.
             var bank = RiddenBank(path, distance, 12f);
             if (bank != null)
@@ -295,6 +308,23 @@ namespace SomeGame.Input
                     lateral = Dodge(path, distance, lateral, at.Distance, at.Lateral, bumper.radius + 0.4f);
                 }
             return lateral;
+        }
+
+        // On a split landing: the middle of this rival's fork at a lap distance (null where there is no split).
+        float? ForkLateral(TrackPath path, float distance)
+        {
+            var track = _sensor.Track;
+            var splits = track.Layout.splits;
+            if (splits == null) return null;
+            for (int i = 0; i < splits.Count; i++)
+            {
+                var split = splits[i];
+                if (path.DeltaDistance(split.from, distance) < 0f || path.DeltaDistance(distance, split.to) < 0f) continue;
+                float half = track.SplitHalf(distance), edge = track.OffRoadAt(distance);
+                float side = Takes(7000 + i) ? 1f : -1f;
+                return side * (half + Mathf.Max(0.5f, edge - half) * 0.5f);
+            }
+            return null;
         }
 
         float Dodge(TrackPath path, float distance, float lateral, float at, float spotLateral, float radius)

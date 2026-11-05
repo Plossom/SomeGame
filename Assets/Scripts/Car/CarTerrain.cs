@@ -293,6 +293,8 @@ namespace SomeGame.Car
                     float room = NextTakeOff(track, ramp.Value);
                     if (room > 0f) air = Mathf.Max(Mathf.Min(air, (room - 2.5f) / Mathf.Max(1f, along)), along >= minClearSpeed ? clear : 0f);
                     _car.Launch(air);
+                    // Onto a split landing: the stick turns the car more in the air, to steer for one of the forks.
+                    if (track.SplitAfter(ramp.Value.FarBank)) _car.AirSteerScale = 2.2f;
                     return;
                 }
             }

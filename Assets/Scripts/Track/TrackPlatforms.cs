@@ -65,10 +65,37 @@ namespace SomeGame.Track
                 }
         }
 
+        static readonly Color TubWood = new Color(0.55f, 0.34f, 0.18f).linear, TubWoodLight = new Color(0.7f, 0.46f, 0.26f).linear,
+            TubRim = new Color(0.2f, 0.12f, 0.06f).linear, TubWater = new Color(0.25f, 0.72f, 0.86f).linear, TubDeep = new Color(0.13f, 0.5f, 0.72f).linear,
+            Bubble = new Color(0.92f, 0.99f, 1f).linear;
+
+        // A hot tub sunk into a chalet's floor: a round wooden rim of staves, turquoise water, bubbles.
+        void Tub(Vector2 centre, float radius, float seed, List<Vector3> v, List<Color> c, List<int> t)
+        {
+            const int n = 24;
+            for (int k = 0; k < n; k++)
+            {
+                float a0 = k * Mathf.PI * 2f / n, a1 = (k + 1) * Mathf.PI * 2f / n;
+                Vector2 d0 = new(Mathf.Cos(a0), Mathf.Sin(a0)), d1 = new(Mathf.Cos(a1), Mathf.Sin(a1));
+                Quad(centre + d0 * (radius + 0.75f), centre + d0 * (radius + 0.9f), centre + d1 * (radius + 0.9f), centre + d1 * (radius + 0.75f), TubRim, v, c, t);
+                Quad(centre + d0 * radius, centre + d0 * (radius + 0.75f), centre + d1 * (radius + 0.75f), centre + d1 * radius, k % 2 == 0 ? TubWood : TubWoodLight, v, c, t);
+                Tri(centre, centre + d0 * radius, centre + d1 * radius, TubDeep, v, c, t);
+                Quad(centre + d0 * radius * 0.45f, centre + d0 * radius * 0.9f, centre + d1 * radius * 0.9f, centre + d1 * radius * 0.45f, TubWater, v, c, t);
+            }
+            for (int b = 0; b < 9; b++)
+            {
+                float a = seed * 3.1f + b * 2.4f, r = radius * (0.2f + 0.65f * Mathf.Repeat(seed * 0.7f + b * 0.37f, 1f));
+                Vector2 p = centre + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
+                float s = 0.09f + 0.07f * (b % 3);
+                Quad(p + new Vector2(-s, 0f), p + new Vector2(0f, -s), p + new Vector2(s, 0f), p + new Vector2(0f, s), Bubble, v, c, t);
+            }
+        }
+
         // Dark water in a ragged ring of ice, a lighter ripple inside.
         void Hole(TrackPath path, TrackLayout.Hole hole, List<Vector3> v, List<Color> c, List<int> t)
         {
             Vector2 centre = path.PointAt(hole.distance) + path.NormalAt(hole.distance) * hole.lateral;
+            if (hole.tub) { Tub(centre, hole.radius, hole.distance * 0.37f + hole.lateral, v, c, t); return; }
             const int n = 18;
             float seed = hole.distance * 0.37f + hole.lateral;
             float Rag(int k) => 1f + 0.12f * Mathf.Sin(k * 2.1f + seed) + 0.06f * Mathf.Sin(k * 5.3f + seed * 2f);

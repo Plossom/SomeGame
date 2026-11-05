@@ -1296,8 +1296,8 @@ namespace SomeGame.EditorTools
             if (houses == null) houses = track.gameObject.AddComponent<SomeGame.Track.TrackHouses>();
             Configure(houses, ("track", track), ("plain", Mat("Plain")));
             var hso = new SerializedObject(houses);
-            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks"), Mat("FloorSawdust"), Mat("FloorCobbles"), Mat("FloorIce"), Mat("FloorRock") });
-            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue"), Mat("RoofCircus"), Mat("RoofSlate"), Mat("RoofIce"), Mat("RoofGinger"), Mat("RoofCave") });
+            SetArray(hso, "floors", new[] { Mat("FloorParquet"), Mat("FloorTiles"), Mat("FloorCarpet"), Mat("FloorPlanks"), Mat("FloorSawdust"), Mat("FloorCobbles"), Mat("FloorIce"), Mat("FloorRock"), Mat("FloorMarble"), Mat("FloorOak"), Mat("FloorGlass") });
+            SetArray(hso, "roofs", new[] { Mat("RoofRed"), Mat("RoofBlue"), Mat("RoofCircus"), Mat("RoofSlate"), Mat("RoofIce"), Mat("RoofGinger"), Mat("RoofCave"), Mat("RoofChalet") });
             hso.ApplyModifiedPropertiesWithoutUndo();
             var journey = track.GetComponent<SomeGame.Track.TrackJourney>();
             if (journey == null) journey = track.gameObject.AddComponent<SomeGame.Track.TrackJourney>();
@@ -1365,6 +1365,10 @@ namespace SomeGame.EditorTools
             var platforms = track.GetComponent<SomeGame.Track.TrackPlatforms>();
             if (platforms == null) platforms = track.gameObject.AddComponent<SomeGame.Track.TrackPlatforms>();
             Configure(platforms, ("track", track), ("plain", Mat("Plain")));
+            // The luxury chalets: runner carpets, sliding doors, pools, bowling, billiards, glass floors, windows.
+            var chalets = track.GetComponent<SomeGame.Track.TrackChalets>();
+            if (chalets == null) chalets = track.gameObject.AddComponent<SomeGame.Track.TrackChalets>();
+            Configure(chalets, ("track", track), ("plain", Mat("Plain")), ("particleMaterial", particles));
             // The weather: storms (whiteout, gusts, lightning), snow twisters.
             var storm = track.GetComponent<SomeGame.Track.TrackStorm>();
             if (storm == null) storm = track.gameObject.AddComponent<SomeGame.Track.TrackStorm>();

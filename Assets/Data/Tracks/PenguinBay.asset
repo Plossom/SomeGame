@@ -13,2794 +13,1061 @@ MonoBehaviour:
   m_Name: PenguinBay
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
   waypoints:
-  - {x: 16, y: 0}
+  - {x: 0, y: 0}
+  - {x: 6, y: 0}
+  - {x: 12, y: 0}
+  - {x: 18, y: 0}
+  - {x: 24, y: 0}
   - {x: 30, y: 0}
-  - {x: 46, y: 0}
-  - {x: 62, y: 0}
-  - {x: 80, y: 0}
-  - {x: 85.21959, y: 1.1946344}
-  - {x: 89.399925, y: 4.54068}
-  - {x: 91.70868, y: 9.371919}
-  - {x: 91.68617, y: 14.726424}
-  - {x: 89.336876, y: 19.538084}
-  - {x: 85.128555, y: 22.848866}
-  - {x: 79.89911, y: 23.999577}
-  - {x: 74.68975, y: 22.7611}
-  - {x: 70.5377, y: 19.380028}
-  - {x: 68.26964, y: 14.52955}
-  - {x: 68.337166, y: 9.175425}
-  - {x: 70.72682, y: 4.383689}
-  - {x: 74.96282, y: 1.1084032}
-  - {x: 80.20176, y: 0.0016956329}
-  - {x: 85.40052, y: 1.2839184}
-  - {x: 89.524, y: 4.699773}
-  - {x: 91.75121, y: 9.569144}
-  - {x: 91.63868, y: 14.922512}
-  - {x: 89.208824, y: 19.693993}
-  - {x: 84.94544, y: 22.933554}
-  - {x: 79.697395, y: 23.996185}
-  - {x: 74.50959, y: 22.670307}
-  - {x: 70.41496, y: 19.21991}
-  - {x: 68.228775, y: 14.33199}
-  - {x: 68.38629, y: 8.979757}
-  - {x: 70.85617, y: 4.2288713}
-  - {x: 75.14664, y: 1.0252619}
-  - {x: 80.403435, y: 0.0067834854}
-  - {x: 85.5799, y: 1.3762226}
-  - {x: 89.645386, y: 4.860915}
-  - {x: 91.79041, y: 9.76704}
-  - {x: 91.587906, y: 15.11776}
-  - {x: 89.07818, y: 19.847715}
-  - {x: 84.76094, y: 23.015148}
-  - {x: 79.495766, y: 23.9894}
-  - {x: 74.330986, y: 22.576498}
-  - {x: 70.29494, y: 19.057745}
-  - {x: 68.19122, y: 14.133749}
-  - {x: 68.43872, y: 8.78491}
-  - {x: 70.98814, y: 4.0762167}
-  - {x: 75.33188, y: 0.945199}
-  - {x: 80.605064, y: 0.015264511}
-  - {x: 85.75779, y: 1.4715672}
-  - {x: 89.76409, y: 5.0241494}
-  - {x: 91.82631, y: 9.965669}
-  - {x: 92, y: 12}
-  - {x: 92, y: 24}
-  - {x: 92, y: 40}
-  - {x: 92, y: 56}
-  - {x: 92, y: 70}
-  - {x: 92, y: 110}
-  - {x: 92, y: 150}
-  - {x: 92, y: 198}
-  - {x: 86, y: 226}
-  - {x: 70, y: 244}
-  - {x: 44, y: 254}
-  - {x: 10, y: 258}
-  - {x: -40, y: 258}
-  - {x: -90, y: 258}
-  - {x: -130, y: 250}
-  - {x: -170, y: 240}
-  - {x: -205, y: 246}
-  - {x: -236, y: 240}
-  - {x: -258, y: 226}
-  - {x: -272, y: 205}
-  - {x: -278, y: 160}
-  - {x: -278, y: 110}
-  - {x: -278, y: 70}
-  - {x: -278, y: 40}
-  - {x: -278, y: -15}
-  - {x: -278, y: -29}
-  - {x: -278, y: -39}
-  - {x: -278, y: -51}
-  - {x: -278, y: -61}
-  - {x: -278, y: -73}
-  - {x: -278, y: -100}
-  - {x: -278, y: -130}
-  - {x: -278, y: -140}
-  - {x: -277.8921, y: -144.70598}
-  - {x: -276.0507, y: -149.30786}
-  - {x: -272.54938, y: -153.16095}
-  - {x: -267.7019, y: -155.66531}
-  - {x: -262.0374, y: -156.35461}
-  - {x: -256.24347, y: -154.9723}
-  - {x: -251.08263, y: -151.52383}
-  - {x: -247.29259, y: -146.29552}
-  - {x: -245.48329, y: -139.83592}
-  - {x: -246.04466, y: -132.89961}
-  - {x: -249.07866, y: -126.35919}
-  - {x: -254.3663, y: -121.09565}
-  - {x: -261.37616, y: -117.880875}
-  - {x: -269.31552, y: -117.267845}
-  - {x: -277.21954, y: -119.503815}
-  - {x: -284.06842, y: -124.479355}
-  - {x: -288.91867, y: -131.72202}
-  - {x: -291, y: -160}
-  - {x: -291, y: -185}
-  - {x: -291, y: -205}
-  - {x: -291, y: -219}
-  - {x: -292, y: -226}
-  - {x: -296, y: -250}
-  - {x: -270, y: -264}
-  - {x: -230, y: -268}
-  - {x: -190, y: -260}
-  - {x: -150, y: -268}
-  - {x: -110, y: -260}
-  - {x: -80, y: -240}
-  - {x: -62, y: -210}
-  - {x: -56, y: -164}
-  - {x: -58, y: -118}
-  - {x: -60, y: -76}
-  - {x: -62, y: -44}
-  - {x: -64, y: -20}
-  - {x: -56, y: -5}
-  - {x: -44, y: 0}
-  - {x: -20, y: 0}
-  roadWidth: 8
+  - {x: 36, y: 0}
+  - {x: 42, y: 0}
+  - {x: 48, y: 0}
+  - {x: 54, y: 0}
+  - {x: 60, y: 0}
+  - {x: 66, y: 0}
+  - {x: 72, y: 0}
+  - {x: 78, y: 0}
+  - {x: 84, y: 0.1}
+  - {x: 89.98, y: 0.61}
+  - {x: 95.9, y: 1.56}
+  - {x: 101.74, y: 2.94}
+  - {x: 107.46, y: 4.74}
+  - {x: 113.03, y: 6.96}
+  - {x: 118.43, y: 9.58}
+  - {x: 123.82, y: 12.2}
+  - {x: 129.4, y: 14.42}
+  - {x: 135.12, y: 16.22}
+  - {x: 140.96, y: 17.6}
+  - {x: 146.88, y: 18.55}
+  - {x: 152.86, y: 19.06}
+  - {x: 158.85, y: 19.16}
+  - {x: 164.85, y: 19.16}
+  - {x: 170.85, y: 19.16}
+  - {x: 176.85, y: 19.16}
+  - {x: 182.85, y: 19.16}
+  - {x: 188.85, y: 19.25}
+  - {x: 194.69, y: 20.54}
+  - {x: 200, y: 23.31}
+  - {x: 204.86, y: 26.82}
+  - {x: 210.39, y: 29.1}
+  - {x: 216.32, y: 29.89}
+  - {x: 222.25, y: 29.1}
+  - {x: 227.78, y: 26.82}
+  - {x: 232.64, y: 23.31}
+  - {x: 237.94, y: 20.54}
+  - {x: 243.78, y: 19.25}
+  - {x: 249.78, y: 19.16}
+  - {x: 255.78, y: 19.16}
+  - {x: 261.78, y: 19.16}
+  - {x: 267.78, y: 19.16}
+  - {x: 273.75, y: 19.65}
+  - {x: 279.57, y: 21.12}
+  - {x: 285.22, y: 23.11}
+  - {x: 291.11, y: 24.25}
+  - {x: 297.1, y: 24.47}
+  - {x: 303.1, y: 24.47}
+  - {x: 309.1, y: 24.47}
+  - {x: 315.1, y: 24.47}
+  - {x: 321.1, y: 24.47}
+  - {x: 327.1, y: 24.47}
+  - {x: 333.1, y: 24.47}
+  - {x: 339.1, y: 24.47}
+  - {x: 345.1, y: 24.48}
+  - {x: 351.08, y: 24.96}
+  - {x: 356.95, y: 26.15}
+  - {x: 362.65, y: 28.03}
+  - {x: 368.08, y: 30.58}
+  - {x: 373.16, y: 33.75}
+  - {x: 377.83, y: 37.52}
+  - {x: 382.02, y: 41.81}
+  - {x: 385.66, y: 46.57}
+  - {x: 388.71, y: 51.73}
+  - {x: 391.12, y: 57.22}
+  - {x: 392.86, y: 62.96}
+  - {x: 393.99, y: 68.85}
+  - {x: 395.03, y: 74.76}
+  - {x: 396.08, y: 80.67}
+  - {x: 397.12, y: 86.58}
+  - {x: 398.16, y: 92.49}
+  - {x: 399.2, y: 98.4}
+  - {x: 400.24, y: 104.31}
+  - {x: 401.29, y: 110.22}
+  - {x: 402.57, y: 116.08}
+  - {x: 404.32, y: 121.81}
+  - {x: 406.53, y: 127.39}
+  - {x: 409.2, y: 132.76}
+  - {x: 412.28, y: 137.9}
+  - {x: 415.78, y: 142.78}
+  - {x: 419.66, y: 147.35}
+  - {x: 423.86, y: 151.64}
+  - {x: 428.11, y: 155.88}
+  - {x: 432.35, y: 160.12}
+  - {x: 436.59, y: 164.36}
+  - {x: 440.83, y: 168.61}
+  - {x: 445.08, y: 172.85}
+  - {x: 449.19, y: 177.21}
+  - {x: 452.72, y: 182.06}
+  - {x: 455.58, y: 187.33}
+  - {x: 457.71, y: 192.93}
+  - {x: 459.08, y: 198.77}
+  - {x: 459.66, y: 204.74}
+  - {x: 459.44, y: 210.73}
+  - {x: 458.42, y: 216.64}
+  - {x: 456.63, y: 222.36}
+  - {x: 454.19, y: 227.84}
+  - {x: 451.66, y: 233.28}
+  - {x: 449.12, y: 238.72}
+  - {x: 446.58, y: 244.15}
+  - {x: 444.05, y: 249.59}
+  - {x: 441.51, y: 255.03}
+  - {x: 438.98, y: 260.47}
+  - {x: 436.44, y: 265.91}
+  - {x: 433.91, y: 271.34}
+  - {x: 431.37, y: 276.78}
+  - {x: 428.83, y: 282.22}
+  - {x: 426.36, y: 287.69}
+  - {x: 424.16, y: 293.27}
+  - {x: 422.26, y: 298.96}
+  - {x: 420.66, y: 304.74}
+  - {x: 419.36, y: 310.59}
+  - {x: 418.37, y: 316.51}
+  - {x: 417.69, y: 322.47}
+  - {x: 417.32, y: 328.46}
+  - {x: 417.25, y: 334.46}
+  - {x: 417.25, y: 340.48}
+  - {x: 417.25, y: 346.49}
+  - {x: 417.25, y: 352.5}
+  - {x: 417.25, y: 358.51}
+  - {x: 417.25, y: 364.52}
+  - {x: 417.25, y: 370.53}
+  - {x: 417.25, y: 376.54}
+  - {x: 417.25, y: 382.56}
+  - {x: 417.25, y: 388.56}
+  - {x: 417.25, y: 394.56}
+  - {x: 417.25, y: 400.56}
+  - {x: 417.25, y: 406.56}
+  - {x: 417.25, y: 412.56}
+  - {x: 417.25, y: 418.56}
+  - {x: 417.25, y: 424.56}
+  - {x: 417.25, y: 430.56}
+  - {x: 417.25, y: 436.56}
+  - {x: 417.25, y: 442.56}
+  - {x: 417.25, y: 448.56}
+  - {x: 416.75, y: 454.53}
+  - {x: 415.09, y: 460.28}
+  - {x: 412.33, y: 465.6}
+  - {x: 408.57, y: 470.27}
+  - {x: 403.97, y: 474.1}
+  - {x: 398.7, y: 476.95}
+  - {x: 392.97, y: 478.71}
+  - {x: 387.01, y: 479.3}
+  - {x: 381.05, y: 478.71}
+  - {x: 375.32, y: 476.95}
+  - {x: 370.06, y: 474.1}
+  - {x: 365.45, y: 470.27}
+  - {x: 361.7, y: 465.6}
+  - {x: 358.93, y: 460.28}
+  - {x: 357.27, y: 454.53}
+  - {x: 356.77, y: 448.56}
+  - {x: 356.77, y: 442.56}
+  - {x: 356.77, y: 436.56}
+  - {x: 356.77, y: 430.56}
+  - {x: 356.77, y: 424.56}
+  - {x: 356.77, y: 418.56}
+  - {x: 356.17, y: 412.6}
+  - {x: 354.56, y: 406.82}
+  - {x: 352, y: 401.41}
+  - {x: 348.54, y: 396.51}
+  - {x: 344.31, y: 392.27}
+  - {x: 339.41, y: 388.82}
+  - {x: 333.99, y: 386.25}
+  - {x: 328.22, y: 384.65}
+  - {x: 322.26, y: 384.05}
+  - {x: 316.26, y: 384.05}
+  - {x: 310.26, y: 384.05}
+  - {x: 304.26, y: 384.05}
+  - {x: 298.26, y: 384.05}
+  - {x: 292.31, y: 383.37}
+  - {x: 286.59, y: 381.56}
+  - {x: 280.89, y: 379.71}
+  - {x: 275.07, y: 378.3}
+  - {x: 269.07, y: 378.16}
+  - {x: 263.07, y: 378.16}
+  - {x: 257.09, y: 377.88}
+  - {x: 251.31, y: 376.29}
+  - {x: 245.6, y: 374.44}
+  - {x: 239.86, y: 372.72}
+  - {x: 233.89, y: 372.27}
+  - {x: 227.89, y: 372.27}
+  - {x: 221.89, y: 372.22}
+  - {x: 216.03, y: 371.02}
+  - {x: 210.32, y: 369.17}
+  - {x: 204.62, y: 367.32}
+  - {x: 198.71, y: 366.38}
+  - {x: 192.71, y: 366.38}
+  - {x: 186.71, y: 366.38}
+  - {x: 180.71, y: 366.38}
+  - {x: 174.71, y: 366.38}
+  - {x: 168.71, y: 366.38}
+  - {x: 162.71, y: 366.38}
+  - {x: 156.71, y: 366.27}
+  - {x: 150.75, y: 365.59}
+  - {x: 144.9, y: 364.29}
+  - {x: 139.21, y: 362.39}
+  - {x: 133.75, y: 359.9}
+  - {x: 128.58, y: 356.86}
+  - {x: 123.76, y: 353.29}
+  - {x: 119.34, y: 349.24}
+  - {x: 115.37, y: 344.75}
+  - {x: 111.88, y: 339.87}
+  - {x: 108.7, y: 334.78}
+  - {x: 104.87, y: 330.17}
+  - {x: 100.36, y: 326.22}
+  - {x: 95.29, y: 323.02}
+  - {x: 89.79, y: 320.66}
+  - {x: 83.98, y: 319.18}
+  - {x: 78.01, y: 318.63}
+  - {x: 72.01, y: 318.63}
+  - {x: 66.01, y: 318.63}
+  - {x: 60.01, y: 318.63}
+  - {x: 54.01, y: 318.63}
+  - {x: 48.07, y: 317.84}
+  - {x: 42.46, y: 315.76}
+  - {x: 36.94, y: 313.49}
+  - {x: 30.99, y: 313.71}
+  - {x: 25.55, y: 316.2}
+  - {x: 19.86, y: 318.07}
+  - {x: 13.9, y: 318.63}
+  - {x: 7.9, y: 318.63}
+  - {x: 1.9, y: 318.63}
+  - {x: -4.1, y: 318.63}
+  - {x: -10.1, y: 318.63}
+  - {x: -16.1, y: 318.63}
+  - {x: -22.1, y: 318.63}
+  - {x: -28.1, y: 318.63}
+  - {x: -34.1, y: 318.54}
+  - {x: -40.02, y: 317.6}
+  - {x: -45.69, y: 315.67}
+  - {x: -50.95, y: 312.8}
+  - {x: -55.64, y: 309.07}
+  - {x: -59.63, y: 304.6}
+  - {x: -62.8, y: 299.51}
+  - {x: -65.05, y: 293.96}
+  - {x: -66.33, y: 288.1}
+  - {x: -66.6, y: 282.12}
+  - {x: -66.29, y: 276.13}
+  - {x: -65.56, y: 270.17}
+  - {x: -64.41, y: 264.28}
+  - {x: -62.86, y: 258.49}
+  - {x: -60.91, y: 252.82}
+  - {x: -58.56, y: 247.29}
+  - {x: -55.84, y: 241.95}
+  - {x: -52.95, y: 236.69}
+  - {x: -50.42, y: 231.25}
+  - {x: -48.27, y: 225.65}
+  - {x: -46.52, y: 219.92}
+  - {x: -45.17, y: 214.07}
+  - {x: -44.23, y: 208.15}
+  - {x: -43.7, y: 202.17}
+  - {x: -43.59, y: 196.17}
+  - {x: -43.59, y: 190.17}
+  - {x: -43.59, y: 184.17}
+  - {x: -43.59, y: 178.17}
+  - {x: -43.59, y: 172.17}
+  - {x: -43.59, y: 166.17}
+  - {x: -43.59, y: 160.17}
+  - {x: -43.59, y: 154.17}
+  - {x: -43.59, y: 148.17}
+  - {x: -43.59, y: 142.17}
+  - {x: -43.59, y: 136.17}
+  - {x: -43.59, y: 130.17}
+  - {x: -43.78, y: 124.18}
+  - {x: -44.99, y: 118.31}
+  - {x: -47.29, y: 112.78}
+  - {x: -50.58, y: 107.77}
+  - {x: -54.75, y: 103.47}
+  - {x: -59.65, y: 100.02}
+  - {x: -65.11, y: 97.56}
+  - {x: -70.93, y: 96.16}
+  - {x: -76.92, y: 95.82}
+  - {x: -82.9, y: 95.35}
+  - {x: -88.79, y: 94.26}
+  - {x: -94.54, y: 92.55}
+  - {x: -100.08, y: 90.26}
+  - {x: -105.36, y: 87.4}
+  - {x: -110.3, y: 84}
+  - {x: -115, y: 80.27}
+  - {x: -120, y: 76.96}
+  - {x: -125.32, y: 74.19}
+  - {x: -130.9, y: 71.99}
+  - {x: -136.68, y: 70.39}
+  - {x: -142.59, y: 69.4}
+  - {x: -148.58, y: 69.03}
+  - {x: -154.58, y: 69.03}
+  - {x: -160.58, y: 69.03}
+  - {x: -166.58, y: 69.03}
+  - {x: -172.58, y: 69.03}
+  - {x: -178.58, y: 69.03}
+  - {x: -184.58, y: 69.03}
+  - {x: -190.58, y: 69.03}
+  - {x: -196.58, y: 69.03}
+  - {x: -202.58, y: 69.03}
+  - {x: -208.58, y: 69.03}
+  - {x: -214.58, y: 69.03}
+  - {x: -220.58, y: 69.03}
+  - {x: -226.58, y: 69.03}
+  - {x: -232.58, y: 69.03}
+  - {x: -238.58, y: 69.03}
+  - {x: -244.58, y: 69.03}
+  - {x: -250.57, y: 68.86}
+  - {x: -256.46, y: 67.75}
+  - {x: -262.08, y: 65.66}
+  - {x: -267.25, y: 62.64}
+  - {x: -271.84, y: 58.78}
+  - {x: -275.69, y: 54.19}
+  - {x: -278.72, y: 49.02}
+  - {x: -280.81, y: 43.4}
+  - {x: -281.92, y: 37.51}
+  - {x: -282, y: 31.52}
+  - {x: -281.06, y: 25.6}
+  - {x: -279.13, y: 19.93}
+  - {x: -276.26, y: 14.67}
+  - {x: -272.53, y: 9.98}
+  - {x: -268.06, y: 5.99}
+  - {x: -262.97, y: 2.82}
+  - {x: -257.42, y: 0.57}
+  - {x: -251.56, y: -0.71}
+  - {x: -245.58, y: -1}
+  - {x: -239.58, y: -1}
+  - {x: -233.58, y: -1}
+  - {x: -227.58, y: -1}
+  - {x: -221.58, y: -1}
+  - {x: -215.58, y: -1}
+  - {x: -209.58, y: -1}
+  - {x: -203.58, y: -1}
+  - {x: -197.58, y: -1}
+  - {x: -191.58, y: -1}
+  - {x: -185.58, y: -1}
+  - {x: -179.58, y: -1}
+  - {x: -173.58, y: -1}
+  - {x: -167.58, y: -1}
+  - {x: -161.58, y: -1}
+  - {x: -155.58, y: -1}
+  - {x: -149.58, y: -1}
+  - {x: -143.58, y: -1}
+  - {x: -137.08, y: -1}
+  - {x: -130.77, y: -0.99}
+  - {x: -124.54, y: -0.98}
+  - {x: -118.23, y: -0.95}
+  - {x: -111.9, y: -0.89}
+  - {x: -105.58, y: -0.82}
+  - {x: -99.25, y: -0.72}
+  - {x: -92.84, y: -0.61}
+  - {x: -86.63, y: -0.49}
+  - {x: -80.39, y: -0.37}
+  - {x: -74.39, y: -0.27}
+  - {x: -68.03, y: -0.17}
+  - {x: -61.67, y: -0.1}
+  - {x: -55.3, y: -0.05}
+  - {x: -48.94, y: -0.02}
+  - {x: -42.66, y: -0}
+  roadWidth: 10
   widths:
-  - distance: 18
-    width: 8
-  - distance: 28
-    width: 6
-  - distance: 352.99557
-    width: 6
-  - distance: 360.99557
+  - distance: 70
+    width: 12
+  - distance: 109.998146
     width: 10
-  - distance: 370.99557
-    width: 14
-  - distance: 871.9956
-    width: 14
-  - distance: 889.9956
-    width: 8
-  - distance: 1131.9956
-    width: 6
-  - distance: 1256.9956
-    width: 6
-  - distance: 1276.9956
-    width: 5.5
-  - distance: 1380.4956
-    width: 5.5
-  - distance: 1400.4956
-    width: 7
-  - distance: 1460.9956
-    width: 6.5
-  - distance: 1513.4956
-    width: 6.5
-  - distance: 1523.4956
+  - distance: 173.99292
+    width: 9.5
+  - distance: 309.96542
     width: 9
-  - distance: 1686.4956
+  - distance: 331.96542
+    width: 10
+  - distance: 402.96503
+    width: 10
+  - distance: 422.9616
+    width: 15
+  - distance: 722.95825
+    width: 15
+  - distance: 742.95825
+    width: 10
+  - distance: 824.5581
+    width: 11
+  - distance: 831.55804
+    width: 16
+  - distance: 932.5492
+    width: 16
+  - distance: 954.5492
+    width: 10
+  - distance: 1024.5417
     width: 9
-  - distance: 1696.4956
-    width: 6.5
-  - distance: 1922.9956
-    width: 6.5
-  - distance: 1932.9956
+  - distance: 1034.5414
     width: 8
+  - distance: 1153.5
+    width: 8
+  - distance: 1173.5
+    width: 10
+  - distance: 1287.496
+    width: 10
+  - distance: 1381.4482
+    width: 10
+  - distance: 1444.4398
+    width: 8
+  - distance: 1534.4443
+    width: 8
+  - distance: 1550.9443
+    width: 14.5
+  - distance: 1584.4443
+    width: 8
+  - distance: 1614.4354
+    width: 8
+  - distance: 1764.4327
+    width: 8
+  - distance: 1802.4327
+    width: 8
+  - distance: 1922.4237
+    width: 8
+  - distance: 1951.4188
+    width: 10
+  - distance: 2049.4187
+    width: 10
+  - distance: 2083.4192
+    width: 9
+  - distance: 2099.9211
+    width: 14.5
+  - distance: 2125.4243
+    width: 10
+  - distance: 2129.5056
+    width: 12
+  - distance: 2145.4253
+    width: 12
   kerbWidth: 0.7
   sampleSpacing: 1
   checkpointCount: 120
   sections: 1
   finishAtLastLine: 0
-  sectionLines:
-  - 358.99557
-  - 889.9956
-  - 1466.9956
-  boundaryMargin: 30
-  rooms: []
-  houses: []
-  upstairs: []
-  stairs: []
+  sectionLines: []
+  boundaryMargin: 40
+  rooms:
+  - min: {x: 176.85, y: 6.16}
+    max: {x: 251.78, y: 42.89}
+    floor: 9
+    upper: 0
+  - min: {x: 251.78, y: 6.16}
+    max: {x: 301.1, y: 42.89}
+    floor: 0
+    upper: 1
+  - min: {x: 10.4, y: 300.26}
+    max: {x: 62.51, y: 331.63}
+    floor: 8
+    upper: 0
+  - min: {x: -17.6, y: 300.26}
+    max: {x: 10.4, y: 331.63}
+    floor: 8
+    upper: 0
+  - min: {x: -232.08, y: -15}
+    max: {x: -182.08, y: 13}
+    floor: 9
+    upper: 0
+  - min: {x: -182.08, y: -15}
+    max: {x: -146.08, y: 13}
+    floor: 0
+    upper: 0
+  houses:
+  - min: {x: 176.85, y: 6.16}
+    max: {x: 301.1, y: 42.89}
+    roof: 7
+  - min: {x: -17.6, y: 300.26}
+    max: {x: 62.51, y: 331.63}
+    roof: 7
+  - min: {x: -232.08, y: -15}
+    max: {x: -146.08, y: 13}
+    roof: 7
+  upstairs:
+  - from: 275.9705
+    to: 310.46542
+  stairs:
+  - from: 263.96982
+    to: 275.9705
   decor:
-  - cell: Grandstand
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -14.000071, y: 13}
-    size: 14
-    angle: 180
-    flat: 0
-  - cell: Grandstand
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -34.359432, y: -12.465117}
-    size: 14
-    angle: -1.6344181
-    flat: 0
-  - cell: Scoreboard
+  - cell: Fireplace
     uv:
       serializedVersion: 2
       x: 0.5
-      y: 0.5
+      y: 0.4
       width: 0.25
-      height: 0.16666667
-    position: {x: 28, y: 12}
-    size: 11
-    angle: 180
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 36, y: -10}
-    size: 9
-    angle: 0
-    flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 132, y: 12}
-    size: 12
-    angle: 0
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 134.33472, y: 25.547169}
-    size: 15.962429
-    angle: 42
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 126.13067, y: 36.528114}
-    size: 13.083623
-    angle: 84
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 108.80319, y: 54.702484}
-    size: 14.086205
-    angle: 168
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 60.885902, y: 59.30905}
-    size: 15.559982
-    angle: 336
-    flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 47.173763, y: 57.181446}
-    size: 13.319963
-    angle: 378
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 39.23688, y: 46.20432}
-    size: 15.9209585
-    angle: 420
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 50.60843, y: -35.036327}
-    size: 14.758704
-    angle: 714
-    flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 63.28047, y: -39.457397}
-    size: 14.492048
-    angle: 756
-    flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 102.448715, y: -38.42063}
-    size: 15.86444
-    angle: 882
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 113.558136, y: -30.952454}
-    size: 12.494412
-    angle: 924
-    flat: 0
-  - cell: RockSpire
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.16666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 134.03827, y: 2.4715796}
-    size: 15.8357315
-    angle: 1050
-    flat: 0
-  - cell: PatrolHut
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.33333334
-      width: 0.25
-      height: 0.16666667
-    position: {x: 72, y: 70.14548}
-    size: 12
-    angle: 270
-    flat: 0
-  - cell: WinterCrowd
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 109, y: 78.145355}
-    size: 7
-    angle: 180
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 79.3, y: 76.145485}
-    size: 7
-    angle: 180
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 104.7, y: 90.14548}
-    size: 7
-    angle: 0
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 79.3, y: 104.14546}
-    size: 7
-    angle: 180
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 104.7, y: 118.1455}
-    size: 7
-    angle: 0
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 79.3, y: 132.14545}
-    size: 7
-    angle: 180
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 104.69999, y: 146.14568}
-    size: 7
-    angle: 0.0008468628
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 79.46019, y: 160.47519}
-    size: 7
-    angle: 178.50575
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 105.23515, y: 173.8508}
-    size: 7
-    angle: -1.2993164
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 79.89269, y: 187.81845}
-    size: 7
-    angle: 181.43925
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 104.19151, y: 203.45647}
-    size: 7
-    angle: 6.1579895
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 77.0943, y: 213.12897}
-    size: 7
-    angle: 192.74316
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 95.23811, y: 235.49785}
-    size: 7
-    angle: 31.304955
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 66.88567, y: 230.29245}
-    size: 7
-    angle: 227.39273
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 69.37727, y: 258.94553}
-    size: 7
-    angle: 64.652954
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 47.358532, y: 239.99191}
-    size: 7
-    angle: 254.32747
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 39.32796, y: 267.9339}
-    size: 7
-    angle: 80.20053
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 22.235926, y: 244.4522}
-    size: 7
-    angle: 265.31354
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 10.015739, y: 270.71906}
-    size: 7
-    angle: 86.79123
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -4.721847, y: 245.68994}
-    size: 7
-    angle: 269.85242
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -18.89396, y: 270.96594}
-    size: 7
-    angle: -269.0722
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -32.533997, y: 245.34828}
-    size: 7
-    angle: -89.311005
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -46.442028, y: 270.76907}
-    size: 7
-    angle: 88.89842
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -61.047195, y: 245.76334}
-    size: 7
-    angle: 268.34625
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -74.73561, y: 271.3874}
-    size: 7
-    angle: -269.74048
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -87.56495, y: 245.47118}
-    size: 7
-    angle: -85.04193
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -104.83961, y: 268.67667}
-    size: 7
-    angle: -259.48944
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -113.2995, y: 240.88388}
-    size: 7
-    angle: -76.75841
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -132.63853, y: 262.424}
-    size: 7
-    angle: -257.24982
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -139.45992, y: 234.11743}
-    size: 7
-    angle: -72.394394
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -159.93489, y: 254.46149}
-    size: 7
-    angle: -255.25693
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -170.2233, y: 227.29218}
-    size: 7
-    angle: -88.75679
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -181.18861, y: 254.27777}
-    size: 7
-    angle: 75.75455
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -200.15909, y: 232.83093}
-    size: 7
-    angle: 259.75485
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -212.96144, y: 258.29547}
-    size: 7
-    angle: -264.9645
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -222.58864, y: 230.97835}
-    size: 7
-    angle: -76.114044
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -244.11436, y: 250.35242}
-    size: 7
-    angle: -245.59581
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 76, y: 76.145485}
-    size: 8
-    angle: 89.99955
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 108, y: 76.145485}
-    size: 8
-    angle: 89.99955
-    flat: 0
-  - cell: WinterCrowd
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 73, y: 92.14562}
-    size: 7
-    angle: -0.00045013428
-    flat: 0
-  - cell: CameraCrane
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 112, y: 86.14548}
+      height: 0.1
+    position: {x: 214.32, y: 38.29}
     size: 10
-    angle: 179.99954
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 76, y: 106.14524}
-    size: 8
-    angle: 90.00044
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 108, y: 106.14571}
-    size: 8
-    angle: 90.00044
-    flat: 0
-  - cell: WinterCrowd
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 73, y: 122.1455}
-    size: 7
-    angle: 0.00044250488
-    flat: 0
-  - cell: CameraCrane
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 112, y: 116.14549}
-    size: 10
-    angle: 180.00044
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 76, y: 136.14546}
-    size: 8
-    angle: 90
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 108, y: 136.14546}
-    size: 8
-    angle: 90
-    flat: 0
-  - cell: WinterCrowd
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 73.01001, y: 152.3158}
-    size: 7
     angle: 0
     flat: 0
-  - cell: CameraCrane
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 111.99999, y: 146.14578}
-    size: 10
-    angle: 180
-    flat: 0
-  - cell: Flags
+  - cell: PersianRug
     uv:
       serializedVersion: 2
       x: 0.25
       y: 0.5
       width: 0.25
-      height: 0.16666667
-    position: {x: 76.33069, y: 166.607}
-    size: 8
-    angle: 88.41963
-    flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: 108.317154, y: 165.67639}
-    size: 8
-    angle: 88.41963
-    flat: 0
-  - cell: WinterCrowd
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 73.6481, y: 182.1724}
-    size: 7
-    angle: -1.580368
-    flat: 0
-  - cell: CameraCrane
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 112.576294, y: 175.7605}
-    size: 10
-    angle: 178.41963
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: 72, y: 86.14548}
-    size: 9
-    angle: 270
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 112, y: 108.145485}
+      height: 0.1
+    position: {x: 214.32, y: 30.39}
     size: 9
     angle: 90
+    flat: 1
+  - cell: LeatherSofa
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.4
+      width: 0.25
+      height: 0.1
+    position: {x: 183.09, y: 36.75}
+    size: 7
+    angle: 90
     flat: 0
-  - cell: SnowCannon
+  - cell: Wingback
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0.8333333
+      y: 0.4
       width: 0.25
-      height: 0.16666667
-    position: {x: 72, y: 130.14545}
-    size: 9
-    angle: 270
+      height: 0.1
+    position: {x: 182.9, y: 29.86}
+    size: 4.5
+    angle: 180
     flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 112.00844, y: 151.96613}
-    size: 9
-    angle: 89.486275
-    flat: 0
-  - cell: SnowCannon
+  - cell: Wingback
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: 72.543564, y: 174.59229}
-    size: 9
-    angle: 268.70068
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 112.111465, y: 197.75426}
-    size: 9
-    angle: 94.67079
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: 69.6535, y: 212.82878}
-    size: 9
-    angle: 284.6087
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 92.955795, y: 250.48154}
-    size: 9
-    angle: 133.02306
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: 52.89321, y: 230.47711}
-    size: 9
-    angle: 338.34357
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: 42.87733, y: 274.70792}
-    size: 9
-    angle: 169.21294
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: 15.984887, y: 237.59525}
-    size: 9
-    angle: 356.25848
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -4.637624, y: 278.38983}
-    size: 9
-    angle: 179.85243
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -26.357632, y: 238.13617}
-    size: 9
-    angle: 0.94425964
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -48.221733, y: 278.1091}
-    size: 9
-    angle: 178.67061
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -70.86924, y: 238.6734}
-    size: 9
-    angle: 359.45264
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -95.00245, y: 277.57053}
-    size: 9
-    angle: -173.21913
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -109.74606, y: 234.21788}
-    size: 9
-    angle: 13.047043
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -141.0381, y: 267.81253}
-    size: 9
-    angle: -164.366
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -151.61324, y: 222.83807}
-    size: 9
-    angle: 14.7430725
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -174.96713, y: 260.3707}
-    size: 9
-    angle: 169.9544
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -202.6557, y: 225.83879}
-    size: 9
-    angle: 352.0077
-    flat: 0
-  - cell: Skiers
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -225.67691, y: 263.79642}
-    size: 9
-    angle: -168.63335
-    flat: 0
-  - cell: SnowCannon
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -233.22836, y: 219.31697}
-    size: 9
-    angle: 27.525345
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -249.95592, y: 212.00453}
-    size: 6.746764
-    angle: 317.26468
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -271.99884, y: 230.35344}
-    size: 6.3229346
-    angle: 195.29033
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -249.18147, y: 209.05219}
-    size: 7.255406
-    angle: 317.40228
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -275.92493, y: 229.98926}
-    size: 6.549511
-    angle: 322.94693
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -276.15686, y: 225.99396}
-    size: 6.9697456
-    angle: 278.00027
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -255.19922, y: 207.99594}
-    size: 7.6589775
-    angle: 208.34427
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -279.83688, y: 221.29382}
-    size: 7.0176973
-    angle: 219.63869
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -255.91324, y: 204.59651}
-    size: 6.788958
-    angle: 313.23944
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -284.2393, y: 220.00056}
-    size: 9.230473
-    angle: 168.54985
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -258.9385, y: 203.08572}
-    size: 9.805302
-    angle: 215.57437
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -284.1476, y: 215.43558}
-    size: 9.282608
-    angle: 151.52234
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -254.35283, y: 199.16504}
-    size: 7.2340426
-    angle: 28.557697
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.32742, y: 212.3245}
-    size: 8.94047
-    angle: 137.50671
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -258.66342, y: 198.95224}
-    size: 8.109081
-    angle: 122.80122
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -287.7506, y: 207.85248}
-    size: 6.4055824
-    angle: 216.14206
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -261.65747, y: 197.17035}
-    size: 9.09697
-    angle: 139.35617
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -259.6156, y: 194.4775}
-    size: 9.334116
-    angle: 268.19388
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -285.2345, y: 199.41362}
-    size: 6.47165
-    angle: 354.6099
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -265.1396, y: 191.29247}
-    size: 7.70262
-    angle: 335.98956
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -286.93878, y: 196.28708}
-    size: 8.440845
-    angle: 346.35184
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -262.44443, y: 188.75435}
-    size: 6.881029
-    angle: 29.31232
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -256.63104, y: 185.94382}
-    size: 8.980326
-    angle: 296.17477
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -257.10098, y: 182.32576}
-    size: 6.465472
-    angle: 158.73518
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -256.72684, y: 179.31535}
-    size: 9.415353
-    angle: 206.87837
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -288.11392, y: 181.44653}
-    size: 9.008423
-    angle: 254.28693
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -264.38553, y: 176.863}
-    size: 6.484389
-    angle: 20.332895
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -293.63177, y: 179.96364}
-    size: 8.411789
-    angle: 299.31613
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -263.658, y: 173.61215}
-    size: 8.092086
-    angle: 12.945777
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -294.43066, y: 176.22728}
-    size: 9.117305
-    angle: 344.98483
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -266.76108, y: 171.77925}
-    size: 9.509769
-    angle: 5.0496798
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -290.3076, y: 173.09804}
-    size: 6.6816764
-    angle: 193.01726
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -266.49503, y: 167.45206}
-    size: 6.303738
-    angle: 259.90646
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -287.53314, y: 169.28508}
-    size: 6.2395515
-    angle: 254.05011
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -257.6998, y: 164.33313}
-    size: 6.0380173
-    angle: 214.91739
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.59454, y: 166.95737}
-    size: 9.271511
-    angle: 286.44168
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -263.0557, y: 161.90802}
-    size: 9.175259
-    angle: 182.08966
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -291.46246, y: 162.5231}
-    size: 6.4282813
-    angle: 229.33076
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -259.44647, y: 158.60739}
-    size: 6.267153
-    angle: 210.47919
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -291.7826, y: 159.5559}
-    size: 9.204236
-    angle: 311.86798
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -261.1475, y: 155.19759}
-    size: 6.294526
-    angle: 346.62366
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -293.4439, y: 157.26495}
-    size: 7.121798
-    angle: 246.08852
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -263.46762, y: 152.25983}
-    size: 7.498991
-    angle: 350.0934
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -296.5846, y: 152.21667}
-    size: 8.2805195
-    angle: 92.790215
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -264.14407, y: 149.4333}
-    size: 7.691432
-    angle: 296.2595
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -266.0382, y: 146.5388}
-    size: 9.806312
-    angle: 13.511825
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.63815, y: 147.09695}
-    size: 9.323885
-    angle: 324.0031
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -259.17572, y: 143.01976}
-    size: 7.6939645
-    angle: 22.149174
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -287.35117, y: 142.5291}
-    size: 6.3772264
-    angle: 263.32083
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -262.73633, y: 140.8086}
-    size: 8.173234
-    angle: 122.36786
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -292.06656, y: 138.64433}
-    size: 7.0027537
-    angle: 309.69446
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -269.52625, y: 136.30798}
-    size: 6.639399
-    angle: 111.670425
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -290.16742, y: 136.45264}
-    size: 7.34886
-    angle: 253.05754
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -260.18765, y: 134.50203}
-    size: 8.680485
-    angle: 111.534805
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -298.07397, y: 132.18454}
-    size: 7.4453297
-    angle: 267.82367
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -262.95926, y: 131.00531}
-    size: 8.773573
-    angle: 168.67441
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.97336, y: 129.50273}
-    size: 8.446669
-    angle: 202.37697
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -266.8416, y: 126.54485}
-    size: 9.882835
-    angle: 293.7793
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -295.08493, y: 126.993}
-    size: 6.453182
-    angle: 266.67026
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -264.10342, y: 124.32058}
-    size: 7.565476
-    angle: 313.24277
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -296.80423, y: 123.65685}
-    size: 6.9339585
-    angle: 127.11639
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -262.51962, y: 120.60376}
-    size: 8.026936
-    angle: 84.09882
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.0177, y: 119.38232}
-    size: 8.765239
-    angle: 357.26907
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -296.0283, y: 117.85057}
-    size: 9.41627
-    angle: 201.67929
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -293.1644, y: 113.35638}
-    size: 9.2930975
-    angle: 204.55055
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -266.2736, y: 111.05151}
-    size: 7.034264
-    angle: 328.2871
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -288.412, y: 111.27702}
-    size: 8.948404
-    angle: 200.07936
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -260.98502, y: 107.534805}
-    size: 6.4835258
-    angle: 236.02293
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -293.76978, y: 107.57594}
-    size: 9.942039
-    angle: 7.8756356
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -258.65704, y: 104.55795}
-    size: 8.693077
-    angle: 81.726906
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -287.17123, y: 103.553955}
-    size: 7.1426654
-    angle: 222.30638
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -260.75296, y: 102.02338}
-    size: 6.492455
-    angle: 237.50768
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -288.0579, y: 101.15744}
-    size: 9.452592
-    angle: 65.905174
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -264.9118, y: 98.422356}
-    size: 7.1931663
-    angle: 282.71313
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -288.6664, y: 97.819695}
-    size: 9.85985
-    angle: 197.97409
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -264.85242, y: 94.254196}
-    size: 9.20559
-    angle: 215.1499
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -291.00504, y: 94.35252}
-    size: 6.1261873
-    angle: 284.03812
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -259.18216, y: 92.688644}
-    size: 6.478333
-    angle: 272.9618
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -293.2071, y: 91.78108}
-    size: 7.8445516
-    angle: 164.57973
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -266.9192, y: 88.1024}
-    size: 9.209759
-    angle: 204.92969
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.86935, y: 89.1546}
-    size: 9.551821
-    angle: 351.43427
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -267.99695, y: 86.284004}
-    size: 8.942953
-    angle: 56.98693
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -296.6269, y: 85.62629}
-    size: 8.1019
-    angle: 76.46474
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -260.76077, y: 82.02067}
-    size: 6.2966127
-    angle: 89.88794
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -264.0071, y: 79.54213}
-    size: 8.031186
-    angle: 93.48199
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -296.3099, y: 79.85927}
-    size: 6.9285936
-    angle: 87.00214
-    flat: 0
-  - cell: FrostTree
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -259.38232, y: 74.9286}
-    size: 6.221362
-    angle: 211.29745
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.217, y: 76.160446}
-    size: 9.845144
-    angle: 301.50558
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -266.45526, y: 71.6322}
-    size: 6.9949436
-    angle: 234.17755
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -293.98642, y: 72.25128}
-    size: 8.211004
-    angle: 185.52466
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -261.2646, y: 69.03491}
-    size: 8.940502
-    angle: 157.85214
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -294.65936, y: 69.299805}
-    size: 7.9042645
-    angle: 93.89404
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -261.33395, y: 66.8907}
-    size: 7.13521
-    angle: 103.57498
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -292.80463, y: 66.13152}
-    size: 7.9488635
-    angle: 339.0178
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -262.3057, y: 63.38442}
-    size: 8.810196
-    angle: 293.76144
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -287.6742, y: 62.03976}
-    size: 9.429214
-    angle: 198.97392
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -259.77634, y: 59.764847}
-    size: 8.8672085
-    angle: 169.4769
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -293.17352, y: 60.399}
-    size: 8.467449
-    angle: 296.0534
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -259.95993, y: 55.91266}
-    size: 8.801878
-    angle: 25.522896
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -291.1541, y: 52.440205}
-    size: 9.676487
-    angle: 91.09727
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -267.1978, y: 49.814613}
-    size: 9.693443
-    angle: 130.13814
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -288.51596, y: 50.3245}
-    size: 9.252133
-    angle: 231.32312
-    flat: 0
-  - cell: SnowPine
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -295.50034, y: 46.785553}
-    size: 8.5266075
-    angle: 262.98575
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -255.74176, y: 212.02051}
-    size: 9
-    angle: 11647.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -283.25092, y: 206.11392}
-    size: 9
-    angle: 11881.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -265.2209, y: 183.83488}
-    size: 9
-    angle: 12115.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -288.5339, y: 167.79181}
-    size: 9
-    angle: 12349.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -267.43237, y: 148.93826}
-    size: 9
-    angle: 12583.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289.33545, y: 130.93208}
-    size: 9
-    angle: 12817.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -267.01376, y: 113.24021}
-    size: 9
-    angle: 13051.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289, y: 95.14824}
-    size: 9
-    angle: 13285.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -267, y: 77.148224}
-    size: 9
-    angle: 13519.943
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -289, y: 59.148026}
-    size: 9
-    angle: 13753.943
-    flat: 0
-  - cell: JudgeTower
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -290, y: 52.14809}
-    size: 11
+      y: 0.4
+      width: 0.25
+      height: 0.1
+    position: {x: 189.89, y: 28.6}
+    size: 4.5
     angle: 0
     flat: 0
-  - cell: WinterCrowd
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.6666667
-      width: 0.25
-      height: 0.16666667
-    position: {x: -267, y: 60.14802}
-    size: 7
-    angle: -180
-    flat: 0
-  - cell: Helicopter
+  - cell: BearRug
     uv:
       serializedVersion: 2
       x: 0
-      y: 0.8333333
+      y: 0.5
       width: 0.25
-      height: 0.16666667
-    position: {x: -248, y: 12.648371}
-    size: 16
+      height: 0.1
+    position: {x: 204.56, y: 12.39}
+    size: 6.5
+    angle: 90
+    flat: 1
+  - cell: GrandPiano
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.4
+      width: 0.25
+      height: 0.1
+    position: {x: 246.58, y: 37.69}
+    size: 8
     angle: -90
     flat: 0
-  - cell: AvalancheFence
+  - cell: Bookcase
     uv:
       serializedVersion: 2
-      x: 0.75
-      y: 0.16666667
+      x: 0
+      y: 0.6
       width: 0.25
-      height: 0.16666667
-    position: {x: -280.04794, y: -178.62654}
-    size: 9
+      height: 0.1
+    position: {x: 198.17, y: 39.49}
+    size: 8
+    angle: 0
+    flat: 0
+  - cell: Bookcase
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 192.12, y: 9.56}
+    size: 8
+    angle: 180
+    flat: 0
+  - cell: Palm
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 248.08, y: 9.86}
+    size: 5
     angle: -90
     flat: 0
-  - cell: Flags
+  - cell: Palm
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 180.55, y: 9.86}
+    size: 5
+    angle: 90
+    flat: 0
+  - cell: Candelabra
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.8
+      width: 0.25
+      height: 0.1
+    position: {x: 238.28, y: 10.89}
+    size: 3
+    angle: 67.956
+    flat: 0
+  - cell: ChampagneTable
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 239.38, y: 38.44}
+    size: 3.5
+    angle: 179.897
+    flat: 0
+  - cell: Ottoman
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.1
+    position: {x: 212.13, y: 13.81}
+    size: 3.5
+    angle: 216.437
+    flat: 0
+  - cell: MarbleBust
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 249.62, y: 28.33}
+    size: 3.5
+    angle: -90
+    flat: 0
+  - cell: Telescope
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: 288.27, y: 40.31}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: FourPoster
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: 294.97, y: 9.56}
+    size: 8
+    angle: 180
+    flat: 0
+  - cell: LeatherSofa
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.4
+      width: 0.25
+      height: 0.1
+    position: {x: 281.77, y: 9.29}
+    size: 7
+    angle: 180
+    flat: 0
+  - cell: Palm
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 255.23, y: 39.44}
+    size: 4.5
+    angle: 90
+    flat: 0
+  - cell: Bookcase
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 274.33, y: 39.76}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Ottoman
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.1
+    position: {x: 287.72, y: 12.74}
+    size: 3.5
+    angle: 114.335
+    flat: 0
+  - cell: PersianRug
     uv:
       serializedVersion: 2
       x: 0.25
       y: 0.5
       width: 0.25
-      height: 0.16666667
-    position: {x: 79.27997, y: 62.267635}
+      height: 0.1
+    position: {x: 266.13, y: 33.08}
     size: 8
-    angle: 300.74323
-    flat: 0
-  - cell: SnowRock
+    angle: 90
+    flat: 1
+  - cell: Fountain
     uv:
       serializedVersion: 2
-      x: 0.5
-      y: 0
+      x: 0
+      y: 0.9
       width: 0.25
-      height: 0.16666667
-    position: {x: 105.42337, y: 95.62297}
-    size: 5
-    angle: 128.81677
+      height: 0.1
+    position: {x: 31.73, y: 323.91}
+    size: 7
+    angle: 84.212
     flat: 0
-  - cell: SnowRock
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 78.214355, y: 127.673416}
-    size: 5
-    angle: 273.1001
-    flat: 0
-  - cell: Flags
+  - cell: Palm
     uv:
       serializedVersion: 2
       x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 58.81, y: 303.96}
+    size: 5
+    angle: 180
+    flat: 0
+  - cell: Palm
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 58.81, y: 327.93}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: MarbleBust
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 20.89, y: 329.47}
+    size: 3.5
+    angle: 0
+    flat: 0
+  - cell: MarbleBust
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 34.72, y: 302.42}
+    size: 3.5
+    angle: 180
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: 22.23, y: 302.56}
+    size: 4
+    angle: 180
+    flat: 0
+  - cell: ChampagneTable
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 40.12, y: 324.69}
+    size: 3.5
+    angle: 5.508
+    flat: 0
+  - cell: Aquarium
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.9
+      width: 0.25
+      height: 0.1
+    position: {x: 45.55, y: 303.66}
+    size: 8
+    angle: 180
+    flat: 0
+  - cell: Lounger
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: 1.95, y: 302.83}
+    size: 5
+    angle: 180
+    flat: 0
+  - cell: Lounger
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: 7.82, y: 307.71}
+    size: 5
+    angle: -90
+    flat: 0
+  - cell: Lounger
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: -9.83, y: 329.06}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: Lounger
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: -11.34, y: 302.83}
+    size: 5
+    angle: 180
+    flat: 0
+  - cell: Towels
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.7
+      width: 0.25
+      height: 0.1
+    position: {x: -3.93, y: 329.33}
+    size: 4
+    angle: 0
+    flat: 0
+  - cell: Palm
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: 6.7, y: 327.93}
+    size: 5
+    angle: 0
+    flat: 0
+  - cell: ChampagneTable
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.6
+      width: 0.25
+      height: 0.1
+    position: {x: -5.23, y: 308.01}
+    size: 3.5
+    angle: 5.338
+    flat: 0
+  - cell: Bar
+    uv:
+      serializedVersion: 2
+      x: 0.75
       y: 0.5
       width: 0.25
-      height: 0.16666667
-    position: {x: 106.13403, y: 154.31448}
-    size: 8
-    angle: 286.41687
+      height: 0.1
+    position: {x: -203.58, y: 9.33}
+    size: 9
+    angle: 0
     flat: 0
-  - cell: Boulders
+  - cell: Jukebox
     uv:
       serializedVersion: 2
-      x: 0.75
-      y: 0
+      x: 0.5
+      y: 0.9
       width: 0.25
-      height: 0.16666667
-    position: {x: 78.45299, y: 188.59438}
-    size: 5
-    angle: 73.63111
+      height: 0.1
+    position: {x: -211.34, y: -12.7}
+    size: 4
+    angle: 180
     flat: 0
-  - cell: Flags
+  - cell: Ottoman
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.1
+    position: {x: -211.86, y: -9.22}
+    size: 3.5
+    angle: 298.624
+    flat: 0
+  - cell: Ottoman
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.8
+      width: 0.25
+      height: 0.1
+    position: {x: -205.51, y: -9.64}
+    size: 3.5
+    angle: 194.533
+    flat: 0
+  - cell: Palm
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0.5
+      y: 0.6
       width: 0.25
-      height: 0.16666667
-    position: {x: 104.37947, y: 219.45047}
-    size: 8
-    angle: 205.83961
-    flat: 0
-  - cell: SnowRock
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 61.8384, y: 233.73502}
+      height: 0.1
+    position: {x: -185.78, y: 9.3}
     size: 5
-    angle: 110.12914
+    angle: -90
     flat: 0
-  - cell: SnowRock
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: 39.4255, y: 268.1486}
-    size: 5
-    angle: 139.85548
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: 2.6287754, y: 244.19682}
-    size: 8
-    angle: 240.47618
-    flat: 0
-  - cell: Flags
+  - cell: WineRack
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0.5
+      y: 0.8
       width: 0.25
-      height: 0.16666667
-    position: {x: -31.19998, y: 273.73926}
-    size: 8
-    angle: 213.06851
+      height: 0.1
+    position: {x: -200.32, y: -11.87}
+    size: 7
+    angle: 180
     flat: 0
-  - cell: SnowRock
+  - cell: DjBooth
     uv:
       serializedVersion: 2
-      x: 0.5
-      y: 0
+      x: 0.75
+      y: 0.9
       width: 0.25
-      height: 0.16666667
-    position: {x: -63.99415, y: 245.97598}
-    size: 5
-    angle: 38.353676
+      height: 0.1
+    position: {x: -154.79, y: -11.6}
+    size: 8
+    angle: 180
     flat: 0
-  - cell: Flags
+  - cell: Aquarium
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0.5
+      y: 0.9
       width: 0.25
-      height: 0.16666667
-    position: {x: -100.95604, y: 271.02383}
+      height: 0.1
+    position: {x: -155.96, y: 9.6}
     size: 8
-    angle: 159.64012
+    angle: 0
     flat: 0
-  - cell: Boulders
+  - cell: LeatherSofa
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.4
+      width: 0.25
+      height: 0.1
+    position: {x: -173.73, y: -11.87}
+    size: 7
+    angle: 180
+    flat: 0
+  - cell: Candelabra
     uv:
       serializedVersion: 2
       x: 0.75
-      y: 0
+      y: 0.8
       width: 0.25
-      height: 0.16666667
-    position: {x: -125.56465, y: 236.12582}
-    size: 5
-    angle: 249.95291
+      height: 0.1
+    position: {x: -175.95, y: 7.69}
+    size: 3
+    angle: 280.025
     flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -164.923, y: 254.7197}
-    size: 5
-    angle: 357.6959
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -193.23747, y: 227.91698}
-    size: 8
-    angle: 189.95168
-    flat: 0
-  - cell: SnowRock
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -219.69092, y: 258.7771}
-    size: 5
-    angle: 59.098366
-    flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -238.7177, y: 224.68123}
-    size: 5
-    angle: 26.057055
-    flat: 0
-  - cell: SnowRock
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -277.54712, y: 216.43909}
-    size: 5
-    angle: 345.88556
-    flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -265.65094, y: 182.06401}
-    size: 5
-    angle: 2.3934124
-    flat: 0
-  - cell: Signpost
+  - cell: Palm
     uv:
       serializedVersion: 2
       x: 0.25
-      y: 0.33333334
+      y: 0.6
       width: 0.25
-      height: 0.16666667
-    position: {x: -289.35977, y: 149.52682}
+      height: 0.1
+    position: {x: -149.78, y: 9.3}
     size: 5
-    angle: 40.656166
+    angle: -90
     flat: 0
-  - cell: Flags
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.5
-      width: 0.25
-      height: 0.16666667
-    position: {x: -265.76706, y: 113.09183}
-    size: 8
-    angle: 130.71722
-    flat: 0
-  - cell: SnowRock
+  - cell: ChampagneTable
     uv:
       serializedVersion: 2
       x: 0.5
-      y: 0
+      y: 0.6
       width: 0.25
-      height: 0.16666667
-    position: {x: -288.2211, y: 82.6781}
-    size: 5
-    angle: 171.71147
-    flat: 0
-  - cell: SnowRock
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -268.12756, y: 53.723564}
-    size: 5
-    angle: 247.82693
-    flat: 0
-  - cell: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    position: {x: -300.88373, y: -180.46014}
-    size: 5
-    angle: 255.60771
-    flat: 0
-  - cell: Signpost
-    uv:
-      serializedVersion: 2
-      x: 0.25
-      y: 0.33333334
-      width: 0.25
-      height: 0.16666667
-    position: {x: -74.38113, y: -18.593855}
-    size: 5
-    angle: 264.96188
-    flat: 0
-  - cell: BrokenTree
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.8333333
-      width: 0.25
-      height: 0.16666667
-    position: {x: -40.192425, y: -12.2014065}
-    size: 8
-    angle: 206.79947
+      height: 0.1
+    position: {x: -172.4, y: 8.49}
+    size: 3.5
+    angle: 263.294
     flat: 0
   logJumps: []
-  rings:
-  - distance: 474.99557
-    lateral: 0
+  rings: []
   waterfalls: []
   dusk: 0
   coasters: []
-  buntings:
-  - {x: 2031.483, y: 10}
-  - {x: 362.99557, y: 392.99557}
+  buntings: []
   padLook: 0
   boats: []
-  fireworks: 1
+  fireworks: 0
   cows: []
   fences: []
   trains: []
   props: []
   bankMaterial: {fileID: 0}
-  sceneryMaterial: {fileID: 2100000, guid: ba50c1e0a12924f23bcbccaecacf6794, type: 2}
+  sceneryMaterial: {fileID: 2100000, guid: 9e681dad6bf254f669afc3ab3df7c457, type: 2}
   roadMaterial: {fileID: 2100000, guid: ac5ff673fb0614880b0fb8f2a1293c04, type: 2}
   vehicle: 1
   noSnowfall: 1
   waterWorld: 0
   biome: 1
   gaps:
-  - from: 376.99557
-    to: 387.99557
+  - from: 309.36542
+    to: 327.96542
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 0
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+  - from: 461.96375
+    to: 475.9574
     rampLateral: 0
     period: 0
     raised: 0
@@ -2812,11 +1079,11 @@ MonoBehaviour:
     slowMotion: 0
     trickJump: 0
     kicker: 1
-    width: 8
+    width: 6.5
     tricks: 3
     plunge: 0
-  - from: 406.99557
-    to: 419.99557
+  - from: 541.9619
+    to: 555.96094
     rampLateral: 0
     period: 0
     raised: 0
@@ -2828,11 +1095,11 @@ MonoBehaviour:
     slowMotion: 0
     trickJump: 0
     kicker: 1
-    width: 8
+    width: 6.5
     tricks: 3
     plunge: 0
-  - from: 436.99557
-    to: 451.99557
+  - from: 661.95746
+    to: 675.95624
     rampLateral: 0
     period: 0
     raised: 0
@@ -2844,139 +1111,11 @@ MonoBehaviour:
     slowMotion: 0
     trickJump: 0
     kicker: 1
-    width: 8
+    width: 6.5
     tricks: 3
     plunge: 0
-  - from: 466.99557
-    to: 483.99557
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 8
-    tricks: 3
-    plunge: 0
-  - from: 612.4956
-    to: 634.4956
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 8
-    tricks: 3
-    plunge: 0
-  - from: 691.4956
-    to: 698.4956
-    rampLateral: 3.8
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 4.2
-    tricks: 3
-    plunge: 0
-  - from: 755.4956
-    to: 762.4956
-    rampLateral: 3.8
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 4.2
-    tricks: 3
-    plunge: 0
-  - from: 794.4956
-    to: 801.4956
-    rampLateral: 3.8
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 4.2
-    tricks: 3
-    plunge: 0
-  - from: 828.4956
-    to: 835.4956
-    rampLateral: 3.8
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 4.2
-    tricks: 3
-    plunge: 0
-  - from: 927.9956
-    to: 940.9956
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 6
-    tricks: 3
-    plunge: 0
-  - from: 987.9956
-    to: 1002.9956
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
-    width: 6
-    tricks: 3
-    plunge: 0
-  - from: 1076.9956
-    to: 1131.9956
+  - from: 770.5581
+    to: 804.5581
     rampLateral: 0
     period: 0
     raised: 0
@@ -2989,10 +1128,10 @@ MonoBehaviour:
     trickJump: 1
     kicker: 0
     width: 0
-    tricks: 10
+    tricks: 4
     plunge: 0
-  - from: 1145.9956
-    to: 1155.9956
+  - from: 1045.5386
+    to: 1053.5411
     rampLateral: 0
     period: 0
     raised: 0
@@ -3007,8 +1146,8 @@ MonoBehaviour:
     width: 0
     tricks: 3
     plunge: 0
-  - from: 1167.9956
-    to: 1177.9956
+  - from: 1064.5334
+    to: 1072.5342
     rampLateral: 0
     period: 0
     raised: 0
@@ -3023,8 +1162,8 @@ MonoBehaviour:
     width: 0
     tricks: 3
     plunge: 0
-  - from: 1189.9956
-    to: 1256.9956
+  - from: 1083.522
+    to: 1091.5255
     rampLateral: 0
     period: 0
     raised: 0
@@ -3039,8 +1178,72 @@ MonoBehaviour:
     width: 0
     tricks: 3
     plunge: 0
-  - from: 1444.9956
-    to: 1458.9956
+  - from: 1102.5187
+    to: 1110.5183
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 0
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+  - from: 1121.5143
+    to: 1129.5083
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 0
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+  - from: 1140.4972
+    to: 1148.5
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 0
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+  - from: 1351.448
+    to: 1365.4481
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 1
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+  - from: 1534.4443
+    to: 1550.4443
     rampLateral: 0
     period: 0
     raised: 0
@@ -3054,9 +1257,25 @@ MonoBehaviour:
     kicker: 0
     width: 0
     tricks: 3
-    plunge: 1
-  - from: 1543.4956
-    to: 1549.4956
+    plunge: 0
+  - from: 1764.4327
+    to: 1802.4327
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 1
+    kicker: 0
+    width: 0
+    tricks: 5
+    plunge: 0
+  - from: 1506.4418
+    to: 1514.4456
     rampLateral: 0
     period: 0
     raised: 0
@@ -3071,56 +1290,8 @@ MonoBehaviour:
     width: 0
     tricks: 3
     plunge: 0
-  - from: 1569.4956
-    to: 1575.9956
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 1
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 0
-    width: 0
-    tricks: 3
-    plunge: 0
-  - from: 1595.4956
-    to: 1602.4956
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 1
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 0
-    width: 0
-    tricks: 3
-    plunge: 0
-  - from: 1621.4956
-    to: 1628.9956
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 1
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 0
-    width: 0
-    tricks: 3
-    plunge: 0
-  - from: 1826.4956
-    to: 1839.4956
+  - from: 2083.4192
+    to: 2099.4211
     rampLateral: 0
     period: 0
     raised: 0
@@ -3131,127 +1302,57 @@ MonoBehaviour:
     collapse: 0
     slowMotion: 0
     trickJump: 0
-    kicker: 1
-    width: 5
-    tricks: 3
-    plunge: 0
-  - from: 1979.4956
-    to: 2001.4956
-    rampLateral: 0
-    period: 0
-    raised: 0
-    offset: 0
-    lift: 0
-    drop: 0
-    hidden: 0
-    collapse: 0
-    slowMotion: 0
-    trickJump: 0
-    kicker: 1
+    kicker: 0
     width: 0
     tricks: 3
     plunge: 0
   elevatedRoad: 0
   bouncers: []
   geysers: []
-  sweepers: []
-  skyLife: 0
+  sweepers:
+  - kind: 4
+    distance: 197.99149
+    period: 5
+    offset: 0
+  - kind: 4
+    distance: 231.97719
+    period: 6.2
+    offset: 2
+  skyLife: 0.3
   rivers: []
   lakes:
-  - center: {x: -269.77682, y: -264.06662}
-    radii: {x: 9, y: 6.5}
-    angle: -16.622467
-  - center: {x: -258.07013, y: -266.6599}
-    radii: {x: 9, y: 6.5}
-    angle: -8.581672
-  - center: {x: -246.14037, y: -267.91467}
-    radii: {x: 9, y: 6.5}
-    angle: -3.5972703
-  - center: {x: -234.14563, y: -268.14346}
-    radii: {x: 9, y: 6.5}
-    angle: 1.0787239
-  - center: {x: -222.22406, y: -266.9663}
-    radii: {x: 9, y: 6.5}
-    angle: 11.15221
-  - center: {x: -210.61606, y: -263.93753}
-    radii: {x: 9, y: 6.5}
-    angle: 16.090275
-  - center: {x: -198.99617, y: -260.9574}
-    radii: {x: 9, y: 6.5}
-    angle: 11.250055
-  - center: {x: -187.0643, y: -260.12305}
-    radii: {x: 9, y: 6.5}
-    angle: -5.348635
-  - center: {x: -175.30948, y: -262.4448}
-    radii: {x: 9, y: 6.5}
-    angle: -15.750875
-  - center: {x: -163.78902, y: -265.80292}
-    radii: {x: 9, y: 6.5}
-    angle: -15.335462
-  - center: {x: -152.0032, y: -267.94116}
-    radii: {x: 9, y: 6.5}
-    angle: -3.9259953
-  - center: {x: -140.02284, y: -267.46835}
-    radii: {x: 9, y: 6.5}
-    angle: 6.1672087
-  - center: {x: -128.17752, y: -265.5837}
-    radii: {x: 9, y: 6.5}
-    angle: 11.928637
-  - center: {x: -116.60043, y: -262.4482}
-    radii: {x: 9, y: 6.5}
-    angle: 18.199074
+  - center: {x: 243.48, y: 375.21}
+    radii: {x: 62.92, y: 24}
+    angle: -171.662
   oil: []
-  rampLength: 4
-  rampWidth: 3.2
+  rampLength: 5
+  rampWidth: 3.6
   shortcuts: []
   branches: []
   banks: []
   penguins: []
   dashPanels:
-  - distance: 547.9956
+  - distance: 45
     lateral: 0
     length: 4
-    width: 3
-  - distance: 1014.9956
+    width: 3.2
+  - distance: 826.5581
     lateral: 0
     length: 4
-    width: 3
-  - distance: 1490.9956
+    width: 3.2
+  - distance: 1175.5
     lateral: 0
     length: 4
-    width: 3
-  - distance: 1720.4956
+    width: 3.2
+  - distance: 1827.4327
     lateral: 0
     length: 4
-    width: 3
-  icePatches:
-  - position: {x: -263.96844, y: -265.5644}
-    size: {x: 12, y: 8}
-    angle: -12.5030575
-  - position: {x: -188.06198, y: -260.05472}
-    size: {x: 12, y: 8}
-    angle: -2.421727
-  - position: {x: -145.0068, y: -267.86234}
-    size: {x: 12, y: 8}
-    angle: 3.3499146
-  - position: {x: -112.82896, y: -261.11627}
-    size: {x: 12, y: 8}
-    angle: 20.432852
-  slopes:
-  - from: 362.99557
-    to: 885.9956
-    speed: 1.2
-  - from: 893.9956
-    to: 1072.9956
-    speed: 1.5
-  - from: 1260.9956
-    to: 1380.4956
-    speed: 1.15
+    width: 3.2
+  icePatches: []
+  slopes: []
   snowPiles: []
   viaducts: []
-  fallingTrees:
-  - {x: 957.9956, y: 1}
-  - {x: 1020.9956, y: -1}
+  fallingTrees: []
   avalanche:
     enabled: 0
     from: -60
@@ -3271,261 +1372,215 @@ MonoBehaviour:
   night: 0
   santa: 0
   snowballFights: []
-  turntables: []
+  turntables:
+  - position: {x: -165.08, y: -1}
+    radius: 9
+    speed: 28
+    disco: 1
   nets:
-  - from: 368.99557
-    to: 877.9956
-  snowTunnels:
-  - from: 732.4956
-    to: 748.4956
+  - from: 417.9648
+    to: 727.95825
+  snowTunnels: []
   chairlifts:
   - points:
-    - {x: 119.8004, y: 59.958103}
-    - {x: 119.11481, y: 95.95157}
-    - {x: 118.42922, y: 131.94504}
-    - {x: 117.74363, y: 167.9385}
-    - {x: 117.05804, y: 203.93199}
-    - {x: 116.37245, y: 239.92546}
-    - {x: 120.1996, y: 270.0419}
-    - {x: 120.88519, y: 234.04843}
-    - {x: 121.57078, y: 198.05496}
-    - {x: 122.25637, y: 162.0615}
-    - {x: 122.94196, y: 126.068016}
-    - {x: 123.62755, y: 90.07454}
-    chairs: 18
-  - points:
-    - {x: -28.851917, y: 298.12332}
-    - {x: -59.56113, y: 279.33652}
-    - {x: -90.27034, y: 260.5497}
-    - {x: -120.979546, y: 241.76288}
-    - {x: -151.68877, y: 222.97607}
-    - {x: -182.39798, y: 204.18927}
-    - {x: -201.14809, y: 197.87668}
-    - {x: -170.43887, y: 216.66348}
-    - {x: -139.72966, y: 235.4503}
-    - {x: -109.020454, y: 254.2371}
-    - {x: -78.31125, y: 273.02393}
-    - {x: -47.60203, y: 291.81073}
+    - {x: 417.1, y: 61.7}
+    - {x: 427.4, y: 100.5}
+    - {x: 437.2, y: 125.3}
+    - {x: 460.3, y: 153.4}
+    - {x: 480.6, y: 205.6}
+    - {x: 465.3, y: 251.8}
+    - {x: 450.8, y: 289.2}
+    - {x: 444.6, y: 321}
+    - {x: 445.2, y: 357.5}
     chairs: 16
   helix:
-    enabled: 1
-    centre: {x: 80, y: 12}
+    enabled: 0
+    centre: {x: 0, y: 0}
     radius: 12
-    entry: 30
-    from: 64
-    to: 289.99557
-    exit: 352.99557
-    turns: 3
+    entry: 0
+    from: 0
+    to: 0
+    exit: 0
+    turns: 6
     mountainRadius: 40
   holes:
-  - distance: 1643.4956
-    lateral: 2.3
-    radius: 1.4
-  - distance: 1660.4956
-    lateral: -2.3
-    radius: 1.4
-  - distance: 1677.4956
-    lateral: 2.3
-    radius: 1.4
+  - distance: 1305.4999
+    lateral: 3
+    radius: 1.8
+    tub: 1
+  - distance: 1317.4806
+    lateral: -3
+    radius: 1.8
+    tub: 1
+  - distance: 1329.4548
+    lateral: 3
+    radius: 1.8
+    tub: 1
+  - distance: 1341.4478
+    lateral: -2.8
+    radius: 1.8
+    tub: 1
   platforms:
-  - from: 1130.9956
-    to: 1145.9956
-  - from: 1155.9956
-    to: 1167.9956
-  - from: 1177.9956
-    to: 1189.9956
-  - from: 1255.9956
-    to: 1268.9956
-  hatches:
-  - 1444.9956
-  vortices:
-  - position: {x: -265, y: -140}
-    radius: 36
-    pull: 4.5
+  - from: 1031.5417
+    to: 1045.5386
+  - from: 1053.5411
+    to: 1064.5334
+  - from: 1072.5342
+    to: 1083.522
+  - from: 1091.5255
+    to: 1102.5187
+  - from: 1110.5183
+    to: 1121.5143
+  - from: 1129.5083
+    to: 1140.4972
+  - from: 1148.5
+    to: 1156.5
+  hatches: []
+  vortices: []
+  splits:
+  - from: 1550.4443
+    to: 1584.4443
+    width: 5
+  - from: 2099.4211
+    to: 2125.4243
+    width: 5
+  slidingDoors:
+  - distance: 179.99292
+    period: 4.2
+    open: 0.6
+    phase: 0
+  - distance: 259.9698
+    period: 3.6
+    open: 0.5
+    phase: 1.6
+  - distance: 1293.4961
+    period: 3.6
+    open: 0.55
+    phase: 0.4
+  - distance: 1375.4482
+    period: 3
+    open: 0.7
+    phase: 1.1
+  - distance: 1957.4188
+    period: 3.8
+    open: 0.55
+    phase: 0.9
+  - distance: 2043.4188
+    period: 3.2
+    open: 0.55
+    phase: 2.2
+  pools:
+  - min: {x: -7.3, y: 309.63}
+    max: {x: 6.1, y: 327.63}
+  bowling:
+  - from: 1963.4188
+    to: 2003.4188
+    lanes:
+    - 2.4
+    - -2.4
+    every: 2.3
+    speed: 9
+  billiards: []
+  glassFloors: []
   storms:
-  - from: 1246.9956
-    to: 1390.4956
-    strength: 0.7
-    lightning: 0
-  twisters:
-  - {x: 1276.9956, y: 1316.9956}
-  - {x: 1328.9956, y: 1372.4956}
-  snowBase: 0.25
+  - from: 1414.4453
+    to: 1952.4188
+    strength: 0.35
+    lightning: 1
+    strikeEvery: {x: 7, y: 11}
+    strikeRadius: 2.4
+    wind: 0.55
+  twisters: []
+  snowBase: 0
   noHeadlights: 1
   rides:
   - type: 1
-    from: 377.99557
-    lateral: 4.4
-    to: 390.99557
-    toLateral: 4
+    from: 462.96008
+    lateral: 5.4
+    to: 479.9584
+    toLateral: 4.86
     points:
-    - {x: 87.4, y: 85.14548}
-    - {x: 87.4, y: 87.64547}
-    - {x: 87.4, y: 90.14548}
+    - {x: 395.27, y: 107.21}
+    - {x: 396.59, y: 114.31}
+    - {x: 398.8, y: 121.48}
     speed: 16
     jib: 1
   - type: 1
-    from: 407.99557
-    lateral: -4.4
-    to: 420.99557
-    toLateral: -4
+    from: 462.96008
+    lateral: -5.4
+    to: 479.9584
+    toLateral: -4.86
     points:
-    - {x: 96.6, y: 115.1455}
-    - {x: 96.6, y: 117.64549}
-    - {x: 96.6, y: 120.145454}
+    - {x: 405.91, y: 105.34}
+    - {x: 407.14, y: 112.01}
+    - {x: 408.57, y: 118.35}
     speed: 16
     jib: 2
   - type: 1
-    from: 437.99557
-    lateral: 4.4
-    to: 450.99557
-    toLateral: 4
+    from: 542.966
+    lateral: 5.4
+    to: 559.95685
+    toLateral: 4.86
     points:
-    - {x: 87.4, y: 145.14551}
-    - {x: 87.399994, y: 147.64555}
-    - {x: 87.40029, y: 150.1544}
+    - {x: 439.84, y: 175.25}
+    - {x: 444.48, y: 180.01}
+    - {x: 448.38, y: 184.8}
     speed: 16
-    jib: 1
+    jib: 0
   - type: 1
-    from: 467.99557
-    lateral: -4.4
-    to: 480.99557
-    toLateral: -4
+    from: 542.966
+    lateral: -5.4
+    to: 559.95685
+    toLateral: -4.86
     points:
-    - {x: 97.15905, y: 175.0425}
-    - {x: 97.20535, y: 177.56146}
-    - {x: 97.2364, y: 180.09883}
-    speed: 16
-    jib: 2
-  - type: 1
-    from: 634.4956
-    lateral: 0
-    to: 662.4956
-    toLateral: 0
-    points:
-    - {x: -18.177423, y: 257.57562}
-    - {x: -20.176525, y: 257.54315}
-    - {x: -22.199816, y: 258.90924}
-    - {x: -24.199446, y: 258.87512}
-    - {x: -26.175762, y: 257.4418}
-    - {x: -28.176247, y: 257.40967}
-    - {x: -30.196724, y: 258.77975}
-    - {x: -32.195168, y: 258.75333}
-    - {x: -34.179943, y: 257.33115}
-    - {x: -36.181976, y: 257.31418}
-    - {x: -38.188625, y: 258.70343}
-    speed: 16
-    jib: 4
-  - type: 1
-    from: 668.4956
-    lateral: 4.4
-    to: 684.4956
-    toLateral: 4
-    points:
-    - {x: -52.31579, y: 253.6071}
-    - {x: -54.28722, y: 254.79604}
-    - {x: -56.273544, y: 255.32462}
-    - {x: -58.28687, y: 254.9169}
-    - {x: -60.31663, y: 253.84555}
+    - {x: 447.48, y: 167.62}
+    - {x: 452.6, y: 172.9}
+    - {x: 457.06, y: 179.32}
     speed: 16
     jib: 6
   - type: 1
-    from: 688.4956
-    lateral: -4.4
-    to: 704.4956
-    toLateral: -4
+    from: 662.9597
+    lateral: 5.4
+    to: 679.9548
+    toLateral: 4.86
     points:
-    - {x: -72.14846, y: 263.28442}
-    - {x: -74.18088, y: 263.28876}
-    - {x: -76.21786, y: 263.27753}
-    - {x: -78.25918, y: 263.24857}
-    - {x: -80.304665, y: 263.19962}
-    speed: 16
-    jib: 5
-  - type: 1
-    from: 708.4956
-    lateral: 4.4
-    to: 721.4956
-    toLateral: 4
-    points:
-    - {x: -91.601364, y: 253.20161}
-    - {x: -94.014694, y: 252.89961}
-    - {x: -96.426125, y: 252.55591}
-    speed: 16
-    jib: 7
-  - type: 1
-    from: 752.4956
-    lateral: -4.4
-    to: 765.4956
-    toLateral: -4
-    points:
-    - {x: -136.40642, y: 253.11702}
-    - {x: -138.86615, y: 252.4091}
-    - {x: -141.3201, y: 251.66576}
+    - {x: 424.78, y: 278.12}
+    - {x: 421.8, y: 284.61}
+    - {x: 419.34, y: 291.51}
     speed: 16
     jib: 3
   - type: 1
-    from: 769.4956
-    lateral: 4.4
-    to: 787.4956
-    toLateral: 4
+    from: 662.9597
+    lateral: -5.4
+    to: 679.9548
+    toLateral: -4.86
     points:
-    - {x: -150.08792, y: 239.26973}
-    - {x: -152.05649, y: 238.68832}
-    - {x: -154.04547, y: 238.12836}
-    - {x: -156.0575, y: 237.59636}
-    - {x: -158.09372, y: 237.09995}
-    - {x: -160.15604, y: 236.64713}
-    speed: 16
-    jib: 9
-  - type: 1
-    from: 791.4956
-    lateral: -4.4
-    to: 804.4956
-    toLateral: -4
-    points:
-    - {x: -172.6968, y: 244.6158}
-    - {x: -174.96132, y: 244.80939}
-    - {x: -177.16104, y: 245.11958}
+    - {x: 434.57, y: 282.69}
+    - {x: 431.71, y: 288.92}
+    - {x: 428.98, y: 295.02}
     speed: 16
     jib: 8
-  - type: 1
-    from: 808.4956
-    lateral: 4.4
-    to: 821.4956
-    toLateral: 4
-    points:
-    - {x: -190.8248, y: 238.9363}
-    - {x: -193.1896, y: 239.55898}
-    - {x: -195.54243, y: 240.13914}
-    speed: 16
-    jib: 1
-  - type: 1
-    from: 825.4956
-    lateral: -4.4
-    to: 838.4956
-    toLateral: -4
-    points:
-    - {x: -206.49158, y: 250.57074}
-    - {x: -209.0994, y: 250.46095}
-    - {x: -211.75241, y: 250.27063}
-    speed: 16
-    jib: 2
-  - type: 1
-    from: 842.4956
-    lateral: 4.4
-    to: 858.4956
-    toLateral: 4
-    points:
-    - {x: -222.19775, y: 239.38974}
-    - {x: -224.31868, y: 240.05992}
-    - {x: -226.30388, y: 240.03693}
-    - {x: -228.03128, y: 239.06715}
-    - {x: -229.52051, y: 237.42966}
-    speed: 16
-    jib: 6
-  pinball: []
-  rinks: []
+  pinball:
+  - position: {x: 412.82, y: 456.05}
+    radius: 1.5
+  - position: {x: 414.54, y: 467.7}
+    radius: 1.5
+  - position: {x: 404.89, y: 472.83}
+    radius: 1.5
+  - position: {x: 395.12, y: 474.02}
+    radius: 1.5
+  - position: {x: 386.45, y: 482.8}
+    radius: 1.5
+  - position: {x: 377.06, y: 476.55}
+    radius: 1.5
+  - position: {x: 365.54, y: 475.73}
+    radius: 1.5
+  - position: {x: 363.96, y: 463.58}
+    radius: 1.5
+  - position: {x: 356.61, y: 456.23}
+    radius: 1.5
+  rinks:
+  - {x: 832.55853, y: 931.5487}
   slalom: []
   fjord:
     enabled: 0
@@ -3544,276 +1599,315 @@ MonoBehaviour:
     floes: []
   chasms:
   - points:
-    - {x: -303.87045, y: -137.47652}
-    - {x: -302.5413, y: -139.68274}
-    - {x: -303.0126, y: -141.84995}
-    - {x: -303.66016, y: -144.2421}
-    - {x: -302.39288, y: -146.79391}
-    - {x: -298.756, y: -149.15341}
-    - {x: -294.37567, y: -151.17282}
-    - {x: -291.2558, y: -153.16777}
-    - {x: -289.8059, y: -155.51137}
-    - {x: -288.73904, y: -158.06807}
-    - {x: -286.81387, y: -160.32655}
-    - {x: -286.01492, y: -160.95023}
-    - {x: -283.59625, y: -162.79155}
-    - {x: -283.04446, y: -163.38419}
-    - {x: -281.5769, y: -165.79979}
-    - {x: -280.8118, y: -167.63028}
-    - {x: -278.9165, y: -169.95029}
-    - {x: -278.23203, y: -170.47586}
-    - {x: -274.95502, y: -171.21451}
-    - {x: -273.90607, y: -171.29866}
-    - {x: -270.31778, y: -171.04485}
-    - {x: -269.31824, y: -171.12195}
-    - {x: -266.545, y: -171.87302}
-    - {x: -265.868, y: -172.35439}
-    - {x: -263.38995, y: -174.28929}
-    - {x: -262.5825, y: -174.8871}
-    - {x: -259.50977, y: -175.76245}
-    - {x: -258.44208, y: -175.68393}
-    - {x: -255.10376, y: -173.8185}
-    - {x: -254.22406, y: -173.05867}
-    - {x: -251.47517, y: -169.69318}
-    - {x: -250.74648, y: -168.79256}
-    - {x: -248.55246, y: -166.12259}
-    - {x: -247.98482, y: -165.70969}
-    - {x: -245.62666, y: -164.49706}
-    - {x: -244.31206, y: -164.3906}
-    - {x: -241.04164, y: -164.29448}
-    - {x: -240.26088, y: -164.29587}
-    - {x: -236.62346, y: -163.69803}
-    - {x: -235.86655, y: -163.39163}
-    - {x: -233.59634, y: -160.84547}
-    - {x: -233.3918, y: -160.1747}
-    - {x: -233.65364, y: -156.10588}
-    - {x: -233.82857, y: -155.3294}
-    - {x: -234.41312, y: -151.87498}
-    - {x: -233.93047, y: -150.59271}
-    - {x: -231.72359, y: -148.24376}
-    - {x: -231.28633, y: -147.75964}
-    - {x: -230.41568, y: -144.90633}
-    - {x: -230.56235, y: -144.3445}
-    - {x: -232.32451, y: -141.66467}
-    - {x: -232.64395, y: -141.11414}
-    - {x: -232.56691, y: -138.48698}
-    - {x: -232.21158, y: -137.85704}
-    - {x: -230.35533, y: -134.3837}
-    - {x: -230.14902, y: -133.73639}
-    - {x: -230.81273, y: -130.92389}
-    - {x: -231.21582, y: -130.4954}
-    - {x: -233.09239, y: -128.61049}
-    - {x: -233.09492, y: -125.49982}
-    - {x: -231.86212, y: -120.98488}
-    - {x: -231.85579, y: -117.343216}
-    - {x: -233.35214, y: -115.51802}
-    - {x: -234.35815, y: -113.271736}
-    - {x: -233.98093, y: -108.83619}
-    - {x: -233.60864, y: -104.04269}
-    - {x: -234.46657, y: -101.446625}
-    - {x: -235.79668, y: -100.064224}
-    - {x: -236.29955, y: -96.90361}
-    - {x: -236.16615, y: -91.91267}
-    - {x: -236.55707, y: -88.159424}
-    - {x: -237.70221, y: -86.83186}
-    - {x: -238.68814, y: -85.24912}
-    - {x: -238.99947, y: -81.22136}
-    - {x: -239.23053, y: -76.655334}
-    - {x: -240.01787, y: -74.46297}
-    - {x: -241.06783, y: -73.78757}
-    - {x: -241.73341, y: -71.36702}
-    - {x: -242.0402, y: -66.84325}
-    - {x: -242.54352, y: -63.347416}
-    - {x: -243.40718, y: -62.380013}
-    - {x: -244.21385, y: -61.333748}
-    - {x: -244.68341, y: -57.718143}
-    - {x: -245.07344, y: -53.206554}
-    - {x: -245.70511, y: -50.896828}
-    - {x: -246.46965, y: -50.242107}
-    - {x: -247.06503, y: -47.920944}
-    - {x: -247.48419, y: -43.237556}
-    - {x: -247.97476, y: -39.2499}
-    - {x: -248.62318, y: -37.780216}
-    - {x: -249.25873, y: -36.438828}
-    - {x: -249.76192, y: -32.51609}
-    - {x: -250.23286, y: -27.402283}
-    - {x: -250.79477, y: -24.329966}
-    - {x: -251.40785, y: -23.115301}
-    - {x: -251.97232, y: -20.468557}
-    - {x: -252.49342, y: -15.369213}
-    - {x: -253.04095, y: -10.746277}
-    - {x: -253.62317, y: -8.723813}
-    - {x: -254.19872, y: -7.178504}
-    - {x: -254.76479, y: -3.218526}
-    - {x: -255.3455, y: 2.0853002}
-    - {x: -255.92715, y: 5.4262543}
-    - {x: -256.4852, y: 6.633132}
-    - {x: -257.04788, y: 8.934354}
-    - {x: -257.65292, y: 13.685158}
-    - {x: -258.26318, y: 18.1502}
-    - {x: -258.8149, y: 19.95436}
-    - {x: -259.3363, y: 20.94938}
-    - {x: -259.91678, y: 24.196476}
-    - {x: -260.55145, y: 28.982286}
-    - {x: -261.1303, y: 31.988634}
-    - {x: -261.61902, y: 32.7091}
-    - {x: -261.9761, y: 33.57003}
-    - {x: -264.85187, y: 31.600794}
-    - {x: -267.7214, y: 30.433048}
-    - {x: -270.7114, y: 31.005327}
-    - {x: -273.8594, y: 32.85451}
-    - {x: -277.04318, y: 34.49242}
-    - {x: -280.06522, y: 34.606438}
-    - {x: -282.83542, y: 33.114475}
-    - {x: -285.4855, y: 31.225475}
-    - {x: -288.2889, y: 30.461304}
-    - {x: -291.43042, y: 31.43215}
-    - {x: -293.6799, y: 32.69939}
-    - {x: -294.28333, y: 31.470213}
-    - {x: -294.86465, y: 30.067553}
-    - {x: -294.84897, y: 26.067778}
-    - {x: -294.65842, y: 21.389633}
-    - {x: -295.03442, y: 19.076515}
-    - {x: -295.78464, y: 18.207289}
-    - {x: -296.06912, y: 15.444759}
-    - {x: -295.80728, y: 10.617222}
-    - {x: -295.85046, y: 6.994996}
-    - {x: -296.5686, y: 5.8155107}
-    - {x: -297.19412, y: 4.2222424}
-    - {x: -297.08124, y: 0.049532533}
-    - {x: -296.81744, y: -4.5639815}
-    - {x: -297.27728, y: -6.7646966}
-    - {x: -298.13794, y: -7.752576}
-    - {x: -298.37216, y: -10.759846}
-    - {x: -297.97308, y: -15.645981}
-    - {x: -298.0182, y: -19.150307}
-    - {x: -298.87717, y: -20.35147}
-    - {x: -299.53995, y: -22.19112}
-    - {x: -299.27615, y: -26.541859}
-    - {x: -298.90393, y: -31.091381}
-    - {x: -299.46942, y: -33.229717}
-    - {x: -300.46164, y: -34.4031}
-    - {x: -300.60233, y: -37.66833}
-    - {x: -299.9995, y: -42.583908}
-    - {x: -300.04172, y: -45.98054}
-    - {x: -301.08362, y: -47.268612}
-    - {x: -301.7733, y: -49.388752}
-    - {x: -301.27652, y: -53.87247}
-    - {x: -300.7454, y: -58.31397}
-    - {x: -301.45566, y: -60.429485}
-    - {x: -302.61438, y: -61.84931}
-    - {x: -302.59494, y: -65.33787}
-    - {x: -301.6896, y: -70.18227}
-    - {x: -301.73022, y: -73.450325}
-    - {x: -303.02576, y: -74.90186}
-    - {x: -303.72592, y: -77.31275}
-    - {x: -302.87305, y: -81.79338}
-    - {x: -302.11823, y: -86.0078}
-    - {x: -303.0439, y: -88.15176}
-    - {x: -304.42075, y: -89.901306}
-    - {x: -304.14056, y: -93.496284}
-    - {x: -302.80484, y: -98.03303}
-    - {x: -302.86957, y: -101.12167}
-    - {x: -304.5197, y: -102.88441}
-    - {x: -305.19608, y: -105.57249}
-    - {x: -303.84354, y: -109.73252}
-    - {x: -302.8348, y: -113.476585}
-    - {x: -304.0827, y: -115.77971}
-    - {x: -305.70807, y: -118.020096}
-    - {x: -305.0698, y: -121.447235}
-    - {x: -303.28125, y: -125.21455}
-    - {x: -303.4803, y: -128.09213}
-    - {x: -305.52805, y: -130.47758}
-    - {x: -306.12238, y: -133.38235}
-    - {x: -304.3473, y: -136.68149}
+    - {x: 379.24997, y: 382.06137}
+    - {x: 379.25, y: 385.06122}
+    - {x: 379.25, y: 388.06006}
+    - {x: 379.25, y: 391.0589}
+    - {x: 379.25, y: 394.06006}
+    - {x: 379.25, y: 397.0589}
+    - {x: 379.25, y: 400.06006}
+    - {x: 379.25, y: 403.0589}
+    - {x: 379.25, y: 406.06006}
+    - {x: 379.25, y: 409.0589}
+    - {x: 379.25, y: 412.06006}
+    - {x: 379.25, y: 415.0589}
+    - {x: 379.25, y: 418.06006}
+    - {x: 379.25, y: 421.0589}
+    - {x: 455.24997, y: 422.06235}
+    - {x: 455.25, y: 419.06006}
+    - {x: 455.24997, y: 416.06235}
+    - {x: 455.25, y: 413.06006}
+    - {x: 455.24997, y: 410.06235}
+    - {x: 455.25, y: 407.06006}
+    - {x: 455.24997, y: 404.06235}
+    - {x: 455.25, y: 401.06006}
+    - {x: 455.24997, y: 398.06235}
+    - {x: 455.25, y: 395.06006}
+    - {x: 455.24997, y: 392.06235}
+    - {x: 455.25, y: 389.06006}
+    - {x: 455.25003, y: 386.06122}
+    - {x: 455.25, y: 383.06006}
   - points:
-    - {x: -295.40836, y: -204.7599}
-    - {x: -295.40836, y: -218.7599}
-    - {x: -286.40836, y: -218.7599}
-    - {x: -286.40836, y: -204.7599}
-  caves:
-  - branch: -1
-    from: 30
-    to: 64
-    stalagmites: []
-    level: -1
-    wallsOnly: 0
-    seamless: 1
-  - branch: -1
-    from: 289.99557
-    to: 352.99557
-    stalagmites: []
-    level: 3
-    wallsOnly: 0
-    seamless: 1
-  - branch: -1
-    from: 1460.9956
-    to: 1922.9956
-    stalagmites:
-    - {x: 16, y: 2.2}
-    - {x: 46, y: -2.2}
-    - {x: 256, y: 2.2}
-    - {x: 286, y: -2.2}
-    - {x: 316, y: 2.2}
-    - {x: 346, y: -2.2}
-    - {x: 406, y: -2.2}
-    - {x: 436, y: 2.2}
-    level: -99
-    wallsOnly: 0
-    seamless: 0
-  - branch: -1
-    from: 64
-    to: 139.33185
-    stalagmites: []
-    level: 0
-    wallsOnly: 0
-    seamless: 1
-  - branch: -1
-    from: 139.33185
-    to: 214.66371
-    stalagmites: []
-    level: 1
-    wallsOnly: 1
-    seamless: 1
-  - branch: -1
-    from: 214.66371
-    to: 289.99557
-    stalagmites: []
-    level: 2
-    wallsOnly: 1
-    seamless: 1
+    - {x: -42.890156, y: 268.87772}
+    - {x: -42.335213, y: 266.7035}
+    - {x: -41.70861, y: 264.56177}
+    - {x: -41.006954, y: 262.44083}
+    - {x: -40.230434, y: 260.3437}
+    - {x: -39.428104, y: 258.38742}
+    - {x: -38.49032, y: 256.31488}
+    - {x: -37.486946, y: 254.31447}
+    - {x: -36.244667, y: 251.96349}
+    - {x: -34.927185, y: 249.6124}
+    - {x: -33.048737, y: 246.08067}
+    - {x: -31.434177, y: 242.71016}
+    - {x: -29.926277, y: 239.26573}
+    - {x: -28.539467, y: 235.7757}
+    - {x: -27.267618, y: 232.21848}
+    - {x: -26.124208, y: 228.62505}
+    - {x: -25.11289, y: 225.01784}
+    - {x: -24.198933, y: 221.25308}
+    - {x: -23.45869, y: 217.65698}
+    - {x: -22.825888, y: 213.94827}
+    - {x: -22.32399, y: 210.24254}
+    - {x: -21.938538, y: 206.39377}
+    - {x: -21.699997, y: 202.6671}
+    - {x: -65.61474, y: 199.23209}
+    - {x: -65.69155, y: 201.38249}
+    - {x: -65.85217, y: 203.49695}
+    - {x: -66.11146, y: 205.81647}
+    - {x: -66.437035, y: 208.03282}
+    - {x: -66.8417, y: 210.25089}
+    - {x: -67.29407, y: 212.33089}
+    - {x: -67.868614, y: 214.58333}
+    - {x: -68.49612, y: 216.7277}
+    - {x: -69.195076, y: 218.83882}
+    - {x: -69.970055, y: 220.92859}
+    - {x: -70.82295, y: 223.00558}
+    - {x: -71.746414, y: 225.05072}
+    - {x: -72.698204, y: 226.98128}
+    - {x: -73.786514, y: 228.9446}
+    - {x: -75.51772, y: 232.09933}
+    - {x: -77.0645, y: 235.06424}
+    - {x: -78.7538, y: 238.54555}
+    - {x: -80.308685, y: 242.09096}
+    - {x: -81.67, y: 245.52153}
+    - {x: -82.93955, y: 249.07732}
+    - {x: -84.08068, y: 252.665}
+    - {x: -85.096344, y: 256.2915}
+  - points:
+    - {x: -9.625828, y: 200.34636}
+    - {x: -9.59457, y: 196.91853}
+    - {x: -9.58252, y: 193.62657}
+    - {x: -9.58939, y: 190.62656}
+    - {x: -9.59, y: 187.67001}
+    - {x: -9.59, y: 184.67001}
+    - {x: -9.59, y: 181.67001}
+    - {x: -9.59, y: 178.67001}
+    - {x: -9.59, y: 175.67001}
+    - {x: -9.59, y: 172.67001}
+    - {x: -9.59, y: 169.67001}
+    - {x: -9.59, y: 166.67001}
+    - {x: -9.59, y: 163.67001}
+    - {x: -9.59, y: 160.67001}
+    - {x: -9.59, y: 157.67001}
+    - {x: -9.59, y: 154.67001}
+    - {x: -9.59, y: 151.67001}
+    - {x: -9.59, y: 148.67001}
+    - {x: -9.59, y: 145.67001}
+    - {x: -77.59, y: 143.67024}
+    - {x: -77.590004, y: 146.67001}
+    - {x: -77.59, y: 149.67024}
+    - {x: -77.590004, y: 152.67001}
+    - {x: -77.59, y: 155.67024}
+    - {x: -77.590004, y: 158.67001}
+    - {x: -77.59, y: 161.67027}
+    - {x: -77.590004, y: 164.67001}
+    - {x: -77.59, y: 167.67027}
+    - {x: -77.590004, y: 170.67001}
+    - {x: -77.59, y: 173.67027}
+    - {x: -77.590004, y: 176.67001}
+    - {x: -77.59, y: 179.67027}
+    - {x: -77.590004, y: 182.67001}
+    - {x: -77.59, y: 185.67026}
+    - {x: -77.590004, y: 188.67001}
+    - {x: -77.58719, y: 191.76534}
+    - {x: -77.58269, y: 194.60959}
+    - {x: -77.59939, y: 197.4758}
+  - points:
+    - {x: -23.59, y: 143.66983}
+    - {x: -23.590004, y: 140.67001}
+    - {x: -23.59, y: 137.66983}
+    - {x: -23.585617, y: 134.76675}
+    - {x: -23.577549, y: 131.60837}
+    - {x: -23.600243, y: 128.61792}
+    - {x: -23.688774, y: 124.60811}
+    - {x: -24.238035, y: 119.54809}
+    - {x: -25.20123, y: 114.84849}
+    - {x: -26.665707, y: 110.07825}
+    - {x: -28.538248, y: 105.579865}
+    - {x: -30.81759, y: 101.283806}
+    - {x: -33.48655, y: 97.21894}
+    - {x: -36.55947, y: 93.38434}
+    - {x: -39.947044, y: 89.89232}
+    - {x: -43.650314, y: 86.72792}
+    - {x: -47.632442, y: 83.92348}
+    - {x: -51.915783, y: 81.48045}
+    - {x: -56.3572, y: 79.4807}
+    - {x: -60.99301, y: 77.89816}
+    - {x: -65.6787, y: 76.77417}
+    - {x: -71.01944, y: 76.05697}
+    - {x: -74.797775, y: 75.89741}
+    - {x: -77.218475, y: 75.76215}
+    - {x: -79.58236, y: 75.59539}
+    - {x: -81.27254, y: 75.37658}
+    - {x: -83.18852, y: 75.021675}
+    - {x: -85.05764, y: 74.57113}
+    - {x: -86.933525, y: 74.01165}
+    - {x: -88.80193, y: 73.348724}
+    - {x: -90.61736, y: 72.59776}
+    - {x: -92.44822, y: 71.72482}
+    - {x: -94.02887, y: 70.868286}
+    - {x: -95.63739, y: 69.88102}
+    - {x: -97.38588, y: 68.666504}
+    - {x: -99.020386, y: 67.438255}
+    - {x: -101.425224, y: 65.47824}
+    - {x: -104.78936, y: 62.991776}
+    - {x: -108.08191, y: 60.80659}
+    - {x: -111.617905, y: 58.719223}
+    - {x: -115.20419, y: 56.852688}
+    - {x: -118.88328, y: 55.17563}
+    - {x: -122.64781, y: 53.691715}
+    - {x: -126.50252, y: 52.402985}
+    - {x: -130.40129, y: 51.324715}
+    - {x: -134.34312, y: 50.45229}
+    - {x: -138.32712, y: 49.785545}
+    - {x: -142.39273, y: 49.32798}
+    - {x: -146.33243, y: 49.09645}
+    - {x: -149.97186, y: 49.005875}
+    - {x: -153.28006, y: 49.022003}
+    - {x: -156.09161, y: 49.03}
+    - {x: -159.09158, y: 49.03}
+    - {x: -162.09161, y: 49.03}
+    - {x: -165.09158, y: 49.03}
+    - {x: -168.09161, y: 49.03}
+    - {x: -171.09158, y: 49.03}
+    - {x: -174.09161, y: 49.03}
+    - {x: -177.08, y: 89.03}
+    - {x: -174.08002, y: 89.03}
+    - {x: -171.07999, y: 89.03}
+    - {x: -168.08002, y: 89.03}
+    - {x: -165.07999, y: 89.03}
+    - {x: -162.08002, y: 89.03}
+    - {x: -159.07999, y: 89.03}
+    - {x: -156.08002, y: 89.03}
+    - {x: -152.8917, y: 89.02013}
+    - {x: -150.20016, y: 89.005226}
+    - {x: -147.84193, y: 89.06796}
+    - {x: -145.79233, y: 89.18325}
+    - {x: -143.89648, y: 89.39593}
+    - {x: -141.96373, y: 89.719666}
+    - {x: -140.04851, y: 90.14392}
+    - {x: -138.16525, y: 90.664986}
+    - {x: -136.33052, y: 91.27873}
+    - {x: -134.51416, y: 91.995125}
+    - {x: -132.73479, y: 92.80653}
+    - {x: -130.99977, y: 93.70985}
+    - {x: -129.36935, y: 94.67169}
+    - {x: -127.66411, y: 95.80559}
+    - {x: -126.20151, y: 96.88104}
+    - {x: -123.95717, y: 98.71375}
+    - {x: -120.801254, y: 101.096756}
+    - {x: -117.61882, y: 103.29983}
+    - {x: -114.11861, y: 105.45734}
+    - {x: -110.42406, y: 107.458145}
+    - {x: -106.83717, y: 109.16165}
+    - {x: -103.10863, y: 110.70268}
+    - {x: -99.32292, y: 112.04457}
+    - {x: -95.44912, y: 113.19777}
+    - {x: -91.485634, y: 114.151695}
+    - {x: -87.50231, y: 114.88847}
+    - {x: -83.24175, y: 115.42765}
+    - {x: -79.621574, y: 115.6899}
+    - {x: -76.0512, y: 115.87777}
+    - {x: -73.834885, y: 115.95776}
+    - {x: -73.23555, y: 116.053856}
+    - {x: -72.089005, y: 116.32834}
+    - {x: -71.049835, y: 116.684555}
+    - {x: -70.02295, y: 117.147385}
+    - {x: -69.09752, y: 117.67627}
+    - {x: -68.17705, y: 118.32602}
+    - {x: -67.321304, y: 119.05822}
+    - {x: -66.53358, y: 119.8712}
+    - {x: -65.856804, y: 120.71716}
+    - {x: -65.23504, y: 121.666145}
+    - {x: -64.70435, y: 122.66827}
+    - {x: -64.27238, y: 123.70684}
+    - {x: -63.97689, y: 124.66928}
+    - {x: -63.739204, y: 125.845566}
+    - {x: -63.6316, y: 126.74602}
+    - {x: -63.600075, y: 128.73419}
+    - {x: -63.577324, y: 131.74344}
+    - {x: -63.585205, y: 134.58475}
+    - {x: -63.59, y: 137.68173}
+    - {x: -63.590004, y: 140.68161}
+  - points:
+    - {x: -176.07999, y: 29.029999}
+    - {x: -179.08, y: 29.029999}
+    - {x: -182.07999, y: 29.029999}
+    - {x: -185.08, y: 29.029999}
+    - {x: -188.07999, y: 29.029999}
+    - {x: -191.08, y: 29.029999}
+    - {x: -194.08002, y: 29.029999}
+    - {x: -197.08, y: 29.029999}
+    - {x: -200.07999, y: 29.029999}
+    - {x: -203.08, y: 29.029999}
+    - {x: -206.07999, y: 29.029999}
+    - {x: -209.08, y: 29.029999}
+    - {x: -212.07999, y: 29.029999}
+    - {x: -215.08, y: 29.029999}
+    - {x: -218.07999, y: 29.029999}
+    - {x: -220.08002, y: 109.03}
+    - {x: -217.08002, y: 109.03}
+    - {x: -214.08002, y: 109.03}
+    - {x: -211.08002, y: 109.03}
+    - {x: -208.08002, y: 109.03}
+    - {x: -205.08002, y: 109.03}
+    - {x: -202.08002, y: 109.03}
+    - {x: -199.08002, y: 109.03}
+    - {x: -196.08002, y: 109.03}
+    - {x: -193.08002, y: 109.03}
+    - {x: -190.08002, y: 109.03}
+    - {x: -187.08002, y: 109.03}
+    - {x: -184.08002, y: 109.03}
+    - {x: -181.08002, y: 109.03}
+    - {x: -178.08002, y: 109.03}
+  - points:
+    - {x: -108.4171, y: 29.147831}
+    - {x: -105.499374, y: 29.184057}
+    - {x: -102.56681, y: 29.229124}
+    - {x: -99.576645, y: 29.278698}
+    - {x: -96.59306, y: 29.32864}
+    - {x: -93.62242, y: 29.380766}
+    - {x: -90.669876, y: 29.436642}
+    - {x: -87.6649, y: 29.495558}
+    - {x: -84.672, y: 29.554016}
+    - {x: -81.632, y: 29.612303}
+    - {x: -78.587006, y: 29.665577}
+    - {x: -75.56895, y: 29.714863}
+    - {x: -72.57888, y: 29.763857}
+    - {x: -69.532616, y: 29.811815}
+    - {x: -66.42809, y: 29.85227}
+    - {x: -63.381866, y: 29.884842}
+    - {x: -60.803932, y: -30.0933}
+    - {x: -63.770676, y: -30.122175}
+    - {x: -66.71583, y: -30.155535}
+    - {x: -69.60926, y: -30.196169}
+    - {x: -72.582924, y: -30.244377}
+    - {x: -75.593704, y: -30.293371}
+    - {x: -78.562965, y: -30.342619}
+    - {x: -81.512215, y: -30.395987}
+    - {x: -84.48898, y: -30.453955}
+    - {x: -87.48807, y: -30.512436}
+    - {x: -90.50548, y: -30.571453}
+    - {x: -93.545906, y: -30.62749}
+    - {x: -96.57021, y: -30.679575}
+    - {x: -99.57756, y: -30.729559}
+    - {x: -102.60472, y: -30.779259}
+    - {x: -105.68718, y: -30.823883}
+  caves: []
   scenery:
-  - name: SnowRock
+  - name: SnowPine
     uv:
       serializedVersion: 2
-      x: 0.5
+      x: 0
       y: 0
       width: 0.25
-      height: 0.16666667
-    count: 50
-    sizeRange: {x: 3, y: 5.5}
-    clearance: {x: 1.5, y: 12}
+      height: 0.1
+    count: 260
+    sizeRange: {x: 3.2, y: 5.2}
+    clearance: {x: 3, y: 0}
     alignToRoad: 0
-    clustered: 0
-    cornerOnly: 0
-    squareAngle: 0
-    tints:
-    - {r: 1, g: 1, b: 1, a: 1}
-    along: {x: 0, y: 0}
-    canopy: 0
-    indoor: 0
-  - name: Boulders
-    uv:
-      serializedVersion: 2
-      x: 0.75
-      y: 0
-      width: 0.25
-      height: 0.16666667
-    count: 24
-    sizeRange: {x: 6, y: 9}
-    clearance: {x: 3, y: 14}
-    alignToRoad: 0
-    clustered: 0
+    clustered: 1
     cornerOnly: 0
     squareAngle: 0
     tints:
@@ -3827,10 +1921,10 @@ MonoBehaviour:
       x: 0.25
       y: 0
       width: 0.25
-      height: 0.16666667
-    count: 40
-    sizeRange: {x: 4.5, y: 6.5}
-    clearance: {x: 2.5, y: 9}
+      height: 0.1
+    count: 70
+    sizeRange: {x: 3.2, y: 4.6}
+    clearance: {x: 3, y: 0}
     alignToRoad: 0
     clustered: 0
     cornerOnly: 0
@@ -3840,23 +1934,270 @@ MonoBehaviour:
     along: {x: 0, y: 0}
     canopy: 0
     indoor: 0
-  - name: SnowPine
+  - name: FrostBush
     uv:
       serializedVersion: 2
-      x: 0
+      x: 0.5
       y: 0
       width: 0.25
-      height: 0.16666667
-    count: 520
-    sizeRange: {x: 6, y: 10}
-    clearance: {x: 5, y: 0}
+      height: 0.1
+    count: 70
+    sizeRange: {x: 1.6, y: 2.6}
+    clearance: {x: 2, y: 0}
     alignToRoad: 0
-    clustered: 1
+    clustered: 0
     cornerOnly: 0
     squareAngle: 0
     tints:
     - {r: 1, g: 1, b: 1, a: 1}
     along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: SnowRock
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.1
+    count: 50
+    sizeRange: {x: 2, y: 3.4}
+    clearance: {x: 2, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Boulders
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.1
+      width: 0.25
+      height: 0.1
+    count: 26
+    sizeRange: {x: 3, y: 4.6}
+    clearance: {x: 3, y: 30}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: RockSpire
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.2
+      width: 0.25
+      height: 0.1
+    count: 14
+    sizeRange: {x: 4, y: 6}
+    clearance: {x: 6, y: 40}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1444.4398, y: 1942.419}
+    canopy: 0
+    indoor: 0
+  - name: SnowDrift
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.1
+      width: 0.25
+      height: 0.1
+    count: 40
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.5, y: 20}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Snowman
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.1
+      width: 0.25
+      height: 0.1
+    count: 10
+    sizeRange: {x: 2.2, y: 2.8}
+    clearance: {x: 2.5, y: 14}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: WinterCrowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.1
+      width: 0.25
+      height: 0.1
+    count: 10
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 2, y: 6}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2069.5042, y: 120.0013}
+    canopy: 0
+    indoor: 0
+  - name: WinterCrowd
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.1
+      width: 0.25
+      height: 0.1
+    count: 6
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 2, y: 6}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 422.9616, y: 824.5581}
+    canopy: 0
+    indoor: 0
+  - name: SkiRack
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.2
+      width: 0.25
+      height: 0.1
+    count: 6
+    sizeRange: {x: 3, y: 3.6}
+    clearance: {x: 2, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 422.9616, y: 717.9581}
+    canopy: 0
+    indoor: 0
+  - name: Signpost
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.2
+      width: 0.25
+      height: 0.1
+    count: 6
+    sizeRange: {x: 2.2, y: 2.6}
+    clearance: {x: 2, y: 6}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: PeakFlag
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.2
+      width: 0.25
+      height: 0.1
+    count: 8
+    sizeRange: {x: 2.4, y: 3}
+    clearance: {x: 2, y: 10}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 1444.4398, y: 1942.419}
+    canopy: 0
+    indoor: 0
+  - name: Igloo
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.3
+      width: 0.25
+      height: 0.1
+    count: 5
+    sizeRange: {x: 4, y: 5}
+    clearance: {x: 4, y: 20}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  - name: Bench
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.3
+      width: 0.25
+      height: 0.1
+    count: 6
+    sizeRange: {x: 2.6, y: 3}
+    clearance: {x: 2, y: 6}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2069.5042, y: 179.99292}
+    canopy: 0
+    indoor: 0
+  - name: ChristmasTree
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.3
+      width: 0.25
+      height: 0.1
+    count: 4
+    sizeRange: {x: 5, y: 6}
+    clearance: {x: 3, y: 12}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 2129.5056, y: 60}
     canopy: 0
     indoor: 0
   bakedScenery: []

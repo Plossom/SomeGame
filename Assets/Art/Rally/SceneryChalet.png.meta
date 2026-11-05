@@ -1,0 +1,1263 @@
+fileFormatVersion: 2
+guid: 727c1c4399d1b479bbf171b9aae49955
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8608664948518444385
+    second: SceneryChalet_0
+  - first:
+      213: -120587246993881657
+    second: SceneryChalet_1
+  - first:
+      213: 5691494195525167959
+    second: SceneryChalet_2
+  - first:
+      213: 7812174325252785987
+    second: SceneryChalet_3
+  - first:
+      213: -4510235368984483228
+    second: SceneryChalet_4
+  - first:
+      213: -5548617960431682061
+    second: SceneryChalet_5
+  - first:
+      213: -4048119569623421496
+    second: SceneryChalet_6
+  - first:
+      213: 1950241491708627305
+    second: SceneryChalet_7
+  - first:
+      213: -5429154437668241538
+    second: SceneryChalet_8
+  - first:
+      213: 4292971121441682118
+    second: SceneryChalet_9
+  - first:
+      213: -7595508295729495815
+    second: SceneryChalet_10
+  - first:
+      213: 2522122584443246338
+    second: SceneryChalet_11
+  - first:
+      213: 6560482744984075568
+    second: SceneryChalet_12
+  - first:
+      213: 4200082429835984678
+    second: SceneryChalet_13
+  - first:
+      213: 1458047017153284344
+    second: SceneryChalet_14
+  - first:
+      213: -5486190597929152643
+    second: SceneryChalet_15
+  - first:
+      213: -8649605574478910463
+    second: SceneryChalet_16
+  - first:
+      213: 2527995277237726378
+    second: SceneryChalet_17
+  - first:
+      213: -29183280823988928
+    second: SceneryChalet_18
+  - first:
+      213: 2143646088924305818
+    second: SceneryChalet_19
+  - first:
+      213: -3405517515331888149
+    second: SceneryChalet_20
+  - first:
+      213: 3415608427884050027
+    second: SceneryChalet_21
+  - first:
+      213: -9111974039835397786
+    second: SceneryChalet_22
+  - first:
+      213: 7056922244111202819
+    second: SceneryChalet_23
+  - first:
+      213: 2945325328135672043
+    second: SceneryChalet_24
+  - first:
+      213: 39628975526891203
+    second: SceneryChalet_25
+  - first:
+      213: 6784923944275956833
+    second: SceneryChalet_26
+  - first:
+      213: -4909697428185953410
+    second: SceneryChalet_27
+  - first:
+      213: -28611406417522957
+    second: SceneryChalet_28
+  - first:
+      213: 5058944963632229067
+    second: SceneryChalet_29
+  - first:
+      213: -3364239156330241696
+    second: SceneryChalet_30
+  - first:
+      213: -809377257650528028
+    second: SceneryChalet_31
+  - first:
+      213: -2890850658251526355
+    second: SceneryChalet_32
+  - first:
+      213: 4231582128384375343
+    second: SceneryChalet_33
+  - first:
+      213: -885873148940417172
+    second: SceneryChalet_34
+  - first:
+      213: 835764295438535020
+    second: SceneryChalet_35
+  - first:
+      213: 4911691281584295287
+    second: SceneryChalet_36
+  - first:
+      213: 8975252738936049592
+    second: SceneryChalet_37
+  - first:
+      213: -5238073891897027785
+    second: SceneryChalet_38
+  - first:
+      213: -5953964966225857837
+    second: SceneryChalet_39
+  - first:
+      213: 6331581359719029050
+    second: SceneryChalet_40
+  - first:
+      213: -4090281688010385869
+    second: SceneryChalet_41
+  - first:
+      213: 4985395406081883525
+    second: SceneryChalet_42
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryChalet_0
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 2303
+        width: 244
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16d5cc6f82f187770800000000000000
+      internalID: 8608664948518444385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_1
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 2365
+        width: 254
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c5cc7aa986935ef0800000000000000
+      internalID: -120587246993881657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_2
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 2351
+        width: 162
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75ba975e0df3cfe40800000000000000
+      internalID: 5691494195525167959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_3
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 2359
+        width: 257
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3478e1c782b6a6c60800000000000000
+      internalID: 7812174325252785987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_4
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 2047
+        width: 186
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46ae64204dc6861c0800000000000000
+      internalID: -4510235368984483228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_5
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 2113
+        width: 254
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fdfd12ec595ff2b0800000000000000
+      internalID: -5548617960431682061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_6
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 2087
+        width: 162
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cde94403b032d7c0800000000000000
+      internalID: -4048119569623421496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_7
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 2104
+        width: 127
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 969458bcd46a01b10800000000000000
+      internalID: 1950241491708627305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_8
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 1791
+        width: 227
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7f7c08cdc4c7a4b0800000000000000
+      internalID: -5429154437668241538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_9
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 1791
+        width: 114
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c2ba846d72b39b30800000000000000
+      internalID: 4292971121441682118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_10
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 1827
+        width: 202
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f0c280a275579690800000000000000
+      internalID: -7595508295729495815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_11
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 1826
+        width: 161
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 207dab5b021600320800000000000000
+      internalID: 2522122584443246338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_12
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1599
+        width: 256
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03dfad13c448b0b50800000000000000
+      internalID: 6560482744984075568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_13
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 1539
+        width: 247
+        height: 250
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62fbbb987b0b94a30800000000000000
+      internalID: 4200082429835984678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_14
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 1565
+        width: 183
+        height: 183
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f84d3b79060c3410800000000000000
+      internalID: 1458047017153284344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_15
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 1573
+        width: 162
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7f4850e7b22dd3b0800000000000000
+      internalID: -5486190597929152643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_16
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 1299
+        width: 198
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10c22fdbe8d66f780800000000000000
+      internalID: -8649605574478910463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_17
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 1279
+        width: 212
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aacae9d8f4e351320800000000000000
+      internalID: 2527995277237726378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_18
+      rect:
+        serializedVersion: 2
+        x: 521
+        y: 1303
+        width: 503
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04d0b11f5f1589ff0800000000000000
+      internalID: -29183280823988928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_19
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1067
+        width: 257
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a991d76a2c2cfbd10800000000000000
+      internalID: 2143646088924305818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_20
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 1031
+        width: 164
+        height: 216
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: beb954eecdb2db0d0800000000000000
+      internalID: -3405517515331888149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_21
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 1066
+        width: 245
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b66fbdbb4cda66f20800000000000000
+      internalID: 3415608427884050027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_22
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 1057
+        width: 202
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 661b70953e3cb8180800000000000000
+      internalID: -9111974039835397786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_23
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 1027
+        width: 86
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30afccf44693fe160800000000000000
+      internalID: 7056922244111202819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_24
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 767
+        width: 191
+        height: 228
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be0dc7be7c5efd820800000000000000
+      internalID: 2945325328135672043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_25
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 848
+        width: 209
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cec711e75acc8000800000000000000
+      internalID: 39628975526891203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_26
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 767
+        width: 258
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1645c961164e82e50800000000000000
+      internalID: 6784923944275956833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_27
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 803
+        width: 201
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7bc356a3304ddbb0800000000000000
+      internalID: -4909697428185953410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_28
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 511
+        width: 239
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fe85f3d31a5a9ff0800000000000000
+      internalID: -28611406417522957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_29
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 552
+        width: 182
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcaec8714abf43640800000000000000
+      internalID: 5058944963632229067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_30
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 574
+        width: 200
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 061e973df42df41d0800000000000000
+      internalID: -3364239156330241696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_31
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 546
+        width: 217
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e0e5742ca384c4f0800000000000000
+      internalID: -809377257650528028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_32
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 292
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2fa63884a2a1e7d0800000000000000
+      internalID: -2890850658251526355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_33
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 432
+        width: 245
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2afd30a68999ba30800000000000000
+      internalID: 4231582128384375343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_34
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 272
+        width: 227
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c678959801fb4b3f0800000000000000
+      internalID: -885873148940417172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_35
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 274
+        width: 205
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c698199d23b399b00800000000000000
+      internalID: 835764295438535020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_36
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 412
+        width: 75
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77d07358235d92440800000000000000
+      internalID: 4911691281584295287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_37
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 380
+        width: 231
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bf82a920d08e8c70800000000000000
+      internalID: 8975252738936049592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_38
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 307
+        width: 248
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 733da3e3c8f9e47b0800000000000000
+      internalID: -5238073891897027785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_39
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d2bcfe98644f5da0800000000000000
+      internalID: -5953964966225857837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_40
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 222
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a39998453bb4ed750800000000000000
+      internalID: 6331581359719029050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_41
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 24
+        width: 207
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3361bdad9766c37c0800000000000000
+      internalID: -4090281688010385869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryChalet_42
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 25
+        width: 179
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58dff5445beaf2540800000000000000
+      internalID: 4985395406081883525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryChalet_0: 8608664948518444385
+      SceneryChalet_1: -120587246993881657
+      SceneryChalet_10: -7595508295729495815
+      SceneryChalet_11: 2522122584443246338
+      SceneryChalet_12: 6560482744984075568
+      SceneryChalet_13: 4200082429835984678
+      SceneryChalet_14: 1458047017153284344
+      SceneryChalet_15: -5486190597929152643
+      SceneryChalet_16: -8649605574478910463
+      SceneryChalet_17: 2527995277237726378
+      SceneryChalet_18: -29183280823988928
+      SceneryChalet_19: 2143646088924305818
+      SceneryChalet_2: 5691494195525167959
+      SceneryChalet_20: -3405517515331888149
+      SceneryChalet_21: 3415608427884050027
+      SceneryChalet_22: -9111974039835397786
+      SceneryChalet_23: 7056922244111202819
+      SceneryChalet_24: 2945325328135672043
+      SceneryChalet_25: 39628975526891203
+      SceneryChalet_26: 6784923944275956833
+      SceneryChalet_27: -4909697428185953410
+      SceneryChalet_28: -28611406417522957
+      SceneryChalet_29: 5058944963632229067
+      SceneryChalet_3: 7812174325252785987
+      SceneryChalet_30: -3364239156330241696
+      SceneryChalet_31: -809377257650528028
+      SceneryChalet_32: -2890850658251526355
+      SceneryChalet_33: 4231582128384375343
+      SceneryChalet_34: -885873148940417172
+      SceneryChalet_35: 835764295438535020
+      SceneryChalet_36: 4911691281584295287
+      SceneryChalet_37: 8975252738936049592
+      SceneryChalet_38: -5238073891897027785
+      SceneryChalet_39: -5953964966225857837
+      SceneryChalet_4: -4510235368984483228
+      SceneryChalet_40: 6331581359719029050
+      SceneryChalet_41: -4090281688010385869
+      SceneryChalet_42: 4985395406081883525
+      SceneryChalet_5: -5548617960431682061
+      SceneryChalet_6: -4048119569623421496
+      SceneryChalet_7: 1950241491708627305
+      SceneryChalet_8: -5429154437668241538
+      SceneryChalet_9: 4292971121441682118
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
