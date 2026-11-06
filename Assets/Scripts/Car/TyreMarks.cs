@@ -25,6 +25,9 @@ namespace SomeGame.Car
         /// <summary>The marks' colour from now on (pale ruts on snow instead of dark rubber).</summary>
         public Color Tint { get => color; set => color = value; }
 
+        /// <summary>Width of new marks.</summary>
+        public float Width { get => width; set => width = value; }
+
         void Awake()
         {
             _car = GetComponent<CarMovement>();

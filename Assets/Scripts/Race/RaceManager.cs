@@ -74,6 +74,9 @@ namespace SomeGame.Race
         /// <summary>Time.time at GO.</summary>
         public float StartTime => _startTime;
 
+        /// <summary>False during a recorded autopilot run: it earns no stars and sets no best times.</summary>
+        public static bool KeepRecords { get; set; } = true;
+
         void OnDestroy()
         {
             if (SomeGame.Track.Track.ClockSource == RaceClock) SomeGame.Track.Track.ClockSource = null;
@@ -219,7 +222,7 @@ namespace SomeGame.Race
 
         void OnPlayerLap(RaceProgress car, float lapTime)
         {
-            bool newBest = Online == null && BestLapStore.Submit(TrackId, lapTime); // online races keep no records
+            bool newBest = Online == null && KeepRecords && BestLapStore.Submit(TrackId, lapTime); // online races keep no records
             PlayerLapCompleted?.Invoke(lapTime, newBest);
         }
 
@@ -233,7 +236,7 @@ namespace SomeGame.Race
             player.ControlsEnabled = false;
             if (joystick != null) joystick.Interactable = false;
             FinalPosition = PositionOf(Player);
-            if (Online != null)
+            if (Online != null || !KeepRecords)
             {
                 // Online races are for fun: no stars or records.
                 PlayerFinished?.Invoke();

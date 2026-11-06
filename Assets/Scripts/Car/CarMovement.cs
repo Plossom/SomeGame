@@ -151,6 +151,9 @@ namespace SomeGame.Car
         /// <summary>Boost strength for landing a trick.</summary>
         const float TrickBoost = 0.55f;
 
+        /// <summary>Hands the car to another driver (a recorded autopilot run).</summary>
+        public void UseInput(ICarInput input) => _input = input;
+
         public CarStats Stats
         {
             get => stats;

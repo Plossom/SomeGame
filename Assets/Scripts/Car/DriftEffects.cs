@@ -39,6 +39,12 @@ namespace SomeGame.Car
         ParticleSystem _flame;
         int _lastTier = -1;
 
+        /// <summary>More and bigger sparks (recordings).</summary>
+        public float Emphasis { get; set; } = 1f;
+
+        /// <summary>The colour of the sparks before the first boost level.</summary>
+        public Color ChargeColor { get => tierColors[0]; set => tierColors[0] = value; }
+
         void Awake()
         {
             _car = GetComponent<CarMovement>();
@@ -56,11 +62,11 @@ namespace SomeGame.Car
             foreach (var sparks in _sparks)
             {
                 var emission = sparks.emission;
-                emission.rateOverTime = tier >= 0 ? tierRates[tier] : 0f;
+                emission.rateOverTime = tier >= 0 ? tierRates[tier] * Emphasis : 0f;
                 if (tier < 0) continue;
                 var main = sparks.main;
                 main.startColor = tierColors[tier];
-                main.startSize = new ParticleSystem.MinMaxCurve(tierSizes[tier] * 0.6f, tierSizes[tier]);
+                main.startSize = new ParticleSystem.MinMaxCurve(tierSizes[tier] * 0.6f * Emphasis, tierSizes[tier] * Emphasis);
                 if (tier > _lastTier && tier > 0) sparks.Emit(tierUpBurst);
             }
             _lastTier = tier;
