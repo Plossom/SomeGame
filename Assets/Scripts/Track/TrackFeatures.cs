@@ -51,13 +51,19 @@ namespace SomeGame.Track
             // Approach arrows: in line with each kicker, and leading off the road onto each corner-cut ramp.
             var a = new MeshData();
             foreach (var jump in track.Jumps)
+            {
+                // Lands on a split (the drop in the middle): a pair pointing off left and right, steer in the air.
+                bool fork = track.SplitAfter(jump.FarBank);
                 foreach (float back in new[] { 8f, 15f })
                 {
                     float d = jump.RampStart - back;
                     if (track.InGap(d)) continue; // (platform to platform: not out over the void)
-                    Vector2 fwd = path.TangentAt(d);
-                    Arrow(a, path.PointAt(d) + path.NormalAt(d) * jump.Lateral, fwd, arrowSize);
+                    Vector2 fwd = path.TangentAt(d), n = path.NormalAt(d), at = path.PointAt(d) + n * jump.Lateral;
+                    if (!fork) { Arrow(a, at, fwd, arrowSize); continue; }
+                    foreach (float side in new[] { -1f, 1f })
+                        Arrow(a, at + n * (side * arrowSize * 0.75f), (fwd + n * (side * 0.9f)).normalized, arrowSize);
                 }
+            }
             foreach (var cut in track.Shortcuts)
             {
                 Vector2 roadPoint = path.PointAt(cut.From);

@@ -359,10 +359,12 @@ MonoBehaviour:
     width: 9
   kerbWidth: 0.7
   sampleSpacing: 1
-  checkpointCount: 100
-  sections: 1
+  checkpointCount: 240
+  sections: 3
   finishAtLastLine: 0
-  sectionLines: []
+  sectionLines:
+  - 509.94757
+  - 1034.837
   boundaryMargin: 40
   rooms:
   - min: {x: 105.64, y: 1.37}
@@ -9695,4 +9697,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 5901603636d12537
+  bakedSignature: 832062d2abc820ad

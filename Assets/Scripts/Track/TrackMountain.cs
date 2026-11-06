@@ -184,10 +184,13 @@ namespace SomeGame.Track
             }
             right.Reverse();
             left.AddRange(right);
-            BuildChasm(new TrackLayout.Chasm { points = left.ToArray() }, SplitOrder, SplitOrder + 1, 0.4f);
+            // The front edge, across the start of the drop, is open: the cars fly in over the jump's own drop there,
+            // so no rim or snow cornice across it (that drew a white line joining the two forks).
+            bool AtFront(Vector2 p) => Mathf.Abs(path.DeltaDistance(split.from, path.Project(p).Distance)) < 0.75f;
+            BuildChasm(new TrackLayout.Chasm { points = left.ToArray() }, SplitOrder, SplitOrder + 1, 0.4f, (a, b) => AtFront(a) && AtFront(b));
         }
 
-        void BuildChasm(TrackLayout.Chasm chasm, int depthOrder = ChasmOrder, int rimOrder = ChasmRimOrder, float rimScale = 1f)
+        void BuildChasm(TrackLayout.Chasm chasm, int depthOrder = ChasmOrder, int rimOrder = ChasmRimOrder, float rimScale = 1f, System.Func<Vector2, Vector2, bool> open = null)
         {
             // The outline every metre or so, a little ragged.
             var outline = Resample(chasm.points, 1.5f);
@@ -221,6 +224,7 @@ namespace SomeGame.Track
             for (int i = 0; i < n; i++)
             {
                 int j = (i + 1) % n;
+                if (open != null && open(outline[i], outline[j])) continue; // an open edge: no wall, no cornice
                 // The rock wall dropping away (light at the top, into the dark), banded with strata.
                 float band = Mathf.Repeat(i * 0.37f, 1f) < 0.5f ? 1f : 0.88f;
                 AddQuad(outline[i], outline[j], rim[j], rim[i], RimRock * band, RimRock * band, Depth, Depth, v, c, t);
