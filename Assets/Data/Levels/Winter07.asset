@@ -25,6 +25,6 @@ MonoBehaviour:
   rivalCornerScale: 1
   starsRequired: 28
   starTimes:
-  - 149
-  - 136
   - 125
+  - 108
+  - 102

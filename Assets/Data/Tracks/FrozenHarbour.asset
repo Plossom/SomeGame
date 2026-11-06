@@ -60,34 +60,34 @@ MonoBehaviour:
   - {x: -21, y: -6}
   - {x: -13.5, y: 4.5}
   - {x: 1.5, y: 3}
-  roadWidth: 8
+  roadWidth: 7.5
   widths:
   - distance: 63.65837
-    width: 8
+    width: 7.5
   - distance: 75.65837
     width: 5.5
   - distance: 167.53534
     width: 5.5
   - distance: 177.53534
-    width: 8
+    width: 7.5
   - distance: 222.3081
-    width: 8
+    width: 7.5
   - distance: 234.3081
     width: 5
   - distance: 295.70694
     width: 5
   - distance: 305.70694
-    width: 8
+    width: 7.5
   - distance: 337.21643
-    width: 8
+    width: 7.5
   - distance: 345.21643
     width: 4.5
   - distance: 376.751
     width: 4.5
   - distance: 384.751
-    width: 8
+    width: 7.5
   - distance: 432.60718
-    width: 8
+    width: 7.5
   - distance: 444.60718
     width: 4.2
   - distance: 534.9809
@@ -99,7 +99,7 @@ MonoBehaviour:
   - distance: 651.6372
     width: 4.5
   - distance: 661.6372
-    width: 8
+    width: 7.5
   kerbWidth: 0.7
   sampleSpacing: 1
   checkpointCount: 16
@@ -432,7 +432,10 @@ MonoBehaviour:
     collapse: 0
     slowMotion: 0
     trickJump: 1
+    kicker: 0
+    width: 0
     tricks: 3
+    plunge: 0
   - from: 202.75655
     to: 211.75655
     rampLateral: 0
@@ -445,7 +448,10 @@ MonoBehaviour:
     collapse: 0
     slowMotion: 0
     trickJump: 0
+    kicker: 0
+    width: 0
     tricks: 3
+    plunge: 0
   - from: 306.21643
     to: 334.21643
     rampLateral: 0
@@ -458,7 +464,10 @@ MonoBehaviour:
     collapse: 0
     slowMotion: 0
     trickJump: 1
+    kicker: 0
+    width: 0
     tricks: 4
+    plunge: 0
   - from: 610.12946
     to: 618.12946
     rampLateral: 0
@@ -471,7 +480,10 @@ MonoBehaviour:
     collapse: 0
     slowMotion: 0
     trickJump: 0
+    kicker: 0
+    width: 0
     tricks: 3
+    plunge: 0
   elevatedRoad: 0
   bouncers: []
   geysers: []
@@ -496,7 +508,7 @@ MonoBehaviour:
   penguins: []
   dashPanels:
   - distance: 656.1415
-    lateral: 1.6
+    lateral: 1.5431263
     length: 4
     width: 3.2
   - distance: 160.66933
@@ -546,19 +558,54 @@ MonoBehaviour:
   night: 0
   santa: 0
   snowballFights: []
+  turntables: []
+  nets: []
+  snowTunnels: []
+  chairlifts: []
+  helix:
+    enabled: 0
+    centre: {x: 0, y: 0}
+    radius: 12
+    entry: 0
+    from: 0
+    to: 0
+    exit: 0
+    turns: 6
+    mountainRadius: 40
+  holes: []
+  platforms: []
+  hatches: []
+  vortices: []
+  abyss: 0
+  islands: []
+  splits: []
+  slidingDoors: []
+  pools: []
+  bowling: []
+  billiards: []
+  glassFloors: []
   storms:
   - from: 49.65837
     to: 305.70694
     strength: 0.5
     lightning: 0
+    strikeEvery: {x: 0, y: 0}
+    strikeRadius: 0
+    wind: 1
   - from: 315.21643
     to: 401.751
     strength: 0.4
     lightning: 0
+    strikeEvery: {x: 0, y: 0}
+    strikeRadius: 0
+    wind: 1
   - from: 450.60718
     to: 534.9809
     strength: 0.4
     lightning: 0
+    strikeEvery: {x: 0, y: 0}
+    strikeRadius: 0
+    wind: 1
   twisters: []
   snowBase: 0.3
   noHeadlights: 0
@@ -4874,4 +4921,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 1648ecfd92830c7f
+  bakedSignature: 97303235212598db

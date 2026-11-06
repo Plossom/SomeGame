@@ -79,7 +79,9 @@ namespace SomeGame.Race
             if (SomeGame.Track.Track.ClockSource == RaceClock) SomeGame.Track.Track.ClockSource = null;
         }
 
-        float RaceClock() => RaceTime;
+        // The track's clock keeps running after the player's finish (RaceTime freezes there): the rivals still out on
+        // the course need doors, bridges and the rest to keep moving.
+        float RaceClock() => State == RaceState.Countdown ? 0f : Time.time - _startTime;
 
         void Awake()
         {
