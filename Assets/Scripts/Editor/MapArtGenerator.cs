@@ -129,7 +129,7 @@ namespace SomeGame.EditorTools
             float Cloud(float cx, float cy, float s) =>
                 Min(Circle(x, y, cx, cy, 40f * s), Circle(x, y, cx + 52f * s, cy + 22f * s, 54f * s),
                     Circle(x, y, cx + 112f * s, cy + 2f * s, 40f * s), RoundRect(x, y, cx + 56f * s, cy - 14f * s, 106f * s, 28f * s, 28f * s));
-            float d = Min(Cloud(905f, 1945f, 0.42f), Cloud(60f, 2110f, 0.36f));
+            float d = Min(Cloud(905f, 1700f, 0.42f), Cloud(60f, 1780f, 0.36f));
             return Over(c, Hex("FFF7E8"), Cov(d) * 0.95f);
         }
 

@@ -21,3 +21,4 @@ MonoBehaviour:
   starsRequired: 0
   challenge: {fileID: 11400000, guid: 8f9533689f923476687d3d861d478bf7, type: 2}
   challengeAfterRival: RosieRust
+  challengeSpot: {x: 1005, y: 585}

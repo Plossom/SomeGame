@@ -35,6 +35,13 @@ namespace SomeGame.UI
         [SerializeField] GameObject rivalBadge;
         [SerializeField] UnityEngine.UI.Image rivalPicture;
         [SerializeField] GameObject rivalMystery, rivalBeaten;
+        [Tooltip("The cup's last race: a chequered flag on the badge.")]
+        [SerializeField] GameObject finalFlag;
+
+        public void SetFinal(bool final)
+        {
+            if (finalFlag != null) finalFlag.SetActive(final);
+        }
 
         /// <summary>The rival waiting here (null: nobody).</summary>
         public void SetRival(SomeGame.Race.RivalCharacter rival, bool known, bool beaten)

@@ -105,16 +105,16 @@ namespace SomeGame.UI
         /// <summary>The forest road: switchbacks up from the bottom (like the mountain road), past the lake to the last race.</summary>
         public static readonly MapRoad Valley = new(new Vector2[]
         {
-            new(40f, -184f), new(170f, 330f), new(470f, 400f), new(830f, 520f), new(860f, 660f), new(560f, 770f),
-            new(230f, 860f), new(260f, 1010f), new(600f, 1060f), new(880f, 1150f), new(800f, 1346f), new(500f, 1483f),
-            new(410f, 1656f),
-        }, 1, 12, 8) { StopShifts = new[] { 0f, 0f, 0f, -55f, 60f } }; // 4 and 5 apart round the left bend
+            new(40f, -208f), new(170f, 373f), new(470f, 452f), new(830f, 588f), new(860f, 746f), new(560f, 870f),
+            new(230f, 972f), new(260f, 1142f), new(600f, 1198f), new(880f, 1300f), new(800f, 1522f), new(500f, 1676f),
+            new(410f, 1872f),
+        }, 1, 12, 8) { StopShifts = new[] { 0f, 0f, 0f, -62f, 68f } }; // 4 and 5 apart round the left bend
 
         /// <summary>The mountain road: comes in from the bottom left and climbs in switchbacks towards the peaks.</summary>
         public static readonly MapRoad Winter = new(new Vector2[]
         {
-            new(50f, -160f), new(270f, 300f), new(690f, 430f), new(920f, 620f), new(690f, 800f), new(290f, 900f),
-            new(210f, 1060f), new(490f, 1190f), new(840f, 1290f), new(870f, 1450f), new(530f, 1560f),
+            new(50f, -181f), new(270f, 339f), new(690f, 486f), new(920f, 701f), new(690f, 904f), new(290f, 1017f),
+            new(210f, 1198f), new(490f, 1345f), new(840f, 1458f), new(870f, 1639f), new(530f, 1763f),
         }, 1, 10, 8);
 
         public static MapRoad Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
@@ -134,6 +134,6 @@ namespace SomeGame.UI
         public static Vector2 PointAt(float distance, out Vector2 tangent) => Current.PointAt(distance, out tangent);
 
         /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
-        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(920f, 1700f, y));
+        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(1040f, 1922f, y));
     }
 }

@@ -76,6 +76,8 @@ namespace SomeGame.UI
         [Tooltip("The garage card's car: yours as built, turning.")]
         [SerializeField] VehicleIcon garageCar;
         [SerializeField] TMP_Text garageBuild;
+        [Tooltip("The cup's challenge: a side stop next to its rival's race.")]
+        [SerializeField] ChallengeStop challengeStop;
         [Tooltip("Meeting a rival the first time their home race is open.")]
         [SerializeField] RivalMeeting meeting;
 
@@ -942,6 +944,7 @@ namespace SomeGame.UI
             SetCar(CarTarget(_selected), 1f);
             car.SetAsLastSibling();
             foreach (var node in _nodes) node.transform.SetAsLastSibling(); // stops stay on top of the line and the car
+            if (challengeStop != null) challengeStop.BringForward();
         }
 
         void DriveTo(int index)
@@ -1055,10 +1058,17 @@ namespace SomeGame.UI
                     : ProgressStore.HasWon(level) ? MapNodeState.Won
                     : MapNodeState.Open;
                 _nodes[i].Bind((i + 1).ToString(), state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, null, () => OnStopTapped(index));
+                _nodes[i].SetFinal(i == catalog.Count - 1);
                 var rival = RivalCharacter.For(level);
                 _nodes[i].SetRival(rival, rival != null && (RivalProgress.HasMet(rival.name) || (CupList.DevUnlockAll && state != MapNodeState.Locked)), rival != null && RivalProgress.IsBeaten(rival.name));
             }
             ShowSelected();
+            if (challengeStop != null)
+            {
+                var stops = new List<RectTransform>();
+                foreach (var node in _nodes) stops.Add((RectTransform)node.transform);
+                challengeStop.Bind(_cup, catalog, stops);
+            }
         }
 
         // The cup's name over the map (the race cards show the races).

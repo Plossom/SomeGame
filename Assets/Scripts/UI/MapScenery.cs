@@ -16,7 +16,7 @@ namespace SomeGame.UI
         /// The landscapes are painted in an unstretched space and stretched upward by this much, so the land
         /// reaches higher up the screen (the horizon sits just below the header).
         /// </summary>
-        public const float Stretch = 1.15f;
+        public const float Stretch = 1.30f;
 
         public static Vector2 ToCanvas(Vector2 paint) => new(paint.x, paint.y * Stretch);
 
