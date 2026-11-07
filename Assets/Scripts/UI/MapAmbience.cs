@@ -202,11 +202,11 @@ namespace SomeGame.UI
         void Fishers()
         {
             if (fisher == null || rowboat == null) return;
-            // Placed on the pond (its centre and radii in painting space), in canvas units.
+            // Placed on the lake (its centre and radii in painting space), in canvas units.
             Vector2 lake = MapScenery.ValleyLake, r = MapScenery.ValleyLakeRadii;
             Vector2 On(float fx, float fy) => MapScenery.ToCanvas(lake + new Vector2(r.x * fx, r.y * fy));
-            Angler(fisher, new Vector2(26f, 32.5f), new Vector2(0.5f, 0f), On(0.52f, -1.12f), new Vector2(-4.1f, 16.3f), On(0.12f, -0.55f), false, 0f, 13f);
-            Angler(rowboat, new Vector2(60f, 37.5f), new Vector2(0.5f, 0.175f), On(-0.36f, 0.1f), new Vector2(-3.8f, 18.8f), On(-0.62f, -0.02f), true, 6.5f, 11f);
+            Angler(fisher, new Vector2(26f, 32.5f), new Vector2(0.5f, 0f), On(0.39f, -1.43f), new Vector2(-4.1f, 16.3f), On(0.08f, -0.87f), false, 0f, 13f);
+            Angler(rowboat, new Vector2(60f, 37.5f), new Vector2(0.5f, 0.175f), On(-0.29f, 0f), new Vector2(-3.8f, 18.8f), On(-0.53f, -0.08f), true, 6.5f, 11f);
         }
 
         void Angler(Sprite sprite, Vector2 size, Vector2 pivot, Vector2 at, Vector2 hands, Vector2 bobberAt, bool boat, float phase, float period)

@@ -25,23 +25,23 @@ namespace SomeGame.UI
 
         // ------------------------------------------------------------------ valley
 
-        /// <summary>The pond the creek runs into (bottom left of the middle), with the jetty and the anglers.</summary>
-        public static readonly Vector2 ValleyLake = new(245f, 572f);
-        public static readonly Vector2 ValleyLakeRadii = new(152f, 54f);
+        public static readonly Vector2 ValleyLake = new(240f, 1110f);
+        public static readonly Vector2 ValleyLakeRadii = new(210f, 62f);
 
-        /// <summary>The village with its church, up on the right.</summary>
+        /// <summary>The village by the lake, the farm and the houses up the valley.</summary>
         public static readonly (Vector2 p, bool church)[] ValleyHouses =
         {
-            (new(912, 1252), true), (new(992, 1272), false), (new(1058, 1246), false), (new(1122, 1282), false), (new(1030, 1300), false),
+            (new(90, 1215), false), (new(200, 1236), false), (new(330, 1222), true),
+            (new(1000, 560), false), (new(1080, 600), false), (new(980, 1290), false), (new(860, 1355), false),
         };
 
         public static float ValleyHouseScale(Vector2 p) => SizeAt(p.y) * 1.6f;
 
-        /// <summary>Top of a village house's chimney.</summary>
+        /// <summary>Top of a chalet's chimney.</summary>
         public static Vector2 ChaletChimney(Vector2 p)
         {
             float s = ValleyHouseScale(p);
-            return p + new Vector2(17f * s, 53f * s);
+            return p + new Vector2(52f * s * 0.2f, 34f * s + 30f * s * 0.7f + 8f * s);
         }
 
         // ------------------------------------------------------------------ winter
