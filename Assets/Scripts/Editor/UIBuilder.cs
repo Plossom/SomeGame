@@ -145,21 +145,25 @@ namespace SomeGame.EditorTools
             var node = BuildNode(world);
             var lockedPage = BuildLockedPage(map);
             var sideStop = BuildChallengeStop(world);
-            // A rival standing by their race (copied for each): their picture by their car, a "?" until met, a tick once beaten.
-            var rivalMarker = At("RivalMarker", world, Vector2.zero, Vector2.zero, new Vector2(230f, 200f));
+            // A rival by their race (copied for each): their round face on a map pin, a "?" until met, a tick once beaten.
+            var rivalMarker = At("RivalMarker", world, Vector2.zero, Vector2.zero, new Vector2(180f, 220f));
             rivalMarker.pivot = new Vector2(0.5f, 0f);
-            Img(At("Shadow", rivalMarker, new Vector2(0.5f, 0f), new Vector2(0f, -6f), new Vector2(210f, 34f)), "Circle", new Color(0.1f, 0.2f, 0.12f, 0.3f)).preserveAspect = false;
-            var markerPicture = Img(Stretch("Picture", rivalMarker), "Circle", Color.white, raycast: true);
-            var mystery = At("Mystery", rivalMarker, new Vector2(0.5f, 1f), new Vector2(0f, 10f), new Vector2(70f, 70f));
+            Img(At("Shadow", rivalMarker, new Vector2(0.5f, 0f), new Vector2(0f, -8f), new Vector2(90f, 26f)), "Circle", new Color(0.1f, 0.2f, 0.12f, 0.35f)).preserveAspect = false;
+            var tail = Img(At("Tail", rivalMarker, new Vector2(0.5f, 0f), new Vector2(0f, 4f), new Vector2(60f, 62f)), "NavArrow", Theme.Ink).rectTransform;
+            tail.pivot = new Vector2(0.5f, 0f); tail.localRotation = Quaternion.Euler(0f, 0f, 180f); tail.anchoredPosition = new Vector2(0f, 62f);
+            var pinHead = At("Head", rivalMarker, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(180f, 180f));
+            Img(Stretch("Ring", pinHead), "Circle", Theme.Ink, raycast: true);
+            Img(At("Rim", pinHead, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(164f, 164f)), "Circle", Theme.Orange);
+            var markerPicture = Img(At("Picture", rivalMarker, new Vector2(0.5f, 1f), new Vector2(0f, -8f), new Vector2(164f, 164f)), "Circle", Color.white);
+            var mystery = At("Mystery", rivalMarker, new Vector2(0.5f, 1f), new Vector2(0f, -90f), new Vector2(80f, 80f));
             mystery.pivot = new Vector2(0.5f, 0.5f);
-            Img(mystery, "Circle", Theme.Ink);
-            Txt(Stretch("Label", mystery), "?", 52, Theme.Amber, _black);
-            var beatenRt = At("Beaten", rivalMarker, new Vector2(1f, 1f), new Vector2(-14f, -10f), new Vector2(54f, 54f));
+            Txt(Stretch("Label", mystery), "?", 84, Theme.Amber, _black);
+            var beatenRt = At("Beaten", rivalMarker, new Vector2(1f, 1f), new Vector2(-6f, -10f), new Vector2(56f, 56f));
             beatenRt.pivot = new Vector2(0.5f, 0.5f);
             Img(beatenRt, "Circle", Theme.Leaf);
             Img(At("Icon", beatenRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(30f, 30f)), "IconCheck", Color.white);
             var markerButton = rivalMarker.gameObject.AddComponent<Button>();
-            markerButton.targetGraphic = markerPicture; markerButton.transition = Selectable.Transition.None;
+            markerButton.targetGraphic = pinHead.GetComponent<Image>(); markerButton.transition = Selectable.Transition.None;
             rivalMarker.gameObject.AddComponent<ButtonFeedback>();
             rivalMarker.gameObject.SetActive(false);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));

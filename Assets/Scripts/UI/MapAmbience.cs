@@ -140,6 +140,9 @@ namespace SomeGame.UI
             }
         }
 
+        // In the strip of sky above the far forest and below the header (canvas units).
+        static float SkyY => MapScenery.ToCanvas(new Vector2(0f, 1590f)).y;
+
         // A small flock crossing the sky every so often, flapping.
         void Birds()
         {
@@ -155,7 +158,7 @@ namespace SomeGame.UI
                     float p = Mathf.Repeat(t + 4f, period) / crossing;
                     if (p > 1f) { rt.anchoredPosition = new Vector2(-400f, 0f); return; }
                     float x = Mathf.Lerp(-120f, MapLayout.Size.x + 120f, p);
-                    rt.anchoredPosition = new Vector2(x, 1905f + Mathf.Sin(p * 5f) * 18f) + offset;
+                    rt.anchoredPosition = new Vector2(x, SkyY + 40f + Mathf.Sin(p * 5f) * 18f) + offset;
                     // Flap by squashing the wings between full height and a third (never through zero:
                     // that made the birds vanish for a moment and blink).
                     rt.localScale = new Vector3(1f, Mathf.Lerp(0.35f, 1f, 0.5f + 0.5f * Mathf.Sin(t * 7f + flapShift)), 1f);
@@ -170,7 +173,7 @@ namespace SomeGame.UI
             _animations.Add(t =>
             {
                 float x = MapLayout.Size.x + 80f - Mathf.Repeat(t * 7f + 500f, MapLayout.Size.x + 160f);
-                rt.anchoredPosition = new Vector2(x, 1915f + Mathf.Sin(t * 0.6f) * 12f);
+                rt.anchoredPosition = new Vector2(x, SkyY + Mathf.Sin(t * 0.6f) * 12f);
                 rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(t * 0.9f) * 2f);
             });
         }

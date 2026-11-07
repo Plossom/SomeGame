@@ -25,8 +25,8 @@ namespace SomeGame.UI
 
         // ------------------------------------------------------------------ valley
 
-        public static readonly Vector2 ValleyLake = new(240f, 1110f);
-        public static readonly Vector2 ValleyLakeRadii = new(210f, 62f);
+        public static readonly Vector2 ValleyLake = new(255f, 1102f);
+        public static readonly Vector2 ValleyLakeRadii = new(258f, 76f);
 
         /// <summary>The village by the lake, the farm and the houses up the valley.</summary>
         public static readonly (Vector2 p, bool church)[] ValleyHouses =

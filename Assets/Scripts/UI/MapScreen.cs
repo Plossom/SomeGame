@@ -1107,7 +1107,7 @@ namespace SomeGame.UI
                 i => { if (i != _selected) Select(i); }, StartRace);
         }
 
-        // The rivals of the shown cup, each standing by their race on the map (leaning on their car): a silhouette
+        // The rivals of the shown cup, each by their race on the map (their face on a pin): a silhouette
         // with a "?" until met, a tick once beaten. Tapping one plays their meeting (again).
         readonly List<RectTransform> _rivalMarkers = new();
 
@@ -1130,7 +1130,7 @@ namespace SomeGame.UI
                 marker.anchoredPosition = rival.mapSpot;
                 bool met = RivalProgress.HasMet(rival.name);
                 var picture = marker.Find("Picture").GetComponent<UnityEngine.UI.Image>();
-                picture.sprite = rival.painting != null ? rival.painting : rival.portrait;
+                picture.sprite = rival.portrait;
                 picture.color = met ? Color.white : new Color(0.08f, 0.1f, 0.12f, 0.85f);
                 marker.Find("Mystery").gameObject.SetActive(!met);
                 marker.Find("Beaten").gameObject.SetActive(RivalProgress.IsBeaten(rival.name));
