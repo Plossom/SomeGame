@@ -32,5 +32,11 @@ namespace SomeGame.UI
             if (details != null) details.sprite = snowmobile ? snowmobileDetails : _carDetails;
             if (shadow != null) shadow.sprite = snowmobile ? snowmobileShadow : _carShadow;
         }
+
+        /// <summary>The body in your car's paint (from the garage).</summary>
+        public void Paint(Color color)
+        {
+            if (body != null) body.color = color;
+        }
     }
 }

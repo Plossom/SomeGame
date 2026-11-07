@@ -179,7 +179,32 @@ namespace SomeGame.EditorTools
             var chapter = Txt(cupRt, "VALLEY CUP", 128, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 70; chapter.fontSizeMax = 128;
-            // No race header under it: the race cards (RaceDeck) show a race's name, stars and records.
+            // No race header under it: the race cards (RaceDeck) show a race's name, stars and records. Under the cup
+            // name instead: the cup's stars as a bar, with what opens next.
+            var progress = At("CupProgress", safe, new Vector2(0.5f, 1f), new Vector2(0f, -224f), new Vector2(700f, 118f));
+            Img(At("Shadow", progress, new Vector2(0.5f, 1f), new Vector2(0f, -10f), new Vector2(700f, 118f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
+            Img(Stretch("Face", progress), "Round", Theme.Ink, sliced: true);
+            Img(At("Star", progress, new Vector2(0f, 0.5f), new Vector2(30f, 0f), new Vector2(60f, 60f)), "IconStar", Theme.Amber);
+            var progressCount = Txt(At("Count", progress, new Vector2(0f, 0.5f), new Vector2(100f, -2f), new Vector2(170f, 80f)), "0/24", 60, Theme.Amber, _condItalic, TextAlignmentOptions.Left);
+            var bar = At("Bar", progress, new Vector2(0f, 1f), new Vector2(272f, -26f), new Vector2(396f, 30f));
+            Rounded(Img(bar, "Round", Theme.WithAlpha(Theme.Cream, 0.16f), sliced: true), 15f);
+            var fill = At("Fill", bar, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(0f, 30f));
+            Rounded(Img(fill, "Round", Theme.Amber, sliced: true), 15f);
+            var marker = At("Marker", bar, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(8f, 46f));
+            marker.pivot = new Vector2(0.5f, 0.5f);
+            Rounded(Img(marker, "Round", Theme.Cream, sliced: true), 4f);
+            var progressCaption = Txt(At("Caption", progress, new Vector2(0f, 0f), new Vector2(272f, 14f), new Vector2(400f, 44f)), "WINTER CUP OPENS AT 20 STARS", 30, Theme.WithAlpha(Theme.Cream, 0.85f), _cond, TextAlignmentOptions.Left);
+            progressCaption.characterSpacing = 3f;
+
+            // The garage, under the menu button: your car's silhouette, and a dot when a new paint has opened.
+            var garageButton = SquareButton(safe, "GarageButton", new Vector2(0f, 1f), new Vector2(60f, -222f), "Car", 140f);
+            var garageIcon = (RectTransform)garageButton.transform.Find("Face/Icon");
+            garageIcon.sizeDelta = new Vector2(50f, 88f);
+            garageIcon.GetComponent<Image>().preserveAspect = true;
+            var garageDot = At("NewDot", (RectTransform)garageButton.transform, new Vector2(1f, 1f), new Vector2(10f, 10f), new Vector2(44f, 44f));
+            Img(garageDot, "Circle", Theme.Cream);
+            Img(At("Dot", garageDot, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(32f, 32f)), "Circle", Theme.Orange);
+
 
             // Switching cups: a blurred picture of the incoming cup over its page, sharpening as it comes in...
             var incoming = Stretch("IncomingBlur", canvas).gameObject.AddComponent<RawImage>();
@@ -200,6 +225,7 @@ namespace SomeGame.EditorTools
             BuildMenu(canvas, menuButton, null, null); // (the cup bar under the cup name replaces the old globe menu)
 
             var deck = BuildRaceDeck(canvas);
+            var garage = BuildGarage(canvas);
 
             var screen = canvas.gameObject.AddComponent<MapScreen>();
             var so = new SerializedObject(screen);
@@ -207,10 +233,13 @@ namespace SomeGame.EditorTools
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total);
             Set(so, "chapterLabel", chapter);
             Set(so, "deck", deck);
+            Set(so, "progress", progress.gameObject); Set(so, "progressCount", progressCount); Set(so, "progressBar", bar);
+            Set(so, "progressFill", fill); Set(so, "progressMarker", marker); Set(so, "progressCaption", progressCaption);
+            Set(so, "garageButton", garageButton); Set(so, "garageDot", garageDot.gameObject); Set(so, "garage", garage);
             // Swipe between cups: the page parts slide (the header and cup name a little faster, for depth).
-            SetArray(so, "page", new[] { map, cupRt });
+            SetArray(so, "page", new[] { map, cupRt, progress });
             var parallax = so.FindProperty("pageParallax");
-            float[] depth = { 1f, 1.3f };
+            float[] depth = { 1f, 1.3f, 1.3f };
             parallax.arraySize = depth.Length;
             for (int i = 0; i < depth.Length; i++) parallax.GetArrayElementAtIndex(i).floatValue = depth[i];
             // The cup column under the menu button: a dark plate (clipping) with a badge per cup in a column
@@ -256,7 +285,7 @@ namespace SomeGame.EditorTools
             Set(so, "lockedCaption", lockedPage.Find("Caption").GetComponent<TMP_Text>());
             Set(so, "lockedNeeds", lockedPage.Find("Needs").gameObject);
             Set(so, "lockedStars", lockedPage.Find("Needs/Stars/Count").GetComponent<TMP_Text>());
-            SetArray(so, "racePageParts", new GameObject[0]);
+            SetArray(so, "racePageParts", new[] { progress.gameObject });
             var celebration = BuildCupCelebration(canvas);
             Configure(celebration, ("flyTarget", dots)); // the new cup's badge flies into the dropdown
             Set(so, "celebration", celebration); Set(so, "sparkle", Sprite("Sparkle"));
@@ -351,6 +380,87 @@ namespace SomeGame.EditorTools
 
         // The race info window: a big cream card over the map with the track from above (as on the loading
         // screen) beside the difficulty, laps, rivals and what is on the track; the description below; START.
+        // The garage (GarageScreen): a card like the race cards with your car big on a turntable under a spotlight,
+        // the paint's name, and a swatch per paint (locked ones with the stars they need).
+        static GarageScreen BuildGarage(RectTransform canvas)
+        {
+            var host = Stretch("Garage", canvas);
+            var panel = Stretch("Panel", host);
+            var dim = Img(Stretch("Dim", panel), null, Theme.WithAlpha(Theme.Ink, 0.72f), raycast: true);
+            var dimButton = dim.gameObject.AddComponent<Button>();
+            dimButton.targetGraphic = dim; dimButton.transition = Selectable.Transition.None;
+            var safe = SafeArea(panel);
+            const float W = 980f, H = 1880f;
+            var card = At("Card", safe, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(W, H));
+            card.pivot = new Vector2(0.5f, 0.5f); card.anchoredPosition = Vector2.zero;
+            var cardShadow = Stretch("Shadow", card);
+            cardShadow.offsetMin = new Vector2(-8f, -32f); cardShadow.offsetMax = new Vector2(8f, -16f);
+            Img(cardShadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
+            var outline = Stretch("Outline", card);
+            outline.offsetMin = new Vector2(-8f, -8f); outline.offsetMax = new Vector2(8f, 8f);
+            Img(outline, "Round", new Color(0.06f, 0.07f, 0.08f), sliced: true);
+            Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true, raycast: true);
+
+            var closeRt = At("Close", card, new Vector2(1f, 1f), Vector2.zero, new Vector2(124f, 124f));
+            closeRt.pivot = new Vector2(0.5f, 0.5f); closeRt.anchoredPosition = new Vector2(-32f, -32f);
+            Img(closeRt, "Circle", new Color(0.06f, 0.07f, 0.08f));
+            var closeFace = Img(At("Face", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(108f, 108f)), "Circle", Theme.Cream, raycast: true);
+            Img(At("Icon", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(52f, 52f)), "IconClose", Theme.Ink);
+            var close = closeRt.gameObject.AddComponent<Button>();
+            close.targetGraphic = closeFace; close.transition = Selectable.Transition.None;
+
+            var title = Txt(At("Title", card, new Vector2(0.5f, 1f), new Vector2(0f, -60f), new Vector2(700f, 130f)), "GARAGE", 120, Theme.Ink, _black);
+            var stars = Txt(At("Stars", card, new Vector2(0.5f, 1f), new Vector2(0f, -186f), new Vector2(700f, 50f)), "0 STARS COLLECTED", 38, Theme.Rust, _condItalic);
+            stars.characterSpacing = 6f;
+
+            // The showroom: a spotlight, a turntable, the car with its shadow.
+            var stage = At("Stage", card, new Vector2(0.5f, 1f), new Vector2(0f, -640f), new Vector2(10f, 10f));
+            stage.pivot = new Vector2(0.5f, 0.5f); stage.anchoredPosition = new Vector2(0f, -640f);
+            Img(At("Spotlight", stage, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(900f, 900f)), "Glow", Theme.WithAlpha(Theme.Amber, 0.4f)).preserveAspect = false;
+            var table = At("Turntable", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, -60f), new Vector2(660f, 340f));
+            Img(At("Edge", table, new Vector2(0.5f, 0.5f), new Vector2(0f, -20f), new Vector2(660f, 340f)), "Circle", Shade(Theme.CreamDark, 0.82f)).preserveAspect = false;
+            Img(Stretch("Top", table), "Circle", Theme.CreamDark).preserveAspect = false;
+            var burst = Img(At("Burst", stage, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(640f, 640f)), "Ring", Theme.Amber);
+            var carHolder = At("CarHolder", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 20f), new Vector2(10f, 10f));
+            var carRt = At("Car", carHolder, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(300f, 525f));
+            carRt.pivot = new Vector2(0.5f, 0.5f);
+            var carShadow = Img(At("Shadow", carRt, new Vector2(0.5f, 0.5f), new Vector2(18f, -26f), new Vector2(312f, 546f)), "CarShadow", new Color(0f, 0f, 0f, 0.5f));
+            carShadow.preserveAspect = false;
+            var body = Img(Stretch("Body", carRt), "Car", Theme.Orange); body.preserveAspect = false;
+            Img(Stretch("Details", carRt), "CarDetails", Color.white).preserveAspect = false;
+
+            var paintName = Txt(At("PaintName", card, new Vector2(0.5f, 1f), new Vector2(0f, -1060f), new Vector2(860f, 100f)), "SUNSET ORANGE", 76, Theme.Ink, _black);
+            Txt(At("Hint", card, new Vector2(0.5f, 1f), new Vector2(0f, -1152f), new Vector2(860f, 50f)), "PICK A PAINT · MORE OPEN WITH STARS", 32, Theme.InkSoft, _cond).characterSpacing = 4f;
+
+            // The paints: a grid of swatches (a gold ring round the one you have, a lock and the stars needed on a locked one).
+            var grid = At("Paints", card, new Vector2(0.5f, 1f), new Vector2(0f, -1236f), new Vector2(W - 100f, 560f));
+            var layout = grid.gameObject.AddComponent<GridLayoutGroup>();
+            layout.cellSize = new Vector2(196f, 250f); layout.spacing = new Vector2(16f, 20f);
+            layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount; layout.constraintCount = 4;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            var swatch = Rt("Swatch", grid);
+            var hit = Img(swatch, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            var swatchButton = swatch.gameObject.AddComponent<Button>();
+            swatchButton.targetGraphic = hit; swatchButton.transition = Selectable.Transition.None;
+            swatch.gameObject.AddComponent<ButtonFeedback>();
+            Img(At("Ring", swatch, new Vector2(0.5f, 1f), new Vector2(0f, 4f), new Vector2(196f, 196f)), "Ring", Theme.Amber);
+            var swFace = At("Face", swatch, new Vector2(0.5f, 1f), new Vector2(0f, -14f), new Vector2(160f, 160f));
+            Img(Stretch("Outline", swFace), "Circle", new Color(0.06f, 0.07f, 0.08f));
+            Img(At("Color", swFace, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 140f)), "Circle", Color.white);
+            Img(At("Shine", swFace, new Vector2(0.5f, 0.5f), new Vector2(-30f, 32f), new Vector2(42f, 42f)), "Circle", new Color(1f, 1f, 1f, 0.35f));
+            Img(At("Lock", swFace, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(64f, 64f)), "IconLock", Theme.Ink);
+            var need = At("Need", swatch, new Vector2(0.5f, 0f), new Vector2(0f, 6f), new Vector2(196f, 56f));
+            Img(At("Star", need, new Vector2(0.5f, 0.5f), new Vector2(-28f, 0f), new Vector2(40f, 40f)), "IconStar", Theme.Amber);
+            Txt(At("Count", need, new Vector2(0.5f, 0.5f), new Vector2(26f, -2f), new Vector2(80f, 56f)), "12", 42, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+
+            Configure(panel.gameObject.AddComponent<PopIn>(), ("card", card), ("backdrop", dim));
+            var screen = host.gameObject.AddComponent<GarageScreen>();
+            Configure(screen, ("panel", panel.gameObject), ("closeButton", close), ("closeArea", dimButton), ("car", carRt), ("carBody", body),
+                ("burst", burst), ("paintName", paintName), ("starsLabel", stars), ("swatchTemplate", swatch));
+            panel.gameObject.SetActive(false);
+            return screen;
+        }
+
         // The races as a deck of cards over the map (RaceDeck): a dim backdrop, the cards in the middle (a template
         // card copied for each race), the cross, and the bar of race numbers along the bottom.
         static RaceDeck BuildRaceDeck(RectTransform canvas)

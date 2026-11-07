@@ -132,6 +132,17 @@ namespace SomeGame.Race
                 Register(rivals[i], slot++, $"Rival {i + 1}");
             }
             Player = Register(player, slot, "You");
+            PaintPlayer();
+        }
+
+        // Your car in the paint from the garage (its tyre marks too); online races keep the room's colours.
+        void PaintPlayer()
+        {
+            var body = SomeGame.Online.OnlineRace.Visual(player);
+            if (body == null) return;
+            var paint = Garage.Color;
+            body.color = paint;
+            foreach (var marks in player.GetComponents<TyreMarks>()) marks.Tint = new Color(paint.r, paint.g, paint.b, marks.Tint.a);
         }
 
         // Rivals share their CarStats assets, so each gets a scaled runtime copy.

@@ -68,6 +68,21 @@ namespace SomeGame.UI
         [SerializeField] GameObject snow;
         [SerializeField] TMP_Text totalStars;
 
+        [Header("Cup progress (under the cup name)")]
+        [Tooltip("The cup's stars as a count and a bar, a mark where the next cup opens and a caption saying what is next.")]
+        [SerializeField] GameObject progress;
+        [SerializeField] TMP_Text progressCount;
+        [SerializeField] RectTransform progressBar;
+        [SerializeField] RectTransform progressFill;
+        [SerializeField] RectTransform progressMarker;
+        [SerializeField] TMP_Text progressCaption;
+
+        [Header("Garage")]
+        [SerializeField] UnityEngine.UI.Button garageButton;
+        [Tooltip("The dot on the garage button: a paint has opened since you last looked.")]
+        [SerializeField] GameObject garageDot;
+        [SerializeField] GarageScreen garage;
+
         [Header("Selected race")]
         [SerializeField] TMP_Text chapterLabel;
 
@@ -100,6 +115,9 @@ namespace SomeGame.UI
             _cup = cup;
             if (cup != null) catalog = CatalogOf(cup);
             ApplyLook(cup != null ? cup.look : CupLook.Valley, cup != null ? cup.mapBackground : null);
+            PaintCar();
+            Garage.Changed += PaintCar;
+            if (garageButton != null) garageButton.onClick.AddListener(() => { garage.Open(); garageDot.SetActive(false); });
         }
 
         // The car on the map road: a snowmobile on the Winter Cup.
@@ -218,7 +236,55 @@ namespace SomeGame.UI
             WriteCounters();
         }
 
-        void WriteCounters() => totalStars.text = (_starsShown ?? ProgressStore.TotalStars).ToString();
+        void WriteCounters()
+        {
+            totalStars.text = (_starsShown ?? ProgressStore.TotalStars).ToString();
+            ShowProgress();
+            if (garageDot != null) garageDot.SetActive(Garage.HasNew);
+        }
+
+        // ------------------------------------------------------------------ cup progress and garage
+
+        float _fill, _fillVelocity, _fillTarget;
+
+        // The cup's stars out of all it has (counting up with the counter), and what comes next: the next cup to
+        // open (with its mark on the bar where that happens), the stars still to get, or all done.
+        void ShowProgress()
+        {
+            if (progress == null) return;
+            int max = catalog.Count * 3;
+            progress.SetActive(max > 0 && CupList.IsPlayable(_cup));
+            if (max == 0) return;
+            int cupStars = 0;
+            for (int i = 0; i < catalog.Count; i++) cupStars += ProgressStore.StarsOf(catalog[i]);
+            int total = ProgressStore.TotalStars, others = total - cupStars;
+            int shown = Mathf.Clamp(cupStars - (total - (_starsShown ?? total)), 0, max);
+            progressCount.text = $"{shown}<size=70%>/{max}</size>";
+            _fillTarget = shown / (float)max;
+            CupDefinition next = null;
+            if (CupList.Instance != null)
+                foreach (var cup in CupList.Instance.cups)
+                    if (cup.HasRaces && cup.starsRequired > total) { next = cup; break; }
+            float mark = next != null ? (next.starsRequired - others) / (float)max : -1f;
+            progressMarker.gameObject.SetActive(mark > 0f && mark <= 1f);
+            if (mark > 0f && mark <= 1f) progressMarker.anchoredPosition = new Vector2(mark * progressBar.rect.width, progressMarker.anchoredPosition.y);
+            progressCaption.text = next != null ? $"{next.displayName} OPENS AT {next.starsRequired} STARS"
+                : cupStars >= max ? "ALL STARS!" : $"{max - cupStars} STARS TO GO";
+        }
+
+        void UpdateProgress()
+        {
+            if (progress == null || !progress.activeSelf) return;
+            _fill = Mathf.SmoothDamp(_fill, _fillTarget, ref _fillVelocity, 0.25f, Mathf.Infinity, Time.unscaledDeltaTime);
+            progressFill.sizeDelta = new Vector2(progressBar.rect.width * _fill, progressFill.sizeDelta.y);
+            progressFill.gameObject.SetActive(_fill > 0.005f);
+        }
+
+        // The car on the map wears your paint (also after a cup switch has recoloured the screen).
+        void PaintCar()
+        {
+            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Paint(Garage.Color);
+        }
 
         // ------------------------------------------------------------------ unlocks
 
@@ -360,6 +426,7 @@ namespace SomeGame.UI
 
         void OnDestroy()
         {
+            Garage.Changed -= PaintCar;
             foreach (var rt in new[] { _snapshot, _newBlur })
                 if (rt != null) { rt.Release(); Destroy(rt); }
             foreach (var rt in _pictures.Values)
@@ -713,6 +780,7 @@ namespace SomeGame.UI
             catalog = CatalogOf(cup);
             MapLayout.Current = MapLayout.Of(cup.look);
             ShowVehicle(cup.look);
+            PaintCar();
             Theme.Use(newPalette);
             if (cup.mapBackground != null && background != null) background.sprite = cup.mapBackground;
             if (snow != null) snow.SetActive(cup.look == CupLook.Winter);
@@ -834,7 +902,11 @@ namespace SomeGame.UI
             }
         }
 
-        void Update() => UpdateDots(true);
+        void Update()
+        {
+            UpdateDots(true);
+            UpdateProgress();
+        }
 
         void LateUpdate() => FitWorld();
 
