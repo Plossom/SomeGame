@@ -9,7 +9,7 @@ namespace SomeGame.UI
     /// The map (start screen): a painted alpine valley with the mountain road of <see cref="MapLayout"/>.
     /// The races sit on the road, followed by a "more soon" stop. The road you have opened up is drawn
     /// in orange up to your car. Tapping a race drives the car there and opens the race cards
-    /// (<see cref="RaceDeck"/>) on it; START on a card enters the race.
+    /// (<see cref="RaceDeck"/>) on it, which show its name, stars and records; START on a card enters the race.
     /// </summary>
     public class MapScreen : MonoBehaviour
     {
@@ -23,8 +23,6 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image background;
         [Tooltip("Animated life on the landscape: clouds, chimney smoke, glints, birds, the lift.")]
         [SerializeField] MapAmbience ambience;
-        [Tooltip("The race name: opens the race cards on the selected race.")]
-        [SerializeField] UnityEngine.UI.Button infoButton;
         [SerializeField] RaceDeck deck;
         [Header("Switching cups")]
         [Tooltip("What slides when switching cups (the map, the race header, the cup name), with how much faster each moves (depth).")]
@@ -72,15 +70,6 @@ namespace SomeGame.UI
 
         [Header("Selected race")]
         [SerializeField] TMP_Text chapterLabel;
-        [SerializeField] TMP_Text titleLabel;
-        [Tooltip("Your best total time for the selected race.")]
-        [SerializeField] TMP_Text bestChip;
-        [Tooltip("Your best lap on the selected race's track.")]
-        [SerializeField] TMP_Text bestLapLabel;
-        [Tooltip("The places for 1, 2 and 3 stars.")]
-        [SerializeField] TMP_Text[] starTimes;
-        [Tooltip("The three star groups (star icons + places): grey until the race has earned them.")]
-        [SerializeField] RectTransform[] starGroups;
 
         [Header("Road progress")]
         [SerializeField, Min(1f)] float progressWidth = 22f;
@@ -106,7 +95,6 @@ namespace SomeGame.UI
 
         void Awake()
         {
-            if (titleLabel != null) _titleHome = titleLabel.rectTransform.localPosition;
             // The map shows the selected cup's races.
             var cup = CupList.Selected;
             _cup = cup;
@@ -146,7 +134,6 @@ namespace SomeGame.UI
                 GameSession.StartTutorial();
                 return;
             }
-            if (infoButton != null) infoButton.onClick.AddListener(ShowInfo);
             if (!CupList.DevUnlockAll) UnlockLog.EnsureInitialised();
             var newRaces = PrepareRaceUnlocks();
             _selected = InitialSelection();
@@ -191,14 +178,10 @@ namespace SomeGame.UI
             {
                 float k = Mathf.Clamp01(t / 0.35f);
                 foreach (var g in groups) g.alpha = k;
-                if (titleLabel != null) titleLabel.rectTransform.localPosition = _titleHome + new Vector3(0f, 26f * (1f - Ease(k)), 0f);
                 yield return null;
             }
             foreach (var g in groups) g.alpha = 1f;
-            if (titleLabel != null) titleLabel.rectTransform.localPosition = _titleHome;
         }
-
-        static float Ease(float t) => 1f - (1f - t) * (1f - t) * (1f - t);
 
         // ------------------------------------------------------------------ counters
 
@@ -1018,35 +1001,7 @@ namespace SomeGame.UI
             bool changed = index != _selected;
             _selected = index;
             DriveTo(index);
-            if (changed && isActiveAndEnabled) { if (_flip != null) StopCoroutine(_flip); _flip = StartCoroutine(FlipHeader()); }
-            else Refresh();
-        }
-
-        // The race header changes with a quick flip: out (fading, sliding up), new race, in (from below).
-        Coroutine _flip;
-        Vector3 _titleHome;
-
-        System.Collections.IEnumerator FlipHeader()
-        {
-            var header = racePageParts != null && racePageParts.Length > 0 && racePageParts[0] != null ? racePageParts[0] : null;
-            var group = header != null ? header.GetComponent<CanvasGroup>() : null;
-            if (header != null && group == null) group = header.AddComponent<CanvasGroup>();
-            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.1f)
-            {
-                if (group != null) group.alpha = 1f - t;
-                titleLabel.rectTransform.localPosition = _titleHome + new Vector3(0f, 18f * t, 0f);
-                yield return null;
-            }
             Refresh();
-            for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 0.2f)
-            {
-                if (group != null) group.alpha = t;
-                titleLabel.rectTransform.localPosition = _titleHome + new Vector3(0f, -18f * (1f - Ease(t)), 0f);
-                yield return null;
-            }
-            if (group != null) group.alpha = 1f;
-            titleLabel.rectTransform.localPosition = _titleHome;
-            _flip = null;
         }
 
         void Refresh()
@@ -1070,46 +1025,18 @@ namespace SomeGame.UI
             ShowSelected();
         }
 
+        // The cup's name over the map (the race cards show the races).
         void ShowSelected()
         {
+            var cup = CupList.Selected;
             if (catalog.Count == 0)
             {
-                // A cup without races yet (development).
-                chapterLabel.text = CupList.Selected != null ? CupList.Selected.displayName : "";
-                titleLabel.text = "COMING SOON";
-                bestChip.text = bestLapLabel.text = "—";
-                foreach (var t in starTimes) t.text = "-";
-                if (infoButton != null) infoButton.interactable = false;
+                chapterLabel.text = cup != null ? cup.displayName : "";
                 return;
             }
             var level = catalog[_selected];
-            // Just the cup name; the map shows which race of it this is.
-            var cup = CupList.Selected;
             int dot = level.chapter.IndexOf('·');
             chapterLabel.text = cup != null ? cup.displayName : (dot > 0 ? level.chapter.Substring(0, dot) : level.chapter).Trim();
-            titleLabel.text = level.displayName.ToUpperInvariant();
-            var best = ProgressStore.BestTimeOf(level);
-            bestChip.text = best.HasValue ? TimeFormat.Race(best.Value) : "—";
-            var bestLap = level.track != null ? BestLapStore.Get(level.track.name) : null;
-            bestLapLabel.text = bestLap.HasValue ? TimeFormat.Race(bestLap.Value) : "—";
-            // A race in sections has only its whole time (every section is different): that row sits in the middle.
-            var lapRow = (RectTransform)bestLapLabel.transform.parent;
-            lapRow.gameObject.SetActive(!level.Sectioned);
-            var bestRow = (RectTransform)bestChip.transform.parent;
-            bestRow.anchoredPosition = new Vector2(bestRow.anchoredPosition.x, level.Sectioned ? -37f : -10f);
-            // The places for 1, 2 and 3 stars; lit up as far as this race's stars go.
-            int stars = ProgressStore.StarsOf(level);
-            for (int i = 0; i < starTimes.Length; i++)
-            {
-                starTimes[i].text = i < LevelDefinition.StarPlaces.Length ? LevelDefinition.StarPlaces[i] : "-";
-                bool earned = stars >= i + 1;
-                starTimes[i].color = earned ? Theme.White : Theme.WithAlpha(Theme.Stone, 0.45f);
-                if (starGroups != null && i < starGroups.Length && starGroups[i] != null)
-                    foreach (var icon in starGroups[i].GetComponentsInChildren<UnityEngine.UI.Image>())
-                        icon.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.Stone, 0.35f);
-            }
-
-            if (infoButton != null) infoButton.interactable = _selected < _hideFrom;
         }
 
         // Tapping a race stop drives the car there and opens its card; the selected one opens at once.

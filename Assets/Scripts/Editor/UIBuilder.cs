@@ -179,46 +179,7 @@ namespace SomeGame.EditorTools
             var chapter = Txt(cupRt, "VALLEY CUP", 128, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 70; chapter.fontSizeMax = 128;
-            // Same left and right edges as the menu button (x 60) and the stars counter (60 from the right).
-            // Right of the cup column (which starts under the menu button), out to the right edge (60).
-            // In line with the menu button on the left; the cup dropdown sits on the right under the counters.
-            var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -222f), new Vector2(906f, 360f));
-            var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, -14f), new Vector2(800f, 130f)), "MEADOW RUN", 100, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
-            title.enableAutoSizing = true; title.fontSizeMin = 64; title.fontSizeMax = 100; // keeps clear of the trophy counter
-            // Your records for the race, beside the star places: best time over best lap.
-            var records = At("Records", header, new Vector2(0f, 1f), new Vector2(512f, -160f), new Vector2(382f, 130f));
-            Img(records, "Round", Theme.Ink, sliced: true);
-            TMP_Text Record(string name, float y, string caption)
-            {
-                var row = At(name, records, new Vector2(0f, 1f), new Vector2(22f, y), new Vector2(338f, 56f));
-                Txt(At("Caption", row, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(130f, 56f)), caption, 32, Theme.Stone, _semi, TextAlignmentOptions.Left).rectTransform.pivot = new Vector2(0f, 0.5f);
-                var value = Txt(At("Value", row, new Vector2(1f, 0.5f), Vector2.zero, new Vector2(200f, 56f)), "—", 44, Theme.Cream, _cond, TextAlignmentOptions.Right);
-                value.rectTransform.pivot = new Vector2(1f, 0.5f);
-                return value;
-            }
-            var best = Record("BestTime", -10f, "Best");
-            var bestLap = Record("BestLap", -64f, "Best lap");
-            // The race name opens the race cards on the selected race.
-            var titleHit = At("InfoButton", header, new Vector2(0f, 1f), new Vector2(-2f, -14f), new Vector2(906f, 130f));
-            var titleHitImage = Img(titleHit, null, new Color(0f, 0f, 0f, 0f), raycast: true);
-            var infoButton = titleHit.gameObject.AddComponent<Button>();
-            infoButton.targetGraphic = titleHitImage; infoButton.transition = Selectable.Transition.None;
-            titleHit.gameObject.AddComponent<ButtonFeedback>();
-            // The places for 1, 2 and 3 stars sit in the header, right under the race name.
-            var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -160f), new Vector2(498f, 130f));
-            Img(timesRt, "Round", Theme.Ink, sliced: true);
-            var times = new TMP_Text[3];
-            var groups = new RectTransform[3];
-            for (int i = 0; i < 3; i++)
-            {
-                var group = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(16f + i * 159f, 0f), new Vector2(156f, 120f));
-                groups[i] = group;
-                group.pivot = new Vector2(0f, 0.5f);
-                for (int k = 0; k <= i; k++)
-                    Img(At($"S{k}", group, new Vector2(0f, 1f), new Vector2(4f + k * 44f, -8f), new Vector2(44f, 44f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 1f);
-                times[i] = Txt(At("Time", group, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(152f, 58f)), "1:00.00", 46, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
-                times[i].rectTransform.pivot = new Vector2(0f, 0f);
-            }
+            // No race header under it: the race cards (RaceDeck) show a race's name, stars and records.
 
             // Switching cups: a blurred picture of the incoming cup over its page, sharpening as it comes in...
             var incoming = Stretch("IncomingBlur", canvas).gameObject.AddComponent<RawImage>();
@@ -244,14 +205,12 @@ namespace SomeGame.EditorTools
             var so = new SerializedObject(screen);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total);
-            Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
-            Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
-            SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
-            Set(so, "infoButton", infoButton); Set(so, "deck", deck);
+            Set(so, "chapterLabel", chapter);
+            Set(so, "deck", deck);
             // Swipe between cups: the page parts slide (the header and cup name a little faster, for depth).
-            SetArray(so, "page", new[] { map, header, cupRt });
+            SetArray(so, "page", new[] { map, cupRt });
             var parallax = so.FindProperty("pageParallax");
-            float[] depth = { 1f, 1.15f, 1.3f };
+            float[] depth = { 1f, 1.3f };
             parallax.arraySize = depth.Length;
             for (int i = 0; i < depth.Length; i++) parallax.GetArrayElementAtIndex(i).floatValue = depth[i];
             // The cup column under the menu button: a dark plate (clipping) with a badge per cup in a column
@@ -297,7 +256,7 @@ namespace SomeGame.EditorTools
             Set(so, "lockedCaption", lockedPage.Find("Caption").GetComponent<TMP_Text>());
             Set(so, "lockedNeeds", lockedPage.Find("Needs").gameObject);
             Set(so, "lockedStars", lockedPage.Find("Needs/Stars/Count").GetComponent<TMP_Text>());
-            SetArray(so, "racePageParts", new[] { header.gameObject });
+            SetArray(so, "racePageParts", new GameObject[0]);
             var celebration = BuildCupCelebration(canvas);
             Configure(celebration, ("flyTarget", dots)); // the new cup's badge flies into the dropdown
             Set(so, "celebration", celebration); Set(so, "sparkle", Sprite("Sparkle"));
@@ -306,7 +265,7 @@ namespace SomeGame.EditorTools
             // The swipe step of the tour points at the middle of the map.
             var swipeArea = At("SwipeArea", safe, new Vector2(0.5f, 0.5f), new Vector2(0f, -120f), new Vector2(900f, 640f));
             swipeArea.pivot = new Vector2(0.5f, 0.5f);
-            BuildMapTour(canvas, screen, title.rectTransform, timesRt, records, null, swipeArea, dots, counters,
+            BuildMapTour(canvas, screen, null, null, null, null, swipeArea, dots, counters,
                 (RectTransform)safe.Find("OnlineButton"), (RectTransform)menuButton.transform, null); // the last step shows the selected stop
 
             var swipe = map.gameObject.AddComponent<MapSwipe>();

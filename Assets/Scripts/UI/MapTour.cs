@@ -7,8 +7,8 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// A short tour of the map after the tutorial (MAP on its last card): the screen dims except for a
-    /// spotlight that glides from one part to the next (the race, the places that earn stars, the stops and cups, online,
-    /// the selected stop), each with a card saying what it is. Tap anywhere or NEXT to go on, SKIP to end it.
+    /// spotlight that glides from one part to the next (the races, the stars, the cups, online), each with a card
+    /// saying what it is. Tap anywhere or NEXT to go on, SKIP to end it.
     /// </summary>
     public class MapTour : MonoBehaviour
     {
@@ -27,16 +27,15 @@ namespace SomeGame.UI
         [Tooltip("The parts of the map a step can show (an empty entry = the selected race's stop).")]
         [SerializeField] RectTransform[] targets;
 
-        // Entries of targets: the race name, its stars, the map, online, the selected stop (empty entry).
-        const int RaceTarget = 0, TimesTarget = 1, MapTarget = 4, OnlineTarget = 7, StopTarget = 9;
+        // Entries of targets: the map, the stars counter, online, the selected stop (empty entry).
+        const int MapTarget = 4, StarsTarget = 6, OnlineTarget = 7, StopTarget = 9;
 
         static readonly (int target, string title, string body)[] Steps =
         {
-            (RaceTarget, "THE RACE", "The race your car is at. Tap its name to open its card."),
-            (TimesTarget, "STARS", "Finish 1st for 3 stars, 2nd–3rd for 2, 4th–5th for 1. Stars open new races and cups."),
-            (MapTarget, "RACES & CUPS", "Tap a stop: your car drives there and the race card opens. Swipe the map sideways for the next cup."),
-            (OnlineTarget, "PLAY ONLINE", "Open a room and share its code: race up to 7 friends."),
-            (StopTarget, "READY?", "Tap your stop to open its card: swipe through the races, then <b>START</b>. Have fun!"),
+            (StopTarget, "THE RACES", "Tap a stop: your car drives there and its card shows the track, how hard it is and the stars you can earn."),
+            (StarsTarget, "STARS", "Finish 1st for 3 stars, 2nd–3rd for 2, 4th–5th for 1. Stars open new races and cups."),
+            (MapTarget, "CUPS", "Swipe the map sideways for the next cup."),
+            (OnlineTarget, "PLAY ONLINE", "Open a room and share its code: race up to 7 friends. Have fun!"),
         };
 
         int _step = -1;
