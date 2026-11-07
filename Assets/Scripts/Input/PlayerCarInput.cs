@@ -84,6 +84,12 @@ namespace SomeGame.Input
         /// </summary>
         [System.NonSerialized] public bool SwipeMode;
 
+        /// <summary>
+        /// Set by the trick jumps for the whole flight: once the arrows are done (or missed), taps do no extra spins
+        /// on the way down.
+        /// </summary>
+        [System.NonSerialized] public bool TapsBlocked;
+
         // In the air: on a normal jump every tap (a second finger while steering, or a tap without steering; Space or
         // a click in the Editor) asks for a spin - tap twice and it tries two, one after the other. On a trick jump a
         // quick flick of any finger is a trick: left or right spins, up a front flip, down a back flip (arrow keys /
@@ -105,7 +111,7 @@ namespace SomeGame.Input
                 _swiped.Clear();
                 _mouseAnchorTime = -1f;
                 _mouseSwiped = false;
-                Taps();
+                if (!TapsBlocked) Taps();
                 return;
             }
             float far = Screen.height * FlickShare;

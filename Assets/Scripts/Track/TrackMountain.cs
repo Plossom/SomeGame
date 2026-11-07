@@ -185,8 +185,9 @@ namespace SomeGame.Track
             right.Reverse();
             left.AddRange(right);
             // The front edge, across the start of the drop, is open: the cars fly in over the jump's own drop there,
-            // so no rim or snow cornice across it (that drew a white line joining the two forks).
-            bool AtFront(Vector2 p) => Mathf.Abs(path.DeltaDistance(split.from, path.Project(p).Distance)) < 0.75f;
+            // so no rim or snow cornice across it (that drew a white line joining the two forks). That includes the first
+            // outline step: where the drop opens to its full width within a metre, that step runs across the road too.
+            bool AtFront(Vector2 p) => Mathf.Abs(path.DeltaDistance(split.from, path.Project(p).Distance)) < 1.1f;
             BuildChasm(new TrackLayout.Chasm { points = left.ToArray() }, SplitOrder, SplitOrder + 1, 0.4f, (a, b) => AtFront(a) && AtFront(b));
         }
 

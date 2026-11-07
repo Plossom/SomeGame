@@ -980,9 +980,10 @@ namespace SomeGame.Track
 
         /// <summary>
         /// A safe place to put a car back on the road: on the centre line, some way before a lap distance,
-        /// not in water or oil, and with enough run-up before the next ramp to reach take-off speed.
+        /// not in water or oil, and with enough run-up before the next ramp to reach take-off speed (cars are set
+        /// down moving, so a short run-up does: a fall should not cost the player much time).
         /// </summary>
-        public Pose RespawnBefore(float distance, float back = 10f, float runUp = 30f)
+        public Pose RespawnBefore(float distance, float back = 10f, float runUp = 12f)
         {
             float d = distance - back;
             for (int i = 0; i < 40; i++)

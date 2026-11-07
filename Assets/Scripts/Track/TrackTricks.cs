@@ -198,7 +198,11 @@ namespace SomeGame.Track
                 }
             }
             // While the arrows are up, swipes are the tricks (on any other jump a tap spins).
-            if (_playerInput != null) _playerInput.SwipeMode = _shown != null && !_shown.Ended && !_shown.Failed && !_shown.Succeeded;
+            if (_playerInput != null)
+            {
+                _playerInput.SwipeMode = _shown != null && !_shown.Ended && !_shown.Failed && !_shown.Succeeded;
+                _playerInput.TapsBlocked = _shown != null; // the whole trick-jump flight: no tap spins after the arrows
+            }
             DrawUi();
         }
 
