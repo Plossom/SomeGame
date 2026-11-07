@@ -13,7 +13,9 @@ namespace SomeGame.UI
     /// glide on and settle on a race with a spring (a tick for every card that passes), and the car drives there on
     /// the map behind. The bar of race numbers under the deck unfolds while you swipe (like the cup column): tap a
     /// number to fly straight to that race. Swipe the deck down, tap beside it or the cross on the card, and the card shrinks back
-    /// into its stop. Lives on the deck's root (always active), so drags and taps anywhere in the deck reach it.
+    /// into its stop. START launches the race: sparks and a ring of light burst from the button, the other cards fly
+    /// off, and the card is drawn - it lifts, then sweeps up towards you filling the screen as the backdrop turns to
+    /// the loading screen's cream, which then takes over. Lives on the deck's root (always active), so drags and taps anywhere in the deck reach it.
     /// </summary>
     public class RaceDeck : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
     {
@@ -31,6 +33,8 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Button stripToggle;
         [SerializeField] RectTransform stripBadge;
         [SerializeField] RectTransform stripRing;
+        [Tooltip("Pictures for the launch: the sparks and the ring of light bursting out of START.")]
+        [SerializeField] Sprite sparkle, flashRing;
 
         const float Spacing = 720f;          // between the middle of two cards next to each other
         const float SideScale = 0.86f, SideTilt = 5f, SideDrop = 46f;
@@ -38,8 +42,9 @@ namespace SomeGame.UI
         const float Omega = 12f;             // the settling spring (critically damped)
         const float BadgeSpacing = 134f, StripFolded = 60f, StripOpen = 172f, DotSpacing = 42f;
         const float CloseDrag = 260f;        // dragged this far down, the deck closes
+        const float LaunchSeconds = 0.95f;   // START: from the press until the loading screen takes over
 
-        enum Phase { Closed, Opening, Open, Closing }
+        enum Phase { Closed, Opening, Open, Closing, Launch }
 
         readonly List<RaceCard> _cards = new();
         readonly List<RectTransform> _badges = new();
@@ -56,6 +61,9 @@ namespace SomeGame.UI
         Action<int> _onSelect, _onStart;
         CupDefinition _cup;
         Canvas _canvas;
+        bool _launched;
+        readonly List<(RectTransform rt, UnityEngine.UI.Image image, Vector2 from, Vector2 velocity, float spin)> _sparks = new();
+        UnityEngine.UI.Image _flash;
 
         public bool IsOpen => _phase != Phase.Closed;
 
@@ -153,7 +161,45 @@ namespace SomeGame.UI
         {
             if (_phase != Phase.Open || card.Index != _target || Mathf.Abs(_pos - _target) > 0.05f) return;
             card.Pressed();
-            _onStart?.Invoke(card.Index);
+            _phase = Phase.Launch;
+            _phaseAt = Time.unscaledTime;
+            _launched = false;
+            _vel = 0f;
+            Burst(card);
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.6f);
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.boost, 0.7f);
+        }
+
+        // Sparks and a ring of light bursting out of START.
+        void Burst(RaceCard card)
+        {
+            var stage = (RectTransform)cardTemplate.transform.parent;
+            Vector2 at = stage.InverseTransformPoint(card.StartButton.transform.position);
+            foreach (var spark in _sparks) if (spark.rt != null) Destroy(spark.rt.gameObject);
+            _sparks.Clear();
+            UnityEngine.UI.Image Make(string name, Sprite sprite, float size, Color color)
+            {
+                var go = new GameObject(name, typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                var rt = (RectTransform)go.transform;
+                rt.SetParent(stage, false);
+                rt.sizeDelta = Vector2.one * size;
+                rt.anchoredPosition = at;
+                var image = go.GetComponent<UnityEngine.UI.Image>();
+                image.sprite = sprite;
+                image.color = color;
+                image.raycastTarget = false;
+                return image;
+            }
+            if (_flash == null && flashRing != null) _flash = Make("LaunchRing", flashRing, 260f, Theme.Amber);
+            if (_flash != null) { _flash.rectTransform.anchoredPosition = at; _flash.rectTransform.SetAsLastSibling(); }
+            if (sparkle == null) return;
+            for (int i = 0; i < 16; i++)
+            {
+                float angle = (i / 16f + UnityEngine.Random.Range(-0.02f, 0.02f)) * Mathf.PI * 2f;
+                var image = Make("Spark", sparkle, UnityEngine.Random.Range(44f, 84f), i % 3 == 0 ? Color.white : Theme.Amber);
+                var v = new Vector2(Mathf.Cos(angle) * 1.5f, Mathf.Sin(angle)) * UnityEngine.Random.Range(260f, 460f);
+                _sparks.Add((image.rectTransform, image, at, v, UnityEngine.Random.Range(-360f, 360f)));
+            }
         }
 
         // ------------------------------------------------------------------ touch
@@ -221,6 +267,17 @@ namespace SomeGame.UI
             if (_phase == Phase.Closed) return;
             float now = Time.unscaledTime, dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
             if (_phase == Phase.Opening && now - _phaseAt >= OpenSeconds) _phase = Phase.Open;
+            if (_phase == Phase.Launch)
+            {
+                // The card is drawn and fills the screen: now the loading screen takes over.
+                if (!_launched && now - _phaseAt >= LaunchSeconds)
+                {
+                    _launched = true;
+                    _onStart?.Invoke(_target);
+                }
+                LayoutLaunch(Mathf.Clamp01((now - _phaseAt) / LaunchSeconds), now - _phaseAt);
+                return;
+            }
             if (_phase == Phase.Closing && now - _phaseAt >= CloseSeconds)
             {
                 _phase = Phase.Closed;
@@ -319,6 +376,50 @@ namespace SomeGame.UI
             _order.Sort((p, q) => Mathf.Abs(q.Index - _pos).CompareTo(Mathf.Abs(p.Index - _pos)));
             for (int i = 0; i < _order.Count; i++) _order[i].transform.SetSiblingIndex(cardTemplate.transform.GetSiblingIndex() + 1 + i);
             LayoutStrip(k, closing);
+        }
+
+        // START: the other cards fly off, the card lifts (drawn from the deck), then sweeps up towards you filling the
+        // screen while the backdrop turns cream like the loading screen; the sparks fly out and fade.
+        void LayoutLaunch(float l, float seconds)
+        {
+            float cream = Ease((l - 0.45f) / 0.4f);
+            backdrop.color = Color.Lerp(Theme.WithAlpha(Theme.Ink, 0.72f), Theme.Cream, cream);
+            float lift = Ease((l - 0.18f) / 0.25f), zoom = Mathf.Clamp01((l - 0.45f) / 0.45f), away = Ease((l - 0.06f) / 0.35f);
+            for (int i = 0; i < _cards.Count; i++)
+            {
+                var card = _cards[i];
+                if (!card.gameObject.activeSelf) continue;
+                var rt = (RectTransform)card.transform;
+                float off = i - _pos;
+                if (i == _target)
+                {
+                    rt.anchoredPosition = new Vector2(0f, 50f * lift * (1f - zoom) + 120f * zoom * zoom);
+                    rt.localScale = Vector3.one * (1f + 0.06f * lift) * Mathf.Lerp(1f, 2.8f, zoom * zoom);
+                    rt.localRotation = Quaternion.Euler(0f, 0f, -3f * lift * (1f - zoom));
+                    card.SetAlpha(1f - Mathf.Clamp01((l - 0.7f) / 0.25f));
+                }
+                else
+                {
+                    var p = rt.anchoredPosition;
+                    rt.anchoredPosition = new Vector2(Mathf.Sign(off) * (Spacing + away * 900f), p.y);
+                    card.SetAlpha(1f - away);
+                }
+            }
+            LayoutStrip(1f - Ease((l - 0.05f) / 0.3f), true);
+            float burst = Mathf.Clamp01(seconds / 0.6f);
+            foreach (var (rt, image, from, velocity, spin) in _sparks)
+            {
+                if (rt == null) continue;
+                rt.anchoredPosition = from + velocity * Ease(burst) + new Vector2(0f, -120f * burst * burst);
+                rt.localRotation = Quaternion.Euler(0f, 0f, spin * burst);
+                var c = image.color; c.a = 1f - burst; image.color = c;
+            }
+            if (_flash != null)
+            {
+                float f = Mathf.Clamp01(seconds / 0.45f);
+                _flash.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.6f, 3.4f, Ease(f));
+                _flash.color = Theme.WithAlpha(Theme.Amber, 0.9f * (1f - f));
+            }
         }
 
         // The bar of race numbers: folded a row of small dots, unfolded a row of numbered badges; the ring glides

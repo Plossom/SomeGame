@@ -19,6 +19,8 @@ namespace SomeGame.UI
         [Tooltip("Tapping a card at the side of the deck brings it to the middle.")]
         [SerializeField] UnityEngine.UI.Button focusButton;
         [SerializeField] UnityEngine.UI.Image veil;
+        [Tooltip("The frost over what sticks out past the card's edge (the number medallion, the trophy, the cross).")]
+        [SerializeField] UnityEngine.UI.Image[] edgeVeils;
         [SerializeField] RectTransform glow;
         [SerializeField] TMP_Text numberLabel, chapterLabel, titleLabel, recordsLabel;
         [SerializeField] UnityEngine.UI.Image picture;
@@ -117,7 +119,9 @@ namespace SomeGame.UI
         public void SetFocus(float away, bool settled)
         {
             float a = Mathf.Clamp01(Mathf.Abs(away));
-            if (veil != null) veil.color = Theme.WithAlpha(Theme.Cream, 0.62f * Mathf.SmoothStep(0f, 1f, a));
+            var frost = Theme.WithAlpha(Theme.Cream, 0.62f * Mathf.SmoothStep(0f, 1f, a));
+            if (veil != null) veil.color = frost;
+            if (edgeVeils != null) foreach (var edge in edgeVeils) if (edge != null) edge.color = frost;
             if (blurredPicture != null && blurredPicture.enabled) blurredPicture.color = new Color(1f, 1f, 1f, Mathf.Clamp01(a * 1.6f));
             bool focused = a < 0.08f;
             startButton.interactable = focused && _canEnter;

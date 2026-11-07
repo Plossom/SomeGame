@@ -428,19 +428,24 @@ namespace SomeGame.EditorTools
             // The race number on a medallion over the top left corner; a trophy over the top right once won.
             var medal = At("Medal", card, new Vector2(0f, 1f), new Vector2(-26f, 34f), new Vector2(170f, 182f));
             Img(At("Shadow", medal, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.OrangeDeep);
+            // Frost over the parts sticking out past the card (like the card's own veil, for a card at the side).
+            var medalShadowVeil = Img(At("ShadowVeil", medal, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
             Img(At("Face", medal, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.Orange);
             Img(At("Rim", medal, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(146f, 146f)), "Ring", Theme.WithAlpha(Color.white, 0.55f));
             var number = Txt(At("Number", medal, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(170f, 130f)), "1", 100, Color.white, _black);
+            var medalVeil = Img(At("Veil", medal, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
             var won = At("Won", card, new Vector2(1f, 1f), new Vector2(-150f, 24f), new Vector2(104f, 104f));
             Img(won, "Circle", new Color(0.06f, 0.07f, 0.08f));
             Img(At("Face", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(90f, 90f)), "Circle", Theme.Amber);
             Img(At("Icon", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(56f, 56f)), "IconTrophy", Theme.Ink);
+            var wonVeil = Img(At("Veil", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104f, 104f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
             // The cross on the top right corner closes the deck.
             var closeRt = At("Close", card, new Vector2(1f, 1f), new Vector2(30f, 30f), new Vector2(124f, 124f));
             closeRt.pivot = new Vector2(0.5f, 0.5f); closeRt.anchoredPosition = new Vector2(-32f, -32f);
             Img(closeRt, "Circle", new Color(0.06f, 0.07f, 0.08f));
             var closeFace = Img(At("Face", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(108f, 108f)), "Circle", Theme.Cream, raycast: true);
             Img(At("Icon", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(52f, 52f)), "IconClose", Theme.Ink);
+            var closeVeil = Img(At("Veil", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(124f, 124f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
             var close = closeRt.gameObject.AddComponent<Button>();
             close.targetGraphic = closeFace; close.transition = Selectable.Transition.None;
 
@@ -539,6 +544,7 @@ namespace SomeGame.EditorTools
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel), ("startRing", ring));
             var cso = new SerializedObject(raceCard);
             SetArray(cso, "difficultyPips", pips); SetArray(cso, "starGroups", groups); SetArray(cso, "starTimes", times);
+            SetArray(cso, "edgeVeils", new[] { medalShadowVeil, medalVeil, wonVeil, closeVeil });
             cso.ApplyModifiedPropertiesWithoutUndo();
 
             // ---- the bar of race numbers
@@ -559,7 +565,7 @@ namespace SomeGame.EditorTools
             Img(stripRing, "Ring", Theme.Amber);
 
             var deck = host.gameObject.AddComponent<RaceDeck>();
-            Configure(deck, ("panel", panel.gameObject), ("backdrop", backdrop), ("cardTemplate", raceCard),
+            Configure(deck, ("panel", panel.gameObject), ("backdrop", backdrop), ("cardTemplate", raceCard), ("sparkle", Sprite("Sparkle")), ("flashRing", Sprite("Ring")),
                 ("strip", strip), ("stripToggle", stripToggle), ("stripBadge", raceBadge), ("stripRing", stripRing));
             panel.gameObject.SetActive(false);
             return deck;
