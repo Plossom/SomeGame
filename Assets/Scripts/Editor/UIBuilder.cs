@@ -179,22 +179,7 @@ namespace SomeGame.EditorTools
             var chapter = Txt(cupRt, "VALLEY CUP", 128, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 70; chapter.fontSizeMax = 128;
-            // No race header under it: the race cards (RaceDeck) show a race's name, stars and records. Under the cup
-            // name instead: the cup's stars as a bar, with what opens next.
-            var progress = At("CupProgress", safe, new Vector2(0.5f, 1f), new Vector2(0f, -224f), new Vector2(700f, 118f));
-            Img(At("Shadow", progress, new Vector2(0.5f, 1f), new Vector2(0f, -10f), new Vector2(700f, 118f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
-            Img(Stretch("Face", progress), "Round", Theme.Ink, sliced: true);
-            Img(At("Star", progress, new Vector2(0f, 0.5f), new Vector2(30f, 0f), new Vector2(60f, 60f)), "IconStar", Theme.Amber);
-            var progressCount = Txt(At("Count", progress, new Vector2(0f, 0.5f), new Vector2(100f, -2f), new Vector2(170f, 80f)), "0/24", 60, Theme.Amber, _condItalic, TextAlignmentOptions.Left);
-            var bar = At("Bar", progress, new Vector2(0f, 1f), new Vector2(272f, -26f), new Vector2(396f, 30f));
-            Rounded(Img(bar, "Round", Theme.WithAlpha(Theme.Cream, 0.16f), sliced: true), 15f);
-            var fill = At("Fill", bar, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(0f, 30f));
-            Rounded(Img(fill, "Round", Theme.Amber, sliced: true), 15f);
-            var marker = At("Marker", bar, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(8f, 46f));
-            marker.pivot = new Vector2(0.5f, 0.5f);
-            Rounded(Img(marker, "Round", Theme.Cream, sliced: true), 4f);
-            var progressCaption = Txt(At("Caption", progress, new Vector2(0f, 0f), new Vector2(272f, 14f), new Vector2(400f, 44f)), "WINTER CUP OPENS AT 20 STARS", 30, Theme.WithAlpha(Theme.Cream, 0.85f), _cond, TextAlignmentOptions.Left);
-            progressCaption.characterSpacing = 3f;
+            // No race header under it: the race cards (RaceDeck) show a race's name, stars and records.
 
             // The garage, under the menu button: your car's silhouette, and a dot when a new paint has opened.
             var garageButton = SquareButton(safe, "GarageButton", new Vector2(0f, 1f), new Vector2(60f, -222f), "Car", 140f);
@@ -233,13 +218,11 @@ namespace SomeGame.EditorTools
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total);
             Set(so, "chapterLabel", chapter);
             Set(so, "deck", deck);
-            Set(so, "progress", progress.gameObject); Set(so, "progressCount", progressCount); Set(so, "progressBar", bar);
-            Set(so, "progressFill", fill); Set(so, "progressMarker", marker); Set(so, "progressCaption", progressCaption);
             Set(so, "garageButton", garageButton); Set(so, "garageDot", garageDot.gameObject); Set(so, "garage", garage);
             // Swipe between cups: the page parts slide (the header and cup name a little faster, for depth).
-            SetArray(so, "page", new[] { map, cupRt, progress });
+            SetArray(so, "page", new[] { map, cupRt });
             var parallax = so.FindProperty("pageParallax");
-            float[] depth = { 1f, 1.3f, 1.3f };
+            float[] depth = { 1f, 1.3f };
             parallax.arraySize = depth.Length;
             for (int i = 0; i < depth.Length; i++) parallax.GetArrayElementAtIndex(i).floatValue = depth[i];
             // The cup column under the menu button: a dark plate (clipping) with a badge per cup in a column
@@ -285,7 +268,7 @@ namespace SomeGame.EditorTools
             Set(so, "lockedCaption", lockedPage.Find("Caption").GetComponent<TMP_Text>());
             Set(so, "lockedNeeds", lockedPage.Find("Needs").gameObject);
             Set(so, "lockedStars", lockedPage.Find("Needs/Stars/Count").GetComponent<TMP_Text>());
-            SetArray(so, "racePageParts", new[] { progress.gameObject });
+            SetArray(so, "racePageParts", new GameObject[0]);
             var celebration = BuildCupCelebration(canvas);
             Configure(celebration, ("flyTarget", dots)); // the new cup's badge flies into the dropdown
             Set(so, "celebration", celebration); Set(so, "sparkle", Sprite("Sparkle"));
