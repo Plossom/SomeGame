@@ -32,7 +32,7 @@ namespace SomeGame.Race
             var list = CupList.Instance;
             if (list == null || cup == null || CupList.IsComingSoon(cup)) return false;
             if (list.cups.IndexOf(cup) <= 0) return true;
-            return ProgressStore.TotalStars >= cup.starsRequired && ProgressStore.TotalWins >= cup.trophiesRequired;
+            return ProgressStore.TotalStars >= cup.starsRequired;
         }
 
         /// <summary>First use: record everything as already seen.</summary>

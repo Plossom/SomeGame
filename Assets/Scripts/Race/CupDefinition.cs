@@ -21,7 +21,6 @@ namespace SomeGame.Race
         [Tooltip("The painted landscape behind the map road.")]
         public Sprite mapBackground;
         [Min(0)] public int starsRequired;
-        [Min(0)] public int trophiesRequired;
 
         public bool HasRaces => races != null && races.Count > 0;
     }

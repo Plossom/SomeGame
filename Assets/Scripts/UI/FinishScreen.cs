@@ -74,8 +74,14 @@ namespace SomeGame.UI
             var palette = Theme.OfLevel(level);
             Theme.RecolorAll(transform, Theme.Valley, palette);
             Theme.Hills(transform, palette);
-            var lapCaption = bestLapValue.transform.parent.Find("Label")?.GetComponent<TMP_Text>();
-            if (lapCaption != null) lapCaption.text = race.Sectioned ? "Best section" : "Best lap";
+            // A race in sections has no best lap (every section is different): the next-star row moves up into its place.
+            var lapRow = (RectTransform)bestLapValue.transform.parent;
+            var nextRow = (RectTransform)nextStarValue.transform.parent;
+            if (race.Sectioned && lapRow.gameObject.activeSelf)
+            {
+                lapRow.gameObject.SetActive(false);
+                nextRow.anchoredPosition = lapRow.anchoredPosition;
+            }
 
             raceLabel.text = level != null ? level.chapter : "TEST RACE";
             positionLabel.text = TimeFormat.Ordinal(position).ToUpperInvariant();

@@ -18,7 +18,7 @@ namespace SomeGame.Race
 
         /// <summary>
         /// Development switch (UNLOCK ALL in the map menu): every cup and every race is open (cups even
-        /// without races). Off by default, so cups and races unlock with stars and trophies. Kept by a game reset.
+        /// without races). Off by default, so cups and races unlock with stars. Kept by a game reset.
         /// </summary>
         public static bool DevUnlockAll
         {
@@ -31,7 +31,7 @@ namespace SomeGame.Race
         }
 
         /// <summary>A "coming soon" placeholder: no races and nothing to unlock it.</summary>
-        public static bool IsComingSoon(CupDefinition cup) => !cup.HasRaces && cup.starsRequired == 0 && cup.trophiesRequired == 0;
+        public static bool IsComingSoon(CupDefinition cup) => !cup.HasRaces && cup.starsRequired == 0;
 
         /// <summary>Whether the cup can be shown on the map.</summary>
         public static bool IsPlayable(CupDefinition cup) => IsUnlocked(cup) && !IsComingSoon(cup) && (cup.HasRaces || DevUnlockAll);
@@ -57,6 +57,6 @@ namespace SomeGame.Race
         }
 
         public static bool IsUnlocked(CupDefinition cup) =>
-            DevUnlockAll || (ProgressStore.TotalStars >= cup.starsRequired && ProgressStore.TotalWins >= cup.trophiesRequired);
+            DevUnlockAll || ProgressStore.TotalStars >= cup.starsRequired;
     }
 }

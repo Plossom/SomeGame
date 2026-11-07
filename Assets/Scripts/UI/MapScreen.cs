@@ -59,7 +59,6 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text lockedCaption;
         [SerializeField] GameObject lockedNeeds;
         [SerializeField] TMP_Text lockedStars;
-        [SerializeField] TMP_Text lockedTrophies;
         [Tooltip("Parts of the page hidden on a locked cup (the race header).")]
         [SerializeField] GameObject[] racePageParts;
 
@@ -70,8 +69,6 @@ namespace SomeGame.UI
         [Tooltip("Snowfall over the map, shown on the winter map.")]
         [SerializeField] GameObject snow;
         [SerializeField] TMP_Text totalStars;
-        [Tooltip("Races won out of all races.")]
-        [SerializeField] TMP_Text totalTrophies;
 
         [Header("Selected race")]
         [SerializeField] TMP_Text chapterLabel;
@@ -205,38 +202,26 @@ namespace SomeGame.UI
 
         // ------------------------------------------------------------------ counters
 
-        const string ShownStarsKey = "Shown.Stars", ShownWinsKey = "Shown.Wins.";
-        int? _starsShown, _winsShown;
+        const string ShownStarsKey = "Shown.Stars";
+        int? _starsShown;
 
-        int CupWins()
-        {
-            int won = 0;
-            for (int i = 0; i < catalog.Count; i++) if (ProgressStore.HasWon(catalog[i])) won++;
-            return won;
-        }
-
-        // Stars and trophies earned since the map was last shown count up, the counter popping with each step.
+        // Stars earned since the map was last shown count up, the counter popping with each step.
         System.Collections.IEnumerator CountUp()
         {
-            int stars = ProgressStore.TotalStars, wins = CupWins();
-            string winsKey = ShownWinsKey + catalog.name;
+            int stars = ProgressStore.TotalStars;
             int fromStars = Mathf.Min(PlayerPrefs.GetInt(ShownStarsKey, stars), stars);
-            int fromWins = Mathf.Min(PlayerPrefs.GetInt(winsKey, wins), wins);
             PlayerPrefs.SetInt(ShownStarsKey, stars);
-            PlayerPrefs.SetInt(winsKey, wins);
             PlayerPrefs.Save();
-            if (fromStars >= stars && fromWins >= wins) yield break;
+            if (fromStars >= stars) yield break;
             _starsShown = fromStars;
-            _winsShown = fromWins;
             WriteCounters();
             var plate = totalStars.transform.parent.parent;
             yield return new WaitForSecondsRealtime(0.2f);
-            int steps = Mathf.Max(stars - fromStars, wins - fromWins);
+            int steps = stars - fromStars;
             float step = Mathf.Clamp(0.9f / steps, 0.06f, 0.2f);
             for (int i = 1; i <= steps; i++)
             {
                 _starsShown = Mathf.Min(stars, fromStars + i);
-                _winsShown = Mathf.Min(wins, fromWins + i);
                 WriteCounters();
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.5f);
                 for (float t = 0f; t < step; t += Time.unscaledDeltaTime)
@@ -246,15 +231,11 @@ namespace SomeGame.UI
                 }
             }
             plate.localScale = Vector3.one;
-            _starsShown = _winsShown = null;
+            _starsShown = null;
             WriteCounters();
         }
 
-        void WriteCounters()
-        {
-            totalStars.text = (_starsShown ?? ProgressStore.TotalStars).ToString();
-            if (totalTrophies != null) totalTrophies.text = (_winsShown ?? CupWins()).ToString();
-        }
+        void WriteCounters() => totalStars.text = (_starsShown ?? ProgressStore.TotalStars).ToString();
 
         // ------------------------------------------------------------------ unlocks
 
@@ -719,7 +700,6 @@ namespace SomeGame.UI
             if (lockedCaption != null) lockedCaption.text = soon ? "MORE CUPS ARE ON THE WAY" : "TO UNLOCK";
             lockedNeeds.SetActive(!soon);
             lockedStars.text = $"{Mathf.Min(ProgressStore.TotalStars, cup.starsRequired)}/{cup.starsRequired}";
-            lockedTrophies.text = $"{Mathf.Min(ProgressStore.TotalWins, cup.trophiesRequired)}/{cup.trophiesRequired}";
             if (snow != null) snow.SetActive(false);
             if (ambience != null) ambience.Clear();
         }
@@ -1112,8 +1092,11 @@ namespace SomeGame.UI
             bestChip.text = best.HasValue ? TimeFormat.Race(best.Value) : "—";
             var bestLap = level.track != null ? BestLapStore.Get(level.track.name) : null;
             bestLapLabel.text = bestLap.HasValue ? TimeFormat.Race(bestLap.Value) : "—";
-            var lapCaption = bestLapLabel.transform.parent.Find("Caption")?.GetComponent<TMP_Text>();
-            if (lapCaption != null) lapCaption.text = level.Sectioned ? "Best sect." : "Best lap";
+            // A race in sections has only its whole time (every section is different): that row sits in the middle.
+            var lapRow = (RectTransform)bestLapLabel.transform.parent;
+            lapRow.gameObject.SetActive(!level.Sectioned);
+            var bestRow = (RectTransform)bestChip.transform.parent;
+            bestRow.anchoredPosition = new Vector2(bestRow.anchoredPosition.x, level.Sectioned ? -37f : -10f);
             // The places for 1, 2 and 3 stars; lit up as far as this race's stars go.
             int stars = ProgressStore.StarsOf(level);
             for (int i = 0; i < starTimes.Length; i++)

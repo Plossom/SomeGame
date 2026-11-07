@@ -11,8 +11,7 @@ namespace SomeGame.UI
     /// there: the card grows out of the stop with a little overshoot and the races before and after slide in at the
     /// sides, frosted over. Swipe sideways and the cards follow the finger, leaning into the swipe; let go and they
     /// glide on and settle on a race with a spring (a tick for every card that passes), and the car drives there on
-    /// the map behind. The bar of race numbers under the deck unfolds while you swipe (like the cup column): tap a
-    /// number to fly straight to that race. Swipe the deck down, tap beside it or the cross on the card, and the card shrinks back
+    /// the map behind. Tap a number in the bar of races under the deck to fly straight to that race. Swipe the deck down, tap beside it or the cross on the card, and the card shrinks back
     /// into its stop. START launches the race: sparks and a ring of light burst from the button, the other cards fly
     /// off, and the card is drawn - it lifts, then sweeps up towards you filling the screen as the backdrop turns to
     /// the loading screen's cream, which then takes over. Lives on the deck's root (always active), so drags and taps anywhere in the deck reach it.
@@ -28,9 +27,8 @@ namespace SomeGame.UI
         [SerializeField] GameObject panel;
         [SerializeField] UnityEngine.UI.Image backdrop;
         [SerializeField] RaceCard cardTemplate;
-        [Tooltip("The bar of race numbers: its plate (tap it folded to unfold it), a badge to copy and the ring on the current race.")]
+        [Tooltip("The bar of race numbers: its plate, a badge to copy and the ring on the current race.")]
         [SerializeField] RectTransform strip;
-        [SerializeField] UnityEngine.UI.Button stripToggle;
         [SerializeField] RectTransform stripBadge;
         [SerializeField] RectTransform stripRing;
         [Tooltip("Pictures for the launch: the sparks and the ring of light bursting out of START.")]
@@ -40,7 +38,7 @@ namespace SomeGame.UI
         const float SideScale = 0.86f, SideTilt = 5f, SideDrop = 46f;
         const float OpenSeconds = 0.6f, CloseSeconds = 0.32f;
         const float Omega = 12f;             // the settling spring (critically damped)
-        const float BadgeSpacing = 134f, StripFolded = 60f, StripOpen = 172f, DotSpacing = 42f;
+        const float BadgeSpacing = 134f, StripHeight = 172f;
         const float CloseDrag = 260f;        // dragged this far down, the deck closes
         const float LaunchSeconds = 0.95f;   // START: from the press until the loading screen takes over
 
@@ -55,7 +53,7 @@ namespace SomeGame.UI
         int _target, _settled, _tick;
         bool _dragging, _vertical, _dragActive;
         float _dragFrom, _dx, _dy, _dyVelocity;
-        float _stripOpen, _stripVelocity, _stripUntil, _ringPopAt = -10f;
+        float _ringPopAt = -10f;
         Vector2 _from;
         Func<int, RectTransform> _stopOf;
         Action<int> _onSelect, _onStart;
@@ -71,7 +69,6 @@ namespace SomeGame.UI
         {
             cardTemplate.gameObject.SetActive(false);
             stripBadge.gameObject.SetActive(false);
-            stripToggle.onClick.AddListener(() => { if (_stripOpen < 0.5f) _stripUntil = Time.unscaledTime + 6f; });
             _canvas = GetComponentInParent<Canvas>().rootCanvas;
             panel.SetActive(false);
         }
@@ -91,8 +88,6 @@ namespace SomeGame.UI
             _pos = _target = _settled = _tick = Mathf.Clamp(selected, 0, races.Count - 1);
             _vel = _dx = _dy = 0f;
             _dragging = _vertical = false;
-            _stripOpen = _stripVelocity = 0f;
-            _stripUntil = -1f;
             _from = StopPoint(_target);
             _phase = Phase.Opening;
             _phaseAt = Time.unscaledTime;
@@ -144,7 +139,7 @@ namespace SomeGame.UI
                 number.gameObject.SetActive(races[i].canEnter);
                 var lockIcon = b.Find("Lock");
                 lockIcon.gameObject.SetActive(!races[i].canEnter);
-                b.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => { if (_stripOpen > 0.5f) FlyTo(index); else _stripUntil = Time.unscaledTime + 6f; });
+                b.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => FlyTo(index));
                 _badges.Add(b);
             }
             stripRing.SetAsLastSibling();
@@ -154,7 +149,6 @@ namespace SomeGame.UI
         {
             if (_phase != Phase.Open || _dragging) return;
             _target = Mathf.Clamp(index, 0, _cards.Count - 1);
-            _stripUntil = Time.unscaledTime + 1.4f;
         }
 
         void StartRace(RaceCard card)
@@ -251,7 +245,6 @@ namespace SomeGame.UI
             // Where the glide would take it, at the speed it was let go.
             float projected = _pos + Mathf.Clamp(_vel, -12f, 12f) * 0.18f;
             _target = Mathf.Clamp(Mathf.RoundToInt(projected), 0, _cards.Count - 1);
-            _stripUntil = Time.unscaledTime + 1.2f;
         }
 
         // A tap beside the cards closes the deck (taps on the cards go to them).
@@ -306,10 +299,6 @@ namespace SomeGame.UI
                 _settled = _target;
                 _onSelect?.Invoke(_target);
             }
-            bool stripWanted = _dragging || Mathf.Abs(_pos - _target) > 0.02f || now < _stripUntil;
-            _stripVelocity += ((stripWanted ? 1f : 0f) - _stripOpen) * 240f * dt;
-            _stripVelocity *= Mathf.Exp(-17f * dt);
-            _stripOpen += _stripVelocity * dt;
             Layout();
         }
 
@@ -422,29 +411,24 @@ namespace SomeGame.UI
             }
         }
 
-        // The bar of race numbers: folded a row of small dots, unfolded a row of numbered badges; the ring glides
-        // along with the deck.
+        // The bar of race numbers: a row of numbered badges (it slides up with the deck); the ring glides along
+        // with the deck.
         void LayoutStrip(float k, bool closing)
         {
-            float open = _stripOpen, open01 = Mathf.Clamp01(open);
             int n = _badges.Count;
-            float width = Mathf.LerpUnclamped(n * DotSpacing + 44f, n * BadgeSpacing + 34f, open);
-            strip.sizeDelta = new Vector2(width, Mathf.LerpUnclamped(StripFolded, StripOpen, open));
+            strip.sizeDelta = new Vector2(n * BadgeSpacing + 34f, StripHeight);
             float slide = closing ? k : Ease((k - 0.35f) / 0.65f);
             strip.anchoredPosition = new Vector2(0f, Mathf.Lerp(-260f, 70f, slide));
-            float pitch = Mathf.LerpUnclamped(DotSpacing, BadgeSpacing, open);
             for (int i = 0; i < n; i++)
             {
                 var b = _badges[i];
-                b.anchoredPosition = new Vector2((i - (n - 1) * 0.5f) * pitch, 0f);
+                b.anchoredPosition = new Vector2((i - (n - 1) * 0.5f) * BadgeSpacing, 0f);
                 float near = Mathf.Clamp01(1f - Mathf.Abs(_pos - i));
-                b.localScale = Vector3.one * Mathf.LerpUnclamped(0.24f, Mathf.Lerp(0.86f, 1f, near), open);
-                var number = b.Find("Number");
-                if (number != null) number.localScale = Vector3.one * open01;
+                b.localScale = Vector3.one * Mathf.Lerp(0.86f, 1f, near);
             }
             float pop = Mathf.Clamp01((Time.unscaledTime - _ringPopAt) / 0.25f);
-            stripRing.anchoredPosition = new Vector2((_pos - (n - 1) * 0.5f) * pitch, 0f);
-            stripRing.localScale = Vector3.one * Mathf.LerpUnclamped(0.34f, 1f, open) * (1f + 0.14f * Mathf.Sin(pop * Mathf.PI));
+            stripRing.anchoredPosition = new Vector2((_pos - (n - 1) * 0.5f) * BadgeSpacing, 0f);
+            stripRing.localScale = Vector3.one * (1f + 0.14f * Mathf.Sin(pop * Mathf.PI));
         }
     }
 }

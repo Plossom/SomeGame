@@ -156,7 +156,7 @@ namespace SomeGame.EditorTools
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
 
-            // Stars and trophies (races won) on one small plate, its top level with the menu button.
+            // Your stars on one small plate, its top level with the menu button.
             // Same size as the menu button.
             var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(140f, 140f));
             // A hard shadow under it like the menu button's (which makes that one 12 units taller).
@@ -169,8 +169,7 @@ namespace SomeGame.EditorTools
                 Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(38f, 38f)), icon, Theme.Amber);
                 return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-20f, -2f), new Vector2(76f, 64f)), "0", 46, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             }
-            var total = CounterRow("Stars", -6f, "IconStar");
-            var trophies = CounterRow("Trophies", -70f, "IconTrophy");
+            var total = CounterRow("Stars", -38f, "IconStar");
 
             // The cup name, big, centred in the gap between the menu button (ends 200 from the left) and the
             // stars and trophies counter (starts 256 from the right), level with the menu button.
@@ -244,7 +243,7 @@ namespace SomeGame.EditorTools
             var screen = canvas.gameObject.AddComponent<MapScreen>();
             var so = new SerializedObject(screen);
             Set(so, "catalog", AssetDatabase.LoadAssetAtPath<LevelCatalog>("Assets/Data/Levels/LevelCatalog.asset"));
-            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total); Set(so, "totalTrophies", trophies);
+            Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total);
             Set(so, "chapterLabel", chapter); Set(so, "titleLabel", title);
             Set(so, "bestChip", best); Set(so, "bestLapLabel", bestLap);
             SetArray(so, "starTimes", times); SetArray(so, "starGroups", groups);
@@ -298,7 +297,6 @@ namespace SomeGame.EditorTools
             Set(so, "lockedCaption", lockedPage.Find("Caption").GetComponent<TMP_Text>());
             Set(so, "lockedNeeds", lockedPage.Find("Needs").gameObject);
             Set(so, "lockedStars", lockedPage.Find("Needs/Stars/Count").GetComponent<TMP_Text>());
-            Set(so, "lockedTrophies", lockedPage.Find("Needs/Trophies/Count").GetComponent<TMP_Text>());
             SetArray(so, "racePageParts", new[] { header.gameObject });
             var celebration = BuildCupCelebration(canvas);
             Configure(celebration, ("flyTarget", dots)); // the new cup's badge flies into the dropdown
@@ -340,7 +338,7 @@ namespace SomeGame.EditorTools
             var caption = Txt(At("Caption", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -212f), new Vector2(1050f, 80f)), "TO UNLOCK", 64, Hex("E3E5E2"), _condItalic);
             caption.enableAutoSizing = true; caption.fontSizeMin = 40; caption.fontSizeMax = 64;
             caption.characterSpacing = 8f;
-            var needs = At("Needs", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -350f), new Vector2(640f, 150f));
+            var needs = At("Needs", page, new Vector2(0.5f, 0.5f), new Vector2(0f, -350f), new Vector2(340f, 150f));
             Img(needs, "Round", Theme.Ink, sliced: true);
             void Need(string name, float x, string icon)
             {
@@ -348,8 +346,7 @@ namespace SomeGame.EditorTools
                 Img(At("Icon", item, new Vector2(0.5f, 0.5f), new Vector2(-82f, 0f), new Vector2(80f, 80f)), icon, Theme.Amber);
                 Txt(At("Count", item, new Vector2(0.5f, 0.5f), new Vector2(42f, -2f), new Vector2(190f, 120f)), "0/20", 76, Theme.Amber, _condItalic, TextAlignmentOptions.Left);
             }
-            Need("Stars", -155f, "IconStar");
-            Need("Trophies", 155f, "IconTrophy");
+            Need("Stars", 0f, "IconStar");
             page.gameObject.SetActive(false);
             return page;
         }
@@ -424,7 +421,7 @@ namespace SomeGame.EditorTools
             var face = Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true, raycast: true);
             var focus = face.gameObject.AddComponent<Button>();
             focus.targetGraphic = face; focus.transition = Selectable.Transition.None;
-            // The race number on a medallion over the top left corner; a trophy over the top right once won.
+            // The race number on a medallion over the top left corner.
             var medal = At("Medal", card, new Vector2(0f, 1f), new Vector2(-26f, 34f), new Vector2(170f, 182f));
             Img(At("Shadow", medal, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.OrangeDeep);
             // Frost over the parts sticking out past the card (like the card's own veil, for a card at the side).
@@ -433,11 +430,6 @@ namespace SomeGame.EditorTools
             Img(At("Rim", medal, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(146f, 146f)), "Ring", Theme.WithAlpha(Color.white, 0.55f));
             var number = Txt(At("Number", medal, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(170f, 130f)), "1", 100, Color.white, _black);
             var medalVeil = Img(At("Veil", medal, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
-            var won = At("Won", card, new Vector2(1f, 1f), new Vector2(-150f, 24f), new Vector2(104f, 104f));
-            Img(won, "Circle", new Color(0.06f, 0.07f, 0.08f));
-            Img(At("Face", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(90f, 90f)), "Circle", Theme.Amber);
-            Img(At("Icon", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(56f, 56f)), "IconTrophy", Theme.Ink);
-            var wonVeil = Img(At("Veil", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104f, 104f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
             // The cross on the top right corner closes the deck.
             var closeRt = At("Close", card, new Vector2(1f, 1f), new Vector2(30f, 30f), new Vector2(124f, 124f));
             closeRt.pivot = new Vector2(0.5f, 0.5f); closeRt.anchoredPosition = new Vector2(-32f, -32f);
@@ -484,11 +476,12 @@ namespace SomeGame.EditorTools
             Configure(frame.gameObject.AddComponent<PreviewFrame>(), ("picture", picture), ("maxSize", new Vector2(W - 80f, 900f)), ("inset", 12f));
 
             // Difficulty: a speedometer and five bars, centred under the picture.
-            const float RowWidth = 60f + 18f + 5f * 64f + 4f * 14f, RowLeft = (W - RowWidth) * 0.5f;
-            Img(At("DifficultyIcon", card, new Vector2(0f, 1f), new Vector2(RowLeft, -1222f), new Vector2(60f, 60f)), "IconGauge", Theme.Rust);
+            // The five bars centred on the card, the speedometer just left of them.
+            const float PipsWidth = 5f * 64f + 4f * 14f, PipsLeft = (W - PipsWidth) * 0.5f;
+            Img(At("DifficultyIcon", card, new Vector2(0f, 1f), new Vector2(PipsLeft - 78f, -1222f), new Vector2(60f, 60f)), "IconGauge", Theme.Rust);
             var pips = new Image[5];
             for (int i = 0; i < pips.Length; i++)
-                pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(RowLeft + 78f + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
+                pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(PipsLeft + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
 
             // The places that earn stars as three light medals: the stars over the place; an earned one turns gold with a gold rim.
             var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1286f), new Vector2(W - 80f, 140f));
@@ -533,29 +526,27 @@ namespace SomeGame.EditorTools
             start.targetGraphic = startFace; start.transition = Selectable.Transition.None;
 
             // The frost over a card at the side of the deck.
-            // It covers the black outline too; what sticks out past the card (medallion, trophy, cross) lies above it
+            // It covers the black outline too; what sticks out past the card (medallion, cross) lies above it
             // with frost of its own, so the two never overlap.
             var veilRt = Stretch("Veil", card);
             veilRt.offsetMin = new Vector2(-8f, -8f); veilRt.offsetMax = new Vector2(8f, 8f);
             var veil = Img(veilRt, "Round", Theme.WithAlpha(Theme.Cream, 0f), sliced: true);
-            medal.SetAsLastSibling(); won.SetAsLastSibling(); closeRt.SetAsLastSibling();
+            medal.SetAsLastSibling(); closeRt.SetAsLastSibling();
 
             var raceCard = card.gameObject.AddComponent<RaceCard>();
             Configure(raceCard, ("group", group), ("focusButton", focus), ("veil", veil), ("glow", glow),
                 ("numberLabel", number), ("chapterLabel", chapter), ("titleLabel", title), ("recordsLabel", records),
                 ("picture", picture), ("blurredPicture", blurred), ("shine", shine), ("lockCover", lockCover.gameObject), ("lockLabel", lockLabel),
-                ("wonBadge", won.gameObject), ("closeButton", close),
+                ("closeButton", close),
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel), ("startRing", ring));
             var cso = new SerializedObject(raceCard);
             SetArray(cso, "difficultyPips", pips); SetArray(cso, "starGroups", groups); SetArray(cso, "starTimes", times);
-            SetArray(cso, "edgeVeils", new[] { medalShadowVeil, medalVeil, wonVeil, closeVeil });
+            SetArray(cso, "edgeVeils", new[] { medalShadowVeil, medalVeil, closeVeil });
             cso.ApplyModifiedPropertiesWithoutUndo();
 
             // ---- the bar of race numbers
             var strip = At("RaceBar", safe, new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(1100f, 172f));
-            var stripFace = Img(strip, "Round", Theme.Ink, sliced: true, raycast: true);
-            var stripToggle = strip.gameObject.AddComponent<Button>();
-            stripToggle.targetGraphic = stripFace; stripToggle.transition = Selectable.Transition.None;
+            Img(strip, "Round", Theme.Ink, sliced: true, raycast: true);
             var raceBadge = At("Race", strip, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f));
             raceBadge.pivot = new Vector2(0.5f, 0.5f);
             var raceFace = Img(At("Face", raceBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f)), "Circle", Theme.Cream, raycast: true);
@@ -570,7 +561,7 @@ namespace SomeGame.EditorTools
 
             var deck = host.gameObject.AddComponent<RaceDeck>();
             Configure(deck, ("panel", panel.gameObject), ("backdrop", backdrop), ("cardTemplate", raceCard), ("sparkle", Sprite("Sparkle")), ("flashRing", Sprite("Ring")),
-                ("strip", strip), ("stripToggle", stripToggle), ("stripBadge", raceBadge), ("stripRing", stripRing));
+                ("strip", strip), ("stripBadge", raceBadge), ("stripRing", stripRing));
             panel.gameObject.SetActive(false);
             return deck;
         }
@@ -651,13 +642,11 @@ namespace SomeGame.EditorTools
             var number = Txt(At("Number", root, new Vector2(0.5f, 0.5f), new Vector2(-2f, 0f), new Vector2(150f, 150f)), "1", 92, Theme.Ink, _black);
             var lockIcon = Img(At("Lock", root, new Vector2(0.5f, 0.5f), new Vector2(0f, 22f), new Vector2(50f, 50f)), "IconLock", Theme.StoneDark);
 
-            var starsPill = At("Stars", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -122f), new Vector2(222f, 60f));
+            var starsPill = At("Stars", root, new Vector2(0.5f, 0.5f), new Vector2(0f, -122f), new Vector2(160f, 60f));
             Img(starsPill, "Pill", Theme.Ink, sliced: true);
             var stars = new Image[3];
             for (int i = 0; i < 3; i++)
-                stars[i] = Img(At($"Star{i + 1}", starsPill, new Vector2(0.5f, 0.5f), new Vector2(-72f + i * 44f, 0f), new Vector2(40f, 40f)), "IconStar", Theme.Amber);
-            Img(At("Divider", starsPill, new Vector2(0.5f, 0.5f), new Vector2(42f, 0f), new Vector2(3f, 36f)), null, Theme.WithAlpha(Theme.Cream, 0.2f));
-            var trophy = Img(At("Trophy", starsPill, new Vector2(0.5f, 0.5f), new Vector2(76f, 1f), new Vector2(40f, 40f)), "IconTrophy", Theme.Amber);
+                stars[i] = Img(At($"Star{i + 1}", starsPill, new Vector2(0.5f, 0.5f), new Vector2(-44f + i * 44f, 0f), new Vector2(40f, 40f)), "IconStar", Theme.Amber);
 
             // A locked race shows the stars it needs inside its badge, under the lock.
             // Centred in the space between the lock and the bottom of the badge.
@@ -680,7 +669,7 @@ namespace SomeGame.EditorTools
             var so = new SerializedObject(mapNode);
             Set(so, "button", button); Set(so, "shadow", shadow); Set(so, "face", face); Set(so, "ring", ring);
             Set(so, "dashedRing", dashed); Set(so, "number", number); Set(so, "lockIcon", lockIcon);
-            Set(so, "starsPill", starsPill.gameObject); SetArray(so, "stars", stars); Set(so, "trophy", trophy);
+            Set(so, "starsPill", starsPill.gameObject); SetArray(so, "stars", stars);
             Set(so, "requirement", req.gameObject); Set(so, "requirementText", reqText);
             Set(so, "selection", selection.gameObject); Set(so, "caption", caption); Set(so, "captionRoot", capRt.gameObject);
             so.ApplyModifiedPropertiesWithoutUndo();

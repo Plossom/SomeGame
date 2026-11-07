@@ -37,18 +37,14 @@ namespace SomeGame.UI
             if (locked)
             {
                 starsNeeded.text = cup.starsRequired.ToString();
-                trophiesNeeded.text = cup.trophiesRequired.ToString();
+                if (trophiesNeeded != null) trophiesNeeded.transform.parent.gameObject.SetActive(false); // cups open with stars alone
             }
             else if (cup.HasRaces)
             {
-                int stars = 0, wins = 0;
-                foreach (var level in cup.races.levels)
-                {
-                    stars += ProgressStore.StarsOf(level);
-                    if (ProgressStore.HasWon(level)) wins++;
-                }
+                int stars = 0;
+                foreach (var level in cup.races.levels) stars += ProgressStore.StarsOf(level);
                 starsNeeded.text = $"{stars}/{cup.races.Count * 3}";
-                trophiesNeeded.text = $"{wins}/{cup.races.Count}";
+                if (trophiesNeeded != null) trophiesNeeded.transform.parent.gameObject.SetActive(false);
             }
             soonLabel.gameObject.SetActive(soon);
             button.onClick.RemoveAllListeners();

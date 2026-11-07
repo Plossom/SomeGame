@@ -19,7 +19,7 @@ namespace SomeGame.UI
         [Tooltip("Tapping a card at the side of the deck brings it to the middle.")]
         [SerializeField] UnityEngine.UI.Button focusButton;
         [SerializeField] UnityEngine.UI.Image veil;
-        [Tooltip("The frost over what sticks out past the card's edge (the number medallion, the trophy, the cross).")]
+        [Tooltip("The frost over what sticks out past the card's edge (the number medallion, the cross).")]
         [SerializeField] UnityEngine.UI.Image[] edgeVeils;
         [SerializeField] RectTransform glow;
         [SerializeField] TMP_Text numberLabel, chapterLabel, titleLabel, recordsLabel;
@@ -29,7 +29,6 @@ namespace SomeGame.UI
         [SerializeField] RectTransform shine;
         [SerializeField] GameObject lockCover;
         [SerializeField] TMP_Text lockLabel;
-        [SerializeField] GameObject wonBadge;
         [SerializeField] UnityEngine.UI.Image[] difficultyPips;
         [Tooltip("The three star medals (a face, a rim, the stars S0.., the places): gold once the race has earned them.")]
         [SerializeField] RectTransform[] starGroups;
@@ -61,11 +60,11 @@ namespace SomeGame.UI
             var best = ProgressStore.BestTimeOf(level);
             var bestPlace = ProgressStore.BestPlaceOf(level);
             var bestLap = level.track != null ? BestLapStore.Get(level.track.name) : null;
-            string ink = Theme.Html(Theme.Ink), lapWord = level.Sectioned ? "SECTION" : "LAP";
+            string ink = Theme.Html(Theme.Ink);
             var parts = new List<string>();
             if (bestPlace.HasValue) parts.Add($"BEST <color={ink}>{TimeFormat.Ordinal(bestPlace.Value).ToUpperInvariant()}</color>");
             if (best.HasValue) parts.Add($"TIME <color={ink}>{TimeFormat.Race(best.Value)}</color>");
-            if (bestLap.HasValue) parts.Add($"{lapWord} <color={ink}>{TimeFormat.Race(bestLap.Value)}</color>");
+            if (bestLap.HasValue && !level.Sectioned) parts.Add($"LAP <color={ink}>{TimeFormat.Race(bestLap.Value)}</color>");
             recordsLabel.text = parts.Count > 0 ? string.Join("    ", parts) : "NO RACE YET";
 
             // A locked race keeps its track a secret (a grey plate in a grey frame).
@@ -97,7 +96,6 @@ namespace SomeGame.UI
                 var rim = medal.Find("Rim");
                 if (rim != null) rim.gameObject.SetActive(earned);
             }
-            if (wonBadge != null) wonBadge.SetActive(ProgressStore.HasWon(level));
 
             lockCover.SetActive(!canEnter);
             if (!canEnter)
