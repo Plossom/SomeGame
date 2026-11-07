@@ -26,8 +26,6 @@ namespace SomeGame.Race
         public LevelDefinition challenge;
         [Tooltip("The rival to beat before the challenge opens (their RivalCharacter asset's name).")]
         public string challengeAfterRival;
-        [Tooltip("Where its side stop sits on the map (map canvas units; zero: beside the race, wherever there is room).")]
-        public Vector2 challengeSpot;
 
         public bool HasRaces => races != null && races.Count > 0;
     }

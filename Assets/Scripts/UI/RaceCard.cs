@@ -42,6 +42,9 @@ namespace SomeGame.UI
         [SerializeField] CanvasGroup rival;
         [SerializeField] UnityEngine.UI.Image rivalPicture;
         [SerializeField] TMP_Text rivalLine, rivalPrize;
+        [Tooltip("A tab on the card's edge, shown while the card lies behind its race's challenge card: tap to bring it back.")]
+        [SerializeField] UnityEngine.UI.Button swapTab;
+        [SerializeField] TMP_Text swapTabLabel;
 
         float _focusedAt = -10f, _pressedAt = -10f, _settledAt = -10f;
         bool _focused, _settled, _canEnter, _hasRival;
@@ -51,6 +54,15 @@ namespace SomeGame.UI
         public UnityEngine.UI.Button FocusButton => focusButton;
         public UnityEngine.UI.Button StartButton => startButton;
         public UnityEngine.UI.Button CloseButton => closeButton;
+        public UnityEngine.UI.Button SwapTab => swapTab;
+
+        /// <summary>The tab that brings the card back in front of its challenge card.</summary>
+        public void ShowSwapTab(bool show)
+        {
+            if (swapTab == null) return;
+            if (swapTab.gameObject.activeSelf != show) swapTab.gameObject.SetActive(show);
+            if (show && swapTabLabel != null) swapTabLabel.text = $"RACE {Index + 1}";
+        }
 
         public void Bind(LevelDefinition level, int index, bool canEnter, CupDefinition cup)
         {

@@ -204,11 +204,6 @@ namespace SomeGame.EditorTools
 
             // Stops on the road stay clear.
             for (int i = 0; i < MapLayout.StopCount; i++) occupied.Add((Unstretch(MapLayout.StopPosition(i)), 120f));
-            // The challenge's stop and the rivals standing by their races stay clear.
-            var valley = AssetDatabase.LoadAssetAtPath<SomeGame.Race.CupDefinition>("Assets/Data/Cups/Valley.asset");
-            if (valley != null && valley.challengeSpot != Vector2.zero) occupied.Add((Unstretch(valley.challengeSpot), 100f));
-            foreach (var rival in Resources.LoadAll<SomeGame.Race.RivalCharacter>("Rivals"))
-                if (rival.mapSpot != Vector2.zero) occupied.Add((Unstretch(rival.mapSpot + new Vector2(0f, 80f)), 110f));
 
             // Village by the lake and a farm by the first race.
             foreach (var (p, church) in MapScenery.ValleyHouses)

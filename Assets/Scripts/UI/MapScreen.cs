@@ -76,10 +76,6 @@ namespace SomeGame.UI
         [Tooltip("The garage card's car: yours as built, turning.")]
         [SerializeField] VehicleIcon garageCar;
         [SerializeField] TMP_Text garageBuild;
-        [Tooltip("The cup's challenge: a side stop next to its rival's race.")]
-        [SerializeField] ChallengeStop challengeStop;
-        [Tooltip("A rival standing by their race on the map (copied for each).")]
-        [SerializeField] RectTransform rivalMarkerTemplate;
         [Tooltip("Meeting a rival the first time their home race is open.")]
         [SerializeField] RivalMeeting meeting;
 
@@ -946,7 +942,6 @@ namespace SomeGame.UI
             SetCar(CarTarget(_selected), 1f);
             car.SetAsLastSibling();
             foreach (var node in _nodes) node.transform.SetAsLastSibling(); // stops stay on top of the line and the car
-            if (challengeStop != null) challengeStop.BringForward();
         }
 
         void DriveTo(int index)
@@ -1060,16 +1055,10 @@ namespace SomeGame.UI
                     : ProgressStore.HasWon(level) ? MapNodeState.Won
                     : MapNodeState.Open;
                 _nodes[i].Bind((i + 1).ToString(), state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, null, () => OnStopTapped(index));
-                _nodes[i].SetRival(null, false, false); // the rival stands by the road instead (RivalMarkers)
+                var rival = RivalCharacter.For(level);
+                _nodes[i].SetRival(rival, rival != null && (RivalProgress.HasMet(rival.name) || (CupList.DevUnlockAll && state != MapNodeState.Locked)), rival != null && RivalProgress.IsBeaten(rival.name));
             }
             ShowSelected();
-            RivalMarkers();
-            if (challengeStop != null)
-            {
-                var stops = new List<RectTransform>();
-                foreach (var node in _nodes) stops.Add((RectTransform)node.transform);
-                challengeStop.Bind(_cup, catalog, stops);
-            }
         }
 
         // The cup's name over the map (the race cards show the races).
@@ -1105,46 +1094,6 @@ namespace SomeGame.UI
             if (_selected >= races.Count) return;
             deck.Open(races, _selected, _cup, i => i < _nodes.Count ? (RectTransform)_nodes[i].transform : null,
                 i => { if (i != _selected) Select(i); }, StartRace);
-        }
-
-        // The rivals of the shown cup, each by their race on the map (their face on a pin): a silhouette
-        // with a "?" until met, a tick once beaten. Tapping one plays their meeting (again).
-        readonly List<RectTransform> _rivalMarkers = new();
-
-        void RivalMarkers()
-        {
-            if (rivalMarkerTemplate == null) return;
-            rivalMarkerTemplate.gameObject.SetActive(false);
-            int used = 0;
-            for (int i = 0; i < catalog.Count && i < _nodes.Count; i++)
-            {
-                var rival = RivalCharacter.For(catalog[i]);
-                if (rival == null || rival.mapSpot == Vector2.zero || !ProgressStore.IsVisible(catalog, i)) continue;
-                if (used >= _rivalMarkers.Count)
-                {
-                    var made = Instantiate(rivalMarkerTemplate, rivalMarkerTemplate.parent);
-                    _rivalMarkers.Add(made);
-                }
-                var marker = _rivalMarkers[used++];
-                marker.gameObject.SetActive(true);
-                marker.anchoredPosition = rival.mapSpot;
-                bool met = RivalProgress.HasMet(rival.name);
-                var picture = marker.Find("Picture").GetComponent<UnityEngine.UI.Image>();
-                picture.sprite = rival.portrait;
-                picture.color = met ? Color.white : new Color(0.08f, 0.1f, 0.12f, 0.85f);
-                marker.Find("Mystery").gameObject.SetActive(!met);
-                marker.Find("Beaten").gameObject.SetActive(RivalProgress.IsBeaten(rival.name));
-                int index = i;
-                var button = marker.GetComponent<UnityEngine.UI.Button>();
-                button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() =>
-                {
-                    if (_celebrating || (deck != null && deck.IsOpen) || meeting == null || meeting.IsOpen) return;
-                    if (RivalProgress.HasMet(rival.name)) meeting.Show(rival, null);
-                    else MeetRival(index, null);
-                });
-            }
-            for (int k = used; k < _rivalMarkers.Count; k++) _rivalMarkers[k].gameObject.SetActive(false);
         }
 
         // The race's rival, met for the first time now that it is open: their meeting, then (done). False if there is none.

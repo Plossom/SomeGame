@@ -33,6 +33,8 @@ namespace SomeGame.UI
         [SerializeField] RectTransform stripRing;
         [Tooltip("Pictures for the launch: the sparks and the ring of light bursting out of START.")]
         [SerializeField] Sprite sparkle, flashRing;
+        [Tooltip("The cup's challenge, a card tucked behind its rival's race card (the two swap when tapped).")]
+        [SerializeField] DeckChallengeCard challengeCard;
 
         const float Spacing = 720f;          // between the middle of two cards next to each other
         const float SideScale = 0.86f, SideTilt = 5f, SideDrop = 46f;
@@ -62,6 +64,10 @@ namespace SomeGame.UI
         bool _launched;
         readonly List<(RectTransform rt, UnityEngine.UI.Image image, Vector2 from, Vector2 velocity, float spin)> _sparks = new();
         UnityEngine.UI.Image _flash;
+        int _challengeAt = -1;          // the race whose card the challenge lies behind
+        float _swap, _swapTarget;       // 0: the race card in front, 1: the challenge card in front
+        const float SwapSeconds = 0.5f;
+        static readonly Vector2 Peek = new(70f, 50f); // where the card behind sits (it peeks out up and right)
 
         public bool IsOpen => _phase != Phase.Closed;
 
@@ -69,6 +75,12 @@ namespace SomeGame.UI
         {
             cardTemplate.gameObject.SetActive(false);
             stripBadge.gameObject.SetActive(false);
+            if (challengeCard != null)
+            {
+                challengeCard.Body.onClick.AddListener(() => Swap(1f));
+                challengeCard.Tab.onClick.AddListener(() => Swap(1f));
+                challengeCard.gameObject.SetActive(false);
+            }
             _canvas = GetComponentInParent<Canvas>().rootCanvas;
             panel.SetActive(false);
         }
@@ -85,6 +97,17 @@ namespace SomeGame.UI
             _cup = cup;
             panel.SetActive(true);
             Build(races);
+            // The cup's challenge behind its rival's race.
+            _challengeAt = -1;
+            _swap = _swapTarget = 0f;
+            if (challengeCard != null && cup != null && cup.challenge != null)
+            {
+                var rival = string.IsNullOrEmpty(cup.challengeAfterRival) ? null : Resources.Load<RivalCharacter>("Rivals/" + cup.challengeAfterRival);
+                for (int i = 0; i < races.Count; i++)
+                    if (rival != null && races[i].level == rival.homeRace && races[i].canEnter) _challengeAt = i;
+                if (_challengeAt >= 0) challengeCard.Bind(cup);
+            }
+            if (challengeCard != null) challengeCard.gameObject.SetActive(_challengeAt >= 0);
             _pos = _target = _settled = _tick = Mathf.Clamp(selected, 0, races.Count - 1);
             _vel = _dx = _dy = 0f;
             _dragging = _vertical = false;
@@ -125,8 +148,9 @@ namespace SomeGame.UI
                 card.Bind(races[i].level, i, races[i].canEnter, _cup);
                 card.CloseButton.onClick.AddListener(Close);
                 int index = i;
-                card.FocusButton.onClick.AddListener(() => FlyTo(index));
+                card.FocusButton.onClick.AddListener(() => { if (index == _challengeAt && _swapTarget > 0f) Swap(0f); else FlyTo(index); });
                 card.StartButton.onClick.AddListener(() => StartRace(card));
+                if (card.SwapTab != null) card.SwapTab.onClick.AddListener(() => Swap(0f));
                 _cards.Add(card);
 
                 var b = Instantiate(stripBadge, stripBadge.parent);
@@ -143,6 +167,15 @@ namespace SomeGame.UI
                 _badges.Add(b);
             }
             stripRing.SetAsLastSibling();
+        }
+
+        // Brings the challenge card (1) or its race's card (0) to the front.
+        void Swap(float front)
+        {
+            if (_phase != Phase.Open || _dragging || _target != _challengeAt || Mathf.Abs(_pos - _target) > 0.05f) return;
+            if (Mathf.Approximately(_swapTarget, front)) return;
+            _swapTarget = front;
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.4f);
         }
 
         void FlyTo(int index)
@@ -285,6 +318,9 @@ namespace SomeGame.UI
                 if (Mathf.Abs(_pos - _target) < 0.0015f && Mathf.Abs(_vel) < 0.01f) { _pos = _target; _vel = 0f; }
             }
             if (!_vertical) _dy = Mathf.Lerp(_dy, 0f, 1f - Mathf.Exp(-14f * dt));
+            // Off to another race: the challenge tucks itself back behind.
+            if (_challengeAt >= 0 && (_target != _challengeAt || _dragging)) _swapTarget = 0f;
+            _swap = Mathf.MoveTowards(_swap, _swapTarget, dt / SwapSeconds);
             // A tick for every card that passes the middle.
             int near = Mathf.Clamp(Mathf.RoundToInt(_pos), 0, _cards.Count - 1);
             if (near != _tick)
@@ -364,7 +400,40 @@ namespace SomeGame.UI
             // The card nearest the middle in front, the others behind it by their distance.
             _order.Sort((p, q) => Mathf.Abs(q.Index - _pos).CompareTo(Mathf.Abs(p.Index - _pos)));
             for (int i = 0; i < _order.Count; i++) _order[i].transform.SetSiblingIndex(cardTemplate.transform.GetSiblingIndex() + 1 + i);
+            LayoutChallenge(settled);
             LayoutStrip(k, closing);
+        }
+
+        // The challenge card and its race's card: the one behind sits a little up and to the right (peeking out);
+        // swapping, the front one slides out sideways and tucks in behind while the other comes forward.
+        void LayoutChallenge(bool settled)
+        {
+            if (challengeCard == null || _challengeAt < 0) return;
+            var host = _cards[_challengeAt];
+            var hostRt = (RectTransform)host.transform;
+            float off = _challengeAt - _pos, a = Mathf.Abs(off);
+            float show = host.gameObject.activeSelf ? Mathf.Clamp01(1f - a * 1.6f) : 0f;
+            var rt = (RectTransform)challengeCard.transform;
+            float t = Mathf.SmoothStep(0f, 1f, _swap), swing = Mathf.Sin(t * Mathf.PI);
+            Vector2 Turn(Vector2 v) => (Vector2)(hostRt.localRotation * v) * hostRt.localScale.x;
+            Vector2 at = hostRt.anchoredPosition;
+            float rot = hostRt.localEulerAngles.z;
+            // The challenge: from behind (peeking) to the front, swinging out to the right on the way.
+            Vector2 challengeOff = Vector2.Lerp(Peek, Vector2.zero, t) + new Vector2(swing * 430f, swing * 30f);
+            rt.anchoredPosition = at + Turn(challengeOff);
+            rt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(-5f, 0f, t) + swing * 8f);
+            rt.localScale = hostRt.localScale * Mathf.Lerp(0.97f, 1f, t);
+            // The race card: from the front to behind, swinging out to the left.
+            hostRt.anchoredPosition = at + Turn(Vector2.Lerp(Vector2.zero, Peek, t) + new Vector2(-swing * 430f, -swing * 10f));
+            hostRt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(0f, -5f, t) - swing * 8f);
+            hostRt.localScale *= Mathf.Lerp(1f, 0.97f, t);
+            // Whichever is in front draws on top (they change places half way).
+            int hostIndex = hostRt.GetSiblingIndex();
+            rt.SetSiblingIndex(t < 0.5f ? hostIndex : hostIndex + 1);
+            challengeCard.Show(t, show * (_phase == Phase.Open || _phase == Phase.Opening ? 1f : Mathf.Clamp01(1f - (Time.unscaledTime - _phaseAt) / CloseSeconds)));
+            // The race card behind is frosted, START off, and gets its tab.
+            if (t > 0f) host.SetFocus(Mathf.Max(Mathf.Abs(off), 0.75f * t), settled);
+            host.ShowSwapTab(t > 0.5f && show > 0.5f);
         }
 
         // START: the other cards fly off, the card lifts (drawn from the deck), then sweeps up towards you filling the
@@ -394,6 +463,7 @@ namespace SomeGame.UI
                     card.SetAlpha(1f - away);
                 }
             }
+            if (challengeCard != null && challengeCard.gameObject.activeSelf) challengeCard.Show(0f, 0f);
             LayoutStrip(1f - Ease((l - 0.05f) / 0.3f), true);
             float burst = Mathf.Clamp01(seconds / 0.6f);
             foreach (var (rt, image, from, velocity, spin) in _sparks)
