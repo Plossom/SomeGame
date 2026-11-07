@@ -148,7 +148,7 @@ namespace SomeGame.UI
             Place(_tags[2], named, true);
             Unstack();
 
-            Ladder(racing || race.State == RaceState.Countdown, place, ahead, behind);
+            Ladder((racing || race.State == RaceState.Countdown) && race.Challenge == null, place, ahead, behind);
             Greet();
             Says();
 
@@ -278,6 +278,9 @@ namespace SomeGame.UI
             yield return new WaitForSecondsRealtime(seconds);
             action();
         }
+
+        /// <summary>A rival says something (their face and a speech bubble, low on the screen).</summary>
+        public void Say(RivalCharacter character, string line, float seconds) => Say(character, line, seconds, _saysHome);
 
         void Say(RivalCharacter character, string line, float seconds, Vector2 home, float delay = 0f)
         {

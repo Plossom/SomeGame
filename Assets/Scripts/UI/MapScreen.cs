@@ -73,6 +73,9 @@ namespace SomeGame.UI
         [Tooltip("The dot on the garage button: a paint has opened since you last looked.")]
         [SerializeField] GameObject garageDot;
         [SerializeField] GarageScreen garage;
+        [Tooltip("The garage card's car: yours as built, turning.")]
+        [SerializeField] VehicleIcon garageCar;
+        [SerializeField] TMP_Text garageBuild;
         [Tooltip("Meeting a rival the first time their home race is open.")]
         [SerializeField] RivalMeeting meeting;
 
@@ -241,6 +244,8 @@ namespace SomeGame.UI
         void PaintCar()
         {
             if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Dress(SomeGame.Car.CarLook.Player);
+            if (garageCar != null) garageCar.Dress(SomeGame.Car.CarLook.Player);
+            if (garageBuild != null) garageBuild.text = Garage.Equipped(Garage.Slot.Body).Name;
         }
 
         // ------------------------------------------------------------------ unlocks

@@ -21,6 +21,11 @@ namespace SomeGame.Race
         [Tooltip("The painted landscape behind the map road.")]
         public Sprite mapBackground;
         [Min(0)] public int starsRequired;
+        [Header("Challenge")]
+        [Tooltip("The cup's funny challenge on the map (not a race).")]
+        public LevelDefinition challenge;
+        [Tooltip("The rival to beat before the challenge opens (their RivalCharacter asset's name).")]
+        public string challengeAfterRival;
 
         public bool HasRaces => races != null && races.Count > 0;
     }

@@ -56,9 +56,23 @@ namespace SomeGame.UI
                 _captioned = true;
                 var caption = lapLabel.transform.parent.Find("Caption")?.GetComponent<TMP_Text>();
                 if (caption != null && race.Sectioned) caption.text = "SECTION";
+                if (caption != null && race.Challenge != null) caption.text = "CHICKENS";
+                var timeCaption = timeLabel.transform.parent.Find("Caption")?.GetComponent<TMP_Text>();
+                if (timeCaption != null && race.Challenge != null) timeCaption.text = "TIME LEFT";
             }
-            lapLabel.text = $"{player.CurrentLap}<size=60%><color={Muted}>/{race.Laps}</color></size>";
-            timeLabel.text = TimeFormat.Clock(race.RaceTime); // hundredths only on the results screen
+            var challenge = race.Challenge;
+            if (challenge != null)
+            {
+                // A challenge: its count instead of the lap, the time left instead of the time (red at the end).
+                lapLabel.text = $"{challenge.Caught}<size=60%><color={Muted}>/{challenge.Total}</color></size>";
+                timeLabel.text = TimeFormat.Clock(challenge.TimeLeft);
+                timeLabel.color = challenge.TimeLeft < 10f && race.State == RaceState.Racing ? Color.Lerp(Color.white, new Color(1f, 0.35f, 0.3f), Mathf.PingPong(Time.time * 2f, 1f)) : Color.white;
+            }
+            else
+            {
+                lapLabel.text = $"{player.CurrentLap}<size=60%><color={Muted}>/{race.Laps}</color></size>";
+                timeLabel.text = TimeFormat.Clock(race.RaceTime); // hundredths only on the results screen
+            }
             // Your place is on the ladder (RivalWatch); a HUD with a place column shows it here too.
             if (positionLabel != null)
             {
@@ -88,6 +102,7 @@ namespace SomeGame.UI
 
         void FlashLap(float lapTime, bool newBest)
         {
+            if (race.Challenge != null) return; // no lap times in a challenge
             string what = race.Sectioned ? $"SECTION {Mathf.Max(1, race.Player.LapsCompleted)}" : "LAP";
             lapFlashLabel.text = $"{what}  {TimeFormat.Race(lapTime)}{(newBest ? "  ·  BEST" : "")}";
             lapFlashLabel.color = newBest ? Theme.Orange : Theme.Ink;

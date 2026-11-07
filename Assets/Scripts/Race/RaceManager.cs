@@ -136,6 +136,9 @@ namespace SomeGame.Race
             MeetCharacter();
         }
 
+        /// <summary>The challenge being played (null in a race): it shows in the HUD and decides when it is over.</summary>
+        public ChickenChase Challenge { get; private set; }
+
         /// <summary>The rival with a face whose home race this is (null if none): they drive the car at the front of the grid.</summary>
         public RivalCharacter Character { get; private set; }
 
@@ -158,7 +161,7 @@ namespace SomeGame.Race
         {
             SomeGame.Car.CarLook.Player.Apply(player, CarTrack);
             // The gadget from the garage (not in the practice drive).
-            if (Garage.Equipped(Garage.Slot.Gadget).Id == "haybale" && (Level == null || !Level.isTutorial))
+            if (Garage.Equipped(Garage.Slot.Gadget).Id == "haybale" && (Level == null || !(Level.isTutorial || Level.isChallenge)))
                 player.gameObject.AddComponent<SomeGame.Car.HayBaleGadget>();
         }
 
@@ -192,6 +195,7 @@ namespace SomeGame.Race
         {
             // Rocket starts, slipstreams and overtakes for the player.
             if (Player != null) Player.gameObject.AddComponent<RaceFeel>().Init(this);
+            if (Level != null && Level.isChallenge) Challenge = gameObject.AddComponent<ChickenChase>();
             StartCoroutine(Countdown());
         }
 
@@ -250,7 +254,7 @@ namespace SomeGame.Race
 
         void OnPlayerLap(RaceProgress car, float lapTime)
         {
-            bool practice = Level != null && Level.isTutorial;
+            bool practice = Level != null && (Level.isTutorial || Level.isChallenge);
             bool newBest = Online == null && KeepRecords && !practice && BestLapStore.Submit(TrackId, lapTime); // online races keep no records
             PlayerLapCompleted?.Invoke(lapTime, newBest);
         }

@@ -29,6 +29,9 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text starsLabel, buildName, buildDetails;
         [Header("Shelf")]
         [SerializeField] RectTransform tabTemplate;
+        [Tooltip("The scrolling shelf: a section per cup (its name and stars, then its tiles).")]
+        [SerializeField] RectTransform content;
+        [SerializeField] RectTransform sectionTemplate;
         [SerializeField] RectTransform tileTemplate;
         [SerializeField] RectTransform cardTemplate;
         [SerializeField] TMP_Text itemName, itemBlurb, shelfTitle, shelfCount;
@@ -47,7 +50,7 @@ namespace SomeGame.UI
         static readonly string[] MysteryHomes = { "VALLEY SPRINT", "RIVER JUMP", "LAGOON LEAP", "SNOWBALL VILLAGE", "FROSTBITE PARK", "THE ABYSS" };
 
         readonly List<RectTransform> _tabs = new(), _tiles = new(), _cards = new();
-        readonly List<Garage.Part> _shown = new();
+        readonly List<Garage.Part> _shown = new(); // the part on each tile (null: a mystery slot)
         Tab _tab = Tab.Paint;
         float _openedAt = -10f, _changedAt = -10f, _shakeAt = -10f, _messageUntil, _tabAt = -10f, _closingAt = -1f;
         int _shake = -1;
@@ -72,23 +75,8 @@ namespace SomeGame.UI
                 _tabs.Add(tab);
             }
             tileTemplate.gameObject.SetActive(false);
-            for (int i = 0; i < 8; i++)
-            {
-                var tile = Instantiate(tileTemplate, tileTemplate.parent);
-                tile.name = "Tile" + i;
-                int index = i;
-                tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Pick(index));
-                _tiles.Add(tile);
-            }
             cardTemplate.gameObject.SetActive(false);
-            for (int i = 0; i < 1 + MysteryHomes.Length; i++)
-            {
-                var card = Instantiate(cardTemplate, cardTemplate.parent);
-                card.name = "Card" + i;
-                int index = i;
-                card.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => OpenCard(index));
-                _cards.Add(card);
-            }
+            sectionTemplate.gameObject.SetActive(false);
             if (detail != null) detail.SetActive(false);
             panel.SetActive(false);
         }
@@ -117,7 +105,62 @@ namespace SomeGame.UI
             _tabAt = Time.unscaledTime;
             _focus = null;
             _messageUntil = 0f;
+            Build();
             Refresh();
+        }
+
+        // The shelf for the tab: a section per cup with its things (or the rivals' cards), scrolled to the top.
+        void Build()
+        {
+            foreach (Transform child in content) if (child != sectionTemplate && child != tileTemplate && child != cardTemplate) Destroy(child.gameObject);
+            _tiles.Clear(); _shown.Clear(); _cards.Clear();
+            if (_tab == Tab.Rivals)
+            {
+                var grid = Section("RIVALS", "");
+                for (int i = 0; i < (_rivals?.Length ?? 0) + MysteryHomes.Length; i++)
+                {
+                    var card = Instantiate(cardTemplate, grid);
+                    card.gameObject.SetActive(true);
+                    int index = i;
+                    card.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => OpenCard(index));
+                    _cards.Add(card);
+                }
+            }
+            else
+            {
+                var slot = (Garage.Slot)(int)_tab;
+                foreach (var cup in CupList.Instance.cups)
+                {
+                    if (cup == null || !cup.HasRaces) continue;
+                    var parts = new List<Garage.Part>();
+                    foreach (var part in Garage.Of(slot)) if (part.Cup == cup.name) parts.Add(part);
+                    // A cup still without a gadget: a mystery slot for its rival's.
+                    if (slot == Garage.Slot.Gadget && !parts.Exists(p => p.How != Garage.Unlock.Free)) parts.Add(null);
+                    if (parts.Count == 0) continue;
+                    var grid = Section(cup.displayName, $"{Garage.CupStars(cup.name)} / {Garage.CupMaxStars(cup.name)}");
+                    foreach (var part in parts)
+                    {
+                        var tile = Instantiate(tileTemplate, grid);
+                        tile.gameObject.SetActive(true);
+                        int index = _tiles.Count;
+                        tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Pick(index));
+                        _tiles.Add(tile);
+                        _shown.Add(part);
+                    }
+                }
+            }
+            content.anchoredPosition = Vector2.zero;
+        }
+
+        RectTransform Section(string title, string stars)
+        {
+            var section = Instantiate(sectionTemplate, content);
+            section.gameObject.SetActive(true);
+            section.Find("Header/Title").GetComponent<TMP_Text>().text = title;
+            var count = section.Find("Header/Stars");
+            count.gameObject.SetActive(stars != "");
+            count.Find("Count").GetComponent<TMP_Text>().text = stars;
+            return (RectTransform)section.Find("Grid");
         }
 
         void Refresh()
@@ -140,31 +183,18 @@ namespace SomeGame.UI
                 tab.Find("Label").GetComponent<TMP_Text>().color = on ? Color.white : Theme.WithAlpha(Theme.Cream, 0.75f);
             }
 
-            bool rivals = _tab == Tab.Rivals;
-            foreach (var card in _cards) card.gameObject.SetActive(rivals);
-            if (rivals)
+            if (_tab == Tab.Rivals)
             {
-                foreach (var tile in _tiles) tile.gameObject.SetActive(false);
                 FillCards();
                 return;
             }
             var slot = (Garage.Slot)(int)_tab;
-            _shown.Clear();
-            _shown.AddRange(Garage.Of(slot));
-            int open = 0;
-            foreach (var part in _shown) if (Garage.IsUnlocked(part)) open++;
-            int mystery = slot == Garage.Slot.Gadget ? Mathf.Min(Garage.MysteryGadgets, _tiles.Count - _shown.Count) : 0;
+            int open = 0, all = 0;
+            foreach (var part in _shown) { all++; if (part != null && Garage.IsUnlocked(part)) open++; }
             shelfTitle.text = TabNames[(int)_tab];
-            shelfCount.text = $"{open} / {_shown.Count + mystery} OPEN";
+            shelfCount.text = $"{open} / {all} OPEN";
             var equipped = Garage.Equipped(slot);
-            for (int i = 0; i < _tiles.Count; i++)
-            {
-                var tile = _tiles[i];
-                bool exists = i < _shown.Count + mystery;
-                tile.gameObject.SetActive(exists);
-                if (!exists) continue;
-                FillTile(tile, i < _shown.Count ? _shown[i] : null, equipped, look);
-            }
+            for (int i = 0; i < _tiles.Count; i++) FillTile(_tiles[i], _shown[i], equipped, look);
             if (Time.unscaledTime >= _messageUntil)
             {
                 var focus = _focus ?? equipped;
@@ -250,6 +280,9 @@ namespace SomeGame.UI
                     needStar.SetActive(true);
                     needText.text = "CUP GOLD";
                     break;
+                case Garage.Unlock.Challenge:
+                    needText.text = "CHALLENGE";
+                    break;
             }
         }
 
@@ -272,24 +305,26 @@ namespace SomeGame.UI
 
         static string Requirement(Garage.Part part, RivalCharacter rival) => part.How switch
         {
-            Garage.Unlock.Stars => $"COLLECT {part.Stars} STARS",
+            Garage.Unlock.Stars => $"WIN {part.Stars} STARS IN THE {Garage.CupNamed(part.Cup)?.displayName}",
             Garage.Unlock.Rival => rival != null ? $"BEAT {rival.displayName.ToUpperInvariant()} IN {rival.homeRace?.displayName.ToUpperInvariant()}" : "BEAT A RIVAL",
-            Garage.Unlock.CupGold => "3 STARS IN EVERY RACE OF THE CUP",
+            Garage.Unlock.CupGold => $"3 STARS IN EVERY RACE OF THE {Garage.CupNamed(part.From)?.displayName}",
+            Garage.Unlock.Challenge => "WIN THE CHALLENGE ON THE MAP",
             _ => "",
         };
 
         void Pick(int index)
         {
             if (_tab == Tab.Rivals) return;
-            var part = index < _shown.Count ? _shown[index] : null;
+            var part = index >= 0 && index < _shown.Count ? _shown[index] : null;
             if (part == null || !Garage.IsUnlocked(part))
             {
                 // Not yet: it shakes, and says what it takes.
                 _shake = index;
                 _shakeAt = Time.unscaledTime;
                 itemName.text = part != null ? part.Name : "A RIVAL'S GADGET";
+                if (part == null) itemBlurb.text = "Beat this cup's rival in their home race to win their gadget.";
                 itemName.color = Theme.Amber;
-                itemBlurb.text = part != null ? Requirement(part, Rival(part.From)) : "Every rival you beat in their home race gives you their gadget.";
+                if (part != null) itemBlurb.text = Requirement(part, Rival(part.From));
                 _messageUntil = Time.unscaledTime + 2.2f;
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.4f);
                 return;

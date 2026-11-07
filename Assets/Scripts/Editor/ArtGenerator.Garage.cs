@@ -41,6 +41,10 @@ namespace SomeGame.EditorTools
             World("DecalFlames", 192, 336, FlamesPixel, 192, false);
             World("DecalCheckers", 192, 336, CheckersPixel, 192, false);
             World("DecalCrest", 192, 336, CrestPixel, 192, false);
+            World("DecalFrost", 192, 336, FrostPixel, 192, false);
+            World("TopSkiRack", 192, 336, SkiRackPixel, 192, false);
+            World("TopChicken", 192, 336, (x, y) => ChickenPixel((x - 96f) / 1.25f + 48f, (y - 160f) / 1.25f + 48f), 192, false);
+            World("Chicken", 96, 96, ChickenPixel, 64, false);
             World("TrailFlame", 64, 64, (x, y) => White(Fill(Min(Circle(x, y, 32, 24, 16), Triangle(x, y, new Vector2(18, 30), new Vector2(46, 30), new Vector2(32, 60)))) * 0.95f), 64, false);
             World("TrailFlake", 64, 64, (x, y) =>
             {
@@ -117,11 +121,12 @@ namespace SomeGame.EditorTools
             Add("body.kart", "CarKart", "CarKartBody", "CarKartDetails");
             Add("body.pickup", "CarPickup", "CarPickupBody", "CarPickupDetails");
             Add("top.spoiler", "TopSpoiler"); Add("top.roofrack", "TopRoofRack"); Add("top.lightbar", "TopLightBar");
-            Add("top.haybales", "TopHayBales"); Add("top.goldwing", "TopGoldWing");
+            Add("top.haybales", "TopHayBales"); Add("top.goldwing", "TopGoldWing"); Add("top.skirack", "TopSkiRack"); Add("top.chicken", "TopChicken");
             Add("decal.stripes", "DecalStripes"); Add("decal.number", "DecalNumber"); Add("decal.flames", "DecalFlames");
-            Add("decal.checkers", "DecalCheckers"); Add("decal.crest", "DecalCrest");
-            Add("trail.sparkle", "Sparkle"); Add("trail.flame", "TrailFlame"); Add("trail.flake", "TrailFlake"); Add("trail.confetti", "TrailConfetti");
+            Add("decal.checkers", "DecalCheckers"); Add("decal.crest", "DecalCrest"); Add("decal.frost", "DecalFrost");
+            Add("trail.sparkle", "Sparkle"); Add("trail.aurora", "Sparkle"); Add("trail.flame", "TrailFlame"); Add("trail.flake", "TrailFlake"); Add("trail.confetti", "TrailConfetti");
             Add("gadget.haybale", "HayBale");
+            Add("challenge.chicken", "Chicken");
             EditorUtility.SetDirty(art);
             AssetDatabase.SaveAssets();
         }
@@ -438,6 +443,68 @@ namespace SomeGame.EditorTools
             bool dark = ((int)((x - 62f) / 10f) + (int)((y - 252f) / 10f)) % 2 == 0;
             Color c = Over(new Color(0, 0, 0, 0), dark ? Hex("1E2A26") : Color.white, Fill(band));
             return Over(c, Outline, Stroke(band, 2f) * Fill(band - 2f));
+        }
+
+        static Color FrostPixel(float x, float y)
+        {
+            float d = float.MaxValue;
+            for (int i = 0; i < 3; i++)
+            {
+                float a = i * Mathf.PI / 3f + Mathf.PI / 2f;
+                Vector2 u = new(Mathf.Cos(a), Mathf.Sin(a)), c = new(96f, 274f);
+                d = Mathf.Min(d, Capsule(x, y, c.x - u.x * 24, c.y - u.y * 24, c.x + u.x * 24, c.y + u.y * 24, 3.4f));
+                foreach (float s in new[] { -1f, 1f })
+                {
+                    Vector2 p = c + u * 14f * s, q = new(-u.y, u.x);
+                    d = Mathf.Min(d, Capsule(x, y, p.x, p.y, p.x + (u.x * s + q.x) * 7f, p.y + (u.y * s + q.y) * 7f, 2.6f));
+                    d = Mathf.Min(d, Capsule(x, y, p.x, p.y, p.x + (u.x * s - q.x) * 7f, p.y + (u.y * s - q.y) * 7f, 2.6f));
+                }
+            }
+            Color c0 = Over(new Color(0, 0, 0, 0), Hex("5FB8E8"), Fill(d - 2.5f));
+            return Over(c0, Color.white, Fill(d));
+        }
+
+        static Color SkiRackPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float bars = Min(Capsule(x, y, 60, 132, 132, 132, 3f), Capsule(x, y, 60, 204, 132, 204, 3f));
+            c = Over(c, new Color(0.2f, 0.2f, 0.22f), Fill(bars));
+            (float sx, string col)[] skis = { (72f, "D8432C"), (84f, "D8432C"), (108f, "2F86D8"), (120f, "2F86D8") };
+            foreach (var (sx, col) in skis)
+            {
+                float ski = RoundRect(x, y, sx, 168, 5, 64, 4);
+                c = Over(c, Hex(col), Fill(ski));
+                c = Over(c, White(0.45f), Fill(RoundRect(x, y, sx - 2, 168, 1.2f, 58, 1)) * Fill(ski));
+                c = Over(c, Outline, Stroke(ski, 2f));
+                float binding = RoundRect(x, y, sx, 160, 6, 8, 2);
+                c = Over(c, new Color(0.15f, 0.15f, 0.17f), Fill(binding));
+            }
+            return c;
+        }
+
+        // A hen from above: white body, wings, a red comb on the head, a yellow beak, a tail fan.
+        static Color ChickenPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float tail = Min(Ellipse(x, y, 40, 22, 7, 12), Ellipse(x, y, 48, 18, 7, 13), Ellipse(x, y, 56, 22, 7, 12));
+            c = Over(c, Hex("E9E2D2"), Fill(tail));
+            c = Over(c, Outline, Stroke(tail, 2.5f));
+            float body = Ellipse(x, y, 48, 44, 22, 26);
+            c = Over(c, Color.white, Fill(body));
+            c = Over(c, Hex("E3DDD0"), Fill(Ellipse(x, y, 56, 40, 12, 18)) * Fill(body));
+            float wings = Min(Ellipse(x, y, 30, 42, 8, 16), Ellipse(x, y, 66, 42, 8, 16));
+            c = Over(c, Hex("EFE9DC"), Fill(wings));
+            c = Over(c, Outline, Stroke(Min(body, wings), 3f));
+            float head = Circle(x, y, 48, 70, 12);
+            c = Over(c, Color.white, Fill(head));
+            c = Over(c, Outline, Stroke(head, 3f));
+            float beak = Triangle(x, y, new Vector2(42, 79), new Vector2(54, 79), new Vector2(48, 91));
+            c = Over(c, Hex("F6B42C"), Fill(beak));
+            c = Over(c, Outline, Stroke(beak, 2f));
+            float comb = Min(Circle(x, y, 48, 74, 4.5f), Circle(x, y, 48, 67, 5f), Circle(x, y, 48, 60, 4f));
+            c = Over(c, Hex("E0303A"), Fill(comb));
+            c = Over(c, Hex("1E1A18"), Fill(Min(Circle(x, y, 41, 74, 2f), Circle(x, y, 55, 74, 2f))));
+            return c;
         }
 
         static Color CrestPixel(float x, float y)

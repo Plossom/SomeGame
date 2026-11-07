@@ -181,15 +181,73 @@ namespace SomeGame.EditorTools
             chapter.enableAutoSizing = true; chapter.fontSizeMin = 70; chapter.fontSizeMax = 128;
             // No race header under it: the race cards (RaceDeck) show a race's name, stars and records.
 
-            // The garage, under the menu button: your car's silhouette, and a dot when a new paint has opened.
-            var garageButton = SquareButton(safe, "GarageButton", new Vector2(0f, 1f), new Vector2(60f, -222f), "Car", 140f);
-            var garageIcon = (RectTransform)garageButton.transform.Find("Face/Icon");
-            garageIcon.sizeDelta = new Vector2(50f, 88f);
-            garageIcon.GetComponent<Image>().preserveAspect = true;
-            var garageDot = At("NewDot", (RectTransform)garageButton.transform, new Vector2(1f, 1f), new Vector2(10f, 10f), new Vector2(44f, 44f));
+            // Under the header, two cards over the sky: YOUR CAR (your car as built, turning; opens the garage, a dot
+            // when something new has opened) and the cup's CHALLENGE.
+            RectTransform Card(string name, Vector2 anchor, float x, Color face, Color edge)
+            {
+                var rt = At(name, safe, anchor, new Vector2(x, -404f), new Vector2(520f, 200f));
+                Img(At("Shadow", rt, new Vector2(0.5f, 0.5f), new Vector2(0f, -12f), new Vector2(520f, 200f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
+                var outlineRt = Stretch("Outline", rt); outlineRt.offsetMin = new Vector2(-6f, -6f); outlineRt.offsetMax = new Vector2(6f, 6f);
+                Img(outlineRt, "Round", edge, sliced: true);
+                Img(Stretch("Face", rt), "Round", face, sliced: true, raycast: true);
+                rt.gameObject.AddComponent<ButtonFeedback>();
+                return rt;
+            }
+            var carCard = Card("GarageCard", new Vector2(0f, 1f), 48f, Theme.Ink, Theme.Ink);
+            var garageButton = carCard.gameObject.AddComponent<Button>();
+            garageButton.targetGraphic = carCard.Find("Face").GetComponent<Image>(); garageButton.transition = Selectable.Transition.None;
+            var plinth = At("Plinth", carCard, new Vector2(0f, 0.5f), new Vector2(24f, -6f), new Vector2(176f, 176f));
+            plinth.pivot = new Vector2(0f, 0.5f);
+            Img(plinth, "Circle", Shade(Theme.Ink, 0.75f));
+            Img(At("Ring", plinth, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(176f, 176f)), "RingDashed", Theme.WithAlpha(Theme.Amber, 0.6f));
+            var carSpin = At("Spin", plinth, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(10f, 10f));
+            carSpin.pivot = new Vector2(0.5f, 0.5f);
+            var cardCar = At("Car", carSpin, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(88f, 154f));
+            cardCar.pivot = new Vector2(0.5f, 0.5f);
+            var ccShadow = Img(At("Shadow", cardCar, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(92f, 160f)), "CarShadow", new Color(0f, 0f, 0f, 0.5f));
+            ccShadow.preserveAspect = false;
+            var ccBody = Img(Stretch("Body", cardCar), "Car", Theme.Orange); ccBody.preserveAspect = false;
+            var ccDetails = Img(Stretch("Details", cardCar), "CarDetails", Color.white); ccDetails.preserveAspect = false;
+            var garageCar = cardCar.gameObject.AddComponent<VehicleIcon>();
+            Configure(garageCar, ("body", ccBody), ("details", ccDetails), ("shadow", ccShadow));
+            Configure(carSpin.gameObject.AddComponent<GarageSpin>(), ("target", carSpin), ("idleSpeed", 30f));
+            var garageTitle = Txt(At("Title", carCard, new Vector2(0f, 0.5f), new Vector2(218f, 30f), new Vector2(290f, 70f)), "GARAGE", 58, Color.white, _black, TextAlignmentOptions.Left);
+            garageTitle.rectTransform.pivot = new Vector2(0f, 0.5f);
+            var garageSub = Txt(At("Build", carCard, new Vector2(0f, 0.5f), new Vector2(218f, -30f), new Vector2(290f, 46f)), "DUNE BUGGY", 32, Theme.Amber, _condItalic, TextAlignmentOptions.Left);
+            garageSub.rectTransform.pivot = new Vector2(0f, 0.5f); garageSub.characterSpacing = 3f;
+            garageSub.enableAutoSizing = true; garageSub.fontSizeMin = 20; garageSub.fontSizeMax = 32;
+            var garageDot = At("NewDot", carCard, new Vector2(1f, 1f), new Vector2(10f, 10f), new Vector2(50f, 50f));
+            garageDot.pivot = new Vector2(0.5f, 0.5f);
             Img(garageDot, "Circle", Theme.Cream);
-            Img(At("Dot", garageDot, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(32f, 32f)), "Circle", Theme.Orange);
+            Img(At("Dot", garageDot, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(36f, 36f)), "Circle", Theme.Orange);
 
+            var challengeCard = Card("ChallengeCard", new Vector2(1f, 1f), -48f, Theme.Cream, Theme.Orange);
+            var challengeButton = challengeCard.gameObject.AddComponent<Button>();
+            challengeButton.targetGraphic = challengeCard.Find("Face").GetComponent<Image>(); challengeButton.transition = Selectable.Transition.None;
+            var chIcon = Img(At("Icon", challengeCard, new Vector2(0f, 0.5f), new Vector2(100f, -4f), new Vector2(150f, 150f)), "Chicken", Color.white);
+            chIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            var chLock = Img(At("Lock", challengeCard, new Vector2(0f, 0.5f), new Vector2(100f, -4f), new Vector2(70f, 70f)), "IconLock", Theme.Cream);
+            chLock.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            var tag = At("Tag", challengeCard, new Vector2(0f, 1f), new Vector2(16f, 22f), new Vector2(210f, 50f));
+            tag.pivot = new Vector2(0f, 1f); tag.localRotation = Quaternion.Euler(0f, 0f, 5f);
+            Img(tag, "Pill", Theme.Orange, sliced: true);
+            Txt(Stretch("Label", tag), "CHALLENGE", 28, Color.white, _black).characterSpacing = 3f;
+            var chTitle = Txt(At("Title", challengeCard, new Vector2(0f, 0.5f), new Vector2(190f, 26f), new Vector2(316f, 70f)), "CHICKEN CHASE", 50, Theme.Ink, _black, TextAlignmentOptions.Left);
+            chTitle.rectTransform.pivot = new Vector2(0f, 0.5f);
+            chTitle.enableAutoSizing = true; chTitle.fontSizeMin = 30; chTitle.fontSizeMax = 50;
+            var chStatus = Txt(At("Status", challengeCard, new Vector2(0f, 0.5f), new Vector2(190f, -32f), new Vector2(316f, 46f)), "BEAT ROSIE FIRST", 30, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            chStatus.rectTransform.pivot = new Vector2(0f, 0.5f); chStatus.characterSpacing = 2f;
+            chStatus.enableAutoSizing = true; chStatus.fontSizeMin = 18; chStatus.fontSizeMax = 30;
+            var chDone = At("Done", challengeCard, new Vector2(1f, 1f), new Vector2(8f, 8f), new Vector2(56f, 56f));
+            chDone.pivot = new Vector2(0.5f, 0.5f);
+            Img(chDone, "Circle", Theme.Leaf);
+            Img(At("Icon", chDone, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(30f, 30f)), "IconCheck", Color.white);
+            var chPlay = At("Play", challengeCard, new Vector2(1f, 1f), new Vector2(8f, 8f), new Vector2(56f, 56f));
+            chPlay.pivot = new Vector2(0.5f, 0.5f);
+            Img(chPlay, "Circle", Theme.Orange);
+            Img(At("Icon", chPlay, new Vector2(0.5f, 0.5f), new Vector2(3f, 0f), new Vector2(28f, 28f)), "IconPlay", Color.white);
+            Configure(challengeCard.gameObject.AddComponent<ChallengeCard>(), ("button", challengeButton), ("icon", chIcon), ("title", chTitle), ("status", chStatus),
+                ("lockIcon", chLock.gameObject), ("doneBadge", chDone.gameObject), ("playBadge", chPlay.gameObject));
 
             // Switching cups: a blurred picture of the incoming cup over its page, sharpening as it comes in...
             var incoming = Stretch("IncomingBlur", canvas).gameObject.AddComponent<RawImage>();
@@ -219,7 +277,7 @@ namespace SomeGame.EditorTools
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total);
             Set(so, "chapterLabel", chapter);
             Set(so, "deck", deck);
-            Set(so, "garageButton", garageButton); Set(so, "garageDot", garageDot.gameObject); Set(so, "garage", garage); Set(so, "meeting", meeting);
+            Set(so, "garageButton", garageButton); Set(so, "garageDot", garageDot.gameObject); Set(so, "garage", garage); Set(so, "meeting", meeting); Set(so, "garageCar", garageCar); Set(so, "garageBuild", garageSub);
             // Swipe between cups: the page parts slide (the header and cup name a little faster, for depth).
             SetArray(so, "page", new[] { map, cupRt });
             var parallax = so.FindProperty("pageParallax");
@@ -449,14 +507,46 @@ namespace SomeGame.EditorTools
             shelfTitle.rectTransform.pivot = new Vector2(0f, 1f);
             var shelfCount = Txt(At("Count", shelf, new Vector2(1f, 1f), new Vector2(-44f, -34f), new Vector2(400f, 56f)), "4 / 8 OPEN", 34, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
             shelfCount.rectTransform.pivot = new Vector2(1f, 1f); shelfCount.characterSpacing = 4f;
-            var grid = At("Grid", shelf, new Vector2(0.5f, 1f), new Vector2(0f, -110f), new Vector2(1050f, 720f));
+            // The shelf scrolls: a section per cup, each a header (the cup and its stars) over a grid of tiles.
+            var viewport = Stretch("Viewport", shelf);
+            viewport.offsetMin = new Vector2(20f, 20f); viewport.offsetMax = new Vector2(-20f, -104f);
+            Img(viewport, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            viewport.gameObject.AddComponent<RectMask2D>();
+            var content = Rt("Content", viewport);
+            content.anchorMin = new Vector2(0f, 1f); content.anchorMax = new Vector2(1f, 1f); content.pivot = new Vector2(0.5f, 1f);
+            content.sizeDelta = Vector2.zero;
+            var contentLayout = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            contentLayout.childControlHeight = contentLayout.childControlWidth = true;
+            contentLayout.childForceExpandHeight = false; contentLayout.childForceExpandWidth = true;
+            contentLayout.spacing = 18f; contentLayout.padding = new RectOffset(10, 10, 10, 30);
+            content.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var scroll = viewport.gameObject.AddComponent<ScrollRect>();
+            scroll.content = content; scroll.viewport = viewport; scroll.horizontal = false; scroll.vertical = true;
+            scroll.movementType = ScrollRect.MovementType.Elastic; scroll.scrollSensitivity = 30f;
+
+            var section = Rt("Section", content);
+            var sectionLayout = section.gameObject.AddComponent<VerticalLayoutGroup>();
+            sectionLayout.childControlHeight = sectionLayout.childControlWidth = true;
+            sectionLayout.childForceExpandHeight = false; sectionLayout.childForceExpandWidth = true; sectionLayout.spacing = 12f;
+            var sectionHeader = Rt("Header", section);
+            sectionHeader.gameObject.AddComponent<LayoutElement>().preferredHeight = 74f;
+            Img(At("Line", sectionHeader, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(1010f, 4f)), null, Theme.WithAlpha(Theme.Ink, 0.15f));
+            var sectionTitle = Txt(At("Title", sectionHeader, new Vector2(0f, 0.5f), new Vector2(14f, 0f), new Vector2(620f, 70f)), "VALLEY CUP", 46, Theme.Ink, _black, TextAlignmentOptions.Left);
+            sectionTitle.rectTransform.pivot = new Vector2(0f, 0.5f);
+            var sectionStars = At("Stars", sectionHeader, new Vector2(1f, 0.5f), new Vector2(-10f, 0f), new Vector2(230f, 62f));
+            sectionStars.pivot = new Vector2(1f, 0.5f);
+            Img(sectionStars, "Pill", Theme.Ink, sliced: true);
+            Img(At("Star", sectionStars, new Vector2(0f, 0.5f), new Vector2(18f, 0f), new Vector2(40f, 40f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
+            var sectionCount = Txt(At("Count", sectionStars, new Vector2(1f, 0.5f), new Vector2(-20f, 1f), new Vector2(160f, 56f)), "5 / 24", 38, Color.white, _black, TextAlignmentOptions.Right);
+            sectionCount.rectTransform.pivot = new Vector2(1f, 0.5f);
+            var grid = Rt("Grid", section);
             var layout = grid.gameObject.AddComponent<GridLayoutGroup>();
-            layout.cellSize = new Vector2(244f, 340f); layout.spacing = new Vector2(24f, 22f);
+            layout.cellSize = new Vector2(236f, 330f); layout.spacing = new Vector2(20f, 20f);
             layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount; layout.constraintCount = 4;
-            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childAlignment = TextAnchor.UpperLeft;
 
             // A tile.
-            var tile = Rt("Tile", grid);
+            var tile = At("Tile", content, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(236f, 330f));
             var tileHit = Img(tile, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             var tileButton = tile.gameObject.AddComponent<Button>();
             tileButton.targetGraphic = tileHit; tileButton.transition = Selectable.Transition.None;
@@ -500,7 +590,7 @@ namespace SomeGame.EditorTools
             Img(At("Icon", check, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(34f, 34f)), "IconCheck", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
 
             // A rival's card on the shelf.
-            var card = Rt("Card", grid);
+            var card = At("Card", content, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(236f, 330f));
             var cardHit = Img(card, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             var cardButton = card.gameObject.AddComponent<Button>();
             cardButton.targetGraphic = cardHit; cardButton.transition = Selectable.Transition.None;
@@ -578,7 +668,7 @@ namespace SomeGame.EditorTools
             Configure(screen, ("panel", panel.gameObject), ("group", group), ("sheet", sheet), ("closeButton", close),
                 ("carHolder", holder), ("car", vehicle), ("burst", burst), ("spin", spin),
                 ("starsLabel", stars), ("buildName", buildName), ("buildDetails", buildDetails),
-                ("tabTemplate", tabT), ("tileTemplate", tile), ("cardTemplate", card), ("itemName", itemName), ("itemBlurb", itemBlurb),
+                ("tabTemplate", tabT), ("content", content), ("sectionTemplate", section), ("tileTemplate", tile), ("cardTemplate", card), ("itemName", itemName), ("itemBlurb", itemBlurb),
                 ("shelfTitle", shelfTitle), ("shelfCount", shelfCount),
                 ("detail", detail.gameObject), ("detailClose", dClose), ("detailPainting", painting), ("detailName", dName), ("detailTitle", dTitle),
                 ("detailBio", dBio), ("detailHome", dHome), ("detailGadget", dGadget), ("detailStatus", dStatus), ("detailGadgetIcon", dGadgetIcon));
@@ -1241,6 +1331,47 @@ namespace SomeGame.EditorTools
             SetArray(rewardSo, "prizes", new[] { prizeGadget, prizePart });
             rewardSo.ApplyModifiedPropertiesWithoutUndo();
             rewardPanel.gameObject.SetActive(false);
+
+            // The end of a challenge: the result, the prize on the first win, AGAIN and MAP.
+            var chHost = Stretch("ChallengeResult", canvas);
+            var chCanvas = chHost.gameObject.AddComponent<Canvas>();
+            chCanvas.overrideSorting = true; chCanvas.sortingOrder = 30;
+            chHost.gameObject.AddComponent<GraphicRaycaster>();
+            var chPanel = Stretch("Panel", chHost);
+            var chGroup = chPanel.gameObject.AddComponent<CanvasGroup>();
+            Img(Stretch("Dim", chPanel), null, Theme.WithAlpha(Theme.Ink, 0.8f), raycast: true);
+            var chSafe = SafeArea(chPanel);
+            var chCard = At("Card", chSafe, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(960f, 1420f));
+            chCard.pivot = new Vector2(0.5f, 0.5f); chCard.anchoredPosition = Vector2.zero;
+            var chOutline = Stretch("Outline", chCard); chOutline.offsetMin = new Vector2(-10f, -10f); chOutline.offsetMax = new Vector2(10f, 10f);
+            Img(chOutline, "Round", Theme.Orange, sliced: true);
+            Img(Stretch("Face", chCard), "Round", Theme.Cream, sliced: true);
+            Txt(At("Kind", chCard, new Vector2(0.5f, 1f), new Vector2(0f, -40f), new Vector2(900f, 50f)), "CHICKEN CHASE", 40, Theme.Rust, _condItalic).characterSpacing = 8f;
+            var chTitleR = Txt(At("Title", chCard, new Vector2(0.5f, 1f), new Vector2(0f, -96f), new Vector2(900f, 150f)), "ALL CAUGHT!", 130, Theme.Orange, _black);
+            chTitleR.fontSharedMaterial = _blackShadow; chTitleR.enableAutoSizing = true; chTitleR.fontSizeMin = 70; chTitleR.fontSizeMax = 130;
+            Img(At("Chicken", chCard, new Vector2(0.5f, 1f), new Vector2(-170f, -300f), new Vector2(190f, 190f)), "Chicken", Color.white);
+            var chScore = Txt(At("Score", chCard, new Vector2(0.5f, 1f), new Vector2(90f, -300f), new Vector2(420f, 150f)), "15 / 15", 120, Theme.Ink, _black);
+            var chBest = Txt(At("Best", chCard, new Vector2(0.5f, 1f), new Vector2(0f, -500f), new Vector2(900f, 60f)), "BEST 15 / 15", 44, Theme.InkSoft, _condItalic);
+            chBest.characterSpacing = 6f;
+            var chPrize = At("Prize", chCard, new Vector2(0.5f, 1f), new Vector2(0f, -830f), new Vector2(820f, 520f));
+            chPrize.pivot = new Vector2(0.5f, 0.5f); chPrize.anchoredPosition = new Vector2(0f, -830f);
+            Img(chPrize, "Round", Theme.Ink, sliced: true);
+            Txt(At("Caption", chPrize, new Vector2(0.5f, 1f), new Vector2(0f, -26f), new Vector2(780f, 50f)), "NEW IN YOUR GARAGE", 38, Theme.Amber, _condItalic).characterSpacing = 6f;
+            var chCarRt = At("Car", chPrize, new Vector2(0f, 0.5f), new Vector2(150f, -20f), new Vector2(190f, 333f));
+            chCarRt.pivot = new Vector2(0.5f, 0.5f);
+            var chBody = Img(Stretch("Body", chCarRt), "Car", Theme.Orange); chBody.preserveAspect = false;
+            var chDetails = Img(Stretch("Details", chCarRt), "CarDetails", Color.white); chDetails.preserveAspect = false;
+            var chPrizeCar = chCarRt.gameObject.AddComponent<VehicleIcon>();
+            Configure(chPrizeCar, ("body", chBody), ("details", chDetails));
+            var chPrizeName = Txt(At("Name", chPrize, new Vector2(1f, 0.5f), new Vector2(-40f, 10f), new Vector2(480f, 160f)), "CHICKEN RIDER", 64, Color.white, _black, TextAlignmentOptions.Right);
+            chPrizeName.rectTransform.pivot = new Vector2(1f, 0.5f); chPrizeName.textWrappingMode = TextWrappingModes.Normal;
+            Txt(At("Kind", chPrize, new Vector2(1f, 0.5f), new Vector2(-40f, -90f), new Vector2(480f, 50f)), "A PART FOR YOUR ROOF", 32, Theme.Amber, _condItalic, TextAlignmentOptions.Right).rectTransform.pivot = new Vector2(1f, 0.5f);
+            var again = SquareButton(chCard, "Again", new Vector2(0.5f, 0f), new Vector2(-150f, 80f), "IconRetry", 170f);
+            var toMap = BigRoundButton(chCard, "Map", new Vector2(0.5f, 0f), new Vector2(150f, 40f), 230f, "MAP", out _, out _, out _, out _);
+            var chResult = chHost.gameObject.AddComponent<ChallengeResult>();
+            Configure(chResult, ("panel", chPanel.gameObject), ("group", chGroup), ("card", chCard), ("prize", chPrize), ("title", chTitleR), ("score", chScore),
+                ("best", chBest), ("prizeName", chPrizeName), ("prizeCar", chPrizeCar), ("againButton", again), ("mapButton", toMap));
+            chPanel.gameObject.SetActive(false);
 
             var watchComp = watch.gameObject.AddComponent<RivalWatch>();
             Configure(watchComp, ("race", race), ("tagTemplate", tag), ("ladder", ladder), ("ladderHeader", header), ("says", says), ("reward", rewardComp));

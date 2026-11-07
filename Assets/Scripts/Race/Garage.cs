@@ -7,76 +7,88 @@ namespace SomeGame.Race
     /// <summary>
     /// Everything for your car, and what you chose. Six kinds (<see cref="Slot"/>): the paint, the body (each with
     /// its own outline from above, all driving the same), a part on top, a decal, the trail behind you and a
-    /// gadget for the race. Things open with stars, by beating a rival in their home race (their signature part
-    /// and gadget), or with a cup's gold (all three stars in every race of the cup). The rivals use the same
+    /// gadget for the race. One garage, a shelf per cup: each cup's things open with that cup's own stars, by
+    /// beating its rival in their home race (their signature part and gadget), by its challenge, or with the cup's
+    /// gold (all three stars in every race of the cup). Once open, a thing goes on your car everywhere. The rivals use the same
     /// parts: Rosie Rust's car is the farm pickup with the hay-bale spoiler. A part you no longer have (after a
     /// reset) falls back to the first of its kind.
     /// </summary>
     public static class Garage
     {
         public enum Slot { Paint, Body, Top, Decal, Trail, Gadget }
-        public enum Unlock { Free, Stars, Rival, CupGold }
+        public enum Unlock { Free, Stars, Rival, CupGold, Challenge }
 
         public sealed class Part
         {
             public readonly string Id, Name, Blurb;
             public readonly Slot Slot;
+            /// <summary>The cup it belongs to (its asset's name): its shelf in the garage, and whose stars open it.</summary>
+            public readonly string Cup;
             public readonly Unlock How;
+            /// <summary>Stars of its own cup.</summary>
             public readonly int Stars;
-            /// <summary>The rival (their <see cref="RivalCharacter"/> asset's name) or the cup (its asset's name) that opens it.</summary>
+            /// <summary>The rival (their <see cref="RivalCharacter"/> asset's name) or the challenge (its level's name) that opens it.</summary>
             public readonly string From;
             public readonly Color Color;
 
-            public Part(Slot slot, string id, string name, string blurb, Unlock how = Unlock.Free, int stars = 0, string from = null, string hex = null)
+            public Part(string cup, Slot slot, string id, string name, string blurb, Unlock how = Unlock.Free, int stars = 0, string from = null, string hex = null)
             {
-                Slot = slot; Id = id; Name = name; Blurb = blurb; How = how; Stars = stars; From = from;
+                Cup = cup; Slot = slot; Id = id; Name = name; Blurb = blurb; How = how; Stars = stars; From = from;
                 Color = Color.white;
                 if (hex != null) ColorUtility.TryParseHtmlString(hex, out Color);
             }
         }
 
+        const string V = "Valley", W = "Winter";
+
+        // Each cup's own things, opened with that cup's stars (24 at most: 8 races, 3 stars each), its rival, its
+        // challenge and its gold. Free ones are on the first cup's shelf.
         public static readonly Part[] Parts =
         {
-            new(Slot.Paint, "orange", "SUNSET ORANGE", "The classic.", hex: "#FF7A1A"),
-            new(Slot.Paint, "red", "CHERRY RED", "Fast by colour alone.", Unlock.Stars, 4, hex: "#E5383B"),
-            new(Slot.Paint, "green", "RACING GREEN", "Old-school cool.", Unlock.Stars, 8, hex: "#2E9E5B"),
-            new(Slot.Paint, "blue", "OCEAN BLUE", "Deep and calm. Until GO.", Unlock.Stars, 12, hex: "#1F7BE0"),
-            new(Slot.Paint, "grape", "GRAPE", "Juicy.", Unlock.Stars, 16, hex: "#7B4FD1"),
-            new(Slot.Paint, "midnight", "MIDNIGHT", "For racing after dark.", Unlock.Stars, 22, hex: "#2B2D35"),
-            new(Slot.Paint, "pearl", "PEARL WHITE", "Showroom shine.", Unlock.Stars, 30, hex: "#F4F2EC"),
-            new(Slot.Paint, "gold", "SOLID GOLD", "Champions only.", Unlock.Stars, 40, hex: "#E8B923"),
+            new(V, Slot.Paint, "orange", "SUNSET ORANGE", "The classic.", hex: "#FF7A1A"),
+            new(V, Slot.Paint, "red", "CHERRY RED", "Fast by colour alone.", Unlock.Stars, 3, hex: "#E5383B"),
+            new(V, Slot.Paint, "green", "RACING GREEN", "Old-school cool.", Unlock.Stars, 7, hex: "#2E9E5B"),
+            new(V, Slot.Paint, "grape", "GRAPE", "Juicy.", Unlock.Stars, 12, hex: "#7B4FD1"),
+            new(V, Slot.Paint, "gold", "SOLID GOLD", "Champions only.", Unlock.Stars, 20, hex: "#E8B923"),
+            new(W, Slot.Paint, "blue", "OCEAN BLUE", "Deep and calm. Until GO.", Unlock.Stars, 2, hex: "#1F7BE0"),
+            new(W, Slot.Paint, "midnight", "MIDNIGHT", "For racing after dark.", Unlock.Stars, 8, hex: "#2B2D35"),
+            new(W, Slot.Paint, "pearl", "PEARL WHITE", "Fresh snow shine.", Unlock.Stars, 14, hex: "#F4F2EC"),
 
-            new(Slot.Body, "buggy", "DUNE BUGGY", "Roll cage, big tyres, no roof. Pure fun."),
-            new(Slot.Body, "rally", "RALLY HATCH", "Wide arches and a roof over your head.", Unlock.Stars, 6),
-            new(Slot.Body, "kart", "GO-KART", "Low, open, helmet on.", Unlock.Stars, 14),
-            new(Slot.Body, "pickup", "FARM PICKUP", "A cab up front, a wooden bed behind.", Unlock.Stars, 24),
+            new(V, Slot.Body, "buggy", "DUNE BUGGY", "Roll cage, big tyres, no roof. Pure fun."),
+            new(V, Slot.Body, "rally", "RALLY HATCH", "Wide arches and a roof over your head.", Unlock.Stars, 5),
+            new(V, Slot.Body, "pickup", "FARM PICKUP", "A cab up front, a wooden bed behind.", Unlock.Stars, 16),
+            new(W, Slot.Body, "kart", "GO-KART", "Low, open, helmet on.", Unlock.Stars, 10),
 
-            new(Slot.Top, "none", "NOTHING", "Clean and simple."),
-            new(Slot.Top, "spoiler", "SPOILER", "Looks fast standing still.", Unlock.Stars, 3),
-            new(Slot.Top, "roofrack", "ROOF RACK", "Packed for a road trip.", Unlock.Stars, 10),
-            new(Slot.Top, "lightbar", "LIGHT BAR", "Four lamps for the night stages.", Unlock.Stars, 18),
-            new(Slot.Top, "haybales", "HAY-BALE SPOILER", "Rosie Rust's: two bales and her pitchfork.", Unlock.Rival, from: "RosieRust"),
-            new(Slot.Top, "goldwing", "GOLDEN WING", "Three stars in every Valley Cup race.", Unlock.CupGold, from: "Valley"),
+            new(V, Slot.Top, "none", "NOTHING", "Clean and simple."),
+            new(V, Slot.Top, "spoiler", "SPOILER", "Looks fast standing still.", Unlock.Stars, 2),
+            new(V, Slot.Top, "roofrack", "ROOF RACK", "Packed for a road trip.", Unlock.Stars, 9),
+            new(V, Slot.Top, "haybales", "HAY-BALE SPOILER", "Rosie Rust's: two bales and her pitchfork.", Unlock.Rival, from: "RosieRust"),
+            new(V, Slot.Top, "chicken", "CHICKEN RIDER", "One of Rosie's chickens liked you. It comes along.", Unlock.Challenge, from: "ChickenChase"),
+            new(V, Slot.Top, "goldwing", "GOLDEN WING", "Three stars in every Valley Cup race.", Unlock.CupGold, from: V),
+            new(W, Slot.Top, "lightbar", "LIGHT BAR", "Four lamps for the long winter nights.", Unlock.Stars, 5),
+            new(W, Slot.Top, "skirack", "SKI RACK", "Two pairs of skis on the roof.", Unlock.Stars, 16),
 
-            new(Slot.Decal, "none", "NOTHING", "Let the paint speak."),
-            new(Slot.Decal, "stripes", "RACING STRIPES", "Two white stripes, nose to tail.", Unlock.Stars, 2),
-            new(Slot.Decal, "number", "LUCKY SEVEN", "A number on the bonnet.", Unlock.Stars, 8),
-            new(Slot.Decal, "flames", "HOT FLAMES", "Fire licking off the nose.", Unlock.Stars, 16),
-            new(Slot.Decal, "checkers", "CHECKERS", "The flag, on your car.", Unlock.Stars, 28),
-            new(Slot.Decal, "crest", "VALLEY CREST", "Three stars in every Valley Cup race.", Unlock.CupGold, from: "Valley"),
+            new(V, Slot.Decal, "none", "NOTHING", "Let the paint speak."),
+            new(V, Slot.Decal, "stripes", "RACING STRIPES", "Two white stripes, nose to tail.", Unlock.Stars, 4),
+            new(V, Slot.Decal, "number", "LUCKY SEVEN", "A number on the bonnet.", Unlock.Stars, 10),
+            new(V, Slot.Decal, "flames", "HOT FLAMES", "Fire licking off the nose.", Unlock.Stars, 14),
+            new(V, Slot.Decal, "crest", "VALLEY CREST", "Three stars in every Valley Cup race.", Unlock.CupGold, from: V),
+            new(W, Slot.Decal, "checkers", "CHECKERS", "The flag, on your car.", Unlock.Stars, 12),
+            new(W, Slot.Decal, "frost", "FROST STAR", "A big snowflake on the bonnet.", Unlock.Stars, 18),
 
-            new(Slot.Trail, "standard", "TYRE SMOKE", "The usual."),
-            new(Slot.Trail, "sparkle", "SPARKLES", "Glitter on every drift and boost.", Unlock.Stars, 5),
-            new(Slot.Trail, "flame", "FIRE", "Flames out of the back.", Unlock.Stars, 12),
-            new(Slot.Trail, "flake", "SNOWFLAKES", "A little blizzard behind you.", Unlock.Stars, 20),
-            new(Slot.Trail, "confetti", "CONFETTI", "Every lap is a party.", Unlock.Stars, 32),
+            new(V, Slot.Trail, "standard", "TYRE SMOKE", "The usual."),
+            new(V, Slot.Trail, "sparkle", "SPARKLES", "Glitter on every drift and boost.", Unlock.Stars, 6),
+            new(V, Slot.Trail, "flame", "FIRE", "Flames out of the back.", Unlock.Stars, 18),
+            new(V, Slot.Trail, "confetti", "CONFETTI", "Every lap is a party.", Unlock.Stars, 22),
+            new(W, Slot.Trail, "flake", "SNOWFLAKES", "A little blizzard behind you.", Unlock.Stars, 4),
+            new(W, Slot.Trail, "aurora", "NORTHERN LIGHTS", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
 
-            new(Slot.Gadget, "none", "NO GADGET", "Just you and the road."),
-            new(Slot.Gadget, "haybale", "HAY BALE DROP", "Drop a hay bale behind you: whoever hits it spins out. Once a lap.", Unlock.Rival, from: "RosieRust"),
+            new(V, Slot.Gadget, "none", "NO GADGET", "Just you and the road."),
+            new(V, Slot.Gadget, "haybale", "HAY BALE DROP", "Drop a hay bale behind you: whoever hits it spins out. Once a lap.", Unlock.Rival, from: "RosieRust"),
         };
 
         /// <summary>Gadgets of rivals still to come: shown as mystery slots.</summary>
-        public const int MysteryGadgets = 6;
+        public const int MysteryGadgets = 1; // a mystery slot on each cup's shelf that has no gadget yet
 
         /// <summary>Something was changed (a part chosen).</summary>
         public static event Action Changed;
@@ -102,41 +114,58 @@ namespace SomeGame.Race
         {
             Unlock.Free => true,
             _ when CupList.DevUnlockAll => true,
-            Unlock.Stars => ProgressStore.TotalStars >= part.Stars,
+            Unlock.Stars => CupStars(part.Cup) >= part.Stars,
             Unlock.Rival => RivalProgress.IsBeaten(part.From),
             Unlock.CupGold => CupGold(part.From),
+            Unlock.Challenge => ChallengeProgress.IsWon(part.From),
             _ => false,
         };
 
-        /// <summary>All three stars in every race of the cup.</summary>
-        public static bool CupGold(string cupName)
+        public static CupDefinition CupNamed(string name)
         {
             var list = CupList.Instance;
-            if (list == null) return false;
-            foreach (var cup in list.cups)
-            {
-                if (cup == null || cup.name != cupName || !cup.HasRaces) continue;
-                for (int i = 0; i < cup.races.Count; i++)
-                    if (!cup.races[i].isTutorial && ProgressStore.StarsOf(cup.races[i]) < 3) return false;
-                return true;
-            }
-            return false;
+            if (list == null) return null;
+            foreach (var cup in list.cups) if (cup != null && cup.name == name) return cup;
+            return null;
         }
+
+        /// <summary>The stars won in a cup's races (out of 24).</summary>
+        public static int CupStars(string cupName)
+        {
+            var cup = CupNamed(cupName);
+            if (cup == null || !cup.HasRaces) return 0;
+            int stars = 0;
+            for (int i = 0; i < cup.races.Count; i++) if (!cup.races[i].isTutorial) stars += ProgressStore.StarsOf(cup.races[i]);
+            return stars;
+        }
+
+        public static int CupMaxStars(string cupName)
+        {
+            var cup = CupNamed(cupName);
+            if (cup == null || !cup.HasRaces) return 0;
+            int n = 0;
+            for (int i = 0; i < cup.races.Count; i++) if (!cup.races[i].isTutorial) n += 3;
+            return n;
+        }
+
+        /// <summary>All three stars in every race of the cup.</summary>
+        public static bool CupGold(string cupName) => CupMaxStars(cupName) > 0 && CupStars(cupName) >= CupMaxStars(cupName);
 
         static string Key(Slot slot) => "Garage." + slot;
 
         /// <summary>The part in a slot (falls back to the first of its kind if it is not, or no longer, open).</summary>
         public static Part Equipped(Slot slot)
         {
-            var part = slot == Slot.Paint ? Find(LegacyPaint(), slot) : Find(PlayerPrefs.GetString(Key(slot), ""), slot);
+            string id = PlayerPrefs.GetString(Key(slot), "");
+            if (slot == Slot.Paint && id == "" && PlayerPrefs.HasKey(PaintKey)) id = LegacyPaint();
+            var part = Find(id, slot);
             return IsUnlocked(part) ? part : Find("", slot);
         }
 
         public static void Equip(Part part)
         {
             if (part == null || !IsUnlocked(part) || Equipped(part.Slot) == part) return;
-            if (part.Slot == Slot.Paint) PlayerPrefs.SetInt(PaintKey, Array.IndexOf(Paints, part));
-            else PlayerPrefs.SetString(Key(part.Slot), part.Id);
+            PlayerPrefs.SetString(Key(part.Slot), part.Id);
             PlayerPrefs.Save();
             Changed?.Invoke();
         }
@@ -147,7 +176,9 @@ namespace SomeGame.Race
 
         public static readonly Part[] Paints = new List<Part>(Of(Slot.Paint)).ToArray();
 
-        static string LegacyPaint() => Paints[Mathf.Clamp(PlayerPrefs.GetInt(PaintKey, 0), 0, Paints.Length - 1)].Id;
+        // Paints used to be saved by their place in the old list.
+        static readonly string[] OldPaints = { "orange", "red", "green", "blue", "grape", "midnight", "pearl", "gold" };
+        static string LegacyPaint() => OldPaints[Mathf.Clamp(PlayerPrefs.GetInt(PaintKey, 0), 0, OldPaints.Length - 1)];
 
         public static bool IsUnlocked(int paint) => IsUnlocked(Paints[paint]);
 
@@ -189,6 +220,23 @@ namespace SomeGame.Race
         {
             PlayerPrefs.SetInt(SeenKey, UnlockedCount - FreeParts + 1);
             PlayerPrefs.Save();
+        }
+    }
+
+    /// <summary>The map's challenges (a funny one per cup): won, and the best score.</summary>
+    public static class ChallengeProgress
+    {
+        public static bool IsWon(string challenge) => !string.IsNullOrEmpty(challenge) && PlayerPrefs.GetInt("Challenge.Won." + challenge, 0) == 1;
+        public static int Best(string challenge) => PlayerPrefs.GetInt("Challenge.Best." + challenge, 0);
+
+        /// <summary>Records a try; true if it was the first win.</summary>
+        public static bool Record(string challenge, int score, bool won)
+        {
+            if (score > Best(challenge)) PlayerPrefs.SetInt("Challenge.Best." + challenge, score);
+            bool first = won && !IsWon(challenge);
+            if (won) PlayerPrefs.SetInt("Challenge.Won." + challenge, 1);
+            PlayerPrefs.Save();
+            return first;
         }
     }
 

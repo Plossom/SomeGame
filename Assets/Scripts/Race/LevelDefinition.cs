@@ -16,6 +16,8 @@ namespace SomeGame.Race
         public TrackLayout track;
         [Tooltip("The practice drive: no rivals, no finish, the tutorial hints guide the player.")]
         public bool isTutorial;
+        [Tooltip("A cup's funny challenge (not a race): no rivals, no records; the challenge decides when it is over.")]
+        public bool isChallenge;
         [Tooltip("Picture of the whole track from above, shown while the race loads (SomeGame > Generate Track Previews).")]
         public Sprite preview;
         [Min(1)] public int laps = 3;
