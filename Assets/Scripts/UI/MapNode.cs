@@ -31,6 +31,22 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text caption;
         [Tooltip("Background of the caption, shown with it.")]
         [SerializeField] GameObject captionRoot;
+        [Tooltip("The face of the rival who waits at this stop (their home race): a silhouette until you meet them, a tick once beaten.")]
+        [SerializeField] GameObject rivalBadge;
+        [SerializeField] UnityEngine.UI.Image rivalPicture;
+        [SerializeField] GameObject rivalMystery, rivalBeaten;
+
+        /// <summary>The rival waiting here (null: nobody).</summary>
+        public void SetRival(SomeGame.Race.RivalCharacter rival, bool known, bool beaten)
+        {
+            if (rivalBadge == null) return;
+            rivalBadge.SetActive(rival != null);
+            if (rival == null) return;
+            rivalPicture.sprite = rival.portrait;
+            rivalPicture.color = known ? Color.white : new Color(0.08f, 0.1f, 0.12f, 0.92f);
+            rivalMystery.SetActive(!known);
+            rivalBeaten.SetActive(beaten);
+        }
 
         /// <summary>
         /// The race opens: the lock shakes, bursts away in a flash of sparkles, and the stop pops up in its

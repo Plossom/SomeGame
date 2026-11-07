@@ -1,10 +1,14 @@
+using SomeGame.Car;
+using SomeGame.Race;
 using UnityEngine;
 
 namespace SomeGame.UI
 {
     /// <summary>
-    /// The little vehicle on the map and on the loading bar: the buggy, or on the Winter Cup the snowmobile.
-    /// Swaps the body (tinted), details and shadow pictures; the buggy's are the images' own.
+    /// A car in the menus (on the map, on the loading bar, on the garage's stage, on a rival's card): the car as
+    /// built in the garage (<see cref="Dress"/>: its body, decal, part on top and paint), or on the Winter Cup the
+    /// snowmobile (which takes only the paint). Swaps the body (tinted), details and shadow pictures; the decal and
+    /// the top are images of their own laid over it.
     /// </summary>
     public class VehicleIcon : MonoBehaviour
     {
@@ -16,27 +20,80 @@ namespace SomeGame.UI
         [SerializeField] Sprite snowmobileShadow;
 
         Sprite _carBody, _carDetails, _carShadow;
-        bool _remembered;
+        bool _remembered, _snowmobile;
+        CarLook? _look;
+        UnityEngine.UI.Image _decal, _top;
+
+        void Remember()
+        {
+            if (_remembered) return;
+            _carBody = body != null ? body.sprite : null;
+            _carDetails = details != null ? details.sprite : null;
+            _carShadow = shadow != null ? shadow.sprite : null;
+            _remembered = true;
+        }
 
         public void Show(bool snowmobile)
         {
-            if (!_remembered)
-            {
-                _carBody = body != null ? body.sprite : null;
-                _carDetails = details != null ? details.sprite : null;
-                _carShadow = shadow != null ? shadow.sprite : null;
-                _remembered = true;
-            }
-            snowmobile &= snowmobileBody != null;
-            if (body != null) body.sprite = snowmobile ? snowmobileBody : _carBody;
-            if (details != null) details.sprite = snowmobile ? snowmobileDetails : _carDetails;
-            if (shadow != null) shadow.sprite = snowmobile ? snowmobileShadow : _carShadow;
+            Remember();
+            _snowmobile = snowmobile && snowmobileBody != null;
+            Refresh();
         }
 
-        /// <summary>The body in your car's paint (from the garage).</summary>
+        /// <summary>The body in a paint (the rest as it is).</summary>
         public void Paint(Color color)
         {
             if (body != null) body.color = color;
+        }
+
+        /// <summary>The car as built: body, decal, top and paint.</summary>
+        public void Dress(CarLook look)
+        {
+            Remember();
+            _look = look;
+            Refresh();
+        }
+
+        void Refresh()
+        {
+            var art = GarageArt.Instance;
+            var entry = _look.HasValue && art != null ? art.Get(_look.Value.Body) : null;
+            if (body != null)
+            {
+                body.sprite = _snowmobile ? snowmobileBody : entry?.full != null ? entry.full : _carBody;
+                if (_look.HasValue) body.color = _look.Value.Paint;
+            }
+            if (details != null) details.sprite = _snowmobile ? snowmobileDetails : entry?.details != null ? entry.details : _carDetails;
+            if (shadow != null) shadow.sprite = _snowmobile ? snowmobileShadow : _carShadow;
+            Sprite decal = null, top = null;
+            if (_look.HasValue && !_snowmobile && art != null)
+            {
+                decal = art.Get(_look.Value.Decal)?.full;
+                top = art.Get(_look.Value.Top)?.full;
+            }
+            Overlay(ref _decal, "Decal", decal, details != null ? details.transform.GetSiblingIndex() : -1);
+            Overlay(ref _top, "Top", top, -1);
+        }
+
+        // An image over the body (the decal under the details, the top over everything).
+        void Overlay(ref UnityEngine.UI.Image image, string name, Sprite sprite, int index)
+        {
+            if (image == null)
+            {
+                if (sprite == null || body == null) return;
+                var rt = new GameObject(name, typeof(RectTransform)).GetComponent<RectTransform>();
+                rt.SetParent(body.transform.parent, false);
+                var from = (RectTransform)body.transform;
+                rt.anchorMin = from.anchorMin; rt.anchorMax = from.anchorMax; rt.pivot = from.pivot;
+                rt.anchoredPosition = from.anchoredPosition; rt.sizeDelta = from.sizeDelta;
+                rt.localRotation = from.localRotation; rt.localScale = from.localScale;
+                image = rt.gameObject.AddComponent<UnityEngine.UI.Image>();
+                image.raycastTarget = false;
+                image.preserveAspect = body.preserveAspect;
+            }
+            image.transform.SetSiblingIndex(index >= 0 ? index : image.transform.parent.childCount - 1);
+            image.sprite = sprite;
+            image.enabled = sprite != null;
         }
     }
 }

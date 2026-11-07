@@ -11,10 +11,26 @@ namespace SomeGame.Race
     public class RivalCharacter : ScriptableObject
     {
         public string displayName = "Rival";
+        [Tooltip("Who they are in a few words, e.g. THE GRUMPY FARMER.")]
+        public string title = "";
+        [TextArea(2, 4)] public string bio = "";
         [Tooltip("Round portrait (transparent around the circle).")]
         public Sprite portrait;
-        public Color carColor = Color.red;
+        [Tooltip("The big painting: the rival standing by their car (the first meeting, their card).")]
+        public Sprite painting;
         public LevelDefinition homeRace;
+
+        [Header("Their car (garage parts, the same as yours)")]
+        public Color carColor = Color.red;
+        public string body = "buggy", top = "none", decal = "none";
+        [Tooltip("The gadget they use in their home race, and you win by beating them (a garage part id).")]
+        public string gadget = "";
+
+        [Header("Words")]
+        [Tooltip("The first meeting, line by line (when their home race opens).")]
+        [TextArea(1, 3)] public string[] meetLines;
+        [Tooltip("On their home race's card, leaning in.")]
+        public string cardLine = "";
         [Tooltip("Said during the countdown.")]
         [TextArea(1, 3)] public string[] startLines;
         [Tooltip("Said at the finish when they beat you.")]
@@ -32,6 +48,9 @@ namespace SomeGame.Race
             return lines[i];
         }
         [System.NonSerialized] string _last;
+
+        /// <summary>Everyone with a face (Resources/Rivals).</summary>
+        public static RivalCharacter[] All => Resources.LoadAll<RivalCharacter>("Rivals");
 
         /// <summary>The character whose home race this is, if any.</summary>
         public static RivalCharacter For(LevelDefinition level)

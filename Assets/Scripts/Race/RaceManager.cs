@@ -146,18 +146,20 @@ namespace SomeGame.Race
             var progress = rivals[0].GetComponent<RaceProgress>();
             progress.Character = Character;
             progress.DisplayName = Character.displayName;
-            var body = SomeGame.Online.OnlineRace.Visual(rivals[0]);
-            if (body != null) body.color = Character.carColor;
+            SomeGame.Car.CarLook.Of(Character.body, Character.top, Character.decal, Character.carColor).Apply(rivals[0], CarTrack);
+            if (Character.gadget == "haybale") rivals[0].gameObject.AddComponent<SomeGame.Car.HayBaleGadget>().Ai = true;
         }
 
-        // Your car in the paint from the garage (its tyre marks too); online races keep the room's colours.
+        // A track for cars (not the snowmobile): the garage's bodies and parts show.
+        bool CarTrack => track.Layout == null || track.Layout.vehicle == SomeGame.Track.TrackLayout.Vehicle.Car;
+
+        // Your car as you built it in the garage; online races keep the room's colours.
         void PaintPlayer()
         {
-            var body = SomeGame.Online.OnlineRace.Visual(player);
-            if (body == null) return;
-            var paint = Garage.Color;
-            body.color = paint;
-            foreach (var marks in player.GetComponents<TyreMarks>()) marks.Tint = new Color(paint.r, paint.g, paint.b, marks.Tint.a);
+            SomeGame.Car.CarLook.Player.Apply(player, CarTrack);
+            // The gadget from the garage (not in the practice drive).
+            if (Garage.Equipped(Garage.Slot.Gadget).Id == "haybale" && (Level == null || !Level.isTutorial))
+                player.gameObject.AddComponent<SomeGame.Car.HayBaleGadget>();
         }
 
         // Rivals share their CarStats assets, so each gets a scaled runtime copy.

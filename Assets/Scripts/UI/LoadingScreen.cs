@@ -60,7 +60,11 @@ namespace SomeGame.UI
                 // Online races wear the room's colours. The first paint is the cup's own accent (like on the map, and
                 // like the race's recolouring leaves it at the end), so it doesn't change colour as the race opens.
                 if (!GameSession.Online)
-                    vehicle.Paint(Theme.TryMap(Garage.Color, Theme.Valley, palette, out var cupPaint) ? cupPaint : Garage.Color);
+                {
+                    var look = SomeGame.Car.CarLook.Player;
+                    if (Theme.TryMap(look.Paint, Theme.Valley, palette, out var cupPaint)) look.Paint = cupPaint;
+                    vehicle.Dress(look);
+                }
             }
             SetProgress(0f);
             group.alpha = 0f;

@@ -35,6 +35,8 @@ namespace SomeGame.UI
         [SerializeField] RectTransform[] ladderRows;
         [Tooltip("A rival with a face speaking: a Portrait (with a Picture), a Name and a Bubble with a Label.")]
         [SerializeField] RectTransform says;
+        [Tooltip("The first win against a rival with a face: their prizes.")]
+        [SerializeField] RivalReward reward;
 
         class Tag
         {
@@ -273,8 +275,20 @@ namespace SomeGame.UI
             foreach (var car in race.Standings) if (car != null && car.Character == character) them = car;
             if (them == null) return;
             bool beatThem = race.PositionOf(race.Player) < race.PositionOf(them);
+            // The first win against them: their gadget and part are yours (shown big over the results).
+            if (beatThem && race.Online == null && RaceManager.KeepRecords && RivalProgress.MarkBeaten(character.name) && reward != null)
+            {
+                StartCoroutine(Later(1.6f, () => reward.Show(character, character.Pick(character.loseLines))));
+                return;
+            }
             // Between the results card and the buttons.
-            Say(character, character.Pick(beatThem ? character.loseLines : character.winLines), 4.5f, _saysHome + new Vector2(0f, 250f), 0.9f);
+            Say(character, character.Pick(beatThem ? character.loseLines : character.winLines), 4.5f, _saysHome + new Vector2(0f, 20f), 0.9f);
+        }
+
+        System.Collections.IEnumerator Later(float seconds, System.Action action)
+        {
+            yield return new WaitForSecondsRealtime(seconds);
+            action();
         }
 
         void Say(RivalCharacter character, string line, float seconds, Vector2 home, float delay = 0f)

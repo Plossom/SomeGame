@@ -158,7 +158,7 @@ namespace SomeGame.Input
             if (screen != null)
             {
                 foreach (var touch in screen.touches)
-                    if (touch.press.wasPressedThisFrame) taps++;
+                    if (touch.press.wasPressedThisFrame && !OnButton(touch)) taps++;
             }
             else
             {
@@ -335,9 +335,15 @@ namespace SomeGame.Input
             if (screen == null) return false;
             int pressed = 0;
             foreach (var touch in screen.touches)
-                if (touch.press.isPressed && ++pressed >= 2) return true;
+                if (touch.press.isPressed && !OnButton(touch) && ++pressed >= 2) return true;
             return false;
         }
+
+        /// <summary>A button over the driving area (the gadget's): a touch that starts on it is not for driving.</summary>
+        public static System.Func<Vector2, bool> ButtonAt { get; set; }
+
+        static bool OnButton(UnityEngine.InputSystem.Controls.TouchControl touch) =>
+            ButtonAt != null && ButtonAt(touch.startPosition.ReadValue());
 
         static bool DriftKeyDown()
         {

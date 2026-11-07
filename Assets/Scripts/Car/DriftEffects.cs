@@ -39,6 +39,9 @@ namespace SomeGame.Car
         ParticleSystem _flame;
         int _lastTier = -1;
 
+        /// <summary>The particles' material (the garage's trails use it too).</summary>
+        public Material ParticleMaterial => particleMaterial;
+
         /// <summary>More and bigger sparks (recordings).</summary>
         public float Emphasis { get; set; } = 1f;
 

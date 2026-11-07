@@ -38,9 +38,13 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image startFace, startShadow;
         [SerializeField] TMP_Text startLabel;
         [SerializeField] RectTransform startRing;
+        [Tooltip("The race's rival leaning in over the picture: their face, a speech bubble, and their gadget as the prize.")]
+        [SerializeField] CanvasGroup rival;
+        [SerializeField] UnityEngine.UI.Image rivalPicture;
+        [SerializeField] TMP_Text rivalLine, rivalPrize;
 
         float _focusedAt = -10f, _pressedAt = -10f, _settledAt = -10f;
-        bool _focused, _settled, _canEnter;
+        bool _focused, _settled, _canEnter, _hasRival;
         readonly bool[] _earned = new bool[3];
 
         public int Index { get; private set; }
@@ -97,6 +101,21 @@ namespace SomeGame.UI
                 if (rim != null) rim.gameObject.SetActive(earned);
             }
 
+            // Their rival leans in (once met; a silhouette with a teaser before).
+            var character = RivalCharacter.For(level);
+            _hasRival = character != null && canEnter && rival != null;
+            if (rival != null) rival.gameObject.SetActive(_hasRival);
+            if (_hasRival)
+            {
+                bool met = RivalProgress.HasMet(character.name);
+                bool beaten = RivalProgress.IsBeaten(character.name);
+                rivalPicture.sprite = character.portrait;
+                rivalPicture.color = met ? Color.white : new Color(0.08f, 0.1f, 0.12f, 0.95f);
+                rivalLine.text = met ? character.cardLine : "Someone is waiting for you here...";
+                var gadget = Garage.Find(character.gadget, Garage.Slot.Gadget);
+                rivalPrize.text = beaten ? "BEATEN!  GADGET WON" : $"WIN  {gadget?.Name}";
+            }
+
             lockCover.SetActive(!canEnter);
             if (!canEnter)
             {
@@ -129,6 +148,7 @@ namespace SomeGame.UI
             startButton.interactable = focused && _canEnter;
             focusButton.interactable = !focused;
             closeButton.interactable = focused;
+            if (rival != null && _hasRival) rival.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(a * 2.5f));
             if (focused && !_focused) _focusedAt = Time.unscaledTime;
             _focused = focused;
             // Come to rest in the middle (not just passing through): the earned stars give a little bump.
@@ -181,6 +201,13 @@ namespace SomeGame.UI
                 var frame = (RectTransform)shine.parent;
                 float w = frame.rect.width + frame.rect.height;
                 shine.anchoredPosition = new Vector2(Mathf.Lerp(-w * 0.6f, w * 0.6f, Mathf.Clamp01(s / 0.7f)), 0f);
+            }
+            // The rival leans in when the card comes to rest, and sways a little.
+            if (rival != null && _hasRival)
+            {
+                float lean = _settled ? Mathf.Clamp01((t - _settledAt - 0.15f) / 0.4f) : 0f;
+                rival.transform.localScale = Vector3.one * (Mathf.Lerp(0.85f, 1f, lean) + 0.1f * Mathf.Sin(lean * Mathf.PI));
+                rival.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(-14f, 4f, lean) + 1.5f * Mathf.Sin(t * 1.7f));
             }
             float press = Mathf.Clamp01((t - _pressedAt) / 0.35f);
             startButton.transform.localScale = Vector3.one * (press < 1f ? 1f - 0.12f * Mathf.Sin(press * Mathf.PI) : 1f);

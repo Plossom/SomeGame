@@ -13,9 +13,21 @@ MonoBehaviour:
   m_Name: RosieRust
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.RivalCharacter
   displayName: Rosie Rust
+  title: THE GRUMPY FARMER
+  bio: Tunes tractors before breakfast and has never lost on her own meadow. Hates rookies, loves hay.
   portrait: {fileID: 21300000, guid: cef9826d0c319429189a8f28a5b941e2, type: 3}
-  carColor: {r: 0.78431374, g: 0.27450982, b: 0.18431373, a: 1}
+  painting: {fileID: 21300000, guid: fc915b2eb53614b9cbfb82fcd9808a9b, type: 3}
   homeRace: {fileID: 11400000, guid: ac524c4c026cf418b9d57aca283a3b56, type: 2}
+  carColor: {r: 0.78431374, g: 0.27450982, b: 0.18431373, a: 1}
+  body: pickup
+  top: haybales
+  decal: none
+  gadget: haybale
+  meetLines:
+  - Well, well. A new face on MY meadow?
+  - This here's my farm pickup. And that's my hay bale launcher. Anything behind me gets a face full of hay!
+  - Beat me at Meadow Run and the launcher is yours. Not that you will, rookie.
+  cardLine: My meadow, my rules. Try to keep up, rookie!
   startLines:
   - My meadow, my rules. Try to keep up!
   - See you at the finish... if you get there.

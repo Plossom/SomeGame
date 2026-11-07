@@ -73,6 +73,8 @@ namespace SomeGame.UI
         [Tooltip("The dot on the garage button: a paint has opened since you last looked.")]
         [SerializeField] GameObject garageDot;
         [SerializeField] GarageScreen garage;
+        [Tooltip("Meeting a rival the first time their home race is open.")]
+        [SerializeField] RivalMeeting meeting;
 
         [Header("Selected race")]
         [SerializeField] TMP_Text chapterLabel;
@@ -238,7 +240,7 @@ namespace SomeGame.UI
         // The car on the map wears your paint (also after a cup switch has recoloured the screen).
         void PaintCar()
         {
-            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Paint(Garage.Color);
+            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Dress(SomeGame.Car.CarLook.Player);
         }
 
         // ------------------------------------------------------------------ unlocks
@@ -271,6 +273,10 @@ namespace SomeGame.UI
                 _hideFrom = int.MaxValue;
                 UnlockLog.SeeRaces(catalog);
                 Select(races[^1]); // drive to the newest race
+                // A rival waits there: they come to say hello.
+                yield return new WaitForSecondsRealtime(0.9f);
+                bool met = false;
+                if (MeetRival(races[^1], () => met = true)) yield return new WaitUntil(() => met);
             }
             CupDefinition newest = null;
             if (cups && !CupList.DevUnlockAll && celebration != null)
@@ -1044,6 +1050,8 @@ namespace SomeGame.UI
                     : ProgressStore.HasWon(level) ? MapNodeState.Won
                     : MapNodeState.Open;
                 _nodes[i].Bind((i + 1).ToString(), state, ProgressStore.StarsOf(level), level.starsRequired, i == _selected, null, () => OnStopTapped(index));
+                var rival = RivalCharacter.For(level);
+                _nodes[i].SetRival(rival, rival != null && (RivalProgress.HasMet(rival.name) || (CupList.DevUnlockAll && state != MapNodeState.Locked)), rival != null && RivalProgress.IsBeaten(rival.name));
             }
             ShowSelected();
         }
@@ -1074,12 +1082,28 @@ namespace SomeGame.UI
         void ShowInfo()
         {
             if (deck == null || catalog.Count == 0 || _celebrating || deck.IsOpen) return;
+            if (MeetRival(_selected, ShowInfo)) return; // first their rival says hello
             var races = new List<RaceDeck.Entry>();
             for (int i = 0; i < catalog.Count && i < _hideFrom; i++)
                 if (ProgressStore.IsVisible(catalog, i)) races.Add(new RaceDeck.Entry { level = catalog[i], canEnter = ProgressStore.CanEnter(catalog, i) });
             if (_selected >= races.Count) return;
             deck.Open(races, _selected, _cup, i => i < _nodes.Count ? (RectTransform)_nodes[i].transform : null,
                 i => { if (i != _selected) Select(i); }, StartRace);
+        }
+
+        // The race's rival, met for the first time now that it is open: their meeting, then (done). False if there is none.
+        bool MeetRival(int index, System.Action done)
+        {
+            if (meeting == null || meeting.IsOpen || index < 0 || index >= catalog.Count || !ProgressStore.CanEnter(catalog, index)) return false;
+            var rival = RivalCharacter.For(catalog[index]);
+            if (rival == null || RivalProgress.HasMet(rival.name)) return false;
+            meeting.Show(rival, () =>
+            {
+                RivalProgress.MarkMet(rival.name);
+                Refresh();
+                done?.Invoke();
+            });
+            return true;
         }
 
         void StartRace(int index)

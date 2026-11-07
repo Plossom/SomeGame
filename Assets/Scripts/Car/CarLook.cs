@@ -1,0 +1,80 @@
+using SomeGame.Race;
+using UnityEngine;
+
+namespace SomeGame.Car
+{
+    /// <summary>
+    /// How a car looks: its body, the part on top, a decal, the paint and the trail behind it. The player's comes
+    /// from the <see cref="Garage"/>; a rival with a face has their own (<see cref="RivalCharacter"/>).
+    /// </summary>
+    public struct CarLook
+    {
+        public Garage.Part Body, Top, Decal, Trail;
+        public Color Paint;
+
+        public static CarLook Player => new()
+        {
+            Body = Garage.Equipped(Garage.Slot.Body), Top = Garage.Equipped(Garage.Slot.Top), Decal = Garage.Equipped(Garage.Slot.Decal),
+            Trail = Garage.Equipped(Garage.Slot.Trail), Paint = Garage.Color,
+        };
+
+        public static CarLook Of(string body, string top, string decal, Color paint) => new()
+        {
+            Body = Garage.Find(body, Garage.Slot.Body), Top = Garage.Find(top, Garage.Slot.Top), Decal = Garage.Find(decal, Garage.Slot.Decal),
+            Trail = Garage.Find("", Garage.Slot.Trail), Paint = paint,
+        };
+
+        /// <summary>
+        /// Dresses a race car: its body and details swapped, the decal and the top laid over it, the paint on the body
+        /// (and its tyre marks) and the trail. <paramref name="car"/> false: the track's own vehicle (the snowmobile)
+        /// takes only the paint and the trail.
+        /// </summary>
+        public void Apply(CarMovement target, bool car)
+        {
+            var art = GarageArt.Instance;
+            SpriteRenderer visual = null, details = null;
+            foreach (var sr in target.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                if (sr.name == "Visual") visual = sr;
+                else if (sr.name == "Details") details = sr;
+            }
+            if (visual == null) return;
+            visual.color = Paint;
+            foreach (var marks in target.GetComponents<TyreMarks>()) marks.Tint = new Color(Paint.r, Paint.g, Paint.b, marks.Tint.a);
+            var body = car && art != null ? art.Get(Body) : null;
+            if (body != null)
+            {
+                if (body.race != null) visual.sprite = body.race;
+                if (details != null && body.details != null) details.sprite = body.details;
+            }
+            if (details != null) details.sortingOrder = 12; // the decal goes between the body and its details
+            Layer(visual, "Decal", car && art != null ? art.Get(Decal)?.full : null, 11);
+            Layer(visual, "Top", car && art != null ? art.Get(Top)?.full : null, 13);
+            if (Trail != null && Trail.Id != "standard")
+            {
+                if (!target.TryGetComponent(out TrailFx trail)) trail = target.gameObject.AddComponent<TrailFx>();
+                trail.Use(Trail, Paint);
+            }
+        }
+
+        static void Layer(SpriteRenderer visual, string name, Sprite sprite, int order)
+        {
+            var t = visual.transform.Find(name);
+            if (sprite == null)
+            {
+                if (t != null) t.gameObject.SetActive(false);
+                return;
+            }
+            if (t == null)
+            {
+                t = new GameObject(name).transform;
+                t.SetParent(visual.transform, false);
+                t.gameObject.AddComponent<SpriteRenderer>();
+            }
+            t.gameObject.SetActive(true);
+            var sr = t.GetComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.sortingOrder = order;
+        }
+    }
+}
