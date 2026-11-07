@@ -313,7 +313,7 @@ namespace SomeGame.UI
                 rt.localScale = Vector3.one * scale;
                 rt.localRotation = Quaternion.Euler(0f, 0f, rot);
                 card.SetAlpha(alpha * Mathf.Clamp01(2.6f - a));
-                card.SetFocus(off);
+                card.SetFocus(off, settled);
             }
             // The card nearest the middle in front, the others behind it by their distance.
             _order.Sort((p, q) => Mathf.Abs(q.Index - _pos).CompareTo(Mathf.Abs(p.Index - _pos)));

@@ -29,7 +29,7 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text lockLabel;
         [SerializeField] GameObject wonBadge;
         [SerializeField] UnityEngine.UI.Image[] difficultyPips;
-        [Tooltip("The three star-time groups: their star icons light up when your best time beats the time.")]
+        [Tooltip("The three star-time medals (a face, a rim, the stars S0.., the time): gold when your best time beats the time.")]
         [SerializeField] RectTransform[] starGroups;
         [SerializeField] TMP_Text[] starTimes;
         [SerializeField] UnityEngine.UI.Button closeButton;
@@ -38,8 +38,9 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text startLabel;
         [SerializeField] RectTransform startRing;
 
-        float _focusedAt = -10f, _pressedAt = -10f;
-        bool _focused, _canEnter;
+        float _focusedAt = -10f, _pressedAt = -10f, _settledAt = -10f;
+        bool _focused, _settled, _canEnter;
+        readonly bool[] _earned = new bool[3];
 
         public int Index { get; private set; }
         public UnityEngine.UI.Button FocusButton => focusButton;
@@ -80,8 +81,15 @@ namespace SomeGame.UI
                 bool has = i < level.starTimes.Length;
                 starTimes[i].text = has ? TimeFormat.Race(level.starTimes[i]) : "-";
                 bool earned = best.HasValue && has && best.Value <= level.starTimes[i];
-                starTimes[i].color = earned ? Theme.White : Theme.WithAlpha(Theme.Stone, 0.6f);
-                foreach (var icon in Stars(i)) icon.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.Stone, 0.35f);
+                if (i < _earned.Length) _earned[i] = earned;
+                starTimes[i].color = earned ? Theme.Ink : Theme.WithAlpha(Theme.InkSoft, 0.55f);
+                foreach (var star in Stars(i)) star.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.StoneDark, 0.3f);
+                var medal = starGroups != null && i < starGroups.Length ? starGroups[i] : null;
+                if (medal == null) continue;
+                var face = medal.Find("Face")?.GetComponent<UnityEngine.UI.Image>();
+                if (face != null) face.color = earned ? Color.white : Theme.CreamDark;
+                var rim = medal.Find("Rim");
+                if (rim != null) rim.gameObject.SetActive(earned);
             }
             if (wonBadge != null) wonBadge.SetActive(ProgressStore.HasWon(level));
 
@@ -99,14 +107,14 @@ namespace SomeGame.UI
 
         IEnumerable<UnityEngine.UI.Image> Stars(int group) =>
             starGroups != null && group < starGroups.Length && starGroups[group] != null
-                ? starGroups[group].GetComponentsInChildren<UnityEngine.UI.Image>(true)
+                ? System.Linq.Enumerable.Where(starGroups[group].GetComponentsInChildren<UnityEngine.UI.Image>(true), image => image.name.StartsWith("S"))
                 : Array.Empty<UnityEngine.UI.Image>();
 
         /// <summary>
         /// How far from the middle of the deck the card is (0 in the middle, 1 one place off): the frost, the blurred
-        /// picture, and whether its buttons work.
+        /// picture, and whether its buttons work. <paramref name="settled"/>: the deck has come to rest.
         /// </summary>
-        public void SetFocus(float away)
+        public void SetFocus(float away, bool settled)
         {
             float a = Mathf.Clamp01(Mathf.Abs(away));
             if (veil != null) veil.color = Theme.WithAlpha(Theme.Cream, 0.62f * Mathf.SmoothStep(0f, 1f, a));
@@ -117,6 +125,10 @@ namespace SomeGame.UI
             closeButton.interactable = focused;
             if (focused && !_focused) _focusedAt = Time.unscaledTime;
             _focused = focused;
+            // Come to rest in the middle (not just passing through): the earned stars give a little bump.
+            bool rest = focused && settled;
+            if (rest && !_settled) _settledAt = Time.unscaledTime;
+            _settled = rest;
             if (glow != null)
             {
                 glow.gameObject.SetActive(a < 0.6f);
@@ -138,12 +150,14 @@ namespace SomeGame.UI
         void Update()
         {
             float t = Time.unscaledTime;
-            // Brought to the middle: the earned stars pop in one after another.
+            // Come to rest in the middle: the earned stars bump up one after another (from their full size, so
+            // nothing jumps when a card arrives).
             for (int i = 0; starGroups != null && i < starGroups.Length; i++)
             {
                 if (starGroups[i] == null) continue;
-                float k = Mathf.Clamp01((t - _focusedAt - 0.08f - i * 0.09f) / 0.3f);
-                starGroups[i].localScale = Vector3.one * (_focused ? Pop(k) : 1f);
+                float k = Mathf.Clamp01((t - _settledAt - 0.1f - i * 0.1f) / 0.32f);
+                float bump = _settled && i < _earned.Length && _earned[i] ? Mathf.Sin(k * Mathf.PI) * (1f - k * 0.4f) : 0f;
+                foreach (var star in Stars(i)) star.rectTransform.localScale = Vector3.one * (1f + 0.35f * bump);
             }
             // The ring round START breathes; the light sweeps over the picture every few seconds.
             if (startRing != null)
@@ -162,18 +176,9 @@ namespace SomeGame.UI
                 float w = frame.rect.width + frame.rect.height;
                 shine.anchoredPosition = new Vector2(Mathf.Lerp(-w * 0.6f, w * 0.6f, Mathf.Clamp01(s / 0.7f)), 0f);
             }
-            // The cross pops up on the card in the middle.
-            closeButton.transform.localScale = Vector3.one * (_focused ? Pop(Mathf.Clamp01((t - _focusedAt - 0.15f) / 0.3f)) * Mathf.Clamp01((t - _focusedAt - 0.15f) / 0.1f) : 0f);
             float press = Mathf.Clamp01((t - _pressedAt) / 0.35f);
             startButton.transform.localScale = Vector3.one * (press < 1f ? 1f - 0.12f * Mathf.Sin(press * Mathf.PI) : 1f);
         }
 
-        static float Pop(float t)
-        {
-            const float s = 2.2f;
-            if (t <= 0f) return 0.6f;
-            float u = Mathf.Clamp01(t) - 1f;
-            return Mathf.LerpUnclamped(0.6f, 1f, 1f + u * u * ((s + 1f) * u + s));
-        }
     }
 }

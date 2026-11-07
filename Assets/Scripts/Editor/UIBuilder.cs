@@ -486,20 +486,29 @@ namespace SomeGame.EditorTools
             for (int i = 0; i < pips.Length; i++)
                 pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(RowLeft + 78f + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
 
-            // The star times on a dark plate.
-            var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1290f), new Vector2(W - 80f, 132f));
-            Img(timesRt, "Round", Theme.Ink, sliced: true);
+            // The star times as three light medals: the stars over the time; an earned one turns gold with a gold rim.
+            var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1286f), new Vector2(W - 80f, 140f));
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var g = At($"Star{i + 1}", timesRt, new Vector2(0f, 0.5f), new Vector2(26f + i * 246f, 0f), new Vector2(236f, 120f));
-                g.pivot = new Vector2(0f, 0.5f);
-                g.anchoredPosition = new Vector2(26f + i * 246f, 0f);
+                var g = At($"Star{i + 1}", timesRt, new Vector2(0.5f, 0.5f), new Vector2((i - 1) * 248f, 0f), new Vector2(228f, 140f));
+                g.pivot = new Vector2(0.5f, 0.5f);
+                g.anchoredPosition = new Vector2((i - 1) * 248f, 0f);
                 groups[i] = g;
+                // The gold rim is a gold medal behind the face, showing round its edge.
+                Rounded(Img(Stretch("Rim", g), "Round", Theme.Amber, sliced: true), 28f);
+                var medalFace = Stretch("Face", g);
+                medalFace.offsetMin = new Vector2(6f, 6f); medalFace.offsetMax = new Vector2(-6f, -6f);
+                Rounded(Img(medalFace, "Round", Theme.CreamDark, sliced: true), 23f);
                 for (int k = 0; k <= i; k++)
-                    Img(At($"S{k}", g, new Vector2(0f, 1f), new Vector2(4f + k * 46f, -8f), new Vector2(46f, 46f)), "IconStar", Theme.Amber);
-                times[i] = Txt(At("Time", g, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(230f, 62f)), "1:00.00", 50, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
+                {
+                    var star = At($"S{k}", g, new Vector2(0.5f, 1f), new Vector2((k - i * 0.5f) * 48f, -40f), new Vector2(50f, 50f));
+                    star.pivot = new Vector2(0.5f, 0.5f);
+                    star.anchoredPosition = new Vector2((k - i * 0.5f) * 48f, -40f);
+                    Img(star, "IconStar", Theme.Amber);
+                }
+                times[i] = Txt(At("Time", g, new Vector2(0.5f, 0f), new Vector2(0f, 8f), new Vector2(220f, 66f)), "1:00.00", 50, Theme.Ink, _cond);
             }
 
             // START along the bottom, with a ring breathing out of it.
