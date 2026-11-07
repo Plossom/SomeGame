@@ -1,0 +1,352 @@
+using System;
+using System.Collections.Generic;
+using SomeGame.Race;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+namespace SomeGame.UI
+{
+    /// <summary>
+    /// The races of a cup as a deck of cards over the map. It opens out of the race's stop once the car has driven
+    /// there: the card grows out of the stop with a little overshoot and the races before and after slide in at the
+    /// sides, frosted over. Swipe sideways and the cards follow the finger, leaning into the swipe; let go and they
+    /// glide on and settle on a race with a spring (a tick for every card that passes), and the car drives there on
+    /// the map behind. The bar of race numbers under the deck unfolds while you swipe (like the cup column): tap a
+    /// number to fly straight to that race. Swipe the deck down, tap beside it or the cross, and the card shrinks back
+    /// into its stop. Lives on the deck's root (always active), so drags and taps anywhere in the deck reach it.
+    /// </summary>
+    public class RaceDeck : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+    {
+        public struct Entry
+        {
+            public LevelDefinition level;
+            public bool canEnter;
+        }
+
+        [SerializeField] GameObject panel;
+        [SerializeField] UnityEngine.UI.Image backdrop;
+        [SerializeField] RaceCard cardTemplate;
+        [SerializeField] UnityEngine.UI.Button closeButton;
+        [Tooltip("The bar of race numbers: its plate (tap it folded to unfold it), a badge to copy and the ring on the current race.")]
+        [SerializeField] RectTransform strip;
+        [SerializeField] UnityEngine.UI.Button stripToggle;
+        [SerializeField] RectTransform stripBadge;
+        [SerializeField] RectTransform stripRing;
+        [SerializeField] RaceCard.FeatureIcon[] icons;
+
+        const float Spacing = 720f;          // between the middle of two cards next to each other
+        const float SideScale = 0.86f, SideTilt = 5f, SideDrop = 46f;
+        const float OpenSeconds = 0.6f, CloseSeconds = 0.32f;
+        const float Omega = 12f;             // the settling spring (critically damped)
+        const float BadgeSpacing = 112f, StripFolded = 44f, StripOpen = 140f;
+        const float CloseDrag = 260f;        // dragged this far down, the deck closes
+
+        enum Phase { Closed, Opening, Open, Closing }
+
+        readonly List<RaceCard> _cards = new();
+        readonly List<RectTransform> _badges = new();
+        readonly List<RaceCard> _order = new();
+        Phase _phase;
+        float _phaseAt;
+        float _pos, _vel;
+        int _target, _settled, _tick;
+        bool _dragging, _vertical, _dragActive;
+        float _dragFrom, _dx, _dy, _dyVelocity;
+        float _stripOpen, _stripVelocity, _stripUntil, _ringPopAt = -10f;
+        Vector2 _from;
+        Func<int, RectTransform> _stopOf;
+        Action<int> _onSelect, _onStart;
+        CupDefinition _cup;
+        Canvas _canvas;
+
+        public bool IsOpen => _phase != Phase.Closed;
+
+        void Awake()
+        {
+            cardTemplate.gameObject.SetActive(false);
+            stripBadge.gameObject.SetActive(false);
+            closeButton.onClick.AddListener(Close);
+            stripToggle.onClick.AddListener(() => { if (_stripOpen < 0.5f) _stripUntil = Time.unscaledTime + 6f; });
+            _canvas = GetComponentInParent<Canvas>().rootCanvas;
+            panel.SetActive(false);
+        }
+
+        /// <summary>Opens the deck on race <paramref name="selected"/>, its card growing out of that race's stop.</summary>
+        /// <param name="onSelect">A race was settled on (the map drives there).</param>
+        /// <param name="onStart">START on a race's card.</param>
+        public void Open(IReadOnlyList<Entry> races, int selected, CupDefinition cup, Func<int, RectTransform> stopOf, Action<int> onSelect, Action<int> onStart)
+        {
+            if (races.Count == 0) return;
+            _stopOf = stopOf;
+            _onSelect = onSelect;
+            _onStart = onStart;
+            _cup = cup;
+            panel.SetActive(true);
+            Build(races);
+            _pos = _target = _settled = _tick = Mathf.Clamp(selected, 0, races.Count - 1);
+            _vel = _dx = _dy = 0f;
+            _dragging = _vertical = false;
+            _stripOpen = _stripVelocity = 0f;
+            _stripUntil = -1f;
+            _from = StopPoint(_target);
+            _phase = Phase.Opening;
+            _phaseAt = Time.unscaledTime;
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
+            Layout();
+        }
+
+        /// <summary>Closes the deck: the card shrinks back into the stop of the race it is on.</summary>
+        public void Close()
+        {
+            if (_phase != Phase.Open && _phase != Phase.Opening) return;
+            _phase = Phase.Closing;
+            _phaseAt = Time.unscaledTime;
+            _from = StopPoint(_target);
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.4f);
+        }
+
+        Vector2 StopPoint(int index)
+        {
+            var stop = _stopOf?.Invoke(index);
+            var stage = (RectTransform)cardTemplate.transform.parent;
+            return stop != null ? (Vector2)stage.InverseTransformPoint(stop.position) : new Vector2(0f, -stage.rect.height * 0.3f);
+        }
+
+        void Build(IReadOnlyList<Entry> races)
+        {
+            foreach (var card in _cards) Destroy(card.gameObject);
+            _cards.Clear();
+            foreach (var badge in _badges) Destroy(badge.gameObject);
+            _badges.Clear();
+            for (int i = 0; i < races.Count; i++)
+            {
+                var card = Instantiate(cardTemplate, cardTemplate.transform.parent);
+                card.gameObject.SetActive(true);
+                card.Bind(races[i].level, i, races[i].canEnter, _cup, icons);
+                int index = i;
+                card.FocusButton.onClick.AddListener(() => FlyTo(index));
+                card.StartButton.onClick.AddListener(() => StartRace(card));
+                _cards.Add(card);
+
+                var b = Instantiate(stripBadge, stripBadge.parent);
+                b.gameObject.SetActive(true);
+                b.name = $"Race{i + 1}";
+                bool won = ProgressStore.HasWon(races[i].level);
+                b.Find("Face").GetComponent<UnityEngine.UI.Image>().color = !races[i].canEnter ? Theme.Stone : won ? Theme.Amber : Theme.Cream;
+                var number = b.Find("Number").GetComponent<TMPro.TMP_Text>();
+                number.text = (i + 1).ToString();
+                number.gameObject.SetActive(races[i].canEnter);
+                var lockIcon = b.Find("Lock");
+                lockIcon.gameObject.SetActive(!races[i].canEnter);
+                b.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => { if (_stripOpen > 0.5f) FlyTo(index); else _stripUntil = Time.unscaledTime + 6f; });
+                _badges.Add(b);
+            }
+            stripRing.SetAsLastSibling();
+        }
+
+        void FlyTo(int index)
+        {
+            if (_phase != Phase.Open || _dragging) return;
+            _target = Mathf.Clamp(index, 0, _cards.Count - 1);
+            _stripUntil = Time.unscaledTime + 1.4f;
+        }
+
+        void StartRace(RaceCard card)
+        {
+            if (_phase != Phase.Open || card.Index != _target || Mathf.Abs(_pos - _target) > 0.05f) return;
+            card.Pressed();
+            _onStart?.Invoke(card.Index);
+        }
+
+        // ------------------------------------------------------------------ touch
+
+        public void OnBeginDrag(PointerEventData e)
+        {
+            _dragActive = _phase == Phase.Open;
+            if (!_dragActive) return;
+            _vertical = Mathf.Abs(e.delta.y) > Mathf.Abs(e.delta.x) * 1.2f && e.delta.y < 0f;
+            _dragging = !_vertical;
+            _dragFrom = _pos;
+            _dx = 0f;
+        }
+
+        public void OnDrag(PointerEventData e)
+        {
+            if (!_dragActive) return;
+            Vector2 step = e.delta / (_canvas != null ? _canvas.scaleFactor : 1f);
+            float dt = Mathf.Max(1e-4f, Time.unscaledDeltaTime);
+            if (_vertical)
+            {
+                float dy = Mathf.Min(0f, _dy + step.y);
+                _dyVelocity = Mathf.Lerp(_dyVelocity, (dy - _dy) / dt, 0.5f);
+                _dy = dy;
+                return;
+            }
+            _dx += step.x;
+            float raw = _dragFrom - _dx / Spacing, last = _cards.Count - 1;
+            // Past the first or the last race the deck only gives a little.
+            if (raw < 0f) raw = -Rubber(-raw);
+            else if (raw > last) raw = last + Rubber(raw - last);
+            _vel = Mathf.Lerp(_vel, (raw - _pos) / dt, 0.5f);
+            _pos = raw;
+        }
+
+        static float Rubber(float x) => 0.3f * (1f - Mathf.Exp(-x / 0.3f));
+
+        public void OnEndDrag(PointerEventData e)
+        {
+            if (!_dragActive) return;
+            _dragActive = false;
+            if (_vertical)
+            {
+                _vertical = false;
+                if (_dy < -CloseDrag || _dyVelocity < -1800f) Close();
+                return;
+            }
+            _dragging = false;
+            // Where the glide would take it, at the speed it was let go.
+            float projected = _pos + Mathf.Clamp(_vel, -12f, 12f) * 0.18f;
+            _target = Mathf.Clamp(Mathf.RoundToInt(projected), 0, _cards.Count - 1);
+            _stripUntil = Time.unscaledTime + 1.2f;
+        }
+
+        // A tap beside the cards closes the deck (taps on the cards go to them).
+        public void OnPointerClick(PointerEventData e)
+        {
+            if (!e.dragging && _phase == Phase.Open) Close();
+        }
+
+        // ------------------------------------------------------------------ motion
+
+        void Update()
+        {
+            if (_phase == Phase.Closed) return;
+            float now = Time.unscaledTime, dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            if (_phase == Phase.Opening && now - _phaseAt >= OpenSeconds) _phase = Phase.Open;
+            if (_phase == Phase.Closing && now - _phaseAt >= CloseSeconds)
+            {
+                _phase = Phase.Closed;
+                panel.SetActive(false);
+                return;
+            }
+            if (!_dragging)
+            {
+                float a = -Omega * Omega * (_pos - _target) - 2f * Omega * _vel;
+                _vel += a * dt;
+                _pos += _vel * dt;
+                if (Mathf.Abs(_pos - _target) < 0.0015f && Mathf.Abs(_vel) < 0.01f) { _pos = _target; _vel = 0f; }
+            }
+            if (!_vertical) _dy = Mathf.Lerp(_dy, 0f, 1f - Mathf.Exp(-14f * dt));
+            // A tick for every card that passes the middle.
+            int near = Mathf.Clamp(Mathf.RoundToInt(_pos), 0, _cards.Count - 1);
+            if (near != _tick)
+            {
+                _tick = near;
+                _ringPopAt = now;
+                SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.35f);
+            }
+            // Settled on another race: the map follows.
+            if (!_dragging && _pos == _target && _target != _settled)
+            {
+                _settled = _target;
+                _onSelect?.Invoke(_target);
+            }
+            bool stripWanted = _dragging || Mathf.Abs(_pos - _target) > 0.02f || now < _stripUntil;
+            _stripVelocity += ((stripWanted ? 1f : 0f) - _stripOpen) * 240f * dt;
+            _stripVelocity *= Mathf.Exp(-17f * dt);
+            _stripOpen += _stripVelocity * dt;
+            Layout();
+        }
+
+        static float Ease(float t) => 1f - Mathf.Pow(1f - Mathf.Clamp01(t), 3f);
+
+        static float Back(float t)
+        {
+            const float s = 1.5f;
+            float u = Mathf.Clamp01(t) - 1f;
+            return 1f + u * u * ((s + 1f) * u + s);
+        }
+
+        void Layout()
+        {
+            float now = Time.unscaledTime;
+            float k = _phase == Phase.Opening ? Mathf.Clamp01((now - _phaseAt) / OpenSeconds)
+                : _phase == Phase.Closing ? 1f - Mathf.Clamp01((now - _phaseAt) / CloseSeconds) : 1f;
+            bool closing = _phase == Phase.Closing;
+            backdrop.color = Theme.WithAlpha(Theme.Ink, 0.72f * Ease(closing ? k : k * 1.6f));
+            closeButton.transform.localScale = Vector3.one * (closing ? k : Back((k - 0.4f) / 0.6f));
+
+            float lean = Mathf.Clamp(_vel * 4f, -8f, 8f);
+            bool settled = _phase == Phase.Open && !_dragging && _pos == _target;
+            float bob = settled ? Mathf.Sin(now * 1.7f) * 6f : 0f;
+            _order.Clear();
+            for (int i = 0; i < _cards.Count; i++)
+            {
+                var card = _cards[i];
+                float off = i - _pos, a = Mathf.Abs(off);
+                bool show = a < 2.6f;
+                if (card.gameObject.activeSelf != show) card.gameObject.SetActive(show);
+                if (!show) continue;
+                _order.Add(card);
+                float side = Mathf.Sign(off);
+                float x = side * (a <= 1f ? a * Spacing : Spacing + (a - 1f) * Spacing * 0.45f);
+                float near = Mathf.Min(a, 1f);
+                float scale = Mathf.Lerp(1f, SideScale, near) - Mathf.Max(0f, a - 1f) * 0.08f;
+                float rot = -off * SideTilt + lean * (1f - near);
+                var at = new Vector2(x, -Mathf.Min(a, 1.5f) * SideDrop + _dy * Mathf.Lerp(1f, 0.6f, near) + bob * (1f - near));
+                float alpha = 1f;
+                var rt = (RectTransform)card.transform;
+                if (i == _target && _phase != Phase.Open)
+                {
+                    // The card in the middle grows out of the stop (and shrinks back into it).
+                    float g = closing ? Ease(k) : Back(k);
+                    at = Vector2.LerpUnclamped(_from, at, g);
+                    scale *= Mathf.LerpUnclamped(0.08f, 1f, g);
+                    rot += (1f - k) * (closing ? 6f : -10f);
+                    alpha = Mathf.Clamp01(k * (closing ? 3f : 4f));
+                }
+                else if (_phase != Phase.Open)
+                {
+                    // The others slide in from the sides, a moment later (and out again).
+                    float s = closing ? k : Ease((k - 0.25f) / 0.75f);
+                    at.x += side * (1f - s) * 700f;
+                    alpha = s;
+                }
+                rt.anchoredPosition = at;
+                rt.localScale = Vector3.one * scale;
+                rt.localRotation = Quaternion.Euler(0f, 0f, rot);
+                card.SetAlpha(alpha * Mathf.Clamp01(2.6f - a));
+                card.SetFocus(off);
+            }
+            // The card nearest the middle in front, the others behind it by their distance.
+            _order.Sort((p, q) => Mathf.Abs(q.Index - _pos).CompareTo(Mathf.Abs(p.Index - _pos)));
+            for (int i = 0; i < _order.Count; i++) _order[i].transform.SetSiblingIndex(cardTemplate.transform.GetSiblingIndex() + 1 + i);
+            LayoutStrip(k, closing);
+        }
+
+        // The bar of race numbers: folded a row of small dots, unfolded a row of numbered badges; the ring glides
+        // along with the deck.
+        void LayoutStrip(float k, bool closing)
+        {
+            float open = _stripOpen, open01 = Mathf.Clamp01(open);
+            int n = _badges.Count;
+            float width = Mathf.LerpUnclamped(n * 30f + 40f, n * BadgeSpacing + 30f, open);
+            strip.sizeDelta = new Vector2(width, Mathf.LerpUnclamped(StripFolded, StripOpen, open));
+            float slide = closing ? k : Ease((k - 0.35f) / 0.65f);
+            strip.anchoredPosition = new Vector2(0f, Mathf.Lerp(-260f, 70f, slide));
+            float pitch = Mathf.LerpUnclamped(30f, BadgeSpacing, open);
+            for (int i = 0; i < n; i++)
+            {
+                var b = _badges[i];
+                b.anchoredPosition = new Vector2((i - (n - 1) * 0.5f) * pitch, 0f);
+                float near = Mathf.Clamp01(1f - Mathf.Abs(_pos - i));
+                b.localScale = Vector3.one * Mathf.LerpUnclamped(0.2f, Mathf.Lerp(0.84f, 1f, near), open);
+                var number = b.Find("Number");
+                if (number != null) number.localScale = Vector3.one * open01;
+            }
+            float pop = Mathf.Clamp01((Time.unscaledTime - _ringPopAt) / 0.25f);
+            stripRing.anchoredPosition = new Vector2((_pos - (n - 1) * 0.5f) * pitch, 0f);
+            stripRing.localScale = Vector3.one * Mathf.LerpUnclamped(0.36f, 1f, open) * (1f + 0.14f * Mathf.Sin(pop * Mathf.PI));
+        }
+    }
+}

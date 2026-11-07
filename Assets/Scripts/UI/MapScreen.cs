@@ -8,8 +8,8 @@ namespace SomeGame.UI
     /// <summary>
     /// The map (start screen): a painted alpine valley with the mountain road of <see cref="MapLayout"/>.
     /// The races sit on the road, followed by a "more soon" stop. The road you have opened up is drawn
-    /// in orange up to your car. Tapping a race selects it; its details show at the top and START at
-    /// the bottom enters it.
+    /// in orange up to your car. Tapping a race drives the car there and opens the race cards
+    /// (<see cref="RaceDeck"/>) on it; START on a card enters the race.
     /// </summary>
     public class MapScreen : MonoBehaviour
     {
@@ -23,13 +23,11 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image background;
         [Tooltip("Animated life on the landscape: clouds, chimney smoke, glints, birds, the lift.")]
         [SerializeField] MapAmbience ambience;
-        [Tooltip("Opens the race info window for the selected race.")]
+        [Tooltip("The race name: opens the race cards on the selected race.")]
         [SerializeField] UnityEngine.UI.Button infoButton;
-        [SerializeField] RaceInfoWindow infoWindow;
-        [Tooltip("Small round \"i\" right after the race name (the race name opens the info).")]
-        [SerializeField] RectTransform infoChip;
+        [SerializeField] RaceDeck deck;
         [Header("Switching cups")]
-        [Tooltip("What slides when switching cups (the map, the race header, the cup name, START), with how much faster each moves (depth).")]
+        [Tooltip("What slides when switching cups (the map, the race header, the cup name), with how much faster each moves (depth).")]
         [SerializeField] RectTransform[] page;
         [SerializeField] float[] pageParallax;
         [Tooltip("The cup bar under the cup name: a dark plate with a round badge per cup (tap one to go there) and a glowing ring on the current cup.")]
@@ -62,7 +60,7 @@ namespace SomeGame.UI
         [SerializeField] GameObject lockedNeeds;
         [SerializeField] TMP_Text lockedStars;
         [SerializeField] TMP_Text lockedTrophies;
-        [Tooltip("Parts of the page hidden on a locked cup (the race header, START).")]
+        [Tooltip("Parts of the page hidden on a locked cup (the race header).")]
         [SerializeField] GameObject[] racePageParts;
 
         [Header("Unlocks")]
@@ -86,11 +84,6 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text[] starTimes;
         [Tooltip("The three star-time groups (star icons + time): grey until your best time beats them.")]
         [SerializeField] RectTransform[] starGroups;
-        [SerializeField] UnityEngine.UI.Button startButton;
-        [SerializeField] UnityEngine.UI.Image startFace;
-        [SerializeField] UnityEngine.UI.Image startShadow;
-        [SerializeField] TMP_Text startLabel;
-        [SerializeField] GameObject startRing;
 
         [Header("Road progress")]
         [SerializeField, Min(1f)] float progressWidth = 22f;
@@ -156,7 +149,6 @@ namespace SomeGame.UI
                 GameSession.StartTutorial();
                 return;
             }
-            startButton.onClick.AddListener(StartSelected);
             if (infoButton != null) infoButton.onClick.AddListener(ShowInfo);
             if (!CupList.DevUnlockAll) UnlockLog.EnsureInitialised();
             var newRaces = PrepareRaceUnlocks();
@@ -184,7 +176,7 @@ namespace SomeGame.UI
             yield return Celebrate(newRaces, true);
         }
 
-        // The race stops pop up one after another along the road; the header and START pop in with them.
+        // The race stops pop up one after another along the road; the header pops in with them.
         System.Collections.IEnumerator Entrance()
         {
             for (int i = 0; i < _nodes.Count; i++) _nodes[i].Appear(0.08f + i * 0.055f);
@@ -203,23 +195,13 @@ namespace SomeGame.UI
                 float k = Mathf.Clamp01(t / 0.35f);
                 foreach (var g in groups) g.alpha = k;
                 if (titleLabel != null) titleLabel.rectTransform.localPosition = _titleHome + new Vector3(0f, 26f * (1f - Ease(k)), 0f);
-                startButton.transform.localScale = Vector3.one * PopCurve(Mathf.Clamp01((t - 0.15f) / 0.4f));
                 yield return null;
             }
             foreach (var g in groups) g.alpha = 1f;
             if (titleLabel != null) titleLabel.rectTransform.localPosition = _titleHome;
-            startButton.transform.localScale = Vector3.one;
         }
 
         static float Ease(float t) => 1f - (1f - t) * (1f - t) * (1f - t);
-
-        static float PopCurve(float t)
-        {
-            const float s = 1.8f;
-            if (t <= 0f) return 0f;
-            float u = Mathf.Clamp01(t) - 1f;
-            return 1f + u * u * ((s + 1f) * u + s);
-        }
 
         // ------------------------------------------------------------------ counters
 
@@ -420,48 +402,6 @@ namespace SomeGame.UI
                 if (rt != null) { rt.Release(); Destroy(rt); }
         }
 
-        // A smoothly blurred copy of a page picture, made on the graphics card: reduced to a quarter of its
-        // size (averaging the pixels), then blurred across and down a few times with a Gaussian blur.
-        static Material _blur;
-
-        static void BlurInto(Texture source, ref RenderTexture blurred)
-        {
-            if (_blur == null)
-            {
-                var shader = Resources.Load<Shader>("CupBlur");
-                if (shader != null) _blur = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
-            }
-            int w = Mathf.Max(1, source.width / 4), h = Mathf.Max(1, source.height / 4);
-            if (blurred == null || blurred.width != w || blurred.height != h)
-            {
-                if (blurred != null) { blurred.Release(); Destroy(blurred); }
-                blurred = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB) { name = "CupBlur", filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
-                blurred.Create();
-            }
-            RenderTexture Temp(int tw, int th)
-            {
-                var t = RenderTexture.GetTemporary(tw, th, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
-                t.filterMode = FilterMode.Bilinear;
-                t.wrapMode = TextureWrapMode.Clamp;
-                return t;
-            }
-            var half = Temp(Mathf.Max(1, source.width / 2), Mathf.Max(1, source.height / 2));
-            Graphics.Blit(source, half);
-            Graphics.Blit(half, blurred);
-            RenderTexture.ReleaseTemporary(half);
-            if (_blur == null) return;
-            var other = Temp(w, h);
-            for (int pass = 0; pass < 3; pass++)
-            {
-                _blur.SetFloat("_Spread", 1.5f);
-                _blur.SetVector("_Direction", new Vector4(1f, 0f, 0f, 0f));
-                Graphics.Blit(blurred, other, _blur);
-                _blur.SetVector("_Direction", new Vector4(0f, 1f, 0f, 0f));
-                Graphics.Blit(other, blurred, _blur);
-            }
-            RenderTexture.ReleaseTemporary(other);
-        }
-
         // A blurred picture of each cup's page as it last stood on screen (taken when you swipe away from it):
         // a cup slides in as its own page, blurred, sharpening as it arrives (until then its landscape stands in).
         readonly Dictionary<CupDefinition, RenderTexture> _pictures = new();
@@ -622,7 +562,7 @@ namespace SomeGame.UI
             wipeImage.uvRect = uv;
             // The old page blurs and dims away as the new cup comes in (and this is its picture from now on).
             _pictures.TryGetValue(_cup, out var oldPicture);
-            BlurInto(_snapshot, ref oldPicture);
+            UiBlur.BlurInto(_snapshot, ref oldPicture);
             _pictures[_cup] = oldPicture;
             if (wipeBlur != null) { wipeBlur.texture = oldPicture; wipeBlur.uvRect = uv; wipeBlur.gameObject.SetActive(true); }
             if (wipeDim != null) wipeDim.gameObject.SetActive(true);
@@ -641,7 +581,7 @@ namespace SomeGame.UI
                 }
                 else if (CupList.IsPlayable(next) && next.mapBackground != null)
                 {
-                    BlurInto(next.mapBackground.texture, ref _newBlur);
+                    UiBlur.BlurInto(next.mapBackground.texture, ref _newBlur);
                     incomingBlur.texture = _newBlur;
                     incomingBlur.uvRect = new Rect(0f, 0f, 1f, 1f);
                     shown = true;
@@ -1010,9 +950,19 @@ namespace SomeGame.UI
         void DriveTo(int index)
         {
             float to = CarTarget(index);
-            if (_carDistance < 0f || _progress.Count == 0) { PlaceCar(); return; }
+            if (_carDistance < 0f || _progress.Count == 0) { PlaceCar(); Arrived(); return; }
             if (_drive != null) StopCoroutine(_drive);
             _drive = StartCoroutine(Drive(_carDistance, to));
+        }
+
+        // Tapped a race on the map: its cards open once the car is there.
+        bool _openOnArrival;
+
+        void Arrived()
+        {
+            if (!_openOnArrival) return;
+            _openOnArrival = false;
+            ShowInfo();
         }
 
         // Drives along the road to the stop; back to an earlier race it reverses, still facing up the road.
@@ -1026,6 +976,7 @@ namespace SomeGame.UI
             }
             SetCar(to, 1f);
             _drive = null;
+            Arrived();
         }
 
         // Puts the car at a road distance, facing the way it is driving, and fills the orange line up to it.
@@ -1079,8 +1030,9 @@ namespace SomeGame.UI
 
         MapRoad _progressRoad;
 
-        void Select(int index)
+        void Select(int index, bool openOnArrival = false)
         {
+            _openOnArrival = openOnArrival;
             CollapseCups();
             if (_celebrating && _hideFrom != int.MaxValue) return; // not while races unlock
             bool changed = index != _selected;
@@ -1147,11 +1099,7 @@ namespace SomeGame.UI
                 titleLabel.text = "COMING SOON";
                 bestChip.text = bestLapLabel.text = "—";
                 foreach (var t in starTimes) t.text = "-";
-                startButton.interactable = false;
-                startFace.color = Theme.Stone; startShadow.color = Theme.StoneDark;
-                startLabel.text = "SOON"; startLabel.color = Theme.StoneDark;
-                startRing.SetActive(false);
-                SetInfoAvailable(false);
+                if (infoButton != null) infoButton.interactable = false;
                 return;
             }
             var level = catalog[_selected];
@@ -1177,62 +1125,33 @@ namespace SomeGame.UI
                         icon.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.Stone, 0.35f);
             }
 
-            bool canEnter = ProgressStore.CanEnter(catalog, _selected) && _selected < _hideFrom;
-            SetInfoAvailable(canEnter); // no race info for a locked race
-            startButton.interactable = canEnter;
-            startFace.color = canEnter ? Theme.Orange : Theme.Stone;
-            startShadow.color = canEnter ? Theme.OrangeDeep : Theme.StoneDark;
-            startLabel.text = canEnter ? "START" : "LOCKED";
-            startLabel.color = canEnter ? Theme.White : Theme.StoneDark;
-            startRing.SetActive(canEnter);
+            if (infoButton != null) infoButton.interactable = _selected < _hideFrom;
         }
 
-        // Tapping a race stop selects it; tapping the selected one again opens its info.
+        // Tapping a race stop drives the car there and opens its card; the selected one opens at once.
         void OnStopTapped(int index)
         {
-            if (index == _selected && !_celebrating) ShowInfo();
-            else Select(index);
+            if (_celebrating || (deck != null && deck.IsOpen)) return;
+            if (index == _selected) ShowInfo();
+            else Select(index, openOnArrival: true);
         }
 
-        // The race name opens the info, with a small "i" chip right after the name; neither for a locked race.
-        void SetInfoAvailable(bool available)
-        {
-            if (infoButton != null) infoButton.interactable = available;
-            if (infoChip == null) return;
-            infoChip.gameObject.SetActive(available);
-            if (!available) return;
-            titleLabel.ForceMeshUpdate();
-            var bounds = titleLabel.textBounds;
-            var titleRt = titleLabel.rectTransform;
-            var at = titleRt.anchoredPosition + new Vector2(bounds.max.x + 48f, bounds.center.y);
-            at.x = Mathf.Min(at.x, ((RectTransform)infoChip.parent).rect.width - 36f);
-            infoChip.anchoredPosition = at;
-        }
-
-        // The nearest race you can enter before / after the selected one (-1 if none).
-        int OpenRace(int from, int step)
-        {
-            for (int i = from + step; i >= 0 && i < catalog.Count; i += step)
-                if (ProgressStore.CanEnter(catalog, i)) return i;
-            return -1;
-        }
-
+        // The cup's races as cards, on the selected one (a race still to unlock with an animation is left out).
         void ShowInfo()
         {
-            if (infoWindow == null || catalog.Count == 0 || !ProgressStore.CanEnter(catalog, _selected)) return;
-            int before = OpenRace(_selected, -1), after = OpenRace(_selected, 1);
-            System.Action previous = before >= 0 ? () => { Select(before); ShowInfo(); } : null;
-            System.Action next = after >= 0 ? () => { Select(after); ShowInfo(); } : null;
-            infoWindow.Show(catalog[_selected], ProgressStore.CanEnter(catalog, _selected), StartSelected, previous, next);
+            if (deck == null || catalog.Count == 0 || _celebrating || deck.IsOpen) return;
+            var races = new List<RaceDeck.Entry>();
+            for (int i = 0; i < catalog.Count && i < _hideFrom; i++)
+                if (ProgressStore.IsVisible(catalog, i)) races.Add(new RaceDeck.Entry { level = catalog[i], canEnter = ProgressStore.CanEnter(catalog, i) });
+            if (_selected >= races.Count) return;
+            deck.Open(races, _selected, _cup, i => i < _nodes.Count ? (RectTransform)_nodes[i].transform : null,
+                i => { if (i != _selected) Select(i); }, StartRace);
         }
 
-        void StartSelected()
+        void StartRace(int index)
         {
-            if (catalog.Count == 0 || !ProgressStore.CanEnter(catalog, _selected) || _selected >= _hideFrom || _celebrating || GameSession.Loading) return;
-            startLabel.text = "LOADING";
-            startLabel.fontSize *= 0.7f;
-            startRing.SetActive(false);
-            GameSession.StartRace(catalog[_selected]);
+            if (index < 0 || index >= catalog.Count || !ProgressStore.CanEnter(catalog, index) || index >= _hideFrom || _celebrating || GameSession.Loading) return;
+            GameSession.StartRace(catalog[index]);
         }
     }
 }

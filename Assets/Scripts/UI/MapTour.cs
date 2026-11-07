@@ -8,7 +8,7 @@ namespace SomeGame.UI
     /// <summary>
     /// A short tour of the map after the tutorial (MAP on its last card): the screen dims except for a
     /// spotlight that glides from one part to the next (the race, its star times, the stops and cups, online,
-    /// START), each with a card saying what it is. Tap anywhere or NEXT to go on, SKIP to end it.
+    /// the selected stop), each with a card saying what it is. Tap anywhere or NEXT to go on, SKIP to end it.
     /// </summary>
     public class MapTour : MonoBehaviour
     {
@@ -27,16 +27,16 @@ namespace SomeGame.UI
         [Tooltip("The parts of the map a step can show (an empty entry = the selected race's stop).")]
         [SerializeField] RectTransform[] targets;
 
-        // Entries of targets: the race name, its star times, the map, online, START.
-        const int RaceTarget = 0, TimesTarget = 1, MapTarget = 4, OnlineTarget = 7, StartTarget = 9;
+        // Entries of targets: the race name, its star times, the map, online, the selected stop (empty entry).
+        const int RaceTarget = 0, TimesTarget = 1, MapTarget = 4, OnlineTarget = 7, StopTarget = 9;
 
         static readonly (int target, string title, string body)[] Steps =
         {
-            (RaceTarget, "THE RACE", "Tap the name (or the <b>i</b>) to see the whole track and what waits on it."),
+            (RaceTarget, "THE RACE", "The race your car is at. Tap its name to open its card."),
             (TimesTarget, "STARS", "Beat these times for 1, 2 or 3 stars. Stars open new races and cups."),
-            (MapTarget, "RACES & CUPS", "Tap a stop to pick a race. Swipe sideways for the next cup."),
+            (MapTarget, "RACES & CUPS", "Tap a stop: your car drives there and the race card opens. Swipe the map sideways for the next cup."),
             (OnlineTarget, "PLAY ONLINE", "Open a room and share its code: race up to 7 friends."),
-            (StartTarget, "READY?", "Tap <b>START</b> to race the selected track. Have fun!"),
+            (StopTarget, "READY?", "Tap your stop to open its card: swipe through the races, then <b>START</b>. Have fun!"),
         };
 
         int _step = -1;
