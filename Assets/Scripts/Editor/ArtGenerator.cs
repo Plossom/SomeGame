@@ -37,6 +37,22 @@ namespace SomeGame.EditorTools
         public static void GenerateInfoIcon() =>
             Ui("IconInfo", 128, 128, (x, y) => Fill(Mathf.Min(Circle(x, y, 64f, 99f, 13f), Capsule(x, y, 64f, 24f, 64f, 70f, 11f))));
 
+        /// <summary>The difficulty gauge beside a race's difficulty bars: a speedometer with its needle well over.</summary>
+        [MenuItem("SomeGame/Generate Difficulty Icon")]
+        public static void GenerateDifficultyIcon()
+        {
+            Ui("IconGauge", 128, 128, (x, y) =>
+            {
+                const float cx = 64f, cy = 52f;
+                float arc = Shell(ArcBand(x, y, cx, cy, 46f, -25f, 205f), 8f);
+                var tip = new Vector2(cx + Mathf.Cos(40f * Mathf.Deg2Rad) * 38f, cy + Mathf.Sin(40f * Mathf.Deg2Rad) * 38f);
+                float needle = Capsule(x, y, cx, cy, tip.x, tip.y, 6.5f);
+                float hub = Circle(x, y, cx, cy, 12f);
+                return Fill(Min(arc, needle, hub));
+            });
+            AssetDatabase.Refresh();
+        }
+
         static void GenerateUi()
         {
             Ui("Round", 128, 128, (x, y) => Fill(RoundRect(x, y, 64, 64, 64, 64, 40)), 44);
@@ -88,6 +104,7 @@ namespace SomeGame.EditorTools
             });
             Ui("IconQuestion", 128, 128, (x, y) => Fill(QuestionMark(x, y)));
             GenerateInfoIcon();
+            GenerateDifficultyIcon();
             Ui("IconFlag", 128, 128, (x, y) =>
             {
                 float pole = Capsule(x, y, 30, 14, 30, 114, 6);

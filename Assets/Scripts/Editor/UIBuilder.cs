@@ -425,10 +425,6 @@ namespace SomeGame.EditorTools
             var face = Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true, raycast: true);
             var focus = face.gameObject.AddComponent<Button>();
             focus.targetGraphic = face; focus.transition = Selectable.Transition.None;
-            // A chequered band along the top, like a start line.
-            var band = Img(At("Checker", card, new Vector2(0.5f, 1f), new Vector2(0f, -26f), new Vector2(W - 120f, 34f)), "Checker", Theme.WithAlpha(Theme.Ink, 0.13f));
-            band.type = Image.Type.Tiled; band.preserveAspect = false; band.pixelsPerUnitMultiplier = 3f;
-
             // The race number on a medallion over the top left corner; a trophy over the top right once won.
             var medal = At("Medal", card, new Vector2(0f, 1f), new Vector2(-26f, 34f), new Vector2(170f, 182f));
             Img(At("Shadow", medal, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.OrangeDeep);
@@ -448,9 +444,10 @@ namespace SomeGame.EditorTools
             var close = closeRt.gameObject.AddComponent<Button>();
             close.targetGraphic = closeFace; close.transition = Selectable.Transition.None;
 
-            var chapter = Txt(At("Chapter", card, new Vector2(0f, 1f), new Vector2(176f, -58f), new Vector2(600f, 46f)), "VALLEY CUP · RACE 1", 36, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
+            // Cup and race number over the name, both centred between the medallion and the cross.
+            var chapter = Txt(At("Chapter", card, new Vector2(0.5f, 1f), new Vector2(0f, -52f), new Vector2(480f, 46f)), "VALLEY CUP · RACE 1", 36, Theme.Rust, _condItalic);
             chapter.characterSpacing = 6f;
-            var title = Txt(At("Title", card, new Vector2(0f, 1f), new Vector2(170f, -100f), new Vector2(660f, 120f)), "SUNDAY LOOP", 100, Theme.Ink, _black, TextAlignmentOptions.Left);
+            var title = Txt(At("Title", card, new Vector2(0.5f, 1f), new Vector2(0f, -98f), new Vector2(560f, 120f)), "SUNDAY LOOP", 100, Theme.Ink, _black);
             title.enableAutoSizing = true; title.fontSizeMin = 56; title.fontSizeMax = 100;
             var records = Txt(At("Records", card, new Vector2(0.5f, 1f), new Vector2(0f, -236f), new Vector2(W - 100f, 50f)), "NO TIME YET", 36, Theme.Rust, _cond);
             records.characterSpacing = 4f;
@@ -482,12 +479,12 @@ namespace SomeGame.EditorTools
             lockLabel.textWrappingMode = TextWrappingModes.Normal;
             Configure(frame.gameObject.AddComponent<PreviewFrame>(), ("picture", picture), ("maxSize", new Vector2(W - 80f, 900f)), ("inset", 12f));
 
-            // Difficulty pips on the left, laps or sections on the right.
+            // Difficulty: a speedometer and five bars, centred under the picture.
+            const float RowWidth = 60f + 18f + 5f * 64f + 4f * 14f, RowLeft = (W - RowWidth) * 0.5f;
+            Img(At("DifficultyIcon", card, new Vector2(0f, 1f), new Vector2(RowLeft, -1222f), new Vector2(60f, 60f)), "IconGauge", Theme.Rust);
             var pips = new Image[5];
             for (int i = 0; i < pips.Length; i++)
-                pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(60f + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
-            var laps = Txt(At("Laps", card, new Vector2(1f, 1f), new Vector2(-60f, -1224f), new Vector2(360f, 56f)), "3 LAPS", 44, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
-            laps.characterSpacing = 6f;
+                pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(RowLeft + 78f + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
 
             // The star times on a dark plate.
             var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1290f), new Vector2(W - 80f, 132f));
@@ -527,7 +524,7 @@ namespace SomeGame.EditorTools
 
             var raceCard = card.gameObject.AddComponent<RaceCard>();
             Configure(raceCard, ("group", group), ("focusButton", focus), ("veil", veil), ("glow", glow),
-                ("numberLabel", number), ("chapterLabel", chapter), ("titleLabel", title), ("recordsLabel", records), ("lapsLabel", laps),
+                ("numberLabel", number), ("chapterLabel", chapter), ("titleLabel", title), ("recordsLabel", records),
                 ("picture", picture), ("blurredPicture", blurred), ("shine", shine), ("lockCover", lockCover.gameObject), ("lockLabel", lockLabel),
                 ("wonBadge", won.gameObject), ("closeButton", close),
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel), ("startRing", ring));

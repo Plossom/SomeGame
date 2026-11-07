@@ -8,7 +8,7 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// One race of the <see cref="RaceDeck"/>: a big card with the race's number on a medallion, its name, the
-    /// whole track from above, difficulty, laps or sections, the star times (earned ones lit), your records and
+    /// whole track from above, difficulty, the star times (earned ones lit), your records and
     /// START; the cross on its corner closes the deck. Off to the side of the deck it is frosted over and its picture
     /// blurred (<see cref="SetFocus"/>). A race still locked keeps its track a secret: a grey plate with a lock and
     /// the stars it needs.
@@ -20,7 +20,7 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Button focusButton;
         [SerializeField] UnityEngine.UI.Image veil;
         [SerializeField] RectTransform glow;
-        [SerializeField] TMP_Text numberLabel, chapterLabel, titleLabel, recordsLabel, lapsLabel;
+        [SerializeField] TMP_Text numberLabel, chapterLabel, titleLabel, recordsLabel;
         [SerializeField] UnityEngine.UI.Image picture;
         [SerializeField] UnityEngine.UI.RawImage blurredPicture;
         [Tooltip("A band of light that sweeps across the picture now and then (on the card in the middle).")]
@@ -54,7 +54,6 @@ namespace SomeGame.UI
             numberLabel.text = (index + 1).ToString();
             chapterLabel.text = cup != null ? $"{cup.displayName} · RACE {index + 1}" : level.chapter;
             titleLabel.text = level.displayName.ToUpperInvariant();
-            lapsLabel.text = level.LapsText.ToUpperInvariant();
 
             var best = ProgressStore.BestTimeOf(level);
             var bestLap = level.track != null ? BestLapStore.Get(level.track.name) : null;
