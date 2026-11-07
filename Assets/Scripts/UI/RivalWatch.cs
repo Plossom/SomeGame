@@ -8,8 +8,8 @@ namespace SomeGame.UI
     /// Who is around you in the race:
     /// <list type="bullet">
     /// <item>The ladder (top left, always there): the car ahead, you (your place, big) and the car behind. Your place
-    /// pops green when you gain one and flashes red when you are passed. On the final lap (or section) and in the
-    /// last 20 seconds a header says so for a few seconds.</item>
+    /// pops green when you gain one and flashes red when you are passed. On the final lap (or section) a header
+    /// says so for a few seconds.</item>
     /// <item>Place tags: the car just ahead of you and the one just behind carry a small tag with their place while
     /// they are on screen.</item>
     /// <item>A rival with a face (<see cref="RivalCharacter"/>, in their home race) shows their portrait on the
@@ -22,7 +22,6 @@ namespace SomeGame.UI
     public class RivalWatch : MonoBehaviour
     {
         const float HeaderSeconds = 4f;
-        const float FinalSeconds = 20f;
         const float RowPitch = 84f, YouPitch = 108f;
 
         [SerializeField] RaceManager race;
@@ -53,12 +52,11 @@ namespace SomeGame.UI
         RectTransform _layer;
         CanvasGroup _ladderGroup, _saysGroup;
         TMP_Text _headerLabel;
-        float _speed = 10f;
         int _place = -1;
         float _placeChangedAt = -10f;
         bool _gained;
-        float _headerAt = -100f, _finalLapAt = -100f;
-        bool _finalLapShown, _finalSecondsShown;
+        float _headerAt = -100f;
+        bool _finalLapShown;
         float _saysAt = -100f, _saysFor;
         Vector2 _saysHome;
 
@@ -114,7 +112,6 @@ namespace SomeGame.UI
             var player = race.Player;
             if (_finalLapShown || player.IsFinished || player.CurrentLap < player.TotalLaps || player.TotalLaps < 2) return;
             _finalLapShown = true;
-            _finalLapAt = Time.time;
             Header(race.Sectioned ? "FINAL SECTION" : "FINAL LAP");
         }
 
@@ -132,8 +129,6 @@ namespace SomeGame.UI
             var player = race.Player;
             bool racing = race.State == RaceState.Racing && !player.IsFinished;
 
-            if (player.TryGetComponent(out Rigidbody2D body))
-                _speed = Mathf.Lerp(_speed, Mathf.Max(8f, body.linearVelocity.magnitude), 1f - Mathf.Exp(-2f * Time.deltaTime));
             int place = race.PositionOf(player);
             if (_place > 0 && place != _place && racing && race.RaceTime > 3f)
             {
@@ -157,13 +152,6 @@ namespace SomeGame.UI
             Greet();
             Says();
 
-            // The last 20 seconds (on the last lap, and not straight after FINAL LAP: on a short track they meet).
-            bool lastLap = player.CurrentLap >= player.TotalLaps;
-            if (racing && !_finalSecondsShown && lastLap && Time.time - _finalLapAt > 8f && player.MetresToGo / _speed <= FinalSeconds && race.RaceTime > 10f)
-            {
-                _finalSecondsShown = true;
-                Header("FINAL 20 SECONDS");
-            }
         }
 
         // A tag over a car while it is on screen. When the car changes (a place changed), the old tag fades out
@@ -342,6 +330,15 @@ namespace SomeGame.UI
             if (body == null || character != null) return;
             var visual = car != null ? SomeGame.Online.OnlineRace.Visual(car.GetComponent<SomeGame.Car.CarMovement>()) : null;
             body.color = car == null ? Garage.Color : visual != null ? visual.color : Theme.Stone;
+            if (car != null) return;
+            // Your own: the body you built in the garage.
+            var entry = GarageArt.Instance?.Get(Garage.Equipped(Garage.Slot.Body));
+            if (entry?.full != null && body.sprite != entry.full)
+            {
+                body.sprite = entry.full;
+                var details = face.Find("Car/Details")?.GetComponent<UnityEngine.UI.Image>();
+                if (details != null && entry.details != null) details.sprite = entry.details;
+            }
         }
 
         static float Overshoot(float x)

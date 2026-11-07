@@ -1100,7 +1100,7 @@ namespace SomeGame.EditorTools
             tagFace.pivot = new Vector2(0f, 0.5f);
             Txt(Stretch("Label", tag), "3RD", 40, Theme.Cream, _black);
 
-            var ladder = At("Ladder", watch, new Vector2(0f, 1f), new Vector2(48f, -222f), new Vector2(228f, 276f));
+            var ladder = At("Ladder", watch, new Vector2(0f, 1f), new Vector2(48f, -222f), new Vector2(252f, 276f));
             var ladderShadow = Stretch("Shadow", ladder);
             ladderShadow.offsetMin = new Vector2(0f, -12f); ladderShadow.offsetMax = new Vector2(0f, -12f);
             Img(ladderShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
@@ -1109,7 +1109,7 @@ namespace SomeGame.EditorTools
             for (int i = 0; i < 3; i++)
             {
                 bool you = i == 1;
-                var row = At(i == 0 ? "Ahead" : you ? "You" : "Behind", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -42f - 96f * i), new Vector2(228f, you ? 108f : 84f));
+                var row = At(i == 0 ? "Ahead" : you ? "You" : "Behind", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -42f - 96f * i), new Vector2(252f, you ? 108f : 84f));
                 row.pivot = new Vector2(0.5f, 0.5f);
                 if (you)
                 {
@@ -1120,11 +1120,11 @@ namespace SomeGame.EditorTools
                 var place = Txt(At("Place", row, new Vector2(0f, 0.5f), new Vector2(26f, you ? 2f : 0f), new Vector2(120f, 80f)),
                     i == 0 ? "2ND" : you ? "3RD" : "4TH", you ? 66 : 42, you ? Color.white : Theme.Cream, _black, TextAlignmentOptions.Left);
                 place.rectTransform.pivot = new Vector2(0f, 0.5f);
-                RivalFace(row, "Face", new Vector2(1f, 0.5f), new Vector2(-22f, 0f), you ? 76f : 60f).pivot = new Vector2(1f, 0.5f);
+                RivalFace(row, "Face", new Vector2(1f, 0.5f), new Vector2(-16f, 0f), you ? 96f : 78f, 1.45f).pivot = new Vector2(1f, 0.5f);
                 rows[i] = row;
             }
             // FINAL LAP and the like: a pill hanging under the ladder for a few seconds.
-            var header = At("Header", ladder, new Vector2(0.5f, 0f), new Vector2(0f, -26f), new Vector2(228f, 60f));
+            var header = At("Header", ladder, new Vector2(0.5f, 0f), new Vector2(0f, -26f), new Vector2(252f, 60f));
             header.pivot = new Vector2(0.5f, 1f);
             Img(Stretch("Pill", header), "Pill", Theme.Amber, sliced: true);
             var headerLabel = Txt(Stretch("Label", header), "FINAL LAP", 34, Theme.Ink, _condItalic);
@@ -1734,13 +1734,13 @@ namespace SomeGame.EditorTools
         }
 
         // A rival's face (for now: its car in its colours on a disc; the Car/Body is tinted by the race).
-        static RectTransform RivalFace(RectTransform parent, string name, Vector2 anchor, Vector2 position, float size)
+        static RectTransform RivalFace(RectTransform parent, string name, Vector2 anchor, Vector2 position, float size, float carScale = 1f)
         {
             var face = At(name, parent, anchor, position, new Vector2(size, size));
             face.pivot = new Vector2(0.5f, 0.5f);
             Img(face, "Circle", Theme.Ink);
             Img(At("Disc", face, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(size * 0.84f, size * 0.84f)), "Circle", Theme.Cream);
-            var car = At("Car", face, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(size * 0.34f, size * 0.6f));
+            var car = At("Car", face, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(size * 0.34f * carScale, size * 0.6f * carScale));
             car.localRotation = Quaternion.Euler(0f, 0f, -35f);
             Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
             Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
