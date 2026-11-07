@@ -63,7 +63,7 @@ namespace SomeGame.UI
             rt.anchoredPosition = best;
 
             // The dotted track from the race's stop.
-            const int count = 5;
+            const int count = 0; // the map has a little side road to it now
             while (_dots.Count < count)
             {
                 var dot = Instantiate(dotTemplate, dotTemplate.parent);

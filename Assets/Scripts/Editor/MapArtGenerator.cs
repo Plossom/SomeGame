@@ -45,9 +45,11 @@ namespace SomeGame.EditorTools
                 for (int px = 0; px < _w; px++)
                     _px[py * _w + px] = Landscape((px + 0.5f) / Scale, (py + 0.5f) / Scale / Stretch);
 
+            _branch = Branch();
             Road();
             Objects();
             HorizonTrees();
+            _branch = null;
             Sdf.WritePixels(ArtGenerator.Folder, "MapBackground", _w, _h, _px, 100, false, 0, compress: true);
             _px = null;
             Debug.Log("Map art generated");
@@ -137,6 +139,36 @@ namespace SomeGame.EditorTools
 
         // ================================================================== road
 
+        // The little side road to the cup's challenge (painting space), or null: from the main road where it comes
+        // closest, curving out to the challenge's stop.
+        static List<Vector2> _branch;
+
+        static List<Vector2> Branch()
+        {
+            var cup = AssetDatabase.LoadAssetAtPath<SomeGame.Race.CupDefinition>("Assets/Data/Cups/Valley.asset");
+            if (cup == null || cup.challenge == null || cup.challengeSpot == Vector2.zero) return null;
+            Vector2 end = Unstretch(cup.challengeSpot);
+            Vector2 start = Vector2.zero; float best = float.MaxValue; Vector2 along = Vector2.right;
+            var s = MapLayout.Samples;
+            for (int i = 1; i < s.Count; i++)
+            {
+                Vector2 p = Unstretch(s[i]);
+                float d = Vector2.Distance(p, end);
+                if (d < best) { best = d; start = p; along = (p - Unstretch(s[i - 1])).normalized; }
+            }
+            // Leaves the road at an angle (a little forward along it), then bends round to the stop.
+            Vector2 control = start + (end - start) * 0.45f + along * 60f;
+            var points = new List<Vector2>();
+            for (int k = 0; k <= 40; k++)
+            {
+                float t = k / 40f;
+                points.Add((1 - t) * (1 - t) * start + 2 * (1 - t) * t * control + t * t * end);
+            }
+            return points;
+        }
+
+        static float BranchWidth(float paintY) => RoadWidth(paintY) * 0.62f;
+
         static void Road()
         {
             var samples = new List<Vector2>();
@@ -152,7 +184,10 @@ namespace SomeGame.EditorTools
                 for (int k = 0; k < n; k++) points.Add((Vector2.Lerp(a, b, k / (float)n), acc + len * k / n));
                 acc += len;
             }
+            // The side road joins in: both edges first, then both surfaces, so they merge at the junction.
+            if (_branch != null) foreach (var p in Dense(_branch)) Disc(p, BranchWidth(p.y) * 0.5f + 5f, Hex("4A4D4B"));
             foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f + 5f, Hex("4A4D4B"));
+            if (_branch != null) foreach (var p in Dense(_branch)) Disc(p, BranchWidth(p.y) * 0.5f, Hex("606462"));
             foreach (var (p, _) in points) Disc(p, RoadWidth(p.y) * 0.5f, Hex("606462"));
             foreach (var (p, dist) in points)
             {
@@ -160,6 +195,18 @@ namespace SomeGame.EditorTools
                 float period = Mathf.Max(18f, w * 0.75f);
                 if (Mathf.Repeat(dist, period) < period * 0.5f) Disc(p, Mathf.Max(1.6f, w * 0.045f), new Color(1f, 0.98f, 0.92f, 0.85f));
             }
+        }
+
+        static List<Vector2> Dense(List<Vector2> line)
+        {
+            var dense = new List<Vector2>();
+            for (int i = 1; i < line.Count; i++)
+            {
+                int n = Mathf.Max(1, Mathf.CeilToInt(Vector2.Distance(line[i - 1], line[i]) / 3f));
+                for (int k = 0; k < n; k++) dense.Add(Vector2.Lerp(line[i - 1], line[i], k / (float)n));
+            }
+            dense.Add(line[^1]);
+            return dense;
         }
 
         static void Disc(Vector2 c, float r, Color color) =>
@@ -184,6 +231,9 @@ namespace SomeGame.EditorTools
                 var q = p + new Vector2(0f, h * k / 4f);
                 float r = k == 0 ? hw * 0.6f : hw;
                 if (RoadDistance(q) < RoadWidth(q.y) * 0.5f + 8f + r) return true;
+                if (_branch != null)
+                    for (int i = 1; i < _branch.Count; i++)
+                        if (SegDist(q, _branch[i - 1], _branch[i]) < BranchWidth(q.y) * 0.5f + 8f + r) return true;
                 if (Sdf.Ellipse(q.x, q.y, LakeCenter.x, LakeCenter.y, LakeRx + 14f, LakeRy + 14f) < r) return true;
             }
             return false;
@@ -204,6 +254,9 @@ namespace SomeGame.EditorTools
 
             // Stops on the road stay clear.
             for (int i = 0; i < MapLayout.StopCount; i++) occupied.Add((Unstretch(MapLayout.StopPosition(i)), 120f));
+            if (_branch != null) occupied.Add((_branch[^1], 110f));
+            foreach (var rival in Resources.LoadAll<SomeGame.Race.RivalCharacter>("Rivals"))
+                if (rival.mapSpot != Vector2.zero) occupied.Add((Unstretch(rival.mapSpot + new Vector2(0f, 80f)), 120f));
 
             // Village by the lake and a farm by the first race.
             foreach (var (p, church) in MapScenery.ValleyHouses)

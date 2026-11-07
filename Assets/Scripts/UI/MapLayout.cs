@@ -105,10 +105,10 @@ namespace SomeGame.UI
         /// <summary>The forest road: switchbacks up from the bottom (like the mountain road), past the lake to the last race.</summary>
         public static readonly MapRoad Valley = new(new Vector2[]
         {
-            new(40f, -208f), new(170f, 373f), new(470f, 452f), new(830f, 588f), new(860f, 746f), new(560f, 870f),
-            new(230f, 972f), new(260f, 1142f), new(600f, 1198f), new(880f, 1300f), new(800f, 1522f), new(500f, 1676f),
-            new(410f, 1872f),
-        }, 1, 12, 8) { StopShifts = new[] { 0f, 0f, 0f, -62f, 68f } }; // 4 and 5 apart round the left bend
+            new(40f, -208f), new(170f, 373f), new(470f, 452f), new(720f, 560f), new(700f, 740f), new(480f, 860f),
+            new(230f, 972f), new(260f, 1142f), new(600f, 1198f), new(880f, 1300f), new(800f, 1500f), new(520f, 1640f),
+            new(430f, 1800f),
+        }, 1, 12, 8) { StopShifts = new[] { 0f, 0f, 0f, -40f, 40f } }; // 4 and 5 apart round the left bend
 
         /// <summary>The mountain road: comes in from the bottom left and climbs in switchbacks towards the peaks.</summary>
         public static readonly MapRoad Winter = new(new Vector2[]

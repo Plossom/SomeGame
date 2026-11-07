@@ -145,6 +145,23 @@ namespace SomeGame.EditorTools
             var node = BuildNode(world);
             var lockedPage = BuildLockedPage(map);
             var sideStop = BuildChallengeStop(world);
+            // A rival standing by their race (copied for each): their picture by their car, a "?" until met, a tick once beaten.
+            var rivalMarker = At("RivalMarker", world, Vector2.zero, Vector2.zero, new Vector2(230f, 200f));
+            rivalMarker.pivot = new Vector2(0.5f, 0f);
+            Img(At("Shadow", rivalMarker, new Vector2(0.5f, 0f), new Vector2(0f, -6f), new Vector2(210f, 34f)), "Circle", new Color(0.1f, 0.2f, 0.12f, 0.3f)).preserveAspect = false;
+            var markerPicture = Img(Stretch("Picture", rivalMarker), "Circle", Color.white, raycast: true);
+            var mystery = At("Mystery", rivalMarker, new Vector2(0.5f, 1f), new Vector2(0f, 10f), new Vector2(70f, 70f));
+            mystery.pivot = new Vector2(0.5f, 0.5f);
+            Img(mystery, "Circle", Theme.Ink);
+            Txt(Stretch("Label", mystery), "?", 52, Theme.Amber, _black);
+            var beatenRt = At("Beaten", rivalMarker, new Vector2(1f, 1f), new Vector2(-14f, -10f), new Vector2(54f, 54f));
+            beatenRt.pivot = new Vector2(0.5f, 0.5f);
+            Img(beatenRt, "Circle", Theme.Leaf);
+            Img(At("Icon", beatenRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(30f, 30f)), "IconCheck", Color.white);
+            var markerButton = rivalMarker.gameObject.AddComponent<Button>();
+            markerButton.targetGraphic = markerPicture; markerButton.transition = Selectable.Transition.None;
+            rivalMarker.gameObject.AddComponent<ButtonFeedback>();
+            rivalMarker.gameObject.SetActive(false);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));
             car.pivot = new Vector2(0.5f, 0.5f);
             var mapShadow = Img(At("Shadow", car, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(70f, 120f)), "CarShadow", new Color(0f, 0f, 0f, 0.45f)); mapShadow.preserveAspect = false;
@@ -244,7 +261,7 @@ namespace SomeGame.EditorTools
             Set(so, "world", world); Set(so, "nodeTemplate", node); Set(so, "car", car); Set(so, "background", background); Set(so, "ambience", ambienceComp); Set(so, "snow", snow.gameObject); Set(so, "totalStars", total);
             Set(so, "chapterLabel", chapter);
             Set(so, "deck", deck);
-            Set(so, "garageButton", garageButton); Set(so, "garageDot", garageDot.gameObject); Set(so, "garage", garage); Set(so, "meeting", meeting); Set(so, "challengeStop", sideStop); Set(so, "garageCar", garageCar);
+            Set(so, "garageButton", garageButton); Set(so, "garageDot", garageDot.gameObject); Set(so, "garage", garage); Set(so, "meeting", meeting); Set(so, "challengeStop", sideStop); Set(so, "rivalMarkerTemplate", rivalMarker); Set(so, "garageCar", garageCar);
             // Swipe between cups: the page parts slide (the header and cup name a little faster, for depth).
             SetArray(so, "page", new[] { map, cupRt });
             var parallax = so.FindProperty("pageParallax");
@@ -1138,13 +1155,6 @@ namespace SomeGame.EditorTools
             var caption = Txt(Stretch("Label", capRt), "MORE SOON", 32, Theme.Ink, _condItalic);
             caption.characterSpacing = 4f;
 
-            // The cup's last race: a chequered flag on the badge's other shoulder.
-            var flag = At("Final", root, new Vector2(0.5f, 0.5f), new Vector2(-70f, 70f), new Vector2(96f, 96f));
-            flag.pivot = new Vector2(0.5f, 0.5f); flag.localRotation = Quaternion.Euler(0f, 0f, 12f);
-            Img(At("Shadow", flag, new Vector2(0.5f, 0.5f), new Vector2(0f, -8f), new Vector2(96f, 96f)), "Circle", Shade(Theme.Ink, 0.7f));
-            Img(Stretch("Face", flag), "Circle", Theme.Ink);
-            Img(At("Icon", flag, new Vector2(0.5f, 0.5f), new Vector2(4f, 0f), new Vector2(58f, 58f)), "IconFlag", Color.white);
-
             // The rival who waits at this stop: their face on the badge's shoulder.
             var rival = At("Rival", root, new Vector2(0.5f, 0.5f), new Vector2(72f, 66f), new Vector2(100f, 100f));
             rival.pivot = new Vector2(0.5f, 0.5f);
@@ -1168,7 +1178,6 @@ namespace SomeGame.EditorTools
             Set(so, "starsPill", starsPill.gameObject); SetArray(so, "stars", stars);
             Set(so, "requirement", req.gameObject); Set(so, "requirementText", reqText);
             Set(so, "selection", selection.gameObject); Set(so, "caption", caption); Set(so, "captionRoot", capRt.gameObject);
-            Set(so, "finalFlag", flag.gameObject);
             Set(so, "rivalBadge", rival.gameObject); Set(so, "rivalPicture", rivalPicture); Set(so, "rivalMystery", rivalMystery.gameObject); Set(so, "rivalBeaten", rivalBeaten.gameObject);
             so.ApplyModifiedPropertiesWithoutUndo();
             rival.gameObject.SetActive(false);

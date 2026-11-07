@@ -32,7 +32,7 @@ namespace SomeGame.UI
         public static readonly (Vector2 p, bool church)[] ValleyHouses =
         {
             (new(90, 1215), false), (new(200, 1236), false), (new(330, 1222), true),
-            (new(1000, 560), false), (new(1080, 600), false), (new(980, 1290), false), (new(860, 1355), false),
+            (new(1060, 720), false), (new(1125, 675), false), (new(980, 1290), false), (new(860, 1355), false),
         };
 
         public static float ValleyHouseScale(Vector2 p) => SizeAt(p.y) * 1.6f;

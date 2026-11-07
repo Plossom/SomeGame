@@ -25,6 +25,8 @@ namespace SomeGame.Race
         [Tooltip("Their face in each mood (Mood order: smug, laugh, surprised, angry, thinking, wink).")]
         public Sprite[] faces;
         public LevelDefinition homeRace;
+        [Tooltip("Where they stand on their cup's map, by their race (map canvas units).")]
+        public Vector2 mapSpot;
 
         [Header("Their car (garage parts, the same as yours)")]
         public Color carColor = Color.red;
