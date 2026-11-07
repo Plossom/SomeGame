@@ -16,7 +16,16 @@ MonoBehaviour:
   title: THE GRUMPY FARMER
   bio: Tunes tractors before breakfast and has never lost on her own meadow. Hates rookies, loves hay.
   portrait: {fileID: 21300000, guid: cef9826d0c319429189a8f28a5b941e2, type: 3}
-  painting: {fileID: 21300000, guid: fc915b2eb53614b9cbfb82fcd9808a9b, type: 3}
+  painting: {fileID: 21300000, guid: 0cec014b63e7741fea3ece192f8b3c24, type: 3}
+  fullBody: {fileID: 21300000, guid: 27834f1c1e7f0478f97c81894e589d49, type: 3}
+  driving: {fileID: 21300000, guid: f9b8b7c7f7e904fc7b1a800961aa00fb, type: 3}
+  faces:
+  - {fileID: 21300000, guid: 62846604432fe42ef9273a9138061997, type: 3}
+  - {fileID: 21300000, guid: 6fa986615be484fd99b4a22189166ec3, type: 3}
+  - {fileID: 21300000, guid: ea660f82ad308411e9971662ef74ae2f, type: 3}
+  - {fileID: 21300000, guid: 6e13f5dbee2d74ac59fd29aaf1fb6a53, type: 3}
+  - {fileID: 21300000, guid: 301753e751aa240338682e4a0604a043, type: 3}
+  - {fileID: 21300000, guid: d118d6a46fd7b440a985504370a732b7, type: 3}
   homeRace: {fileID: 11400000, guid: ac524c4c026cf418b9d57aca283a3b56, type: 2}
   carColor: {r: 0.78431374, g: 0.27450982, b: 0.18431373, a: 1}
   body: pickup
@@ -24,19 +33,19 @@ MonoBehaviour:
   decal: none
   gadget: haybale
   meetLines:
-  - Well, well. A new face on MY meadow?
-  - This here's my farm pickup. And that's my hay bale launcher. Anything behind me gets a face full of hay!
-  - Beat me at Meadow Run and the launcher is yours. Not that you will, rookie.
+  - thinking|Well, well. A new face on MY meadow?
+  - laugh|This here's my farm pickup. And that's my hay bale launcher. Anything behind me gets a face full of hay!
+  - smug|Beat me at Meadow Run and the launcher is yours. Not that you will, rookie.
   cardLine: My meadow, my rules. Try to keep up, rookie!
   startLines:
-  - My meadow, my rules. Try to keep up!
-  - See you at the finish... if you get there.
-  - Mind the hay bales, rookie!
+  - smug|My meadow, my rules. Try to keep up!
+  - laugh|See you at the finish... if you get there.
+  - smug|Mind the hay bales, rookie!
   winLines:
-  - Back to the barn with you!
-  - That's how we race on the farm!
-  - Eat my dust, rookie!
+  - laugh|Back to the barn with you!
+  - laugh|That's how we race on the farm!
+  - wink|Eat my dust, rookie!
   loseLines:
-  - I let you win. Obviously.
-  - Hmph. Beginner's luck!
-  - My tractor would have beaten you.
+  - angry|I let you win. Obviously.
+  - angry|Hmph. Beginner's luck!
+  - surprised|My tractor would have beaten you!

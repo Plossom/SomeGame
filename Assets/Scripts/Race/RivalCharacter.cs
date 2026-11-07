@@ -16,8 +16,14 @@ namespace SomeGame.Race
         [TextArea(2, 4)] public string bio = "";
         [Tooltip("Round portrait (transparent around the circle).")]
         public Sprite portrait;
-        [Tooltip("The big painting: the rival standing by their car (the first meeting, their card).")]
+        [Tooltip("The rival by their car (the first meeting).")]
         public Sprite painting;
+        [Tooltip("The rival standing, head to toe (their card).")]
+        public Sprite fullBody;
+        [Tooltip("The rival at the wheel (the loading screen of their races).")]
+        public Sprite driving;
+        [Tooltip("Their face in each mood (Mood order: smug, laugh, surprised, angry, thinking, wink).")]
+        public Sprite[] faces;
         public LevelDefinition homeRace;
 
         [Header("Their car (garage parts, the same as yours)")]
@@ -48,6 +54,22 @@ namespace SomeGame.Race
             return lines[i];
         }
         [System.NonSerialized] string _last;
+
+        public enum Mood { Smug, Laugh, Surprised, Angry, Thinking, Wink }
+
+        /// <summary>Their face in a mood (the portrait if there is none).</summary>
+        public Sprite Face(Mood mood) => faces != null && (int)mood < faces.Length && faces[(int)mood] != null ? faces[(int)mood] : portrait;
+
+        /// <summary>A line may start with its mood ("laugh|Ha!"): the words, and the mood (smug if none).</summary>
+        public static string Words(string line, out Mood mood)
+        {
+            mood = Mood.Smug;
+            if (string.IsNullOrEmpty(line)) return "";
+            int bar = line.IndexOf('|');
+            if (bar <= 0) return line;
+            if (System.Enum.TryParse(line.Substring(0, bar), true, out Mood parsed)) mood = parsed;
+            return line.Substring(bar + 1);
+        }
 
         /// <summary>Everyone with a face (Resources/Rivals).</summary>
         public static RivalCharacter[] All => Resources.LoadAll<RivalCharacter>("Rivals");

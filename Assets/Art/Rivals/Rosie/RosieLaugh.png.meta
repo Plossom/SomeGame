@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: fc915b2eb53614b9cbfb82fcd9808a9b
+guid: 6fa986615be484fd99b4a22189166ec3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3475363263064526080
-    second: RosieRustPainting_0
+      213: 5915656718950655260
+    second: RosieLaugh_0
+  - first:
+      213: 1894186187379794763
+    second: RosieLaugh_1
+  - first:
+      213: 6755812736663610702
+    second: RosieLaugh_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -77,7 +83,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -128,13 +134,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RosieRustPainting_0
+      name: RosieLaugh_0
       rect:
         serializedVersion: 2
-        x: 103
-        y: 0
-        width: 1097
-        height: 1189
+        x: 7
+        y: 6
+        width: 302
+        height: 282
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -143,8 +149,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 00d47687978fa3030800000000000000
-      internalID: 3475363263064526080
+      spriteID: c15e4328172a81250800000000000000
+      internalID: 5915656718950655260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RosieLaugh_1
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 154
+        width: 37
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4369353d40894a10800000000000000
+      internalID: 1894186187379794763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RosieLaugh_2
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 122
+        width: 35
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e45e4e1e3e771cd50800000000000000
+      internalID: 6755812736663610702
       vertices: []
       indices: 
       edges: []
@@ -163,7 +213,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      RosieRustPainting_0: 3475363263064526080
+      RosieLaugh_0: 5915656718950655260
+      RosieLaugh_1: 1894186187379794763
+      RosieLaugh_2: 6755812736663610702
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

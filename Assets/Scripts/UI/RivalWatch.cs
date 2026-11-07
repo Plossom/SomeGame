@@ -285,11 +285,13 @@ namespace SomeGame.UI
         void Say(RivalCharacter character, string line, float seconds, Vector2 home, float delay = 0f)
         {
             if (says == null || string.IsNullOrEmpty(line)) return;
+            // Their face in the line's mood ("laugh|Ha!"), the words in the bubble.
+            string words = RivalCharacter.Words(line, out var mood);
             var portrait = says.Find("Portrait/Picture")?.GetComponent<UnityEngine.UI.Image>();
-            if (portrait != null) portrait.sprite = character.portrait;
-            var nameLabel = says.Find("Name")?.GetComponentInChildren<TMP_Text>();
+            if (portrait != null) portrait.sprite = character.Face(mood);
+            var nameLabel = says.Find("Portrait/Name")?.GetComponentInChildren<TMP_Text>();
             if (nameLabel != null) nameLabel.text = character.displayName.ToUpperInvariant();
-            says.Find("Bubble/Label").GetComponent<TMP_Text>().text = line;
+            says.Find("Bubble/Label").GetComponent<TMP_Text>().text = words;
             says.anchoredPosition = home;
             _saysAt = Time.time + delay;
             _saysFor = seconds;

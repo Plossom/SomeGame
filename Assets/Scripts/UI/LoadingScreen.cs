@@ -15,6 +15,8 @@ namespace SomeGame.UI
     /// </summary>
     public class LoadingScreen : MonoBehaviour
     {
+        [Tooltip("The race's rival at the wheel (their home race, or the challenge they set).")]
+        [SerializeField] UnityEngine.UI.Image rival;
         [SerializeField] CanvasGroup group;
         [SerializeField] UnityEngine.UI.Image preview;
         [SerializeField] TMP_Text chapter;
@@ -66,6 +68,13 @@ namespace SomeGame.UI
                     vehicle.Dress(look);
                 }
             }
+            // Their race: the rival comes driving in over the corner of the picture.
+            var character = RivalOf(level);
+            if (rival != null)
+            {
+                rival.gameObject.SetActive(character != null && character.driving != null);
+                if (character != null) rival.sprite = character.driving;
+            }
             SetProgress(0f);
             group.alpha = 0f;
             for (float t = 0f; t < 0.2f; t += Time.unscaledDeltaTime) { group.alpha = t / 0.2f; yield return null; }
@@ -93,6 +102,33 @@ namespace SomeGame.UI
             done?.Invoke();
             for (float t = 0f; t < fadeSeconds; t += Time.unscaledDeltaTime) { group.alpha = 1f - t / fadeSeconds; yield return null; }
             Destroy(gameObject);
+        }
+
+        static RivalCharacter RivalOf(LevelDefinition level)
+        {
+            if (level == null) return null;
+            var home = RivalCharacter.For(level);
+            if (home != null) return home;
+            foreach (var cup in CupList.Instance.cups)
+                if (cup != null && cup.challenge == level && !string.IsNullOrEmpty(cup.challengeAfterRival))
+                    return Resources.Load<RivalCharacter>("Rivals/" + cup.challengeAfterRival);
+            return null;
+        }
+
+        float _shownAt = -1f;
+
+        // The rival drives in from the side with a bump, then bounces along.
+        void Update()
+        {
+            if (rival == null || !rival.gameObject.activeSelf) return;
+            if (_shownAt < 0f) _shownAt = Time.unscaledTime;
+            float t = Time.unscaledTime - _shownAt;
+            float k = Mathf.Clamp01(t / 0.6f);
+            float slide = 1f - Mathf.Pow(1f - k, 3f);
+            var rt = rival.rectTransform;
+            rt.localScale = Vector3.one * (0.6f + 0.4f * slide);
+            rt.localRotation = Quaternion.Euler(0f, 0f, 2.5f * Mathf.Sin(t * 9f));
+            rt.anchoredPosition = new Vector2(-260f + 500f * (1f - slide), 300f + 10f * Mathf.Abs(Mathf.Sin(t * 9f)));
         }
 
         void SetProgress(float value)

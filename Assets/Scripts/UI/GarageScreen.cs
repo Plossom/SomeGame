@@ -386,7 +386,7 @@ namespace SomeGame.UI
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.4f);
                 return;
             }
-            detailPainting.sprite = rival.painting != null ? rival.painting : rival.portrait;
+            detailPainting.sprite = rival.fullBody != null ? rival.fullBody : rival.painting != null ? rival.painting : rival.portrait;
             detailName.text = rival.displayName.ToUpperInvariant();
             detailTitle.text = rival.title;
             detailBio.text = rival.bio;

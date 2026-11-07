@@ -21,6 +21,8 @@ namespace SomeGame.UI
         [SerializeField] RectTransform banner, box, next, prize;
         [SerializeField] TMP_Text nameLabel, titleLabel, lineLabel, prizeName;
         [SerializeField] UnityEngine.UI.Image prizeIcon;
+        [Tooltip("Their face on the speech box, in the mood of each line.")]
+        [SerializeField] UnityEngine.UI.Image face;
         [SerializeField, Min(5f)] float charactersPerSecond = 42f;
 
         RivalCharacter _rival;
@@ -67,7 +69,8 @@ namespace SomeGame.UI
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.unlock, 0.7f);
         }
 
-        string Line => _rival.meetLines != null && _line < _rival.meetLines.Length ? _rival.meetLines[_line] : "";
+        string Raw => _rival.meetLines != null && _line < _rival.meetLines.Length ? _rival.meetLines[_line] : "";
+        string Line => RivalCharacter.Words(Raw, out _);
         bool LastLine => _rival.meetLines == null || _line >= _rival.meetLines.Length - 1;
         int Shown => Mathf.Clamp(Mathf.FloorToInt((Time.unscaledTime - _lineAt) * charactersPerSecond), 0, Line.Length);
 
@@ -116,6 +119,14 @@ namespace SomeGame.UI
 
             // The words type out; the arrow bobs when the line is all there.
             lineLabel.text = Line;
+            if (face != null)
+            {
+                RivalCharacter.Words(Raw, out var mood);
+                face.sprite = _rival.Face(mood);
+                float k = Mathf.Clamp01((t - _lineAt) / 0.3f);
+                face.rectTransform.localScale = Vector3.one * (k <= 0f ? 0f : EaseOutBack(k));
+                face.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 3f * Mathf.Sin(t * 2.4f));
+            }
             lineLabel.maxVisibleCharacters = Shown;
             bool full = Shown >= Line.Length;
             next.gameObject.SetActive(full && !LastLine);

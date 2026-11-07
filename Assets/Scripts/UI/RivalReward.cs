@@ -31,9 +31,9 @@ namespace SomeGame.UI
 
         public void Show(RivalCharacter rival, string sayLine)
         {
-            portraitImage.sprite = rival.portrait;
+            line.text = RivalCharacter.Words(sayLine, out var mood);
+            portraitImage.sprite = rival.Face(mood);
             title.text = $"YOU BEAT {rival.displayName.ToUpperInvariant()}!";
-            line.text = sayLine;
             var gadget = Garage.Find(rival.gadget, Garage.Slot.Gadget);
             gadgetName.text = gadget?.Name ?? "";
             gadgetIcon.sprite = GarageArt.Instance?.Get(gadget)?.full;

@@ -57,7 +57,7 @@ namespace SomeGame.Race
                 _greeted = true;
                 var rosie = Resources.Load<RivalCharacter>("Rivals/RosieRust");
                 var watch = FindAnyObjectByType<SomeGame.UI.RivalWatch>();
-                if (rosie != null && watch != null) watch.Say(rosie, "My chickens got out! Catch all of them before dinner, rookie!", 2.8f);
+                if (rosie != null && watch != null) watch.Say(rosie, "surprised|My chickens got out! Catch all of them before dinner, rookie!", 2.8f);
             }
             if (_race.State == RaceState.Racing && TimeLeft <= 0f) End(false);
         }
