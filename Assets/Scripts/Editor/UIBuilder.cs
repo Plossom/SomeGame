@@ -416,8 +416,12 @@ namespace SomeGame.EditorTools
             glow.pivot = new Vector2(0.5f, 0.5f); glow.anchoredPosition = Vector2.zero;
             Img(glow, "Glow", Theme.WithAlpha(Theme.Amber, 0.3f)).preserveAspect = false;
             var cardShadow = Stretch("Shadow", card);
-            cardShadow.offsetMin = cardShadow.offsetMax = new Vector2(0f, -24f);
+            cardShadow.offsetMin = new Vector2(-8f, -32f); cardShadow.offsetMax = new Vector2(8f, -16f);
             Img(cardShadow, "Round", Shade(Theme.Ink, 0.7f), sliced: true);
+            // A crisp black outline round the card.
+            var outline = Stretch("Outline", card);
+            outline.offsetMin = new Vector2(-8f, -8f); outline.offsetMax = new Vector2(8f, 8f);
+            Img(outline, "Round", new Color(0.06f, 0.07f, 0.08f), sliced: true);
             var face = Img(Stretch("Face", card), "Round", Theme.Cream, sliced: true, raycast: true);
             var focus = face.gameObject.AddComponent<Button>();
             focus.targetGraphic = face; focus.transition = Selectable.Transition.None;
@@ -431,9 +435,18 @@ namespace SomeGame.EditorTools
             Img(At("Face", medal, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.Orange);
             Img(At("Rim", medal, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(146f, 146f)), "Ring", Theme.WithAlpha(Color.white, 0.55f));
             var number = Txt(At("Number", medal, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(170f, 130f)), "1", 100, Color.white, _black);
-            var won = At("Won", card, new Vector2(1f, 1f), new Vector2(26f, 30f), new Vector2(130f, 130f));
-            Img(won, "Circle", Theme.Amber);
-            Img(At("Icon", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(70f, 70f)), "IconTrophy", Theme.Ink);
+            var won = At("Won", card, new Vector2(1f, 1f), new Vector2(-150f, 24f), new Vector2(104f, 104f));
+            Img(won, "Circle", new Color(0.06f, 0.07f, 0.08f));
+            Img(At("Face", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(90f, 90f)), "Circle", Theme.Amber);
+            Img(At("Icon", won, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(56f, 56f)), "IconTrophy", Theme.Ink);
+            // The cross on the top right corner closes the deck.
+            var closeRt = At("Close", card, new Vector2(1f, 1f), new Vector2(30f, 30f), new Vector2(124f, 124f));
+            closeRt.pivot = new Vector2(0.5f, 0.5f); closeRt.anchoredPosition = new Vector2(-32f, -32f);
+            Img(closeRt, "Circle", new Color(0.06f, 0.07f, 0.08f));
+            var closeFace = Img(At("Face", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(108f, 108f)), "Circle", Theme.Cream, raycast: true);
+            Img(At("Icon", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(52f, 52f)), "IconClose", Theme.Ink);
+            var close = closeRt.gameObject.AddComponent<Button>();
+            close.targetGraphic = closeFace; close.transition = Selectable.Transition.None;
 
             var chapter = Txt(At("Chapter", card, new Vector2(0f, 1f), new Vector2(176f, -58f), new Vector2(600f, 46f)), "VALLEY CUP · RACE 1", 36, Theme.Rust, _condItalic, TextAlignmentOptions.Left);
             chapter.characterSpacing = 6f;
@@ -444,10 +457,10 @@ namespace SomeGame.EditorTools
 
             // The track from above in a dark frame sized to the picture's shape; its blurred copy shows off-centre,
             // a band of light sweeps over it, and a lock covers a race still locked.
-            var frame = At("Track", card, new Vector2(0.5f, 1f), new Vector2(0f, -706f), new Vector2(W - 80f, 800f));
-            frame.pivot = new Vector2(0.5f, 0.5f); frame.anchoredPosition = new Vector2(0f, -706f);
+            var frame = At("Track", card, new Vector2(0.5f, 1f), new Vector2(0f, -756f), new Vector2(W - 80f, 900f));
+            frame.pivot = new Vector2(0.5f, 0.5f); frame.anchoredPosition = new Vector2(0f, -756f);
             Img(frame, "Round", Theme.Ink, sliced: true);
-            frame.gameObject.AddComponent<RectMask2D>();
+            frame.gameObject.AddComponent<Mask>().showMaskGraphic = true; // clips the light band (also on a tilted card)
             var picture = Img(Stretch("Picture", frame), null, Color.white);
             picture.rectTransform.offsetMin = new Vector2(12f, 12f); picture.rectTransform.offsetMax = new Vector2(-12f, -12f);
             picture.preserveAspect = true;
@@ -457,22 +470,27 @@ namespace SomeGame.EditorTools
             var shine = At("Shine", frame, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(110f, 2400f));
             shine.pivot = new Vector2(0.5f, 0.5f); shine.localRotation = Quaternion.Euler(0f, 0f, -24f);
             Img(shine, null, new Color(1f, 1f, 1f, 0.2f));
+            // A locked race: no track yet, a grey plate (like a locked cup's page) with a lock and the stars it needs.
             var lockCover = Stretch("Lock", frame);
-            Img(lockCover, null, Theme.WithAlpha(Theme.Ink, 0.62f));
-            Img(At("Icon", lockCover, new Vector2(0.5f, 0.5f), new Vector2(0f, 90f), new Vector2(170f, 170f)), "IconLock", Theme.Cream);
-            var lockLabel = Txt(At("Label", lockCover, new Vector2(0.5f, 0.5f), new Vector2(0f, -90f), new Vector2(700f, 160f)), "0 / 2\nSTARS TO UNLOCK", 46, Theme.Cream, _condItalic);
+            lockCover.offsetMin = new Vector2(12f, 12f); lockCover.offsetMax = new Vector2(-12f, -12f);
+            Img(lockCover, "Round", Theme.Stone, sliced: true);
+            var lockPattern = Img(Stretch("Pattern", lockCover), "Checker", Theme.WithAlpha(Theme.StoneDark, 0.08f));
+            lockPattern.type = Image.Type.Tiled; lockPattern.preserveAspect = false; lockPattern.pixelsPerUnitMultiplier = 0.6f;
+            Img(At("Ring", lockCover, new Vector2(0.5f, 0.5f), new Vector2(0f, 90f), new Vector2(260f, 260f)), "Circle", Theme.WithAlpha(Theme.StoneDark, 0.18f));
+            Img(At("Icon", lockCover, new Vector2(0.5f, 0.5f), new Vector2(0f, 90f), new Vector2(150f, 150f)), "IconLock", Theme.StoneDark);
+            var lockLabel = Txt(At("Label", lockCover, new Vector2(0.5f, 0.5f), new Vector2(0f, -120f), new Vector2(700f, 160f)), "0 / 2\nSTARS TO UNLOCK", 46, Theme.StoneDark, _condItalic);
             lockLabel.textWrappingMode = TextWrappingModes.Normal;
-            Configure(frame.gameObject.AddComponent<PreviewFrame>(), ("picture", picture), ("maxSize", new Vector2(W - 80f, 800f)), ("inset", 12f));
+            Configure(frame.gameObject.AddComponent<PreviewFrame>(), ("picture", picture), ("maxSize", new Vector2(W - 80f, 900f)), ("inset", 12f));
 
             // Difficulty pips on the left, laps or sections on the right.
             var pips = new Image[5];
             for (int i = 0; i < pips.Length; i++)
-                pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(60f + i * 78f, -1138f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
-            var laps = Txt(At("Laps", card, new Vector2(1f, 1f), new Vector2(-60f, -1124f), new Vector2(360f, 56f)), "3 LAPS", 44, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
+                pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(60f + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
+            var laps = Txt(At("Laps", card, new Vector2(1f, 1f), new Vector2(-60f, -1224f), new Vector2(360f, 56f)), "3 LAPS", 44, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
             laps.characterSpacing = 6f;
 
             // The star times on a dark plate.
-            var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1190f), new Vector2(W - 80f, 132f));
+            var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1290f), new Vector2(W - 80f, 132f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
@@ -486,20 +504,6 @@ namespace SomeGame.EditorTools
                     Img(At($"S{k}", g, new Vector2(0f, 1f), new Vector2(4f + k * 46f, -8f), new Vector2(46f, 46f)), "IconStar", Theme.Amber);
                 times[i] = Txt(At("Time", g, new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(230f, 62f)), "1:00.00", 50, Theme.Cream, _cond, TextAlignmentOptions.BottomLeft);
             }
-
-            // What waits on the track: a row of round badges with the game's own pictures.
-            var row = At("Features", card, new Vector2(0.5f, 1f), new Vector2(0f, -1352f), new Vector2(W - 80f, 100f));
-            var rowLayout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-            rowLayout.spacing = 16f; rowLayout.childAlignment = TextAnchor.MiddleCenter;
-            rowLayout.childControlWidth = false; rowLayout.childControlHeight = false;
-            rowLayout.childForceExpandWidth = false; rowLayout.childForceExpandHeight = false;
-            var badge = Rt("Badge", row);
-            badge.sizeDelta = new Vector2(100f, 100f);
-            Img(badge, "Circle", Theme.Ink);
-            var mask = At("Mask", badge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(86f, 86f));
-            Img(mask, "Circle", Color.white);
-            mask.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-            Img(At("Icon", mask, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(78f, 78f)), null, Color.white).preserveAspect = true;
 
             // START along the bottom, with a ring breathing out of it.
             var startRt = At("StartButton", card, new Vector2(0.5f, 0f), new Vector2(0f, 54f), new Vector2(600f, 178f));
@@ -525,59 +529,32 @@ namespace SomeGame.EditorTools
             Configure(raceCard, ("group", group), ("focusButton", focus), ("veil", veil), ("glow", glow),
                 ("numberLabel", number), ("chapterLabel", chapter), ("titleLabel", title), ("recordsLabel", records), ("lapsLabel", laps),
                 ("picture", picture), ("blurredPicture", blurred), ("shine", shine), ("lockCover", lockCover.gameObject), ("lockLabel", lockLabel),
-                ("wonBadge", won.gameObject), ("featureRow", row), ("featureTemplate", badge),
+                ("wonBadge", won.gameObject), ("closeButton", close),
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel), ("startRing", ring));
             var cso = new SerializedObject(raceCard);
             SetArray(cso, "difficultyPips", pips); SetArray(cso, "starGroups", groups); SetArray(cso, "starTimes", times);
             cso.ApplyModifiedPropertiesWithoutUndo();
 
-            // ---- the cross, and the bar of race numbers
-            var closeRt = At("Close", safe, new Vector2(1f, 1f), new Vector2(-50f, -40f), new Vector2(130f, 130f));
-            closeRt.pivot = new Vector2(0.5f, 0.5f); closeRt.anchoredPosition = new Vector2(-115f, -105f);
-            var closeFace = Img(closeRt, "Circle", Theme.Cream, raycast: true);
-            Img(At("Icon", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(60f, 60f)), "IconClose", Theme.Ink);
-            var close = closeRt.gameObject.AddComponent<Button>();
-            close.targetGraphic = closeFace; close.transition = Selectable.Transition.None;
-            closeRt.gameObject.AddComponent<ButtonFeedback>();
-
-            var strip = At("RaceBar", safe, new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(900f, 140f));
+            // ---- the bar of race numbers
+            var strip = At("RaceBar", safe, new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(1100f, 172f));
             var stripFace = Img(strip, "Round", Theme.Ink, sliced: true, raycast: true);
             var stripToggle = strip.gameObject.AddComponent<Button>();
             stripToggle.targetGraphic = stripFace; stripToggle.transition = Selectable.Transition.None;
-            var raceBadge = At("Race", strip, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(96f, 96f));
+            var raceBadge = At("Race", strip, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f));
             raceBadge.pivot = new Vector2(0.5f, 0.5f);
-            var raceFace = Img(At("Face", raceBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(96f, 96f)), "Circle", Theme.Cream, raycast: true);
-            Txt(At("Number", raceBadge, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(96f, 96f)), "1", 52, Theme.Ink, _black);
-            Img(At("Lock", raceBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(48f, 48f)), "IconLock", Theme.StoneDark);
+            var raceFace = Img(At("Face", raceBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f)), "Circle", Theme.Cream, raycast: true);
+            Txt(At("Number", raceBadge, new Vector2(0.5f, 0.5f), new Vector2(0f, 2f), new Vector2(118f, 118f)), "1", 64, Theme.Ink, _black);
+            Img(At("Lock", raceBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(58f, 58f)), "IconLock", Theme.StoneDark);
             var raceButton = raceBadge.gameObject.AddComponent<Button>();
             raceButton.targetGraphic = raceFace; raceButton.transition = Selectable.Transition.None;
             raceBadge.gameObject.AddComponent<ButtonFeedback>();
-            var stripRing = At("Ring", strip, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(122f, 122f));
+            var stripRing = At("Ring", strip, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 150f));
             stripRing.pivot = new Vector2(0.5f, 0.5f);
             Img(stripRing, "Ring", Theme.Amber);
 
             var deck = host.gameObject.AddComponent<RaceDeck>();
-            Configure(deck, ("panel", panel.gameObject), ("backdrop", backdrop), ("cardTemplate", raceCard), ("closeButton", close),
+            Configure(deck, ("panel", panel.gameObject), ("backdrop", backdrop), ("cardTemplate", raceCard),
                 ("strip", strip), ("stripToggle", stripToggle), ("stripBadge", raceBadge), ("stripRing", stripRing));
-            var dso = new SerializedObject(deck);
-            var iconList = new (string key, string sprite)[]
-            {
-                ("roof", "RoofRow"), ("wall", "IceWall"), ("ice", "Ice"), ("ramp", "Ramp"), ("gummiboat", "Gummiboat"), ("pad", "JumpPad"),
-                ("dash", "DashPanel"), ("penguin", "Penguin"), ("fish", "Fish"), ("snowball", "Snowball"), ("log", "Log"), ("hay", "HayBale"),
-                ("oil", "Oil"), ("shortcut", "Arrow"), ("mushroom", "MushroomPad"), ("cow", "Cow"), ("forestlog", "ForestLog"), ("trampoline", "Trampoline"),
-                ("lantern", "Lantern"), ("drawbridge", "BridgeLeaf"), ("ring", "BoostRing"), ("waterfall", "Waterfall"), ("coaster", "CoasterCar"),
-                ("floe", "IceFloe"), ("curling", "CurlingStone"), ("aurora", "AuroraBadge"), ("reindeer", "Reindeer"),
-            };
-            var icons = dso.FindProperty("icons");
-            icons.arraySize = iconList.Length;
-            for (int i = 0; i < iconList.Length; i++)
-            {
-                var entry = icons.GetArrayElementAtIndex(i);
-                entry.FindPropertyRelative("key").stringValue = iconList[i].key;
-                entry.FindPropertyRelative("sprite").objectReferenceValue = Sprite(iconList[i].sprite);
-                entry.FindPropertyRelative("tint").colorValue = iconList[i].key == "shortcut" ? new Color(0.17f, 0.23f, 0.23f) : Color.clear;
-            }
-            dso.ApplyModifiedPropertiesWithoutUndo();
             panel.gameObject.SetActive(false);
             return deck;
         }

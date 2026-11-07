@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using SomeGame.Race;
-using SomeGame.Track;
 using TMPro;
 using UnityEngine;
 
@@ -9,21 +8,13 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// One race of the <see cref="RaceDeck"/>: a big card with the race's number on a medallion, its name, the
-    /// whole track from above, difficulty, laps or sections, the star times (earned ones lit), your records, what
-    /// waits on the track, and START. Off to the side of the deck it is frosted over and its picture blurred
-    /// (<see cref="SetFocus"/>). A race still locked shows a lock and the stars it needs.
+    /// whole track from above, difficulty, laps or sections, the star times (earned ones lit), your records and
+    /// START; the cross on its corner closes the deck. Off to the side of the deck it is frosted over and its picture
+    /// blurred (<see cref="SetFocus"/>). A race still locked keeps its track a secret: a grey plate with a lock and
+    /// the stars it needs.
     /// </summary>
     public class RaceCard : MonoBehaviour
     {
-        [Serializable]
-        public struct FeatureIcon
-        {
-            public string key;
-            public Sprite sprite;
-            [Tooltip("Tint of the picture (white pictures need a dark one). Clear = no tint.")]
-            public Color tint;
-        }
-
         [SerializeField] CanvasGroup group;
         [Tooltip("Tapping a card at the side of the deck brings it to the middle.")]
         [SerializeField] UnityEngine.UI.Button focusButton;
@@ -41,22 +32,21 @@ namespace SomeGame.UI
         [Tooltip("The three star-time groups: their star icons light up when your best time beats the time.")]
         [SerializeField] RectTransform[] starGroups;
         [SerializeField] TMP_Text[] starTimes;
-        [SerializeField] RectTransform featureRow;
-        [SerializeField] RectTransform featureTemplate;
+        [SerializeField] UnityEngine.UI.Button closeButton;
         [SerializeField] UnityEngine.UI.Button startButton;
         [SerializeField] UnityEngine.UI.Image startFace, startShadow;
         [SerializeField] TMP_Text startLabel;
         [SerializeField] RectTransform startRing;
 
-        readonly List<GameObject> _badges = new();
         float _focusedAt = -10f, _pressedAt = -10f;
         bool _focused, _canEnter;
 
         public int Index { get; private set; }
         public UnityEngine.UI.Button FocusButton => focusButton;
         public UnityEngine.UI.Button StartButton => startButton;
+        public UnityEngine.UI.Button CloseButton => closeButton;
 
-        public void Bind(LevelDefinition level, int index, bool canEnter, CupDefinition cup, FeatureIcon[] icons)
+        public void Bind(LevelDefinition level, int index, bool canEnter, CupDefinition cup)
         {
             Index = index;
             _canEnter = canEnter;
@@ -73,11 +63,14 @@ namespace SomeGame.UI
                 ? $"BEST  <color={Theme.Html(Theme.Ink)}>{TimeFormat.Race(best.Value)}</color>" + (bestLap.HasValue ? $"     {lapWord}  <color={Theme.Html(Theme.Ink)}>{TimeFormat.Race(bestLap.Value)}</color>" : "")
                 : "NO TIME YET";
 
-            picture.sprite = level.preview;
-            picture.enabled = level.preview != null;
+            // A locked race keeps its track a secret (a grey plate in a grey frame).
+            var preview = canEnter ? level.preview : null;
+            if (picture.transform.parent.TryGetComponent(out UnityEngine.UI.Image frame)) frame.color = canEnter ? Theme.Ink : Theme.StoneDark;
+            picture.sprite = preview;
+            picture.enabled = preview != null;
             if (blurredPicture != null)
             {
-                blurredPicture.texture = level.preview != null ? UiBlur.Blurred(level.preview.texture) : null;
+                blurredPicture.texture = preview != null ? UiBlur.Blurred(preview.texture) : null;
                 blurredPicture.enabled = blurredPicture.texture != null;
             }
             for (int i = 0; i < difficultyPips.Length; i++)
@@ -92,7 +85,6 @@ namespace SomeGame.UI
                 foreach (var icon in Stars(i)) icon.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.Stone, 0.35f);
             }
             if (wonBadge != null) wonBadge.SetActive(ProgressStore.HasWon(level));
-            ShowFeatures(level.track, icons);
 
             lockCover.SetActive(!canEnter);
             if (!canEnter)
@@ -123,6 +115,7 @@ namespace SomeGame.UI
             bool focused = a < 0.08f;
             startButton.interactable = focused && _canEnter;
             focusButton.interactable = !focused;
+            closeButton.interactable = focused;
             if (focused && !_focused) _focusedAt = Time.unscaledTime;
             _focused = focused;
             if (glow != null)
@@ -170,6 +163,8 @@ namespace SomeGame.UI
                 float w = frame.rect.width + frame.rect.height;
                 shine.anchoredPosition = new Vector2(Mathf.Lerp(-w * 0.6f, w * 0.6f, Mathf.Clamp01(s / 0.7f)), 0f);
             }
+            // The cross pops up on the card in the middle.
+            closeButton.transform.localScale = Vector3.one * (_focused ? Pop(Mathf.Clamp01((t - _focusedAt - 0.15f) / 0.3f)) * Mathf.Clamp01((t - _focusedAt - 0.15f) / 0.1f) : 0f);
             float press = Mathf.Clamp01((t - _pressedAt) / 0.35f);
             startButton.transform.localScale = Vector3.one * (press < 1f ? 1f - 0.12f * Mathf.Sin(press * Mathf.PI) : 1f);
         }
@@ -180,83 +175,6 @@ namespace SomeGame.UI
             if (t <= 0f) return 0.6f;
             float u = Mathf.Clamp01(t) - 1f;
             return Mathf.LerpUnclamped(0.6f, 1f, 1f + u * u * ((s + 1f) * u + s));
-        }
-
-        void ShowFeatures(TrackLayout track, FeatureIcon[] icons)
-        {
-            foreach (var badge in _badges) Destroy(badge);
-            _badges.Clear();
-            if (track == null || featureRow == null || featureTemplate == null || icons == null) return;
-            featureTemplate.gameObject.SetActive(false);
-            foreach (var key in Features(track))
-            {
-                var entry = Array.Find(icons, i => i.key == key);
-                if (entry.sprite == null) continue;
-                var badge = Instantiate(featureTemplate, featureRow);
-                badge.gameObject.SetActive(true);
-                badge.name = key;
-                var icon = badge.Find("Mask/Icon")?.GetComponent<UnityEngine.UI.Image>();
-                if (icon != null)
-                {
-                    icon.sprite = entry.sprite;
-                    icon.color = entry.tint.a > 0f ? entry.tint : Color.white;
-                }
-                _badges.Add(badge.gameObject);
-            }
-        }
-
-        // What waits on the track, from its layout (keys of the badge pictures), at most seven.
-        static List<string> Features(TrackLayout track)
-        {
-            var keys = new List<string>();
-            void Add(bool has, string key) { if (has && keys.Count < 7) keys.Add(key); }
-            bool Has(TrackLayout.BranchKind kind) => track.branches.Exists(b => b.kind == kind);
-            // The special attractions first.
-            Add(track.dusk, track.biome == TrackLayout.Biome.Snow ? "aurora" : "lantern"); // winter nights have the northern lights, no lanterns
-            Add(track.gaps.Exists(g => g.IsDrawbridge), "drawbridge");
-            Add(track.rings is { Count: > 0 }, "ring");
-            Add(track.waterfalls is { Count: > 0 }, "waterfall");
-            Add(track.coasters is { Count: > 0 }, "coaster");
-            Add(Has(TrackLayout.BranchKind.Roof), "roof");
-            Add(track.banks.Count > 0, "wall");
-            Add(Has(TrackLayout.BranchKind.Ice), "ice");
-            Add(track.rivers.Count > 0 || track.gaps.Count > 0, "ramp");
-            // Pads as the track draws them: gummi boats in the water, bouncy mushrooms on meadow ground.
-            bool orange = track.padLook == TrackLayout.PadLook.Orange;
-            Add(track.bouncers.Exists(b => Wet(track, b.position)), track.biome == TrackLayout.Biome.Snow ? "floe" : "gummiboat");
-            Add(track.bouncers.Exists(b => !Wet(track, b.position)),
-                orange ? "pad" : track.padLook == TrackLayout.PadLook.Trampoline ? "trampoline" : track.biome == TrackLayout.Biome.Meadow ? "mushroom" : "pad");
-            Add(track.dashPanels.Count > 0, "dash");
-            Add(track.penguins.Exists(p => p.kind == TrackLayout.CrossingKind.Reindeer), "reindeer");
-            Add(track.penguins.Exists(p => p.kind != TrackLayout.CrossingKind.Reindeer), "penguin");
-            Add(track.geysers.Count > 0, "fish");
-            Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Snowball), "snowball");
-            Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Curling), "curling");
-            Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.Log), "log");
-            Add(track.sweepers.Exists(s => s.kind == TrackLayout.SweeperKind.HayBale), "hay");
-            Add(track.oil.Count > 0, "oil");
-            Add(track.cows.Count > 0, "cow");
-            Add(track.logJumps.Count > 0, "forestlog");
-            Add(track.shortcuts.Count > 0, "shortcut");
-            return keys;
-        }
-
-        static bool Wet(TrackLayout track, Vector2 p)
-        {
-            if (track.waterWorld) return true;
-            foreach (var lake in track.lakes)
-            {
-                Vector2 local = Quaternion.Euler(0f, 0f, -lake.angle) * (p - lake.center);
-                if (new Vector2(local.x / lake.radii.x, local.y / lake.radii.y).sqrMagnitude < 1f) return true;
-            }
-            foreach (var river in track.rivers)
-                for (int i = 1; i < river.points.Length; i++)
-                {
-                    Vector2 a = river.points[i - 1], ab = river.points[i] - a;
-                    float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / Mathf.Max(1e-6f, ab.sqrMagnitude));
-                    if (Vector2.Distance(p, a + ab * t) < river.width * 0.5f) return true;
-                }
-            return false;
         }
     }
 }
