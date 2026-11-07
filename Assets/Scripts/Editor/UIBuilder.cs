@@ -186,8 +186,7 @@ namespace SomeGame.EditorTools
             var header = At("Header", safe, new Vector2(0f, 1f), new Vector2(60f, -222f), new Vector2(906f, 360f));
             var title = Txt(At("Title", header, new Vector2(0f, 1f), new Vector2(-2f, -14f), new Vector2(800f, 130f)), "MEADOW RUN", 100, Theme.Ink, _black, TextAlignmentOptions.TopLeft);
             title.enableAutoSizing = true; title.fontSizeMin = 64; title.fontSizeMax = 100; // keeps clear of the trophy counter
-            // Your records for the race, beside the star times: best time over best lap.
-            // Star times | records | info button, sharing the header width (1050).
+            // Your records for the race, beside the star places: best time over best lap.
             var records = At("Records", header, new Vector2(0f, 1f), new Vector2(512f, -160f), new Vector2(382f, 130f));
             Img(records, "Round", Theme.Ink, sliced: true);
             TMP_Text Record(string name, float y, string caption)
@@ -206,7 +205,7 @@ namespace SomeGame.EditorTools
             var infoButton = titleHit.gameObject.AddComponent<Button>();
             infoButton.targetGraphic = titleHitImage; infoButton.transition = Selectable.Transition.None;
             titleHit.gameObject.AddComponent<ButtonFeedback>();
-            // Star times sit in the header, right under the race info.
+            // The places for 1, 2 and 3 stars sit in the header, right under the race name.
             var timesRt = At("StarTimes", header, new Vector2(0f, 1f), new Vector2(0f, -160f), new Vector2(498f, 130f));
             Img(timesRt, "Round", Theme.Ink, sliced: true);
             var times = new TMP_Text[3];
@@ -491,7 +490,7 @@ namespace SomeGame.EditorTools
             for (int i = 0; i < pips.Length; i++)
                 pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(RowLeft + 78f + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
 
-            // The star times as three light medals: the stars over the time; an earned one turns gold with a gold rim.
+            // The places that earn stars as three light medals: the stars over the place; an earned one turns gold with a gold rim.
             var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1286f), new Vector2(W - 80f, 140f));
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
@@ -513,7 +512,7 @@ namespace SomeGame.EditorTools
                     star.anchoredPosition = new Vector2((k - i * 0.5f) * 48f, -40f);
                     Img(star, "IconStar", Theme.Amber);
                 }
-                times[i] = Txt(At("Time", g, new Vector2(0.5f, 0f), new Vector2(0f, 8f), new Vector2(220f, 66f)), "1:00.00", 50, Theme.Ink, _cond);
+                times[i] = Txt(At("Time", g, new Vector2(0.5f, 0f), new Vector2(0f, 8f), new Vector2(220f, 66f)), "1ST", 50, Theme.Ink, _cond);
             }
 
             // START along the bottom, with a ring breathing out of it.
@@ -828,7 +827,7 @@ namespace SomeGame.EditorTools
             Img(Stretch("Face", panel), "Round", Theme.Cream, sliced: true);
             Txt(At("Title", panel, new Vector2(0.5f, 1f), new Vector2(0f, -70f), new Vector2(820f, 170f)), "YOU'RE READY!", 120, Theme.Orange, _black).fontSharedMaterial = _blackShadow;
             var text = Txt(At("Body", panel, new Vector2(0.5f, 1f), new Vector2(0f, -270f), new Vector2(760f, 200f)),
-                "Win races and beat the star times to collect stars and trophies.", 44, Theme.Ink, _semi);
+                "Finish in the top five for stars, win for all three. Stars open new races.", 44, Theme.Ink, _semi);
             text.textWrappingMode = TextWrappingModes.Normal;
             var go = BigRoundButton(panel, "MapButton", new Vector2(0.5f, 0f), new Vector2(0f, 50f), 190f, "MAP", out _, out _, out _, out _);
 

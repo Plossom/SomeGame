@@ -8,7 +8,7 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// One race of the <see cref="RaceDeck"/>: a big card with the race's number on a medallion, its name, the
-    /// whole track from above, difficulty, the star times (earned ones lit), your records and
+    /// whole track from above, difficulty, the places that earn stars (earned ones lit), your records and
     /// START; the cross on its corner closes the deck. Off to the side of the deck it is frosted over and its picture
     /// blurred (<see cref="SetFocus"/>). A race still locked keeps its track a secret: a grey plate with a lock and
     /// the stars it needs.
@@ -31,7 +31,7 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text lockLabel;
         [SerializeField] GameObject wonBadge;
         [SerializeField] UnityEngine.UI.Image[] difficultyPips;
-        [Tooltip("The three star-time medals (a face, a rim, the stars S0.., the time): gold when your best time beats the time.")]
+        [Tooltip("The three star medals (a face, a rim, the stars S0.., the places): gold once the race has earned them.")]
         [SerializeField] RectTransform[] starGroups;
         [SerializeField] TMP_Text[] starTimes;
         [SerializeField] UnityEngine.UI.Button closeButton;
@@ -59,11 +59,14 @@ namespace SomeGame.UI
             titleLabel.text = level.displayName.ToUpperInvariant();
 
             var best = ProgressStore.BestTimeOf(level);
+            var bestPlace = ProgressStore.BestPlaceOf(level);
             var bestLap = level.track != null ? BestLapStore.Get(level.track.name) : null;
-            string lapWord = level.Sectioned ? "BEST SECTION" : "BEST LAP";
-            recordsLabel.text = best.HasValue
-                ? $"BEST  <color={Theme.Html(Theme.Ink)}>{TimeFormat.Race(best.Value)}</color>" + (bestLap.HasValue ? $"     {lapWord}  <color={Theme.Html(Theme.Ink)}>{TimeFormat.Race(bestLap.Value)}</color>" : "")
-                : "NO TIME YET";
+            string ink = Theme.Html(Theme.Ink), lapWord = level.Sectioned ? "SECTION" : "LAP";
+            var parts = new List<string>();
+            if (bestPlace.HasValue) parts.Add($"BEST <color={ink}>{TimeFormat.Ordinal(bestPlace.Value).ToUpperInvariant()}</color>");
+            if (best.HasValue) parts.Add($"TIME <color={ink}>{TimeFormat.Race(best.Value)}</color>");
+            if (bestLap.HasValue) parts.Add($"{lapWord} <color={ink}>{TimeFormat.Race(bestLap.Value)}</color>");
+            recordsLabel.text = parts.Count > 0 ? string.Join("    ", parts) : "NO RACE YET";
 
             // A locked race keeps its track a secret (a grey plate in a grey frame).
             var preview = canEnter ? level.preview : null;
@@ -78,11 +81,12 @@ namespace SomeGame.UI
             for (int i = 0; i < difficultyPips.Length; i++)
                 difficultyPips[i].color = i < level.difficulty ? Theme.Orange : Theme.WithAlpha(Theme.StoneDark, 0.3f);
 
+            // The places for 1, 2 and 3 stars; lit up as far as this race's stars go.
+            int stars = ProgressStore.StarsOf(level);
             for (int i = 0; i < starTimes.Length; i++)
             {
-                bool has = i < level.starTimes.Length;
-                starTimes[i].text = has ? TimeFormat.Race(level.starTimes[i]) : "-";
-                bool earned = best.HasValue && has && best.Value <= level.starTimes[i];
+                starTimes[i].text = i < LevelDefinition.StarPlaces.Length ? LevelDefinition.StarPlaces[i] : "-";
+                bool earned = stars >= i + 1;
                 if (i < _earned.Length) _earned[i] = earned;
                 starTimes[i].color = earned ? Theme.Ink : Theme.WithAlpha(Theme.InkSoft, 0.55f);
                 foreach (var star in Stars(i)) star.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.StoneDark, 0.3f);

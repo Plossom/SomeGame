@@ -246,7 +246,7 @@ namespace SomeGame.Race
             float? previous = Level != null ? ProgressStore.BestTimeOf(Level) : null;
             IsNewBestTime = Level != null && (!previous.HasValue || RaceTime < previous.Value);
             StarsEarned = Level != null
-                ? ProgressStore.Record(Level, FinalPosition == 1, RaceTime)
+                ? ProgressStore.Record(Level, FinalPosition, RaceTime)
                 : 0;
             PlayerFinished?.Invoke();
         }

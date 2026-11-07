@@ -80,9 +80,9 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text bestChip;
         [Tooltip("Your best lap on the selected race's track.")]
         [SerializeField] TMP_Text bestLapLabel;
-        [Tooltip("Times for 1, 2 and 3 stars.")]
+        [Tooltip("The places for 1, 2 and 3 stars.")]
         [SerializeField] TMP_Text[] starTimes;
-        [Tooltip("The three star-time groups (star icons + time): grey until your best time beats them.")]
+        [Tooltip("The three star groups (star icons + places): grey until the race has earned them.")]
         [SerializeField] RectTransform[] starGroups;
 
         [Header("Road progress")]
@@ -1114,11 +1114,12 @@ namespace SomeGame.UI
             bestLapLabel.text = bestLap.HasValue ? TimeFormat.Race(bestLap.Value) : "—";
             var lapCaption = bestLapLabel.transform.parent.Find("Caption")?.GetComponent<TMP_Text>();
             if (lapCaption != null) lapCaption.text = level.Sectioned ? "Best sect." : "Best lap";
+            // The places for 1, 2 and 3 stars; lit up as far as this race's stars go.
+            int stars = ProgressStore.StarsOf(level);
             for (int i = 0; i < starTimes.Length; i++)
             {
-                starTimes[i].text = i < level.starTimes.Length ? TimeFormat.Race(level.starTimes[i]) : "-";
-                // Earned (your best beats it): yellow stars and a white time; otherwise grey.
-                bool earned = best.HasValue && i < level.starTimes.Length && best.Value <= level.starTimes[i];
+                starTimes[i].text = i < LevelDefinition.StarPlaces.Length ? LevelDefinition.StarPlaces[i] : "-";
+                bool earned = stars >= i + 1;
                 starTimes[i].color = earned ? Theme.White : Theme.WithAlpha(Theme.Stone, 0.45f);
                 if (starGroups != null && i < starGroups.Length && starGroups[i] != null)
                     foreach (var icon in starGroups[i].GetComponentsInChildren<UnityEngine.UI.Image>())

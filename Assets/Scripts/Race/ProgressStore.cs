@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>
-    /// Saved progress per race (best stars, won, best time) and the two-step unlock rules of the map:
+    /// Saved progress per race (best stars, won, best place, best time) and the two-step unlock rules of the map:
     /// a race becomes visible once the previous race is won, and can be entered once the total stars
     /// reach its requirement.
     /// </summary>
@@ -19,6 +19,7 @@ namespace SomeGame.Race
             public string level;
             public int stars;
             public bool won;
+            public int bestPlace; // 0: not known (finished before stars came from the place)
             public float bestTime;
         }
 
@@ -35,6 +36,7 @@ namespace SomeGame.Race
 
         public static int StarsOf(LevelDefinition level) => Find(level)?.stars ?? 0;
         public static bool HasWon(LevelDefinition level) => Find(level)?.won ?? false;
+        public static int? BestPlaceOf(LevelDefinition level) => Find(level) is { bestPlace: > 0 } e ? e.bestPlace : null;
         public static float? BestTimeOf(LevelDefinition level) => Find(level) is { bestTime: > 0f } e ? e.bestTime : null;
 
         /// <summary>Races won (trophies), over all cups.</summary>
@@ -68,10 +70,14 @@ namespace SomeGame.Race
         public static bool CanEnter(LevelCatalog catalog, int index) =>
             IsVisible(catalog, index) && (UnlockAll || TotalStars >= catalog[index].starsRequired);
 
-        /// <summary>Stores a finished race; keeps the best stars and time. Returns the stars for this run.</summary>
-        public static int Record(LevelDefinition level, bool won, float totalTime)
+        /// <summary>
+        /// Stores a finished race; keeps the best stars, place and time (stars earned by the old star times stay).
+        /// Returns the stars for this run.
+        /// </summary>
+        public static int Record(LevelDefinition level, int place, float totalTime)
         {
-            int stars = level.StarsFor(won, totalTime);
+            int stars = LevelDefinition.StarsForPlace(place);
+            bool won = place == 1;
             var entry = Find(level);
             if (entry == null)
             {
@@ -80,6 +86,7 @@ namespace SomeGame.Race
             }
             entry.stars = Mathf.Max(entry.stars, stars);
             entry.won |= won;
+            if (place > 0 && (entry.bestPlace <= 0 || place < entry.bestPlace)) entry.bestPlace = place;
             if (entry.bestTime <= 0f || totalTime < entry.bestTime) entry.bestTime = totalTime; // any finish counts
             Save();
             return stars;

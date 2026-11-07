@@ -112,15 +112,16 @@ namespace SomeGame.UI
                 nextStarLabel.text = "No stars in test races";
                 nextStarValue.text = "";
             }
-            else if (earned >= level.starTimes.Length)
+            else if (earned >= 3)
             {
                 nextStarLabel.text = "All stars";
-                nextStarValue.text = $"{earned}/{level.starTimes.Length}";
+                nextStarValue.text = "3/3";
             }
             else
             {
-                nextStarLabel.text = $"{TimeFormat.Ordinal(earned + 1)} star at";
-                nextStarValue.text = TimeFormat.Race(level.starTimes[earned]);
+                // What the next star takes: a top-five, a podium, a win.
+                nextStarLabel.text = earned == 0 ? "1 star for" : $"{earned + 1} stars for";
+                nextStarValue.text = earned == 0 ? "TOP 5" : earned == 1 ? "TOP 3" : "A WIN";
             }
 
             continueButton.gameObject.SetActive(level != null);
