@@ -818,6 +818,62 @@ namespace SomeGame.EditorTools
             Configure(combo.gameObject.AddComponent<ComboDisplay>(), ("race", race), ("trickRoot", trickRoot), ("trickLabel", trickLabel),
                 ("burst", burst), ("comboRoot", comboRoot), ("comboLabel", comboLabel));
 
+            // Who is around you: place tags over close rivals, arrows at the edge for ones just out of view, the
+            // ladder (ahead, you, behind) at key moments, and the face of the rival you just passed.
+            var watch = Stretch("Rivals", safe);
+            var edgeArea = Stretch("EdgeArea", watch);
+            edgeArea.offsetMin = new Vector2(110f, 210f); edgeArea.offsetMax = new Vector2(-110f, -620f);
+            var tag = At("Tag", watch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 64f));
+            var tagPoint = Img(At("Point", tag, new Vector2(0.5f, 0f), new Vector2(0f, -12f), new Vector2(30f, 26f)), "NavArrow", Theme.Ink).rectTransform;
+            tagPoint.pivot = new Vector2(0.5f, 0.5f); tagPoint.localRotation = Quaternion.Euler(0f, 0f, 180f);
+            Img(Stretch("Pill", tag), "Pill", Theme.Ink, sliced: true);
+            Txt(Stretch("Label", tag), "3RD", 42, Theme.Cream, _black);
+            var edge = At("Edge", watch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(120f, 120f));
+            var edgePivot = At("Pivot", edge, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            Img(At("Arrow", edgePivot, new Vector2(0.5f, 0.5f), new Vector2(0f, 84f), new Vector2(54f, 66f)), "NavArrow", Theme.Amber);
+            RivalFace(edge, "Face", new Vector2(0.5f, 0.5f), Vector2.zero, 108f);
+            var edgeLabel = Txt(At("Label", edge, new Vector2(0.5f, 0.5f), new Vector2(0f, -88f), new Vector2(260f, 60f)), "+0.8s", 48, Color.white, _black);
+            edgeLabel.fontSharedMaterial = _blackOutline;
+
+            // The ladder top left under the menu button (the road ahead is top right).
+            var ladder = At("Ladder", watch, new Vector2(0f, 1f), new Vector2(48f, -222f), new Vector2(276f, 360f));
+            var ladderShadow = Stretch("Shadow", ladder);
+            ladderShadow.offsetMin = new Vector2(0f, -10f); ladderShadow.offsetMax = new Vector2(0f, -10f);
+            Img(ladderShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
+            Img(Stretch("Fill", ladder), "Round", Theme.Ink, sliced: true);
+            var ladderHeader = Txt(At("Header", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(256f, 46f)), "FINAL LAP", 36, Theme.Amber, _condItalic);
+            ladderHeader.characterSpacing = 4f;
+            ladderHeader.enableAutoSizing = true; ladderHeader.fontSizeMin = 26; ladderHeader.fontSizeMax = 36;
+            var rows = new RectTransform[3];
+            for (int i = 0; i < 3; i++)
+            {
+                var row = At(i == 0 ? "Ahead" : i == 1 ? "You" : "Behind", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -110f - 100f * i), new Vector2(256f, 92f));
+                row.pivot = new Vector2(0.5f, 0.5f);
+                if (i == 1) Img(Stretch("Highlight", row), "Round", Theme.Orange, sliced: true);
+                var place = Txt(At("Place", row, new Vector2(0f, 0.5f), new Vector2(14f, 0f), new Vector2(80f, 70f)), i == 0 ? "2ND" : i == 1 ? "3RD" : "4TH", 44, i == 1 ? Color.white : Theme.Cream, _black, TextAlignmentOptions.Left);
+                place.rectTransform.pivot = new Vector2(0f, 0.5f);
+                RivalFace(row, "Face", new Vector2(0.5f, 0.5f), new Vector2(-16f, 0f), 72f);
+                var gap = Txt(At("Gap", row, new Vector2(1f, 0.5f), new Vector2(-12f, 0f), new Vector2(68f, 60f)), i == 0 ? "0.6s" : i == 1 ? "YOU" : "1.2s", 40, i == 1 ? Color.white : Theme.Cream, _condItalic, TextAlignmentOptions.Right);
+                gap.rectTransform.pivot = new Vector2(1f, 0.5f);
+                if (i != 1)
+                {
+                    var dir = Img(At("Dir", row, new Vector2(1f, 0.5f), new Vector2(-94f, 0f), new Vector2(22f, 28f)), "NavArrow", i == 0 ? Theme.Leaf : Theme.Stone).rectTransform;
+                    dir.pivot = new Vector2(0.5f, 0.5f);
+                    if (i == 2) dir.localRotation = Quaternion.Euler(0f, 0f, 180f);
+                }
+                rows[i] = row;
+            }
+
+            var passed = RivalFace(watch, "PassedFace", new Vector2(0.5f, 0.5f), new Vector2(0f, 840f), 170f);
+            var passedRing = Img(At("Ring", passed, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(196f, 196f)), "Ring", Theme.Amber).rectTransform;
+            passedRing.SetAsFirstSibling();
+            var watchComp = watch.gameObject.AddComponent<RivalWatch>();
+            Configure(watchComp, ("race", race), ("tagTemplate", tag), ("edgeTemplate", edge), ("edgeArea", edgeArea),
+                ("ladder", ladder), ("ladderHeader", ladderHeader), ("passedFace", passed));
+            var wso = new SerializedObject(watchComp);
+            SetArray(wso, "ladderRows", rows);
+            wso.ApplyModifiedPropertiesWithoutUndo();
+
             // Countdown.
             var cd = Stretch("Countdown", canvas);
             var cdLabel = Txt(At("Number", cd, new Vector2(0.5f, 0.5f), new Vector2(0f, 330f), new Vector2(1000f, 520f)), "3", 440, Color.white, _black);
@@ -1301,6 +1357,20 @@ namespace SomeGame.EditorTools
             var rt = (RectTransform)go.transform;
             rt.SetParent(parent, false);
             return rt;
+        }
+
+        // A rival's face (for now: its car in its colours on a disc; the Car/Body is tinted by the race).
+        static RectTransform RivalFace(RectTransform parent, string name, Vector2 anchor, Vector2 position, float size)
+        {
+            var face = At(name, parent, anchor, position, new Vector2(size, size));
+            face.pivot = new Vector2(0.5f, 0.5f);
+            Img(face, "Circle", Theme.Ink);
+            Img(At("Disc", face, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(size * 0.84f, size * 0.84f)), "Circle", Theme.Cream);
+            var car = At("Car", face, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(size * 0.34f, size * 0.6f));
+            car.localRotation = Quaternion.Euler(0f, 0f, -35f);
+            Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
+            Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
+            return face;
         }
 
         static RectTransform Stretch(string name, Transform parent)

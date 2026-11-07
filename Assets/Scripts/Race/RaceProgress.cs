@@ -102,6 +102,28 @@ namespace SomeGame.Race
             }
         }
 
+        /// <summary>
+        /// <see cref="Progress"/> in metres along the course (roughly: the checkpoints are about evenly spread). The
+        /// difference between two cars is the gap between them on the road.
+        /// </summary>
+        public float Metres => Progress * Circuit.Path.Length / CheckpointCount;
+
+        /// <summary>Metres still to drive to the finish line (roughly, like <see cref="Metres"/>).</summary>
+        public float MetresToGo
+        {
+            get
+            {
+                if (IsFinished) return 0f;
+                if (_finishAt < 0) // the checkpoint count at which the last lap (or section) line is crossed
+                {
+                    _finishAt = 1;
+                    while (Circuit.LinesPassed(_finishAt) < TotalLaps && _finishAt < 10000) _finishAt++;
+                }
+                return Mathf.Max(0f, (_finishAt - Progress) * Circuit.Path.Length / CheckpointCount);
+            }
+        }
+        int _finishAt = -1;
+
         void Awake()
         {
             _sensor = GetComponent<TrackSensor>();
@@ -115,6 +137,7 @@ namespace SomeGame.Race
         {
             TotalLaps = totalLaps;
             CheckpointsPassed = 0;
+            _finishAt = -1;
             IsFinished = false;
             _lapTimes.Clear();
             _lapStartTime = startTime;
