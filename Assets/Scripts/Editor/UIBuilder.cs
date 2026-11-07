@@ -534,7 +534,12 @@ namespace SomeGame.EditorTools
             start.targetGraphic = startFace; start.transition = Selectable.Transition.None;
 
             // The frost over a card at the side of the deck.
-            var veil = Img(Stretch("Veil", card), "Round", Theme.WithAlpha(Theme.Cream, 0f), sliced: true);
+            // It covers the black outline too; what sticks out past the card (medallion, trophy, cross) lies above it
+            // with frost of its own, so the two never overlap.
+            var veilRt = Stretch("Veil", card);
+            veilRt.offsetMin = new Vector2(-8f, -8f); veilRt.offsetMax = new Vector2(8f, 8f);
+            var veil = Img(veilRt, "Round", Theme.WithAlpha(Theme.Cream, 0f), sliced: true);
+            medal.SetAsLastSibling(); won.SetAsLastSibling(); closeRt.SetAsLastSibling();
 
             var raceCard = card.gameObject.AddComponent<RaceCard>();
             Configure(raceCard, ("group", group), ("focusButton", focus), ("veil", veil), ("glow", glow),
