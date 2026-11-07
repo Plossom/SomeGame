@@ -64,6 +64,8 @@ namespace SomeGame.Race
         public event Action<RaceProgress> Finished;
 
         public string DisplayName { get; set; }
+        /// <summary>The rival with a face driving this car (in their home race), or null.</summary>
+        public RivalCharacter Character { get; set; }
         public int TotalLaps { get; private set; } = 3;
         public int CheckpointsPassed { get; private set; }
         public bool IsFinished { get; private set; }

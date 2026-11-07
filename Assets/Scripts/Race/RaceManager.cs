@@ -133,6 +133,21 @@ namespace SomeGame.Race
             }
             Player = Register(player, slot, "You");
             PaintPlayer();
+            MeetCharacter();
+        }
+
+        /// <summary>The rival with a face whose home race this is (null if none): they drive the car at the front of the grid.</summary>
+        public RivalCharacter Character { get; private set; }
+
+        void MeetCharacter()
+        {
+            Character = RivalCharacter.For(Level);
+            if (Character == null || rivals.Count == 0 || !rivals[0].gameObject.activeSelf) return;
+            var progress = rivals[0].GetComponent<RaceProgress>();
+            progress.Character = Character;
+            progress.DisplayName = Character.displayName;
+            var body = SomeGame.Online.OnlineRace.Visual(rivals[0]);
+            if (body != null) body.color = Character.carColor;
         }
 
         // Your car in the paint from the garage (its tyre marks too); online races keep the room's colours.

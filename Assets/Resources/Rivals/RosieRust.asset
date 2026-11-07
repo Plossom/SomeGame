@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37c5d6ea3ac174d85a1db3563878df1b, type: 3}
+  m_Name: RosieRust
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.RivalCharacter
+  displayName: Rosie Rust
+  portrait: {fileID: 21300000, guid: cef9826d0c319429189a8f28a5b941e2, type: 3}
+  carColor: {r: 0.78431374, g: 0.27450982, b: 0.18431373, a: 1}
+  homeRace: {fileID: 11400000, guid: ac524c4c026cf418b9d57aca283a3b56, type: 2}
+  startLines:
+  - My meadow, my rules. Try to keep up!
+  - See you at the finish... if you get there.
+  - Mind the hay bales, rookie!
+  winLines:
+  - Back to the barn with you!
+  - That's how we race on the farm!
+  - Eat my dust, rookie!
+  loseLines:
+  - I let you win. Obviously.
+  - Hmph. Beginner's luck!
+  - My tractor would have beaten you.

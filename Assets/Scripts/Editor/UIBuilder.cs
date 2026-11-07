@@ -768,18 +768,20 @@ namespace SomeGame.EditorTools
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(48f, -48f), "IconMenu", 138f);
 
-            // HUD bar: LAP | TIME | POS on a pine-green card with a hard shadow.
+            // HUD bar: LAP | TIME on a pine-green card with a hard shadow, between the menu button and the road
+            // ahead in the corner (your place is on the ladder under the menu button).
+            const float aheadSize = 288f;
             var hud = Rt("Hud", safe);
             hud.anchorMin = new Vector2(0f, 1f); hud.anchorMax = new Vector2(1f, 1f); hud.pivot = new Vector2(0.5f, 1f);
-            hud.anchoredPosition = new Vector2(87f, -48f); hud.sizeDelta = new Vector2(-270f, 138f);
+            float hudLeft = 210f, hudRight = 48f + aheadSize + 24f;
+            hud.anchoredPosition = new Vector2((hudLeft - hudRight) * 0.5f, -48f); hud.sizeDelta = new Vector2(-(hudLeft + hudRight), 138f);
             var hudShadow = Stretch("Shadow", hud);
             hudShadow.offsetMin = new Vector2(0f, -12f); hudShadow.offsetMax = new Vector2(0f, -12f);
             Img(hudShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Fill", hud), "Round", Theme.Ink, sliced: true);
-            var lap = HudColumn(hud, "Lap", 0f, 0.27f, "LAP", "1/3", 76, _condItalic);
-            var time = HudColumn(hud, "Time", 0.27f, 0.68f, "TIME", "0:00.00", 76, _condItalic);
-            var pos = HudColumn(hud, "Position", 0.68f, 1f, "POS", "1ST", 84, _black);
-            var flashRt = At("LapFlash", safe, new Vector2(0.5f, 1f), new Vector2(0f, -224f), new Vector2(560f, 84f));
+            var lap = HudColumn(hud, "Lap", 0f, 0.38f, "LAP", "1/3", 76, _condItalic);
+            var time = HudColumn(hud, "Time", 0.38f, 1f, "TIME", "0:00.00", 76, _condItalic);
+            var flashRt = At("LapFlash", safe, new Vector2(0.5f, 1f), new Vector2(-30f, -224f), new Vector2(440f, 84f));
             Img(flashRt, "Pill", Theme.Cream, sliced: true);
             var flash = Txt(Stretch("Label", flashRt), "LAP 0:21.56", 46, Theme.Ink, _condItalic);
             flash.characterSpacing = 4f;
@@ -788,12 +790,12 @@ namespace SomeGame.EditorTools
             warning.enableAutoSizing = true; warning.fontSizeMin = 50; warning.fontSizeMax = 116;
             var hudComp = hud.gameObject.AddComponent<RaceHud>();
             var hso = new SerializedObject(hudComp);
-            Set(hso, "race", race); Set(hso, "lapLabel", lap); Set(hso, "timeLabel", time); Set(hso, "positionLabel", pos);
+            Set(hso, "race", race); Set(hso, "lapLabel", lap); Set(hso, "timeLabel", time);
             Set(hso, "lapFlashLabel", flash); Set(hso, "lapFlashRoot", flashRt.gameObject); Set(hso, "warningLabel", warning);
             hso.ApplyModifiedPropertiesWithoutUndo();
 
-            // The road around the car, top right under the HUD bar: fixed like the screen, the car in the middle.
-            var aheadRt = At("TrackAhead", safe, new Vector2(1f, 1f), new Vector2(-48f, -222f), new Vector2(300f, 300f));
+            // The road around the car, in the top right corner: fixed like the screen, the car in the middle.
+            var aheadRt = At("TrackAhead", safe, new Vector2(1f, 1f), new Vector2(-48f, -48f), new Vector2(aheadSize, aheadSize));
             Img(aheadRt, "Round", Theme.WithAlpha(Theme.Ink, 0.9f), sliced: true);
             aheadRt.gameObject.AddComponent<RectMask2D>();
             var aheadOther = Line(Stretch("OtherWay", aheadRt));
@@ -818,50 +820,78 @@ namespace SomeGame.EditorTools
             Configure(combo.gameObject.AddComponent<ComboDisplay>(), ("race", race), ("trickRoot", trickRoot), ("trickLabel", trickLabel),
                 ("burst", burst), ("comboRoot", comboRoot), ("comboLabel", comboLabel));
 
-            // Who is around you: place tags over close rivals, arrows at the edge for ones just out of view, the
-            // ladder (ahead, you, behind) at key moments, and the face of the rival you just passed.
+            // Who is around you: the ladder top left (the car ahead, you, the car behind), place tags over the car
+            // ahead and the one behind, and a rival with a face speaking (their home race).
             var watch = Stretch("Rivals", safe);
-            var edgeArea = Stretch("EdgeArea", watch);
-            edgeArea.offsetMin = new Vector2(110f, 210f); edgeArea.offsetMax = new Vector2(-110f, -620f);
-            var tag = At("Tag", watch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 64f));
-            var tagPoint = Img(At("Point", tag, new Vector2(0.5f, 0f), new Vector2(0f, -12f), new Vector2(30f, 26f)), "NavArrow", Theme.Ink).rectTransform;
+            var tag = At("Tag", watch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(120f, 62f));
+            var tagPoint = Img(At("Point", tag, new Vector2(0.5f, 0f), new Vector2(0f, -12f), new Vector2(28f, 24f)), "NavArrow", Theme.Ink).rectTransform;
             tagPoint.pivot = new Vector2(0.5f, 0.5f); tagPoint.localRotation = Quaternion.Euler(0f, 0f, 180f);
             Img(Stretch("Pill", tag), "Pill", Theme.Ink, sliced: true);
-            Txt(Stretch("Label", tag), "3RD", 42, Theme.Cream, _black);
-            var edge = At("Edge", watch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(120f, 120f));
-            var edgePivot = At("Pivot", edge, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            Img(At("Arrow", edgePivot, new Vector2(0.5f, 0.5f), new Vector2(0f, 84f), new Vector2(54f, 66f)), "NavArrow", Theme.Amber);
-            RivalFace(edge, "Face", new Vector2(0.5f, 0.5f), Vector2.zero, 108f);
-            var edgeLabel = Txt(At("Label", edge, new Vector2(0.5f, 0.5f), new Vector2(0f, -88f), new Vector2(260f, 60f)), "CLOSING!", 48, new Color(1f, 0.36f, 0.3f), _black);
-            edgeLabel.fontSharedMaterial = _blackOutline;
+            var tagFace = RivalFace(tag, "Face", new Vector2(0f, 0.5f), new Vector2(4f, 0f), 54f);
+            tagFace.pivot = new Vector2(0f, 0.5f);
+            Txt(Stretch("Label", tag), "3RD", 40, Theme.Cream, _black);
 
-            // The ladder top left under the menu button (the road ahead is top right).
-            var ladder = At("Ladder", watch, new Vector2(0f, 1f), new Vector2(48f, -222f), new Vector2(206f, 360f));
+            var ladder = At("Ladder", watch, new Vector2(0f, 1f), new Vector2(48f, -222f), new Vector2(228f, 276f));
             var ladderShadow = Stretch("Shadow", ladder);
-            ladderShadow.offsetMin = new Vector2(0f, -10f); ladderShadow.offsetMax = new Vector2(0f, -10f);
+            ladderShadow.offsetMin = new Vector2(0f, -12f); ladderShadow.offsetMax = new Vector2(0f, -12f);
             Img(ladderShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Fill", ladder), "Round", Theme.Ink, sliced: true);
-            var ladderHeader = Txt(At("Header", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(190f, 46f)), "FINAL LAP", 36, Theme.Amber, _condItalic);
-            ladderHeader.characterSpacing = 4f;
-            ladderHeader.enableAutoSizing = true; ladderHeader.fontSizeMin = 26; ladderHeader.fontSizeMax = 36;
             var rows = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var row = At(i == 0 ? "Ahead" : i == 1 ? "You" : "Behind", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -110f - 100f * i), new Vector2(186f, 92f));
+                bool you = i == 1;
+                var row = At(i == 0 ? "Ahead" : you ? "You" : "Behind", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -42f - 96f * i), new Vector2(228f, you ? 108f : 84f));
                 row.pivot = new Vector2(0.5f, 0.5f);
-                if (i == 1) Img(Stretch("Highlight", row), "Round", Theme.Orange, sliced: true);
-                var place = Txt(At("Place", row, new Vector2(0f, 0.5f), new Vector2(14f, 0f), new Vector2(80f, 70f)), i == 0 ? "2ND" : i == 1 ? "3RD" : "4TH", 44, i == 1 ? Color.white : Theme.Cream, _black, TextAlignmentOptions.Left);
+                if (you)
+                {
+                    var highlight = Stretch("Highlight", row);
+                    highlight.offsetMin = new Vector2(8f, 8f); highlight.offsetMax = new Vector2(-8f, -8f);
+                    Img(highlight, "Round", Theme.Orange, sliced: true);
+                }
+                var place = Txt(At("Place", row, new Vector2(0f, 0.5f), new Vector2(26f, you ? 2f : 0f), new Vector2(120f, 80f)),
+                    i == 0 ? "2ND" : you ? "3RD" : "4TH", you ? 66 : 42, you ? Color.white : Theme.Cream, _black, TextAlignmentOptions.Left);
                 place.rectTransform.pivot = new Vector2(0f, 0.5f);
-                RivalFace(row, "Face", new Vector2(1f, 0.5f), new Vector2(-14f, 0f), 72f).pivot = new Vector2(1f, 0.5f);
+                RivalFace(row, "Face", new Vector2(1f, 0.5f), new Vector2(-22f, 0f), you ? 76f : 60f).pivot = new Vector2(1f, 0.5f);
                 rows[i] = row;
             }
+            // FINAL LAP and the like: a pill hanging under the ladder for a few seconds.
+            var header = At("Header", ladder, new Vector2(0.5f, 0f), new Vector2(0f, -26f), new Vector2(228f, 60f));
+            header.pivot = new Vector2(0.5f, 1f);
+            Img(Stretch("Pill", header), "Pill", Theme.Amber, sliced: true);
+            var headerLabel = Txt(Stretch("Label", header), "FINAL LAP", 34, Theme.Ink, _condItalic);
+            headerLabel.characterSpacing = 3f;
+            headerLabel.enableAutoSizing = true; headerLabel.fontSizeMin = 22; headerLabel.fontSizeMax = 34;
+            headerLabel.margin = new Vector4(14f, 0f, 14f, 0f);
 
-            var passed = RivalFace(watch, "PassedFace", new Vector2(0.5f, 0.5f), new Vector2(0f, 840f), 170f);
-            var passedRing = Img(At("Ring", passed, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(196f, 196f)), "Ring", Theme.Amber).rectTransform;
-            passedRing.SetAsFirstSibling();
+            // A rival with a face speaking: their portrait and name, and a speech bubble (above the results too).
+            var says = At("Says", watch, new Vector2(0.5f, 0f), new Vector2(0f, 330f), new Vector2(1060f, 300f));
+            says.pivot = new Vector2(0.5f, 0.5f);
+            var saysCanvas = says.gameObject.AddComponent<Canvas>();
+            saysCanvas.overrideSorting = true; saysCanvas.sortingOrder = 20;
+            var portrait = At("Portrait", says, new Vector2(0f, 0.5f), new Vector2(130f, 10f), new Vector2(250f, 250f));
+            portrait.pivot = new Vector2(0.5f, 0.5f);
+            Img(portrait, "Circle", Theme.Ink);
+            Img(At("Picture", portrait, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(232f, 232f)), "Circle", Color.white);
+            var namePlate = At("Name", portrait, new Vector2(0.5f, 0f), new Vector2(0f, -22f), new Vector2(250f, 58f));
+            namePlate.pivot = new Vector2(0.5f, 0.5f);
+            Img(Stretch("Pill", namePlate), "Pill", Theme.Orange, sliced: true);
+            var nameLabel = Txt(Stretch("Label", namePlate), "ROSIE RUST", 34, Color.white, _black);
+            nameLabel.enableAutoSizing = true; nameLabel.fontSizeMin = 20; nameLabel.fontSizeMax = 34;
+            var bubble = At("Bubble", says, new Vector2(0f, 0.5f), new Vector2(290f, 20f), new Vector2(760f, 200f));
+            bubble.pivot = new Vector2(0f, 0.5f);
+            var bubbleShadow = Stretch("Shadow", bubble);
+            bubbleShadow.offsetMin = new Vector2(0f, -10f); bubbleShadow.offsetMax = new Vector2(0f, -10f);
+            Img(bubbleShadow, "Round", Theme.WithAlpha(Theme.Ink, 0.35f), sliced: true);
+            var tail = Img(At("Tail", bubble, new Vector2(0f, 0.5f), new Vector2(-22f, -10f), new Vector2(54f, 50f)), "NavArrow", Theme.Cream).rectTransform;
+            tail.pivot = new Vector2(0.5f, 0.5f); tail.localRotation = Quaternion.Euler(0f, 0f, 90f);
+            Img(Stretch("Fill", bubble), "Round", Theme.Cream, sliced: true);
+            var line = Txt(Stretch("Label", bubble), "My meadow, my rules. Try to keep up!", 50, Theme.Ink, _bold, TextAlignmentOptions.MidlineLeft);
+            line.textWrappingMode = TextWrappingModes.Normal;
+            line.margin = new Vector4(36f, 20f, 36f, 20f);
+            line.enableAutoSizing = true; line.fontSizeMin = 30; line.fontSizeMax = 50;
+
             var watchComp = watch.gameObject.AddComponent<RivalWatch>();
-            Configure(watchComp, ("race", race), ("tagTemplate", tag), ("edgeTemplate", edge), ("edgeArea", edgeArea),
-                ("ladder", ladder), ("ladderHeader", ladderHeader), ("passedFace", passed));
+            Configure(watchComp, ("race", race), ("tagTemplate", tag), ("ladder", ladder), ("ladderHeader", header), ("says", says));
             var wso = new SerializedObject(watchComp);
             SetArray(wso, "ladderRows", rows);
             wso.ApplyModifiedPropertiesWithoutUndo();
@@ -1362,6 +1392,9 @@ namespace SomeGame.EditorTools
             car.localRotation = Quaternion.Euler(0f, 0f, -35f);
             Img(Stretch("Body", car), "Car", Theme.Orange).preserveAspect = false;
             Img(Stretch("Details", car), "CarDetails", Color.white).preserveAspect = false;
+            // A rival with a face: their portrait instead of the car (switched on by the race).
+            var picture = Img(At("Picture", face, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(size * 0.9f, size * 0.9f)), "Circle", Color.white);
+            picture.gameObject.SetActive(false);
             return face;
         }
 

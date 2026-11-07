@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace SomeGame.UI
 {
-    /// <summary>Top-of-screen race info: lap, race time, position, and a short lap-time flash.</summary>
+    /// <summary>Top-of-screen race info: lap, race time (your place is on the ladder, <see cref="RivalWatch"/>), and a short lap-time flash.</summary>
     public class RaceHud : MonoBehaviour
     {
         [SerializeField] RaceManager race;
@@ -24,9 +24,6 @@ namespace SomeGame.UI
         static string Muted => Theme.Html(Theme.Stone);
 
         float _hideFlashAt;
-        int _lastPosition;
-        float _passedAt = -10f;
-        static readonly Color PassedRed = new(1f, 0.3f, 0.26f);
 
         GameObject LapFlash => lapFlashRoot != null ? lapFlashRoot : lapFlashLabel.gameObject;
 
@@ -62,14 +59,13 @@ namespace SomeGame.UI
             }
             lapLabel.text = $"{player.CurrentLap}<size=60%><color={Muted}>/{race.Laps}</color></size>";
             timeLabel.text = TimeFormat.Clock(race.RaceTime); // hundredths only on the results screen
-            int position = race.PositionOf(player);
-            positionLabel.text = $"{TimeFormat.Ordinal(position).ToUpperInvariant()}<size=60%><color={Muted}>/{race.Standings.Count}</color></size>";
-            // Passed by someone: the place flashes red with a little punch.
-            if (race.State == RaceState.Racing && race.RaceTime > 3f && _lastPosition > 0 && position > _lastPosition) _passedAt = Time.time;
-            _lastPosition = position;
-            float flash = 1f - Mathf.Clamp01((Time.time - _passedAt) / 0.7f);
-            positionLabel.color = Color.Lerp(position == 1 ? Theme.Amber : Theme.White, PassedRed, flash);
-            positionLabel.rectTransform.localScale = Vector3.one * (1f + 0.25f * Mathf.Sin(Mathf.Clamp01((Time.time - _passedAt) / 0.3f) * Mathf.PI));
+            // Your place is on the ladder (RivalWatch); a HUD with a place column shows it here too.
+            if (positionLabel != null)
+            {
+                int position = race.PositionOf(player);
+                positionLabel.text = $"{TimeFormat.Ordinal(position).ToUpperInvariant()}<size=60%><color={Muted}>/{race.Standings.Count}</color></size>";
+                positionLabel.color = position == 1 ? Theme.Amber : Theme.White;
+            }
 
             if (warningLabel != null)
             {
