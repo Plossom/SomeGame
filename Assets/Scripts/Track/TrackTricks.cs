@@ -18,7 +18,7 @@ namespace SomeGame.Track
     {
         [SerializeField] Track track;
 
-        const float SlowScale = 0.4f, RivalSkill = 0.74f;
+        const float SlowScale = 0.4f, RivalSkill = 0.74f, MissSeconds = 0.9f;
         const int MaxTricks = 10;
 
         class Attempt
@@ -41,6 +41,15 @@ namespace SomeGame.Track
         Attempt _shown;
         float _scaleBefore = 1f;
         bool _slow;
+
+        /// <summary>False: a trick jump is a plain jump (the practice drive, until its trick step).</summary>
+        public bool Asking { get; set; } = true;
+        /// <summary>The player's arrows are up (or a miss still is, for a moment).</summary>
+        public bool Showing => _shown != null && (_shown.Failed ? Time.unscaledTime - _shakeAt < MissSeconds : _shown.Car.IsAirborne);
+        /// <summary>The player landed all the tricks of a trick jump.</summary>
+        public event System.Action Cleared;
+        /// <summary>The player swiped wrong, or ran out of time.</summary>
+        public event System.Action Missed;
 
         // On screen: the trick to do (one big arrow), the time left, a dot per trick.
         Canvas _canvas;
@@ -82,7 +91,7 @@ namespace SomeGame.Track
         // Off the lip of a trick jump: the tricks to do.
         void OnLaunched(CarMovement car)
         {
-            if (car.IsCarried || car.IsRiding) return;
+            if (!Asking || car.IsCarried || car.IsRiding) return;
             var sensor = car.GetComponent<TrackSensor>();
             if (sensor == null) return;
             var gaps = track.Layout.gaps;
@@ -134,6 +143,7 @@ namespace SomeGame.Track
             {
                 if (_combo != null) _combo.Banner("PERFECT!", new Color(1f, 0.85f, 0.3f));
                 Slow(false);
+                Cleared?.Invoke();
             }
         }
 
@@ -148,6 +158,7 @@ namespace SomeGame.Track
                 _shakeAt = Time.unscaledTime;
                 if (_combo != null) _combo.Banner("MISSED!", new Color(1f, 0.4f, 0.35f));
                 Slow(false);
+                Missed?.Invoke();
             }
         }
 
@@ -299,7 +310,7 @@ namespace SomeGame.Track
             if (_canvas == null) return;
             var a = _shown;
             // A miss stays on screen for a moment (the wrong arrow in red), then goes.
-            bool show = a != null && !(a.Ended && !a.Failed) && !(a.Failed && Time.unscaledTime - _shakeAt > 0.9f);
+            bool show = a != null && !(a.Ended && !a.Failed) && !(a.Failed && Time.unscaledTime - _shakeAt > MissSeconds);
             if (!show)
             {
                 _arrow.gameObject.SetActive(false);
@@ -378,7 +389,7 @@ namespace SomeGame.Track
         }
 
         // A thick white arrow pointing right, with a dark rim (tinted per state; turned for each direction).
-        static Sprite ArrowSprite()
+        public static Sprite ArrowSprite()
         {
             const int size = 128;
             var tex = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };

@@ -7,9 +7,8 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// A short tour of the map after the tutorial (MAP on its last card): the screen dims except for a
-    /// spotlight that glides from one part to the next (race info, star times, records, the race stops,
-    /// swiping between cups, the cup list, stars and trophies, online, the menu, START), each with a card
-    /// saying what it is. Tap anywhere or NEXT to go on, SKIP to end it.
+    /// spotlight that glides from one part to the next (the race, its star times, the stops and cups, online,
+    /// START), each with a card saying what it is. Tap anywhere or NEXT to go on, SKIP to end it.
     /// </summary>
     public class MapTour : MonoBehaviour
     {
@@ -25,21 +24,19 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text stepLabel, titleLabel, bodyLabel, nextLabel;
         [SerializeField] Button nextButton, skipButton, tapArea;
         [SerializeField] RectTransform finger;
-        [Tooltip("What each step shows, in order (an empty entry = the selected race's stop).")]
+        [Tooltip("The parts of the map a step can show (an empty entry = the selected race's stop).")]
         [SerializeField] RectTransform[] targets;
 
-        static readonly (string title, string body)[] Steps =
+        // Entries of targets: the race name, its star times, the map, online, START.
+        const int RaceTarget = 0, TimesTarget = 1, MapTarget = 4, OnlineTarget = 7, StartTarget = 9;
+
+        static readonly (int target, string title, string body)[] Steps =
         {
-            ("THE RACE", "Tap the race name (or the <b>i</b>) to see the whole track, how hard it is and what waits on it."),
-            ("STAR TIMES", "Finish faster than these times to earn 1, 2 or 3 stars."),
-            ("YOUR RECORDS", "Your best time and your best lap on this race."),
-            ("THE RACES", "Tap a stop on the map to pick a race. New races open as you collect stars."),
-            ("SWITCH CUPS", "Swipe left or right anywhere on the map to go to the next cup."),
-            ("THE CUPS", "Or open this list and tap a cup to jump to it."),
-            ("STARS & TROPHIES", "Everything you have won. Enough stars and trophies unlock new cups."),
-            ("PLAY ONLINE", "Race your friends: open a room and share its code. Up to 8 racers!"),
-            ("MENU", "Sound, controls, the tutorial and more."),
-            ("READY?", "Tap <b>START</b> to race the selected track. Have fun!"),
+            (RaceTarget, "THE RACE", "Tap the name (or the <b>i</b>) to see the whole track and what waits on it."),
+            (TimesTarget, "STARS", "Beat these times for 1, 2 or 3 stars. Stars open new races and cups."),
+            (MapTarget, "RACES & CUPS", "Tap a stop to pick a race. Swipe sideways for the next cup."),
+            (OnlineTarget, "PLAY ONLINE", "Open a room and share its code: race up to 7 friends."),
+            (StartTarget, "READY?", "Tap <b>START</b> to race the selected track. Have fun!"),
         };
 
         int _step = -1;
@@ -91,7 +88,8 @@ namespace SomeGame.UI
 
         RectTransform Target(int step)
         {
-            var t = step < targets.Length ? targets[step] : null;
+            int index = Steps[step].target;
+            var t = index < targets.Length ? targets[index] : null;
             return t != null ? t : screen.SelectedStop;
         }
 
@@ -138,7 +136,7 @@ namespace SomeGame.UI
             card.anchoredPosition = new Vector2(0f, y - r.center.y);
 
             // The swipe step: a finger sweeps across the map.
-            bool swipe = _step == 4;
+            bool swipe = Steps[_step].target == MapTarget;
             finger.gameObject.SetActive(swipe);
             if (swipe)
             {

@@ -49,7 +49,9 @@ namespace SomeGame.Track
                 _nextFlock = Time.time + Random.Range(1f, 2f) * Mathf.Lerp(9f, 2f, busy);
             }
             int balloons = _flyers.FindAll(f => !f.bird).Count;
-            if (busy > 0.01f && Time.time >= _nextBalloon && balloons < Mathf.RoundToInt(1f + 3f * busy))
+            // None in the practice drive: a balloon over the car hides it just when you are learning to steer it.
+            bool practice = SomeGame.Race.GameSession.CurrentLevel != null && SomeGame.Race.GameSession.CurrentLevel.isTutorial;
+            if (!practice && busy > 0.01f && Time.time >= _nextBalloon && balloons < Mathf.RoundToInt(1f + 3f * busy))
             {
                 SpawnBalloon();
                 _nextBalloon = Time.time + Random.Range(4f, 8f) * Mathf.Lerp(2f, 0.8f, busy);

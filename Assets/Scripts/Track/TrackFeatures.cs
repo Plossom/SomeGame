@@ -83,7 +83,7 @@ namespace SomeGame.Track
             var pads = b;
             foreach (var jump in track.Jumps)
             {
-                if (jump.Gap >= 0 && layout.gaps[jump.Gap].kicker) continue; // a snow kicker: drawn by TrackPark
+                if (jump.Gap >= 0 && layout.gaps[jump.Gap].kicker && layout.biome == TrackLayout.Biome.Snow) continue; // a snow kicker: drawn by TrackPark
                 if (jump.Gap >= 0 && layout.gaps[jump.Gap].plunge) continue; // a hatch: drawn by TrackPlatforms
                 float length = path.DeltaDistance(jump.RampStart, jump.Lip);
                 float mid = jump.RampStart + length * 0.5f;

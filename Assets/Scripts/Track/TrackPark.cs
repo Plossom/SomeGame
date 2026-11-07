@@ -34,7 +34,8 @@ namespace SomeGame.Track
             _parts.Clear(); _tunnels.Clear(); _lifts.Clear();
             var v = new List<Vector3>(); var c = new List<Color>(); var t = new List<int>();
             var sv = new List<Vector3>(); var sc = new List<Color>(); var st = new List<int>();
-            for (int g = 0; g < layout.gaps.Count; g++) if (layout.gaps[g].kicker) Mound(path, layout.gaps[g], v, c, t, sv, sc, st);
+            // Away from the snow a kicker is an ordinary ramp (TrackFeatures).
+            for (int g = 0; g < layout.gaps.Count; g++) if (layout.gaps[g].kicker && layout.biome == TrackLayout.Biome.Snow) Mound(path, layout.gaps[g], v, c, t, sv, sc, st);
             if (sv.Count > 0) Part("KickerShadows", Mesh("KickerShadows", sv, sc, st), MoundOrder - 1, transform);
             if (v.Count > 0) Part("Kickers", Mesh("Kickers", v, c, t), MoundOrder, transform);
             v = new List<Vector3>(); c = new List<Color>(); t = new List<int>();

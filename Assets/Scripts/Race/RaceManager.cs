@@ -222,7 +222,8 @@ namespace SomeGame.Race
 
         void OnPlayerLap(RaceProgress car, float lapTime)
         {
-            bool newBest = Online == null && KeepRecords && BestLapStore.Submit(TrackId, lapTime); // online races keep no records
+            bool practice = Level != null && Level.isTutorial;
+            bool newBest = Online == null && KeepRecords && !practice && BestLapStore.Submit(TrackId, lapTime); // online races keep no records
             PlayerLapCompleted?.Invoke(lapTime, newBest);
         }
 

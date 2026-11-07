@@ -10,7 +10,7 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// The practice drive: shows one hint at a time on a card at the top and moves on once the player has
-    /// done it (steer, hop, drift, charge, boost, jump). At the end a "You're ready" card sends the player
+    /// done it (steer, hop, drift, charge, boost, jump, trick jump). At the end a "You're ready" card sends the player
     /// to the map. Only active when the race is the tutorial level; then the normal race HUD is hidden.
     /// </summary>
     public class TutorialGuide : MonoBehaviour
@@ -33,9 +33,10 @@ namespace SomeGame.UI
         [SerializeField] TutorialDemo demo;
         [Tooltip("Road before a curve (drift step) and before the ramp (jump step) the car is put at.")]
         [SerializeField, Min(5f)] float curveLead = 34f, rampLead = 50f;
+        const float TrickLead = 60f; // the run-up to the trick kicker: at full speed by its lip
 
         // Where a step is best practised: the car is moved there when the step starts.
-        enum Spot { Anywhere, BeforeCurve, BeforeRamp }
+        enum Spot { Anywhere, BeforeCurve, BeforeRamp, BeforeTrick }
 
         struct Step
         {
@@ -43,17 +44,21 @@ namespace SomeGame.UI
             public Func<bool> done;
             public Spot spot;
             public int demo;
+            public int resumeAt; // left here half way: back to this step (a boost needs its drift first)
+            public string retry; // the hint after a miss
         }
 
         Step[] _steps;
         int _index = -1;
         float _steerTime, _nextAt = -1f;
-        bool _hopped, _drifted, _boosted, _jumped;
+        bool _hopped, _drifted, _boosted, _jumped, _cleared, _missed;
         CarMovement _car;
         SomeGame.Input.PlayerCarInput _input;
         SomeGame.Track.TrackSensor _sensor;
         RaceProgress _progress;
         List<float> _curves;
+        SomeGame.Track.TrackTricks _tricks;
+        bool _trickStep;
 
         void Start()
         {
@@ -83,6 +88,14 @@ namespace SomeGame.UI
             _car.DriftStarted += () => _drifted = true;
             _car.BoostStarted += _ => _boosted = true;
             _car.Launched += _ => _jumped = true;
+            // Until its step, the kicker on the practice track is a plain jump: no arrows out of the blue.
+            _tricks = FindAnyObjectByType<SomeGame.Track.TrackTricks>();
+            if (_tricks != null)
+            {
+                _tricks.Asking = false;
+                _tricks.Cleared += () => _cleared = true;
+                _tricks.Missed += () => _missed = true;
+            }
             skipButton.onClick.AddListener(Finish);
             doneButton.onClick.AddListener(() =>
             {
@@ -104,12 +117,24 @@ namespace SomeGame.UI
                 steps.Add(new Step { title = "HOP", body = second + " while you steer: the car hops.", done = () => _hopped, demo = 1 });
                 steps.Add(new Step { title = "DRIFT", body = "Steer a little into the curve, then hop again and <b>keep holding</b>: you drift round the corner.",
                     done = () => _drifted, spot = Spot.BeforeCurve, demo = 2 });
+                int drift = steps.Count - 1;
                 steps.Add(new Step { title = "CHARGE", body = "Keep drifting: the sparks turn <color=#4FA3FF>blue</color>, <color=#FF9A3D>orange</color>, then <color=#B66BFF>purple</color>.",
-                    done = () => _car.IsDrifting && _car.DriftTier >= 1, demo = 3 });
-                steps.Add(new Step { title = "BOOST!", body = "Now let go: the longer the drift, the bigger the boost.", done = () => _boosted, demo = 4 });
+                    done = () => _car.IsDrifting && _car.DriftTier >= 1, demo = 3, resumeAt = drift });
+                steps.Add(new Step { title = "BOOST!", body = "Now let go: the longer the drift, the bigger the boost.", done = () => _boosted, demo = 4, resumeAt = drift });
             }
             steps.Add(new Step { title = "JUMP", body = "Drive straight over the <b>ramp with the white arrows</b> at full speed to fly across the stream.",
                 done = () => _jumped, spot = Spot.BeforeRamp, demo = 5 });
+            if (_tricks != null)
+                steps.Add(new Step { title = "ARROW TRICK", body = "Take this ramp. In the air time slows and arrows appear: <b>swipe the way each one points</b>.",
+                    retry = "Missed! One swipe per arrow, the way it points, before the bar runs out. Once more!",
+                    done = () => _cleared, spot = Spot.BeforeTrick, demo = 6 });
+            for (int i = 0; i < steps.Count; i++)
+                if (steps[i].resumeAt == 0)
+                {
+                    var step = steps[i];
+                    step.resumeAt = i;
+                    steps[i] = step;
+                }
             _steps = steps.ToArray();
         }
 
@@ -117,7 +142,7 @@ namespace SomeGame.UI
         {
             if (_steps == null) return;
             if (race.State != RaceState.Racing) return;
-            if (_index < 0) Show(Mathf.Clamp(PlayerPrefs.GetInt(GameReset.TutorialStepKey, 0), 0, _steps.Length - 1)); // where it was left
+            if (_index < 0) Show(_steps[Mathf.Clamp(PlayerPrefs.GetInt(GameReset.TutorialStepKey, 0), 0, _steps.Length - 1)].resumeAt); // where it was left
             if (_index >= _steps.Length) return;
 
             if (_input != null && _input.SteerDirection.sqrMagnitude > 0.01f && _car.ForwardSpeed > 4f) _steerTime += Time.deltaTime;
@@ -127,10 +152,25 @@ namespace SomeGame.UI
                 if (Time.time >= _nextAt) { _nextAt = -1f; Show(_index + 1); }
                 return;
             }
+            // The arrows come up where the card is: it steps aside for them.
+            if (_trickStep)
+            {
+                bool showing = _tricks.Showing;
+                if (card.activeSelf == showing) card.SetActive(!showing);
+                if (_missed && !showing && !_car.IsAirborne)
+                {
+                    _missed = false;
+                    bodyLabel.text = _steps[_index].retry;
+                    FitCard();
+                    StartCoroutine(MoveTo(Spot.BeforeTrick));
+                }
+            }
             if (_steps[_index].done())
             {
                 titleLabel.text = _steps[_index].title + "  <color=#FF7A1A>DONE!</color>";
                 _nextAt = Time.time + stepPause;
+                // What happens in the pause counts for the next step (a boost right after the charge).
+                _hopped = _drifted = _boosted = _jumped = _cleared = _missed = false;
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.star, 0.6f);
             }
         }
@@ -145,8 +185,8 @@ namespace SomeGame.UI
             }
             PlayerPrefs.SetInt(GameReset.TutorialStepKey, index);
             PlayerPrefs.Save();
-            // Only events that happen while a step is shown count for it.
-            _hopped = _drifted = _boosted = _jumped = false;
+            _trickStep = _steps[index].spot == Spot.BeforeTrick;
+            if (_tricks != null) _tricks.Asking = _trickStep;
             card.SetActive(true);
             stepLabel.text = $"PRACTICE  ·  {index + 1}/{_steps.Length}";
             titleLabel.text = _steps[index].title;
@@ -163,10 +203,13 @@ namespace SomeGame.UI
             if (_sensor == null || _sensor.Track == null) yield break;
             var track = _sensor.Track;
             var path = track.Path;
-            float lead = spot == Spot.BeforeRamp ? rampLead : curveLead;
+            float lead = spot == Spot.BeforeRamp ? rampLead : spot == Spot.BeforeTrick ? TrickLead : curveLead;
             var targets = new List<float>();
-            if (spot == Spot.BeforeRamp) foreach (var jump in track.Jumps) targets.Add(jump.RampStart);
-            else targets.AddRange(Curves(path));
+            if (spot == Spot.BeforeCurve) targets.AddRange(Curves(path));
+            else
+                foreach (var jump in track.Jumps)
+                    if (spot == Spot.BeforeTrick == (jump.Gap >= 0 && track.Layout.gaps[jump.Gap].trickJump))
+                        targets.Add(jump.RampStart);
             if (targets.Count == 0) yield break;
 
             float current = _sensor.Current.Distance;
@@ -246,6 +289,8 @@ namespace SomeGame.UI
             _index = _steps.Length;
             card.SetActive(false);
             doneCard.SetActive(true);
+            if (_tricks != null) _tricks.Asking = false;
+            _trickStep = false;
         }
     }
 }

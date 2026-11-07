@@ -5,7 +5,7 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// The little demo under the tutorial's hint card: white fingers acting out the current step on a
-    /// see-through plate, with a mini car showing what happens (steer, hop, drift, charge, boost, jump).
+    /// see-through plate, with a mini car showing what happens (steer, hop, drift, charge, boost, jump, arrow trick).
     /// It loops while the step is shown. Nothing in it catches touches.
     /// </summary>
     public class TutorialDemo : MonoBehaviour
@@ -24,7 +24,7 @@ namespace SomeGame.UI
 
         int _step = -1;
         float _start;
-        Image _rippleImage, _pressImage;
+        Image _rippleImage, _pressImage, _arrow;
 
         public void Play(int step)
         {
@@ -43,6 +43,14 @@ namespace SomeGame.UI
         {
             _rippleImage = ripple.GetComponent<Image>();
             _pressImage = press.GetComponent<Image>();
+            var go = new GameObject("Arrow", typeof(RectTransform));
+            go.transform.SetParent(car.parent, false);
+            _arrow = go.AddComponent<Image>();
+            _arrow.sprite = SomeGame.Track.TrackTricks.ArrowSprite();
+            _arrow.color = new Color(1f, 0.85f, 0.3f);
+            _arrow.raycastTarget = false;
+            _arrow.rectTransform.sizeDelta = new Vector2(170f, 170f);
+            _arrow.gameObject.SetActive(false);
         }
 
         void Update()
@@ -52,12 +60,15 @@ namespace SomeGame.UI
             group.alpha = Mathf.Clamp01(t / 0.3f);
             // Defaults: one finger on the stick, nothing else.
             ring.gameObject.SetActive(true);
+            knob.gameObject.SetActive(true);
+            finger1.gameObject.SetActive(true);
             finger2.gameObject.SetActive(false);
             press.gameObject.SetActive(false);
             ripple.gameObject.SetActive(false);
             foreach (var s in sparks) s.gameObject.SetActive(false);
             foreach (var l in speedLines) l.gameObject.SetActive(false);
             ramp.gameObject.SetActive(false);
+            _arrow.gameObject.SetActive(false);
             car.localScale = Vector3.one;
             car.anchoredPosition = CarAt;
             carShadow.anchoredPosition = CarAt + new Vector2(6f, -8f);
@@ -70,6 +81,7 @@ namespace SomeGame.UI
                 case 2: Drift(t, false); break;
                 case 3: Drift(t, true); break;
                 case 4: Boost(t); break;
+                case 6: Trick(t); break;
                 default: Jump(t); break;
             }
         }
@@ -174,6 +186,38 @@ namespace SomeGame.UI
                 var line = speedLines[i];
                 line.gameObject.SetActive(dash > 0f && dash < 1f);
                 line.anchoredPosition = car.anchoredPosition + new Vector2((i - 1) * 30f, -105f - 36f * Mathf.Repeat(t * 4f + i * 0.3f, 1f));
+            }
+        }
+
+        // An arrow pops up, the finger flicks the same way: the car spins (or flips), then the next arrow.
+        void Trick(float t)
+        {
+            ring.gameObject.SetActive(false);
+            knob.gameObject.SetActive(false);
+            finger1.gameObject.SetActive(false);
+            const float Period = 1.5f;
+            int n = Mathf.FloorToInt(t / Period);
+            float c = Mathf.Repeat(t, Period) / Period;
+            // right, left, up, down: the arrow's turn and the way the finger goes
+            float turn = (n % 4) switch { 0 => 0f, 1 => 180f, 2 => 90f, _ => -90f };
+            Vector2 way = Quaternion.Euler(0f, 0f, turn) * Vector2.right;
+            _arrow.gameObject.SetActive(true);
+            _arrow.rectTransform.anchoredPosition = RingAt;
+            _arrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, turn);
+            _arrow.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.5f, 1f, Mathf.Clamp01(c / 0.12f));
+            finger2.gameObject.SetActive(true);
+            float flick = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.3f, 0.5f, c));
+            finger2.anchoredPosition = TapAt + way * Mathf.Lerp(-70f, 70f, flick);
+            // In the air: bigger, the shadow away from it, and the trick as the finger goes.
+            car.localScale = Vector3.one * 1.3f;
+            carShadow.anchoredPosition = CarAt + new Vector2(24f, -34f);
+            carShadow.localScale = Vector3.one * 0.8f;
+            float spin = Mathf.InverseLerp(0.4f, 0.8f, c);
+            if (n % 4 < 2) CarHeading((n % 4 == 0 ? -360f : 360f) * spin);
+            else
+            {
+                CarHeading(0f);
+                car.localScale = new Vector3(1.3f, 1.3f * Mathf.Cos(spin * Mathf.PI * 2f), 1f);
             }
         }
 
