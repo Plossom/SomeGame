@@ -10,11 +10,11 @@ namespace SomeGame.UI
     /// <list type="bullet">
     /// <item>Place tags: a rival within about <see cref="TagSeconds"/> ahead or behind gets a small tag over its car
     /// with its place; it fades out once the rival is further away.</item>
-    /// <item>Edge arrows: a rival just out of view ahead gets an arrow at the screen's edge with its face and the gap
-    /// ("+0.8s"); one closing in from behind off screen gets "CLOSING!".</item>
+    /// <item>Edge arrows: only while you close in on a rival just out of view ahead (within about
+    /// <see cref="EdgeSeconds"/>), or one closes in on you from behind ("CLOSING!"): an arrow at the screen's edge
+    /// with its face.</item>
     /// <item>The ladder: on the final lap (or section), in the last 20 seconds and after a place changes, a slim
-    /// ladder slides in at the side: the car ahead, you and the car behind, with the gaps. It hides after a few
-    /// seconds.</item>
+    /// ladder slides in at the side: the car ahead, you and the car behind. It hides after a few seconds.</item>
     /// <item>Overtake: the face of the rival you just passed flips down above the OVERTAKE! headline.</item>
     /// </list>
     /// The faces are placeholders (the rival's car in its colours on a disc) until the rivals get their characters.
@@ -22,7 +22,7 @@ namespace SomeGame.UI
     public class RivalWatch : MonoBehaviour
     {
         const float TagSeconds = 1.5f;
-        const float EdgeAheadSeconds = 3f;
+        const float EdgeSeconds = 1f;
         const float LadderSeconds = 4f;
         const float FinalSeconds = 20f;
         const float RowPitch = 100f, RowTop = -60f, RowTopBare = -10f; // the ladder's rows (from its top)
@@ -206,12 +206,18 @@ namespace SomeGame.UI
         // An arrow at the edge for the nearest rival just out of view ahead, and for one closing in from behind.
         void Edges(bool racing)
         {
+            // Only while the gap shrinks (you catch one up, or one catches you); once shown it stays a little
+            // longer (a bit further out, or the gap holding) so it doesn't flicker.
             Rival ahead = null, behind = null;
             foreach (var rival in _rivals)
             {
                 if (rival.Car == null || rival.Car.IsFinished || OnScreen(rival)) continue;
-                if (rival.Gap > 0f && rival.Gap <= EdgeAheadSeconds && (ahead == null || rival.Gap < ahead.Gap)) ahead = rival;
-                if (rival.Gap < 0f && rival.Gap >= -TagSeconds && rival.GapRate > 0.04f && (behind == null || rival.Gap > behind.Gap)) behind = rival;
+                bool shown = rival.EdgeAlpha > 0.5f;
+                float reach = shown ? EdgeSeconds * 1.3f : EdgeSeconds, rate = shown ? 0.1f : 0.04f;
+                float gap = Mathf.Abs(rival.Gap), approach = rival.Gap > 0f ? -rival.GapRate : rival.GapRate;
+                if (gap > reach || (shown ? approach < -rate : approach < rate)) continue;
+                if (rival.Gap > 0f && (ahead == null || rival.Gap < ahead.Gap)) ahead = rival;
+                if (rival.Gap < 0f && (behind == null || rival.Gap > behind.Gap)) behind = rival;
             }
             // The area in the layer's space (both sit on the layer's centre).
             var area = new Rect((Vector2)edgeArea.localPosition + edgeArea.rect.position, edgeArea.rect.size);
@@ -238,9 +244,7 @@ namespace SomeGame.UI
                 var pivot = rival.Edge.Find("Pivot");
                 if (pivot != null) pivot.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
                 bool closing = rival.Gap < 0f;
-                var label = rival.Edge.Find("Label").GetComponent<TMP_Text>();
-                label.text = closing ? "CLOSING!" : $"+{rival.Gap:0.0}s";
-                label.color = closing ? Closing : Color.white;
+                rival.Edge.Find("Label").gameObject.SetActive(closing); // CLOSING! only for one coming from behind
                 var arrow = pivot != null ? pivot.Find("Arrow")?.GetComponent<UnityEngine.UI.Image>() : null;
                 if (arrow != null) arrow.color = closing ? Closing : Theme.Amber;
                 float pulse = closing ? 1f + 0.08f * Mathf.Sin(Time.time * 12f) : 1f;
@@ -307,15 +311,7 @@ namespace SomeGame.UI
                 y -= RowPitch;
                 var car = standings[at];
                 rowRt.Find("Place").GetComponent<TMP_Text>().text = TimeFormat.Ordinal(at + 1).ToUpperInvariant();
-                var gapLabel = rowRt.Find("Gap")?.GetComponent<TMP_Text>();
-                if (row == 1) { Paint(rowRt.Find("Face"), null); continue; }
-                var rival = _rivals.Find(r => r.Car == car);
-                Paint(rowRt.Find("Face"), rival);
-                if (gapLabel != null)
-                {
-                    float gap = rival != null ? Mathf.Max(0.1f, Mathf.Abs(rival.Gap)) : 0.1f;
-                    gapLabel.text = car.IsFinished ? "DONE" : $"{gap:0.0}s";
-                }
+                Paint(rowRt.Find("Face"), row == 1 ? null : _rivals.Find(r => r.Car == car));
             }
             ladder.sizeDelta = new Vector2(ladder.sizeDelta.x, -y + 10f);
         }

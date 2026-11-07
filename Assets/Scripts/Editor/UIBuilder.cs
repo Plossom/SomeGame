@@ -832,35 +832,27 @@ namespace SomeGame.EditorTools
             var edgePivot = At("Pivot", edge, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             Img(At("Arrow", edgePivot, new Vector2(0.5f, 0.5f), new Vector2(0f, 84f), new Vector2(54f, 66f)), "NavArrow", Theme.Amber);
             RivalFace(edge, "Face", new Vector2(0.5f, 0.5f), Vector2.zero, 108f);
-            var edgeLabel = Txt(At("Label", edge, new Vector2(0.5f, 0.5f), new Vector2(0f, -88f), new Vector2(260f, 60f)), "+0.8s", 48, Color.white, _black);
+            var edgeLabel = Txt(At("Label", edge, new Vector2(0.5f, 0.5f), new Vector2(0f, -88f), new Vector2(260f, 60f)), "CLOSING!", 48, new Color(1f, 0.36f, 0.3f), _black);
             edgeLabel.fontSharedMaterial = _blackOutline;
 
             // The ladder top left under the menu button (the road ahead is top right).
-            var ladder = At("Ladder", watch, new Vector2(0f, 1f), new Vector2(48f, -222f), new Vector2(276f, 360f));
+            var ladder = At("Ladder", watch, new Vector2(0f, 1f), new Vector2(48f, -222f), new Vector2(206f, 360f));
             var ladderShadow = Stretch("Shadow", ladder);
             ladderShadow.offsetMin = new Vector2(0f, -10f); ladderShadow.offsetMax = new Vector2(0f, -10f);
             Img(ladderShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Fill", ladder), "Round", Theme.Ink, sliced: true);
-            var ladderHeader = Txt(At("Header", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(256f, 46f)), "FINAL LAP", 36, Theme.Amber, _condItalic);
+            var ladderHeader = Txt(At("Header", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(190f, 46f)), "FINAL LAP", 36, Theme.Amber, _condItalic);
             ladderHeader.characterSpacing = 4f;
             ladderHeader.enableAutoSizing = true; ladderHeader.fontSizeMin = 26; ladderHeader.fontSizeMax = 36;
             var rows = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var row = At(i == 0 ? "Ahead" : i == 1 ? "You" : "Behind", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -110f - 100f * i), new Vector2(256f, 92f));
+                var row = At(i == 0 ? "Ahead" : i == 1 ? "You" : "Behind", ladder, new Vector2(0.5f, 1f), new Vector2(0f, -110f - 100f * i), new Vector2(186f, 92f));
                 row.pivot = new Vector2(0.5f, 0.5f);
                 if (i == 1) Img(Stretch("Highlight", row), "Round", Theme.Orange, sliced: true);
                 var place = Txt(At("Place", row, new Vector2(0f, 0.5f), new Vector2(14f, 0f), new Vector2(80f, 70f)), i == 0 ? "2ND" : i == 1 ? "3RD" : "4TH", 44, i == 1 ? Color.white : Theme.Cream, _black, TextAlignmentOptions.Left);
                 place.rectTransform.pivot = new Vector2(0f, 0.5f);
-                RivalFace(row, "Face", new Vector2(0.5f, 0.5f), new Vector2(-16f, 0f), 72f);
-                var gap = Txt(At("Gap", row, new Vector2(1f, 0.5f), new Vector2(-12f, 0f), new Vector2(68f, 60f)), i == 0 ? "0.6s" : i == 1 ? "YOU" : "1.2s", 40, i == 1 ? Color.white : Theme.Cream, _condItalic, TextAlignmentOptions.Right);
-                gap.rectTransform.pivot = new Vector2(1f, 0.5f);
-                if (i != 1)
-                {
-                    var dir = Img(At("Dir", row, new Vector2(1f, 0.5f), new Vector2(-94f, 0f), new Vector2(22f, 28f)), "NavArrow", i == 0 ? Theme.Leaf : Theme.Stone).rectTransform;
-                    dir.pivot = new Vector2(0.5f, 0.5f);
-                    if (i == 2) dir.localRotation = Quaternion.Euler(0f, 0f, 180f);
-                }
+                RivalFace(row, "Face", new Vector2(1f, 0.5f), new Vector2(-14f, 0f), 72f).pivot = new Vector2(1f, 0.5f);
                 rows[i] = row;
             }
 
