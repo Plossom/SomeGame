@@ -991,22 +991,27 @@ namespace SomeGame.EditorTools
             play.gameObject.AddComponent<ButtonFeedback>();
             var veilRt = Stretch("Veil", card); veilRt.offsetMin = new Vector2(-8f, -8f); veilRt.offsetMax = new Vector2(8f, 8f);
             var veil = Img(veilRt, "Round", Theme.WithAlpha(Theme.Cream, 0f), sliced: true);
-            // A chicken in a ring in the top right corner (what shows of the card while it is fanned out behind).
-            var corner = At("Corner", card, new Vector2(1f, 1f), new Vector2(-34f, -34f), new Vector2(150f, 150f));
-            corner.pivot = new Vector2(1f, 1f);
-            Img(corner, "Circle", new Color(0.06f, 0.07f, 0.08f));
-            var cornerFace = Img(At("Face", corner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f)), "Circle", Theme.Orange);
-            var tabIcon = Img(At("Icon", corner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104f, 104f)), "Chicken", Color.white);
+            // The chicken on a medallion over the top left corner, like a race card's number (with the same frost).
+            var medal = At("Medal", card, new Vector2(0f, 1f), new Vector2(-26f, 34f), new Vector2(170f, 182f));
+            Img(At("Shadow", medal, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.OrangeDeep);
+            var medalShadowVeil = Img(At("ShadowVeil", medal, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
+            Img(At("Face", medal, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.Orange);
+            Img(At("Rim", medal, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(146f, 146f)), "Ring", Theme.WithAlpha(Color.white, 0.55f));
+            var tabIcon = Img(At("Icon", medal, new Vector2(0.5f, 1f), new Vector2(0f, -85f), new Vector2(118f, 118f)), "Chicken", Color.white);
             tabIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            var medalVeil = Img(At("Veil", medal, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
             // A lock over the picture while the challenge is locked.
             var lockBadge = At("Lock", disc, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 140f));
             lockBadge.pivot = new Vector2(0.5f, 0.5f);
             Img(lockBadge, "Circle", Theme.WithAlpha(Theme.Ink, 0.85f));
             Img(At("Icon", lockBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(76f, 76f)), "IconLock", Theme.Cream);
             var comp = card.gameObject.AddComponent<DeckChallengeCard>();
-            Configure(comp, ("group", group), ("body", body), ("playButton", playButton), ("icon", icon), ("tabIcon", tabIcon), ("cornerFace", cornerFace), ("lockBadge", lockBadge.gameObject), ("playFace", playFace), ("veil", veil),
+            Configure(comp, ("group", group), ("body", body), ("playButton", playButton), ("icon", icon), ("tabIcon", tabIcon), ("lockBadge", lockBadge.gameObject), ("playFace", playFace), ("veil", veil),
                 ("title", title), ("description", description), ("best", best), ("prizeName", prizeName), ("playLabel", playLabel),
                 ("prizeCar", prizeCar), ("prizeWon", won.gameObject));
+            var dso = new SerializedObject(comp);
+            SetArray(dso, "edgeVeils", new[] { medalShadowVeil, medalVeil });
+            dso.ApplyModifiedPropertiesWithoutUndo();
             card.gameObject.SetActive(false);
             return comp;
         }

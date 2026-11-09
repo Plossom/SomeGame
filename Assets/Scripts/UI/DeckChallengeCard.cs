@@ -17,8 +17,8 @@ namespace SomeGame.UI
         [Tooltip("Tapping the card while it lies behind brings it to the front.")]
         [SerializeField] UnityEngine.UI.Button body, playButton;
         [SerializeField] UnityEngine.UI.Image icon, tabIcon, playFace, veil;
-        [Tooltip("The ring of the chicken badge in the corner (grey while the card lies behind).")]
-        [SerializeField] UnityEngine.UI.Image cornerFace;
+        [Tooltip("The frost over the medallion sticking out past the card (like a race card's).")]
+        [SerializeField] UnityEngine.UI.Image[] edgeVeils;
         [SerializeField] TMP_Text title, description, best, prizeName, playLabel;
         [SerializeField] VehicleIcon prizeCar;
         [SerializeField] GameObject prizeWon;
@@ -81,17 +81,17 @@ namespace SomeGame.UI
             _front = front;
             group.alpha = alpha;
             group.blocksRaycasts = alpha > 0.5f;
-            veil.color = Theme.WithAlpha(Theme.Cream, 0.55f * (1f - front));
-            // The corner chicken greys out while the card lies behind.
-            if (cornerFace != null) cornerFace.color = Color.Lerp(Theme.Stone, Theme.Orange, front);
-            tabIcon.color = Color.Lerp(new Color(0.72f, 0.72f, 0.72f), Color.white, front);
+            // Frosted behind like a race card at the side (the same strength as the race card behind it).
+            var frost = Theme.WithAlpha(Theme.Cream, 0.62f * Mathf.SmoothStep(0f, 1f, 0.75f * (1f - front)));
+            veil.color = frost;
+            if (edgeVeils != null) foreach (var edge in edgeVeils) if (edge != null) edge.color = frost;
             body.interactable = front < 0.05f;
             playButton.interactable = front > 0.95f;
         }
 
         void Update()
         {
-            // The corner chicken pecks now and then.
+            // The medallion's chicken pecks now and then.
             float t = Mathf.Repeat(Time.unscaledTime, 2.4f);
             tabIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, t < 0.5f ? 8f * Mathf.Sin(t / 0.5f * Mathf.PI * 3f) : 0f);
         }
