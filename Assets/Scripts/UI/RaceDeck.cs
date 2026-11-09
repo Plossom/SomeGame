@@ -70,8 +70,10 @@ namespace SomeGame.UI
         float _fan;                     // 0: the card behind hidden right behind, 1: fanned out to the side
         float _fannedAt = -1f;          // when the fan last opened (the teasing nudges count from there)
         int _teased = -1;
-        const float TeaseEvery = 4f, TeaseSeconds = 0.75f, TeaseLift = 0.16f;
-        const float SwapSeconds = 0.45f, FanTilt = -9f, FanShift = 80f;
+        const float TeaseEvery = 4f, TeaseSeconds = 0.75f, TeaseOut = 22f, TeaseTilt = 1.2f;
+        const float SwapSeconds = 0.45f;
+        const float FanTilt = 3.2f, FanShift = 8f;      // each card of the fan: tilted out round its bottom, moved aside
+        const float SwapOut = 150f, SwapTilt = 3f;       // swapping, they pull apart this much more for a moment
 
         public bool IsOpen => _phase != Phase.Closed;
 
@@ -410,9 +412,9 @@ namespace SomeGame.UI
             LayoutStrip(k, closing);
         }
 
-        // The challenge card and its race's card, like two cards held in a hand: resting on the race they fan out (the
-        // one behind tilted out to the right, turning round its bottom), moving on they close up again. Swapping, the
-        // front one swings away and tucks in behind while the other comes forward.
+        // The challenge card and its race's card, like two cards held in a hand: resting on the race they fan out a
+        // little (the race card leaning left, the challenge right, each turning round its bottom), moving on they close
+        // up again. Swapping, they pull apart for a moment and the tapped one comes on top.
         void LayoutChallenge(bool settled)
         {
             if (challengeCard == null || _challengeAt < 0) return;
@@ -421,22 +423,21 @@ namespace SomeGame.UI
             float off = _challengeAt - _pos, a = Mathf.Abs(off);
             float show = host.gameObject.activeSelf ? Mathf.Clamp01(1f - a * 1.6f) : 0f;
             var rt = (RectTransform)challengeCard.transform;
-            float t = Mathf.SmoothStep(0f, 1f, _swap), fan = Mathf.SmoothStep(0f, 1f, _fan);
-            t = Mathf.Max(t, Tease());
-            float swing = Mathf.Sin(t * Mathf.PI);
-            float scale = hostRt.localScale.x, h = hostRt.rect.height * scale;
+            float t = Mathf.SmoothStep(0f, 1f, _swap), swing = Mathf.Sin(t * Mathf.PI), fan = Mathf.SmoothStep(0f, 1f, _fan);
+            float tease = Tease();
+            float spread = FanShift * fan + SwapOut * swing + TeaseOut * tease;
+            float tilt = FanTilt * fan + SwapTilt * swing + TeaseTilt * tease;
+            float scale = hostRt.localScale.x, h = hostRt.rect.height;
             Vector2 Turn(Vector2 v) => (Vector2)(hostRt.localRotation * v) * scale;
-            // Tilting round the bottom of the card: the middle moves sideways (and a touch down).
-            Vector2 Behind(float tilt) => new Vector2(-Mathf.Sin(tilt * Mathf.Deg2Rad) * h * 0.5f / scale + FanShift, (Mathf.Cos(tilt * Mathf.Deg2Rad) - 1f) * h * 0.5f / scale) * fan;
+            // Tilted round its bottom by deg (anticlockwise), moved aside by dx: where the card's middle goes.
+            Vector2 Lean(float deg, float dx) => new(-Mathf.Sin(deg * Mathf.Deg2Rad) * h * 0.5f + dx, (Mathf.Cos(deg * Mathf.Deg2Rad) - 1f) * h * 0.5f);
             Vector2 at = hostRt.anchoredPosition;
-            float rot = hostRt.localEulerAngles.z, tilt = FanTilt * fan;
-            // The challenge: from behind (fanned) to the front, swinging out to the right on the way.
-            rt.anchoredPosition = at + Turn(Vector2.Lerp(Behind(FanTilt), Vector2.zero, t) + new Vector2(swing * 260f, 0f));
-            rt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(tilt, 0f, t) - swing * 6f);
+            float rot = hostRt.localEulerAngles.z;
+            rt.anchoredPosition = at + Turn(Lean(-tilt, spread));
+            rt.localRotation = Quaternion.Euler(0f, 0f, rot - tilt);
             rt.localScale = hostRt.localScale * Mathf.Lerp(0.97f, 1f, t);
-            // The race card: from the front to behind (fanned), swinging out to the left.
-            hostRt.anchoredPosition = at + Turn(Vector2.Lerp(Vector2.zero, Behind(FanTilt), t) - new Vector2(swing * 260f, 0f));
-            hostRt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(0f, tilt, t) + swing * 6f);
+            hostRt.anchoredPosition = at + Turn(Lean(tilt, -spread));
+            hostRt.localRotation = Quaternion.Euler(0f, 0f, rot + tilt);
             hostRt.localScale *= Mathf.Lerp(1f, 0.97f, t);
             // Whichever is in front draws on top (they change places half way).
             int hostIndex = hostRt.GetSiblingIndex();
@@ -448,8 +449,9 @@ namespace SomeGame.UI
             if (t > 0f) host.SetFocus(Mathf.Max(Mathf.Abs(off), 0.75f * t), settled);
         }
 
-        // Resting on the race with the challenge behind: every few seconds the swap starts on its own for a moment
-        // (the challenge lifts out a little and settles back), a hint to tap it.
+        // Resting on the race with the challenge behind: every few seconds the fan opens a touch wider and closes
+        // again, a hint to tap the card behind.
+        // 0..1 while a nudge runs.
         float Tease()
         {
             if (_fannedAt < 0f || _swap > 0f || _swapTarget > 0f) return 0f;
@@ -463,7 +465,7 @@ namespace SomeGame.UI
                 _teased = round;
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.15f);
             }
-            return TeaseLift * Mathf.Sin(p * Mathf.PI) * (1f - 0.25f * Mathf.Sin(p * Mathf.PI * 2f));
+            return Mathf.Sin(p * Mathf.PI);
         }
 
         // START: the other cards fly off, the card lifts (drawn from the deck), then sweeps up towards you filling the

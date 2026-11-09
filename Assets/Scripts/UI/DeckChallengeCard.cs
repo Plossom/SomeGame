@@ -17,6 +17,8 @@ namespace SomeGame.UI
         [Tooltip("Tapping the card while it lies behind brings it to the front.")]
         [SerializeField] UnityEngine.UI.Button body, playButton;
         [SerializeField] UnityEngine.UI.Image icon, tabIcon, playFace, veil;
+        [Tooltip("The ring of the chicken badge in the corner (grey while the card lies behind).")]
+        [SerializeField] UnityEngine.UI.Image cornerFace;
         [SerializeField] TMP_Text title, description, best, prizeName, playLabel;
         [SerializeField] VehicleIcon prizeCar;
         [SerializeField] GameObject prizeWon;
@@ -80,6 +82,9 @@ namespace SomeGame.UI
             group.alpha = alpha;
             group.blocksRaycasts = alpha > 0.5f;
             veil.color = Theme.WithAlpha(Theme.Cream, 0.55f * (1f - front));
+            // The corner chicken greys out while the card lies behind.
+            if (cornerFace != null) cornerFace.color = Color.Lerp(Theme.Stone, Theme.Orange, front);
+            tabIcon.color = Color.Lerp(new Color(0.72f, 0.72f, 0.72f), Color.white, front);
             body.interactable = front < 0.05f;
             playButton.interactable = front > 0.95f;
         }

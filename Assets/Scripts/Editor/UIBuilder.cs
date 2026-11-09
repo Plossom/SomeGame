@@ -995,7 +995,7 @@ namespace SomeGame.EditorTools
             var corner = At("Corner", card, new Vector2(1f, 1f), new Vector2(-34f, -34f), new Vector2(150f, 150f));
             corner.pivot = new Vector2(1f, 1f);
             Img(corner, "Circle", new Color(0.06f, 0.07f, 0.08f));
-            Img(At("Face", corner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f)), "Circle", Theme.Orange);
+            var cornerFace = Img(At("Face", corner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f)), "Circle", Theme.Orange);
             var tabIcon = Img(At("Icon", corner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104f, 104f)), "Chicken", Color.white);
             tabIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             // A lock over the picture while the challenge is locked.
@@ -1004,7 +1004,7 @@ namespace SomeGame.EditorTools
             Img(lockBadge, "Circle", Theme.WithAlpha(Theme.Ink, 0.85f));
             Img(At("Icon", lockBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(76f, 76f)), "IconLock", Theme.Cream);
             var comp = card.gameObject.AddComponent<DeckChallengeCard>();
-            Configure(comp, ("group", group), ("body", body), ("playButton", playButton), ("icon", icon), ("tabIcon", tabIcon), ("lockBadge", lockBadge.gameObject), ("playFace", playFace), ("veil", veil),
+            Configure(comp, ("group", group), ("body", body), ("playButton", playButton), ("icon", icon), ("tabIcon", tabIcon), ("cornerFace", cornerFace), ("lockBadge", lockBadge.gameObject), ("playFace", playFace), ("veil", veil),
                 ("title", title), ("description", description), ("best", best), ("prizeName", prizeName), ("playLabel", playLabel),
                 ("prizeCar", prizeCar), ("prizeWon", won.gameObject));
             card.gameObject.SetActive(false);
