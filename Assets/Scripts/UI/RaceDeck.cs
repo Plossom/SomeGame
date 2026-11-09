@@ -68,6 +68,9 @@ namespace SomeGame.UI
         int _challengeAt = -1;          // the race whose card the challenge lies behind
         float _swap, _swapTarget;       // 0: the race card in front, 1: the challenge card in front
         float _fan;                     // 0: the card behind hidden right behind, 1: fanned out to the side
+        float _fannedAt = -1f;          // when the fan last opened (the teasing nudges count from there)
+        int _teased = -1;
+        const float TeaseEvery = 4f, TeaseSeconds = 0.75f, TeaseLift = 0.16f;
         const float SwapSeconds = 0.45f, FanTilt = -9f, FanShift = 80f;
 
         public bool IsOpen => _phase != Phase.Closed;
@@ -322,6 +325,8 @@ namespace SomeGame.UI
             _swap = Mathf.MoveTowards(_swap, _swapTarget, dt / SwapSeconds);
             bool fanned = _challengeAt >= 0 && _phase == Phase.Open && !_dragging && _target == _challengeAt && Mathf.Abs(_pos - _target) < 0.05f;
             _fan = Mathf.MoveTowards(_fan, fanned ? 1f : 0f, dt / 0.3f);
+            if (_fan >= 1f && _fannedAt < 0f) { _fannedAt = now; _teased = -1; }
+            else if (_fan < 1f) _fannedAt = -1f;
             // A tick for every card that passes the middle.
             int near = Mathf.Clamp(Mathf.RoundToInt(_pos), 0, _cards.Count - 1);
             if (near != _tick)
@@ -416,7 +421,9 @@ namespace SomeGame.UI
             float off = _challengeAt - _pos, a = Mathf.Abs(off);
             float show = host.gameObject.activeSelf ? Mathf.Clamp01(1f - a * 1.6f) : 0f;
             var rt = (RectTransform)challengeCard.transform;
-            float t = Mathf.SmoothStep(0f, 1f, _swap), swing = Mathf.Sin(t * Mathf.PI), fan = Mathf.SmoothStep(0f, 1f, _fan);
+            float t = Mathf.SmoothStep(0f, 1f, _swap), fan = Mathf.SmoothStep(0f, 1f, _fan);
+            t = Mathf.Max(t, Tease());
+            float swing = Mathf.Sin(t * Mathf.PI);
             float scale = hostRt.localScale.x, h = hostRt.rect.height * scale;
             Vector2 Turn(Vector2 v) => (Vector2)(hostRt.localRotation * v) * scale;
             // Tilting round the bottom of the card: the middle moves sideways (and a touch down).
@@ -439,6 +446,24 @@ namespace SomeGame.UI
             challengeCard.Show(t, alpha);
             // The race card behind is frosted with START off.
             if (t > 0f) host.SetFocus(Mathf.Max(Mathf.Abs(off), 0.75f * t), settled);
+        }
+
+        // Resting on the race with the challenge behind: every few seconds the swap starts on its own for a moment
+        // (the challenge lifts out a little and settles back), a hint to tap it.
+        float Tease()
+        {
+            if (_fannedAt < 0f || _swap > 0f || _swapTarget > 0f) return 0f;
+            float since = Time.unscaledTime - _fannedAt - 1.2f;
+            if (since < 0f) return 0f;
+            int round = Mathf.FloorToInt(since / TeaseEvery);
+            float p = (since - round * TeaseEvery) / TeaseSeconds;
+            if (p >= 1f) return 0f;
+            if (round != _teased)
+            {
+                _teased = round;
+                SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.15f);
+            }
+            return TeaseLift * Mathf.Sin(p * Mathf.PI) * (1f - 0.25f * Mathf.Sin(p * Mathf.PI * 2f));
         }
 
         // START: the other cards fly off, the card lifts (drawn from the deck), then sweeps up towards you filling the
