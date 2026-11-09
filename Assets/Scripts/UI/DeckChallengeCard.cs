@@ -14,23 +14,25 @@ namespace SomeGame.UI
     public class DeckChallengeCard : MonoBehaviour
     {
         [SerializeField] CanvasGroup group;
-        [Tooltip("Tapping the card (or its tab) while it lies behind brings it to the front.")]
-        [SerializeField] UnityEngine.UI.Button body, tab, playButton;
+        [Tooltip("Tapping the card while it lies behind brings it to the front.")]
+        [SerializeField] UnityEngine.UI.Button body, playButton;
         [SerializeField] UnityEngine.UI.Image icon, tabIcon, playFace, veil;
         [SerializeField] TMP_Text title, description, best, prizeName, playLabel;
         [SerializeField] VehicleIcon prizeCar;
         [SerializeField] GameObject prizeWon;
+        [Tooltip("A lock over the picture while it is locked.")]
+        [SerializeField] GameObject lockBadge;
 
         CupDefinition _cup;
         float _front;
 
         public UnityEngine.UI.Button Body => body;
-        public UnityEngine.UI.Button Tab => tab;
 
         void Awake() => playButton.onClick.AddListener(Play);
 
+        /// <summary>Open once its rival is beaten (for real: not opened by the developer switch that unlocks the races).</summary>
         public static bool IsOpen(CupDefinition cup) => cup != null && cup.challenge != null &&
-            (CupList.DevUnlockAll || string.IsNullOrEmpty(cup.challengeAfterRival) || RivalProgress.IsBeaten(cup.challengeAfterRival));
+            (string.IsNullOrEmpty(cup.challengeAfterRival) || RivalProgress.IsBeaten(cup.challengeAfterRival));
 
         /// <summary>The race (index in the cup) whose card it lies behind, or -1 (no challenge).</summary>
         public static int RaceOf(CupDefinition cup, LevelCatalog catalog)
@@ -57,6 +59,7 @@ namespace SomeGame.UI
             look.Top = part;
             prizeCar.Dress(look);
             prizeWon.SetActive(won);
+            if (lockBadge != null) lockBadge.SetActive(!open);
             if (open)
             {
                 playLabel.text = won ? "PLAY AGAIN" : "PLAY";
@@ -79,14 +82,11 @@ namespace SomeGame.UI
             veil.color = Theme.WithAlpha(Theme.Cream, 0.55f * (1f - front));
             body.interactable = front < 0.05f;
             playButton.interactable = front > 0.95f;
-            bool tabShown = front < 0.5f && alpha > 0.5f;
-            if (tab.gameObject.activeSelf != tabShown) tab.gameObject.SetActive(tabShown);
         }
 
         void Update()
         {
-            // The tab's chicken pecks now and then.
-            if (!tab.gameObject.activeSelf) return;
+            // The corner chicken pecks now and then.
             float t = Mathf.Repeat(Time.unscaledTime, 2.4f);
             tabIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, t < 0.5f ? 8f * Mathf.Sin(t / 0.5f * Mathf.PI * 3f) : 0f);
         }

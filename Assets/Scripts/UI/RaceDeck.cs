@@ -37,6 +37,7 @@ namespace SomeGame.UI
         [SerializeField] DeckChallengeCard challengeCard;
 
         const float Spacing = 720f;          // between the middle of two cards next to each other
+        const float Raise = 90f;             // the cards sit this much above the middle (the bar of race numbers stays)
         const float SideScale = 0.86f, SideTilt = 5f, SideDrop = 46f;
         const float OpenSeconds = 0.6f, CloseSeconds = 0.32f;
         const float Omega = 12f;             // the settling spring (critically damped)
@@ -66,8 +67,8 @@ namespace SomeGame.UI
         UnityEngine.UI.Image _flash;
         int _challengeAt = -1;          // the race whose card the challenge lies behind
         float _swap, _swapTarget;       // 0: the race card in front, 1: the challenge card in front
-        const float SwapSeconds = 0.5f;
-        static readonly Vector2 Peek = new(70f, 50f); // where the card behind sits (it peeks out up and right)
+        float _fan;                     // 0: the card behind hidden right behind, 1: fanned out to the side
+        const float SwapSeconds = 0.45f, FanTilt = -9f, FanShift = 80f;
 
         public bool IsOpen => _phase != Phase.Closed;
 
@@ -78,7 +79,6 @@ namespace SomeGame.UI
             if (challengeCard != null)
             {
                 challengeCard.Body.onClick.AddListener(() => Swap(1f));
-                challengeCard.Tab.onClick.AddListener(() => Swap(1f));
                 challengeCard.gameObject.SetActive(false);
             }
             _canvas = GetComponentInParent<Canvas>().rootCanvas;
@@ -99,7 +99,7 @@ namespace SomeGame.UI
             Build(races);
             // The cup's challenge behind its rival's race.
             _challengeAt = -1;
-            _swap = _swapTarget = 0f;
+            _swap = _swapTarget = _fan = 0f;
             if (challengeCard != null && cup != null && cup.challenge != null)
             {
                 var rival = string.IsNullOrEmpty(cup.challengeAfterRival) ? null : Resources.Load<RivalCharacter>("Rivals/" + cup.challengeAfterRival);
@@ -150,7 +150,6 @@ namespace SomeGame.UI
                 int index = i;
                 card.FocusButton.onClick.AddListener(() => { if (index == _challengeAt && _swapTarget > 0f) Swap(0f); else FlyTo(index); });
                 card.StartButton.onClick.AddListener(() => StartRace(card));
-                if (card.SwapTab != null) card.SwapTab.onClick.AddListener(() => Swap(0f));
                 _cards.Add(card);
 
                 var b = Instantiate(stripBadge, stripBadge.parent);
@@ -318,9 +317,11 @@ namespace SomeGame.UI
                 if (Mathf.Abs(_pos - _target) < 0.0015f && Mathf.Abs(_vel) < 0.01f) { _pos = _target; _vel = 0f; }
             }
             if (!_vertical) _dy = Mathf.Lerp(_dy, 0f, 1f - Mathf.Exp(-14f * dt));
-            // Off to another race: the challenge tucks itself back behind.
+            // Off to another race: the challenge tucks itself back behind; resting on its race the two fan out.
             if (_challengeAt >= 0 && (_target != _challengeAt || _dragging)) _swapTarget = 0f;
             _swap = Mathf.MoveTowards(_swap, _swapTarget, dt / SwapSeconds);
+            bool fanned = _challengeAt >= 0 && _phase == Phase.Open && !_dragging && _target == _challengeAt && Mathf.Abs(_pos - _target) < 0.05f;
+            _fan = Mathf.MoveTowards(_fan, fanned ? 1f : 0f, dt / 0.3f);
             // A tick for every card that passes the middle.
             int near = Mathf.Clamp(Mathf.RoundToInt(_pos), 0, _cards.Count - 1);
             if (near != _tick)
@@ -372,7 +373,7 @@ namespace SomeGame.UI
                 float near = Mathf.Min(a, 1f);
                 float scale = Mathf.Lerp(1f, SideScale, near) - Mathf.Max(0f, a - 1f) * 0.08f;
                 float rot = -off * SideTilt + lean * (1f - near);
-                var at = new Vector2(x, -Mathf.Min(a, 1.5f) * SideDrop + _dy * Mathf.Lerp(1f, 0.6f, near) + bob * (1f - near));
+                var at = new Vector2(x, Raise - Mathf.Min(a, 1.5f) * SideDrop + _dy * Mathf.Lerp(1f, 0.6f, near) + bob * (1f - near));
                 float alpha = 1f;
                 var rt = (RectTransform)card.transform;
                 if (i == _target && _phase != Phase.Open)
@@ -404,8 +405,9 @@ namespace SomeGame.UI
             LayoutStrip(k, closing);
         }
 
-        // The challenge card and its race's card: the one behind sits a little up and to the right (peeking out);
-        // swapping, the front one slides out sideways and tucks in behind while the other comes forward.
+        // The challenge card and its race's card, like two cards held in a hand: resting on the race they fan out (the
+        // one behind tilted out to the right, turning round its bottom), moving on they close up again. Swapping, the
+        // front one swings away and tucks in behind while the other comes forward.
         void LayoutChallenge(bool settled)
         {
             if (challengeCard == null || _challengeAt < 0) return;
@@ -414,26 +416,29 @@ namespace SomeGame.UI
             float off = _challengeAt - _pos, a = Mathf.Abs(off);
             float show = host.gameObject.activeSelf ? Mathf.Clamp01(1f - a * 1.6f) : 0f;
             var rt = (RectTransform)challengeCard.transform;
-            float t = Mathf.SmoothStep(0f, 1f, _swap), swing = Mathf.Sin(t * Mathf.PI);
-            Vector2 Turn(Vector2 v) => (Vector2)(hostRt.localRotation * v) * hostRt.localScale.x;
+            float t = Mathf.SmoothStep(0f, 1f, _swap), swing = Mathf.Sin(t * Mathf.PI), fan = Mathf.SmoothStep(0f, 1f, _fan);
+            float scale = hostRt.localScale.x, h = hostRt.rect.height * scale;
+            Vector2 Turn(Vector2 v) => (Vector2)(hostRt.localRotation * v) * scale;
+            // Tilting round the bottom of the card: the middle moves sideways (and a touch down).
+            Vector2 Behind(float tilt) => new Vector2(-Mathf.Sin(tilt * Mathf.Deg2Rad) * h * 0.5f / scale + FanShift, (Mathf.Cos(tilt * Mathf.Deg2Rad) - 1f) * h * 0.5f / scale) * fan;
             Vector2 at = hostRt.anchoredPosition;
-            float rot = hostRt.localEulerAngles.z;
-            // The challenge: from behind (peeking) to the front, swinging out to the right on the way.
-            Vector2 challengeOff = Vector2.Lerp(Peek, Vector2.zero, t) + new Vector2(swing * 430f, swing * 30f);
-            rt.anchoredPosition = at + Turn(challengeOff);
-            rt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(-5f, 0f, t) + swing * 8f);
+            float rot = hostRt.localEulerAngles.z, tilt = FanTilt * fan;
+            // The challenge: from behind (fanned) to the front, swinging out to the right on the way.
+            rt.anchoredPosition = at + Turn(Vector2.Lerp(Behind(FanTilt), Vector2.zero, t) + new Vector2(swing * 260f, 0f));
+            rt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(tilt, 0f, t) - swing * 6f);
             rt.localScale = hostRt.localScale * Mathf.Lerp(0.97f, 1f, t);
-            // The race card: from the front to behind, swinging out to the left.
-            hostRt.anchoredPosition = at + Turn(Vector2.Lerp(Vector2.zero, Peek, t) + new Vector2(-swing * 430f, -swing * 10f));
-            hostRt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(0f, -5f, t) - swing * 8f);
+            // The race card: from the front to behind (fanned), swinging out to the left.
+            hostRt.anchoredPosition = at + Turn(Vector2.Lerp(Vector2.zero, Behind(FanTilt), t) - new Vector2(swing * 260f, 0f));
+            hostRt.localRotation = Quaternion.Euler(0f, 0f, rot + Mathf.Lerp(0f, tilt, t) + swing * 6f);
             hostRt.localScale *= Mathf.Lerp(1f, 0.97f, t);
             // Whichever is in front draws on top (they change places half way).
             int hostIndex = hostRt.GetSiblingIndex();
             rt.SetSiblingIndex(t < 0.5f ? hostIndex : hostIndex + 1);
-            challengeCard.Show(t, show * (_phase == Phase.Open || _phase == Phase.Opening ? 1f : Mathf.Clamp01(1f - (Time.unscaledTime - _phaseAt) / CloseSeconds)));
-            // The race card behind is frosted, START off, and gets its tab.
+            float alpha = show * Mathf.Lerp(Mathf.Max(fan, t), 1f, t);
+            if (_phase == Phase.Closing) alpha *= Mathf.Clamp01(1f - (Time.unscaledTime - _phaseAt) / CloseSeconds);
+            challengeCard.Show(t, alpha);
+            // The race card behind is frosted with START off.
             if (t > 0f) host.SetFocus(Mathf.Max(Mathf.Abs(off), 0.75f * t), settled);
-            host.ShowSwapTab(t > 0.5f && show > 0.5f);
         }
 
         // START: the other cards fly off, the card lifts (drawn from the deck), then sweeps up towards you filling the
@@ -451,7 +456,7 @@ namespace SomeGame.UI
                 float off = i - _pos;
                 if (i == _target)
                 {
-                    rt.anchoredPosition = new Vector2(0f, 50f * lift * (1f - zoom) + 120f * zoom * zoom);
+                    rt.anchoredPosition = new Vector2(0f, Raise + 50f * lift * (1f - zoom) + 120f * zoom * zoom);
                     rt.localScale = Vector3.one * (1f + 0.06f * lift) * Mathf.Lerp(1f, 2.8f, zoom * zoom);
                     rt.localRotation = Quaternion.Euler(0f, 0f, -3f * lift * (1f - zoom));
                     card.SetAlpha(1f - Mathf.Clamp01((l - 0.7f) / 0.25f));

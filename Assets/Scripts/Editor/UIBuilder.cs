@@ -896,9 +896,6 @@ namespace SomeGame.EditorTools
             veilRt.offsetMin = new Vector2(-8f, -8f); veilRt.offsetMax = new Vector2(8f, 8f);
             var veil = Img(veilRt, "Round", Theme.WithAlpha(Theme.Cream, 0f), sliced: true);
             medal.SetAsLastSibling(); closeRt.SetAsLastSibling();
-            // While the card lies behind its race's challenge card, a tab on its edge brings it back.
-            var swapTab = SideTab(card, "RACE 3", "IconFlag", Theme.Orange, out var swapTabLabel);
-            swapTab.gameObject.SetActive(false);
 
             var raceCard = card.gameObject.AddComponent<RaceCard>();
             Configure(raceCard, ("group", group), ("focusButton", focus), ("veil", veil), ("glow", glow),
@@ -906,8 +903,7 @@ namespace SomeGame.EditorTools
                 ("picture", picture), ("blurredPicture", blurred), ("shine", shine), ("lockCover", lockCover.gameObject), ("lockLabel", lockLabel),
                 ("closeButton", close),
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel), ("startRing", ring),
-                ("rival", rivalGroup), ("rivalPicture", rivalPicture), ("rivalLine", rivalLine), ("rivalPrize", rivalPrize),
-                ("swapTab", swapTab), ("swapTabLabel", swapTabLabel));
+                ("rival", rivalGroup), ("rivalPicture", rivalPicture), ("rivalLine", rivalLine), ("rivalPrize", rivalPrize));
             var cso = new SerializedObject(raceCard);
             SetArray(cso, "difficultyPips", pips); SetArray(cso, "starGroups", groups); SetArray(cso, "starTimes", times);
             SetArray(cso, "edgeVeils", new[] { medalShadowVeil, medalVeil, closeVeil });
@@ -935,27 +931,6 @@ namespace SomeGame.EditorTools
                 ("strip", strip), ("stripBadge", raceBadge), ("stripRing", stripRing), ("challengeCard", challenge));
             panel.gameObject.SetActive(false);
             return deck;
-        }
-
-        // A tab sticking out of a card's right edge (upper half): an icon over a word running down it.
-        static Button SideTab(RectTransform card, string label, string icon, Color color, out TMP_Text text)
-        {
-            var tab = At("SwapTab", card, new Vector2(1f, 0.5f), new Vector2(-24f, 330f), new Vector2(104f, 380f));
-            tab.pivot = new Vector2(0f, 0.5f);
-            Img(At("Shadow", tab, new Vector2(0.5f, 0.5f), new Vector2(6f, -10f), new Vector2(104f, 380f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
-            var outline = Stretch("Outline", tab); outline.offsetMin = new Vector2(-6f, -6f); outline.offsetMax = new Vector2(6f, 6f);
-            Img(outline, "Round", new Color(0.06f, 0.07f, 0.08f), sliced: true);
-            var face = Img(Stretch("Face", tab), "Round", color, sliced: true, raycast: true);
-            var iconImage = Img(At("Icon", tab, new Vector2(0.5f, 1f), new Vector2(10f, -20f), new Vector2(70f, 70f)), icon, Color.white);
-            iconImage.rectTransform.pivot = new Vector2(0.5f, 1f);
-            var labelRt = At("Label", tab, new Vector2(0.5f, 0.5f), new Vector2(10f, -40f), new Vector2(270f, 70f));
-            labelRt.pivot = new Vector2(0.5f, 0.5f); labelRt.localRotation = Quaternion.Euler(0f, 0f, -90f);
-            text = Txt(labelRt, label, 46, Color.white, _black);
-            text.characterSpacing = 4f; text.enableAutoSizing = true; text.fontSizeMin = 26; text.fontSizeMax = 46;
-            var button = tab.gameObject.AddComponent<Button>();
-            button.targetGraphic = face; button.transition = Selectable.Transition.None;
-            tab.gameObject.AddComponent<ButtonFeedback>();
-            return button;
         }
 
         // The cup's challenge as a card in the deck (DeckChallengeCard), tucked behind its rival's race card: the
@@ -1016,10 +991,20 @@ namespace SomeGame.EditorTools
             play.gameObject.AddComponent<ButtonFeedback>();
             var veilRt = Stretch("Veil", card); veilRt.offsetMin = new Vector2(-8f, -8f); veilRt.offsetMax = new Vector2(8f, 8f);
             var veil = Img(veilRt, "Round", Theme.WithAlpha(Theme.Cream, 0f), sliced: true);
-            var tab = SideTab(card, "CHALLENGE", "Chicken", Theme.Orange, out _);
-            var tabIcon = tab.transform.Find("Icon").GetComponent<Image>();
+            // A chicken in a ring in the top right corner (what shows of the card while it is fanned out behind).
+            var corner = At("Corner", card, new Vector2(1f, 1f), new Vector2(-34f, -34f), new Vector2(150f, 150f));
+            corner.pivot = new Vector2(1f, 1f);
+            Img(corner, "Circle", new Color(0.06f, 0.07f, 0.08f));
+            Img(At("Face", corner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f)), "Circle", Theme.Orange);
+            var tabIcon = Img(At("Icon", corner, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104f, 104f)), "Chicken", Color.white);
+            tabIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            // A lock over the picture while the challenge is locked.
+            var lockBadge = At("Lock", disc, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 140f));
+            lockBadge.pivot = new Vector2(0.5f, 0.5f);
+            Img(lockBadge, "Circle", Theme.WithAlpha(Theme.Ink, 0.85f));
+            Img(At("Icon", lockBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(76f, 76f)), "IconLock", Theme.Cream);
             var comp = card.gameObject.AddComponent<DeckChallengeCard>();
-            Configure(comp, ("group", group), ("body", body), ("tab", tab), ("playButton", playButton), ("icon", icon), ("tabIcon", tabIcon), ("playFace", playFace), ("veil", veil),
+            Configure(comp, ("group", group), ("body", body), ("playButton", playButton), ("icon", icon), ("tabIcon", tabIcon), ("lockBadge", lockBadge.gameObject), ("playFace", playFace), ("veil", veil),
                 ("title", title), ("description", description), ("best", best), ("prizeName", prizeName), ("playLabel", playLabel),
                 ("prizeCar", prizeCar), ("prizeWon", won.gameObject));
             card.gameObject.SetActive(false);
