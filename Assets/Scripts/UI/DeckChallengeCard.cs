@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SomeGame.Car;
 using SomeGame.Race;
 using TMPro;
@@ -6,43 +7,45 @@ using UnityEngine;
 namespace SomeGame.UI
 {
     /// <summary>
-    /// The cup's challenge as a card in the race deck, tucked behind the card of the race of the rival who sets it
-    /// (Chicken Chase behind Rosie's Meadow Run): a CHALLENGE tab sticks out of its edge. Tapped, the two cards swap
-    /// (<see cref="RaceDeck"/> does the shuffle); in front it shows what to do, your best, the prize on your car
-    /// and PLAY (or who to beat first while it is locked).
+    /// The cup's challenge as a card in the race deck, fanned out behind the card of the race of the rival who sets it
+    /// (Chicken Chase behind Rosie's Meadow Run); tapped, the two swap (<see cref="RaceDeck"/> does the shuffle). It
+    /// is laid out like a race card: the chicken on the corner medallion, the cup and CHALLENGE, its name, your best,
+    /// the track in a frame with the runaway chickens pecking about on it (a lock over it while locked), what to do
+    /// (15 chickens, 75 seconds), the prize on your car, and PLAY (or who to beat first).
     /// </summary>
     public class DeckChallengeCard : MonoBehaviour
     {
         [SerializeField] CanvasGroup group;
         [Tooltip("Tapping the card while it lies behind brings it to the front.")]
         [SerializeField] UnityEngine.UI.Button body, playButton;
-        [SerializeField] UnityEngine.UI.Image icon, tabIcon, playFace, veil;
+        [SerializeField] UnityEngine.UI.Image picture, tabIcon, playFace, veil;
+        [SerializeField] TMP_Text chapter, title, best, prizeName, playLabel, lockLabel;
+        [SerializeField] RectTransform chickens;
+        [SerializeField] GameObject lockCover, prizeWon;
+        [SerializeField] VehicleIcon prizeCar;
         [Tooltip("The frost over the medallion sticking out past the card (like a race card's).")]
         [SerializeField] UnityEngine.UI.Image[] edgeVeils;
-        [SerializeField] TMP_Text title, description, best, prizeName, playLabel;
-        [SerializeField] VehicleIcon prizeCar;
-        [SerializeField] GameObject prizeWon;
-        [Tooltip("A lock over the picture while it is locked.")]
-        [SerializeField] GameObject lockBadge;
 
         CupDefinition _cup;
         float _front;
+        readonly List<(RectTransform rt, Vector2 home, float phase)> _hens = new();
 
         public UnityEngine.UI.Button Body => body;
 
-        void Awake() => playButton.onClick.AddListener(Play);
+        void Awake()
+        {
+            playButton.onClick.AddListener(Play);
+            if (chickens != null)
+                for (int i = 0; i < chickens.childCount; i++)
+                {
+                    var rt = (RectTransform)chickens.GetChild(i);
+                    _hens.Add((rt, rt.anchoredPosition, i * 1.7f));
+                }
+        }
 
         /// <summary>Open once its rival is beaten (for real: not opened by the developer switch that unlocks the races).</summary>
         public static bool IsOpen(CupDefinition cup) => cup != null && cup.challenge != null &&
             (string.IsNullOrEmpty(cup.challengeAfterRival) || RivalProgress.IsBeaten(cup.challengeAfterRival));
-
-        /// <summary>The race (index in the cup) whose card it lies behind, or -1 (no challenge).</summary>
-        public static int RaceOf(CupDefinition cup, LevelCatalog catalog)
-        {
-            if (cup == null || cup.challenge == null || catalog == null) return -1;
-            var rival = string.IsNullOrEmpty(cup.challengeAfterRival) ? null : Resources.Load<RivalCharacter>("Rivals/" + cup.challengeAfterRival);
-            return rival != null && rival.homeRace != null ? catalog.IndexOf(rival.homeRace) : catalog.Count - 1;
-        }
 
         public void Bind(CupDefinition cup)
         {
@@ -50,18 +53,23 @@ namespace SomeGame.UI
             var challenge = cup.challenge;
             bool open = IsOpen(cup);
             bool won = ChallengeProgress.IsWon(challenge.name);
+            chapter.text = $"{cup.displayName} · CHALLENGE";
             title.text = challenge.displayName.ToUpperInvariant();
-            description.text = challenge.description;
             int score = ChallengeProgress.Best(challenge.name);
-            best.text = score > 0 ? $"YOUR BEST  {score} / 15" : "NOT PLAYED YET";
-            icon.color = open ? Color.white : new Color(0.1f, 0.12f, 0.14f, 0.8f);
+            string ink = Theme.Html(Theme.Ink);
+            best.text = score > 0 ? $"YOUR BEST <color={ink}>{score} / 15</color>" : "NOT PLAYED YET";
+            picture.sprite = challenge.preview;
+            picture.enabled = picture.sprite != null;
+            lockCover.SetActive(!open);
             var part = Garage.Find("chicken", Garage.Slot.Top);
             prizeName.text = part.Name;
             var look = CarLook.Player;
             look.Top = part;
             prizeCar.Dress(look);
             prizeWon.SetActive(won);
-            if (lockBadge != null) lockBadge.SetActive(!open);
+            var rival = Resources.Load<RivalCharacter>("Rivals/" + cup.challengeAfterRival);
+            string first = rival != null ? rival.displayName.Split(' ')[0].ToUpperInvariant() : "THE RIVAL";
+            lockLabel.text = $"BEAT {first} IN\n{(rival != null && rival.homeRace != null ? rival.homeRace.displayName.ToUpperInvariant() : "THEIR RACE")}";
             if (open)
             {
                 playLabel.text = won ? "PLAY AGAIN" : "PLAY";
@@ -69,8 +77,7 @@ namespace SomeGame.UI
             }
             else
             {
-                var rival = Resources.Load<RivalCharacter>("Rivals/" + cup.challengeAfterRival);
-                playLabel.text = rival != null ? $"BEAT {rival.displayName.Split(' ')[0].ToUpperInvariant()} FIRST" : "LOCKED";
+                playLabel.text = $"BEAT {first} FIRST";
                 playFace.color = Theme.Stone;
             }
         }
@@ -91,9 +98,16 @@ namespace SomeGame.UI
 
         void Update()
         {
-            // The medallion's chicken pecks now and then.
-            float t = Mathf.Repeat(Time.unscaledTime, 2.4f);
-            tabIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, t < 0.5f ? 8f * Mathf.Sin(t / 0.5f * Mathf.PI * 3f) : 0f);
+            float t = Time.unscaledTime;
+            // The medallion's chicken pecks now and then; the chickens on the track bob and peck about.
+            float p = Mathf.Repeat(t, 2.4f);
+            tabIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, p < 0.5f ? 8f * Mathf.Sin(p / 0.5f * Mathf.PI * 3f) : 0f);
+            foreach (var (rt, home, phase) in _hens)
+            {
+                float peck = Mathf.Max(0f, Mathf.Sin(t * 2.6f + phase));
+                rt.anchoredPosition = home + new Vector2(Mathf.Sin(t * 0.7f + phase) * 6f, peck * 5f);
+                rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(t * 1.3f + phase) * 14f);
+            }
         }
 
         void Play()

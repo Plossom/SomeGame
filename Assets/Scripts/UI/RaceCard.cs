@@ -42,6 +42,11 @@ namespace SomeGame.UI
         [SerializeField] CanvasGroup rival;
         [SerializeField] UnityEngine.UI.Image rivalPicture;
         [SerializeField] TMP_Text rivalLine, rivalPrize;
+        [Tooltip("Their speech bubble: shown for a while when the card comes to rest, again when their face is tapped.")]
+        [SerializeField] CanvasGroup rivalBubble;
+        [SerializeField] UnityEngine.UI.Button rivalFace;
+        const float BubbleSeconds = 4.5f;
+        float _bubbleAt = -100f;
 
         float _focusedAt = -10f, _pressedAt = -10f, _settledAt = -10f;
         bool _focused, _settled, _canEnter, _hasRival;
@@ -52,6 +57,15 @@ namespace SomeGame.UI
         public UnityEngine.UI.Button StartButton => startButton;
         public UnityEngine.UI.Button CloseButton => closeButton;
 
+
+        void Awake()
+        {
+            if (rivalFace != null) rivalFace.onClick.AddListener(() =>
+            {
+                _bubbleAt = Time.unscaledTime;
+                SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.4f);
+            });
+        }
 
         public void Bind(LevelDefinition level, int index, bool canEnter, CupDefinition cup)
         {
@@ -154,7 +168,7 @@ namespace SomeGame.UI
             _focused = focused;
             // Come to rest in the middle (not just passing through): the earned stars give a little bump.
             bool rest = focused && settled;
-            if (rest && !_settled) _settledAt = Time.unscaledTime;
+            if (rest && !_settled) { _settledAt = Time.unscaledTime; _bubbleAt = _settledAt + 0.35f; }
             _settled = rest;
             if (glow != null)
             {
@@ -209,6 +223,14 @@ namespace SomeGame.UI
                 float lean = _settled ? Mathf.Clamp01((t - _settledAt - 0.15f) / 0.4f) : 0f;
                 rival.transform.localScale = Vector3.one * (Mathf.Lerp(0.85f, 1f, lean) + 0.1f * Mathf.Sin(lean * Mathf.PI));
                 rival.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(-14f, 4f, lean) + 1.5f * Mathf.Sin(t * 1.7f));
+                // The speech bubble: pops up, stays a while, fades away (a tap on the face brings it back).
+                if (rivalBubble != null)
+                {
+                    float b = t - _bubbleAt;
+                    float shown = b < 0f ? 0f : Mathf.Clamp01(b / 0.2f) * (1f - Mathf.Clamp01((b - BubbleSeconds) / 0.4f));
+                    rivalBubble.alpha = shown;
+                    rivalBubble.transform.localScale = Vector3.one * (b < 0f ? 0.6f : Mathf.Lerp(0.6f, 1f, Mathf.Clamp01(b / 0.2f)) + 0.06f * Mathf.Sin(Mathf.Clamp01(b / 0.35f) * Mathf.PI));
+                }
             }
             float press = Mathf.Clamp01((t - _pressedAt) / 0.35f);
             startButton.transform.localScale = Vector3.one * (press < 1f ? 1f - 0.12f * Mathf.Sin(press * Mathf.PI) : 1f);
