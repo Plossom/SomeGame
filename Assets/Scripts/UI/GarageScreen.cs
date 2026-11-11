@@ -11,11 +11,12 @@ namespace SomeGame.UI
     /// each kind of thing joined to its part of the car by a line (PAINT on its flank, BODY, TOP on the roof, DECAL
     /// on the bonnet, TRAIL behind it, GADGET), each saying what you have on. The car drops onto the podium, the
     /// lines draw out and the hotspots pop in one after another.
-    /// Tap one: the others fly away, the car rises, its part pulses, and a row of big cards slides up from the
+    /// Tap one: the others fly away, the car rises, its part pulses, and a carousel of big cards slides up from the
     /// bottom with everything for that slot, cup by cup (also the locked ones, with what they take: stars of the
-    /// cup, a rival to beat, the cup's gold or its challenge). Tap a card: the car takes it there and then with a
-    /// pop, a ring of light and sparks; a locked one shakes and says what it takes. DONE (or a tap on the car) goes
-    /// back to all the hotspots. The rivals' cards are behind their own button.
+    /// cup, a rival to beat, the cup's gold or its challenge). Swipe through them and the car tries each one on;
+    /// EQUIP puts it on for good with a pop, a ring of light and sparks (a locked one says what it takes and its
+    /// button shakes). DONE (or a tap on the car) goes back to all the hotspots. The rivals' cards are behind their
+    /// own button.
     /// </summary>
     public class GarageScreen : MonoBehaviour
     {
@@ -35,12 +36,17 @@ namespace SomeGame.UI
         [SerializeField] RectTransform hotspotTemplate;
         [SerializeField] Sprite[] slotIcons;
         [SerializeField] TMP_Text hint, buildName;
-        [Header("The row of cards")]
+        [Header("The carousel of cards")]
         [SerializeField] RectTransform tray;
-        [SerializeField] UnityEngine.UI.ScrollRect scroll;
-        [SerializeField] RectTransform content, tileTemplate, dividerTemplate;
+        [SerializeField] GarageCarousel carousel;
+        [SerializeField] RectTransform cardsParent, tileTemplate;
         [SerializeField] TMP_Text trayTitle, trayCount, itemName, itemBlurb;
         [SerializeField] UnityEngine.UI.Button doneButton;
+        [Tooltip("EQUIP / EQUIPPED / what it takes, under the cards.")]
+        [SerializeField] UnityEngine.UI.Button actionButton;
+        [SerializeField] UnityEngine.UI.Image actionFace, actionShadow, actionIcon;
+        [SerializeField] TMP_Text actionLabel;
+        [SerializeField] Sprite checkIcon, lockIcon;
         [Header("The rivals' cards")]
         [SerializeField] GameObject rivalsPanel;
         [SerializeField] RectTransform rivalsGrid, cardTemplate;
@@ -53,10 +59,10 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text detailName, detailTitle, detailBio, detailHome, detailGadget, detailStatus;
         [SerializeField] UnityEngine.UI.Image detailGadgetIcon;
 
-        const float Rise = 240f, FocusScale = 0.92f; // the car with one slot open: a little higher and smaller (the tray below)
+        const float Rise = 330f, FocusScale = 0.8f; // the car with one slot open: a little higher and smaller (the tray below)
         static readonly string[] SlotNames = { "PAINT", "BODY", "TOP", "DECAL", "TRAIL", "GADGET" };
         // Where each hotspot sits round the car, and the point of the car its line goes to (car units, car facing up).
-        static readonly Vector2[] Spots = { new(-400f, 40f), new(400f, 40f), new(380f, 400f), new(-380f, 400f), new(-330f, -440f), new(330f, -440f) };
+        static readonly Vector2[] Spots = { new(-385f, 30f), new(385f, 30f), new(370f, 440f), new(-370f, 440f), new(-330f, -480f), new(330f, -480f) };
         static readonly Vector2[] Anchors = { new(-140f, -40f), new(140f, -40f), new(40f, 110f), new(0f, 270f), new(0f, -330f), new(105f, -265f) };
 
         // The rivals still to come: their home races (names and faces stay a secret).
@@ -73,7 +79,8 @@ namespace SomeGame.UI
         readonly List<Garage.Part> _shown = new(); // the part on each tile (null: a mystery slot)
         readonly List<(RectTransform rt, UnityEngine.UI.Image image, Vector2 velocity, float spin, float born)> _sparks = new();
         int _focus = -1;               // the slot being changed (-1: all the hotspots)
-        float _openedAt = -10f, _closingAt = -1f, _focusAt = -10f, _unfocusAt = -10f, _changedAt = -10f, _shakeAt = -10f, _messageUntil;
+        float _openedAt = -10f, _closingAt = -1f, _focusAt = -10f, _unfocusAt = -10f, _changedAt = -10f, _shakeAt = -10f, _tryAt = -10f, _messageUntil;
+        int _browsing;
         int _shake = -1;
         Garage.Part _picked;
         RivalCharacter[] _rivals;
@@ -85,6 +92,8 @@ namespace SomeGame.UI
             rivalsButton.onClick.AddListener(OpenRivals);
             rivalsClose.onClick.AddListener(() => PopIn.Hide(rivalsPanel));
             doneButton.onClick.AddListener(Unfocus);
+            actionButton.onClick.AddListener(() => Pick(_browsing));
+            carousel.FocusChanged += Browse;
             carButton.onClick.AddListener(() => { if (_focus >= 0) Unfocus(); });
             if (detailClose != null) detailClose.onClick.AddListener(() => PopIn.Hide(detail));
             if (detail != null && detail.transform.Find("Dim")?.GetComponent<UnityEngine.UI.Button>() is { } dim) dim.onClick.AddListener(() => PopIn.Hide(detail));
@@ -108,7 +117,6 @@ namespace SomeGame.UI
                 _hotspots.Add(spot);
             }
             tileTemplate.gameObject.SetActive(false);
-            dividerTemplate.gameObject.SetActive(false);
             cardTemplate.gameObject.SetActive(false);
             if (detail != null) detail.SetActive(false);
             rivalsPanel.SetActive(false);
@@ -158,11 +166,10 @@ namespace SomeGame.UI
             Refresh();
         }
 
-        // The row of cards for the slot: a divider with the cup's name and stars, then its things; scrolled so the one
-        // you have on is in view.
+        // The cards for the slot, cup by cup (the cup's name on each), the one you have on in the middle.
         void BuildTray()
         {
-            foreach (Transform child in content) if (child != tileTemplate && child != dividerTemplate) Destroy(child.gameObject);
+            foreach (var tile in _tiles) Destroy(tile.gameObject);
             _tiles.Clear(); _shown.Clear();
             var slot = (Garage.Slot)_focus;
             var equipped = Garage.Equipped(slot);
@@ -173,30 +180,78 @@ namespace SomeGame.UI
                 var parts = new List<Garage.Part>();
                 foreach (var part in Garage.Of(slot)) if (part.Cup == cup.name) parts.Add(part);
                 if (slot == Garage.Slot.Gadget && !parts.Exists(p => p.How != Garage.Unlock.Free)) parts.Add(null); // a rival's gadget to come
-                if (parts.Count == 0) continue;
-                var divider = Instantiate(dividerTemplate, content);
-                divider.gameObject.SetActive(true);
-                divider.Find("Name").GetComponent<TMP_Text>().text = cup.displayName;
-                divider.Find("Stars/Count").GetComponent<TMP_Text>().text = $"{Garage.CupStars(cup.name)}/{Garage.CupMaxStars(cup.name)}";
                 foreach (var part in parts)
                 {
-                    var tile = Instantiate(tileTemplate, content);
+                    var tile = Instantiate(tileTemplate, cardsParent);
                     tile.gameObject.SetActive(true);
                     int index = _tiles.Count;
-                    tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Pick(index));
+                    tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    {
+                        if (carousel.Dragging) return;
+                        if (index == carousel.Focused) Pick(index); else carousel.FlyTo(index);
+                    });
+                    tile.Find("Cup/Label").GetComponent<TMP_Text>().text = cup.displayName;
                     if (part == equipped) equippedAt = index;
                     _tiles.Add(tile);
                     _shown.Add(part);
                 }
             }
-            Canvas.ForceUpdateCanvases();
-            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(content);
-            // The one you have on, near the middle.
-            float x = _tiles.Count > 0 ? -_tiles[equippedAt].anchoredPosition.x + scroll.viewport.rect.width * 0.5f : 0f;
-            float max = Mathf.Max(0f, content.rect.width - scroll.viewport.rect.width);
-            content.anchoredPosition = new Vector2(Mathf.Clamp(x, -max, 0f), 0f);
-            scroll.velocity = Vector2.zero;
+            _browsing = equippedAt;
+            carousel.Set(_tiles, equippedAt);
         }
+
+        // The card in the middle: the car tries it on, the name and what it is (or what it takes) show, the button
+        // says EQUIP, EQUIPPED or what it takes.
+        void Browse(int index)
+        {
+            if (_focus < 0 || index < 0 || index >= _shown.Count) return;
+            _browsing = index;
+            _messageUntil = 0f;
+            var part = _shown[index];
+            var look = CarLook.Player;
+            if (part != null)
+            {
+                if (part.Slot == Garage.Slot.Paint) look.Paint = part.Color;
+                if (part.Slot == Garage.Slot.Body) look.Body = part;
+                if (part.Slot == Garage.Slot.Top) look.Top = part;
+                if (part.Slot == Garage.Slot.Decal) look.Decal = part;
+                if (part != Garage.Equipped(part.Slot)) _tryAt = Time.unscaledTime;
+            }
+            car.Dress(look);
+            ShowAction();
+        }
+
+        void ShowAction()
+        {
+            var part = _browsing >= 0 && _browsing < _shown.Count ? _shown[_browsing] : null;
+            bool open = part != null && Garage.IsUnlocked(part);
+            bool on = part != null && part == Garage.Equipped(part.Slot);
+            if (Time.unscaledTime >= _messageUntil)
+            {
+                itemName.text = part != null ? part.Name : "A RIVAL'S GADGET";
+                itemName.color = Theme.Ink;
+                itemBlurb.text = part == null ? "Beat this cup's rival in their home race to win their gadget."
+                    : open ? part.Blurb : Requirement(part, Rival(part.From));
+                itemBlurb.color = open ? Theme.InkSoft : Theme.Rust;
+            }
+            actionIcon.gameObject.SetActive(on || !open);
+            actionIcon.sprite = on ? checkIcon : lockIcon;
+            actionLabel.text = on ? "EQUIPPED" : open ? "EQUIP" : part == null ? "LOCKED" : Short(part);
+            actionFace.color = on ? Theme.Leaf : open ? Theme.Orange : Theme.Stone;
+            actionShadow.color = on ? Shade(Theme.Leaf, 0.7f) : open ? Theme.OrangeDeep : Theme.StoneDark;
+        }
+
+        static Color Shade(Color c, float k) => new(c.r * k, c.g * k, c.b * k, c.a);
+
+        // What it takes, in a few words (for the button).
+        string Short(Garage.Part part) => part.How switch
+        {
+            Garage.Unlock.Stars => $"{part.Stars} STARS",
+            Garage.Unlock.Rival => "BEAT " + (Rival(part.From) is { } r ? FirstName(r) : "THE RIVAL"),
+            Garage.Unlock.CupGold => "CUP GOLD",
+            Garage.Unlock.Challenge => "WIN THE CHALLENGE",
+            _ => "LOCKED",
+        };
 
         void Refresh()
         {
@@ -213,13 +268,7 @@ namespace SomeGame.UI
             trayCount.text = $"{open} / {all} OPEN";
             var equipped = Garage.Equipped(slot);
             for (int i = 0; i < _tiles.Count; i++) FillTile(_tiles[i], _shown[i], equipped, look);
-            if (Time.unscaledTime >= _messageUntil)
-            {
-                var focus = _picked ?? equipped;
-                itemName.text = focus.Name;
-                itemName.color = Theme.Ink;
-                itemBlurb.text = focus.Blurb;
-            }
+            ShowAction();
         }
 
         void FillTile(RectTransform tile, Garage.Part part, Garage.Part equipped, CarLook look)
@@ -336,13 +385,9 @@ namespace SomeGame.UI
             var part = index >= 0 && index < _shown.Count ? _shown[index] : null;
             if (part == null || !Garage.IsUnlocked(part))
             {
-                // Not yet: it shakes, and says what it takes.
+                // Not yet: the card and the button shake.
                 _shake = index;
                 _shakeAt = Time.unscaledTime;
-                itemName.text = part != null ? part.Name : "A RIVAL'S GADGET";
-                itemName.color = Theme.Rust;
-                itemBlurb.text = part != null ? Requirement(part, Rival(part.From)) : "Beat this cup's rival in their home race to win their gadget.";
-                _messageUntil = Time.unscaledTime + 2.2f;
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.4f);
                 return;
             }
@@ -356,6 +401,7 @@ namespace SomeGame.UI
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.star, 0.6f);
             }
             Refresh();
+            car.Dress(CarLook.Player);
         }
 
         // Sparks fly off the part that changed.
@@ -452,7 +498,8 @@ namespace SomeGame.UI
             // The car drops onto the podium with a bounce, then floats; a change pops it.
             float drop = Mathf.Clamp01((t - _openedAt - 0.05f) / 0.6f);
             float fall = 1f - Bounce(drop);
-            float pop = 1f + 0.12f * Mathf.Sin(Mathf.Clamp01((t - _changedAt) / 0.35f) * Mathf.PI);
+            float pop = 1f + 0.12f * Mathf.Sin(Mathf.Clamp01((t - _changedAt) / 0.35f) * Mathf.PI)
+                           + 0.05f * Mathf.Sin(Mathf.Clamp01((t - _tryAt) / 0.25f) * Mathf.PI);
             carRoot.anchoredPosition = _carHome + new Vector2(0f, 700f * fall + Rise * focus + Mathf.Sin(t * 1.4f) * 8f);
             carRoot.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * pop;
             podium.anchoredPosition = _carHome + new Vector2(0f, Rise * focus);
@@ -497,17 +544,16 @@ namespace SomeGame.UI
             }
 
             // The tray: slides up with the cards popping in one after another.
-            tray.anchoredPosition = new Vector2(0f, Mathf.Lerp(-900f, 0f, focus));
+            tray.anchoredPosition = new Vector2(0f, Mathf.Lerp(-1200f, 0f, focus));
             if (focus <= 0.001f && _focus < 0 && tray.gameObject.activeSelf) tray.gameObject.SetActive(false);
-            var equipped = _focus >= 0 ? Garage.Equipped((Garage.Slot)_focus) : null;
-            for (int i = 0; i < _tiles.Count; i++)
-            {
-                float appear = Mathf.Clamp01((t - _focusAt - 0.15f - i * 0.04f) / 0.3f);
-                float s = i == _shake ? Mathf.Clamp01((t - _shakeAt) / 0.4f) : 1f;
-                bool on = _shown[i] != null && _shown[i] == equipped;
-                _tiles[i].localScale = Vector3.one * EaseOutBack(appear) * (on ? 1.06f : 1f);
-                _tiles[i].localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(s * Mathf.PI * 6f) * 6f * (1f - s));
-            }
+            // The carousel rises in a moment after the tray; a locked pick shakes the middle card and the button.
+            float rise = EaseOutBack(Mathf.Clamp01((t - _focusAt - 0.12f) / 0.4f));
+            carousel.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, rise);
+            float shake = Mathf.Clamp01((t - _shakeAt) / 0.4f);
+            float wobble = Mathf.Sin(shake * Mathf.PI * 6f) * (1f - shake);
+            if (_shake >= 0 && _shake < _tiles.Count) _tiles[_shake].Find("Preview").localRotation = Quaternion.Euler(0f, 0f, wobble * 10f);
+            actionButton.transform.localPosition = new Vector3(wobble * 18f, actionButton.transform.localPosition.y, 0f);
+            actionButton.transform.localScale = Vector3.one * (1f + 0.03f * Mathf.Sin(t * 4f) * (actionFace.color == Theme.Orange ? 1f : 0f));
 
             // The sparks fly out and fade.
             for (int i = _sparks.Count - 1; i >= 0; i--)

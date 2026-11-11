@@ -15,8 +15,14 @@ namespace SomeGame.UI
     /// </summary>
     public class LoadingScreen : MonoBehaviour
     {
-        [Tooltip("The race's rival at the wheel (their home race, or the challenge they set).")]
+        [Tooltip("The race's rival at the wheel (their home race, or the challenge they set), on the VS band.")]
         [SerializeField] UnityEngine.UI.Image rival;
+        [Tooltip("A race against a rival with a face: a duel band under a smaller picture (your car VS them).")]
+        [SerializeField] RectTransform vsBand, vsYou, vsThem, vsBadge;
+        [SerializeField] VehicleIcon vsCar;
+        [SerializeField] TMP_Text vsName;
+        [SerializeField] PreviewFrame previewFrame;
+        [SerializeField] Vector2 duelPreviewSize = new(820f, 820f), duelPreviewAt = new(0f, -980f);
         [SerializeField] CanvasGroup group;
         [SerializeField] UnityEngine.UI.Image preview;
         [SerializeField] TMP_Text chapter;
@@ -68,12 +74,22 @@ namespace SomeGame.UI
                     vehicle.Dress(look);
                 }
             }
-            // Their race: the rival comes driving in over the corner of the picture.
+            // Their race: a smaller picture and the duel band below it (your car VS them at the wheel).
             var character = RivalOf(level);
-            if (rival != null)
+            bool duel = character != null && character.driving != null && vsBand != null && !GameSession.Online;
+            if (vsBand != null) vsBand.gameObject.SetActive(duel);
+            if (duel)
             {
-                rival.gameObject.SetActive(character != null && character.driving != null);
-                if (character != null) rival.sprite = character.driving;
+                rival.sprite = character.driving;
+                vsName.text = character.displayName.ToUpperInvariant();
+                var look = SomeGame.Car.CarLook.Player;
+                if (Theme.TryMap(look.Paint, Theme.Valley, palette, out var duelPaint)) look.Paint = duelPaint;
+                vsCar.Dress(look);
+                if (previewFrame != null)
+                {
+                    previewFrame.MaxSize = duelPreviewSize;
+                    ((RectTransform)previewFrame.transform).anchoredPosition = duelPreviewAt;
+                }
             }
             SetProgress(0f);
             group.alpha = 0f;
@@ -117,18 +133,21 @@ namespace SomeGame.UI
 
         float _shownAt = -1f;
 
-        // The rival drives in from the side with a bump, then bounces along.
+        // The duel band: you slide in from the left, they come driving in from the right (bouncing along), the VS
+        // badge slams down between you.
         void Update()
         {
-            if (rival == null || !rival.gameObject.activeSelf) return;
+            if (vsBand == null || !vsBand.gameObject.activeSelf) return;
             if (_shownAt < 0f) _shownAt = Time.unscaledTime;
             float t = Time.unscaledTime - _shownAt;
-            float k = Mathf.Clamp01(t / 0.6f);
-            float slide = 1f - Mathf.Pow(1f - k, 3f);
-            var rt = rival.rectTransform;
-            rt.localScale = Vector3.one * (0.6f + 0.4f * slide);
-            rt.localRotation = Quaternion.Euler(0f, 0f, 2.5f * Mathf.Sin(t * 9f));
-            rt.anchoredPosition = new Vector2(-260f + 500f * (1f - slide), 300f + 10f * Mathf.Abs(Mathf.Sin(t * 9f)));
+            float In(float delay, float seconds) { float k = Mathf.Clamp01((t - delay) / seconds); return 1f - Mathf.Pow(1f - k, 3f); }
+            vsBand.localScale = new Vector3(1f, Mathf.Lerp(0.2f, 1f, In(0f, 0.25f)), 1f);
+            vsYou.anchoredPosition = new Vector2(Mathf.Lerp(-700f, 0f, In(0.15f, 0.45f)), 0f);
+            vsThem.anchoredPosition = new Vector2(Mathf.Lerp(700f, 0f, In(0.15f, 0.45f)), 4f * Mathf.Abs(Mathf.Sin(t * 9f)));
+            vsThem.localRotation = Quaternion.Euler(0f, 0f, 1.5f * Mathf.Sin(t * 9f));
+            float slam = Mathf.Clamp01((t - 0.55f) / 0.3f);
+            vsBadge.localScale = Vector3.one * (slam <= 0f ? 0f : Mathf.Lerp(2.2f, 1f, 1f - Mathf.Pow(1f - slam, 3f)) * (1f + 0.04f * Mathf.Sin(t * 5f)));
+            vsBadge.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(-25f, -6f, slam));
         }
 
         void SetProgress(float value)

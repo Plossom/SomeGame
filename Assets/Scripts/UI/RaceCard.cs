@@ -43,7 +43,7 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image rivalPicture;
         [SerializeField] TMP_Text rivalLine, rivalPrize;
         [Tooltip("Their speech bubble: shown for a while when the card comes to rest, again when their face is tapped.")]
-        [SerializeField] CanvasGroup rivalBubble;
+        [SerializeField] CanvasGroup rivalBubble, rivalPrizeGroup;
         [SerializeField] UnityEngine.UI.Button rivalFace;
         const float BubbleSeconds = 4.5f;
         float _bubbleAt = -100f;
@@ -229,6 +229,7 @@ namespace SomeGame.UI
                     float b = t - _bubbleAt;
                     float shown = b < 0f ? 0f : Mathf.Clamp01(b / 0.2f) * (1f - Mathf.Clamp01((b - BubbleSeconds) / 0.4f));
                     rivalBubble.alpha = shown;
+                    if (rivalPrizeGroup != null) rivalPrizeGroup.alpha = shown;
                     rivalBubble.transform.localScale = Vector3.one * (b < 0f ? 0.6f : Mathf.Lerp(0.6f, 1f, Mathf.Clamp01(b / 0.2f)) + 0.06f * Mathf.Sin(Mathf.Clamp01(b / 0.35f) * Mathf.PI));
                 }
             }

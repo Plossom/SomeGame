@@ -18,6 +18,13 @@ namespace SomeGame.UI
 
         Sprite _shown;
 
+        /// <summary>The frame's largest size (changing it refits the frame).</summary>
+        public Vector2 MaxSize
+        {
+            get => maxSize;
+            set { maxSize = value; Fit(); }
+        }
+
         void OnEnable() => Fit();
 
         void LateUpdate()
