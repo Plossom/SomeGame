@@ -104,7 +104,6 @@ namespace SomeGame.UI
         float _openedAt = -10f, _closingAt = -1f, _focusAt = -10f, _unfocusAt = -10f, _changedAt = -10f, _shakeAt = -10f, _tryAt = -10f, _messageUntil;
         int _browsing;
         float _switchAt = -10f;
-        Vector2 _highlightAt;
         readonly List<RectTransform> _tabs = new();
         int _shake = -1;
         Garage.Part _picked;
@@ -881,15 +880,7 @@ namespace SomeGame.UI
             vehicleRing.anchoredPosition = new Vector2((shownAt - (_badges.Count - 1) * 0.5f) * BadgeSpacing, 0f);
             vehicleRing.localScale = Vector3.one * (1f + 0.16f * Mathf.Sin(Mathf.Clamp01((t - _pageAt) / 0.3f) * Mathf.PI));
 
-            // The part being changed pulses.
-            highlight.gameObject.SetActive(_focus >= 0);
-            if (_focus >= 0)
-            {
-                Vector2 to = _armEnd[_focus]; // on the end of its arm
-                _highlightAt = (t - _switchAt < 0.02f && t - _focusAt < 0.02f) || spring ? to : Vector2.Lerp(_highlightAt, to, 1f - Mathf.Exp(-14f * dt));
-                highlight.rectTransform.anchoredPosition = _highlightAt;
-                highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * Mathf.Clamp01((t - _openedAt - 0.7f) / 0.3f) * Mathf.Lerp(0.5f, 1f, Mathf.Clamp01(holdScale / mainScale));
-            }
+            highlight.gameObject.SetActive(false); // (no ring pulsing on the part being changed: the orange hotspot says it)
 
             // The tray: slides up with the cards popping in one after another.
             tray.anchoredPosition = new Vector2(0f, Mathf.Lerp(-700f, 0f, EaseOut((t - _openedAt - 0.25f) / 0.45f)));
