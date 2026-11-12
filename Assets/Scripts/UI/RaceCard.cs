@@ -30,9 +30,13 @@ namespace SomeGame.UI
         [SerializeField] GameObject lockCover;
         [SerializeField] TMP_Text lockLabel;
         [SerializeField] UnityEngine.UI.Image[] difficultyPips;
-        [Tooltip("The three star medals (a face, a rim, the stars S0.., the places): gold once the race has earned them.")]
+        [Tooltip("The three star badges on the track (a face, a rim, the stars S0.., the place): gold once earned.")]
         [SerializeField] RectTransform[] starGroups;
         [SerializeField] TMP_Text[] starTimes;
+        [Tooltip("The track's gold fill (up to the last star earned) and the ring on the next star to win.")]
+        [SerializeField] RectTransform starFill, starNext;
+        [SerializeField] Sprite sparkle;
+        const float FillFirst = 60f, NodeGap = 250f;
         [SerializeField] UnityEngine.UI.Button closeButton;
         [SerializeField] UnityEngine.UI.Button startButton;
         [SerializeField] UnityEngine.UI.Image startFace, startShadow;
@@ -51,6 +55,12 @@ namespace SomeGame.UI
         float _focusedAt = -10f, _pressedAt = -10f, _settledAt = -10f;
         bool _focused, _settled, _canEnter, _hasRival;
         readonly bool[] _earned = new bool[3];
+        // Stars: how many the race has, and how many the card shows (new ones fill in once it comes to rest).
+        int _stars, _starsFrom;
+        float _starsShown, _starLandedAt = -10f;
+        int _starLanded = -1;
+        LevelDefinition _level;
+        readonly List<(RectTransform rt, UnityEngine.UI.Image image, Vector2 velocity, float born)> _sparks = new();
 
         public int Index { get; private set; }
         public UnityEngine.UI.Button FocusButton => focusButton;
@@ -99,22 +109,16 @@ namespace SomeGame.UI
             for (int i = 0; i < difficultyPips.Length; i++)
                 difficultyPips[i].color = i < level.difficulty ? Theme.Orange : Theme.WithAlpha(Theme.StoneDark, 0.3f);
 
-            // The places for 1, 2 and 3 stars; lit up as far as this race's stars go.
-            int stars = ProgressStore.StarsOf(level);
+            // The places for 1, 2 and 3 stars on the track, lit as far as this race's stars go; stars won since the
+            // card was last seen come in when it comes to rest.
+            _level = level;
+            _stars = ProgressStore.StarsOf(level);
+            _starsFrom = canEnter ? ProgressStore.StarsBeforeNew(level) : _stars;
+            _starsShown = _starsFrom;
+            _starLanded = -1;
             for (int i = 0; i < starTimes.Length; i++)
-            {
                 starTimes[i].text = i < LevelDefinition.StarPlaces.Length ? LevelDefinition.StarPlaces[i] : "-";
-                bool earned = stars >= i + 1;
-                if (i < _earned.Length) _earned[i] = earned;
-                starTimes[i].color = earned ? Theme.Ink : Theme.WithAlpha(Theme.InkSoft, 0.55f);
-                foreach (var star in Stars(i)) star.color = earned ? Theme.Amber : Theme.WithAlpha(Theme.StoneDark, 0.3f);
-                var medal = starGroups != null && i < starGroups.Length ? starGroups[i] : null;
-                if (medal == null) continue;
-                var face = medal.Find("Face")?.GetComponent<UnityEngine.UI.Image>();
-                if (face != null) face.color = earned ? Color.white : Theme.CreamDark;
-                var rim = medal.Find("Rim");
-                if (rim != null) rim.gameObject.SetActive(earned);
-            }
+            ShowStars();
 
             // Their rival leans in (once met; a silhouette with a teaser before).
             var character = RivalCharacter.For(level);
@@ -141,6 +145,31 @@ namespace SomeGame.UI
             startShadow.color = canEnter ? Theme.OrangeDeep : Theme.StoneDark;
             startLabel.text = canEnter ? "START" : "LOCKED";
             startLabel.color = canEnter ? Theme.White : Theme.StoneDark;
+        }
+
+        // The badges lit as far as the stars shown; the fill up to the last one; the ring on the next.
+        void ShowStars()
+        {
+            int lit = Mathf.FloorToInt(_starsShown + 0.001f);
+            for (int i = 0; i < starTimes.Length; i++)
+            {
+                bool earned = lit >= i + 1;
+                if (i < _earned.Length) _earned[i] = earned;
+                starTimes[i].color = earned ? Theme.Ink : Theme.WithAlpha(Theme.InkSoft, 0.55f);
+                foreach (var star in Stars(i)) star.color = earned ? Color.white : Theme.WithAlpha(Theme.StoneDark, 0.55f);
+                var medal = starGroups != null && i < starGroups.Length ? starGroups[i] : null;
+                if (medal == null) continue;
+                var face = medal.Find("Face")?.GetComponent<UnityEngine.UI.Image>();
+                if (face != null) face.color = earned ? Theme.Amber : Theme.CreamDark;
+                var rim = medal.Find("Rim")?.GetComponent<UnityEngine.UI.Image>();
+                if (rim != null) rim.color = earned ? Theme.OrangeDeep : Theme.WithAlpha(Theme.StoneDark, 0.35f);
+            }
+            if (starFill != null)
+            {
+                float width = _starsShown <= 0f ? 0f : _starsShown < 1f ? FillFirst * _starsShown : FillFirst + (_starsShown - 1f) * NodeGap;
+                starFill.sizeDelta = new Vector2(Mathf.Max(width, 24f), starFill.sizeDelta.y);
+                starFill.gameObject.SetActive(width > 1f);
+            }
         }
 
         IEnumerable<UnityEngine.UI.Image> Stars(int group) =>
@@ -181,6 +210,26 @@ namespace SomeGame.UI
 
         public void SetAlpha(float alpha) => group.alpha = alpha;
 
+        // Sparkles bursting out of a star badge that was just won.
+        void Burst(RectTransform badge)
+        {
+            if (sparkle == null || badge == null) return;
+            for (int i = 0; i < 12; i++)
+            {
+                var go = new GameObject("Spark", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                var rt = (RectTransform)go.transform;
+                rt.SetParent(badge.parent, false);
+                rt.sizeDelta = Vector2.one * UnityEngine.Random.Range(26f, 52f);
+                rt.anchoredPosition = badge.anchoredPosition + new Vector2(0f, 22f);
+                var image = go.GetComponent<UnityEngine.UI.Image>();
+                image.sprite = sparkle;
+                image.raycastTarget = false;
+                image.color = i % 3 == 0 ? Color.white : Theme.Amber;
+                float a = (i / 12f + UnityEngine.Random.Range(-0.03f, 0.03f)) * Mathf.PI * 2f;
+                _sparks.Add((rt, image, new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * UnityEngine.Random.Range(380f, 620f), Time.unscaledTime));
+            }
+        }
+
         /// <summary>START pressed: it dips, and says LOADING.</summary>
         public void Pressed()
         {
@@ -190,15 +239,59 @@ namespace SomeGame.UI
 
         void Update()
         {
-            float t = Time.unscaledTime;
+            float t = Time.unscaledTime, dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            // New stars: once the card is at rest the gold fills along the track to each one in turn; it slams in
+            // with a burst of sparkles.
+            if (_settled && _starsShown < _stars && t > _settledAt + 0.35f)
+            {
+                _starsShown = Mathf.MoveTowards(_starsShown, _stars, dt / 0.45f);
+                int reached = Mathf.FloorToInt(_starsShown + 0.001f);
+                if (reached - 1 > _starLanded && reached >= 1)
+                {
+                    _starLanded = reached - 1;
+                    _starLandedAt = t;
+                    Burst(starGroups[_starLanded]);
+                    SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.star, 0.7f);
+                }
+                ShowStars();
+                if (_starsShown >= _stars && _level != null) ProgressStore.NewStarsShown(_level);
+            }
             // Come to rest in the middle: the earned stars bump up one after another (from their full size, so
-            // nothing jumps when a card arrives).
+            // nothing jumps when a card arrives); one just won slams in big.
             for (int i = 0; starGroups != null && i < starGroups.Length; i++)
             {
                 if (starGroups[i] == null) continue;
                 float k = Mathf.Clamp01((t - _settledAt - 0.1f - i * 0.1f) / 0.32f);
-                float bump = _settled && i < _earned.Length && _earned[i] ? Mathf.Sin(k * Mathf.PI) * (1f - k * 0.4f) : 0f;
+                float bump = _settled && i < _earned.Length && _earned[i] && i < _starsFrom ? Mathf.Sin(k * Mathf.PI) * (1f - k * 0.4f) : 0f;
                 foreach (var star in Stars(i)) star.rectTransform.localScale = Vector3.one * (1f + 0.35f * bump);
+                float slam = i == _starLanded ? Mathf.Clamp01((t - _starLandedAt) / 0.45f) : 1f;
+                starGroups[i].localScale = Vector3.one * (slam < 1f ? 1f + 0.45f * Mathf.Sin(slam * Mathf.PI) * (1f - slam) + 0.1f * Mathf.Sin(slam * Mathf.PI * 3f) * (1f - slam) : 1f);
+            }
+            // The next star to win: a ring breathing round its badge.
+            if (starNext != null)
+            {
+                int next = Mathf.FloorToInt(_starsShown + 0.001f);
+                bool show = _canEnter && next < 3 && starGroups != null && next < starGroups.Length;
+                starNext.gameObject.SetActive(show);
+                if (show)
+                {
+                    starNext.anchoredPosition = starGroups[next].anchoredPosition + new Vector2(0f, 22f);
+                    float c = Mathf.Repeat(t, 1.6f) / 1.6f;
+                    starNext.localScale = Vector3.one * Mathf.Lerp(0.95f, 1.25f, c);
+                    var ring = starNext.GetComponent<UnityEngine.UI.Image>();
+                    ring.color = Theme.WithAlpha(Theme.Orange, 0.8f * (1f - c));
+                }
+            }
+            // The sparkles fly out and fade.
+            for (int i = _sparks.Count - 1; i >= 0; i--)
+            {
+                var (rt, image, velocity, born) = _sparks[i];
+                float age = (t - born) / 0.6f;
+                if (age >= 1f || rt == null) { if (rt != null) Destroy(rt.gameObject); _sparks.RemoveAt(i); continue; }
+                rt.anchoredPosition += velocity * dt * (1f - age);
+                rt.localScale = Vector3.one * (1f - age * 0.6f);
+                rt.localRotation = Quaternion.Euler(0f, 0f, age * 180f);
+                var c = image.color; c.a = 1f - age * age; image.color = c;
             }
             // The ring round START breathes; the light sweeps over the picture every few seconds.
             if (startRing != null)

@@ -194,11 +194,11 @@ namespace SomeGame.EditorTools
             var safe = SafeArea(canvas);
             var menuButton = SquareButton(safe, "MenuButton", new Vector2(0f, 1f), new Vector2(60f, -50f), "IconMenu", 140f);
 
-            // Your stars on one small plate, its top level with the menu button.
-            // Same size as the menu button.
-            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(140f, 140f));
+            // Your stars on one small plate, its top level with the menu button: low, so that the right column (stars,
+            // online, the cup) ends level with the left one (menu, garage).
+            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(140f, 84f));
             // A hard shadow under it like the menu button's (which makes that one 12 units taller).
-            var countersShadow = At("Shadow", counters, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(140f, 140f));
+            var countersShadow = At("Shadow", counters, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(140f, 84f));
             Img(countersShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Face", counters), "Round", Theme.Ink, sliced: true);
             TMP_Text CounterRow(string name, float y, string icon)
@@ -207,7 +207,7 @@ namespace SomeGame.EditorTools
                 Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(38f, 38f)), icon, Theme.Amber);
                 return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-20f, -2f), new Vector2(76f, 64f)), "0", 46, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             }
-            var total = CounterRow("Stars", -38f, "IconStar");
+            var total = CounterRow("Stars", -10f, "IconStar");
 
             // The cup name, big, centred in the gap between the menu button (ends 200 from the left) and the
             // stars and trophies counter (starts 256 from the right), level with the menu button.
@@ -288,15 +288,16 @@ namespace SomeGame.EditorTools
             var columnLayer = SafeArea(canvas);
             columnLayer.name = "CupColumnLayer";
             columnLayer.SetSiblingIndex(wipe.GetSiblingIndex() + 1);
-            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-66f, -326f), new Vector2(128f, 64f)); // under the ONLINE button
+            // Folded it shows the current cup's badge (tap it to unfold); its bottom level with the garage button's.
+            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-60f, -264f), new Vector2(140f, 110f)); // under the ONLINE button
             Img(dots, "Round", Theme.Ink, sliced: true, raycast: true);
             dots.gameObject.AddComponent<RectMask2D>();
-            var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(128f, 600f));
-            var ring = At("Ring", content, new Vector2(0.5f, 1f), new Vector2(0f, -64f), new Vector2(110f, 110f));
+            var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(140f, 600f));
+            var ring = At("Ring", content, new Vector2(0.5f, 1f), new Vector2(0f, -55f), new Vector2(110f, 110f));
             ring.pivot = new Vector2(0.5f, 0.5f);
             Img(At("Glow", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(126f, 126f)), "Circle", Theme.WithAlpha(Theme.Amber, 0.22f));
             Img(At("Line", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(110f, 110f)), "Ring", Theme.Amber);
-            var badgeT = At("Badge", content, new Vector2(0.5f, 1f), new Vector2(0f, -64f), new Vector2(92f, 92f));
+            var badgeT = At("Badge", content, new Vector2(0.5f, 1f), new Vector2(0f, -55f), new Vector2(92f, 92f));
             badgeT.pivot = new Vector2(0.5f, 0.5f);
             var badgeFace = Img(At("Face", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(92f, 92f)), "Circle", Theme.Cream, raycast: true);
             Img(At("Icon", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), null, Color.white).preserveAspect = true;
@@ -304,16 +305,8 @@ namespace SomeGame.EditorTools
             var badgeButton = badgeT.gameObject.AddComponent<Button>();
             badgeButton.targetGraphic = badgeFace; badgeButton.transition = Selectable.Transition.None;
             badgeT.gameObject.AddComponent<ButtonFeedback>();
-            // The fold toggle along the bottom: a small arrow pointing down (folded) or up (unfolded).
-            var toggleRt = At("Toggle", dots, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(128f, 64f));
-            var toggleHit = Img(toggleRt, null, new Color(0f, 0f, 0f, 0f), raycast: true);
-            var toggle = toggleRt.gameObject.AddComponent<Button>();
-            toggle.targetGraphic = toggleHit; toggle.transition = Selectable.Transition.None;
-            toggleRt.gameObject.AddComponent<ButtonFeedback>();
-            var chevron = Img(At("Chevron", toggleRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(34f, 34f)), "IconPlay", Theme.Cream);
-            chevron.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -90f);
-            Set(so, "barToggle", toggle);
-            Set(so, "barContent", content); Set(so, "barChevron", chevron);
+            // (No arrow: the current cup's badge unfolds the column.)
+            Set(so, "barContent", content);
             SetArray(so, "fadeRoots", new Transform[] { columnLayer }); // the cup column sits above the frozen picture: its colours blend over
             Set(so, "dots", dots); Set(so, "badgeTemplate", badgeT); Set(so, "barRing", ring);
             Set(so, "wipe", wipe); Set(so, "wipeImage", wipeImage); Set(so, "wipeEdge", wipeEdge);
@@ -999,31 +992,44 @@ namespace SomeGame.EditorTools
             for (int i = 0; i < pips.Length; i++)
                 pips[i] = Rounded(Img(At($"Pip{i + 1}", card, new Vector2(0f, 1f), new Vector2(PipsLeft + i * 78f, -1238f), new Vector2(64f, 28f)), "Round", Theme.Orange, sliced: true), 8f);
 
-            // The places that earn stars as three light medals: the stars over the place; an earned one turns gold with a gold rim.
+            // The places that earn stars as a track to climb: a bar filling from the left through three round badges
+            // (one, two, three stars) with the place under each; earned ones gold, the next one ringed.
             var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1286f), new Vector2(W - 80f, 140f));
+            const float NodeGap = 250f, TrackLeft = -310f, TrackRight = 250f;
+            var trackRt = At("Track", timesRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(TrackRight - TrackLeft, 24f));
+            trackRt.pivot = new Vector2(0f, 0.5f); trackRt.anchoredPosition = new Vector2(TrackLeft, 22f);
+            Rounded(Img(trackRt, "Round", Theme.CreamDark, sliced: true), 12f);
+            var fillRt = At("Fill", trackRt, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(0f, 24f));
+            fillRt.pivot = new Vector2(0f, 0.5f);
+            Rounded(Img(fillRt, "Round", Theme.Amber, sliced: true), 12f);
+            var nextRt = At("Next", timesRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(128f, 128f));
+            nextRt.pivot = new Vector2(0.5f, 0.5f);
+            Img(nextRt, "Ring", Theme.Orange);
             var times = new TMP_Text[3];
             var groups = new RectTransform[3];
             for (int i = 0; i < 3; i++)
             {
-                var g = At($"Star{i + 1}", timesRt, new Vector2(0.5f, 0.5f), new Vector2((i - 1) * 248f, 0f), new Vector2(228f, 140f));
+                var g = At($"Star{i + 1}", timesRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(200f, 140f));
                 g.pivot = new Vector2(0.5f, 0.5f);
-                g.anchoredPosition = new Vector2((i - 1) * 248f, 0f);
+                g.anchoredPosition = new Vector2((i - 1) * NodeGap, 0f);
                 groups[i] = g;
-                // The gold rim is a gold medal behind the face, showing round its edge.
-                Rounded(Img(Stretch("Rim", g), "Round", Theme.Amber, sliced: true), 28f);
-                var medalFace = Stretch("Face", g);
-                medalFace.offsetMin = new Vector2(6f, 6f); medalFace.offsetMax = new Vector2(-6f, -6f);
-                Rounded(Img(medalFace, "Round", Theme.CreamDark, sliced: true), 23f);
-                for (int k = 0; k <= i; k++)
+                var rim = At("Rim", g, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(108f, 108f));
+                rim.pivot = new Vector2(0.5f, 0.5f); rim.anchoredPosition = new Vector2(0f, 22f);
+                Img(rim, "Circle", Theme.OrangeDeep);
+                var badgeFace = At("Face", g, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(96f, 96f));
+                badgeFace.pivot = new Vector2(0.5f, 0.5f); badgeFace.anchoredPosition = new Vector2(0f, 22f);
+                Img(badgeFace, "Circle", Theme.CreamDark);
+                (Vector2 at, float size)[] layout = i == 0 ? new[] { (new Vector2(0f, 22f), 58f) }
+                    : i == 1 ? new[] { (new Vector2(-17f, 22f), 42f), (new Vector2(17f, 22f), 42f) }
+                    : new[] { (new Vector2(-24f, 14f), 34f), (new Vector2(0f, 32f), 38f), (new Vector2(24f, 14f), 34f) };
+                for (int k = 0; k < layout.Length; k++)
                 {
-                    var star = At($"S{k}", g, new Vector2(0.5f, 1f), new Vector2((k - i * 0.5f) * 48f, -40f), new Vector2(50f, 50f));
-                    star.pivot = new Vector2(0.5f, 0.5f);
-                    star.anchoredPosition = new Vector2((k - i * 0.5f) * 48f, -40f);
+                    var star = At($"S{k}", g, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.one * layout[k].size);
+                    star.pivot = new Vector2(0.5f, 0.5f); star.anchoredPosition = layout[k].at;
                     Img(star, "IconStar", Theme.Amber);
                 }
-                times[i] = Txt(At("Time", g, new Vector2(0.5f, 0f), new Vector2(0f, 8f), new Vector2(220f, 66f)), "1ST", 50, Theme.Ink, _cond);
+                times[i] = Txt(At("Time", g, new Vector2(0.5f, 0f), new Vector2(0f, -8f), new Vector2(200f, 56f)), "1ST", 42, Theme.Ink, _cond);
             }
-
             // START along the bottom, with a ring breathing out of it.
             var startRt = At("StartButton", card, new Vector2(0.5f, 0f), new Vector2(0f, 54f), new Vector2(600f, 178f));
             var ring = At("Ring", startRt, new Vector2(0.5f, 0.5f), new Vector2(0f, 7f), new Vector2(600f, 164f));
@@ -1086,7 +1092,8 @@ namespace SomeGame.EditorTools
                 ("closeButton", close),
                 ("startButton", start), ("startFace", startFace), ("startShadow", startShadow), ("startLabel", startLabel), ("startRing", ring),
                 ("rival", rivalGroup), ("rivalPicture", rivalPicture), ("rivalLine", rivalLine), ("rivalPrize", rivalPrize),
-                ("rivalBubble", bubbleGroup), ("rivalPrizeGroup", prizeGroup), ("rivalFace", rivalFaceButton));
+                ("rivalBubble", bubbleGroup), ("rivalPrizeGroup", prizeGroup), ("rivalFace", rivalFaceButton),
+                ("starFill", fillRt), ("starNext", nextRt), ("sparkle", Sprite("Sparkle")));
             var cso = new SerializedObject(raceCard);
             SetArray(cso, "difficultyPips", pips); SetArray(cso, "starGroups", groups); SetArray(cso, "starTimes", times);
             SetArray(cso, "edgeVeils", new[] { medalShadowVeil, medalVeil, closeVeil });

@@ -769,9 +769,9 @@ namespace SomeGame.UI
             Refresh();
         }
 
-        // The cup column under the menu button: a badge per cup. Folded it shows the current cup (and a
-        // small arrow); tapping it unfolds the column downward with all cups and the ring on the current one.
-        const float BadgeSpacing = 118f, BadgeTop = 64f, FoldedHeight = 64f, ToggleRow = 60f;
+        // The cup column under the ONLINE button: a badge per cup. Folded it shows the current cup's badge; tapping
+        // it unfolds the column downward with all cups and the ring on the current one.
+        const float BadgeSpacing = 118f, BadgeTop = 55f, FoldedHeight = 110f;
 
         void BuildDots()
         {
@@ -799,7 +799,7 @@ namespace SomeGame.UI
         {
             if (_switching || _celebrating || _wipeFrom != null) return;
             var cups = Switchable();
-            if (!_barOpen) return;
+            if (!_barOpen) { OpenCups(true); return; }
             if (cups[slot] == _cup) { CollapseCups(); return; }
             SwitchTo(cups[slot]);
         }
@@ -857,10 +857,10 @@ namespace SomeGame.UI
             else { _ringAt = target; _ringVelocity = 0f; _barOpenAt = openTarget; _barOpenVelocity = 0f; }
 
             float open = _barOpenAt, open01 = Mathf.Clamp01(open);
-            // Folded it is only the arrow; unfolded the cups appear above it.
-            float full = BadgeTop * 2f + (_badges.Count - 1) * BadgeSpacing + ToggleRow;
+            // Folded it shows the current cup's badge (the column scrolled to it); unfolded all of them.
+            float full = BadgeTop * 2f + (_badges.Count - 1) * BadgeSpacing;
             dots.sizeDelta = new Vector2(dots.sizeDelta.x, Mathf.LerpUnclamped(FoldedHeight, full, open));
-            if (barContent != null) barContent.anchoredPosition = new Vector2(0f, Mathf.LerpUnclamped(BadgeSpacing * 0.6f, 0f, open));
+            if (barContent != null) barContent.anchoredPosition = new Vector2(0f, Mathf.LerpUnclamped(_ringAt * BadgeSpacing, 0f, open));
             if (barRing != null)
             {
                 barRing.anchoredPosition = new Vector2(0f, -BadgeTop - _ringAt * BadgeSpacing);
@@ -868,13 +868,13 @@ namespace SomeGame.UI
             }
             if (barChevron != null) barChevron.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpUnclamped(-90f, 90f, open));
             if (barRing != null)
-                foreach (var g in barRing.GetComponentsInChildren<UnityEngine.UI.Graphic>()) { var c = g.color; c.a = (g.name == "Glow" ? 0.22f : 1f) * open01; g.color = c; }
+                foreach (var g in barRing.GetComponentsInChildren<UnityEngine.UI.Graphic>()) { var c = g.color; c.a = g.name == "Glow" ? 0.22f : 1f; g.color = c; }
             for (int i = 0; i < _badges.Count; i++)
             {
                 float near = Mathf.Clamp01(1f - Mathf.Abs(_ringAt - i));
                 _badges[i].localScale = Vector3.one * Mathf.Lerp(0.82f, 1f, near);
                 var group = _badges[i].GetComponent<CanvasGroup>();
-                if (group != null) group.alpha = Mathf.Lerp(0.55f, 1f, near) * open01;
+                if (group != null) group.alpha = Mathf.Lerp(near, Mathf.Lerp(0.55f, 1f, near), open01);
             }
         }
 

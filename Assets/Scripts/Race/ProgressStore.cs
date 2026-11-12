@@ -35,6 +35,11 @@ namespace SomeGame.Race
         public static event Action Changed;
 
         public static int StarsOf(LevelDefinition level) => Find(level)?.stars ?? 0;
+
+        /// <summary>Where a race's stars stood before new ones were earned (until its card has shown them coming in).</summary>
+        public const string NewStarsKey = "Stars.New.";
+        public static int StarsBeforeNew(LevelDefinition level) => Mathf.Min(PlayerPrefs.GetInt(NewStarsKey + level.name, StarsOf(level)), StarsOf(level));
+        public static void NewStarsShown(LevelDefinition level) { PlayerPrefs.DeleteKey(NewStarsKey + level.name); PlayerPrefs.Save(); }
         public static bool HasWon(LevelDefinition level) => Find(level)?.won ?? false;
         public static int? BestPlaceOf(LevelDefinition level) => Find(level) is { bestPlace: > 0 } e ? e.bestPlace : null;
         public static float? BestTimeOf(LevelDefinition level) => Find(level) is { bestTime: > 0f } e ? e.bestTime : null;
@@ -84,6 +89,8 @@ namespace SomeGame.Race
                 entry = new Entry { level = level.name };
                 Saved.entries.Add(entry);
             }
+            // New stars: the race's card shows them coming in, from what it had (the next time it's seen).
+            if (stars > entry.stars && !PlayerPrefs.HasKey(NewStarsKey + level.name)) PlayerPrefs.SetInt(NewStarsKey + level.name, entry.stars);
             entry.stars = Mathf.Max(entry.stars, stars);
             entry.won |= won;
             if (place > 0 && (entry.bestPlace <= 0 || place < entry.bestPlace)) entry.bestPlace = place;

@@ -37,7 +37,7 @@ namespace SomeGame.EditorTools
             // The entry: a square button with two people, top right between the stars / trophies counter and
             // the cup dropdown (same column, same width as the dropdown).
             // As wide as the counters above, flatter; the people in the cup's star colour.
-            var openRt = At("OnlineButton", safe, new Vector2(1f, 1f), new Vector2(-60f, -216f), new Vector2(140f, 94f));
+            var openRt = At("OnlineButton", safe, new Vector2(1f, 1f), new Vector2(-60f, -158f), new Vector2(140f, 94f));
             Img(At("Shadow", openRt, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(140f, 82f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             var openFace = At("Face", openRt, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(140f, 82f));
             var openBg = Img(openFace, "Round", Theme.Ink, sliced: true, raycast: true);
