@@ -1187,12 +1187,9 @@ namespace SomeGame.EditorTools
             Img(At("Glow", stageDisc, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(240f, 240f)), "Glow", Theme.WithAlpha(Theme.Amber, 0.55f)).rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Img(Stretch("Floor", stageDisc), "Circle", Shade(Theme.Ink, 0.7f));
             Img(At("Ring", stageDisc, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(166f, 166f)), "Ring", Theme.Amber);
-            var carRt = At("Car", stageDisc, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 147f));
-            carRt.pivot = new Vector2(0.5f, 0.5f); carRt.localRotation = Quaternion.Euler(0f, 0f, -30f);
-            var carBody = Img(Stretch("Body", carRt), "Car", Theme.Orange); carBody.preserveAspect = false;
-            var carDetails = Img(Stretch("Details", carRt), "CarDetails", Color.white); carDetails.preserveAspect = false;
-            var prizeCar = carRt.gameObject.AddComponent<VehicleIcon>();
-            Configure(prizeCar, ("body", carBody), ("details", carDetails));
+            // Just the chicken (the prize is the chicken that rides on your roof).
+            var prizeIcon = Img(At("Chicken", stageDisc, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(132f, 132f)), "Chicken", Color.white);
+            prizeIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f); prizeIcon.preserveAspect = true;
             var prizeCaption = Txt(At("Caption", prize, new Vector2(0f, 0.5f), new Vector2(210f, 50f), new Vector2(480f, 40f)), "WIN THE PRIZE", 32, Theme.Amber, _condItalic, TextAlignmentOptions.Left);
             prizeCaption.rectTransform.pivot = new Vector2(0f, 0.5f); prizeCaption.characterSpacing = 4f;
             var prizeName = Txt(At("Name", prize, new Vector2(0f, 0.5f), new Vector2(210f, 2f), new Vector2(480f, 66f)), "CHICKEN RIDER", 60, Color.white, _black, TextAlignmentOptions.Left);
@@ -1229,14 +1226,24 @@ namespace SomeGame.EditorTools
             var tabIcon = Img(At("Icon", medal, new Vector2(0.5f, 1f), new Vector2(0f, -85f), new Vector2(118f, 118f)), "Chicken", Color.white);
             tabIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             var medalVeil = Img(At("Veil", medal, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(170f, 170f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
+            // The cross on the top right corner closes the deck (as on a race card).
+            var closeRt = At("Close", card, new Vector2(1f, 1f), new Vector2(30f, 30f), new Vector2(124f, 124f));
+            closeRt.pivot = new Vector2(0.5f, 0.5f); closeRt.anchoredPosition = new Vector2(-32f, -32f);
+            Img(closeRt, "Circle", new Color(0.06f, 0.07f, 0.08f));
+            var closeFace = Img(At("Face", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(108f, 108f)), "Circle", Theme.Cream, raycast: true);
+            Img(At("Icon", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(52f, 52f)), "IconClose", Theme.Ink);
+            var closeVeil = Img(At("Veil", closeRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(124f, 124f)), "Circle", Theme.WithAlpha(Theme.Cream, 0f));
+            var close = closeRt.gameObject.AddComponent<Button>();
+            close.targetGraphic = closeFace; close.transition = Selectable.Transition.None;
+            closeRt.gameObject.AddComponent<ButtonFeedback>();
 
             var comp = card.gameObject.AddComponent<DeckChallengeCard>();
             Configure(comp, ("group", group), ("body", body), ("playButton", playButton), ("picture", picture), ("tabIcon", tabIcon), ("playFace", playFace), ("veil", veil),
                 ("chapter", chapter), ("title", title), ("best", best), ("prizeName", prizeName), ("playLabel", playLabel), ("lockLabel", lockLabel),
-                ("chickens", hens), ("lockCover", lockCover.gameObject), ("prizeWon", won.gameObject), ("prizeCar", prizeCar),
+                ("chickens", hens), ("lockCover", lockCover.gameObject), ("prizeWon", won.gameObject), ("prizeIcon", prizeIcon), ("closeButton", close),
                 ("prizeCaption", prizeCaption), ("prizeSub", prizeSub), ("prizeFace", prizeFace), ("prizeOutline", prizeOutline));
             var dso = new SerializedObject(comp);
-            SetArray(dso, "edgeVeils", new[] { medalShadowVeil, medalVeil });
+            SetArray(dso, "edgeVeils", new[] { medalShadowVeil, medalVeil, closeVeil });
             dso.ApplyModifiedPropertiesWithoutUndo();
             card.gameObject.SetActive(false);
             return comp;

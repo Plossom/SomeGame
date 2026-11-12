@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using SomeGame.Car;
 using SomeGame.Race;
 using TMPro;
 using UnityEngine;
@@ -18,11 +17,14 @@ namespace SomeGame.UI
         [SerializeField] CanvasGroup group;
         [Tooltip("Tapping the card while it lies behind brings it to the front.")]
         [SerializeField] UnityEngine.UI.Button body, playButton;
+        [Tooltip("The cross on the top right corner: closes the deck.")]
+        [SerializeField] UnityEngine.UI.Button closeButton;
         [SerializeField] UnityEngine.UI.Image picture, tabIcon, playFace, veil;
         [SerializeField] TMP_Text chapter, title, best, prizeName, playLabel, lockLabel;
         [SerializeField] RectTransform chickens;
         [SerializeField] GameObject lockCover, prizeWon;
-        [SerializeField] VehicleIcon prizeCar;
+        [Tooltip("The prize on its stage: the chicken itself.")]
+        [SerializeField] UnityEngine.UI.Image prizeIcon;
         [Tooltip("The prize panel: gold once won, its caption and line saying so.")]
         [SerializeField] TMP_Text prizeCaption, prizeSub;
         [SerializeField] UnityEngine.UI.Image prizeFace, prizeOutline;
@@ -34,6 +36,7 @@ namespace SomeGame.UI
         readonly List<(RectTransform rt, Vector2 home, float phase)> _hens = new();
 
         public UnityEngine.UI.Button Body => body;
+        public UnityEngine.UI.Button CloseButton => closeButton;
 
         void Awake()
         {
@@ -66,9 +69,6 @@ namespace SomeGame.UI
             lockCover.SetActive(!open);
             var part = Garage.Find("chicken", Garage.Slot.Top);
             prizeName.text = part.Name;
-            var look = CarLook.Player;
-            look.Top = part;
-            prizeCar.Dress(look);
             prizeWon.SetActive(won);
             prizeCaption.text = won ? "YOU WON IT!" : "WIN THE PRIZE";
             prizeCaption.color = won ? new Color(0.55f, 0.95f, 0.5f) : Theme.Amber;
@@ -102,6 +102,7 @@ namespace SomeGame.UI
             if (edgeVeils != null) foreach (var edge in edgeVeils) if (edge != null) edge.color = frost;
             body.interactable = front < 0.05f;
             playButton.interactable = front > 0.95f;
+            if (closeButton != null) closeButton.interactable = front > 0.95f;
         }
 
         void Update()
@@ -110,9 +111,10 @@ namespace SomeGame.UI
             // The medallion's chicken pecks now and then; the chickens on the track bob and peck about.
             float p = Mathf.Repeat(t, 2.4f);
             tabIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, p < 0.5f ? 8f * Mathf.Sin(p / 0.5f * Mathf.PI * 3f) : 0f);
-            // The won stamp breathes; the prize car turns gently on its stage.
+            // The won stamp breathes; the prize chicken bobs and pecks on its stage.
             if (prizeWon.activeSelf) prizeWon.transform.localScale = Vector3.one * (1f + 0.05f * Mathf.Sin(t * 3f));
-            prizeCar.transform.localRotation = Quaternion.Euler(0f, 0f, -30f + 12f * Mathf.Sin(t * 0.8f));
+            float bob = Mathf.Repeat(t + 1.2f, 2.4f);
+            prizeIcon.transform.localRotation = Quaternion.Euler(0f, 0f, bob < 0.5f ? -10f * Mathf.Sin(bob / 0.5f * Mathf.PI * 2f) : 4f * Mathf.Sin(t * 1.5f));
             foreach (var (rt, home, phase) in _hens)
             {
                 float peck = Mathf.Max(0f, Mathf.Sin(t * 2.6f + phase));

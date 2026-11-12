@@ -84,6 +84,7 @@ namespace SomeGame.UI
             if (challengeCard != null)
             {
                 challengeCard.Body.onClick.AddListener(() => Swap(1f));
+                if (challengeCard.CloseButton != null) challengeCard.CloseButton.onClick.AddListener(Close);
                 challengeCard.gameObject.SetActive(false);
             }
             _canvas = GetComponentInParent<Canvas>().rootCanvas;
