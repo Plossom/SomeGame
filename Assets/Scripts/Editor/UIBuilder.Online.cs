@@ -37,11 +37,11 @@ namespace SomeGame.EditorTools
             // The entry: a square button with two people, top right between the stars / trophies counter and
             // the cup dropdown (same column, same width as the dropdown).
             // As wide as the counters above, flatter; the people in the cup's star colour.
-            var openRt = At("OnlineButton", safe, new Vector2(1f, 1f), new Vector2(-60f, -150f), new Vector2(140f, 82f));
-            Img(At("Shadow", openRt, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(140f, 70f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
-            var openFace = At("Face", openRt, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(140f, 70f));
+            var openRt = At("OnlineButton", safe, new Vector2(1f, 1f), new Vector2(-60f, -170f), new Vector2(140f, 98f));
+            Img(At("Shadow", openRt, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(140f, 86f)), "Round", Shade(Theme.Ink, 0.6f), sliced: true);
+            var openFace = At("Face", openRt, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(140f, 86f));
             var openBg = Img(openFace, "Round", Theme.Ink, sliced: true, raycast: true);
-            Img(At("Icon", openFace, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(56f, 56f)), "IconPeople", Theme.Amber);
+            Img(At("Icon", openFace, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(64f, 64f)), "IconPeople", Theme.Amber);
             var open = openRt.gameObject.AddComponent<Button>();
             open.targetGraphic = openBg; open.transition = Selectable.Transition.None;
             openRt.gameObject.AddComponent<ButtonFeedback>();

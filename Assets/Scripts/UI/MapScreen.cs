@@ -831,9 +831,10 @@ namespace SomeGame.UI
                 bool soon = CupList.IsComingSoon(cup), locked = !soon && !CupList.IsUnlocked(cup);
                 var icon = _badges[i].Find("Icon").GetComponent<UnityEngine.UI.Image>();
                 icon.sprite = soon ? soonSprite : locked ? lockSprite : cup.icon;
-                icon.rectTransform.sizeDelta = Vector2.one * (soon || locked ? 56f : 96f);
+                icon.rectTransform.sizeDelta = Vector2.one * (soon || locked ? 56f : 108f);
                 icon.color = soon || locked ? Theme.StoneDark : Color.white;
-                _badges[i].Find("Face").GetComponent<UnityEngine.UI.Image>().color = soon || locked ? Theme.Stone : Theme.Cream;
+                // An open cup's picture sits straight on the plate; a locked one on a grey disc with its lock.
+                _badges[i].Find("Face").GetComponent<UnityEngine.UI.Image>().color = soon || locked ? Theme.Stone : new Color(0f, 0f, 0f, 0f);
             }
         }
 
