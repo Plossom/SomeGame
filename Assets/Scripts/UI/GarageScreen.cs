@@ -68,12 +68,13 @@ namespace SomeGame.UI
 
         const float Rise = 130f, FocusScale = 0.8f, HotScale = 0.8f;
         // The other vehicles' peek spots (as wide as the car shown there) and how long a page change takes.
-        static readonly Vector2 PeekAbove = new(0f, 680f), PeekBelow = new(0f, -280f);
+        static readonly Vector2 PeekAbove = new(0f, 605f), PeekBelow = new(0f, -355f);
         const float PeekGap = 480f;          // from the car to a peek spot: a full swipe
         const float PeekCarWidth = 150f;     // the car in a peek (the main car is 420 wide)
         const float PeekScale = PeekCarWidth / 420f;
         float _scrub, _scrubTarget, _dragVelocity;
         int _scrubDir, _scrubDirWas;
+        float _landedAt = -10f;
         bool _snapping; // past half way: the change goes through quickly by itself
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _scrubPlan;
         readonly Dictionary<RectTransform, Vector2> _peekHome = new(); // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
@@ -275,7 +276,7 @@ namespace SomeGame.UI
             _scrubDir = 0;
             _scrub = _scrubTarget = 0f;
             _snapping = false;
-            _pageAt = _switchAt = _changedAt = Time.unscaledTime; // it lands with a pop and a ring
+            _pageAt = _switchAt = _landedAt = Time.unscaledTime; // it lands with a little pop
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.land, 0.5f);
             // The old vehicle now sits in its peek spot at peek size: that peek takes over at once.
             var back = _scrubDirWas > 0 ? peekLeft : peekRight;
@@ -753,6 +754,7 @@ namespace SomeGame.UI
             float drop = Mathf.Clamp01((t - _openedAt - 0.05f) / 0.6f);
             float fall = 1f - Bounce(drop);
             float pop = 1f + 0.12f * Mathf.Sin(Mathf.Clamp01((t - _changedAt) / 0.35f) * Mathf.PI)
+                           + 0.08f * Mathf.Sin(Mathf.Clamp01((t - _landedAt) / 0.3f) * Mathf.PI)
                            + 0.05f * Mathf.Sin(Mathf.Clamp01((t - _tryAt) / 0.25f) * Mathf.PI);
             // A vehicle change (following the finger, or gliding after it): the car shrinks into the peek spot on
             // the far side while the vehicle on the near side grows out of its spot into the middle; the colours blend.

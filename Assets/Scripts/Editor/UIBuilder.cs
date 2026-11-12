@@ -470,18 +470,20 @@ namespace SomeGame.EditorTools
 
             // The stage: everything placed from its middle.
             var stage = Stretch("Stage", safe);
-            var podium = At("Podium", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 70f), new Vector2(800f, 800f));
+            var podium = At("Podium", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, -5f), new Vector2(800f, 800f));
             podium.pivot = new Vector2(0.5f, 0.5f);
             Img(At("Glow", podium, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1100f, 1100f)), "Glow", Theme.WithAlpha(Theme.Amber, 0.22f)).rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            Img(Stretch("Floor", podium), "Circle", Shade(Theme.Ink, 0.82f));
+            // A mid-tone floor: the cars have plenty of black (tyres, trim) that would sink into a dark one, and
+            // can be painted white, which would vanish on a light one.
+            Img(Stretch("Floor", podium), "Circle", Theme.WithAlpha(Theme.Cream, 0.4f));
             var rim = Stretch("Rim", podium); rim.offsetMin = new Vector2(12f, 12f); rim.offsetMax = new Vector2(-12f, -12f);
             Img(rim, "Ring", Theme.WithAlpha(Theme.Amber, 0.6f));
             var podiumRing = At("Dashes", podium, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(620f, 620f));
             podiumRing.pivot = new Vector2(0.5f, 0.5f);
-            Img(podiumRing, "RingDashed", Theme.WithAlpha(Theme.Cream, 0.35f));
+            Img(podiumRing, "RingDashed", Theme.WithAlpha(Theme.Ink, 0.18f));
             var burst = Img(At("Burst", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(640f, 640f)), "Ring", Theme.Amber);
             burst.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            var carRoot = At("Car", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 70f), new Vector2(420f, 735f));
+            var carRoot = At("Car", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, -5f), new Vector2(420f, 735f));
             carRoot.pivot = new Vector2(0.5f, 0.5f);
             var carShadow = Img(At("Shadow", carRoot, new Vector2(0.5f, 0.5f), new Vector2(26f, -34f), new Vector2(436f, 760f)), "CarShadow", new Color(0f, 0f, 0f, 0.55f));
             carShadow.preserveAspect = false;
@@ -496,7 +498,7 @@ namespace SomeGame.EditorTools
             // The other vehicles peeking in above and below (tap, or swipe up or down, to go to their page).
             RectTransform PeekAt(string name, float side)
             {
-                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side > 0f ? 680f : -280f), new Vector2(300f, 300f));
+                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side > 0f ? 605f : -355f), new Vector2(300f, 300f));
                 peek.pivot = new Vector2(0.5f, 0.5f);
                 peek.gameObject.AddComponent<CanvasGroup>();
                 var hit = Img(peek, null, new Color(0f, 0f, 0f, 0f), raycast: true);
