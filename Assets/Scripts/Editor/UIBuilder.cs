@@ -483,26 +483,27 @@ namespace SomeGame.EditorTools
             // The other vehicles peeking in above and below (tap, or swipe up or down, to go to their page).
             RectTransform PeekAt(string name, float side)
             {
-                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side > 0f ? 730f : -230f), new Vector2(240f, 240f));
+                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side > 0f ? 730f : -230f), new Vector2(300f, 300f));
                 peek.pivot = new Vector2(0.5f, 0.5f);
                 peek.gameObject.AddComponent<CanvasGroup>();
                 var hit = Img(peek, null, new Color(0f, 0f, 0f, 0f), raycast: true);
-                var peekCar = At("Car", peek, new Vector2(0.5f, 0.5f), new Vector2(0f, -side * 10f), new Vector2(110f, 192f));
+                // The main car (420 wide) at the scale of a peek: it grows into it and shrinks out of it on a change.
+                var peekCar = At("Car", peek, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 262.5f));
                 peekCar.pivot = new Vector2(0.5f, 0.5f);
-                var pShadow = Img(At("Shadow", peekCar, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(116f, 200f)), "CarShadow", new Color(0f, 0f, 0f, 0.5f)); pShadow.preserveAspect = false;
+                var pShadow = Img(At("Shadow", peekCar, new Vector2(0.5f, 0.5f), new Vector2(9.3f, -12.1f), new Vector2(155.7f, 271.4f)), "CarShadow", new Color(0f, 0f, 0f, 0.55f)); pShadow.preserveAspect = false;
                 var pBody = Img(Stretch("Body", peekCar), "Car", Theme.Orange); pBody.preserveAspect = false;
                 var pDetails = Img(Stretch("Details", peekCar), "CarDetails", Color.white); pDetails.preserveAspect = false;
                 Configure(peekCar.gameObject.AddComponent<VehicleIcon>(), ("body", pBody), ("details", pDetails), ("shadow", pShadow),
                     ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
-                var arrow = Img(At("Arrow", peek, new Vector2(0.5f, 0.5f), new Vector2(0f, side * 110f), new Vector2(50f, 60f)), "NavArrow", Theme.Amber).rectTransform;
+                var arrow = Img(At("Arrow", peek, new Vector2(0.5f, 0.5f), new Vector2(0f, side * 175f), new Vector2(54f, 64f)), "NavArrow", Theme.Amber).rectTransform;
                 arrow.pivot = new Vector2(0.5f, 0.5f); arrow.localRotation = Quaternion.Euler(0f, 0f, side > 0f ? 0f : 180f);
                 var label = Txt(At("Name", peek, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(10f, 10f)), "", 10, Theme.Cream, _black);
                 label.gameObject.SetActive(false);
                 var button = peek.gameObject.AddComponent<Button>();
                 button.targetGraphic = hit; button.transition = Selectable.Transition.None;
-                peek.gameObject.AddComponent<ButtonFeedback>();
                 return peek;
             }
+            // (No press squash on the peeks and hotspots: the garage scales them itself.)
             var peekLeft = PeekAt("PeekAbove", 1f);
             var peekRight = PeekAt("PeekBelow", -1f);
             // The vehicle leaving on a page change.
@@ -543,7 +544,6 @@ namespace SomeGame.EditorTools
             spotValue.enableAutoSizing = true; spotValue.fontSizeMin = 18; spotValue.fontSizeMax = 34;
             var spotButtonComp = spotButton.gameObject.AddComponent<Button>();
             spotButtonComp.targetGraphic = spotFace; spotButtonComp.transition = Selectable.Transition.None;
-            spotButton.gameObject.AddComponent<ButtonFeedback>();
 
             var buildName = Txt(At("BuildName", stage, new Vector2(0.5f, 0f), new Vector2(0f, 250f), new Vector2(1060f, 90f)), "DUNE BUGGY  ·  SUNSET ORANGE", 60, Color.white, _black);
             buildName.enableAutoSizing = true; buildName.fontSizeMin = 34; buildName.fontSizeMax = 60;
@@ -552,7 +552,7 @@ namespace SomeGame.EditorTools
 
             // The tray for the chosen part: the part tabs and DONE, a strip of round chips (cup by cup), the name and
             // what it is (or what it takes).
-            var tray = At("Tray", safe, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(1170f, 520f));
+            var tray = At("Tray", safe, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(1170f, 600f));
             tray.pivot = new Vector2(0.5f, 0f);
             var trayShadow = Stretch("Shadow", tray); trayShadow.offsetMin = new Vector2(0f, -60f); trayShadow.offsetMax = new Vector2(0f, 14f);
             Img(trayShadow, "Round", Shade(Theme.Ink, 0.45f), sliced: true);
@@ -594,13 +594,14 @@ namespace SomeGame.EditorTools
             done.gameObject.SetActive(false); // always choosing: the cross closes the garage
 
             // The strip: round chips scrolling sideways, a divider per cup.
-            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -40f), new Vector2(1170f, 380f));
+            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -36f), new Vector2(1170f, 470f));
             viewport.pivot = new Vector2(0.5f, 1f);
             Img(viewport, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             viewport.gameObject.AddComponent<RectMask2D>();
             var content = Rt("Content", viewport);
             content.anchorMin = new Vector2(0f, 0f); content.anchorMax = new Vector2(0f, 1f); content.pivot = new Vector2(0f, 0.5f);
             content.sizeDelta = Vector2.zero;
+            content.localScale = Vector3.one * 1.22f; // bigger chips (the layout works in the unscaled size)
             var row = content.gameObject.AddComponent<HorizontalLayoutGroup>();
             row.spacing = 22f; row.padding = new RectOffset(44, 44, 0, 0); row.childAlignment = TextAnchor.MiddleLeft;
             row.childControlWidth = row.childControlHeight = false; row.childForceExpandWidth = row.childForceExpandHeight = false;

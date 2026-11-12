@@ -71,7 +71,13 @@ namespace SomeGame.UI
         const float Rise = 130f, FocusScale = 0.8f, HotScale = 0.8f;
         // The other vehicles' peek spots (as wide as the car shown there) and how long a page change takes.
         static readonly Vector2 PeekAbove = new(0f, 730f), PeekBelow = new(0f, -230f);
-        const float PeekScale = 0.24f, PageSeconds = 0.6f; // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
+        const float PeekGap = 480f;          // from the car to a peek spot: a full swipe
+        const float PeekCarWidth = 150f;     // the car in a peek (the main car is 420 wide)
+        const float PeekScale = PeekCarWidth / 420f, PageSeconds = 0.35f;
+        float _scrub, _scrubTarget, _dragVelocity;
+        int _scrubDir, _scrubDirWas;
+        List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _scrubPlan;
+        readonly Dictionary<RectTransform, Vector2> _peekHome = new(); // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
         static readonly string[] SlotNames = { "PAINT", "BODY", "TOP", "DECAL", "TRAIL", "GADGET" };
         // Where each hotspot sits round the car, and the point of the car its line goes to (car units, car facing up).
         static readonly Vector2[] Spots = { new(-385f, 30f), new(385f, 30f), new(370f, 440f), new(-370f, 440f), new(-330f, -480f), new(330f, -480f) };
@@ -101,7 +107,7 @@ namespace SomeGame.UI
         RivalCharacter[] _rivals;
         Vector2 _carHome;
         Vehicle _vehicle = Vehicle.Car;
-        float _pageAt = -10f, _pageDir, _dragY;
+        float _pageAt = -10f, _dragY;
         // The garage takes the colours of the vehicle's cup (Valley green, Winter blue), morphing between them.
         Theme.Palette _palette, _mapPalette;
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _morph;
@@ -178,6 +184,7 @@ namespace SomeGame.UI
             outgoing.gameObject.SetActive(false);
             // In the map's colours now (it recoloured the whole screen); the vehicle's cup's colours from here.
             _mapPalette = _palette = Theme.Current;
+            _scrubDir = 0; _scrub = _scrubTarget = 0f; _scrubPlan = null;
             _morph = null;
             Morph(PaletteOf(_vehicle), instant: true);
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.5f);
@@ -212,25 +219,61 @@ namespace SomeGame.UI
         /// <summary>To the next vehicle's page (+1, the one below) or the one before (-1, above).</summary>
         void Page(int step)
         {
-            int to = PageIndex + step;
-            if (to < 0 || to >= Garage.Vehicles.Length) return;
-            // The vehicle leaving, as it is, slides away; the new one comes in from the other side.
-            outgoingCar.Show(_vehicle == Vehicle.Snowmobile);
-            outgoingCar.Dress(CarLook.For(_vehicle));
-            outgoing.gameObject.SetActive(true);
-            _vehicle = Garage.Vehicles[to];
-            Morph(PaletteOf(_vehicle));
-            _pageAt = Time.unscaledTime;
-            _pageDir = step;
+            if (_scrubDir != 0 || Neighbour(step) < 0) return;
+            StartScrub(step);
+            _scrubTarget = 1f;
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
-            // The same part on the new vehicle if it has it (else its paint); its chips pop in afresh.
+        }
+
+        int Neighbour(int step)
+        {
+            int to = PageIndex + step;
+            return to >= 0 && to < Garage.Vehicles.Length ? to : -1;
+        }
+
+        // A vehicle change in the making (step +1: the one below comes up, -1: the one above comes down): the colours
+        // blend with it, all the way to the other cup's.
+        void StartScrub(int step)
+        {
+            if (_scrubDir == step) return;
+            RestoreScrubColours();
+            _scrubDir = step;
+            _scrubPlan = Theme.RecolorPlan(transform, _palette, PaletteOf(Garage.Vehicles[Neighbour(step)]));
+            _scrubPlan.RemoveAll(p => p.graphic.name is "Body" or "Color" or "Pic");
+            _scrubPlan.RemoveAll(p => _hotspots.Exists(h => p.graphic.transform == h.Button.Find("Face") || p.graphic.transform == h.Button.Find("Label") || p.graphic == h.Name));
+        }
+
+        void RestoreScrubColours()
+        {
+            if (_scrubPlan != null) foreach (var (g, from, _) in _scrubPlan) if (g != null) g.color = from;
+            _scrubPlan = null;
+        }
+
+        // The change is through: the new vehicle is in the middle now (it is where the old one was drawn, so nothing
+        // jumps), in its cup's colours, with the same part open if it has it.
+        void FinishScrub()
+        {
+            if (_scrubPlan != null) foreach (var (g, _, to) in _scrubPlan) if (g != null) g.color = to;
+            _scrubPlan = null;
+            var vehicle = Garage.Vehicles[Neighbour(_scrubDir)];
+            _palette = PaletteOf(vehicle);
+            Theme.Use(_palette);
+            _vehicle = vehicle;
+            _scrubDirWas = _scrubDir;
+            _scrubDir = 0;
+            _scrub = _scrubTarget = 0f;
+            _pageAt = _switchAt = Time.unscaledTime;
+            // The old vehicle now sits in its peek spot at peek size: that peek takes over at once.
+            var back = _scrubDirWas > 0 ? peekLeft : peekRight;
+            var backGroup = back.GetComponent<CanvasGroup>();
+            if (backGroup != null) backGroup.alpha = 1f;
             if (_focus < 0 || !Fits(_focus)) _focus = (int)Garage.Slot.Paint;
-            _switchAt = Time.unscaledTime;
             BuildTray();
             Refresh();
         }
 
-        // Swipe up for the next vehicle (it comes up from below), down for the one before.
+        // Swipe up for the next vehicle (it comes up from below), down for the one before: the vehicles follow the
+        // finger; let go past a third of the way and the change glides through, else it glides back.
         public void OnBeginDrag(PointerEventData e)
         {
             _paging = true; // (the chip strip scrolls on its own: swipes on it don't page)
@@ -239,15 +282,23 @@ namespace SomeGame.UI
 
         public void OnDrag(PointerEventData e)
         {
-            if (_paging) _dragY += e.delta.y / Mathf.Max(0.01f, GetComponentInParent<Canvas>().rootCanvas.scaleFactor);
+            if (!_paging) return;
+            _dragY += e.delta.y / Mathf.Max(0.01f, GetComponentInParent<Canvas>().rootCanvas.scaleFactor);
+            _dragVelocity = Mathf.Lerp(_dragVelocity, e.delta.y / Mathf.Max(1e-4f, Time.unscaledDeltaTime), 0.4f);
+            int step = _dragY > 0f ? 1 : -1;
+            if (Neighbour(step) < 0) { if (_scrubDir == 0) _scrub = 0f; return; }
+            StartScrub(step);
+            _scrub = Mathf.Clamp01(Mathf.Abs(_dragY) / PeekGap);
         }
 
         public void OnEndDrag(PointerEventData e)
         {
             if (!_paging) return;
             _paging = false;
-            if (Mathf.Abs(_dragY) > 140f) Page(_dragY > 0f ? 1 : -1);
-            _dragY = 0f;
+            bool flung = Mathf.Abs(_dragVelocity) > 1400f && Mathf.Sign(_dragVelocity) == _scrubDir;
+            _scrubTarget = _scrubDir != 0 && (_scrub > 0.33f || flung) ? 1f : 0f;
+            if (_scrubTarget > 0f) SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
+            _dragY = _dragVelocity = 0f;
         }
 
         bool Fits(int slot) => Garage.Fits((Garage.Slot)slot, _vehicle);
@@ -260,6 +311,8 @@ namespace SomeGame.UI
         // Closed: back in the map's colours (the screen around it is in them).
         void Closed()
         {
+            RestoreScrubColours();
+            _scrubDir = 0; _scrub = _scrubTarget = 0f;
             Morph(_mapPalette, instant: true);
             panel.SetActive(false);
         }
@@ -317,8 +370,9 @@ namespace SomeGame.UI
             UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(stripContent);
             if (_tiles.Count > 0)
             {
-                float x = -_tiles[equippedAt].anchoredPosition.x + strip.viewport.rect.width * 0.5f;
-                float max = Mathf.Max(0f, stripContent.rect.width - strip.viewport.rect.width);
+                float scale = stripContent.localScale.x;
+                float x = -_tiles[equippedAt].anchoredPosition.x * scale + strip.viewport.rect.width * 0.5f;
+                float max = Mathf.Max(0f, stripContent.rect.width * scale - strip.viewport.rect.width);
                 stripContent.anchoredPosition = new Vector2(Mathf.Clamp(x, -max, 0f), 0f);
             }
             strip.velocity = Vector2.zero;
@@ -672,25 +726,23 @@ namespace SomeGame.UI
             float fall = 1f - Bounce(drop);
             float pop = 1f + 0.12f * Mathf.Sin(Mathf.Clamp01((t - _changedAt) / 0.35f) * Mathf.PI)
                            + 0.05f * Mathf.Sin(Mathf.Clamp01((t - _tryAt) / 0.25f) * Mathf.PI);
-            // A page change: the old vehicle slides away up (or down) and fades, the new one comes in from the
-            // other side; the swipe drags the car along a little meanwhile.
-            // A page change: the new vehicle grows out of its peek spot (below for the next one, above for the one
-            // before) into the middle, while the old one shrinks into the peek spot on the other side.
-            float page = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - _pageAt) / PageSeconds));
-            float dragOffset = _paging ? Mathf.Clamp(_dragY * 0.5f, -240f, 240f) : 0f;
-            Vector2 middle = _carHome + new Vector2(0f, Rise * focus);
-            Vector2 comeFrom = _pageDir > 0f ? PeekBelow : PeekAbove, goTo = _pageDir > 0f ? PeekAbove : PeekBelow;
-            float mainScale = Mathf.Lerp(1f, FocusScale, focus);
-            carRoot.anchoredPosition = Vector2.Lerp(comeFrom, middle, page) + new Vector2(0f, dragOffset + 700f * fall + Mathf.Sin(t * 1.4f) * 8f * page);
-            carRoot.localScale = Vector3.one * Mathf.Lerp(PeekScale, mainScale, page) * pop;
-            if (outgoing.gameObject.activeSelf)
+            // A vehicle change (following the finger, or gliding after it): the car shrinks into the peek spot on
+            // the far side while the vehicle on the near side grows out of its spot into the middle; the colours blend.
+            if (!_paging && _scrubDir != 0)
             {
-                outgoing.anchoredPosition = Vector2.Lerp(middle, goTo, page);
-                outgoing.localScale = Vector3.one * Mathf.Lerp(mainScale, PeekScale, page);
-                outgoing.GetComponent<CanvasGroup>().alpha = 1f;
-                if (page >= 1f) outgoing.gameObject.SetActive(false);
+                _scrub = Mathf.Lerp(_scrub, _scrubTarget, 1f - Mathf.Exp(-11f * dt));
+                if (_scrubTarget > 0f && _scrub > 0.995f) FinishScrub();
+                else if (_scrubTarget <= 0f && _scrub < 0.005f) { RestoreScrubColours(); _scrubDir = 0; _scrub = 0f; }
             }
-            podium.anchoredPosition = _carHome + new Vector2(0f, Rise * focus);
+            float k = _scrub; // under the finger 1:1 (the glide after it eases out by itself)
+            if (_scrubPlan != null) foreach (var (g, from, to) in _scrubPlan) if (g != null) g.color = Color.Lerp(from, to, k);
+            Vector2 middle = _carHome + new Vector2(0f, Rise * focus);
+            float mainScale = Mathf.Lerp(1f, FocusScale, focus);
+            Vector2 away = _scrubDir > 0 ? PeekAbove : PeekBelow;
+            carRoot.anchoredPosition = Vector2.Lerp(middle, away, k) + new Vector2(0f, 700f * fall + Mathf.Sin(t * 1.4f) * 8f * (1f - k));
+            carRoot.localScale = Vector3.one * Mathf.Lerp(mainScale, PeekScale, k) * pop;
+            outgoing.gameObject.SetActive(false);
+            podium.anchoredPosition = middle;
             podium.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * Mathf.Lerp(0.6f, 1f, EaseOut(drop));
             podiumRing.localRotation = Quaternion.Euler(0f, 0f, t * 12f);
             float ring = Mathf.Clamp01((t - _changedAt) / 0.55f);
@@ -711,28 +763,42 @@ namespace SomeGame.UI
                 Vector2 anchor = carRoot.anchoredPosition + Anchors[i] * carRoot.localScale.x;
                 Vector2 at = carRoot.anchoredPosition + Spots[i] * HotScale * (carRoot.localScale.x / FocusScale);
                 spot.Button.anchoredPosition = at;
-                spot.Button.localScale = Vector3.one * EaseOutBack(appear) * HotScale * (on ? 1.12f : 1f) * pick;
+                float during = 1f - Mathf.Clamp01(_scrub * 4f); // they make way while the vehicles change
+                spot.Button.localScale = Vector3.one * EaseOutBack(appear) * HotScale * (on ? 1.12f : 1f) * pick * during;
                 spot.Dot.anchoredPosition = anchor;
-                spot.Dot.localScale = Vector3.one * appear * (on ? 1.3f : 0.9f) * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i)));
+                spot.Dot.localScale = Vector3.one * appear * (on ? 1.3f : 0.9f) * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i))) * (1f - Mathf.Clamp01(_scrub * 4f));
                 Vector2 d = anchor - at;
                 float gap = 70f * HotScale;
-                float length = Mathf.Max(0f, d.magnitude - gap) * Mathf.Clamp01(appear * 1.4f);
+                float length = Mathf.Max(0f, d.magnitude - gap) * Mathf.Clamp01(appear * 1.4f) * during;
                 spot.Line.anchoredPosition = at + d.normalized * gap;
                 spot.Line.sizeDelta = new Vector2(length, on ? 9f : 5f);
                 spot.Line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
                 bool active = Fits(i);
                 if (spot.Root.gameObject.activeSelf != active) spot.Root.gameObject.SetActive(active);
             }
-            // The other vehicles peek in above and below (not while a part is open); their arrow nods now and then.
-            foreach (var (peek, side) in new[] { (peekLeft, 1f), (peekRight, -1f) })
+            // The other vehicles peek in above and below. The one the change goes to grows out of its spot into the
+            // middle (to the main car's size); the one on the far side fades away. They and their arrows fade in and
+            // out smoothly.
+            foreach (var (peek, step) in new[] { (peekLeft, -1), (peekRight, 1) })
             {
-                if (!peek.gameObject.activeSelf) continue;
-                float show = Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.9f, t - _pageAt - PageSeconds) / 0.25f) * 0.8f;
-                peek.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, show);
-                peek.GetComponent<CanvasGroup>().alpha = show;
-                float nudge = Mathf.Repeat(t, 3.5f) < 0.5f ? Mathf.Sin(Mathf.Repeat(t, 3.5f) / 0.5f * Mathf.PI) * 14f : 0f;
+                if (!_peekHome.ContainsKey(peek)) _peekHome[peek] = peek.anchoredPosition;
+                bool exists = Neighbour(step) >= 0;
+                if (!exists) { peek.gameObject.SetActive(false); continue; }
+                peek.gameObject.SetActive(true);
+                var group = peek.GetComponent<CanvasGroup>() ?? peek.gameObject.AddComponent<CanvasGroup>();
+                bool coming = _scrubDir == step;
+                float grow = coming ? k : 0f;
+                peek.anchoredPosition = Vector2.Lerp(_peekHome[peek], middle, grow) + new Vector2(0f, Mathf.Sin(t * 1.4f) * 8f * grow);
+                peek.localScale = Vector3.one * Mathf.Lerp(1f, mainScale / PeekScale, grow);
+                float want = Mathf.Clamp01((t - _openedAt - 0.8f) / 0.3f) * (coming || _scrubDir == 0 ? 1f : 1f - k);
+                group.alpha = coming ? Mathf.Max(group.alpha, want) : Mathf.Lerp(group.alpha, want, 1f - Mathf.Exp(-12f * dt));
                 var arrow = peek.Find("Arrow");
-                arrow.localPosition = new Vector3(0f, side * (110f + nudge), 0f);
+                float nudge = Mathf.Repeat(t, 3.5f) < 0.5f ? Mathf.Sin(Mathf.Repeat(t, 3.5f) / 0.5f * Mathf.PI) * 14f : 0f;
+                arrow.localPosition = new Vector3(0f, -step * (175f + nudge), 0f);
+                var arrowImage = arrow.GetComponent<UnityEngine.UI.Image>();
+                arrow.localScale = Vector3.one / peek.localScale.x; // (it doesn't grow with its vehicle)
+                float gone = 1f - Mathf.Clamp01(_scrub * 5f);
+                var c = arrowImage.color; c.a = Mathf.Min(gone, Mathf.Lerp(c.a, gone, 1f - Mathf.Exp(-8f * dt))); arrowImage.color = c;
             }
 
             // The part being changed pulses.
@@ -742,7 +808,7 @@ namespace SomeGame.UI
                 Vector2 to = carRoot.anchoredPosition + Anchors[_focus] * carRoot.localScale.x;
                 _highlightAt = t - _switchAt < 0.02f && t - _focusAt < 0.02f ? to : Vector2.Lerp(_highlightAt, to, 1f - Mathf.Exp(-14f * dt));
                 highlight.rectTransform.anchoredPosition = _highlightAt;
-                highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * Mathf.Clamp01((t - _openedAt - 0.7f) / 0.3f);
+                highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.7f, t - _pageAt - 0.25f) / 0.3f) * (1f - Mathf.Clamp01(_scrub * 4f));
             }
 
             // The tray: slides up with the cards popping in one after another.
