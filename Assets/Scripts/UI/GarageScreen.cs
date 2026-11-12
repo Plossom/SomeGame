@@ -49,7 +49,6 @@ namespace SomeGame.UI
         [Header("The strip of chips")]
         [SerializeField] RectTransform tray;
         [Tooltip("A row of round chips (a divider per cup): tap one and the car wears it at once.")]
-        [SerializeField] UnityEngine.UI.ScrollRect strip;
         [SerializeField] RectTransform stripContent, tileTemplate, dividerTemplate;
         [SerializeField] TMP_Text trayCount, itemName, itemBlurb;
         [Tooltip("The row of part tabs at the top of the tray: jump straight to another part.")]
@@ -94,7 +93,7 @@ namespace SomeGame.UI
 
         readonly List<Hotspot> _hotspots = new();
         readonly List<RectTransform> _badges = new();
-        const float BadgeSpacing = 140f;
+        const float BadgeSpacing = 154f;
         readonly List<RectTransform> _tiles = new(), _cards = new();
         readonly List<Garage.Part> _shown = new(); // the part on each tile (null: a mystery slot)
         readonly List<(RectTransform rt, UnityEngine.UI.Image image, Vector2 velocity, float spin, float born)> _sparks = new();
@@ -394,17 +393,7 @@ namespace SomeGame.UI
                 _shown.Add(part);
             }
             _browsing = equippedAt;
-            Canvas.ForceUpdateCanvases();
             UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(stripContent);
-            if (_tiles.Count > 0)
-            {
-                // The card you have on in view (centred if it can be).
-                float scale = stripContent.localScale.x;
-                float x = -_tiles[equippedAt].anchoredPosition.x * scale + strip.viewport.rect.width * 0.5f;
-                float max = Mathf.Max(0f, stripContent.rect.width * scale - strip.viewport.rect.width);
-                stripContent.anchoredPosition = new Vector2(Mathf.Clamp(x, -max, 0f), 0f);
-            }
-            strip.velocity = Vector2.zero;
             Browse(equippedAt);
         }
 

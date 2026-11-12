@@ -450,12 +450,12 @@ namespace SomeGame.EditorTools
             var rivals = SquareButton(safe, "Rivals", new Vector2(1f, 1f), new Vector2(-48f, -190f), "IconCards", 124f);
             // The vehicles under GARAGE: a bar of badges (like the race deck's bar of race numbers), each with its
             // vehicle in it; the ring glides along to the one on show.
-            var vehicleBar = At("VehicleBar", safe, new Vector2(0.5f, 1f), new Vector2(0f, -180f), new Vector2(300f, 150f));
+            var vehicleBar = At("VehicleBar", safe, new Vector2(0.5f, 1f), new Vector2(0f, -178f), new Vector2(330f, 164f));
             Img(vehicleBar, "Round", Theme.Ink, sliced: true, raycast: true);
-            var vehicleBadge = At("Vehicle", vehicleBar, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f));
+            var vehicleBadge = At("Vehicle", vehicleBar, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f));
             vehicleBadge.pivot = new Vector2(0.5f, 0.5f);
-            var badgeFace = Img(At("Face", vehicleBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f)), "Circle", Theme.Cream, raycast: true);
-            var badgeCar = At("Car", vehicleBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(50f, 87.5f));
+            var badgeFace = Img(At("Face", vehicleBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(134f, 134f)), "Circle", Theme.Cream, raycast: true);
+            var badgeCar = At("Car", vehicleBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(64f, 112f));
             badgeCar.pivot = new Vector2(0.5f, 0.5f);
             var bBody = Img(Stretch("Body", badgeCar), "Car", Theme.Orange); bBody.preserveAspect = false;
             var bDetails = Img(Stretch("Details", badgeCar), "CarDetails", Color.white); bDetails.preserveAspect = false;
@@ -464,7 +464,7 @@ namespace SomeGame.EditorTools
             var badgeButton = vehicleBadge.gameObject.AddComponent<Button>();
             badgeButton.targetGraphic = badgeFace; badgeButton.transition = Selectable.Transition.None;
             vehicleBadge.gameObject.AddComponent<ButtonFeedback>();
-            var vehicleRing = At("Ring", vehicleBar, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(148f, 148f));
+            var vehicleRing = At("Ring", vehicleBar, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(164f, 164f));
             vehicleRing.pivot = new Vector2(0.5f, 0.5f);
             Img(vehicleRing, "Ring", Theme.Amber);
 
@@ -567,10 +567,7 @@ namespace SomeGame.EditorTools
             // what it is (or what it takes).
             var tray = At("Tray", safe, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(1170f, 600f));
             tray.pivot = new Vector2(0.5f, 0f);
-            var trayShadow = Stretch("Shadow", tray); trayShadow.offsetMin = new Vector2(0f, -60f); trayShadow.offsetMax = new Vector2(0f, 14f);
-            Img(trayShadow, "Round", Shade(Theme.Ink, 0.45f), sliced: true);
-            var trayFace = Stretch("Face", tray); trayFace.offsetMin = new Vector2(0f, -60f);
-            Img(trayFace, "Round", Theme.Cream, sliced: true, raycast: true);
+            // (No panel behind the cards: they lie straight on the garage.)
             // The part tabs: jump straight to another part (the one open orange, with its name).
             // The part tabs at the top of the screen, under the page's name (always there).
             var tabs = At("Tabs", safe, new Vector2(0.5f, 1f), new Vector2(0f, -290f), new Vector2(816f, 170f));
@@ -606,22 +603,17 @@ namespace SomeGame.EditorTools
             done.gameObject.AddComponent<ButtonFeedback>();
             done.gameObject.SetActive(false); // always choosing: the cross closes the garage
 
-            // The cards: one row scrolling sideways.
-            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(1050f, 540f)); // (a margin at the sides)
+            // The cards: all at once, four to a row (the first row filled first).
+            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(1050f, 600f)); // (a margin at the sides)
             viewport.pivot = new Vector2(0.5f, 1f);
-            Img(viewport, null, new Color(0f, 0f, 0f, 0f), raycast: true);
-            viewport.gameObject.AddComponent<RectMask2D>();
-            var content = Rt("Content", viewport);
-            content.anchorMin = new Vector2(0f, 0f); content.anchorMax = new Vector2(0f, 1f); content.pivot = new Vector2(0f, 0.5f);
-            content.sizeDelta = Vector2.zero;
-            content.localScale = Vector3.one * 0.95f; // (the layout works in the unscaled size)
-            var row = content.gameObject.AddComponent<HorizontalLayoutGroup>();
-            row.spacing = 26f; row.padding = new RectOffset(32, 32, 0, 0); row.childAlignment = TextAnchor.MiddleLeft;
-            row.childControlWidth = row.childControlHeight = false; row.childForceExpandWidth = row.childForceExpandHeight = false;
-            content.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            var strip = viewport.gameObject.AddComponent<ScrollRect>();
-            strip.content = content; strip.viewport = viewport; strip.horizontal = true; strip.vertical = false;
-            strip.movementType = ScrollRect.MovementType.Elastic; strip.decelerationRate = 0.12f;
+            var content = Stretch("Content", viewport);
+            content.pivot = new Vector2(0.5f, 1f);
+            content.localScale = Vector3.one * 0.86f; // (the grid works in the unscaled size)
+            var grid = content.gameObject.AddComponent<GridLayoutGroup>();
+            grid.cellSize = new Vector2(240f, 300f); grid.spacing = new Vector2(26f, 30f);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount; grid.constraintCount = 4;
+            grid.startCorner = GridLayoutGroup.Corner.UpperLeft; grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+            grid.childAlignment = TextAnchor.UpperCenter; grid.padding = new RectOffset(0, 0, 14, 0);
             var divider = At("Divider", content, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(84f, 250f));
             divider.pivot = new Vector2(0.5f, 0.5f);
             Img(divider, "Round", Theme.Ink, sliced: true);
@@ -793,7 +785,7 @@ namespace SomeGame.EditorTools
                 ("vehicleBar", vehicleBar), ("vehicleBadge", vehicleBadge), ("vehicleRing", vehicleRing), ("peekLeft", peekLeft), ("peekRight", peekRight), ("outgoing", outgoing), ("outgoingCar", outgoingCar),
                 ("carRoot", carRoot), ("car", vehicle), ("podium", podium), ("podiumRing", podiumRing), ("burst", burst), ("highlight", highlight),
                 ("carButton", carButton), ("sparkle", Sprite("Sparkle")), ("hotspotTemplate", spot), ("hint", hint), ("buildName", buildName),
-                ("tray", tray), ("strip", strip), ("stripContent", content), ("tileTemplate", tile), ("dividerTemplate", divider),
+                ("tray", tray), ("stripContent", content), ("tileTemplate", tile), ("dividerTemplate", divider),
                 ("tabTemplate", tabT), ("trayCount", trayCount), ("itemName", itemName), ("itemBlurb", itemBlurb), ("doneButton", doneButton),
                 ("rivalsPanel", rivalsHost.gameObject), ("rivalsGrid", rivalsGrid), ("cardTemplate", card), ("rivalsClose", rClose), ("rivalsCount", rivalsCount),
                 ("detail", detail.gameObject), ("detailClose", dClose), ("detailPainting", painting), ("detailName", dName), ("detailTitle", dTitle),
