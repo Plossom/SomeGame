@@ -47,16 +47,16 @@ namespace SomeGame.Race
         // its gold. "Nothing" and the plain tyre smoke are there for every vehicle.
         public static readonly Part[] Parts =
         {
-            new(V, Slot.Paint, "orange", "SUNSET ORANGE", "The classic.", hex: "#FF7A1A"),
-            new(V, Slot.Paint, "red", "CHERRY RED", "Fast by colour alone.", Unlock.Stars, 3, hex: "#E5383B"),
-            new(V, Slot.Paint, "green", "RACING GREEN", "Old-school cool.", Unlock.Stars, 7, hex: "#2E9E5B"),
-            new(V, Slot.Paint, "grape", "GRAPE", "Juicy.", Unlock.Stars, 12, hex: "#7B4FD1"),
-            new(V, Slot.Paint, "gold", "SOLID GOLD", "Champions only.", Unlock.Stars, 20, hex: "#E8B923"),
-            new(W, Slot.Paint, "frost", "FROST BLUE", "Cold and crisp.", hex: "#5BB8F0"),
-            new(W, Slot.Paint, "blue", "OCEAN BLUE", "Deep and calm. Until GO.", Unlock.Stars, 2, hex: "#1F7BE0"),
-            new(W, Slot.Paint, "midnight", "MIDNIGHT", "For racing after dark.", Unlock.Stars, 8, hex: "#2B2D35"),
-            new(W, Slot.Paint, "pearl", "PEARL WHITE", "Fresh snow shine.", Unlock.Stars, 14, hex: "#F4F2EC"),
-            new(W, Slot.Paint, "berry", "WINTER BERRY", "A splash of red in the snow.", Unlock.Stars, 20, hex: "#C2304A"),
+            new(V, Slot.Paint, "orange", "ORANGE", "The classic.", hex: "#FF7A1A"),
+            new(V, Slot.Paint, "red", "RED", "Fast by colour alone.", Unlock.Stars, 3, hex: "#E5383B"),
+            new(V, Slot.Paint, "green", "GREEN", "Old-school cool.", Unlock.Stars, 7, hex: "#2E9E5B"),
+            new(V, Slot.Paint, "grape", "PURPLE", "Juicy.", Unlock.Stars, 12, hex: "#7B4FD1"),
+            new(V, Slot.Paint, "gold", "GOLD", "Champions only.", Unlock.Stars, 20, hex: "#E8B923"),
+            new(W, Slot.Paint, "frost", "LIGHT BLUE", "Cold and crisp.", hex: "#5BB8F0"),
+            new(W, Slot.Paint, "blue", "BLUE", "Deep and calm. Until GO.", Unlock.Stars, 2, hex: "#1F7BE0"),
+            new(W, Slot.Paint, "midnight", "BLACK", "For racing after dark.", Unlock.Stars, 8, hex: "#2B2D35"),
+            new(W, Slot.Paint, "pearl", "WHITE", "Fresh snow shine.", Unlock.Stars, 14, hex: "#F4F2EC"),
+            new(W, Slot.Paint, "berry", "DARK RED", "A splash of red in the snow.", Unlock.Stars, 20, hex: "#C2304A"),
 
             new(V, Slot.Body, "buggy", "DUNE BUGGY", "Roll cage, big tyres, no roof. Pure fun."),
             new(V, Slot.Body, "rally", "RALLY HATCH", "Wide arches and a roof over your head.", Unlock.Stars, 5),

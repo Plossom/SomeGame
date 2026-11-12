@@ -457,7 +457,7 @@ namespace SomeGame.EditorTools
 
             // The stage: everything placed from its middle.
             var stage = Stretch("Stage", safe);
-            var podium = At("Podium", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(800f, 800f));
+            var podium = At("Podium", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 70f), new Vector2(800f, 800f));
             podium.pivot = new Vector2(0.5f, 0.5f);
             Img(At("Glow", podium, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1100f, 1100f)), "Glow", Theme.WithAlpha(Theme.Amber, 0.22f)).rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Img(Stretch("Floor", podium), "Circle", Shade(Theme.Ink, 0.82f));
@@ -468,7 +468,7 @@ namespace SomeGame.EditorTools
             Img(podiumRing, "RingDashed", Theme.WithAlpha(Theme.Cream, 0.35f));
             var burst = Img(At("Burst", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(640f, 640f)), "Ring", Theme.Amber);
             burst.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            var carRoot = At("Car", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(420f, 735f));
+            var carRoot = At("Car", stage, new Vector2(0.5f, 0.5f), new Vector2(0f, 70f), new Vector2(420f, 735f));
             carRoot.pivot = new Vector2(0.5f, 0.5f);
             var carShadow = Img(At("Shadow", carRoot, new Vector2(0.5f, 0.5f), new Vector2(26f, -34f), new Vector2(436f, 760f)), "CarShadow", new Color(0f, 0f, 0f, 0.55f));
             carShadow.preserveAspect = false;
@@ -483,7 +483,7 @@ namespace SomeGame.EditorTools
             // The other vehicles peeking in above and below (tap, or swipe up or down, to go to their page).
             RectTransform PeekAt(string name, float side)
             {
-                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side > 0f ? 730f : -230f), new Vector2(300f, 300f));
+                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side > 0f ? 680f : -280f), new Vector2(300f, 300f));
                 peek.pivot = new Vector2(0.5f, 0.5f);
                 peek.gameObject.AddComponent<CanvasGroup>();
                 var hit = Img(peek, null, new Color(0f, 0f, 0f, 0f), raycast: true);
@@ -593,10 +593,22 @@ namespace SomeGame.EditorTools
             done.gameObject.AddComponent<ButtonFeedback>();
             done.gameObject.SetActive(false); // always choosing: the cross closes the garage
 
-            // The chips: all of them in the tray at once (laid out by the garage: one row, or two when there are many).
+            // The cards: one row scrolling sideways.
             var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(1170f, 540f));
             viewport.pivot = new Vector2(0.5f, 1f);
-            var content = Stretch("Content", viewport);
+            Img(viewport, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+            viewport.gameObject.AddComponent<RectMask2D>();
+            var content = Rt("Content", viewport);
+            content.anchorMin = new Vector2(0f, 0f); content.anchorMax = new Vector2(0f, 1f); content.pivot = new Vector2(0f, 0.5f);
+            content.sizeDelta = Vector2.zero;
+            content.localScale = Vector3.one * 1.15f; // (the layout works in the unscaled size)
+            var row = content.gameObject.AddComponent<HorizontalLayoutGroup>();
+            row.spacing = 26f; row.padding = new RectOffset(34, 34, 0, 0); row.childAlignment = TextAnchor.MiddleLeft;
+            row.childControlWidth = row.childControlHeight = false; row.childForceExpandWidth = row.childForceExpandHeight = false;
+            content.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var strip = viewport.gameObject.AddComponent<ScrollRect>();
+            strip.content = content; strip.viewport = viewport; strip.horizontal = true; strip.vertical = false;
+            strip.movementType = ScrollRect.MovementType.Elastic; strip.decelerationRate = 0.12f;
             var divider = At("Divider", content, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(84f, 250f));
             divider.pivot = new Vector2(0.5f, 0.5f);
             Img(divider, "Round", Theme.Ink, sliced: true);
@@ -606,24 +618,28 @@ namespace SomeGame.EditorTools
             Img(At("Star", dividerStars, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(28f, 28f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0.5f, 1f);
             Txt(At("Count", dividerStars, new Vector2(0.5f, 0f), new Vector2(0f, -6f), new Vector2(90f, 30f)), "6/24", 24, Color.white, _black);
 
-            // A chip: the thing on a round face (a big swatch, the car wearing it, or its icon), its name below;
-            // the one you have on in an orange ring with a tick; locked ones dimmed, a lock and what they take.
-            var tile = At("Chip", content, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(240f, 330f));
+            // A card: the thing on a round face (a big swatch, the car wearing it, or its icon) on a white card, its
+            // name under it; the one you have on in an orange frame with a tick on the corner; locked ones grey, the
+            // face dimmed, a lock on it and what they take on a pill along the bottom.
+            var tile = At("Chip", content, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(240f, 300f));
             tile.pivot = new Vector2(0.5f, 0.5f);
             var tileHit = Img(tile, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             var tileButton = tile.gameObject.AddComponent<Button>();
             tileButton.targetGraphic = tileHit; tileButton.transition = Selectable.Transition.None;
-            var equipped = At("Equipped", tile, new Vector2(0.5f, 1f), new Vector2(0f, 8f), new Vector2(248f, 248f));
-            Img(equipped, "Ring", Theme.Orange);
-            Img(At("Shadow", tile, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(216f, 216f)), "Circle", Shade(Theme.CreamDark, 0.8f));
-            var chipFace = At("Face", tile, new Vector2(0.5f, 1f), new Vector2(0f, -10f), new Vector2(216f, 216f));
+            var equipped = Stretch("Equipped", tile); equipped.offsetMin = new Vector2(-10f, -18f); equipped.offsetMax = new Vector2(10f, 10f);
+            Img(equipped, "Round", Theme.Orange, sliced: true);
+            var chipShadow = Stretch("Shadow", tile); chipShadow.offsetMin = new Vector2(0f, -8f); chipShadow.offsetMax = new Vector2(0f, -8f);
+            Img(chipShadow, "Round", Shade(Theme.CreamDark, 0.75f), sliced: true);
+            Img(Stretch("Card", tile), "Round", Color.white, sliced: true);
+            var chipFace = At("Face", tile, new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(168f, 168f));
             Img(chipFace, "Circle", Theme.Ink);
-            var preview = At("Preview", tile, new Vector2(0.5f, 1f), new Vector2(0f, -118f), new Vector2(216f, 216f));
-            preview.pivot = new Vector2(0.5f, 0.5f); preview.anchoredPosition = new Vector2(0f, -118f);
+            var preview = At("Preview", tile, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(216f, 216f));
+            preview.pivot = new Vector2(0.5f, 0.5f); preview.anchoredPosition = new Vector2(0f, -112f);
+            preview.localScale = Vector3.one * (168f / 216f);
             var swatch = At("Swatch", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(216f, 216f));
             swatch.pivot = new Vector2(0.5f, 0.5f);
             Img(Stretch("Outline", swatch), "Circle", new Color(0.06f, 0.07f, 0.08f));
-            Img(At("Color", swatch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(194f, 194f)), "Circle", Color.white);
+            Img(At("Color", swatch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(190f, 190f)), "Circle", Color.white);
             Img(At("Shine", swatch, new Vector2(0.5f, 0.5f), new Vector2(-42f, 46f), new Vector2(56f, 56f)), "Circle", new Color(1f, 1f, 1f, 0.45f));
             var mini = At("Car", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104f, 182f));
             mini.pivot = new Vector2(0.5f, 0.5f); mini.localRotation = Quaternion.Euler(0f, 0f, -20f);
@@ -634,24 +650,24 @@ namespace SomeGame.EditorTools
             iconRt.pivot = new Vector2(0.5f, 0.5f);
             Img(At("Pic", iconRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(148f, 148f)), "Sparkle", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Txt(At("Question", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(210f, 210f)), "?", 150, Theme.Amber, _black);
-            var veil = At("Veil", tile, new Vector2(0.5f, 1f), new Vector2(0f, -10f), new Vector2(216f, 216f));
-            Img(veil, "Circle", Theme.WithAlpha(Theme.Ink, 0.55f));
-            var tileLock = At("Lock", tile, new Vector2(0.5f, 1f), new Vector2(0f, -110f), new Vector2(76f, 76f));
-            tileLock.pivot = new Vector2(0.5f, 0.5f); tileLock.anchoredPosition = new Vector2(0f, -110f);
+            var veil = At("Veil", tile, new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(168f, 168f));
+            Img(veil, "Circle", Theme.WithAlpha(Theme.Ink, 0.4f));
+            var tileLock = At("Lock", tile, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(64f, 64f));
+            tileLock.pivot = new Vector2(0.5f, 0.5f); tileLock.anchoredPosition = new Vector2(0f, -112f);
             Img(tileLock, "IconLock", Theme.Cream);
-            var need = At("Need", tile, new Vector2(0.5f, 1f), new Vector2(0f, -196f), new Vector2(190f, 50f));
+            var need = At("Need", tile, new Vector2(0.5f, 0f), new Vector2(0f, -14f), new Vector2(200f, 56f));
             Img(need, "Pill", Theme.Ink, sliced: true);
-            Img(At("Star", need, new Vector2(0f, 0.5f), new Vector2(12f, 0f), new Vector2(30f, 30f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
-            Img(At("Face", need, new Vector2(0f, 0.5f), new Vector2(4f, 0f), new Vector2(38f, 38f)), "Circle", Color.white).rectTransform.pivot = new Vector2(0f, 0.5f);
-            var needText = Txt(At("Text", need, new Vector2(0.5f, 0.5f), new Vector2(14f, 1f), new Vector2(120f, 40f)), "14", 26, Theme.Cream, _black);
-            needText.enableAutoSizing = true; needText.fontSizeMin = 14; needText.fontSizeMax = 26;
-            var check = At("Check", tile, new Vector2(0.5f, 1f), new Vector2(82f, -26f), new Vector2(66f, 66f));
-            check.pivot = new Vector2(0.5f, 0.5f);
+            Img(At("Star", need, new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(34f, 34f)), "IconStar", Theme.Amber).rectTransform.pivot = new Vector2(0f, 0.5f);
+            Img(At("Face", need, new Vector2(0f, 0.5f), new Vector2(6f, 0f), new Vector2(44f, 44f)), "Circle", Color.white).rectTransform.pivot = new Vector2(0f, 0.5f);
+            var needText = Txt(At("Text", need, new Vector2(0.5f, 0.5f), new Vector2(16f, 1f), new Vector2(130f, 46f)), "14", 32, Theme.Cream, _black);
+            needText.enableAutoSizing = true; needText.fontSizeMin = 16; needText.fontSizeMax = 32;
+            var check = At("Check", tile, new Vector2(1f, 1f), new Vector2(-6f, 6f), new Vector2(66f, 66f));
+            check.pivot = new Vector2(0.5f, 0.5f); check.anchoredPosition = new Vector2(-6f, 6f);
             Img(check, "Circle", Theme.Orange);
-            Img(At("Icon", check, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(32f, 32f)), "IconCheck", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            var tileName = Txt(At("Name", tile, new Vector2(0.5f, 0f), new Vector2(0f, 2f), new Vector2(236f, 78f)), "RACING STRIPES", 32, Theme.Ink, _black);
-            tileName.textWrappingMode = TextWrappingModes.Normal; tileName.enableAutoSizing = true; tileName.fontSizeMin = 26; tileName.fontSizeMax = 40; // (the chips are drawn smaller)
-            tileName.verticalAlignment = VerticalAlignmentOptions.Top;
+            Img(At("Icon", check, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(34f, 34f)), "IconCheck", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            var tileName = Txt(At("Name", tile, new Vector2(0.5f, 1f), new Vector2(0f, -204f), new Vector2(228f, 64f)), "RED", 50, Theme.Ink, _condItalic);
+            tileName.enableAutoSizing = true; tileName.fontSizeMin = 26; tileName.fontSizeMax = 50;
+            tileName.fontStyle = FontStyles.Bold;
 
             var itemName = Txt(At("ItemName", tray, new Vector2(0.5f, 0f), new Vector2(0f, 108f), new Vector2(1060f, 66f)), "SUNSET ORANGE", 52, Theme.Ink, _black);
             var itemBlurb = Txt(At("ItemBlurb", tray, new Vector2(0.5f, 0f), new Vector2(0f, 62f), new Vector2(1000f, 46f)), "The classic.", 34, Theme.InkSoft, _semi);
@@ -764,7 +780,7 @@ namespace SomeGame.EditorTools
                 ("pageTitle", pageTitle), ("peekLeft", peekLeft), ("peekRight", peekRight), ("outgoing", outgoing), ("outgoingCar", outgoingCar),
                 ("carRoot", carRoot), ("car", vehicle), ("podium", podium), ("podiumRing", podiumRing), ("burst", burst), ("highlight", highlight),
                 ("carButton", carButton), ("sparkle", Sprite("Sparkle")), ("hotspotTemplate", spot), ("hint", hint), ("buildName", buildName),
-                ("tray", tray), ("stripContent", content), ("tileTemplate", tile), ("dividerTemplate", divider),
+                ("tray", tray), ("strip", strip), ("stripContent", content), ("tileTemplate", tile), ("dividerTemplate", divider),
                 ("tabTemplate", tabT), ("trayCount", trayCount), ("itemName", itemName), ("itemBlurb", itemBlurb), ("doneButton", doneButton),
                 ("rivalsPanel", rivalsHost.gameObject), ("rivalsGrid", rivalsGrid), ("cardTemplate", card), ("rivalsClose", rClose), ("rivalsCount", rivalsCount),
                 ("detail", detail.gameObject), ("detailClose", dClose), ("detailPainting", painting), ("detailName", dName), ("detailTitle", dTitle),

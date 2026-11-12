@@ -50,6 +50,7 @@ namespace SomeGame.UI
         [Header("The strip of chips")]
         [SerializeField] RectTransform tray;
         [Tooltip("A row of round chips (a divider per cup): tap one and the car wears it at once.")]
+        [SerializeField] UnityEngine.UI.ScrollRect strip;
         [SerializeField] RectTransform stripContent, tileTemplate, dividerTemplate;
         [SerializeField] TMP_Text trayCount, itemName, itemBlurb;
         [Tooltip("The row of part tabs at the top of the tray: jump straight to another part.")]
@@ -69,13 +70,12 @@ namespace SomeGame.UI
 
         const float Rise = 130f, FocusScale = 0.8f, HotScale = 0.8f;
         // The other vehicles' peek spots (as wide as the car shown there) and how long a page change takes.
-        static readonly Vector2 PeekAbove = new(0f, 730f), PeekBelow = new(0f, -230f);
+        static readonly Vector2 PeekAbove = new(0f, 680f), PeekBelow = new(0f, -280f);
         const float PeekGap = 480f;          // from the car to a peek spot: a full swipe
         const float PeekCarWidth = 150f;     // the car in a peek (the main car is 420 wide)
         const float PeekScale = PeekCarWidth / 420f;
         float _scrub, _scrubTarget, _dragVelocity;
         int _scrubDir, _scrubDirWas;
-        float _chipScale = 1f;
         bool _snapping; // past half way: the change goes through quickly by itself
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _scrubPlan;
         readonly Dictionary<RectTransform, Vector2> _peekHome = new(); // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
@@ -378,31 +378,18 @@ namespace SomeGame.UI
                 _shown.Add(part);
             }
             _browsing = equippedAt;
-            LayOutChips();
+            Canvas.ForceUpdateCanvases();
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(stripContent);
+            if (_tiles.Count > 0)
+            {
+                // The card you have on in view (centred if it can be).
+                float scale = stripContent.localScale.x;
+                float x = -_tiles[equippedAt].anchoredPosition.x * scale + strip.viewport.rect.width * 0.5f;
+                float max = Mathf.Max(0f, stripContent.rect.width * scale - strip.viewport.rect.width);
+                stripContent.anchoredPosition = new Vector2(Mathf.Clamp(x, -max, 0f), 0f);
+            }
+            strip.velocity = Vector2.zero;
             Browse(equippedAt);
-        }
-
-        // All the chips fit in the tray at once: in one row, or two when that lets them be bigger; each row centred.
-        void LayOutChips()
-        {
-            const float chipW = 240f, chipH = 330f, gap = 22f, margin = 30f;
-            var area = stripContent.rect;
-            int n = _tiles.Count, rows = 1;
-            _chipScale = 0f;
-            for (int r = 1; r <= 2 && r <= n; r++)
-            {
-                int c = Mathf.CeilToInt(n / (float)r);
-                float fit = Mathf.Min(1.15f, (area.width - 2f * margin - (c - 1) * gap) / (c * chipW), area.height / (r * chipH));
-                if (fit > _chipScale + 0.02f) { _chipScale = fit; rows = r; }
-            }
-            int cols = Mathf.CeilToInt(n / (float)rows);
-            for (int i = 0; i < n; i++)
-            {
-                int row = i / cols, col = i % cols, inRow = Mathf.Min(cols, n - row * cols);
-                var tile = _tiles[i];
-                tile.anchorMin = tile.anchorMax = tile.pivot = new Vector2(0.5f, 0.5f);
-                tile.anchoredPosition = new Vector2((col - (inRow - 1) * 0.5f) * (chipW * _chipScale + gap), ((rows - 1) * 0.5f - row) * chipH * _chipScale);
-            }
         }
 
         // The chip tapped last: the car wears it (or tries it on, if it is still locked), its name and what it is
@@ -544,6 +531,7 @@ namespace SomeGame.UI
                 question.SetActive(false);
             }
             tile.Find("Veil").gameObject.SetActive(!open);
+            tile.Find("Card").GetComponent<UnityEngine.UI.Image>().color = open ? Color.white : new Color(0.79f, 0.8f, 0.8f);
             tile.Find("Lock").gameObject.SetActive(!open && !mystery);
             tile.Find("Equipped").gameObject.SetActive(!mystery && part == equipped);
             tile.Find("Check").gameObject.SetActive(!mystery && part == equipped);
@@ -815,7 +803,9 @@ namespace SomeGame.UI
                 var group = peek.GetComponent<CanvasGroup>() ?? peek.gameObject.AddComponent<CanvasGroup>();
                 bool coming = _scrubDir == step;
                 float grow = coming ? k : 0f;
-                peek.anchoredPosition = Vector2.Lerp(_peekHome[peek], middle, grow) + new Vector2(0f, Mathf.Sin(t * 1.4f) * 8f * grow);
+                // Waiting in its spot it floats gently up and down (easing in after a change, so nothing jumps).
+                float drift = Mathf.Sin((t - _pageAt) * 1.8f + step) * 12f * Mathf.Clamp01((t - _pageAt) / 0.8f) * (1f - grow);
+                peek.anchoredPosition = Vector2.Lerp(_peekHome[peek], middle, grow) + new Vector2(0f, Mathf.Sin(t * 1.4f) * 8f * grow + drift);
                 peek.localScale = Vector3.one * Mathf.Lerp(1f, mainScale / PeekScale, grow);
                 float want = Mathf.Clamp01((t - _openedAt - 0.8f) / 0.3f) * (coming || _scrubDir == 0 ? 1f : 1f - k);
                 group.alpha = coming ? Mathf.Max(group.alpha, want) : Mathf.Lerp(group.alpha, want, 1f - Mathf.Exp(-12f * dt));
@@ -852,7 +842,7 @@ namespace SomeGame.UI
             for (int i = 0; i < _tiles.Count; i++)
             {
                 float appear = EaseOutBack(Mathf.Clamp01((t - _switchAt - 0.1f - i * 0.035f) / 0.3f));
-                _tiles[i].localScale = Vector3.one * _chipScale * appear * (i == _browsing ? 1.1f + 0.02f * Mathf.Sin(t * 4f) : 1f);
+                _tiles[i].localScale = Vector3.one * appear * (i == _browsing ? 1.1f + 0.02f * Mathf.Sin(t * 4f) : 1f);
                 _tiles[i].localRotation = Quaternion.Euler(0f, 0f, i == _shake ? wobble * 10f : 0f);
             }
 
