@@ -68,7 +68,7 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text detailName, detailTitle, detailBio, detailHome, detailGadget, detailStatus;
         [SerializeField] UnityEngine.UI.Image detailGadgetIcon;
 
-        const float Rise = 130f, FocusScale = 0.8f; // the car with one slot open: a little higher and smaller (the tray below)
+        const float Rise = 130f, FocusScale = 0.8f, HotScale = 0.8f; // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
         static readonly string[] SlotNames = { "PAINT", "BODY", "TOP", "DECAL", "TRAIL", "GADGET" };
         // Where each hotspot sits round the car, and the point of the car its line goes to (car units, car facing up).
         static readonly Vector2[] Spots = { new(-385f, 30f), new(385f, 30f), new(370f, 440f), new(-370f, 440f), new(-330f, -480f), new(330f, -480f) };
@@ -139,6 +139,7 @@ namespace SomeGame.UI
             dividerTemplate.gameObject.SetActive(false);
             outgoing.gameObject.SetActive(false);
             tabTemplate.gameObject.SetActive(false);
+            tabTemplate.parent.gameObject.SetActive(false); // the hotspots round the car choose the part
             for (int i = 0; i < SlotNames.Length; i++)
             {
                 var tab = Instantiate(tabTemplate, tabTemplate.parent);
@@ -192,6 +193,8 @@ namespace SomeGame.UI
             var plan = Theme.RecolorPlan(transform, _palette, to);
             // Not what shows your paint or a part's own colours (the cars, the paint swatches, the trail icons).
             plan.RemoveAll(p => p.graphic.name is "Body" or "Color" or "Pic");
+            // Nor the hotspots: which one is chosen sets their colours (straight in the new cup's).
+            plan.RemoveAll(p => _hotspots.Exists(h => p.graphic.transform == h.Button.Find("Face") || p.graphic.transform == h.Button.Find("Label") || p.graphic == h.Name));
             _palette = to;
             Theme.Use(to); // what the garage colours now from code (tabs, dots, chips...) is in these colours too
             if (instant) { foreach (var (g, _, end) in plan) g.color = end; return; }
@@ -386,7 +389,14 @@ namespace SomeGame.UI
             car.Dress(look);
             buildName.gameObject.SetActive(false);
             hint.gameObject.SetActive(false);
-            for (int i = 0; i < _hotspots.Count; i++) _hotspots[i].Value.text = Garage.Equipped((Garage.Slot)i, _vehicle).Name;
+            for (int i = 0; i < _hotspots.Count; i++)
+            {
+                _hotspots[i].Value.text = Garage.Equipped((Garage.Slot)i, _vehicle).Name;
+                bool on = i == _focus;
+                _hotspots[i].Button.Find("Face").GetComponent<UnityEngine.UI.Image>().color = on ? Theme.Orange : Theme.Ink;
+                _hotspots[i].Name.color = on ? Color.white : Theme.Amber;
+                _hotspots[i].Button.Find("Label").GetComponent<UnityEngine.UI.Image>().color = on ? Theme.OrangeDeep : Theme.WithAlpha(Theme.Ink * 0.6f, 0.95f);
+            }
             for (int i = 0; i < _tabs.Count; i++) _tabs[i].gameObject.SetActive(Fits(i));
             // The page: its name, its dot, the other vehicles peeking in at the sides (in their own setup).
             int page = PageIndex;
@@ -692,20 +702,22 @@ namespace SomeGame.UI
                 var spot = _hotspots[i];
                 float since = Mathf.Min(t - _openedAt - 0.6f, t - _pageAt - 0.3f);
                 float appear = Fits(i) ? Mathf.Clamp01((since - i * 0.06f) / 0.35f) : 0f;
-                float stay = 1f - focus;
+                // Round the car (moving with it), the part being chosen orange and a little bigger.
+                bool on = i == _focus;
+                float pick = on ? 1f + 0.16f * Mathf.Sin(Mathf.Clamp01((t - _switchAt) / 0.3f) * Mathf.PI) : 1f;
                 Vector2 anchor = carRoot.anchoredPosition + Anchors[i] * carRoot.localScale.x;
-                Vector2 home = _carHome + Spots[i];
-                Vector2 at = home + (home - _carHome).normalized * 520f * focus;
+                Vector2 at = carRoot.anchoredPosition + Spots[i] * HotScale;
                 spot.Button.anchoredPosition = at;
-                spot.Button.localScale = Vector3.one * EaseOutBack(appear) * stay * (1f + 0.04f * Mathf.Sin(t * 3f + i));
+                spot.Button.localScale = Vector3.one * EaseOutBack(appear) * HotScale * (on ? 1.12f : 1f) * pick;
                 spot.Dot.anchoredPosition = anchor;
-                spot.Dot.localScale = Vector3.one * appear * stay * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i)));
+                spot.Dot.localScale = Vector3.one * appear * (on ? 1.3f : 0.9f) * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i)));
                 Vector2 d = anchor - at;
-                float length = Mathf.Max(0f, d.magnitude - 70f) * Mathf.Clamp01(appear * 1.4f) * stay;
-                spot.Line.anchoredPosition = at + d.normalized * 70f;
-                spot.Line.sizeDelta = new Vector2(length, spot.Line.sizeDelta.y);
+                float gap = 70f * HotScale;
+                float length = Mathf.Max(0f, d.magnitude - gap) * Mathf.Clamp01(appear * 1.4f);
+                spot.Line.anchoredPosition = at + d.normalized * gap;
+                spot.Line.sizeDelta = new Vector2(length, on ? 9f : 5f);
                 spot.Line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
-                bool active = false; // no overview with hotspots any more: the tabs on top choose the part
+                bool active = Fits(i);
                 if (spot.Root.gameObject.activeSelf != active) spot.Root.gameObject.SetActive(active);
             }
             // The other vehicles peek in above and below (not while a part is open); their arrow nods now and then.
