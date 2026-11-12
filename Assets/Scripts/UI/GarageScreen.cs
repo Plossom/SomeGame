@@ -74,7 +74,9 @@ namespace SomeGame.UI
         const float PeekScale = PeekCarWidth / 420f;
         float _scrub, _scrubTarget, _dragVelocity;
         int _scrubDir, _scrubDirWas;
-        float _landedAt = -10f;
+        float _landedAt = -10f, _armsSpringUntil = -10f;
+        bool _armsToNew;
+        readonly Vector2[] _armEnd = new Vector2[6], _armVelocity = new Vector2[6];
         bool _snapping; // past half way: the change goes through quickly by itself
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _scrubPlan;
         readonly Dictionary<RectTransform, Vector2> _peekHome = new(); // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
@@ -800,27 +802,46 @@ namespace SomeGame.UI
             burst.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.5f, 1.9f, 1f - (1f - ring) * (1f - ring));
             burst.color = Theme.WithAlpha(Theme.Amber, 0.85f * (1f - ring));
 
-            // The hotspots: drawn out one after another after the drop; flying off when one is chosen.
+            // The hotspots: drawn out one after another after the drop. The buttons stay put round the middle; their
+            // arms hold on to the car. On a vehicle change they hold the old one until half way, then let go and
+            // snap over (springing a little) to the vehicle coming in, following it into the middle.
+            bool toNew = _scrubDir != 0 && (_snapping || k >= 0.5f);
+            if (toNew != _armsToNew) { _armsToNew = toNew; _armsSpringUntil = t + 0.5f; }
+            Vector2 holdAt = carRoot.anchoredPosition;
+            float holdScale = carRoot.localScale.x;
+            if (toNew)
+            {
+                var coming = _scrubDir < 0 ? peekLeft : peekRight;
+                holdAt = Vector2.Lerp(_peekHome.TryGetValue(coming, out var home) ? home : coming.anchoredPosition, middle, k);
+                holdScale = Mathf.Lerp(PeekScale, mainScale, k);
+            }
+            bool spring = t < _armsSpringUntil;
             for (int i = 0; i < _hotspots.Count; i++)
             {
                 var spot = _hotspots[i];
-                float since = Mathf.Min(t - _openedAt - 0.6f, t - _pageAt + 0.05f);
-                float appear = Fits(i) ? Mathf.Clamp01((since - i * 0.06f) / 0.35f) : 0f;
-                // Round the car (moving with it), the part being chosen orange and a little bigger.
+                float appear = Fits(i) ? Mathf.Clamp01((t - _openedAt - 0.6f - i * 0.06f) / 0.35f) : 0f;
+                // The part being chosen orange and a little bigger.
                 bool on = i == _focus;
                 float pick = on ? 1f + 0.16f * Mathf.Sin(Mathf.Clamp01((t - _switchAt) / 0.3f) * Mathf.PI) : 1f;
-                Vector2 anchor = carRoot.anchoredPosition + Anchors[i] * carRoot.localScale.x;
-                Vector2 at = carRoot.anchoredPosition + Spots[i] * HotScale * (carRoot.localScale.x / FocusScale);
+                Vector2 target = holdAt + Anchors[i] * holdScale;
+                if (spring)
+                {
+                    _armVelocity[i] += (target - _armEnd[i]) * 520f * dt;
+                    _armVelocity[i] *= Mathf.Exp(-20f * dt);
+                    _armEnd[i] += _armVelocity[i] * dt;
+                }
+                else { _armEnd[i] = target; _armVelocity[i] = Vector2.zero; }
+                Vector2 anchor = _armEnd[i];
+                Vector2 at = middle + Spots[i] * HotScale;
                 spot.Button.anchoredPosition = at;
-                float during = carRoot.localScale.x / FocusScale; // they stay on the car (the spider), shrinking with it
-                spot.Button.localScale = Vector3.one * EaseOutBack(appear) * HotScale * (on ? 1.12f : 1f) * pick * during;
+                spot.Button.localScale = Vector3.one * EaseOutBack(appear) * HotScale * (on ? 1.12f : 1f) * pick;
                 spot.Dot.anchoredPosition = anchor;
-                spot.Dot.localScale = Vector3.one * appear * (on ? 1.3f : 0.9f) * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i))) * during;
+                spot.Dot.localScale = Vector3.one * appear * (on ? 1.3f : 0.9f) * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i)));
                 Vector2 d = anchor - at;
                 float gap = 70f * HotScale;
-                float length = Mathf.Max(0f, d.magnitude - gap * during) * Mathf.Clamp01(appear * 1.4f);
-                spot.Line.anchoredPosition = at + d.normalized * gap * during;
-                spot.Line.sizeDelta = new Vector2(length, (on ? 9f : 5f) * Mathf.Lerp(0.6f, 1f, during));
+                float length = Mathf.Max(0f, d.magnitude - gap) * Mathf.Clamp01(appear * 1.4f);
+                spot.Line.anchoredPosition = at + d.normalized * gap;
+                spot.Line.sizeDelta = new Vector2(length, on ? 9f : 5f);
                 spot.Line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
                 bool active = Fits(i);
                 if (spot.Root.gameObject.activeSelf != active) spot.Root.gameObject.SetActive(active);
@@ -864,10 +885,10 @@ namespace SomeGame.UI
             highlight.gameObject.SetActive(_focus >= 0);
             if (_focus >= 0)
             {
-                Vector2 to = carRoot.anchoredPosition + Anchors[_focus] * carRoot.localScale.x;
-                _highlightAt = t - _switchAt < 0.02f && t - _focusAt < 0.02f ? to : Vector2.Lerp(_highlightAt, to, 1f - Mathf.Exp(-14f * dt));
+                Vector2 to = _armEnd[_focus]; // on the end of its arm
+                _highlightAt = (t - _switchAt < 0.02f && t - _focusAt < 0.02f) || spring ? to : Vector2.Lerp(_highlightAt, to, 1f - Mathf.Exp(-14f * dt));
                 highlight.rectTransform.anchoredPosition = _highlightAt;
-                highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.7f, t - _pageAt - 0.1f) / 0.3f) * carRoot.localScale.x / FocusScale;
+                highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * Mathf.Clamp01((t - _openedAt - 0.7f) / 0.3f) * Mathf.Lerp(0.5f, 1f, Mathf.Clamp01(holdScale / mainScale));
             }
 
             // The tray: slides up with the cards popping in one after another.
