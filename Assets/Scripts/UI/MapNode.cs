@@ -190,7 +190,7 @@ namespace SomeGame.UI
             (captionRoot != null ? captionRoot : caption.gameObject).SetActive(!string.IsNullOrEmpty(captionText));
             caption.text = captionText;
 
-            selection.SetActive(selected && !hidden);
+            selection.SetActive(false); // (no ring round the selected race: the race deck shows which it is)
             _targetScale = selected ? 1.15f : hidden ? 0.8f : 1f;
             if (!_scaled) { _scale = _targetScale; _scaled = true; if (!_manual && _appearAt < 0f) transform.localScale = Vector3.one * _scale; }
             else if (selected && !_wasSelected) _scaleVelocity += 3.2f; // a springy bounce when it gets selected

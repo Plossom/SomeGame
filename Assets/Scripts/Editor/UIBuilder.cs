@@ -205,7 +205,7 @@ namespace SomeGame.EditorTools
             {
                 var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(140f, 64f));
                 Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(48f, 48f)), icon, Theme.Amber);
-                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-16f, -2f), new Vector2(80f, 64f)), "0", 58, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-26f, -2f), new Vector2(80f, 64f)), "0", 58, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             }
             var total = CounterRow("Stars", -16f, "IconStar");
 
