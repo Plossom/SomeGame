@@ -214,6 +214,57 @@ namespace SomeGame.Track
         [Tooltip("No snowfall over the screen on this snow track.")]
         public bool noSnowfall;
 
+        [Header("Lagoon (Water Cup)")]
+        [Tooltip("Islands in the lagoon: sand beaches round jungle, palms and huts on them; boats bump off their shores.")]
+        public List<Island> lagoonIslands = new();
+        [Tooltip("Swells rolling along the channel: catch one from behind at speed and it throws you into the air (a boost when you land).")]
+        public List<Swell> swells = new();
+        [Tooltip("Currents along the channel: streaks of fast water that carry a boat along.")]
+        public List<Current> currents = new();
+        [Tooltip("Dolphins leaping across the channel now and then (lap distances).")]
+        public List<float> dolphins = new();
+        [Tooltip("Wooden footbridges over the channel (lap distances): you race underneath.")]
+        public List<float> footbridges = new();
+
+        public enum IslandKind { Jungle, Sand, Rock }
+
+        [Serializable]
+        public class Island
+        {
+            [Tooltip("The shore, a closed loop (smoothed).")]
+            public Vector2[] points = { };
+            public IslandKind kind;
+            [Tooltip("How wide the sandy beach is before the jungle.")]
+            [Min(0.5f)] public float beach = 3.5f;
+            [Tooltip("Palms (and huts, rocks) scattered over it.")]
+            [Min(0)] public int palms = 8;
+            [Min(0)] public int huts;
+            public int seed;
+        }
+
+        [Serializable]
+        public class Swell
+        {
+            [Tooltip("Lap distances it rolls between (it rises at the first, breaks at the second).")]
+            public float from, to;
+            [Tooltip("Speed it rolls at (units/s): slower than the boats, so they catch it.")]
+            [Min(1f)] public float speed = 9f;
+            [Tooltip("Seconds between swells.")]
+            [Min(1f)] public float period = 6f;
+            public float offset;
+        }
+
+        [Serializable]
+        public class Current
+        {
+            public float from, to;
+            [Tooltip("Sideways offset of its middle from the centre line (positive = left).")]
+            public float lateral;
+            [Min(1f)] public float width = 3.5f;
+            [Tooltip("Extra speed it gives (fraction of top speed).")]
+            [Range(0f, 0.6f)] public float push = 0.25f;
+        }
+
         [Header("Water, jumps and oil")]
         [Tooltip("The whole world is water: the road is a causeway, and anything off the road is a splash.")]
         public bool waterWorld;
@@ -263,9 +314,9 @@ namespace SomeGame.Track
             public float offset;
         }
 
-        public enum Biome { Meadow, Snow }
+        public enum Biome { Meadow, Snow, Lagoon }
 
-        public enum Vehicle { Car, Snowmobile }
+        public enum Vehicle { Car, Snowmobile, Boat }
 
         public enum SweeperKind { Log, HayBale, Snowball, Boulder, Vacuum, Ball, Curling }
 

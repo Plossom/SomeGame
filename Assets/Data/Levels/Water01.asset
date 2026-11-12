@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
+  m_Name: Water01
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
+  displayName: Lagoon Loop
+  chapter: "WATER CUP \xB7 RACE 1"
+  track: {fileID: 11400000, guid: daf823d4124e448df913ea081f43343b, type: 2}
+  isTutorial: 0
+  isChallenge: 0
+  preview: {fileID: 21300000, guid: b7b8a26f218954ee2a7b34f29764fd7f, type: 3}
+  laps: 3
+  description: 'Three laps round the tropical lagoon in speedboats: under the beach bridge, round Palm Island and the lighthouse rock. Catch the swells for big air, let the currents carry you, and mind the dolphins!'
+  difficulty: 1
+  rivalCount: 7
+  rivalSpeedScale: 0.87
+  rivalCornerScale: 1
+  starsRequired: 0

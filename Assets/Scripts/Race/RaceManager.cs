@@ -149,18 +149,18 @@ namespace SomeGame.Race
             var progress = rivals[0].GetComponent<RaceProgress>();
             progress.Character = Character;
             progress.DisplayName = Character.displayName;
-            SomeGame.Car.CarLook.Of(Character.body, Character.top, Character.decal, Character.carColor).Apply(rivals[0], CarTrack);
+            SomeGame.Car.CarLook.Of(Character.body, Character.top, Character.decal, Character.carColor).Apply(rivals[0], TrackVehicle);
             if (Character.gadget == "haybale") rivals[0].gameObject.AddComponent<SomeGame.Car.HayBaleGadget>().Ai = true;
         }
 
-        // A track for cars (not the snowmobile): the garage's bodies and parts show.
-        bool CarTrack => track.Layout == null || track.Layout.vehicle == SomeGame.Track.TrackLayout.Vehicle.Car;
+        // What everyone races in on this track (each vehicle shows its own cup's parts from the garage).
+        SomeGame.Track.TrackLayout.Vehicle TrackVehicle => track.Layout != null ? track.Layout.vehicle : SomeGame.Track.TrackLayout.Vehicle.Car;
 
         // Your car as you built it in the garage; online races keep the room's colours.
         void PaintPlayer()
         {
             var vehicle = track.Layout != null ? track.Layout.vehicle : SomeGame.Track.TrackLayout.Vehicle.Car;
-            SomeGame.Car.CarLook.For(vehicle).Apply(player, CarTrack);
+            SomeGame.Car.CarLook.For(vehicle).Apply(player, vehicle);
             // The gadget from the garage (not in the practice drive).
             if (Garage.Equipped(Garage.Slot.Gadget, vehicle).Id == "haybale" && (Level == null || !(Level.isTutorial || Level.isChallenge)))
                 player.gameObject.AddComponent<SomeGame.Car.HayBaleGadget>();

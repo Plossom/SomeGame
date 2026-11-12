@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5663eba86fa03446eb0a11e49983cdc6, type: 3}
+  m_Name: Water
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.CupDefinition
+  displayName: WATER CUP
+  races: {fileID: 11400000, guid: 1fcdd65cf2fee432d8abac7cefcb4c81, type: 2}
+  icon: {fileID: 21300000, guid: 72c55e762a67246beada00e8cb9e64c1, type: 3}
+  accent: {r: 1, g: 0.42, b: 0.32, a: 1}
+  look: 2
+  mapBackground: {fileID: 21300000, guid: cb920d2598e894e47a12812f8f7b783c, type: 3}
+  starsRequired: 40
+  challenge: {fileID: 0}
+  challengeAfterRival: 

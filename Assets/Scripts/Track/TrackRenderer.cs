@@ -75,6 +75,15 @@ namespace SomeGame.Track
         [Tooltip("Snowfall over the race, shown on snow tracks.")]
         [SerializeField] GameObject snowfall;
 
+        [Header("Lagoon biome (Water Cup)")]
+        [Tooltip("The shallows all round (ground), the deep racing channel (road), foam along its edges, buoy lines in the corners, pale shallows in the run-off.")]
+        [SerializeField] Material lagoonGround;
+        [SerializeField] Material lagoonRoad;
+        [SerializeField] Material lagoonEdges;
+        [SerializeField] Material lagoonKerbs;
+        [SerializeField] Material lagoonRunoff;
+        [SerializeField] Color lagoonBackground = new(0.25f, 0.78f, 0.8f);
+
         [Header("Vehicles")]
         [Tooltip("Body (tinted), details, shadow and ski (in place of the front wheels) of the snowmobile, for tracks raced on snowmobiles.")]
         [SerializeField] Sprite snowmobileBody;
@@ -112,14 +121,15 @@ namespace SomeGame.Track
             }
 
             bool snow = layout.biome == TrackLayout.Biome.Snow && !water;
+            bool lagoon = layout.biome == TrackLayout.Biome.Lagoon && lagoonGround != null;
             Rect area = Expand(path.Bounds(), layout.boundaryMargin);
-            Assign(grass, BuildGrass(Expand(area, grassOverscan), water, snow));
+            Assign(grass, BuildGrass(Expand(area, grassOverscan), water || lagoon, snow));
             if (Application.isPlaying && Camera.main != null)
-                Camera.main.backgroundColor = layout.abyss ? new Color(0.14f, 0.18f, 0.27f) : water ? waterBackground : snow ? snowBackground : grassBackground;
+                Camera.main.backgroundColor = layout.abyss ? new Color(0.14f, 0.18f, 0.27f) : lagoon ? lagoonBackground : water ? waterBackground : snow ? snowBackground : grassBackground;
             var groundRenderer = grass != null ? grass.GetComponent<MeshRenderer>() : null;
             if (groundRenderer != null && grassMaterial != null && waterMaterial != null)
-                groundRenderer.sharedMaterial = water ? waterMaterial : snow && snowGround != null ? snowGround : grassMaterial;
-            ApplyBiome(snow);
+                groundRenderer.sharedMaterial = lagoon ? lagoonGround : water ? waterMaterial : snow && snowGround != null ? snowGround : grassMaterial;
+            ApplyBiome(snow, lagoon);
             BuildHelix();
             if (boundary != null && Application.isPlaying)
             {
@@ -137,13 +147,14 @@ namespace SomeGame.Track
         // so a meadow track gets them back) and switches the snowfall on.
         readonly System.Collections.Generic.Dictionary<Renderer, Material> _meadow = new();
 
-        void ApplyBiome(bool snow)
+        void ApplyBiome(bool snow, bool lagoon = false)
         {
             // A track with its own road surface uses it whatever the biome.
             var ownRoad = track.Layout != null ? track.Layout.roadMaterial : null;
-            Swap(road, ownRoad != null ? ownRoad : snowRoad, snow || ownRoad != null);
-            Swap(kerbs, snowKerbs, snow);
-            Swap(runoff, snowRunoff, snow);
+            Swap(road, ownRoad != null ? ownRoad : lagoon ? lagoonRoad : snowRoad, snow || lagoon || ownRoad != null);
+            Swap(kerbs, lagoon ? lagoonKerbs : snowKerbs, snow || lagoon);
+            Swap(runoff, lagoon ? lagoonRunoff : snowRunoff, snow || lagoon);
+            Swap(edgeLines, lagoonEdges, lagoon);
             Swap(scenery, snowScenery, snow);
             // A track with its own scenery sheet (the journey race) uses it instead.
             var own = track.Layout != null ? track.Layout.sceneryMaterial : null;
@@ -167,17 +178,26 @@ namespace SomeGame.Track
         void ApplyVehicle(TrackLayout.Vehicle vehicle)
         {
             bool sled = vehicle == TrackLayout.Vehicle.Snowmobile && snowmobileBody != null;
+            // The boat: the plain speedboat's hull and deck, its own shadow, no wheels (the garage's hull goes on after).
+            var art = SomeGame.Race.GarageArt.Instance;
+            var boat = vehicle == TrackLayout.Vehicle.Boat && art != null ? art.Get("body.speedboat") : null;
+            var boatShadow = boat != null ? art.Get("shadow.boat")?.full : null;
             foreach (var car in FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 foreach (var sr in car.GetComponentsInChildren<SpriteRenderer>(true))
                 {
-                    var sprite = sr.name switch { "Visual" => snowmobileBody, "Details" => snowmobileDetails, "Shadow" => snowmobileShadow, "WheelL" or "WheelR" => snowmobileSki, _ => null };
-                    if (sprite == null) continue;
+                    bool swapped = sr.name is "Visual" or "Details" or "Shadow" or "WheelL" or "WheelR";
+                    if (!swapped) continue;
                     if (!_carSprites.ContainsKey(sr)) _carSprites[sr] = sr.sprite;
-                    sr.sprite = sled ? sprite : _carSprites[sr];
+                    if (boat != null)
+                        sr.sprite = sr.name switch { "Visual" => boat.race, "Details" => boat.details, "Shadow" => boatShadow != null ? boatShadow : _carSprites[sr], _ => null };
+                    else if (sled)
+                        sr.sprite = sr.name switch { "Visual" => snowmobileBody, "Details" => snowmobileDetails, "Shadow" => snowmobileShadow, _ => snowmobileSki };
+                    else sr.sprite = _carSprites[sr];
                 }
                 // Dressed already (the garage's body on top of the plain one): dressed again over the swap.
                 if (car.TryGetComponent(out SomeGame.Car.CarDress dress)) dress.Again();
+                SomeGame.Car.BoatFx.Fit(car, boat != null);
             }
         }
 

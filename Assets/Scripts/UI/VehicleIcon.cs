@@ -1,6 +1,7 @@
 using SomeGame.Car;
 using SomeGame.Race;
 using UnityEngine;
+using Vehicle = SomeGame.Track.TrackLayout.Vehicle;
 
 namespace SomeGame.UI
 {
@@ -20,7 +21,8 @@ namespace SomeGame.UI
         [SerializeField] Sprite snowmobileShadow;
 
         Sprite _carBody, _carDetails, _carShadow;
-        bool _remembered, _snowmobile;
+        bool _remembered;
+        Vehicle _vehicle;
         CarLook? _look;
         UnityEngine.UI.Image _decal, _top;
 
@@ -33,10 +35,13 @@ namespace SomeGame.UI
             _remembered = true;
         }
 
-        public void Show(bool snowmobile)
+        public void Show(bool snowmobile) => Show(snowmobile ? Vehicle.Snowmobile : Vehicle.Car);
+
+        /// <summary>Which vehicle it shows: the car, the snowmobile or the boat (each in its own setup).</summary>
+        public void Show(Vehicle vehicle)
         {
             Remember();
-            _snowmobile = snowmobile && snowmobileBody != null;
+            _vehicle = vehicle;
             Refresh();
         }
 
@@ -57,19 +62,25 @@ namespace SomeGame.UI
         void Refresh()
         {
             var art = GarageArt.Instance;
-            // A snowmobile body (the Winter Cup's) makes it a snowmobile; on a snowmobile a car's body doesn't show.
+            // A body of another cup (a snowmobile's, a boat's) makes it that vehicle; on a vehicle a body of another
+            // cup doesn't show (its own plain one does).
             var bodyPart = _look.HasValue ? _look.Value.Body : null;
-            bool sled = _snowmobile || bodyPart is { Cup: "Winter" };
-            string cup = sled ? "Winter" : "Valley";
+            var shown = bodyPart != null && bodyPart.Cup != "Valley" ? Garage.VehicleOfCup(bodyPart.Cup) : _vehicle;
+            string cup = Garage.CupOf(shown);
             bool Fits(Garage.Part part) => part != null && part.Cup == cup;
             var entry = art != null && Fits(bodyPart) ? art.Get(bodyPart) : null;
+            // The plain one of each vehicle (when no body of its own is chosen).
+            var plain = shown == Vehicle.Boat && art != null ? art.Get("body.speedboat") : null;
+            Sprite plainBody = shown switch { Vehicle.Snowmobile when snowmobileBody != null => snowmobileBody, Vehicle.Boat when plain?.full != null => plain.full, _ => _carBody };
+            Sprite plainDetails = shown switch { Vehicle.Snowmobile when snowmobileDetails != null => snowmobileDetails, Vehicle.Boat when plain?.details != null => plain.details, _ => _carDetails };
+            Sprite plainShadow = shown switch { Vehicle.Snowmobile when snowmobileShadow != null => snowmobileShadow, Vehicle.Boat when art?.Get("shadow.boat")?.full != null => art.Get("shadow.boat").full, _ => _carShadow };
             if (body != null)
             {
-                body.sprite = entry?.full != null ? entry.full : sled && snowmobileBody != null ? snowmobileBody : _carBody;
+                body.sprite = entry?.full != null ? entry.full : plainBody;
                 if (_look.HasValue) body.color = _look.Value.Paint;
             }
-            if (details != null) details.sprite = entry?.details != null ? entry.details : sled && snowmobileDetails != null ? snowmobileDetails : _carDetails;
-            if (shadow != null) shadow.sprite = sled && snowmobileShadow != null ? snowmobileShadow : _carShadow;
+            if (details != null) details.sprite = entry?.details != null ? entry.details : plainDetails;
+            if (shadow != null) shadow.sprite = plainShadow;
             Sprite decal = null, top = null;
             if (_look.HasValue && art != null)
             {

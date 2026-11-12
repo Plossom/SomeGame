@@ -26495,6 +26495,12 @@ MonoBehaviour:
   scenery: {fileID: 45056161}
   snowBackground: {r: 0.9, g: 0.94, b: 0.98, a: 1}
   snowfall: {fileID: 1958745674}
+  lagoonGround: {fileID: 2100000, guid: 3d08ec25ef1264f9580e319109356ee3, type: 2}
+  lagoonRoad: {fileID: 2100000, guid: c421cef1b72bf4d92b819af27b68fac8, type: 2}
+  lagoonEdges: {fileID: 2100000, guid: 6b0ce423357e848ef977c5a3e71f5ee0, type: 2}
+  lagoonKerbs: {fileID: 2100000, guid: 58013335c652a4cd58de4a496672a831, type: 2}
+  lagoonRunoff: {fileID: 2100000, guid: 9ec800ca0c15c4bab8c987728f2a54f8, type: 2}
+  lagoonBackground: {r: 0.25, g: 0.78, b: 0.8, a: 1}
   snowmobileBody: {fileID: 21300000, guid: 0e8606ad3b3ce42898267261143b3bd8, type: 3}
   snowmobileDetails: {fileID: 21300000, guid: 93a6841efabbb423faf5ee4a0e4e76d6, type: 3}
   snowmobileShadow: {fileID: 21300000, guid: ca5fce787f02b439387385fd61a11321, type: 3}
@@ -26551,6 +26557,7 @@ Transform:
   - {fileID: 1855001301}
   - {fileID: 1327568332}
   - {fileID: 1518250215}
+  - {fileID: 1905064030}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1295174580
@@ -39359,6 +39366,61 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -138}
   m_SizeDelta: {x: 252, y: 108}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1905064028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1905064030}
+  - component: {fileID: 1905064029}
+  m_Layer: 0
+  m_Name: Lagoon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1905064029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1905064028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99e8fc19fbd1745648d43c3b374631fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLagoon
+  track: {fileID: 1295174578}
+  sand: {fileID: 2100000, guid: 3f19bc6965e0e4e628d7ff16959bce6b, type: 2}
+  jungle: {fileID: 2100000, guid: 43383a25ec2ca4660823714b8fdc3be0, type: 2}
+  shallows: {fileID: 2100000, guid: 9ec800ca0c15c4bab8c987728f2a54f8, type: 2}
+  foam: {fileID: 2100000, guid: 6b0ce423357e848ef977c5a3e71f5ee0, type: 2}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+  current: {fileID: 2100000, guid: 99f3ed349e9c047119357ab4de1903d8, type: 2}
+  scenery: {fileID: 2100000, guid: 1550ddcd6b7bd4ab3adbdbf4660ffab7, type: 2}
+  dolphin: {fileID: 21300000, guid: a29bdb6ef4bfa4fb1806d1fc89c60956, type: 3}
+  bridge: {fileID: 21300000, guid: 6686edf7cc2654a30af7f3a3a2055bd3, type: 3}
+  ring: {fileID: 21300000, guid: 1bcca3c55e7c7493c945906948bfb2fe, type: 3}
+--- !u!4 &1905064030
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1905064028}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1295174579}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1907200764
 GameObject:
   m_ObjectHideFlags: 0

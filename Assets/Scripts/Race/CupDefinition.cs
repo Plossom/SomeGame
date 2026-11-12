@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SomeGame.Race
 {
     /// <summary>The look of a cup's map: its colours, its road and its landscape.</summary>
-    public enum CupLook { Valley, Winter }
+    public enum CupLook { Valley, Winter, Water }
 
     /// <summary>A cup (world): its races and what it takes to unlock it.</summary>
     [CreateAssetMenu(menuName = "SomeGame/Cup", fileName = "Cup")]

@@ -208,7 +208,7 @@ namespace SomeGame.UI
             _focusAt = _switchAt = _openedAt;
         }
 
-        static Theme.Palette PaletteOf(Vehicle vehicle) => vehicle == Vehicle.Snowmobile ? Theme.Winter : Theme.Valley;
+        static Theme.Palette PaletteOf(Vehicle vehicle) => vehicle switch { Vehicle.Snowmobile => Theme.Winter, Vehicle.Boat => Theme.Water, _ => Theme.Valley };
 
         // Morphs the garage's colours to a palette (or jumps there). A morph still running is finished first.
         void Morph(Theme.Palette to, bool instant = false)
@@ -456,8 +456,7 @@ namespace SomeGame.UI
             string cupName = Garage.CupOf(_vehicle);
             starsLabel.text = $"{Garage.CupStars(cupName)}<size=60%>/{Garage.CupMaxStars(cupName)}</size>";
             var look = CarLook.For(_vehicle);
-            bool snow = _vehicle == Vehicle.Snowmobile;
-            car.Show(snow);
+            car.Show(_vehicle);
             car.Dress(look);
             buildName.gameObject.SetActive(false);
             hint.gameObject.SetActive(false);
@@ -475,7 +474,7 @@ namespace SomeGame.UI
             for (int i = 0; i < _badges.Count; i++)
             {
                 var badgeCar = _badges[i].Find("Car").GetComponent<VehicleIcon>();
-                badgeCar.Show(Garage.Vehicles[i] == Vehicle.Snowmobile);
+                badgeCar.Show(Garage.Vehicles[i]);
                 badgeCar.Dress(CarLook.For(Garage.Vehicles[i]));
             }
             Peek(peekLeft, page - 1);  // above
@@ -608,6 +607,9 @@ namespace SomeGame.UI
             "flake" => new Color(0.45f, 0.72f, 0.95f), // (deep enough to show on a white card)
             "confetti" => new Color(1f, 0.45f, 0.6f),
             "winterconfetti" => new Color(0.35f, 0.65f, 1f),
+            "bubbles" => new Color(0.3f, 0.7f, 0.95f),
+            "rainbow" => new Color(1f, 0.45f, 0.6f),
+            "goldwake" => new Color(0.95f, 0.72f, 0.1f),
             "aurora" => new Color(0.55f, 1f, 0.8f),
             "standard" => new Color(0.5f, 0.52f, 0.55f),
             _ => Color.Lerp(paint, Color.white, 0.4f),
@@ -665,7 +667,7 @@ namespace SomeGame.UI
             if (!show) return;
             var vehicle = Garage.Vehicles[page];
             var icon = peek.Find("Car").GetComponent<VehicleIcon>();
-            icon.Show(vehicle == Vehicle.Snowmobile);
+            icon.Show(vehicle);
             icon.Dress(CarLook.For(vehicle));
             peek.Find("Name").gameObject.SetActive(false); // the page title names the vehicle; the peek just shows it
         }

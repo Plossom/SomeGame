@@ -64,7 +64,7 @@ namespace SomeGame.UI
             // A snowmobile rides the bar to a Winter Cup race.
             if (barCar != null && barCar.TryGetComponent(out VehicleIcon vehicle))
             {
-                vehicle.Show(level != null && level.track != null && level.track.biome == SomeGame.Track.TrackLayout.Biome.Snow);
+                vehicle.Show(SomeGame.Car.CarLook.VehicleOf(level));
                 // Online races wear the room's colours. The first paint is the cup's own accent (like on the map, and
                 // like the race's recolouring leaves it at the end), so it doesn't change colour as the race opens.
                 if (!GameSession.Online)
@@ -85,7 +85,7 @@ namespace SomeGame.UI
                 var vehicleOf = SomeGame.Car.CarLook.VehicleOf(level);
                 var look = SomeGame.Car.CarLook.For(vehicleOf);
                 if (Theme.TryMap(look.Paint, Theme.Valley, palette, out var duelPaint)) look.Paint = duelPaint;
-                vsCar.Show(vehicleOf == SomeGame.Track.TrackLayout.Vehicle.Snowmobile);
+                vsCar.Show(vehicleOf);
                 vsCar.Dress(look);
                 if (previewFrame != null)
                 {

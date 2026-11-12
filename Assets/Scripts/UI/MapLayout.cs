@@ -117,7 +117,14 @@ namespace SomeGame.UI
             new(210f, 1198f), new(490f, 1345f), new(840f, 1458f), new(870f, 1639f), new(530f, 1763f),
         }, 1, 10, 8);
 
-        public static MapRoad Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
+        /// <summary>The sea lane: buoys from the beach at the bottom out round the islands to the far reef.</summary>
+        public static readonly MapRoad Water = new(new Vector2[]
+        {
+            new(-60f, 190f), new(230f, 372f), new(640f, 430f), new(900f, 640f), new(760f, 880f), new(360f, 960f),
+            new(230f, 1170f), new(470f, 1360f), new(850f, 1420f), new(900f, 1630f), new(560f, 1770f),
+        }, 1, 10, 8);
+
+        public static MapRoad Of(CupLook look) => look switch { CupLook.Winter => Winter, CupLook.Water => Water, _ => Valley };
 
         /// <summary>The road of the map being shown (or painted).</summary>
         public static MapRoad Current { get; set; } = Valley;

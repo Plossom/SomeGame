@@ -40,7 +40,7 @@ namespace SomeGame.Race
             }
         }
 
-        const string V = "Valley", W = "Winter";
+        const string V = "Valley", W = "Winter", S = "Water";
 
         // Each cup's own things for its own vehicle (the Valley Cup's for the car, the Winter Cup's for the
         // snowmobile), opened with that cup's stars (24 at most: 8 races, 3 stars each), its rival, its challenge or
@@ -57,6 +57,11 @@ namespace SomeGame.Race
             new(W, Slot.Paint, "midnight", "BLACK", "For racing after dark.", Unlock.Stars, 8, hex: "#2B2D35"),
             new(W, Slot.Paint, "pearl", "WHITE", "Fresh snow shine.", Unlock.Stars, 14, hex: "#F4F2EC"),
             new(W, Slot.Paint, "berry", "DARK RED", "A splash of red in the snow.", Unlock.Stars, 20, hex: "#C2304A"),
+            new(S, Slot.Paint, "coral", "CORAL", "Bright as a reef.", hex: "#FF6B52"),
+            new(S, Slot.Paint, "turquoise", "TURQUOISE", "The colour of the lagoon.", Unlock.Stars, 1, hex: "#22B8C9"),
+            new(S, Slot.Paint, "sunshine", "YELLOW", "Like a beach umbrella.", Unlock.Stars, 2, hex: "#FFC93C"),
+            new(S, Slot.Paint, "navy", "NAVY", "Proper sailor blue.", Unlock.Stars, 6, hex: "#1B4E7A"),
+            new(S, Slot.Paint, "flamingo", "PINK", "Flamingo pink.", Unlock.Stars, 12, hex: "#FF7FAE"),
 
             new(V, Slot.Body, "buggy", "DUNE BUGGY", "Roll cage, big tyres, no roof. Pure fun."),
             new(V, Slot.Body, "rally", "RALLY HATCH", "Wide arches and a roof over your head.", Unlock.Stars, 5),
@@ -65,6 +70,9 @@ namespace SomeGame.Race
             new(W, Slot.Body, "sled", "SNOWMOBILE", "Skis up front, a track behind."),
             new(W, Slot.Body, "tub", "BUBBLE TUB", "A clawfoot bathtub on skis. Bring a duck.", Unlock.Stars, 6),
             new(W, Slot.Body, "touring", "TOURING SLED", "A long seat, a backrest and a rack.", Unlock.Stars, 15),
+            new(S, Slot.Body, "speedboat", "SPEEDBOAT", "A pointy hull, a windscreen and a big outboard."),
+            new(S, Slot.Body, "jetski", "JET SKI", "Stand up, hold on, spray everyone.", Unlock.Stars, 3),
+            new(S, Slot.Body, "duck", "RUBBER DUCK", "A giant rubber duck with an outboard. Quack.", Unlock.Stars, 12),
 
             new(V, Slot.Top, "none", "NOTHING", "Clean and simple."),
             new(V, Slot.Top, "spoiler", "SPOILER", "Looks fast standing still.", Unlock.Stars, 2),
@@ -80,6 +88,11 @@ namespace SomeGame.Race
             new(W, Slot.Top, "antlers", "ANTLERS", "Reindeer antlers on your helmet.", Unlock.Stars, 16),
             new(W, Slot.Top, "snowman", "SNOWMAN", "A snowman riding along behind you.", Unlock.Stars, 21),
             new(W, Slot.Top, "icecrown", "ICE CROWN", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
+            new(S, Slot.Top, "radar", "RADAR ARCH", "An arch with a spinning radar.", Unlock.Stars, 2),
+            new(S, Slot.Top, "surfboard", "SURFBOARD", "For when the waves get big.", Unlock.Stars, 3),
+            new(S, Slot.Top, "parrot", "PARROT", "A parrot rides along. It talks a lot.", Unlock.Stars, 9),
+            new(S, Slot.Top, "floatie", "FLAMINGO FLOAT", "An inflatable flamingo in tow.", Unlock.Stars, 15),
+            new(S, Slot.Top, "treasure", "TREASURE CHEST", "Three stars in every Water Cup race.", Unlock.CupGold, from: S),
 
             new(V, Slot.Decal, "none", "NOTHING", "Let the paint speak."),
             new(V, Slot.Decal, "stripes", "RACING STRIPES", "Two white stripes, nose to tail.", Unlock.Stars, 4),
@@ -93,6 +106,11 @@ namespace SomeGame.Race
             new(W, Slot.Decal, "penguin", "PENGUIN", "A penguin face on the hood.", Unlock.Stars, 13),
             new(W, Slot.Decal, "one", "NUMBER ONE", "Where you mean to finish.", Unlock.Stars, 18),
             new(W, Slot.Decal, "wintercrest", "WINTER CREST", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
+            new(S, Slot.Decal, "wave", "WAVE", "A curling wave down the side.", Unlock.Stars, 1),
+            new(S, Slot.Decal, "shark", "SHARK", "Teeth on the bow.", Unlock.Stars, 3),
+            new(S, Slot.Decal, "palm", "PALM TREE", "A little island on the deck.", Unlock.Stars, 8),
+            new(S, Slot.Decal, "skull", "JOLLY ROGER", "For pirates only.", Unlock.Stars, 14),
+            new(S, Slot.Decal, "trident", "TRIDENT CREST", "Three stars in every Water Cup race.", Unlock.CupGold, from: S),
 
             new(V, Slot.Trail, "standard", "TYRE SMOKE", "The usual."),
             new(V, Slot.Trail, "sparkle", "SPARKLES", "Glitter on every drift and boost.", Unlock.Stars, 6),
@@ -101,6 +119,9 @@ namespace SomeGame.Race
             new(W, Slot.Trail, "flake", "SNOWFLAKES", "A little blizzard behind you.", Unlock.Stars, 4),
             new(W, Slot.Trail, "winterconfetti", "SNOW CONFETTI", "Every lap is a snow party.", Unlock.Stars, 12),
             new(W, Slot.Trail, "aurora", "NORTHERN LIGHTS", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
+            new(S, Slot.Trail, "bubbles", "BUBBLES", "A fizz of bubbles in your wake.", Unlock.Stars, 2),
+            new(S, Slot.Trail, "rainbow", "RAINBOW SPRAY", "Your spray catches the sun.", Unlock.Stars, 10),
+            new(S, Slot.Trail, "goldwake", "GOLDEN WAKE", "Three stars in every Water Cup race.", Unlock.CupGold, from: S),
 
             new(V, Slot.Gadget, "none", "NO GADGET", "Just you and the road."),
             new(V, Slot.Gadget, "haybale", "HAY BALE DROP", "Drop a hay bale behind you: whoever hits it spins out. Once a lap.", Unlock.Rival, from: "RosieRust"),
@@ -191,7 +212,7 @@ namespace SomeGame.Race
 
         // ---------------------------------------------------------------- one setup per vehicle
 
-        public static readonly Vehicle[] Vehicles = { Vehicle.Car, Vehicle.Snowmobile };
+        public static readonly Vehicle[] Vehicles = { Vehicle.Car, Vehicle.Snowmobile, Vehicle.Boat };
 
         /// <summary>What can be changed on a vehicle: everything, each from its own cup's shop.</summary>
         public static Slot[] SlotsOf(Vehicle vehicle) => new[] { Slot.Paint, Slot.Body, Slot.Top, Slot.Decal, Slot.Trail, Slot.Gadget };
@@ -199,9 +220,17 @@ namespace SomeGame.Race
         public static bool Fits(Slot slot, Vehicle vehicle) => System.Array.IndexOf(SlotsOf(vehicle), slot) >= 0;
 
         /// <summary>The cup a vehicle belongs to (its page in the garage): the car the Valley Cup's, the snowmobile the Winter Cup's.</summary>
-        public static string CupOf(Vehicle vehicle) => vehicle == Vehicle.Snowmobile ? "Winter" : "Valley";
+        public static string CupOf(Vehicle vehicle) => vehicle switch { Vehicle.Snowmobile => "Winter", Vehicle.Boat => "Water", _ => "Valley" };
 
-        static string Key(Slot slot, Vehicle vehicle) => vehicle == Vehicle.Snowmobile ? "Garage.Snow." + slot : "Garage." + slot;
+        /// <summary>The vehicle raced in a cup (the one its page in the garage belongs to).</summary>
+        public static Vehicle VehicleOfCup(string cup) => cup switch { "Winter" => Vehicle.Snowmobile, "Water" => Vehicle.Boat, _ => Vehicle.Car };
+
+        static string Key(Slot slot, Vehicle vehicle) => vehicle switch
+        {
+            Vehicle.Snowmobile => "Garage.Snow." + slot,
+            Vehicle.Boat => "Garage.Boat." + slot,
+            _ => "Garage." + slot,
+        };
 
         /// <summary>The part in a slot of a vehicle: one of its own shop's, and open (else the first of its shop).</summary>
         public static Part Equipped(Slot slot, Vehicle vehicle = Vehicle.Car)

@@ -97,10 +97,15 @@ namespace SomeGame.Track
                 seed = seed, overscan = overscan, runoff = new Vector4(cornerRunoff, cornerRunoffInside, runoffFullTurn, cornerTurn), span = runoffSpan,
             };
             string json = JsonUtility.ToJson(sig);
+            // (the lagoon's islands only where there are any, so the other tracks keep their signatures)
+            if (layout.lagoonIslands is { Count: > 0 }) json += JsonUtility.ToJson(new IslandData { islands = layout.lagoonIslands });
             ulong hash = 14695981039346656037UL;
             foreach (char c in json) { hash ^= c; hash *= 1099511628211UL; }
             return hash.ToString("x16");
         }
+
+        [Serializable]
+        class IslandData { public List<TrackLayout.Island> islands; }
 
         [Serializable]
         class SignatureData
@@ -198,6 +203,7 @@ namespace SomeGame.Track
                     if (fromKerb < kind.clearance.x) continue;
                     if (kind.clearance.y > 0f && fromKerb > kind.clearance.y) continue;
                     if (!layout.waterWorld && track.WaterDistance(p) < size * 0.5f + 1.2f) continue;
+                    if (layout.lagoonIslands.Count > 0 && LagoonSheet.OnIsland(layout, p, size * 0.5f)) continue; // (the islands bring their own)
                     if (InShortcutPath(p, size)) continue;
                     if (OnBranch(p, size)) continue;
                     if (InMountain(layout, p, size)) continue;

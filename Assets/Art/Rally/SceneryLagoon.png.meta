@@ -1,0 +1,691 @@
+fileFormatVersion: 2
+guid: b13e6c54dc6d545dc8252db9eda716aa
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1391917284865932489
+    second: SceneryLagoon_0
+  - first:
+      213: -6494751138713105052
+    second: SceneryLagoon_1
+  - first:
+      213: 1753286421497238043
+    second: SceneryLagoon_2
+  - first:
+      213: -2904269352256464679
+    second: SceneryLagoon_3
+  - first:
+      213: 4692104825755555479
+    second: SceneryLagoon_4
+  - first:
+      213: 1373898285500750101
+    second: SceneryLagoon_5
+  - first:
+      213: 733579285465825224
+    second: SceneryLagoon_6
+  - first:
+      213: 1305508030353258760
+    second: SceneryLagoon_7
+  - first:
+      213: 1119986045156659916
+    second: SceneryLagoon_8
+  - first:
+      213: 8192823773212102828
+    second: SceneryLagoon_9
+  - first:
+      213: -503285602741802503
+    second: SceneryLagoon_10
+  - first:
+      213: 638323188473155328
+    second: SceneryLagoon_11
+  - first:
+      213: 5013128549314994823
+    second: SceneryLagoon_12
+  - first:
+      213: -8872949384406192702
+    second: SceneryLagoon_13
+  - first:
+      213: -4179180515171609173
+    second: SceneryLagoon_14
+  - first:
+      213: 6375876311661792034
+    second: SceneryLagoon_15
+  - first:
+      213: -3597552452090673096
+    second: SceneryLagoon_16
+  - first:
+      213: 3466740823522707239
+    second: SceneryLagoon_17
+  - first:
+      213: -8160049247453516479
+    second: SceneryLagoon_18
+  - first:
+      213: 6172151786721201334
+    second: SceneryLagoon_19
+  - first:
+      213: 7201539930504103661
+    second: SceneryLagoon_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryLagoon_0
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 804
+        width: 211
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ccf8295565115310800000000000000
+      internalID: 1391917284865932489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_1
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 982
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46d017000420ed5a0800000000000000
+      internalID: -6494751138713105052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_2
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 777
+        width: 97
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b12dbd606bce45810800000000000000
+      internalID: 1753286421497238043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_3
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 943
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d813be5966f1b7d0800000000000000
+      internalID: -2904269352256464679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_4
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 783
+        width: 191
+        height: 198
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7965e0caa74bd1140800000000000000
+      internalID: 4692104825755555479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_5
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 914
+        width: 51
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5195ac02631111310800000000000000
+      internalID: 1373898285500750101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_6
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 844
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cf76c439723e2a00800000000000000
+      internalID: 733579285465825224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_7
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 855
+        width: 56
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80930a003a81e1210800000000000000
+      internalID: 1305508030353258760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_8
+      rect:
+        serializedVersion: 2
+        x: 894
+        y: 835
+        width: 57
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc215f6cf5dfa8f00800000000000000
+      internalID: 1119986045156659916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_9
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 548
+        width: 161
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca0dea570d1c2b170800000000000000
+      internalID: 8192823773212102828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_10
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 548
+        width: 161
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f9a10c2968f309f0800000000000000
+      internalID: -503285602741802503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_11
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 539
+        width: 171
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00f46d4de87cbd800800000000000000
+      internalID: 638323188473155328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_12
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 577
+        width: 150
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7822a4bdad5329540800000000000000
+      internalID: 5013128549314994823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_13
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 279
+        width: 186
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cda278bb83fcd480800000000000000
+      internalID: -8872949384406192702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_14
+      rect:
+        serializedVersion: 2
+        x: 302
+        y: 289
+        width: 175
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba556f4b6719006c0800000000000000
+      internalID: -4179180515171609173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_15
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 309
+        width: 166
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22bcd6089b9ab7850800000000000000
+      internalID: 6375876311661792034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_16
+      rect:
+        serializedVersion: 2
+        x: 814
+        y: 294
+        width: 166
+        height: 175
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 838cc400b1de21ec0800000000000000
+      internalID: -3597552452090673096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_17
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 10
+        width: 215
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7278a6259665c1030800000000000000
+      internalID: 3466740823522707239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_18
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 0
+        width: 256
+        height: 251
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14de6d7717ea1ce80800000000000000
+      internalID: -8160049247453516479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_19
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 6
+        width: 234
+        height: 241
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bc4f4b3953e7a550800000000000000
+      internalID: 6172151786721201334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryLagoon_20
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 67
+        width: 146
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de60d71596201f360800000000000000
+      internalID: 7201539930504103661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryLagoon_0: 1391917284865932489
+      SceneryLagoon_1: -6494751138713105052
+      SceneryLagoon_10: -503285602741802503
+      SceneryLagoon_11: 638323188473155328
+      SceneryLagoon_12: 5013128549314994823
+      SceneryLagoon_13: -8872949384406192702
+      SceneryLagoon_14: -4179180515171609173
+      SceneryLagoon_15: 6375876311661792034
+      SceneryLagoon_16: -3597552452090673096
+      SceneryLagoon_17: 3466740823522707239
+      SceneryLagoon_18: -8160049247453516479
+      SceneryLagoon_19: 6172151786721201334
+      SceneryLagoon_2: 1753286421497238043
+      SceneryLagoon_20: 7201539930504103661
+      SceneryLagoon_3: -2904269352256464679
+      SceneryLagoon_4: 4692104825755555479
+      SceneryLagoon_5: 1373898285500750101
+      SceneryLagoon_6: 733579285465825224
+      SceneryLagoon_7: 1305508030353258760
+      SceneryLagoon_8: 1119986045156659916
+      SceneryLagoon_9: 8192823773212102828
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

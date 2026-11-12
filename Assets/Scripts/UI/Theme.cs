@@ -34,6 +34,14 @@ namespace SomeGame.UI
             Stone = Hex("CCD8E4"), StoneDark = Hex("7B8CA1"), Leaf = Hex("6FA7B8"),
         };
 
+        /// <summary>Sunny lagoon: sea-foam white plates, deep sea navy, coral buttons, sunshine yellow, turquoise.</summary>
+        public static readonly Palette Water = new()
+        {
+            Cream = Hex("ECFAF7"), CreamDark = Hex("C6EBE6"), Ink = Hex("0B3A57"), InkSoft = Hex("176284"),
+            Orange = Hex("FF6B52"), OrangeDeep = Hex("C2412E"), Amber = Hex("FFD24D"), Rust = Hex("0F86A8"),
+            Stone = Hex("D2E5E4"), StoneDark = Hex("7B9CA4"), Leaf = Hex("2EC4B6"),
+        };
+
         /// <summary>Greys for a locked or coming-soon cup's page: no colour until it is earned.</summary>
         public static readonly Palette Locked = new()
         {
@@ -53,7 +61,7 @@ namespace SomeGame.UI
             Stone = Hex("BFC1C4"), StoneDark = Hex("85888D"), Leaf = Hex("3FA066"),
         };
 
-        public static Palette Of(CupLook look) => look == CupLook.Winter ? Winter : Valley;
+        public static Palette Of(CupLook look) => look switch { CupLook.Winter => Winter, CupLook.Water => Water, _ => Valley };
 
         /// <summary>The palette of the cup a race belongs to (Valley when it is in none).</summary>
         public static Palette OfLevel(LevelDefinition level)
@@ -123,8 +131,8 @@ namespace SomeGame.UI
         public static void Hills(Transform root, Palette palette)
         {
             // Meadow green, snow for the Winter Cup, plain greys for the neutral screens.
-            string back = palette == Winter ? "DCE8F3" : palette == Neutral ? "E2E2DF" : "9CC383";
-            string front = palette == Winter ? "C3D8EA" : palette == Neutral ? "D2D2CE" : "7FB06C";
+            string back = palette == Winter ? "DCE8F3" : palette == Water ? "9FE3E0" : palette == Neutral ? "E2E2DF" : "9CC383";
+            string front = palette == Winter ? "C3D8EA" : palette == Water ? "5CCBC6" : palette == Neutral ? "D2D2CE" : "7FB06C";
             foreach (var image in root.GetComponentsInChildren<UnityEngine.UI.Image>(true))
             {
                 if (image.name == "HillBack") image.color = Hex(back);

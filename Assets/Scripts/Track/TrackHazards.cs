@@ -77,7 +77,7 @@ namespace SomeGame.Track
             foreach (var b in layout.bouncers)
             {
                 bool orange = layout.padLook == TrackLayout.PadLook.Orange;
-                bool dry = jumpPadSprite != null && !track.IsWater(b.position);
+                bool dry = jumpPadSprite != null && !track.IsWater(b.position) && layout.biome != TrackLayout.Biome.Lagoon; // (a gummiboat on the lagoon)
                 bool trampoline = dry && trampolineSprite != null && layout.padLook == TrackLayout.PadLook.Trampoline;
                 bool mushroom = dry && !trampoline && !orange && mushroomPadSprite != null && layout.biome == TrackLayout.Biome.Meadow;
                 bool floe = !dry && iceFloeSprite != null && layout.biome == TrackLayout.Biome.Snow;
@@ -100,7 +100,7 @@ namespace SomeGame.Track
                 Vector2 from = path.PointAt(g.distance) + normal * reach, to = path.PointAt(g.distance) - normal * reach;
                 // On dry ground the fish needs a pond on each side.
                 foreach (var end in new[] { from, to })
-                    if (!track.IsWater(end)) Sprite("Pond", geyserSprite, end, 2.6f, 0f, sortingOrder - 3);
+                    if (!track.IsWater(end) && layout.biome != TrackLayout.Biome.Lagoon) Sprite("Pond", geyserSprite, end, 2.6f, 0f, sortingOrder - 3);
                 var shadow = Sprite("FishShadow", fishSprite, from, fishLength, 0f, sortingOrder - 1);
                 shadow.color = new Color(0f, 0f, 0f, 0.28f);
                 var fish = Sprite("Fish", fishSprite, from, fishLength, 0f, sortingOrder + 8);

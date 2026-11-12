@@ -235,6 +235,10 @@ namespace SomeGame.Car
         public bool IsSlipping => _slipTimer > 0f;
         /// <summary>Strength (0..1) of the boost currently running.</summary>
         public float BoostStrength { get; private set; }
+        /// <summary>A current carrying the boat along (lagoon): its top speed is this much higher (0 = none).</summary>
+        public float CurrentPush { get; set; }
+        /// <summary>How much of its grip the vehicle has (boats on water have less: they glide and swing wide).</summary>
+        public float GripScale { get; set; } = 1f;
 
         void Awake()
         {
@@ -301,8 +305,8 @@ namespace SomeGame.Car
             float slope = !offRoad && sensor != null && sensor.Track != null && sensor.Branch < 0 ? sensor.Track.SlopeAt(sensor.Current.Distance) : 1f;
             OnSlope = slope > 1f;
             float maxSpeed = stats.topSpeed * (offRoad ? stats.offRoadSlowdown : 1f)
-                           * (IsDrifting ? stats.driftSpeedFactor : 1f) * (1f + boostBonus) * slope;
-            float acceleration = (stats.acceleration + stats.boostAcceleration * boost) * (OnSlope ? 1.6f : 1f);
+                           * (IsDrifting ? stats.driftSpeedFactor : 1f) * (1f + boostBonus) * slope * (1f + CurrentPush);
+            float acceleration = (stats.acceleration + stats.boostAcceleration * boost) * (OnSlope || CurrentPush > 0f ? 1.6f : 1f);
 
             if (IsDrifting)
             {
@@ -342,7 +346,7 @@ namespace SomeGame.Car
 
             // Lateral: grip bleeds off sideways velocity; less grip at speed lets the car slide in fast corners.
             float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / Mathf.Max(0.01f, stats.topSpeed));
-            float grip = stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f) * (OnIce ? stats.iceGrip : 1f)
+            float grip = GripScale * stats.grip * (1f - stats.highSpeedGripLoss * speedRatio) * (offRoad ? stats.offRoadGrip : 1f) * (OnIce ? stats.iceGrip : 1f)
                          * (IsWallRiding ? stats.wallGrip : 1f) * (_calmTimer > 0f ? stats.driftCalmGrip : _boostTimer > 0f ? 1.4f : 1f); // calm after a drift, steady on a boost
             sidewaysSpeed *= Mathf.Exp(-grip * dt);
 

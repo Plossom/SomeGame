@@ -134,6 +134,16 @@ namespace SomeGame.EditorTools
             Add("top.antlers", "TopSnowAntlers"); Add("top.snowman", "TopSnowman"); Add("top.icecrown", "TopIceCrown");
             Add("decal.zigzag", "DecalZigzag"); Add("decal.pine", "DecalPine"); Add("decal.penguin", "DecalPenguin");
             Add("decal.one", "DecalNumberOne"); Add("decal.wintercrest", "DecalWinterCrest");
+            // The boats' (the Water Cup's): one picture serves the menus and the race (no wheels to steer).
+            Add("body.speedboat", "BoatSpeed", "BoatSpeed", "BoatSpeedDetails");
+            Add("body.jetski", "BoatJetski", "BoatJetski", "BoatJetskiDetails");
+            Add("body.duck", "BoatDuck", "BoatDuck", "BoatDuckDetails");
+            Add("shadow.boat", "BoatShadow");
+            Add("top.radar", "TopRadar"); Add("top.surfboard", "TopSurfboard"); Add("top.parrot", "TopParrot");
+            Add("top.floatie", "TopFlamingoFloat"); Add("top.treasure", "TopTreasure");
+            Add("decal.wave", "DecalWave"); Add("decal.shark", "DecalShark"); Add("decal.palm", "DecalPalm");
+            Add("decal.skull", "DecalSkull"); Add("decal.trident", "DecalTrident");
+            Add("trail.bubbles", "TrailBubble"); Add("trail.rainbow", "Sparkle"); Add("trail.goldwake", "Sparkle");
             Add("challenge.chicken", "Chicken");
             // A top's or a decal's picture covers the whole car (it's laid over it): where on it the part itself is,
             // for showing it on its own in the garage.

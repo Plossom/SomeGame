@@ -403,6 +403,176 @@ MonoBehaviour:
       y: 236
       width: 60
       height: 64
+  - id: body.speedboat
+    full: {fileID: 21300000, guid: 7a161867b47b84244b2353c9c3d53236, type: 3}
+    race: {fileID: 21300000, guid: 7a161867b47b84244b2353c9c3d53236, type: 3}
+    details: {fileID: 21300000, guid: b8d25d561354d4a0a9214c7b68ddc46b, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: body.jetski
+    full: {fileID: 21300000, guid: 1981657755bcf47e0bbba6b7441a1e3d, type: 3}
+    race: {fileID: 21300000, guid: 1981657755bcf47e0bbba6b7441a1e3d, type: 3}
+    details: {fileID: 21300000, guid: f5ac1731f2d4545798c1a26154643da2, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: body.duck
+    full: {fileID: 21300000, guid: b57e204cc65204361ade7e531947ca05, type: 3}
+    race: {fileID: 21300000, guid: b57e204cc65204361ade7e531947ca05, type: 3}
+    details: {fileID: 21300000, guid: 04e9c08717fad4684b9ae397205ea523, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: shadow.boat
+    full: {fileID: 21300000, guid: 215710307a8ce45b1b6475c4cb102639, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: top.radar
+    full: {fileID: 21300000, guid: 1f95b95d5a9ba4471a04896d2aa462af, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 30
+      y: 118
+      width: 132
+      height: 40
+  - id: top.surfboard
+    full: {fileID: 21300000, guid: a2d002a75f4284195ac3ead30af944f9, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 27
+      y: 61
+      width: 141
+      height: 57
+  - id: top.parrot
+    full: {fileID: 21300000, guid: 89e1876527ab74067b7d83be2f72f349, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 126
+      y: 157
+      width: 35
+      height: 83
+  - id: top.floatie
+    full: {fileID: 21300000, guid: 663d7b8d9d6a4483c9172f5842d0fbeb, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 51
+      y: 45
+      width: 92
+      height: 119
+  - id: top.treasure
+    full: {fileID: 21300000, guid: a9ced91ab0e1e4951941e8bec6b86bab, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 66
+      y: 216
+      width: 64
+      height: 56
+  - id: decal.wave
+    full: {fileID: 21300000, guid: be760a20a9639472a9f68bdecadde0e8, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 63
+      y: 210
+      width: 56
+      height: 47
+  - id: decal.shark
+    full: {fileID: 21300000, guid: 66071c77aa9284129b2f94c8b76cb8cf, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 56
+      y: 214
+      width: 80
+      height: 46
+  - id: decal.palm
+    full: {fileID: 21300000, guid: 42630d0983ea14a68b284c4c80a9b14f, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 67
+      y: 212
+      width: 60
+      height: 57
+  - id: decal.skull
+    full: {fileID: 21300000, guid: f83266ec3fe9641a0b3d1291bb765b7a, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 67
+      y: 215
+      width: 58
+      height: 46
+  - id: decal.trident
+    full: {fileID: 21300000, guid: 18085d23148f0451b890ba9ae3c5ac7e, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 68
+      y: 206
+      width: 56
+      height: 56
+  - id: trail.bubbles
+    full: {fileID: 21300000, guid: 826fe5f24b2d94b6baf25b8f263740d3, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: trail.rainbow
+    full: {fileID: 21300000, guid: 8c9ca149451e64c92a41f2e5ac99a07b, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: trail.goldwake
+    full: {fileID: 21300000, guid: 8c9ca149451e64c92a41f2e5ac99a07b, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: challenge.chicken
     full: {fileID: 21300000, guid: 02e36d4e7435e4495b43b475468fc33a, type: 3}
     race: {fileID: 0}

@@ -120,13 +120,12 @@ namespace SomeGame.UI
         // The car on the map road: a snowmobile on the Winter Cup.
         void ShowVehicle(CupLook look)
         {
-            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Show(look == CupLook.Winter);
+            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Show(Garage.VehicleOfCup(look.ToString()));
             PaintCar();
         }
 
         /// <summary>The vehicle of the cup on show: the snowmobile on the Winter Cup, the car elsewhere (its garage page).</summary>
-        SomeGame.Track.TrackLayout.Vehicle MapVehicle => CupList.Selected != null && CupList.Selected.look == CupLook.Winter
-            ? SomeGame.Track.TrackLayout.Vehicle.Snowmobile : SomeGame.Track.TrackLayout.Vehicle.Car;
+        SomeGame.Track.TrackLayout.Vehicle MapVehicle => Garage.VehicleOfCup(CupList.Selected != null ? CupList.Selected.look.ToString() : "Valley");
 
         static LevelCatalog CatalogOf(CupDefinition cup) =>
             cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
@@ -256,7 +255,7 @@ namespace SomeGame.UI
             if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Dress(look);
             if (garageCar != null)
             {
-                garageCar.Show(MapVehicle == SomeGame.Track.TrackLayout.Vehicle.Snowmobile);
+                garageCar.Show(MapVehicle);
                 garageCar.Dress(look);
             }
             if (garageBuild != null) garageBuild.text = Garage.Equipped(Garage.Slot.Body).Name;

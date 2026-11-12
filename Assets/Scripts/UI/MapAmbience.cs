@@ -44,6 +44,13 @@ namespace SomeGame.UI
                 Glints(MapScenery.IceLake, MapScenery.IceLakeRadii, 7);
                 LiftChairs();
             }
+            else if (look == CupLook.Water)
+            {
+                // Glints all over the sea, gulls, and dolphins leaping now and then.
+                Glints(new Vector2(585f, 900f), new Vector2(560f, 420f), 16);
+                Birds();
+                Dolphins();
+            }
             else
             {
                 Glints(MapScenery.ValleyLake, MapScenery.ValleyLakeRadii, 6);
@@ -164,6 +171,46 @@ namespace SomeGame.UI
                     rt.localScale = new Vector3(1f, Mathf.Lerp(0.35f, 1f, 0.5f + 0.5f * Mathf.Sin(t * 7f + flapShift)), 1f);
                 });
             }
+        }
+
+        // A pod of dolphins leaping out of the sea in arcs, one after another, every so often at a few spots.
+        void Dolphins()
+        {
+            if (fish == null) return;
+            var spots = new[] { (new Vector2(800f, 1000f), 1f, 0f), (new Vector2(260f, 640f), 1.25f, 4f), (new Vector2(700f, 1250f), 0.8f, 8f) };
+            foreach (var (spot, s, shift) in spots)
+                for (int k = 0; k < 3; k++)
+                {
+                    var rt = Make("Dolphin", fish, new Vector2(14f, 30f) * s, Hex("5C86A8"), new Vector2(0.5f, 0.5f));
+                    var splash = Make("Splash", ring, Vector2.one, Color.white, new Vector2(0.5f, 0.5f));
+                    var splashImage = ImageOf(splash);
+                    Vector2 from = MapScenery.ToCanvas(spot + new Vector2(k * 26f * s, 0f));
+                    float delay = k * 0.35f;
+                    _animations.Add(t =>
+                    {
+                        float c = Mathf.Repeat(t + shift, 12f) - delay;
+                        float u = c / 1.3f;
+                        bool up = u >= 0f && u <= 1f;
+                        rt.gameObject.SetActive(up);
+                        if (up)
+                        {
+                            Vector2 p = from + new Vector2(70f * s * u, Mathf.Sin(u * Mathf.PI) * 46f * s);
+                            rt.anchoredPosition = p;
+                            float slope = Mathf.Cos(u * Mathf.PI) * 46f * s * Mathf.PI / (70f * s);
+                            rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(slope, 1f) * Mathf.Rad2Deg - 90f);
+                        }
+                        // A ring of spray where it dives back in.
+                        float r = (c - 1.3f) / 0.8f;
+                        bool ringOn = r >= 0f && r <= 1f;
+                        splash.gameObject.SetActive(ringOn);
+                        if (ringOn)
+                        {
+                            splash.anchoredPosition = from + new Vector2(70f * s, 0f);
+                            splash.sizeDelta = new Vector2(Mathf.Lerp(6f, 34f, r), Mathf.Lerp(6f, 34f, r) * 0.4f) * s;
+                            splashImage.color = new Color(1f, 1f, 1f, 0.8f * (1f - r));
+                        }
+                    });
+                }
         }
 
         // A hot-air balloon drifting slowly across, bobbing.

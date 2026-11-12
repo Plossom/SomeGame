@@ -35,15 +35,15 @@ namespace SomeGame.Car
 
         /// <summary>
         /// Dresses a race car: its body and details swapped, the decal and the top laid over it, the paint on the body
-        /// (and its tyre marks) and the trail. <paramref name="car"/> false: on the snowmobile (the track's own
-        /// vehicle), which takes the snowmobile's parts (the Winter Cup's) and none of the car's.
+        /// (and its tyre marks) and the trail. Each vehicle (the track's: the car, the snowmobile or the boat) takes
+        /// only its own cup's parts.
         /// </summary>
-        public void Apply(CarMovement target, bool car)
+        public void Apply(CarMovement target, Vehicle vehicle)
         {
             // Remembered on the car: the track swaps its vehicle's sprites in (maybe after this), then dresses it again.
             var dress = target.GetComponent<CarDress>() ?? target.gameObject.AddComponent<CarDress>();
-            dress.Look = this; dress.Car = car;
-            string cup = Garage.CupOf(car ? Vehicle.Car : Vehicle.Snowmobile);
+            dress.Look = this; dress.Vehicle = vehicle;
+            string cup = Garage.CupOf(vehicle);
             bool Fits(Garage.Part part) => part != null && part.Cup == cup;
             var art = GarageArt.Instance;
             SpriteRenderer visual = null, details = null;
@@ -96,8 +96,8 @@ namespace SomeGame.Car
     public class CarDress : MonoBehaviour
     {
         public CarLook Look;
-        public bool Car;
+        public Vehicle Vehicle;
 
-        public void Again() => Look.Apply(GetComponent<CarMovement>(), Car);
+        public void Again() => Look.Apply(GetComponent<CarMovement>(), Vehicle);
     }
 }
