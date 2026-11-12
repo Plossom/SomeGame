@@ -13,12 +13,12 @@ namespace SomeGame.UI
     /// each kind of thing joined to its part of the car by a line (PAINT on its flank, BODY, TOP on the roof, DECAL
     /// on the bonnet, TRAIL behind it, GADGET), each saying what you have on. The car drops onto the podium, the
     /// lines draw out and the hotspots pop in one after another.
-    /// Tap one: the others fly away, the car rises, its part pulses, and a carousel of big cards slides up from the
-    /// bottom with everything for that slot, cup by cup (also the locked ones, with what they take: stars of the
-    /// cup, a rival to beat, the cup's gold or its challenge). Swipe through them and the car tries each one on;
-    /// EQUIP puts it on for good with a pop, a ring of light and sparks (a locked one says what it takes and its
-    /// button shakes). DONE (or a tap on the car) goes back to all the hotspots. The rivals' cards are behind their
-    /// own button.
+    /// Tap one: the others fly away, the car rises, its part pulses, and a strip of round chips slides up with
+    /// everything for that slot, cup by cup (also the locked ones, with what they take: stars of the cup, a rival to
+    /// beat, the cup's gold or its challenge). Tap a chip and the car wears it at once with a pop, a ring of light
+    /// and sparks; a locked one is tried on, shakes and says what it takes. The tabs over the strip jump to another
+    /// part; DONE (or a tap on the car) goes back to all the hotspots. Each vehicle has its own page (swipe up or
+    /// down, the garage's colours morphing to its cup's); the rivals' cards are behind their own button.
     /// </summary>
     public class GarageScreen : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
@@ -31,8 +31,11 @@ namespace SomeGame.UI
         [Tooltip("The page's name under GARAGE (the cup and the vehicle) and a dot per page.")]
         [SerializeField] TMP_Text pageTitle;
         [SerializeField] UnityEngine.UI.Image[] pageDots;
-        [Tooltip("The other vehicles peeking in at the sides: tap (or swipe) to go to their page.")]
+        [Tooltip("The other vehicles peeking in above and below: tap (or swipe up or down) to go to their page.")]
         [SerializeField] RectTransform peekLeft, peekRight;
+        [Tooltip("The vehicle leaving on a page change (it slides away while the new one comes in).")]
+        [SerializeField] RectTransform outgoing;
+        [SerializeField] VehicleIcon outgoingCar;
         [Header("The car")]
         [SerializeField] RectTransform carRoot;
         [SerializeField] VehicleIcon car;
@@ -44,19 +47,15 @@ namespace SomeGame.UI
         [SerializeField] RectTransform hotspotTemplate;
         [SerializeField] Sprite[] slotIcons;
         [SerializeField] TMP_Text hint, buildName;
-        [Header("The carousel of cards")]
+        [Header("The strip of chips")]
         [SerializeField] RectTransform tray;
-        [SerializeField] GarageCarousel carousel;
-        [SerializeField] RectTransform cardsParent, tileTemplate;
+        [Tooltip("A row of round chips (a divider per cup): tap one and the car wears it at once.")]
+        [SerializeField] UnityEngine.UI.ScrollRect strip;
+        [SerializeField] RectTransform stripContent, tileTemplate, dividerTemplate;
         [SerializeField] TMP_Text trayCount, itemName, itemBlurb;
         [Tooltip("The row of part tabs at the top of the tray: jump straight to another part.")]
         [SerializeField] RectTransform tabTemplate;
         [SerializeField] UnityEngine.UI.Button doneButton;
-        [Tooltip("EQUIP / EQUIPPED / what it takes, under the cards.")]
-        [SerializeField] UnityEngine.UI.Button actionButton;
-        [SerializeField] UnityEngine.UI.Image actionFace, actionShadow, actionIcon;
-        [SerializeField] TMP_Text actionLabel;
-        [SerializeField] Sprite checkIcon, lockIcon;
         [Header("The rivals' cards")]
         [SerializeField] GameObject rivalsPanel;
         [SerializeField] RectTransform rivalsGrid, cardTemplate;
@@ -69,7 +68,7 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text detailName, detailTitle, detailBio, detailHome, detailGadget, detailStatus;
         [SerializeField] UnityEngine.UI.Image detailGadgetIcon;
 
-        const float Rise = 330f, FocusScale = 0.8f; // the car with one slot open: a little higher and smaller (the tray below)
+        const float Rise = 230f, FocusScale = 0.88f; // the car with one slot open: a little higher and smaller (the tray below)
         static readonly string[] SlotNames = { "PAINT", "BODY", "TOP", "DECAL", "TRAIL", "GADGET" };
         // Where each hotspot sits round the car, and the point of the car its line goes to (car units, car facing up).
         static readonly Vector2[] Spots = { new(-385f, 30f), new(385f, 30f), new(370f, 440f), new(-370f, 440f), new(-330f, -480f), new(330f, -480f) };
@@ -99,7 +98,12 @@ namespace SomeGame.UI
         RivalCharacter[] _rivals;
         Vector2 _carHome;
         Vehicle _vehicle = Vehicle.Car;
-        float _pageAt = -10f, _pageDir, _dragX;
+        float _pageAt = -10f, _pageDir, _dragY;
+        // The garage takes the colours of the vehicle's cup (Valley green, Winter blue), morphing between them.
+        Theme.Palette _palette, _mapPalette;
+        List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _morph;
+        float _morphAt = -10f;
+        const float MorphSeconds = 0.55f;
         bool _paging;
         static string[] VehicleNames => new[] { "CAR", "SNOWMOBILE" };
 
@@ -109,8 +113,6 @@ namespace SomeGame.UI
             rivalsButton.onClick.AddListener(OpenRivals);
             rivalsClose.onClick.AddListener(() => PopIn.Hide(rivalsPanel));
             doneButton.onClick.AddListener(Unfocus);
-            actionButton.onClick.AddListener(() => Pick(_browsing));
-            carousel.FocusChanged += Browse;
             carButton.onClick.AddListener(() => { if (_focus >= 0) Unfocus(); });
             if (detailClose != null) detailClose.onClick.AddListener(() => PopIn.Hide(detail));
             if (detail != null && detail.transform.Find("Dim")?.GetComponent<UnityEngine.UI.Button>() is { } dim) dim.onClick.AddListener(() => PopIn.Hide(detail));
@@ -134,6 +136,8 @@ namespace SomeGame.UI
                 _hotspots.Add(spot);
             }
             tileTemplate.gameObject.SetActive(false);
+            dividerTemplate.gameObject.SetActive(false);
+            outgoing.gameObject.SetActive(false);
             tabTemplate.gameObject.SetActive(false);
             for (int i = 0; i < SlotNames.Length; i++)
             {
@@ -167,43 +171,71 @@ namespace SomeGame.UI
             _unfocusAt = -10f;
             panel.SetActive(true);
             tray.gameObject.SetActive(false);
+            outgoing.gameObject.SetActive(false);
+            // In the map's colours now (it recoloured the whole screen); the vehicle's cup's colours from here.
+            _mapPalette = _palette = Theme.Current;
+            _morph = null;
+            Morph(PaletteOf(_vehicle), instant: true);
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.5f);
             Refresh();
+        }
+
+        static Theme.Palette PaletteOf(Vehicle vehicle) => vehicle == Vehicle.Snowmobile ? Theme.Winter : Theme.Valley;
+
+        // Morphs the garage's colours to a palette (or jumps there). A morph still running is finished first.
+        void Morph(Theme.Palette to, bool instant = false)
+        {
+            if (_morph != null) { foreach (var (g, _, end) in _morph) if (g != null) g.color = end; _morph = null; }
+            if (to == _palette) return;
+            var plan = Theme.RecolorPlan(transform, _palette, to);
+            // Not what shows your paint or a part's own colours (the cars, the paint swatches, the trail icons).
+            plan.RemoveAll(p => p.graphic.name is "Body" or "Color" or "Pic");
+            _palette = to;
+            Theme.Use(to); // what the garage colours now from code (tabs, dots, chips...) is in these colours too
+            if (instant) { foreach (var (g, _, end) in plan) g.color = end; return; }
+            _morph = plan;
+            _morphAt = Time.unscaledTime;
         }
 
         // ---------------------------------------------------------------- the vehicles' pages
 
         int PageIndex => System.Array.IndexOf(Garage.Vehicles, _vehicle);
 
-        /// <summary>To the next vehicle's page (+1, the one on the right) or the one before (-1).</summary>
+        /// <summary>To the next vehicle's page (+1, the one below) or the one before (-1, above).</summary>
         void Page(int step)
         {
             int to = PageIndex + step;
             if (_focus >= 0 || to < 0 || to >= Garage.Vehicles.Length) return;
+            // The vehicle leaving, as it is, slides away; the new one comes in from the other side.
+            outgoingCar.Show(_vehicle == Vehicle.Snowmobile);
+            outgoingCar.Dress(CarLook.For(_vehicle));
+            outgoing.gameObject.SetActive(true);
             _vehicle = Garage.Vehicles[to];
+            Morph(PaletteOf(_vehicle));
             _pageAt = Time.unscaledTime;
             _pageDir = step;
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
             Refresh();
         }
 
+        // Swipe up for the next vehicle (it comes up from below), down for the one before.
         public void OnBeginDrag(PointerEventData e)
         {
             _paging = _focus < 0;
-            _dragX = 0f;
+            _dragY = 0f;
         }
 
         public void OnDrag(PointerEventData e)
         {
-            if (_paging) _dragX += e.delta.x / Mathf.Max(0.01f, GetComponentInParent<Canvas>().rootCanvas.scaleFactor);
+            if (_paging) _dragY += e.delta.y / Mathf.Max(0.01f, GetComponentInParent<Canvas>().rootCanvas.scaleFactor);
         }
 
         public void OnEndDrag(PointerEventData e)
         {
             if (!_paging) return;
             _paging = false;
-            if (Mathf.Abs(_dragX) > 140f) Page(_dragX < 0f ? 1 : -1);
-            _dragX = 0f;
+            if (Mathf.Abs(_dragY) > 140f) Page(_dragY > 0f ? 1 : -1);
+            _dragY = 0f;
         }
 
         bool Fits(int slot) => Garage.Fits((Garage.Slot)slot, _vehicle);
@@ -211,6 +243,13 @@ namespace SomeGame.UI
         public void Close()
         {
             if (_closingAt < 0f) _closingAt = Time.unscaledTime;
+        }
+
+        // Closed: back in the map's colours (the screen around it is in them).
+        void Closed()
+        {
+            Morph(_mapPalette, instant: true);
+            panel.SetActive(false);
         }
 
         // ---------------------------------------------------------------- one slot
@@ -239,10 +278,11 @@ namespace SomeGame.UI
             Refresh();
         }
 
-        // The cards for the slot, cup by cup (the cup's name on each), the one you have on in the middle.
+        // The chips for the slot, cup by cup (a divider with the cup's name and stars before its own), scrolled so
+        // the one you have on is in view.
         void BuildTray()
         {
-            foreach (var tile in _tiles) Destroy(tile.gameObject);
+            foreach (Transform child in stripContent) if (child != tileTemplate && child != dividerTemplate) Destroy(child.gameObject);
             _tiles.Clear(); _shown.Clear();
             var slot = (Garage.Slot)_focus;
             var equipped = Garage.Equipped(slot, _vehicle);
@@ -253,28 +293,37 @@ namespace SomeGame.UI
                 var parts = new List<Garage.Part>();
                 foreach (var part in Garage.Of(slot)) if (part.Cup == cup.name) parts.Add(part);
                 if (slot == Garage.Slot.Gadget && !parts.Exists(p => p.How != Garage.Unlock.Free)) parts.Add(null); // a rival's gadget to come
+                if (parts.Count == 0) continue;
+                var divider = Instantiate(dividerTemplate, stripContent);
+                divider.gameObject.SetActive(true);
+                divider.Find("Name").GetComponent<TMP_Text>().text = cup.displayName;
+                divider.Find("Stars/Count").GetComponent<TMP_Text>().text = $"{Garage.CupStars(cup.name)}/{Garage.CupMaxStars(cup.name)}";
                 foreach (var part in parts)
                 {
-                    var tile = Instantiate(tileTemplate, cardsParent);
+                    var tile = Instantiate(tileTemplate, stripContent);
                     tile.gameObject.SetActive(true);
                     int index = _tiles.Count;
-                    tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
-                    {
-                        if (carousel.Dragging) return;
-                        if (index == carousel.Focused) Pick(index); else carousel.FlyTo(index);
-                    });
-                    tile.Find("Cup/Label").GetComponent<TMP_Text>().text = cup.displayName;
+                    tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Pick(index));
                     if (part == equipped) equippedAt = index;
                     _tiles.Add(tile);
                     _shown.Add(part);
                 }
             }
             _browsing = equippedAt;
-            carousel.Set(_tiles, equippedAt);
+            Canvas.ForceUpdateCanvases();
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(stripContent);
+            if (_tiles.Count > 0)
+            {
+                float x = -_tiles[equippedAt].anchoredPosition.x + strip.viewport.rect.width * 0.5f;
+                float max = Mathf.Max(0f, stripContent.rect.width - strip.viewport.rect.width);
+                stripContent.anchoredPosition = new Vector2(Mathf.Clamp(x, -max, 0f), 0f);
+            }
+            strip.velocity = Vector2.zero;
+            Browse(equippedAt);
         }
 
-        // The card in the middle: the car tries it on, the name and what it is (or what it takes) show, the button
-        // says EQUIP, EQUIPPED or what it takes.
+        // The chip tapped last: the car wears it (or tries it on, if it is still locked), its name and what it is
+        // (or what it takes) show.
         void Browse(int index)
         {
             if (_focus < 0 || index < 0 || index >= _shown.Count) return;
@@ -307,11 +356,7 @@ namespace SomeGame.UI
                     : open ? part.Blurb : Requirement(part, Rival(part.From));
                 itemBlurb.color = open ? Theme.InkSoft : Theme.Rust;
             }
-            actionIcon.gameObject.SetActive(on || !open);
-            actionIcon.sprite = on ? checkIcon : lockIcon;
-            actionLabel.text = on ? "EQUIPPED" : open ? "EQUIP" : part == null ? "LOCKED" : Short(part);
-            actionFace.color = on ? Theme.Leaf : open ? Theme.Orange : Theme.Stone;
-            actionShadow.color = on ? Shade(Theme.Leaf, 0.7f) : open ? Theme.OrangeDeep : Theme.StoneDark;
+            if (Time.unscaledTime >= _messageUntil && part != null && !open) itemName.text = $"{part.Name}  ·  LOCKED";
         }
 
         static Color Shade(Color c, float k) => new(c.r * k, c.g * k, c.b * k, c.a);
@@ -333,16 +378,16 @@ namespace SomeGame.UI
             bool snow = _vehicle == Vehicle.Snowmobile;
             car.Show(snow);
             car.Dress(look);
-            buildName.text = $"{(snow ? "SNOWMOBILE" : look.Body.Name)}  ·  {Garage.Equipped(Garage.Slot.Paint, _vehicle).Name}";
+            buildName.gameObject.SetActive(false);
+            hint.gameObject.SetActive(false);
             for (int i = 0; i < _hotspots.Count; i++) _hotspots[i].Value.text = Garage.Equipped((Garage.Slot)i, _vehicle).Name;
             for (int i = 0; i < _tabs.Count; i++) _tabs[i].gameObject.SetActive(Fits(i));
-            hint.text = $"TAP A HOTSPOT TO CHANGE YOUR {(snow ? "SNOWMOBILE" : "CAR")}";
             // The page: its name, its dot, the other vehicles peeking in at the sides (in their own setup).
             int page = PageIndex;
             pageTitle.text = $"{Garage.CupNamed(Garage.CupOf(_vehicle))?.displayName ?? ""}  ·  {VehicleNames[page]}";
             for (int i = 0; i < pageDots.Length; i++) pageDots[i].color = i == page ? Theme.Amber : Theme.WithAlpha(Theme.Cream, 0.35f);
-            Peek(peekLeft, page - 1);
-            Peek(peekRight, page + 1);
+            Peek(peekLeft, page - 1);  // above
+            Peek(peekRight, page + 1); // below
             if (_focus < 0) return;
             var slot = (Garage.Slot)_focus;
             int open = 0, all = 0;
@@ -473,12 +518,14 @@ namespace SomeGame.UI
             var part = index >= 0 && index < _shown.Count ? _shown[index] : null;
             if (part == null || !Garage.IsUnlocked(part))
             {
-                // Not yet: the card and the button shake.
+                // Not yet: the car tries it on, the chip shakes, and what it takes shows.
                 _shake = index;
                 _shakeAt = Time.unscaledTime;
+                Browse(index);
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.click, 0.4f);
                 return;
             }
+            _browsing = index;
             _picked = part;
             _messageUntil = 0f;
             if (Garage.Equipped(part.Slot, _vehicle) != part)
@@ -490,6 +537,7 @@ namespace SomeGame.UI
             }
             Refresh();
             car.Dress(CarLook.For(_vehicle));
+            ShowAction();
         }
 
         void Peek(RectTransform peek, int page)
@@ -589,7 +637,14 @@ namespace SomeGame.UI
             float shut = _closingAt >= 0f ? Mathf.Clamp01((t - _closingAt) / 0.25f) : 0f;
             group.alpha = open * (1f - shut);
             sheet.anchoredPosition = new Vector2(0f, -120f * shut * shut);
-            if (shut >= 1f) { panel.SetActive(false); return; }
+            if (shut >= 1f) { Closed(); return; }
+            // The colours morph to the vehicle's cup.
+            if (_morph != null)
+            {
+                float m = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - _morphAt) / MorphSeconds));
+                foreach (var (g, from, to) in _morph) if (g != null) g.color = Color.Lerp(from, to, m);
+                if (m >= 1f) _morph = null;
+            }
             if (_messageUntil > 0f && t >= _messageUntil) { _messageUntil = 0f; Refresh(); }
 
             // In focus (0..1): the car rises and shrinks a little, the tray slides up; back out the other way.
@@ -600,10 +655,20 @@ namespace SomeGame.UI
             float fall = 1f - Bounce(drop);
             float pop = 1f + 0.12f * Mathf.Sin(Mathf.Clamp01((t - _changedAt) / 0.35f) * Mathf.PI)
                            + 0.05f * Mathf.Sin(Mathf.Clamp01((t - _tryAt) / 0.25f) * Mathf.PI);
-            // A page change: the new vehicle slides in from its side (the swipe drags it a little meanwhile).
-            float slide = 1f - EaseOut((t - _pageAt) / 0.45f);
-            float dragOffset = _paging ? Mathf.Clamp(_dragX * 0.5f, -220f, 220f) : 0f;
-            carRoot.anchoredPosition = _carHome + new Vector2(_pageDir * 900f * slide + dragOffset, 700f * fall + Rise * focus + Mathf.Sin(t * 1.4f) * 8f);
+            // A page change: the old vehicle slides away up (or down) and fades, the new one comes in from the
+            // other side; the swipe drags the car along a little meanwhile.
+            float page = Mathf.Clamp01((t - _pageAt) / 0.55f);
+            float slide = 1f - EaseOut(page);
+            float dragOffset = _paging ? Mathf.Clamp(_dragY * 0.5f, -240f, 240f) : 0f;
+            carRoot.anchoredPosition = _carHome + new Vector2(0f, -_pageDir * 1150f * slide + dragOffset + 700f * fall + Rise * focus + Mathf.Sin(t * 1.4f) * 8f);
+            if (outgoing.gameObject.activeSelf)
+            {
+                float away = EaseOut(page);
+                outgoing.anchoredPosition = _carHome + new Vector2(0f, _pageDir * 1150f * away);
+                outgoing.localScale = Vector3.one * Mathf.Lerp(1f, 0.7f, away);
+                outgoing.GetComponent<CanvasGroup>().alpha = 1f - away;
+                if (page >= 1f) outgoing.gameObject.SetActive(false);
+            }
             carRoot.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * pop;
             podium.anchoredPosition = _carHome + new Vector2(0f, Rise * focus);
             podium.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * Mathf.Lerp(0.6f, 1f, EaseOut(drop));
@@ -636,18 +701,17 @@ namespace SomeGame.UI
                 bool active = stay > 0.01f && Fits(i);
                 if (spot.Root.gameObject.activeSelf != active) spot.Root.gameObject.SetActive(active);
             }
-            hint.alpha = Mathf.Clamp01((t - _openedAt - 1.1f) / 0.4f) * (1f - focus);
-            // The other vehicles peek in at the sides (not while a part is open); they nod now and then.
-            foreach (var (peek, side) in new[] { (peekLeft, -1f), (peekRight, 1f) })
+            // The other vehicles peek in above and below (not while a part is open); their arrow nods now and then.
+            foreach (var (peek, side) in new[] { (peekLeft, 1f), (peekRight, -1f) })
             {
                 if (!peek.gameObject.activeSelf) continue;
-                float show = Mathf.Clamp01((t - _openedAt - 0.9f) / 0.4f) * (1f - focus);
+                float show = Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.9f, t - _pageAt - 0.4f) / 0.4f) * (1f - focus);
                 peek.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, show);
                 peek.GetComponent<CanvasGroup>().alpha = show;
                 float nudge = Mathf.Repeat(t, 3.5f) < 0.5f ? Mathf.Sin(Mathf.Repeat(t, 3.5f) / 0.5f * Mathf.PI) * 14f : 0f;
-                peek.Find("Arrow").localPosition = new Vector3(-side * 40f + side * nudge, peek.Find("Arrow").localPosition.y, 0f);
+                var arrow = peek.Find("Arrow");
+                arrow.localPosition = new Vector3(0f, side * (150f + nudge), 0f);
             }
-            buildName.alpha = hint.alpha;
 
             // The part being changed pulses.
             highlight.gameObject.SetActive(_focus >= 0);
@@ -660,21 +724,23 @@ namespace SomeGame.UI
             }
 
             // The tray: slides up with the cards popping in one after another.
-            tray.anchoredPosition = new Vector2(0f, Mathf.Lerp(-1200f, 0f, focus));
+            tray.anchoredPosition = new Vector2(0f, Mathf.Lerp(-820f, 0f, focus));
             if (focus <= 0.001f && _focus < 0 && tray.gameObject.activeSelf) tray.gameObject.SetActive(false);
-            // The carousel rises in a moment after the tray; a locked pick shakes the middle card and the button.
-            float rise = EaseOutBack(Mathf.Clamp01((t - _switchAt - 0.08f) / 0.35f));
+            // The chips pop in one after another after the tray (and again on a part switch); the one tapped last
+            // stands a little bigger; a locked one shakes.
             for (int i = 0; i < _tabs.Count; i++)
             {
                 float tabPop = i == _focus ? 1f + 0.18f * Mathf.Sin(Mathf.Clamp01((t - _switchAt) / 0.3f) * Mathf.PI) : 1f;
                 _tabs[i].localScale = Vector3.one * (i == _focus ? 1.08f : 0.94f) * tabPop;
             }
-            carousel.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, rise) * 0.86f; // the cards a touch smaller than built
             float shake = Mathf.Clamp01((t - _shakeAt) / 0.4f);
             float wobble = Mathf.Sin(shake * Mathf.PI * 6f) * (1f - shake);
-            if (_shake >= 0 && _shake < _tiles.Count) _tiles[_shake].Find("Preview").localRotation = Quaternion.Euler(0f, 0f, wobble * 10f);
-            actionButton.transform.localPosition = new Vector3(wobble * 18f, actionButton.transform.localPosition.y, 0f);
-            actionButton.transform.localScale = Vector3.one * (1f + 0.03f * Mathf.Sin(t * 4f) * (actionFace.color == Theme.Orange ? 1f : 0f));
+            for (int i = 0; i < _tiles.Count; i++)
+            {
+                float appear = EaseOutBack(Mathf.Clamp01((t - _switchAt - 0.1f - i * 0.035f) / 0.3f));
+                _tiles[i].localScale = Vector3.one * appear * (i == _browsing ? 1.1f + 0.02f * Mathf.Sin(t * 4f) : 1f);
+                _tiles[i].localRotation = Quaternion.Euler(0f, 0f, i == _shake ? wobble * 10f : 0f);
+            }
 
             // The sparks fly out and fade.
             for (int i = _sparks.Count - 1; i >= 0; i--)
