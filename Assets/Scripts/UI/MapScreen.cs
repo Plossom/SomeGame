@@ -94,6 +94,7 @@ namespace SomeGame.UI
         int _wipeTargetSlot = -1;
         float _wipeCovering;
         bool _barOpen;
+        float _ringAlpha;
         float _barOpenAt, _barOpenVelocity, _collapseAt = -1f;
         Vector2[] _pageHome;
         bool _switching;
@@ -745,6 +746,7 @@ namespace SomeGame.UI
             _fadePlan = fadeAbove ? new List<(UnityEngine.UI.Graphic, Color, Color)>() : null;
             foreach (var (graphic, a, b) in plan)
             {
+                if (barRing != null && graphic.transform.IsChildOf(barRing)) continue; // (the ring colours itself, see UpdateDots)
                 bool above = fadeAbove && fadeRoots != null && System.Array.Exists(fadeRoots, r => r != null && graphic.transform.IsChildOf(r));
                 if (above) _fadePlan.Add((graphic, a, b));
                 else graphic.color = b;
@@ -831,7 +833,7 @@ namespace SomeGame.UI
                 bool soon = CupList.IsComingSoon(cup), locked = !soon && !CupList.IsUnlocked(cup);
                 var icon = _badges[i].Find("Icon").GetComponent<UnityEngine.UI.Image>();
                 icon.sprite = soon ? soonSprite : locked ? lockSprite : cup.icon;
-                icon.rectTransform.sizeDelta = Vector2.one * (soon || locked ? 56f : 108f);
+                icon.rectTransform.sizeDelta = Vector2.one * (soon || locked ? 52f : 94f);
                 icon.color = soon || locked ? Theme.StoneDark : Color.white;
                 // An open cup's picture sits straight on the plate; a locked one on a grey disc with its lock.
                 _badges[i].Find("Face").GetComponent<UnityEngine.UI.Image>().color = soon || locked ? Theme.Stone : new Color(0f, 0f, 0f, 0f);
@@ -871,8 +873,13 @@ namespace SomeGame.UI
                 barRing.localScale = Vector3.one * (1f + 0.04f * Mathf.Sin(Time.unscaledTime * 3f));
             }
             if (barChevron != null) barChevron.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpUnclamped(-90f, 90f, open));
+            // The ring shows while it moves (a switch) and while the column is open by hand; once a cup is chosen it
+            // fades away slowly.
+            bool ringWanted = Mathf.Abs(target - _ringAt) > 0.02f || (_barOpen && _collapseAt > 0f) || _switching;
+            _ringAlpha = ringWanted ? Mathf.MoveTowards(_ringAlpha, 1f, dt / 0.15f) : Mathf.MoveTowards(_ringAlpha, 0f, dt / 1.2f);
+            if (!animate) _ringAlpha = ringWanted ? 1f : 0f;
             if (barRing != null)
-                foreach (var g in barRing.GetComponentsInChildren<UnityEngine.UI.Graphic>()) { var c = g.color; c.a = g.name == "Glow" ? 0.22f : 1f; g.color = c; }
+                foreach (var g in barRing.GetComponentsInChildren<UnityEngine.UI.Graphic>()) g.color = Theme.WithAlpha(Theme.Amber, (g.name == "Glow" ? 0.22f : 1f) * _ringAlpha);
             for (int i = 0; i < _badges.Count; i++)
             {
                 float near = Mathf.Clamp01(1f - Mathf.Abs(_ringAt - i));

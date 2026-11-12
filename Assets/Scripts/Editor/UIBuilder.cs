@@ -204,8 +204,8 @@ namespace SomeGame.EditorTools
             TMP_Text CounterRow(string name, float y, string icon)
             {
                 var row = At(name, counters, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(140f, 64f));
-                Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(38f, 38f)), icon, Theme.Amber);
-                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-20f, -2f), new Vector2(76f, 64f)), "0", 46, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
+                Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(48f, 48f)), icon, Theme.Amber);
+                return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-16f, -2f), new Vector2(80f, 64f)), "0", 58, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             }
             var total = CounterRow("Stars", -16f, "IconStar");
 
