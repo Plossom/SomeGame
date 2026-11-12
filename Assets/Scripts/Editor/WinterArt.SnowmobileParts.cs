@@ -8,9 +8,10 @@ namespace SomeGame.EditorTools
     /// The snowmobile's own garage parts (the Winter Cup's), on its 192 x 336 canvas (nose up, the skis and the
     /// track in the same spots, so every sled drives and steers the same):
     /// <list type="bullet">
-    /// <item>Bodies (tinted with the paint; details untinted): the SPORT SLED (a pointed hood, slit lamps) and the
-    /// TOURING SLED (a wide hood, a long seat with a backrest and a rack behind). Each as Snowmobile{Name} (with
-    /// its skis, for the menus), Snowmobile{Name}Body (without, for races) and Snowmobile{Name}Details.</item>
+    /// <item>Bodies (tinted with the paint; details untinted): the BUBBLE TUB (a clawfoot bathtub on skis, the
+    /// rider in a shower cap in the foam, a rubber duck along for the ride) and the TOURING SLED (a wide hood, a
+    /// long seat with a backrest and a rack behind). Each as Snowmobile{Name} (with its skis, for the menus),
+    /// Snowmobile{Name}Body (without, for races) and Snowmobile{Name}Details.</item>
     /// <item>Tops, laid over it: a tall windscreen, a safety flag, a cargo box, reindeer antlers, a snowman riding
     /// pillion and the gold ice crown.</item>
     /// <item>Decals on the hood: a zigzag, a pine tree, a penguin, a number one and the gold Winter crest.</item>
@@ -21,7 +22,7 @@ namespace SomeGame.EditorTools
         [MenuItem("SomeGame/Generate Snowmobile Parts")]
         public static void GenerateSnowmobileParts()
         {
-            foreach (var (name, kind) in new[] { ("Sport", 1), ("Touring", 2) })
+            foreach (var (name, kind) in new[] { ("Tub", 1), ("Touring", 2) })
             {
                 int k = kind;
                 Write(ArtGenerator.Folder, "Snowmobile" + name, 192, 336, (x, y) =>
@@ -47,15 +48,12 @@ namespace SomeGame.EditorTools
             Debug.Log("Snowmobile parts generated");
         }
 
-        // ------------------------------------------------------------------ bodies (1 sport, 2 touring)
+        // ------------------------------------------------------------------ bodies (1 the bubble tub, 2 touring)
 
-        static float SportBodySdf(float x, float y)
-        {
-            float hood = Polygon(x, y, new[] { new Vector2(48, 212), new Vector2(144, 212), new Vector2(118, 296), new Vector2(96, 322), new Vector2(74, 296) }) - 6f;
-            // Swept side fairings past the seat.
-            float fairings = Polygon(x, y, new[] { new Vector2(42, 110), new Vector2(150, 110), new Vector2(146, 214), new Vector2(46, 214) }) - 6f;
-            return Mathf.Min(hood, fairings);
-        }
+        static Color SledPixel(int kind, float x, float y) => kind == 1 ? TubPixel(x, y) : TouringPixel(x, y);
+        static Color SledDetailsPixel(int kind, float x, float y) => kind == 1 ? TubDetailsPixel(x, y) : TouringDetailsPixel(x, y);
+
+        // ------------------------------------------------------------------ the touring sled
 
         static float TouringBodySdf(float x, float y)
         {
@@ -64,9 +62,7 @@ namespace SomeGame.EditorTools
             return Mathf.Min(hood, middle);
         }
 
-        static float KindBodySdf(int kind, float x, float y) => kind == 1 ? SportBodySdf(x, y) : TouringBodySdf(x, y);
-
-        static Color SledPixel(int kind, float x, float y)
+        static Color TouringPixel(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
             float arms = Min(Capsule(x, y, 58, 252, 30, 258, 4.5f), Capsule(x, y, 58, 274, 30, 270, 4.5f),
@@ -76,46 +72,26 @@ namespace SomeGame.EditorTools
             c = Over(c, Mathf.Repeat(y, 9f) < 4f ? Tyre : TyreLight, Fill(track));
             c = Over(c, SledOutline, Stroke(track, 4f));
 
-            // The touring sled's rack over the back of the track (under the body's tail).
-            if (kind == 2)
-            {
-                float rack = Mathf.Max(RoundRect(x, y, 96, 52, 40, 22, 8), -RoundRect(x, y, 96, 52, 32, 14, 4));
-                rack = Mathf.Min(rack, Capsule(x, y, 96, 34, 96, 70, 2.5f));
-                c = Over(c, new Color(0.18f, 0.18f, 0.2f), Fill(rack));
-                c = Over(c, SledOutline, Stroke(rack, 2f));
-            }
+            // The rack over the back of the track (under the body's tail).
+            float rack = Mathf.Max(RoundRect(x, y, 96, 52, 40, 22, 8), -RoundRect(x, y, 96, 52, 32, 14, 4));
+            rack = Mathf.Min(rack, Capsule(x, y, 96, 34, 96, 70, 2.5f));
+            c = Over(c, new Color(0.18f, 0.18f, 0.2f), Fill(rack));
+            c = Over(c, SledOutline, Stroke(rack, 2f));
 
-            float body = KindBodySdf(kind, x, y);
+            float body = TouringBodySdf(x, y);
             float inside = Mathf.Clamp01(-body / 14f);
             float v = Mathf.Lerp(0.8f, 1f, inside) - Mathf.Clamp01((x - 120f) / 60f) * 0.08f;
             c = Over(c, new Color(v, v, v), Fill(body));
-            if (kind == 1)
-            {
-                // A sharp crease down the hood and darker vents on the fairings.
-                c = Over(c, new Color(0.93f, 0.93f, 0.93f), Fill(Polygon(x, y, new[] { new Vector2(90, 224), new Vector2(102, 224), new Vector2(98, 306), new Vector2(94, 306) })) * Fill(body + 4f));
-                foreach (float s in new[] { -1f, 1f })
-                    for (int i = 0; i < 3; i++)
-                        c = Over(c, new Color(0.62f, 0.62f, 0.64f), Fill(Capsule(x, y, 96 + s * 40, 132 + i * 14, 96 + s * 46, 138 + i * 14, 2f)));
-            }
-            else
-            {
-                c = Over(c, new Color(0.92f, 0.92f, 0.92f), Fill(RoundRect(x, y, 96, 270, 26, 34, 14)) * Fill(body + 4f));
-            }
+            c = Over(c, new Color(0.92f, 0.92f, 0.92f), Fill(RoundRect(x, y, 96, 270, 26, 34, 14)) * Fill(body + 4f));
             c = Over(c, SledOutline, Stroke(body, 4.5f));
 
-            // The seat: the touring one long, with a backrest for a passenger.
-            float seat = kind == 2 ? RoundRect(x, y, 96, 118, 26, 60, 12) : RoundRect(x, y, 96, 138, 22, 40, 12);
-            c = Over(c, Cockpit, Fill(seat));
-            c = Over(c, new Color(0.24f, 0.24f, 0.26f), Fill(kind == 2 ? RoundRect(x, y, 96, 100, 16, 34, 8) : RoundRect(x, y, 96, 126, 12, 22, 8)));
-            if (kind == 2)
-            {
-                float back = RoundRect(x, y, 96, 64, 28, 8, 5);
-                c = Over(c, Cockpit, Fill(back));
-                c = Over(c, SledOutline, Stroke(back, 2.5f));
-            }
-            float boards = kind == 1
-                ? Mathf.Min(RoundRect(x, y, 56, 134, 7, 36, 4), RoundRect(x, y, 136, 134, 7, 36, 4))
-                : Mathf.Min(RoundRect(x, y, 56, 128, 10, 48, 5), RoundRect(x, y, 136, 128, 10, 48, 5));
+            // A long seat with a backrest for a passenger, footboards either side.
+            c = Over(c, Cockpit, Fill(RoundRect(x, y, 96, 118, 26, 60, 12)));
+            c = Over(c, new Color(0.24f, 0.24f, 0.26f), Fill(RoundRect(x, y, 96, 100, 16, 34, 8)));
+            float back = RoundRect(x, y, 96, 64, 28, 8, 5);
+            c = Over(c, Cockpit, Fill(back));
+            c = Over(c, SledOutline, Stroke(back, 2.5f));
+            float boards = Mathf.Min(RoundRect(x, y, 56, 128, 10, 48, 5), RoundRect(x, y, 136, 128, 10, 48, 5));
             c = Over(c, Mathf.Repeat(y, 8f) < 3f ? Cockpit : new Color(0.22f, 0.22f, 0.24f), Fill(boards));
 
             // The rider, as on the classic sled.
@@ -125,11 +101,9 @@ namespace SomeGame.EditorTools
             c = Over(c, Suit, Fill(rider));
             c = Over(c, SledOutline, Stroke(rider, 3.5f));
 
-            // Tubes (tinted): the sport sled only a handlebar; the touring one a wide bumper and side rails too.
+            // Tubes (tinted): the handlebar, a wide bumper and side rails.
             const float r = 4.2f;
-            float tubes = Capsule(x, y, 54, 212, 138, 212, r);
-            if (kind == 2)
-                tubes = Min(tubes, Capsule(x, y, 44, 288, 64, 328, r), Capsule(x, y, 64, 328, 128, 328, r), Capsule(x, y, 128, 328, 148, 288, r));
+            float tubes = Min(Capsule(x, y, 54, 212, 138, 212, r), Capsule(x, y, 44, 288, 64, 328, r), Capsule(x, y, 64, 328, 128, 328, r), Capsule(x, y, 128, 328, 148, 288, r));
             c = Over(c, new Color(0.95f, 0.95f, 0.95f), Fill(tubes));
             c = Over(c, SledOutline, Stroke(tubes, 2.5f));
             float gloves = Mathf.Min(Circle(x, y, 60, 211, 9f), Circle(x, y, 132, 211, 9f));
@@ -141,38 +115,110 @@ namespace SomeGame.EditorTools
             return c;
         }
 
-        static Color SledDetailsPixel(int kind, float x, float y)
+        static Color TouringDetailsPixel(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            // Windscreen: low and swept on the sport sled, a big one on the touring sled.
-            float screen = kind == 1
-                ? Polygon(x, y, new[] { new Vector2(70, 222), new Vector2(122, 222), new Vector2(112, 236), new Vector2(80, 236) }) - 2f
-                : RoundRect(x, y, 96, 234, 40, 12, 7);
+            float screen = RoundRect(x, y, 96, 234, 40, 12, 7);
             c = Over(c, new Color(0.62f, 0.82f, 0.96f, 0.85f), Fill(screen));
             c = Over(c, new Color(1f, 1f, 1f, 0.7f), Fill(Capsule(x, y, 76, 230, 88, 230, 2f)));
             c = Over(c, SledOutline, Stroke(screen, 3f));
             c = Over(c, Hex("1D2733"), Fill(Mathf.Max(Circle(x, y, 96, 166, 20), 172f - y)));
             c = Over(c, new Color(1f, 1f, 1f, 0.45f), Fill(Circle(x, y, 88, 160, 7f)));
-            if (kind == 1)
-            {
-                // Slit lamps either side of the point.
-                float heads = Mathf.Min(Capsule(x, y, 80, 290, 88, 306, 3.2f), Capsule(x, y, 112, 290, 104, 306, 3.2f));
-                c = Over(c, Hex("FFF6D8"), Fill(heads));
-                c = Over(c, SledOutline, Stroke(heads, 2f));
-            }
-            else
-            {
-                // One big round lamp and mirrors on the bar ends.
-                float lamp = Circle(x, y, 96, 300, 11);
-                c = Over(c, Hex("FFF6D8"), Fill(lamp));
-                c = Over(c, new Color(1f, 1f, 1f, 0.8f), Fill(Circle(x, y, 92, 304, 3.5f)));
-                c = Over(c, SledOutline, Stroke(lamp, 2.5f));
-                float mirrors = Mathf.Min(Ellipse(x, y, 42, 222, 8, 6), Ellipse(x, y, 150, 222, 8, 6));
-                c = Over(c, Hex("9FB4C8"), Fill(mirrors));
-                c = Over(c, SledOutline, Stroke(mirrors, 2f));
-            }
+            // One big round lamp and mirrors on the bar ends.
+            float lamp = Circle(x, y, 96, 300, 11);
+            c = Over(c, Hex("FFF6D8"), Fill(lamp));
+            c = Over(c, new Color(1f, 1f, 1f, 0.8f), Fill(Circle(x, y, 92, 304, 3.5f)));
+            c = Over(c, SledOutline, Stroke(lamp, 2.5f));
+            float mirrors = Mathf.Min(Ellipse(x, y, 42, 222, 8, 6), Ellipse(x, y, 150, 222, 8, 6));
+            c = Over(c, Hex("9FB4C8"), Fill(mirrors));
+            c = Over(c, SledOutline, Stroke(mirrors, 2f));
             float tails = Mathf.Min(RoundRect(x, y, 74, 84, 8, 4, 2), RoundRect(x, y, 118, 84, 8, 4, 2));
             c = Over(c, Hex("E0303A"), Fill(tails));
+            return c;
+        }
+
+        // ------------------------------------------------------------------ the bubble tub
+
+        // A clawfoot bathtub (tinted), its front on the ski arms, little runners under its claw feet at the back.
+        static float TubSdf(float x, float y) => RoundRect(x, y, 96, 178, 62, 112, 56);
+        static float TubBasinSdf(float x, float y) => RoundRect(x, y, 96, 176, 48, 96, 44);
+
+        static Color TubPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float arms = Min(Capsule(x, y, 58, 252, 30, 258, 4.5f), Capsule(x, y, 58, 274, 30, 270, 4.5f),
+                             Capsule(x, y, 134, 252, 162, 258, 4.5f), Capsule(x, y, 134, 274, 162, 270, 4.5f));
+            c = Over(c, new Color(0.16f, 0.16f, 0.16f), Fill(arms));
+            // The back feet on short runners (dark, like the track they replace).
+            foreach (float fx in new[] { 40f, 152f })
+            {
+                float runner = RoundRect(x, y, fx, 86, 9, 40, 8);
+                c = Over(c, Mathf.Repeat(y, 9f) < 4f ? Tyre : TyreLight, Fill(runner));
+                c = Over(c, SledOutline, Stroke(runner, 3f));
+                float foot = Ellipse(x, y, fx + (fx < 96 ? 10 : -10), 96, 12, 16);
+                c = Over(c, new Color(0.82f, 0.68f, 0.3f), Fill(foot));
+                c = Over(c, SledOutline, Stroke(foot, 2.5f));
+            }
+            // The tub: a thick rolled rim, the basin inside a shade deeper.
+            float tub = TubSdf(x, y);
+            float v = Mathf.Lerp(0.82f, 1f, Mathf.Clamp01(-tub / 10f)) - Mathf.Clamp01((x - 120f) / 60f) * 0.08f;
+            c = Over(c, new Color(v, v, v), Fill(tub));
+            c = Over(c, new Color(0.97f, 0.97f, 0.97f), Fill(Capsule(x, y, 54, 120, 54, 236, 3f)) * Fill(tub + 3f));
+            float basin = TubBasinSdf(x, y);
+            c = Over(c, new Color(0.74f, 0.74f, 0.74f), Fill(basin));
+            c = Over(c, SledOutline, Stroke(basin, 2.5f));
+            c = Over(c, SledOutline, Stroke(tub, 4.5f));
+            return c;
+        }
+
+        static Color TubDetailsPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            // Water in the basin with foam heaped along its edge (untinted: whatever the paint, the bath is blue).
+            float basin = TubBasinSdf(x, y) + 2f;
+            c = Over(c, new Color(0.55f, 0.82f, 0.96f, 0.95f), Fill(basin));
+            c = Over(c, new Color(1f, 1f, 1f, 0.5f), Fill(Capsule(x, y, 70, 104, 82, 100, 2f)) * Fill(basin));
+            float foam = float.MaxValue;
+            for (int i = 0; i < 26; i++)
+            {
+                float a = i / 26f * Mathf.PI * 2f;
+                float fx = 96 + Mathf.Cos(a) * 44f, fy = 176 + Mathf.Sin(a) * 90f;
+                foam = Mathf.Min(foam, Circle(x, y, fx, fy, 7f + 4f * Hash(i, 3)));
+            }
+            foam = Mathf.Min(foam, Min(Circle(x, y, 74, 190, 9), Circle(x, y, 118, 196, 8), Circle(x, y, 84, 128, 7), Circle(x, y, 112, 134, 6)));
+            c = Over(c, White(0.95f), Fill(foam) * Fill(basin));
+            // A chrome towel rail across the front to hold on to.
+            float rail = Capsule(x, y, 52, 228, 140, 228, 4.2f);
+            c = Over(c, Hex("C9D3DC"), Fill(rail));
+            c = Over(c, SledOutline, Stroke(rail, 2.5f));
+            // The rider sat in the foam, arms out to the rail.
+            float shoulders = Ellipse(x, y, 96, 156, 30, 16);
+            float armsUp = Mathf.Min(Capsule(x, y, 72, 162, 62, 222, 8.5f), Capsule(x, y, 120, 162, 130, 222, 8.5f));
+            float rider = Mathf.Min(shoulders, armsUp);
+            c = Over(c, Hex("F2C6A0"), Fill(rider));
+            c = Over(c, SledOutline, Stroke(rider, 3f));
+            float hands = Mathf.Min(Circle(x, y, 62, 226, 7.5f), Circle(x, y, 130, 226, 7.5f));
+            c = Over(c, Hex("F2C6A0"), Fill(hands));
+            c = Over(c, SledOutline, Stroke(hands, 2.5f));
+            float head = Circle(x, y, 96, 166, 22);
+            c = Over(c, Hex("F2C6A0"), Fill(head));
+            c = Over(c, SledOutline, Stroke(head, 3.5f));
+            // The rubber duck bobbing at the back.
+            float duck = Mathf.Min(Ellipse(x, y, 112, 100, 14, 11), Circle(x, y, 112, 114, 8));
+            c = Over(c, Hex("FFD23F"), Fill(duck));
+            c = Over(c, Hex("FF8A1E"), Fill(Triangle(x, y, new Vector2(108, 120), new Vector2(116, 120), new Vector2(112, 128))));
+            c = Over(c, SledOutline, Stroke(duck, 2f));
+            c = Over(c, SledOutline, Fill(Circle(x, y, 109, 116, 1.6f)));
+            // A chrome tap at the front end.
+            float tap = Mathf.Min(RoundRect(x, y, 96, 282, 7, 10, 3), Capsule(x, y, 84, 284, 108, 284, 3.2f));
+            c = Over(c, Hex("C9D3DC"), Fill(tap));
+            c = Over(c, SledOutline, Stroke(tap, 2f));
+            // The shower cap, pink with a frill.
+            float cap = Circle(x, y, 96, 168, 20);
+            c = Over(c, Hex("FF8FB8"), Fill(cap));
+            c = Over(c, Hex("FFC2D8"), Fill(Circle(x, y, 90, 174, 7)));
+            float frill = Shell(Circle(x, y, 96, 168, 21), 2.2f);
+            c = Over(c, White(0.9f), Fill(frill));
             return c;
         }
 

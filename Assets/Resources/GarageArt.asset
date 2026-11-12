@@ -273,10 +273,10 @@ MonoBehaviour:
       y: 0
       width: 0
       height: 0
-  - id: body.sport
-    full: {fileID: 21300000, guid: f8ba12177f9564e1f82a276430ff642c, type: 3}
-    race: {fileID: 21300000, guid: ca824dfb1e1e4424ba12c527395e6f49, type: 3}
-    details: {fileID: 21300000, guid: 47fec35f39b7547d4b08b2c9d9b91786, type: 3}
+  - id: body.tub
+    full: {fileID: 21300000, guid: 8cc17c2a27716482b8bdea4a399de2fa, type: 3}
+    race: {fileID: 21300000, guid: 51c6e1884e16e4e7590f354a8e61155c, type: 3}
+    details: {fileID: 21300000, guid: 06545287bef6440d1853d07ad68f67d9, type: 3}
     bounds:
       serializedVersion: 2
       x: 0

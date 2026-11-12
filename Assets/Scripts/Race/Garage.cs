@@ -63,7 +63,7 @@ namespace SomeGame.Race
             new(V, Slot.Body, "pickup", "FARM PICKUP", "A cab up front, a wooden bed behind.", Unlock.Stars, 16),
             new(V, Slot.Body, "kart", "GO-KART", "Low, open, helmet on.", Unlock.Stars, 22),
             new(W, Slot.Body, "sled", "SNOWMOBILE", "Skis up front, a track behind."),
-            new(W, Slot.Body, "sport", "SPORT SLED", "A pointed nose and slit lamps.", Unlock.Stars, 6),
+            new(W, Slot.Body, "tub", "BUBBLE TUB", "A clawfoot bathtub on skis. Bring a duck.", Unlock.Stars, 6),
             new(W, Slot.Body, "touring", "TOURING SLED", "A long seat, a backrest and a rack.", Unlock.Stars, 15),
 
             new(V, Slot.Top, "none", "NOTHING", "Clean and simple."),

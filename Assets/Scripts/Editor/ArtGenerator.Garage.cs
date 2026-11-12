@@ -128,7 +128,7 @@ namespace SomeGame.EditorTools
             Add("gadget.haybale", "HayBale");
             // The snowmobile's (the Winter Cup's).
             Add("body.sled", "SnowmobileIcon", "Snowmobile", "SnowmobileDetails");
-            Add("body.sport", "SnowmobileSport", "SnowmobileSportBody", "SnowmobileSportDetails");
+            Add("body.tub", "SnowmobileTub", "SnowmobileTubBody", "SnowmobileTubDetails");
             Add("body.touring", "SnowmobileTouring", "SnowmobileTouringBody", "SnowmobileTouringDetails");
             Add("top.windscreen", "TopSnowScreen"); Add("top.flag", "TopSnowFlag"); Add("top.cargo", "TopSnowCargo");
             Add("top.antlers", "TopSnowAntlers"); Add("top.snowman", "TopSnowman"); Add("top.icecrown", "TopIceCrown");
