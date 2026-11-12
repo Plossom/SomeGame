@@ -50,7 +50,6 @@ namespace SomeGame.UI
         [Header("The strip of chips")]
         [SerializeField] RectTransform tray;
         [Tooltip("A row of round chips (a divider per cup): tap one and the car wears it at once.")]
-        [SerializeField] UnityEngine.UI.ScrollRect strip;
         [SerializeField] RectTransform stripContent, tileTemplate, dividerTemplate;
         [SerializeField] TMP_Text trayCount, itemName, itemBlurb;
         [Tooltip("The row of part tabs at the top of the tray: jump straight to another part.")]
@@ -73,9 +72,11 @@ namespace SomeGame.UI
         static readonly Vector2 PeekAbove = new(0f, 730f), PeekBelow = new(0f, -230f);
         const float PeekGap = 480f;          // from the car to a peek spot: a full swipe
         const float PeekCarWidth = 150f;     // the car in a peek (the main car is 420 wide)
-        const float PeekScale = PeekCarWidth / 420f, PageSeconds = 0.35f;
+        const float PeekScale = PeekCarWidth / 420f;
         float _scrub, _scrubTarget, _dragVelocity;
         int _scrubDir, _scrubDirWas;
+        float _chipScale = 1f;
+        bool _snapping; // past half way: the change goes through quickly by itself
         List<(UnityEngine.UI.Graphic graphic, Color from, Color to)> _scrubPlan;
         readonly Dictionary<RectTransform, Vector2> _peekHome = new(); // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
         static readonly string[] SlotNames = { "PAINT", "BODY", "TOP", "DECAL", "TRAIL", "GADGET" };
@@ -184,7 +185,7 @@ namespace SomeGame.UI
             outgoing.gameObject.SetActive(false);
             // In the map's colours now (it recoloured the whole screen); the vehicle's cup's colours from here.
             _mapPalette = _palette = Theme.Current;
-            _scrubDir = 0; _scrub = _scrubTarget = 0f; _scrubPlan = null;
+            _scrubDir = 0; _scrub = _scrubTarget = 0f; _scrubPlan = null; _snapping = false;
             _morph = null;
             Morph(PaletteOf(_vehicle), instant: true);
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.5f);
@@ -221,8 +222,7 @@ namespace SomeGame.UI
         {
             if (_scrubDir != 0 || Neighbour(step) < 0) return;
             StartScrub(step);
-            _scrubTarget = 1f;
-            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
+            Snap();
         }
 
         int Neighbour(int step)
@@ -262,7 +262,9 @@ namespace SomeGame.UI
             _scrubDirWas = _scrubDir;
             _scrubDir = 0;
             _scrub = _scrubTarget = 0f;
-            _pageAt = _switchAt = Time.unscaledTime;
+            _snapping = false;
+            _pageAt = _switchAt = _changedAt = Time.unscaledTime; // it lands with a pop and a ring
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.land, 0.5f);
             // The old vehicle now sits in its peek spot at peek size: that peek takes over at once.
             var back = _scrubDirWas > 0 ? peekLeft : peekRight;
             var backGroup = back.GetComponent<CanvasGroup>();
@@ -276,7 +278,7 @@ namespace SomeGame.UI
         // finger; let go past a third of the way and the change glides through, else it glides back.
         public void OnBeginDrag(PointerEventData e)
         {
-            _paging = true; // (the chip strip scrolls on its own: swipes on it don't page)
+            _paging = true;
             _dragY = 0f;
         }
 
@@ -289,6 +291,16 @@ namespace SomeGame.UI
             if (Neighbour(step) < 0) { if (_scrubDir == 0) _scrub = 0f; return; }
             StartScrub(step);
             _scrub = Mathf.Clamp01(Mathf.Abs(_dragY) / PeekGap);
+            if (_scrub >= 0.5f) Snap(); // half way: it pops over to the next vehicle
+        }
+
+        void Snap()
+        {
+            _paging = false;
+            _snapping = true;
+            _scrubTarget = 1f;
+            _dragY = _dragVelocity = 0f;
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
         }
 
         public void OnEndDrag(PointerEventData e)
@@ -296,8 +308,8 @@ namespace SomeGame.UI
             if (!_paging) return;
             _paging = false;
             bool flung = Mathf.Abs(_dragVelocity) > 1400f && Mathf.Sign(_dragVelocity) == _scrubDir;
-            _scrubTarget = _scrubDir != 0 && (_scrub > 0.33f || flung) ? 1f : 0f;
-            if (_scrubTarget > 0f) SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
+            if (_scrubDir != 0 && flung) { Snap(); return; }
+            _scrubTarget = 0f; // short of half way: it glides back
             _dragY = _dragVelocity = 0f;
         }
 
@@ -312,7 +324,7 @@ namespace SomeGame.UI
         void Closed()
         {
             RestoreScrubColours();
-            _scrubDir = 0; _scrub = _scrubTarget = 0f;
+            _scrubDir = 0; _scrub = _scrubTarget = 0f; _snapping = false;
             Morph(_mapPalette, instant: true);
             panel.SetActive(false);
         }
@@ -366,17 +378,31 @@ namespace SomeGame.UI
                 _shown.Add(part);
             }
             _browsing = equippedAt;
-            Canvas.ForceUpdateCanvases();
-            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(stripContent);
-            if (_tiles.Count > 0)
-            {
-                float scale = stripContent.localScale.x;
-                float x = -_tiles[equippedAt].anchoredPosition.x * scale + strip.viewport.rect.width * 0.5f;
-                float max = Mathf.Max(0f, stripContent.rect.width * scale - strip.viewport.rect.width);
-                stripContent.anchoredPosition = new Vector2(Mathf.Clamp(x, -max, 0f), 0f);
-            }
-            strip.velocity = Vector2.zero;
+            LayOutChips();
             Browse(equippedAt);
+        }
+
+        // All the chips fit in the tray at once: in one row, or two when that lets them be bigger; each row centred.
+        void LayOutChips()
+        {
+            const float chipW = 240f, chipH = 330f, gap = 22f, margin = 30f;
+            var area = stripContent.rect;
+            int n = _tiles.Count, rows = 1;
+            _chipScale = 0f;
+            for (int r = 1; r <= 2 && r <= n; r++)
+            {
+                int c = Mathf.CeilToInt(n / (float)r);
+                float fit = Mathf.Min(1.15f, (area.width - 2f * margin - (c - 1) * gap) / (c * chipW), area.height / (r * chipH));
+                if (fit > _chipScale + 0.02f) { _chipScale = fit; rows = r; }
+            }
+            int cols = Mathf.CeilToInt(n / (float)rows);
+            for (int i = 0; i < n; i++)
+            {
+                int row = i / cols, col = i % cols, inRow = Mathf.Min(cols, n - row * cols);
+                var tile = _tiles[i];
+                tile.anchorMin = tile.anchorMax = tile.pivot = new Vector2(0.5f, 0.5f);
+                tile.anchoredPosition = new Vector2((col - (inRow - 1) * 0.5f) * (chipW * _chipScale + gap), ((rows - 1) * 0.5f - row) * chipH * _chipScale);
+            }
         }
 
         // The chip tapped last: the car wears it (or tries it on, if it is still locked), its name and what it is
@@ -730,11 +756,12 @@ namespace SomeGame.UI
             // the far side while the vehicle on the near side grows out of its spot into the middle; the colours blend.
             if (!_paging && _scrubDir != 0)
             {
-                _scrub = Mathf.Lerp(_scrub, _scrubTarget, 1f - Mathf.Exp(-11f * dt));
+                _scrub = _snapping ? Mathf.MoveTowards(_scrub, 1f, dt / 0.16f) : Mathf.Lerp(_scrub, _scrubTarget, 1f - Mathf.Exp(-11f * dt));
                 if (_scrubTarget > 0f && _scrub > 0.995f) FinishScrub();
-                else if (_scrubTarget <= 0f && _scrub < 0.005f) { RestoreScrubColours(); _scrubDir = 0; _scrub = 0f; }
+                else if (_scrubTarget <= 0f && _scrub < 0.005f) { RestoreScrubColours(); _scrubDir = 0; _scrub = 0f; _snapping = false; }
             }
-            float k = _scrub; // under the finger 1:1 (the glide after it eases out by itself)
+            // Under the finger 1:1; the snap speeds through the rest (and the new vehicle lands with a pop).
+            float k = _scrub;
             if (_scrubPlan != null) foreach (var (g, from, to) in _scrubPlan) if (g != null) g.color = Color.Lerp(from, to, k);
             Vector2 middle = _carHome + new Vector2(0f, Rise * focus);
             float mainScale = Mathf.Lerp(1f, FocusScale, focus);
@@ -755,7 +782,7 @@ namespace SomeGame.UI
             for (int i = 0; i < _hotspots.Count; i++)
             {
                 var spot = _hotspots[i];
-                float since = Mathf.Min(t - _openedAt - 0.6f, t - _pageAt - PageSeconds + 0.1f);
+                float since = Mathf.Min(t - _openedAt - 0.6f, t - _pageAt + 0.05f);
                 float appear = Fits(i) ? Mathf.Clamp01((since - i * 0.06f) / 0.35f) : 0f;
                 // Round the car (moving with it), the part being chosen orange and a little bigger.
                 bool on = i == _focus;
@@ -763,15 +790,15 @@ namespace SomeGame.UI
                 Vector2 anchor = carRoot.anchoredPosition + Anchors[i] * carRoot.localScale.x;
                 Vector2 at = carRoot.anchoredPosition + Spots[i] * HotScale * (carRoot.localScale.x / FocusScale);
                 spot.Button.anchoredPosition = at;
-                float during = 1f - Mathf.Clamp01(_scrub * 4f); // they make way while the vehicles change
+                float during = carRoot.localScale.x / FocusScale; // they stay on the car (the spider), shrinking with it
                 spot.Button.localScale = Vector3.one * EaseOutBack(appear) * HotScale * (on ? 1.12f : 1f) * pick * during;
                 spot.Dot.anchoredPosition = anchor;
-                spot.Dot.localScale = Vector3.one * appear * (on ? 1.3f : 0.9f) * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i))) * (1f - Mathf.Clamp01(_scrub * 4f));
+                spot.Dot.localScale = Vector3.one * appear * (on ? 1.3f : 0.9f) * (1f + 0.25f * Mathf.Abs(Mathf.Sin(t * 2.5f + i))) * during;
                 Vector2 d = anchor - at;
                 float gap = 70f * HotScale;
-                float length = Mathf.Max(0f, d.magnitude - gap) * Mathf.Clamp01(appear * 1.4f) * during;
-                spot.Line.anchoredPosition = at + d.normalized * gap;
-                spot.Line.sizeDelta = new Vector2(length, on ? 9f : 5f);
+                float length = Mathf.Max(0f, d.magnitude - gap * during) * Mathf.Clamp01(appear * 1.4f);
+                spot.Line.anchoredPosition = at + d.normalized * gap * during;
+                spot.Line.sizeDelta = new Vector2(length, (on ? 9f : 5f) * Mathf.Lerp(0.6f, 1f, during));
                 spot.Line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
                 bool active = Fits(i);
                 if (spot.Root.gameObject.activeSelf != active) spot.Root.gameObject.SetActive(active);
@@ -808,7 +835,7 @@ namespace SomeGame.UI
                 Vector2 to = carRoot.anchoredPosition + Anchors[_focus] * carRoot.localScale.x;
                 _highlightAt = t - _switchAt < 0.02f && t - _focusAt < 0.02f ? to : Vector2.Lerp(_highlightAt, to, 1f - Mathf.Exp(-14f * dt));
                 highlight.rectTransform.anchoredPosition = _highlightAt;
-                highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.7f, t - _pageAt - 0.25f) / 0.3f) * (1f - Mathf.Clamp01(_scrub * 4f));
+                highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.7f, t - _pageAt - 0.1f) / 0.3f) * carRoot.localScale.x / FocusScale;
             }
 
             // The tray: slides up with the cards popping in one after another.
@@ -825,7 +852,7 @@ namespace SomeGame.UI
             for (int i = 0; i < _tiles.Count; i++)
             {
                 float appear = EaseOutBack(Mathf.Clamp01((t - _switchAt - 0.1f - i * 0.035f) / 0.3f));
-                _tiles[i].localScale = Vector3.one * appear * (i == _browsing ? 1.1f + 0.02f * Mathf.Sin(t * 4f) : 1f);
+                _tiles[i].localScale = Vector3.one * _chipScale * appear * (i == _browsing ? 1.1f + 0.02f * Mathf.Sin(t * 4f) : 1f);
                 _tiles[i].localRotation = Quaternion.Euler(0f, 0f, i == _shake ? wobble * 10f : 0f);
             }
 

@@ -593,22 +593,10 @@ namespace SomeGame.EditorTools
             done.gameObject.AddComponent<ButtonFeedback>();
             done.gameObject.SetActive(false); // always choosing: the cross closes the garage
 
-            // The strip: round chips scrolling sideways, a divider per cup.
-            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -36f), new Vector2(1170f, 470f));
+            // The chips: all of them in the tray at once (laid out by the garage: one row, or two when there are many).
+            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(1170f, 540f));
             viewport.pivot = new Vector2(0.5f, 1f);
-            Img(viewport, null, new Color(0f, 0f, 0f, 0f), raycast: true);
-            viewport.gameObject.AddComponent<RectMask2D>();
-            var content = Rt("Content", viewport);
-            content.anchorMin = new Vector2(0f, 0f); content.anchorMax = new Vector2(0f, 1f); content.pivot = new Vector2(0f, 0.5f);
-            content.sizeDelta = Vector2.zero;
-            content.localScale = Vector3.one * 1.22f; // bigger chips (the layout works in the unscaled size)
-            var row = content.gameObject.AddComponent<HorizontalLayoutGroup>();
-            row.spacing = 22f; row.padding = new RectOffset(44, 44, 0, 0); row.childAlignment = TextAnchor.MiddleLeft;
-            row.childControlWidth = row.childControlHeight = false; row.childForceExpandWidth = row.childForceExpandHeight = false;
-            content.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            var strip = viewport.gameObject.AddComponent<ScrollRect>();
-            strip.content = content; strip.viewport = viewport; strip.horizontal = true; strip.vertical = false;
-            strip.movementType = ScrollRect.MovementType.Elastic; strip.decelerationRate = 0.12f;
+            var content = Stretch("Content", viewport);
             var divider = At("Divider", content, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(84f, 250f));
             divider.pivot = new Vector2(0.5f, 0.5f);
             Img(divider, "Round", Theme.Ink, sliced: true);
@@ -662,7 +650,7 @@ namespace SomeGame.EditorTools
             Img(check, "Circle", Theme.Orange);
             Img(At("Icon", check, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(32f, 32f)), "IconCheck", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
             var tileName = Txt(At("Name", tile, new Vector2(0.5f, 0f), new Vector2(0f, 2f), new Vector2(236f, 78f)), "RACING STRIPES", 32, Theme.Ink, _black);
-            tileName.textWrappingMode = TextWrappingModes.Normal; tileName.enableAutoSizing = true; tileName.fontSizeMin = 20; tileName.fontSizeMax = 32;
+            tileName.textWrappingMode = TextWrappingModes.Normal; tileName.enableAutoSizing = true; tileName.fontSizeMin = 26; tileName.fontSizeMax = 40; // (the chips are drawn smaller)
             tileName.verticalAlignment = VerticalAlignmentOptions.Top;
 
             var itemName = Txt(At("ItemName", tray, new Vector2(0.5f, 0f), new Vector2(0f, 108f), new Vector2(1060f, 66f)), "SUNSET ORANGE", 52, Theme.Ink, _black);
@@ -776,7 +764,7 @@ namespace SomeGame.EditorTools
                 ("pageTitle", pageTitle), ("peekLeft", peekLeft), ("peekRight", peekRight), ("outgoing", outgoing), ("outgoingCar", outgoingCar),
                 ("carRoot", carRoot), ("car", vehicle), ("podium", podium), ("podiumRing", podiumRing), ("burst", burst), ("highlight", highlight),
                 ("carButton", carButton), ("sparkle", Sprite("Sparkle")), ("hotspotTemplate", spot), ("hint", hint), ("buildName", buildName),
-                ("tray", tray), ("strip", strip), ("stripContent", content), ("tileTemplate", tile), ("dividerTemplate", divider),
+                ("tray", tray), ("stripContent", content), ("tileTemplate", tile), ("dividerTemplate", divider),
                 ("tabTemplate", tabT), ("trayCount", trayCount), ("itemName", itemName), ("itemBlurb", itemBlurb), ("doneButton", doneButton),
                 ("rivalsPanel", rivalsHost.gameObject), ("rivalsGrid", rivalsGrid), ("cardTemplate", card), ("rivalsClose", rClose), ("rivalsCount", rivalsCount),
                 ("detail", detail.gameObject), ("detailClose", dClose), ("detailPainting", painting), ("detailName", dName), ("detailTitle", dTitle),
