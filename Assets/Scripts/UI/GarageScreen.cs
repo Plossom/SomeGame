@@ -28,9 +28,8 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Button closeButton, rivalsButton;
         [SerializeField] TMP_Text starsLabel;
         [Header("The vehicles: a page each")]
-        [Tooltip("The page's name under GARAGE (the cup and the vehicle) and a dot per page.")]
-        [SerializeField] TMP_Text pageTitle;
-        [SerializeField] UnityEngine.UI.Image[] pageDots;
+        [Tooltip("The bar of vehicles under GARAGE: a badge each (the template), the ring on the one on show.")]
+        [SerializeField] RectTransform vehicleBar, vehicleBadge, vehicleRing;
         [Tooltip("The other vehicles peeking in above and below: tap (or swipe up or down) to go to their page.")]
         [SerializeField] RectTransform peekLeft, peekRight;
         [Tooltip("The vehicle leaving on a page change (it slides away while the new one comes in).")]
@@ -94,6 +93,8 @@ namespace SomeGame.UI
         }
 
         readonly List<Hotspot> _hotspots = new();
+        readonly List<RectTransform> _badges = new();
+        const float BadgeSpacing = 140f;
         readonly List<RectTransform> _tiles = new(), _cards = new();
         readonly List<Garage.Part> _shown = new(); // the part on each tile (null: a mystery slot)
         readonly List<(RectTransform rt, UnityEngine.UI.Image image, Vector2 velocity, float spin, float born)> _sparks = new();
@@ -115,7 +116,6 @@ namespace SomeGame.UI
         float _morphAt = -10f;
         const float MorphSeconds = 0.55f;
         bool _paging;
-        static string[] VehicleNames => new[] { "CAR", "SNOWMOBILE" };
 
         void Awake()
         {
@@ -161,6 +161,19 @@ namespace SomeGame.UI
                 tab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Focus(slot));
                 _tabs.Add(tab);
             }
+            vehicleBadge.gameObject.SetActive(false);
+            for (int i = 0; i < Garage.Vehicles.Length; i++)
+            {
+                var badge = Instantiate(vehicleBadge, vehicleBadge.parent);
+                badge.gameObject.SetActive(true);
+                badge.name = Garage.Vehicles[i].ToString();
+                badge.anchoredPosition = new Vector2((i - (Garage.Vehicles.Length - 1) * 0.5f) * BadgeSpacing, 0f);
+                int index = i;
+                badge.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => { if (index != PageIndex) Page(index - PageIndex); });
+                _badges.Add(badge);
+            }
+            vehicleBar.sizeDelta = new Vector2(Garage.Vehicles.Length * BadgeSpacing + 32f, vehicleBar.sizeDelta.y);
+            vehicleRing.SetAsLastSibling();
             peekLeft.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Page(-1));
             peekRight.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Page(1));
             cardTemplate.gameObject.SetActive(false);
@@ -359,7 +372,10 @@ namespace SomeGame.UI
         // in view.
         void BuildTray()
         {
-            foreach (Transform child in stripContent) if (child != tileTemplate && child != dividerTemplate) Destroy(child.gameObject);
+            // (Out of the row at once: destroyed only at the end of the frame, they'd still count in the layout.)
+            var old = new List<Transform>();
+            foreach (Transform child in stripContent) if (child != tileTemplate && child != dividerTemplate) old.Add(child);
+            foreach (var child in old) { child.SetParent(null, false); Destroy(child.gameObject); }
             _tiles.Clear(); _shown.Clear();
             var slot = (Garage.Slot)_focus;
             var equipped = Garage.Equipped(slot, _vehicle);
@@ -465,8 +481,12 @@ namespace SomeGame.UI
             for (int i = 0; i < _tabs.Count; i++) _tabs[i].gameObject.SetActive(Fits(i));
             // The page: its name, its dot, the other vehicles peeking in at the sides (in their own setup).
             int page = PageIndex;
-            pageTitle.text = $"{Garage.CupNamed(Garage.CupOf(_vehicle))?.displayName ?? ""}  ·  {VehicleNames[page]}";
-            for (int i = 0; i < pageDots.Length; i++) pageDots[i].color = i == page ? Theme.Amber : Theme.WithAlpha(Theme.Cream, 0.35f);
+            for (int i = 0; i < _badges.Count; i++)
+            {
+                var badgeCar = _badges[i].Find("Car").GetComponent<VehicleIcon>();
+                badgeCar.Show(Garage.Vehicles[i] == Vehicle.Snowmobile);
+                badgeCar.Dress(CarLook.For(Garage.Vehicles[i]));
+            }
             Peek(peekLeft, page - 1);  // above
             Peek(peekRight, page + 1); // below
             if (_focus < 0) return;
@@ -817,6 +837,14 @@ namespace SomeGame.UI
                 float gone = 1f - Mathf.Clamp01(_scrub * 5f);
                 var c = arrowImage.color; c.a = Mathf.Min(gone, Mathf.Lerp(c.a, gone, 1f - Mathf.Exp(-8f * dt))); arrowImage.color = c;
             }
+
+            // The vehicle bar: the ring glides along with the change (and pops as it lands); the badge on show a
+            // little bigger.
+            float shownAt = PageIndex + _scrubDir * k;
+            for (int i = 0; i < _badges.Count; i++)
+                _badges[i].localScale = Vector3.one * Mathf.Lerp(0.82f, 1f, Mathf.Clamp01(1f - Mathf.Abs(shownAt - i)));
+            vehicleRing.anchoredPosition = new Vector2((shownAt - (_badges.Count - 1) * 0.5f) * BadgeSpacing, 0f);
+            vehicleRing.localScale = Vector3.one * (1f + 0.16f * Mathf.Sin(Mathf.Clamp01((t - _pageAt) / 0.3f) * Mathf.PI));
 
             // The part being changed pulses.
             highlight.gameObject.SetActive(_focus >= 0);

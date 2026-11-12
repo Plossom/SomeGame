@@ -448,12 +448,25 @@ namespace SomeGame.EditorTools
             var stars = Txt(At("Count", starsPill, new Vector2(1f, 0.5f), new Vector2(-30f, 2f), new Vector2(130f, 90f)), "24", 64, Color.white, _black, TextAlignmentOptions.Right);
             stars.rectTransform.pivot = new Vector2(1f, 0.5f);
             var rivals = SquareButton(safe, "Rivals", new Vector2(1f, 1f), new Vector2(-48f, -190f), "IconCards", 124f);
-            // The page: the cup and the vehicle under GARAGE, a dot per vehicle.
-            var pageTitle = Txt(At("Page", safe, new Vector2(0.5f, 1f), new Vector2(0f, -180f), new Vector2(700f, 56f)), "VALLEY CUP  ·  CAR", 40, Theme.Amber, _condItalic);
-            pageTitle.characterSpacing = 6f;
-            var pageDots = new Image[2];
-            for (int i = 0; i < 2; i++)
-                pageDots[i] = Img(At($"Dot{i}", safe, new Vector2(0.5f, 1f), new Vector2(-18f + i * 36f, -250f), new Vector2(20f, 20f)), "Circle", Theme.Amber);
+            // The vehicles under GARAGE: a bar of badges (like the race deck's bar of race numbers), each with its
+            // vehicle in it; the ring glides along to the one on show.
+            var vehicleBar = At("VehicleBar", safe, new Vector2(0.5f, 1f), new Vector2(0f, -180f), new Vector2(300f, 150f));
+            Img(vehicleBar, "Round", Theme.Ink, sliced: true, raycast: true);
+            var vehicleBadge = At("Vehicle", vehicleBar, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f));
+            vehicleBadge.pivot = new Vector2(0.5f, 0.5f);
+            var badgeFace = Img(At("Face", vehicleBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(118f, 118f)), "Circle", Theme.Cream, raycast: true);
+            var badgeCar = At("Car", vehicleBadge, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(50f, 87.5f));
+            badgeCar.pivot = new Vector2(0.5f, 0.5f);
+            var bBody = Img(Stretch("Body", badgeCar), "Car", Theme.Orange); bBody.preserveAspect = false;
+            var bDetails = Img(Stretch("Details", badgeCar), "CarDetails", Color.white); bDetails.preserveAspect = false;
+            Configure(badgeCar.gameObject.AddComponent<VehicleIcon>(), ("body", bBody), ("details", bDetails),
+                ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")));
+            var badgeButton = vehicleBadge.gameObject.AddComponent<Button>();
+            badgeButton.targetGraphic = badgeFace; badgeButton.transition = Selectable.Transition.None;
+            vehicleBadge.gameObject.AddComponent<ButtonFeedback>();
+            var vehicleRing = At("Ring", vehicleBar, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(148f, 148f));
+            vehicleRing.pivot = new Vector2(0.5f, 0.5f);
+            Img(vehicleRing, "Ring", Theme.Amber);
 
             // The stage: everything placed from its middle.
             var stage = Stretch("Stage", safe);
@@ -594,16 +607,16 @@ namespace SomeGame.EditorTools
             done.gameObject.SetActive(false); // always choosing: the cross closes the garage
 
             // The cards: one row scrolling sideways.
-            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(1170f, 540f));
+            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(1050f, 540f)); // (a margin at the sides)
             viewport.pivot = new Vector2(0.5f, 1f);
             Img(viewport, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             viewport.gameObject.AddComponent<RectMask2D>();
             var content = Rt("Content", viewport);
             content.anchorMin = new Vector2(0f, 0f); content.anchorMax = new Vector2(0f, 1f); content.pivot = new Vector2(0f, 0.5f);
             content.sizeDelta = Vector2.zero;
-            content.localScale = Vector3.one * 1.15f; // (the layout works in the unscaled size)
+            content.localScale = Vector3.one * 0.95f; // (the layout works in the unscaled size)
             var row = content.gameObject.AddComponent<HorizontalLayoutGroup>();
-            row.spacing = 26f; row.padding = new RectOffset(34, 34, 0, 0); row.childAlignment = TextAnchor.MiddleLeft;
+            row.spacing = 26f; row.padding = new RectOffset(32, 32, 0, 0); row.childAlignment = TextAnchor.MiddleLeft;
             row.childControlWidth = row.childControlHeight = false; row.childForceExpandWidth = row.childForceExpandHeight = false;
             content.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             var strip = viewport.gameObject.AddComponent<ScrollRect>();
@@ -777,7 +790,7 @@ namespace SomeGame.EditorTools
 
             var screen = host.gameObject.AddComponent<GarageScreen>();
             Configure(screen, ("panel", panel.gameObject), ("group", group), ("sheet", sheet), ("closeButton", close), ("rivalsButton", rivals), ("starsLabel", stars),
-                ("pageTitle", pageTitle), ("peekLeft", peekLeft), ("peekRight", peekRight), ("outgoing", outgoing), ("outgoingCar", outgoingCar),
+                ("vehicleBar", vehicleBar), ("vehicleBadge", vehicleBadge), ("vehicleRing", vehicleRing), ("peekLeft", peekLeft), ("peekRight", peekRight), ("outgoing", outgoing), ("outgoingCar", outgoingCar),
                 ("carRoot", carRoot), ("car", vehicle), ("podium", podium), ("podiumRing", podiumRing), ("burst", burst), ("highlight", highlight),
                 ("carButton", carButton), ("sparkle", Sprite("Sparkle")), ("hotspotTemplate", spot), ("hint", hint), ("buildName", buildName),
                 ("tray", tray), ("strip", strip), ("stripContent", content), ("tileTemplate", tile), ("dividerTemplate", divider),
@@ -790,7 +803,6 @@ namespace SomeGame.EditorTools
             var slotSprites = new Sprite[slotIcons.Length];
             for (int i = 0; i < slotIcons.Length; i++) slotSprites[i] = Sprite(slotIcons[i]);
             SetArray(gso, "slotIcons", slotSprites);
-            SetArray(gso, "pageDots", pageDots);
             gso.ApplyModifiedPropertiesWithoutUndo();
             detail.gameObject.SetActive(false);
             rivalsHost.gameObject.SetActive(false);
