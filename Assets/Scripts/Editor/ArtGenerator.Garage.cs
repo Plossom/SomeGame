@@ -126,6 +126,14 @@ namespace SomeGame.EditorTools
             Add("decal.checkers", "DecalCheckers"); Add("decal.crest", "DecalCrest"); Add("decal.frost", "DecalFrost");
             Add("trail.sparkle", "Sparkle"); Add("trail.aurora", "Sparkle"); Add("trail.flame", "TrailFlame"); Add("trail.flake", "TrailFlake"); Add("trail.confetti", "TrailConfetti"); Add("trail.winterconfetti", "TrailConfetti"); Add("trail.standard", "Smoke");
             Add("gadget.haybale", "HayBale");
+            // The snowmobile's (the Winter Cup's).
+            Add("body.sled", "SnowmobileIcon", "Snowmobile", "SnowmobileDetails");
+            Add("body.sport", "SnowmobileSport", "SnowmobileSportBody", "SnowmobileSportDetails");
+            Add("body.touring", "SnowmobileTouring", "SnowmobileTouringBody", "SnowmobileTouringDetails");
+            Add("top.windscreen", "TopSnowScreen"); Add("top.flag", "TopSnowFlag"); Add("top.cargo", "TopSnowCargo");
+            Add("top.antlers", "TopSnowAntlers"); Add("top.snowman", "TopSnowman"); Add("top.icecrown", "TopIceCrown");
+            Add("decal.zigzag", "DecalZigzag"); Add("decal.pine", "DecalPine"); Add("decal.penguin", "DecalPenguin");
+            Add("decal.one", "DecalNumberOne"); Add("decal.wintercrest", "DecalWinterCrest");
             Add("challenge.chicken", "Chicken");
             // A top's or a decal's picture covers the whole car (it's laid over it): where on it the part itself is,
             // for showing it on its own in the garage.

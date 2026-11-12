@@ -57,19 +57,24 @@ namespace SomeGame.UI
         void Refresh()
         {
             var art = GarageArt.Instance;
-            var entry = _look.HasValue && art != null ? art.Get(_look.Value.Body) : null;
+            // A snowmobile body (the Winter Cup's) makes it a snowmobile; on a snowmobile a car's body doesn't show.
+            var bodyPart = _look.HasValue ? _look.Value.Body : null;
+            bool sled = _snowmobile || bodyPart is { Cup: "Winter" };
+            string cup = sled ? "Winter" : "Valley";
+            bool Fits(Garage.Part part) => part != null && part.Cup == cup;
+            var entry = art != null && Fits(bodyPart) ? art.Get(bodyPart) : null;
             if (body != null)
             {
-                body.sprite = _snowmobile ? snowmobileBody : entry?.full != null ? entry.full : _carBody;
+                body.sprite = entry?.full != null ? entry.full : sled && snowmobileBody != null ? snowmobileBody : _carBody;
                 if (_look.HasValue) body.color = _look.Value.Paint;
             }
-            if (details != null) details.sprite = _snowmobile ? snowmobileDetails : entry?.details != null ? entry.details : _carDetails;
-            if (shadow != null) shadow.sprite = _snowmobile ? snowmobileShadow : _carShadow;
+            if (details != null) details.sprite = entry?.details != null ? entry.details : sled && snowmobileDetails != null ? snowmobileDetails : _carDetails;
+            if (shadow != null) shadow.sprite = sled && snowmobileShadow != null ? snowmobileShadow : _carShadow;
             Sprite decal = null, top = null;
-            if (_look.HasValue && !_snowmobile && art != null)
+            if (_look.HasValue && art != null)
             {
-                decal = art.Get(_look.Value.Decal)?.full;
-                top = art.Get(_look.Value.Top)?.full;
+                if (Fits(_look.Value.Decal)) decal = art.Get(_look.Value.Decal)?.full;
+                if (Fits(_look.Value.Top)) top = art.Get(_look.Value.Top)?.full;
             }
             Overlay(ref _decal, "Decal", decal, details != null ? details.transform.GetSiblingIndex() : -1);
             Overlay(ref _top, "Top", top, -1);

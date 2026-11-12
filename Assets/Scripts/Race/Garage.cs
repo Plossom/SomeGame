@@ -62,6 +62,9 @@ namespace SomeGame.Race
             new(V, Slot.Body, "rally", "RALLY HATCH", "Wide arches and a roof over your head.", Unlock.Stars, 5),
             new(V, Slot.Body, "pickup", "FARM PICKUP", "A cab up front, a wooden bed behind.", Unlock.Stars, 16),
             new(V, Slot.Body, "kart", "GO-KART", "Low, open, helmet on.", Unlock.Stars, 22),
+            new(W, Slot.Body, "sled", "SNOWMOBILE", "Skis up front, a track behind."),
+            new(W, Slot.Body, "sport", "SPORT SLED", "A pointed nose and slit lamps.", Unlock.Stars, 6),
+            new(W, Slot.Body, "touring", "TOURING SLED", "A long seat, a backrest and a rack.", Unlock.Stars, 15),
 
             new(V, Slot.Top, "none", "NOTHING", "Clean and simple."),
             new(V, Slot.Top, "spoiler", "SPOILER", "Looks fast standing still.", Unlock.Stars, 2),
@@ -71,6 +74,12 @@ namespace SomeGame.Race
             new(V, Slot.Top, "haybales", "HAY-BALE SPOILER", "Rosie Rust's: two bales and her pitchfork.", Unlock.Rival, from: "RosieRust"),
             new(V, Slot.Top, "chicken", "CHICKEN RIDER", "One of Rosie's chickens liked you. It comes along.", Unlock.Challenge, from: "ChickenChase"),
             new(V, Slot.Top, "goldwing", "GOLDEN WING", "Three stars in every Valley Cup race.", Unlock.CupGold, from: V),
+            new(W, Slot.Top, "windscreen", "TALL SCREEN", "Keeps the snow out of your face.", Unlock.Stars, 3),
+            new(W, Slot.Top, "flag", "SAFETY FLAG", "An orange pennant on a whip pole.", Unlock.Stars, 7),
+            new(W, Slot.Top, "cargo", "CARGO BOX", "Room for a thermos and a spare scarf.", Unlock.Stars, 11),
+            new(W, Slot.Top, "antlers", "ANTLERS", "Reindeer antlers on your helmet.", Unlock.Stars, 16),
+            new(W, Slot.Top, "snowman", "SNOWMAN", "A snowman riding along behind you.", Unlock.Stars, 21),
+            new(W, Slot.Top, "icecrown", "ICE CROWN", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
 
             new(V, Slot.Decal, "none", "NOTHING", "Let the paint speak."),
             new(V, Slot.Decal, "stripes", "RACING STRIPES", "Two white stripes, nose to tail.", Unlock.Stars, 4),
@@ -79,6 +88,11 @@ namespace SomeGame.Race
             new(V, Slot.Decal, "flames", "HOT FLAMES", "Fire licking off the nose.", Unlock.Stars, 14),
             new(V, Slot.Decal, "frost", "FROST STAR", "A big snowflake on the bonnet.", Unlock.Stars, 19),
             new(V, Slot.Decal, "crest", "VALLEY CREST", "Three stars in every Valley Cup race.", Unlock.CupGold, from: V),
+            new(W, Slot.Decal, "zigzag", "ZIGZAG", "A lightning zigzag down the hood.", Unlock.Stars, 5),
+            new(W, Slot.Decal, "pine", "PINE TREE", "A little forest on the hood.", Unlock.Stars, 9),
+            new(W, Slot.Decal, "penguin", "PENGUIN", "A penguin face on the hood.", Unlock.Stars, 13),
+            new(W, Slot.Decal, "one", "NUMBER ONE", "Where you mean to finish.", Unlock.Stars, 18),
+            new(W, Slot.Decal, "wintercrest", "WINTER CREST", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
 
             new(V, Slot.Trail, "standard", "TYRE SMOKE", "The usual."),
             new(V, Slot.Trail, "sparkle", "SPARKLES", "Glitter on every drift and boost.", Unlock.Stars, 6),
@@ -179,10 +193,8 @@ namespace SomeGame.Race
 
         public static readonly Vehicle[] Vehicles = { Vehicle.Car, Vehicle.Snowmobile };
 
-        /// <summary>What can be changed on a vehicle: everything on the car; on the snowmobile its paint, trail and gadget.</summary>
-        public static Slot[] SlotsOf(Vehicle vehicle) => vehicle == Vehicle.Snowmobile
-            ? new[] { Slot.Paint, Slot.Trail, Slot.Gadget }
-            : new[] { Slot.Paint, Slot.Body, Slot.Top, Slot.Decal, Slot.Trail, Slot.Gadget };
+        /// <summary>What can be changed on a vehicle: everything, each from its own cup's shop.</summary>
+        public static Slot[] SlotsOf(Vehicle vehicle) => new[] { Slot.Paint, Slot.Body, Slot.Top, Slot.Decal, Slot.Trail, Slot.Gadget };
 
         public static bool Fits(Slot slot, Vehicle vehicle) => System.Array.IndexOf(SlotsOf(vehicle), slot) >= 0;
 

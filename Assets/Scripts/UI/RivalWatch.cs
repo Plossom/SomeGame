@@ -334,10 +334,12 @@ namespace SomeGame.UI
             var body = face.Find("Car/Body")?.GetComponent<UnityEngine.UI.Image>();
             if (body == null || character != null) return;
             var visual = car != null ? SomeGame.Online.OnlineRace.Visual(car.GetComponent<SomeGame.Car.CarMovement>()) : null;
-            body.color = car == null ? Garage.Color : visual != null ? visual.color : Theme.Stone;
+            // (Your own vehicle is the race's: the car, or the snowmobile on a snowmobile track.)
+            var vehicle = SomeGame.Car.CarLook.VehicleOf(GameSession.CurrentLevel);
+            body.color = car == null ? Garage.ColorOf(vehicle) : visual != null ? visual.color : Theme.Stone;
             if (car != null) return;
             // Your own: the body you built in the garage.
-            var entry = GarageArt.Instance?.Get(Garage.Equipped(Garage.Slot.Body));
+            var entry = GarageArt.Instance?.Get(Garage.Equipped(Garage.Slot.Body, vehicle));
             if (entry?.full != null && body.sprite != entry.full)
             {
                 body.sprite = entry.full;

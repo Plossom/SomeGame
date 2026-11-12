@@ -263,6 +263,146 @@ MonoBehaviour:
       y: 0
       width: 0
       height: 0
+  - id: body.sled
+    full: {fileID: 21300000, guid: 8d94effd431c64f3d925dd99e207eeb6, type: 3}
+    race: {fileID: 21300000, guid: 0e8606ad3b3ce42898267261143b3bd8, type: 3}
+    details: {fileID: 21300000, guid: 93a6841efabbb423faf5ee4a0e4e76d6, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: body.sport
+    full: {fileID: 21300000, guid: f8ba12177f9564e1f82a276430ff642c, type: 3}
+    race: {fileID: 21300000, guid: ca824dfb1e1e4424ba12c527395e6f49, type: 3}
+    details: {fileID: 21300000, guid: 47fec35f39b7547d4b08b2c9d9b91786, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: body.touring
+    full: {fileID: 21300000, guid: 65851c53a639344eb86f10589ce151d4, type: 3}
+    race: {fileID: 21300000, guid: 0e36bd61a3d994d0bb26d4f3eed1d5c8, type: 3}
+    details: {fileID: 21300000, guid: 2a09eb2673334438e8a6b269e082324f, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - id: top.windscreen
+    full: {fileID: 21300000, guid: 687016c76026c4adf9390a2e63a9a068, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 38
+      y: 210
+      width: 116
+      height: 52
+  - id: top.flag
+    full: {fileID: 21300000, guid: 0edf9e3f013674a11934aef9f9884782, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 140
+      y: 41
+      width: 46
+      height: 61
+  - id: top.cargo
+    full: {fileID: 21300000, guid: c40108ba4ca3349c7bb71d338a33e271, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 54
+      y: 30
+      width: 84
+      height: 68
+  - id: top.antlers
+    full: {fileID: 21300000, guid: dc0b44c55bdb94637808d11731d5bfe2, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 31
+      y: 168
+      width: 130
+      height: 63
+  - id: top.snowman
+    full: {fileID: 21300000, guid: b2a44e4d514ec4f63818b645b36277e1, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 66
+      y: 62
+      width: 60
+      height: 69
+  - id: top.icecrown
+    full: {fileID: 21300000, guid: 3c864d33b7a3a46f598f2696a17d88fa, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 53
+      y: 123
+      width: 86
+      height: 86
+  - id: decal.zigzag
+    full: {fileID: 21300000, guid: 2d518bfa34efd451586bf9c91b678f94, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 76
+      y: 222
+      width: 40
+      height: 98
+  - id: decal.pine
+    full: {fileID: 21300000, guid: 0f3e37753feec42ff94300fd7aaeb620, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 63
+      y: 218
+      width: 66
+      height: 77
+  - id: decal.penguin
+    full: {fileID: 21300000, guid: 985e3f51ae39f4c8591f44ff9fc3d6c2, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 71
+      y: 238
+      width: 50
+      height: 56
+  - id: decal.one
+    full: {fileID: 21300000, guid: d9ea381552c5b440f9329c57d2196056, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 73
+      y: 249
+      width: 46
+      height: 46
+  - id: decal.wintercrest
+    full: {fileID: 21300000, guid: 40bfce9ad9a614c4e9e7344077ccc2ef, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 66
+      y: 236
+      width: 60
+      height: 64
   - id: challenge.chicken
     full: {fileID: 21300000, guid: 02e36d4e7435e4495b43b475468fc33a, type: 3}
     race: {fileID: 0}

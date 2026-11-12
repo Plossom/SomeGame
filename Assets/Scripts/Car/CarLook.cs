@@ -35,11 +35,16 @@ namespace SomeGame.Car
 
         /// <summary>
         /// Dresses a race car: its body and details swapped, the decal and the top laid over it, the paint on the body
-        /// (and its tyre marks) and the trail. <paramref name="car"/> false: the track's own vehicle (the snowmobile)
-        /// takes only the paint and the trail.
+        /// (and its tyre marks) and the trail. <paramref name="car"/> false: on the snowmobile (the track's own
+        /// vehicle), which takes the snowmobile's parts (the Winter Cup's) and none of the car's.
         /// </summary>
         public void Apply(CarMovement target, bool car)
         {
+            // Remembered on the car: the track swaps its vehicle's sprites in (maybe after this), then dresses it again.
+            var dress = target.GetComponent<CarDress>() ?? target.gameObject.AddComponent<CarDress>();
+            dress.Look = this; dress.Car = car;
+            string cup = Garage.CupOf(car ? Vehicle.Car : Vehicle.Snowmobile);
+            bool Fits(Garage.Part part) => part != null && part.Cup == cup;
             var art = GarageArt.Instance;
             SpriteRenderer visual = null, details = null;
             foreach (var sr in target.GetComponentsInChildren<SpriteRenderer>(true))
@@ -50,15 +55,15 @@ namespace SomeGame.Car
             if (visual == null) return;
             visual.color = Paint;
             foreach (var marks in target.GetComponents<TyreMarks>()) marks.Tint = new Color(Paint.r, Paint.g, Paint.b, marks.Tint.a);
-            var body = car && art != null ? art.Get(Body) : null;
+            var body = art != null && Fits(Body) ? art.Get(Body) : null;
             if (body != null)
             {
                 if (body.race != null) visual.sprite = body.race;
                 if (details != null && body.details != null) details.sprite = body.details;
             }
             if (details != null) details.sortingOrder = 12; // the decal goes between the body and its details
-            Layer(visual, "Decal", car && art != null ? art.Get(Decal)?.full : null, 11);
-            Layer(visual, "Top", car && art != null ? art.Get(Top)?.full : null, 13);
+            Layer(visual, "Decal", art != null && Fits(Decal) ? art.Get(Decal)?.full : null, 11);
+            Layer(visual, "Top", art != null && Fits(Top) ? art.Get(Top)?.full : null, 13);
             if (Trail != null && Trail.Id != "standard")
             {
                 if (!target.TryGetComponent(out TrailFx trail)) trail = target.gameObject.AddComponent<TrailFx>();
@@ -85,5 +90,14 @@ namespace SomeGame.Car
             sr.sprite = sprite;
             sr.sortingOrder = order;
         }
+    }
+
+    /// <summary>The look a race car was last dressed in (<see cref="CarLook.Apply"/>), to dress it again after its sprites are swapped.</summary>
+    public class CarDress : MonoBehaviour
+    {
+        public CarLook Look;
+        public bool Car;
+
+        public void Again() => Look.Apply(GetComponent<CarMovement>(), Car);
     }
 }

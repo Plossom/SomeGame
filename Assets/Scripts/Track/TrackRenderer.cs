@@ -176,6 +176,8 @@ namespace SomeGame.Track
                     if (!_carSprites.ContainsKey(sr)) _carSprites[sr] = sr.sprite;
                     sr.sprite = sled ? sprite : _carSprites[sr];
                 }
+                // Dressed already (the garage's body on top of the plain one): dressed again over the swap.
+                if (car.TryGetComponent(out SomeGame.Car.CarDress dress)) dress.Again();
             }
         }
 
