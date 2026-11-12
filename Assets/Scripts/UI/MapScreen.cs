@@ -237,9 +237,12 @@ namespace SomeGame.UI
             WriteCounters();
         }
 
+        // The cup on show's own stars (those still counting up held back).
         void WriteCounters()
         {
-            totalStars.text = (_starsShown ?? ProgressStore.TotalStars).ToString();
+            int cupStars = _cup != null ? Garage.CupStars(_cup.name) : ProgressStore.TotalStars;
+            int pending = ProgressStore.TotalStars - (_starsShown ?? ProgressStore.TotalStars);
+            totalStars.text = Mathf.Max(0, cupStars - pending).ToString();
             if (garageDot != null) garageDot.SetActive(Garage.HasNew);
         }
 
@@ -771,7 +774,7 @@ namespace SomeGame.UI
 
         // The cup column under the ONLINE button: a badge per cup. Folded it shows the current cup's badge; tapping
         // it unfolds the column downward with all cups and the ring on the current one.
-        const float BadgeSpacing = 118f, BadgeTop = 55f, FoldedHeight = 110f;
+        const float BadgeSpacing = 132f, BadgeTop = 66f, FoldedHeight = 132f;
 
         void BuildDots()
         {
@@ -828,7 +831,7 @@ namespace SomeGame.UI
                 bool soon = CupList.IsComingSoon(cup), locked = !soon && !CupList.IsUnlocked(cup);
                 var icon = _badges[i].Find("Icon").GetComponent<UnityEngine.UI.Image>();
                 icon.sprite = soon ? soonSprite : locked ? lockSprite : cup.icon;
-                icon.rectTransform.sizeDelta = Vector2.one * (soon || locked ? 50f : 86f);
+                icon.rectTransform.sizeDelta = Vector2.one * (soon || locked ? 56f : 96f);
                 icon.color = soon || locked ? Theme.StoneDark : Color.white;
                 _badges[i].Find("Face").GetComponent<UnityEngine.UI.Image>().color = soon || locked ? Theme.Stone : Theme.Cream;
             }

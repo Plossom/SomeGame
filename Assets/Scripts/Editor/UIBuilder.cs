@@ -196,9 +196,9 @@ namespace SomeGame.EditorTools
 
             // Your stars on one small plate, its top level with the menu button: low, so that the right column (stars,
             // online, the cup) ends level with the left one (menu, garage).
-            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(140f, 84f));
+            var counters = At("Counters", safe, new Vector2(1f, 1f), new Vector2(-60f, -50f), new Vector2(140f, 78f));
             // A hard shadow under it like the menu button's (which makes that one 12 units taller).
-            var countersShadow = At("Shadow", counters, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(140f, 84f));
+            var countersShadow = At("Shadow", counters, new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(140f, 78f));
             Img(countersShadow, "Round", Shade(Theme.Ink, 0.6f), sliced: true);
             Img(Stretch("Face", counters), "Round", Theme.Ink, sliced: true);
             TMP_Text CounterRow(string name, float y, string icon)
@@ -207,7 +207,7 @@ namespace SomeGame.EditorTools
                 Img(At("Icon", row, new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(38f, 38f)), icon, Theme.Amber);
                 return Txt(At("Count", row, new Vector2(1f, 0.5f), new Vector2(-20f, -2f), new Vector2(76f, 64f)), "0", 46, Theme.Amber, _condItalic, TextAlignmentOptions.Right);
             }
-            var total = CounterRow("Stars", -10f, "IconStar");
+            var total = CounterRow("Stars", -7f, "IconStar");
 
             // The cup name, big, centred in the gap between the menu button (ends 200 from the left) and the
             // stars and trophies counter (starts 256 from the right), level with the menu button.
@@ -289,17 +289,17 @@ namespace SomeGame.EditorTools
             columnLayer.name = "CupColumnLayer";
             columnLayer.SetSiblingIndex(wipe.GetSiblingIndex() + 1);
             // Folded it shows the current cup's badge (tap it to unfold); its bottom level with the garage button's.
-            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-60f, -264f), new Vector2(140f, 110f)); // under the ONLINE button
+            var dots = At("CupColumn", columnLayer, new Vector2(1f, 1f), new Vector2(-60f, -242f), new Vector2(140f, 132f)); // under the ONLINE button
             Img(dots, "Round", Theme.Ink, sliced: true, raycast: true);
             dots.gameObject.AddComponent<RectMask2D>();
             var content = At("Content", dots, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(140f, 600f));
-            var ring = At("Ring", content, new Vector2(0.5f, 1f), new Vector2(0f, -55f), new Vector2(110f, 110f));
+            var ring = At("Ring", content, new Vector2(0.5f, 1f), new Vector2(0f, -66f), new Vector2(126f, 126f));
             ring.pivot = new Vector2(0.5f, 0.5f);
-            Img(At("Glow", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(126f, 126f)), "Circle", Theme.WithAlpha(Theme.Amber, 0.22f));
-            Img(At("Line", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(110f, 110f)), "Ring", Theme.Amber);
-            var badgeT = At("Badge", content, new Vector2(0.5f, 1f), new Vector2(0f, -55f), new Vector2(92f, 92f));
+            Img(At("Glow", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(132f, 132f)), "Circle", Theme.WithAlpha(Theme.Amber, 0.22f));
+            Img(At("Line", ring, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(126f, 126f)), "Ring", Theme.Amber);
+            var badgeT = At("Badge", content, new Vector2(0.5f, 1f), new Vector2(0f, -66f), new Vector2(112f, 112f));
             badgeT.pivot = new Vector2(0.5f, 0.5f);
-            var badgeFace = Img(At("Face", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(92f, 92f)), "Circle", Theme.Cream, raycast: true);
+            var badgeFace = Img(At("Face", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(112f, 112f)), "Circle", Theme.Cream, raycast: true);
             Img(At("Icon", badgeT, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(84f, 84f)), null, Color.white).preserveAspect = true;
             badgeT.gameObject.AddComponent<CanvasGroup>();
             var badgeButton = badgeT.gameObject.AddComponent<Button>();
