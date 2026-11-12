@@ -68,7 +68,10 @@ namespace SomeGame.UI
         [SerializeField] TMP_Text detailName, detailTitle, detailBio, detailHome, detailGadget, detailStatus;
         [SerializeField] UnityEngine.UI.Image detailGadgetIcon;
 
-        const float Rise = 130f, FocusScale = 0.8f, HotScale = 0.8f; // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
+        const float Rise = 130f, FocusScale = 0.8f, HotScale = 0.8f;
+        // The other vehicles' peek spots (as wide as the car shown there) and how long a page change takes.
+        static readonly Vector2 PeekAbove = new(0f, 730f), PeekBelow = new(0f, -230f);
+        const float PeekScale = 0.24f, PageSeconds = 0.6f; // the car over the chips, its hotspots round it // the car with one slot open: a little higher and smaller (the tray below)
         static readonly string[] SlotNames = { "PAINT", "BODY", "TOP", "DECAL", "TRAIL", "GADGET" };
         // Where each hotspot sits round the car, and the point of the car its line goes to (car units, car facing up).
         static readonly Vector2[] Spots = { new(-385f, 30f), new(385f, 30f), new(370f, 440f), new(-370f, 440f), new(-330f, -480f), new(330f, -480f) };
@@ -287,36 +290,27 @@ namespace SomeGame.UI
             Refresh();
         }
 
-        // The chips for the slot, cup by cup (a divider with the cup's name and stars before its own), scrolled so
-        // the one you have on is in view.
+        // The chips for the slot: what this vehicle's shop has (its cup's things), scrolled so the one you have on is
+        // in view.
         void BuildTray()
         {
             foreach (Transform child in stripContent) if (child != tileTemplate && child != dividerTemplate) Destroy(child.gameObject);
             _tiles.Clear(); _shown.Clear();
             var slot = (Garage.Slot)_focus;
             var equipped = Garage.Equipped(slot, _vehicle);
+            var parts = Garage.For(slot, _vehicle);
+            // A gadget still to come: a mystery slot for this cup's rival's.
+            if (slot == Garage.Slot.Gadget && !parts.Exists(p => p.How != Garage.Unlock.Free)) parts.Add(null);
             int equippedAt = 0;
-            foreach (var cup in CupList.Instance.cups)
+            foreach (var part in parts)
             {
-                if (cup == null || !cup.HasRaces) continue;
-                var parts = new List<Garage.Part>();
-                foreach (var part in Garage.Of(slot)) if (part.Cup == cup.name) parts.Add(part);
-                if (slot == Garage.Slot.Gadget && !parts.Exists(p => p.How != Garage.Unlock.Free)) parts.Add(null); // a rival's gadget to come
-                if (parts.Count == 0) continue;
-                var divider = Instantiate(dividerTemplate, stripContent);
-                divider.gameObject.SetActive(true);
-                divider.Find("Name").GetComponent<TMP_Text>().text = cup.displayName;
-                divider.Find("Stars/Count").GetComponent<TMP_Text>().text = $"{Garage.CupStars(cup.name)}/{Garage.CupMaxStars(cup.name)}";
-                foreach (var part in parts)
-                {
-                    var tile = Instantiate(tileTemplate, stripContent);
-                    tile.gameObject.SetActive(true);
-                    int index = _tiles.Count;
-                    tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Pick(index));
-                    if (part == equipped) equippedAt = index;
-                    _tiles.Add(tile);
-                    _shown.Add(part);
-                }
+                var tile = Instantiate(tileTemplate, stripContent);
+                tile.gameObject.SetActive(true);
+                int index = _tiles.Count;
+                tile.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Pick(index));
+                if (part == equipped) equippedAt = index;
+                _tiles.Add(tile);
+                _shown.Add(part);
             }
             _browsing = equippedAt;
             Canvas.ForceUpdateCanvases();
@@ -357,6 +351,8 @@ namespace SomeGame.UI
             var part = _browsing >= 0 && _browsing < _shown.Count ? _shown[_browsing] : null;
             bool open = part != null && Garage.IsUnlocked(part);
             bool on = part != null && part == Garage.Equipped(part.Slot, _vehicle);
+            itemName.gameObject.SetActive(false); // the chips say it all (their names, what they take)
+            itemBlurb.gameObject.SetActive(false);
             if (Time.unscaledTime >= _messageUntil)
             {
                 itemName.text = part != null ? part.Name : "A RIVAL'S GADGET";
@@ -382,7 +378,9 @@ namespace SomeGame.UI
 
         void Refresh()
         {
-            starsLabel.text = ProgressStore.TotalStars.ToString();
+            // The stars of the vehicle's cup: they open its things.
+            string cupName = Garage.CupOf(_vehicle);
+            starsLabel.text = $"{Garage.CupStars(cupName)}<size=60%>/{Garage.CupMaxStars(cupName)}</size>";
             var look = CarLook.For(_vehicle);
             bool snow = _vehicle == Vehicle.Snowmobile;
             car.Show(snow);
@@ -391,7 +389,7 @@ namespace SomeGame.UI
             hint.gameObject.SetActive(false);
             for (int i = 0; i < _hotspots.Count; i++)
             {
-                _hotspots[i].Value.text = Garage.Equipped((Garage.Slot)i, _vehicle).Name;
+                _hotspots[i].Value.gameObject.SetActive(false); // just the part's name on the button
                 bool on = i == _focus;
                 _hotspots[i].Button.Find("Face").GetComponent<UnityEngine.UI.Image>().color = on ? Theme.Orange : Theme.Ink;
                 _hotspots[i].Name.color = on ? Color.white : Theme.Amber;
@@ -460,7 +458,7 @@ namespace SomeGame.UI
                         icon.color = part.Slot == Garage.Slot.Trail ? TrailTint(part, look.Paint) : Color.white;
                         break;
                 }
-            if (!mystery && (part.Id == "none" || part.Id == "standard") && (part.Slot == Garage.Slot.Trail || part.Slot == Garage.Slot.Gadget))
+            if (!mystery && part.Id == "none" && part.Slot == Garage.Slot.Gadget)
             {
                 iconRoot.SetActive(false);
                 question.SetActive(false);
@@ -507,7 +505,9 @@ namespace SomeGame.UI
             "flame" => new Color(1f, 0.6f, 0.2f),
             "flake" => new Color(0.8f, 0.93f, 1f),
             "confetti" => new Color(1f, 0.45f, 0.6f),
+            "winterconfetti" => new Color(0.6f, 0.85f, 1f),
             "aurora" => new Color(0.55f, 1f, 0.8f),
+            "standard" => new Color(0.85f, 0.85f, 0.85f),
             _ => Color.Lerp(paint, Color.white, 0.4f),
         };
 
@@ -674,19 +674,22 @@ namespace SomeGame.UI
                            + 0.05f * Mathf.Sin(Mathf.Clamp01((t - _tryAt) / 0.25f) * Mathf.PI);
             // A page change: the old vehicle slides away up (or down) and fades, the new one comes in from the
             // other side; the swipe drags the car along a little meanwhile.
-            float page = Mathf.Clamp01((t - _pageAt) / 0.55f);
-            float slide = 1f - EaseOut(page);
+            // A page change: the new vehicle grows out of its peek spot (below for the next one, above for the one
+            // before) into the middle, while the old one shrinks into the peek spot on the other side.
+            float page = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - _pageAt) / PageSeconds));
             float dragOffset = _paging ? Mathf.Clamp(_dragY * 0.5f, -240f, 240f) : 0f;
-            carRoot.anchoredPosition = _carHome + new Vector2(0f, -_pageDir * 1150f * slide + dragOffset + 700f * fall + Rise * focus + Mathf.Sin(t * 1.4f) * 8f);
+            Vector2 middle = _carHome + new Vector2(0f, Rise * focus);
+            Vector2 comeFrom = _pageDir > 0f ? PeekBelow : PeekAbove, goTo = _pageDir > 0f ? PeekAbove : PeekBelow;
+            float mainScale = Mathf.Lerp(1f, FocusScale, focus);
+            carRoot.anchoredPosition = Vector2.Lerp(comeFrom, middle, page) + new Vector2(0f, dragOffset + 700f * fall + Mathf.Sin(t * 1.4f) * 8f * page);
+            carRoot.localScale = Vector3.one * Mathf.Lerp(PeekScale, mainScale, page) * pop;
             if (outgoing.gameObject.activeSelf)
             {
-                float away = EaseOut(page);
-                outgoing.anchoredPosition = _carHome + new Vector2(0f, _pageDir * 1150f * away);
-                outgoing.localScale = Vector3.one * Mathf.Lerp(1f, 0.7f, away);
-                outgoing.GetComponent<CanvasGroup>().alpha = 1f - away;
+                outgoing.anchoredPosition = Vector2.Lerp(middle, goTo, page);
+                outgoing.localScale = Vector3.one * Mathf.Lerp(mainScale, PeekScale, page);
+                outgoing.GetComponent<CanvasGroup>().alpha = 1f;
                 if (page >= 1f) outgoing.gameObject.SetActive(false);
             }
-            carRoot.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * pop;
             podium.anchoredPosition = _carHome + new Vector2(0f, Rise * focus);
             podium.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * Mathf.Lerp(0.6f, 1f, EaseOut(drop));
             podiumRing.localRotation = Quaternion.Euler(0f, 0f, t * 12f);
@@ -700,13 +703,13 @@ namespace SomeGame.UI
             for (int i = 0; i < _hotspots.Count; i++)
             {
                 var spot = _hotspots[i];
-                float since = Mathf.Min(t - _openedAt - 0.6f, t - _pageAt - 0.3f);
+                float since = Mathf.Min(t - _openedAt - 0.6f, t - _pageAt - PageSeconds + 0.1f);
                 float appear = Fits(i) ? Mathf.Clamp01((since - i * 0.06f) / 0.35f) : 0f;
                 // Round the car (moving with it), the part being chosen orange and a little bigger.
                 bool on = i == _focus;
                 float pick = on ? 1f + 0.16f * Mathf.Sin(Mathf.Clamp01((t - _switchAt) / 0.3f) * Mathf.PI) : 1f;
                 Vector2 anchor = carRoot.anchoredPosition + Anchors[i] * carRoot.localScale.x;
-                Vector2 at = carRoot.anchoredPosition + Spots[i] * HotScale;
+                Vector2 at = carRoot.anchoredPosition + Spots[i] * HotScale * (carRoot.localScale.x / FocusScale);
                 spot.Button.anchoredPosition = at;
                 spot.Button.localScale = Vector3.one * EaseOutBack(appear) * HotScale * (on ? 1.12f : 1f) * pick;
                 spot.Dot.anchoredPosition = anchor;
@@ -724,7 +727,7 @@ namespace SomeGame.UI
             foreach (var (peek, side) in new[] { (peekLeft, 1f), (peekRight, -1f) })
             {
                 if (!peek.gameObject.activeSelf) continue;
-                float show = Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.9f, t - _pageAt - 0.4f) / 0.4f) * 0.8f;
+                float show = Mathf.Clamp01(Mathf.Min(t - _openedAt - 0.9f, t - _pageAt - PageSeconds) / 0.25f) * 0.8f;
                 peek.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, show);
                 peek.GetComponent<CanvasGroup>().alpha = show;
                 float nudge = Mathf.Repeat(t, 3.5f) < 0.5f ? Mathf.Sin(Mathf.Repeat(t, 3.5f) / 0.5f * Mathf.PI) * 14f : 0f;

@@ -42,8 +42,9 @@ namespace SomeGame.Race
 
         const string V = "Valley", W = "Winter";
 
-        // Each cup's own things, opened with that cup's stars (24 at most: 8 races, 3 stars each), its rival, its
-        // challenge and its gold. Free ones are on the first cup's shelf.
+        // Each cup's own things for its own vehicle (the Valley Cup's for the car, the Winter Cup's for the
+        // snowmobile), opened with that cup's stars (24 at most: 8 races, 3 stars each), its rival, its challenge or
+        // its gold. "Nothing" and the plain tyre smoke are there for every vehicle.
         public static readonly Part[] Parts =
         {
             new(V, Slot.Paint, "orange", "SUNSET ORANGE", "The classic.", hex: "#FF7A1A"),
@@ -51,42 +52,64 @@ namespace SomeGame.Race
             new(V, Slot.Paint, "green", "RACING GREEN", "Old-school cool.", Unlock.Stars, 7, hex: "#2E9E5B"),
             new(V, Slot.Paint, "grape", "GRAPE", "Juicy.", Unlock.Stars, 12, hex: "#7B4FD1"),
             new(V, Slot.Paint, "gold", "SOLID GOLD", "Champions only.", Unlock.Stars, 20, hex: "#E8B923"),
+            new(W, Slot.Paint, "frost", "FROST BLUE", "Cold and crisp.", hex: "#5BB8F0"),
             new(W, Slot.Paint, "blue", "OCEAN BLUE", "Deep and calm. Until GO.", Unlock.Stars, 2, hex: "#1F7BE0"),
             new(W, Slot.Paint, "midnight", "MIDNIGHT", "For racing after dark.", Unlock.Stars, 8, hex: "#2B2D35"),
             new(W, Slot.Paint, "pearl", "PEARL WHITE", "Fresh snow shine.", Unlock.Stars, 14, hex: "#F4F2EC"),
+            new(W, Slot.Paint, "berry", "WINTER BERRY", "A splash of red in the snow.", Unlock.Stars, 20, hex: "#C2304A"),
 
             new(V, Slot.Body, "buggy", "DUNE BUGGY", "Roll cage, big tyres, no roof. Pure fun."),
             new(V, Slot.Body, "rally", "RALLY HATCH", "Wide arches and a roof over your head.", Unlock.Stars, 5),
             new(V, Slot.Body, "pickup", "FARM PICKUP", "A cab up front, a wooden bed behind.", Unlock.Stars, 16),
-            new(W, Slot.Body, "kart", "GO-KART", "Low, open, helmet on.", Unlock.Stars, 10),
+            new(V, Slot.Body, "kart", "GO-KART", "Low, open, helmet on.", Unlock.Stars, 22),
 
             new(V, Slot.Top, "none", "NOTHING", "Clean and simple."),
             new(V, Slot.Top, "spoiler", "SPOILER", "Looks fast standing still.", Unlock.Stars, 2),
             new(V, Slot.Top, "roofrack", "ROOF RACK", "Packed for a road trip.", Unlock.Stars, 9),
+            new(V, Slot.Top, "lightbar", "LIGHT BAR", "Four lamps for the night stages.", Unlock.Stars, 13),
+            new(V, Slot.Top, "skirack", "SKI RACK", "Two pairs of skis on the roof.", Unlock.Stars, 18),
             new(V, Slot.Top, "haybales", "HAY-BALE SPOILER", "Rosie Rust's: two bales and her pitchfork.", Unlock.Rival, from: "RosieRust"),
             new(V, Slot.Top, "chicken", "CHICKEN RIDER", "One of Rosie's chickens liked you. It comes along.", Unlock.Challenge, from: "ChickenChase"),
             new(V, Slot.Top, "goldwing", "GOLDEN WING", "Three stars in every Valley Cup race.", Unlock.CupGold, from: V),
-            new(W, Slot.Top, "lightbar", "LIGHT BAR", "Four lamps for the long winter nights.", Unlock.Stars, 5),
-            new(W, Slot.Top, "skirack", "SKI RACK", "Two pairs of skis on the roof.", Unlock.Stars, 16),
 
             new(V, Slot.Decal, "none", "NOTHING", "Let the paint speak."),
             new(V, Slot.Decal, "stripes", "RACING STRIPES", "Two white stripes, nose to tail.", Unlock.Stars, 4),
+            new(V, Slot.Decal, "checkers", "CHECKERS", "The flag, on your car.", Unlock.Stars, 8),
             new(V, Slot.Decal, "number", "LUCKY SEVEN", "A number on the bonnet.", Unlock.Stars, 10),
             new(V, Slot.Decal, "flames", "HOT FLAMES", "Fire licking off the nose.", Unlock.Stars, 14),
+            new(V, Slot.Decal, "frost", "FROST STAR", "A big snowflake on the bonnet.", Unlock.Stars, 19),
             new(V, Slot.Decal, "crest", "VALLEY CREST", "Three stars in every Valley Cup race.", Unlock.CupGold, from: V),
-            new(W, Slot.Decal, "checkers", "CHECKERS", "The flag, on your car.", Unlock.Stars, 12),
-            new(W, Slot.Decal, "frost", "FROST STAR", "A big snowflake on the bonnet.", Unlock.Stars, 18),
 
             new(V, Slot.Trail, "standard", "TYRE SMOKE", "The usual."),
             new(V, Slot.Trail, "sparkle", "SPARKLES", "Glitter on every drift and boost.", Unlock.Stars, 6),
             new(V, Slot.Trail, "flame", "FIRE", "Flames out of the back.", Unlock.Stars, 18),
             new(V, Slot.Trail, "confetti", "CONFETTI", "Every lap is a party.", Unlock.Stars, 22),
             new(W, Slot.Trail, "flake", "SNOWFLAKES", "A little blizzard behind you.", Unlock.Stars, 4),
+            new(W, Slot.Trail, "winterconfetti", "SNOW CONFETTI", "Every lap is a snow party.", Unlock.Stars, 12),
             new(W, Slot.Trail, "aurora", "NORTHERN LIGHTS", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
 
             new(V, Slot.Gadget, "none", "NO GADGET", "Just you and the road."),
             new(V, Slot.Gadget, "haybale", "HAY BALE DROP", "Drop a hay bale behind you: whoever hits it spins out. Once a lap.", Unlock.Rival, from: "RosieRust"),
         };
+
+        /// <summary>What a vehicle's shop shows for a slot: its cup's things (and "nothing" / the plain tyre smoke,
+        /// which every vehicle has). The first is what it falls back to.</summary>
+        public static List<Part> For(Slot slot, Vehicle vehicle)
+        {
+            var free = new List<Part>();
+            var rest = new List<Part>();
+            if (!Fits(slot, vehicle)) return free;
+            string cup = CupOf(vehicle);
+            foreach (var part in Parts)
+            {
+                if (part.Slot != slot) continue;
+                bool shared = part.How == Unlock.Free && (part.Id == "none" || part.Id == "standard");
+                if (shared || (part.Cup == cup && part.How == Unlock.Free)) free.Add(part);
+                else if (part.Cup == cup) rest.Add(part);
+            }
+            free.AddRange(rest); // the free ones first, then the rest as listed
+            return free;
+        }
 
         /// <summary>Gadgets of rivals still to come: shown as mystery slots.</summary>
         public const int MysteryGadgets = 1; // a mystery slot on each cup's shelf that has no gadget yet
@@ -168,24 +191,20 @@ namespace SomeGame.Race
 
         static string Key(Slot slot, Vehicle vehicle) => vehicle == Vehicle.Snowmobile ? "Garage.Snow." + slot : "Garage." + slot;
 
-        /// <summary>The part in a slot of a vehicle (falls back to the first of its kind if it is not, or no longer, open).
-        /// The snowmobile starts out with the car's choices until it gets its own.</summary>
+        /// <summary>The part in a slot of a vehicle: one of its own shop's, and open (else the first of its shop).</summary>
         public static Part Equipped(Slot slot, Vehicle vehicle = Vehicle.Car)
         {
-            if (vehicle == Vehicle.Snowmobile)
-            {
-                if (!Fits(slot, vehicle)) return Find("", slot);
-                if (!PlayerPrefs.HasKey(Key(slot, vehicle))) return Equipped(slot, Vehicle.Car);
-            }
+            var shop = For(slot, vehicle);
+            if (shop.Count == 0) return Find("", slot);
             string id = PlayerPrefs.GetString(Key(slot, vehicle), "");
             if (vehicle == Vehicle.Car && slot == Slot.Paint && id == "" && PlayerPrefs.HasKey(PaintKey)) id = LegacyPaint();
-            var part = Find(id, slot);
-            return IsUnlocked(part) ? part : Find("", slot);
+            foreach (var part in shop) if (part.Id == id && IsUnlocked(part)) return part;
+            return shop[0];
         }
 
         public static void Equip(Part part, Vehicle vehicle = Vehicle.Car)
         {
-            if (part == null || !IsUnlocked(part) || !Fits(part.Slot, vehicle) || Equipped(part.Slot, vehicle) == part) return;
+            if (part == null || !IsUnlocked(part) || !For(part.Slot, vehicle).Contains(part) || Equipped(part.Slot, vehicle) == part) return;
             PlayerPrefs.SetString(Key(part.Slot, vehicle), part.Id);
             PlayerPrefs.Save();
             Changed?.Invoke();

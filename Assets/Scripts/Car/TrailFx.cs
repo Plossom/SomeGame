@@ -39,6 +39,7 @@ namespace SomeGame.Car
                 "flame" => new ParticleSystem.MinMaxGradient(new Color(1f, 0.85f, 0.3f), new Color(1f, 0.35f, 0.1f)),
                 "flake" => new ParticleSystem.MinMaxGradient(Color.white, new Color(0.75f, 0.9f, 1f)),
                 "confetti" => new ParticleSystem.MinMaxGradient(Confetti[0], Confetti[3]) { mode = ParticleSystemGradientMode.RandomColor, gradient = ConfettiGradient() },
+"winterconfetti" => new ParticleSystem.MinMaxGradient(Color.white, new Color(0.45f, 0.8f, 1f)),
                 "aurora" => new ParticleSystem.MinMaxGradient(new Color(0.4f, 1f, 0.7f), new Color(0.7f, 0.5f, 1f)),
                 _ => new ParticleSystem.MinMaxGradient(Color.white, Color.Lerp(paint, Color.white, 0.5f)),
             };

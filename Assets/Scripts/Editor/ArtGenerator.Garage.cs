@@ -124,7 +124,7 @@ namespace SomeGame.EditorTools
             Add("top.haybales", "TopHayBales"); Add("top.goldwing", "TopGoldWing"); Add("top.skirack", "TopSkiRack"); Add("top.chicken", "TopChicken");
             Add("decal.stripes", "DecalStripes"); Add("decal.number", "DecalNumber"); Add("decal.flames", "DecalFlames");
             Add("decal.checkers", "DecalCheckers"); Add("decal.crest", "DecalCrest"); Add("decal.frost", "DecalFrost");
-            Add("trail.sparkle", "Sparkle"); Add("trail.aurora", "Sparkle"); Add("trail.flame", "TrailFlame"); Add("trail.flake", "TrailFlake"); Add("trail.confetti", "TrailConfetti");
+            Add("trail.sparkle", "Sparkle"); Add("trail.aurora", "Sparkle"); Add("trail.flame", "TrailFlame"); Add("trail.flake", "TrailFlake"); Add("trail.confetti", "TrailConfetti"); Add("trail.winterconfetti", "TrailConfetti"); Add("trail.standard", "Smoke");
             Add("gadget.haybale", "HayBale");
             Add("challenge.chicken", "Chicken");
             EditorUtility.SetDirty(art);
