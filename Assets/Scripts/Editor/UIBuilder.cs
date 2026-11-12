@@ -483,7 +483,7 @@ namespace SomeGame.EditorTools
             // The other vehicles peeking in above and below (tap, or swipe up or down, to go to their page).
             RectTransform PeekAt(string name, float side)
             {
-                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side * 740f), new Vector2(240f, 240f));
+                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(0f, side > 0f ? 640f : -400f), new Vector2(240f, 240f));
                 peek.pivot = new Vector2(0.5f, 0.5f);
                 peek.gameObject.AddComponent<CanvasGroup>();
                 var hit = Img(peek, null, new Color(0f, 0f, 0f, 0f), raycast: true);
@@ -494,7 +494,7 @@ namespace SomeGame.EditorTools
                 var pDetails = Img(Stretch("Details", peekCar), "CarDetails", Color.white); pDetails.preserveAspect = false;
                 Configure(peekCar.gameObject.AddComponent<VehicleIcon>(), ("body", pBody), ("details", pDetails), ("shadow", pShadow),
                     ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
-                var arrow = Img(At("Arrow", peek, new Vector2(0.5f, 0.5f), new Vector2(0f, side * 150f), new Vector2(50f, 60f)), "NavArrow", Theme.Amber).rectTransform;
+                var arrow = Img(At("Arrow", peek, new Vector2(0.5f, 0.5f), new Vector2(0f, side * 110f), new Vector2(50f, 60f)), "NavArrow", Theme.Amber).rectTransform;
                 arrow.pivot = new Vector2(0.5f, 0.5f); arrow.localRotation = Quaternion.Euler(0f, 0f, side > 0f ? 0f : 180f);
                 var label = Txt(At("Name", peek, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(10f, 10f)), "", 10, Theme.Cream, _black);
                 label.gameObject.SetActive(false);
@@ -552,17 +552,18 @@ namespace SomeGame.EditorTools
 
             // The tray for the chosen part: the part tabs and DONE, a strip of round chips (cup by cup), the name and
             // what it is (or what it takes).
-            var tray = At("Tray", safe, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(1170f, 700f));
+            var tray = At("Tray", safe, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(1170f, 480f));
             tray.pivot = new Vector2(0.5f, 0f);
             var trayShadow = Stretch("Shadow", tray); trayShadow.offsetMin = new Vector2(0f, -60f); trayShadow.offsetMax = new Vector2(0f, 14f);
             Img(trayShadow, "Round", Shade(Theme.Ink, 0.45f), sliced: true);
             var trayFace = Stretch("Face", tray); trayFace.offsetMin = new Vector2(0f, -60f);
             Img(trayFace, "Round", Theme.Cream, sliced: true, raycast: true);
             // The part tabs: jump straight to another part (the one open orange, with its name).
-            var tabs = At("Tabs", tray, new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(816f, 170f));
-            tabs.pivot = new Vector2(0f, 1f);
+            // The part tabs at the top of the screen, under the page's name (always there).
+            var tabs = At("Tabs", safe, new Vector2(0.5f, 1f), new Vector2(0f, -290f), new Vector2(816f, 170f));
+            tabs.pivot = new Vector2(0.5f, 1f);
             var tabRow = tabs.gameObject.AddComponent<HorizontalLayoutGroup>();
-            tabRow.spacing = 0f; tabRow.childControlWidth = tabRow.childControlHeight = false; tabRow.childForceExpandWidth = false; tabRow.childAlignment = TextAnchor.MiddleLeft;
+            tabRow.spacing = 0f; tabRow.childControlWidth = tabRow.childControlHeight = false; tabRow.childForceExpandWidth = false; tabRow.childAlignment = TextAnchor.MiddleCenter;
             var tabT = Rt("Tab", tabs);
             tabT.sizeDelta = new Vector2(136f, 170f);
             Img(tabT, null, new Color(0f, 0f, 0f, 0f), raycast: true);
@@ -580,6 +581,7 @@ namespace SomeGame.EditorTools
             tabButton.targetGraphic = tabT.GetComponent<Image>(); tabButton.transition = Selectable.Transition.None;
             tabT.gameObject.AddComponent<ButtonFeedback>();
             var trayCount = Txt(At("Count", tray, new Vector2(1f, 1f), new Vector2(-48f, -146f), new Vector2(260f, 40f)), "4 / 8 OPEN", 30, Theme.Rust, _condItalic, TextAlignmentOptions.Center);
+            trayCount.gameObject.SetActive(false);
             trayCount.rectTransform.pivot = new Vector2(1f, 1f); trayCount.characterSpacing = 4f;
             var done = At("Done", tray, new Vector2(1f, 1f), new Vector2(-48f, -36f), new Vector2(240f, 100f));
             done.pivot = new Vector2(1f, 1f);
@@ -589,9 +591,10 @@ namespace SomeGame.EditorTools
             var doneButton = done.gameObject.AddComponent<Button>();
             doneButton.targetGraphic = doneFace; doneButton.transition = Selectable.Transition.None;
             done.gameObject.AddComponent<ButtonFeedback>();
+            done.gameObject.SetActive(false); // always choosing: the cross closes the garage
 
             // The strip: round chips scrolling sideways, a divider per cup.
-            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -200f), new Vector2(1170f, 290f));
+            var viewport = At("Strip", tray, new Vector2(0.5f, 1f), new Vector2(0f, -14f), new Vector2(1170f, 290f));
             viewport.pivot = new Vector2(0.5f, 1f);
             Img(viewport, null, new Color(0f, 0f, 0f, 0f), raycast: true);
             viewport.gameObject.AddComponent<RectMask2D>();
@@ -661,8 +664,8 @@ namespace SomeGame.EditorTools
             tileName.textWrappingMode = TextWrappingModes.Normal; tileName.enableAutoSizing = true; tileName.fontSizeMin = 18; tileName.fontSizeMax = 28;
             tileName.verticalAlignment = VerticalAlignmentOptions.Top;
 
-            var itemName = Txt(At("ItemName", tray, new Vector2(0.5f, 0f), new Vector2(0f, 120f), new Vector2(1060f, 66f)), "SUNSET ORANGE", 52, Theme.Ink, _black);
-            var itemBlurb = Txt(At("ItemBlurb", tray, new Vector2(0.5f, 0f), new Vector2(0f, 74f), new Vector2(1000f, 46f)), "The classic.", 34, Theme.InkSoft, _semi);
+            var itemName = Txt(At("ItemName", tray, new Vector2(0.5f, 0f), new Vector2(0f, 108f), new Vector2(1060f, 66f)), "SUNSET ORANGE", 52, Theme.Ink, _black);
+            var itemBlurb = Txt(At("ItemBlurb", tray, new Vector2(0.5f, 0f), new Vector2(0f, 62f), new Vector2(1000f, 46f)), "The classic.", 34, Theme.InkSoft, _semi);
             itemBlurb.enableAutoSizing = true; itemBlurb.fontSizeMin = 22; itemBlurb.fontSizeMax = 34;
 
             // The rivals' cards: a panel of their own.
