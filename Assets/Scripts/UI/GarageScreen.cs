@@ -505,6 +505,12 @@ namespace SomeGame.UI
             var iconRoot = preview.Find("Icon").gameObject;
             var icon = preview.Find("Icon/Pic").GetComponent<UnityEngine.UI.Image>();
             var question = preview.Find("Question").gameObject;
+            var alone = preview.Find("Alone").gameObject;
+            var none = preview.Find("None").gameObject;
+            var stripesRoot = preview.Find("Stripes").gameObject;
+            stripesRoot.SetActive(false);
+            alone.SetActive(false);
+            none.SetActive(!mystery && part.Id == "none");
             swatch.SetActive(false);
             mini.gameObject.SetActive(false);
             iconRoot.SetActive(false);
@@ -518,14 +524,26 @@ namespace SomeGame.UI
                         swatch.transform.Find("Color").GetComponent<UnityEngine.UI.Image>().color = part.Color;
                         break;
                     case Garage.Slot.Body:
+                        // Just the body (in your paint): no top, no decal.
+                        mini.gameObject.SetActive(true);
+                        var bare = look;
+                        bare.Body = part;
+                        bare.Top = Garage.Find("none", Garage.Slot.Top);
+                        bare.Decal = Garage.Find("none", Garage.Slot.Decal);
+                        mini.Dress(bare);
+                        break;
                     case Garage.Slot.Top:
                     case Garage.Slot.Decal:
-                        mini.gameObject.SetActive(true);
-                        var dressed = look;
-                        if (part.Slot == Garage.Slot.Body) dressed.Body = part;
-                        if (part.Slot == Garage.Slot.Top) dressed.Top = part;
-                        if (part.Slot == Garage.Slot.Decal) dressed.Decal = part;
-                        mini.Dress(dressed);
+                        // Just the part itself, as big as the card takes it.
+                        var sprite = GarageArt.Instance?.Get(part)?.Alone;
+                        bool stripes = part.Id == "stripes";
+                        stripesRoot.SetActive(stripes);
+                        foreach (var bar in stripesRoot.GetComponentsInChildren<UnityEngine.UI.Image>(true)) if (bar.name == "Bar") bar.color = new Color(0.22f, 0.24f, 0.27f); // (white on the car; dark to show on the card, whatever the paint)
+                        alone.SetActive(sprite != null && !stripes);
+                        foreach (var image in alone.GetComponentsInChildren<UnityEngine.UI.Image>(true)) image.sprite = sprite;
+                        // Stickers get a darker shadow to stand off the white card.
+                        alone.transform.Find("Shadow").GetComponent<UnityEngine.UI.Image>().color = new Color(0f, 0f, 0f, part.Slot == Garage.Slot.Decal ? 0.7f : 0.4f);
+                        ((RectTransform)alone.transform.Find("Shadow")).anchoredPosition = part.Slot == Garage.Slot.Decal ? new Vector2(4f, -5f) : new Vector2(6f, -8f);
                         break;
                     default:
                         iconRoot.SetActive(true);
@@ -535,7 +553,7 @@ namespace SomeGame.UI
                         icon.color = part.Slot == Garage.Slot.Trail ? TrailTint(part, look.Paint) : Color.white;
                         break;
                 }
-            if (!mystery && part.Id == "none" && part.Slot == Garage.Slot.Gadget)
+            if (!mystery && part.Id == "none")
             {
                 iconRoot.SetActive(false);
                 question.SetActive(false);

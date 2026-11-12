@@ -658,6 +658,24 @@ namespace SomeGame.EditorTools
             iconRt.pivot = new Vector2(0.5f, 0.5f);
             Img(At("Pic", iconRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(230f, 230f)), "Sparkle", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Txt(At("Question", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(210f, 210f)), "?", 150, Theme.Amber, _black);
+            // A top or a decal on its own (with a soft shadow, so white stickers show on the white card); a dashed
+            // ring for nothing.
+            var alone = At("Alone", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(230f, 230f));
+            alone.pivot = new Vector2(0.5f, 0.5f);
+            var aloneShadow = Img(At("Shadow", alone, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(230f, 230f)), "Circle", new Color(0f, 0f, 0f, 0.4f));
+            aloneShadow.rectTransform.pivot = new Vector2(0.5f, 0.5f); aloneShadow.rectTransform.anchoredPosition = new Vector2(6f, -8f); aloneShadow.preserveAspect = true;
+            var alonePic = Img(At("Pic", alone, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(230f, 230f)), "Circle", Color.white);
+            alonePic.rectTransform.pivot = new Vector2(0.5f, 0.5f); alonePic.preserveAspect = true;
+            var none = Img(At("None", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(170f, 170f)), "RingDashed", Theme.WithAlpha(Theme.Ink, 0.3f));
+            none.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            // The racing stripes (their picture mostly lies under the cockpit): a pair of bars.
+            var stripes = At("Stripes", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(120f, 210f));
+            stripes.pivot = new Vector2(0.5f, 0.5f);
+            foreach (float x in new[] { -22f, 22f })
+            {
+                Img(At("Shadow", stripes, new Vector2(0.5f, 0.5f), new Vector2(x + 4f, -5f), new Vector2(30f, 210f)), "Pill", new Color(0f, 0f, 0f, 0.35f), sliced: true).rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                Img(At("Bar", stripes, new Vector2(0.5f, 0.5f), new Vector2(x, 0f), new Vector2(30f, 210f)), "Pill", Color.white, sliced: true).rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            }
             var veil = At("Veil", tile, new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(168f, 168f));
             Img(veil, "Circle", Theme.WithAlpha(Theme.Ink, 0.4f));
             var tileLock = At("Lock", tile, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(64f, 64f));

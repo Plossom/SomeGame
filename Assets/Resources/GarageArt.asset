@@ -17,103 +17,259 @@ MonoBehaviour:
     full: {fileID: 21300000, guid: 116ad1292413a4d0e93dbc3c5fa8fe8a, type: 3}
     race: {fileID: 21300000, guid: 467857a9807084dfebedd104523f096e, type: 3}
     details: {fileID: 21300000, guid: 33d58208ae9974eb4bfecfa2edac9e75, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: body.rally
     full: {fileID: 21300000, guid: abca5a4c1df9344d1b14ea1cac628b54, type: 3}
     race: {fileID: 21300000, guid: 25a57dda01acd4fa6af8874e0650974b, type: 3}
     details: {fileID: 21300000, guid: 174ced29020a34aa9af0b6c994aed661, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: body.kart
     full: {fileID: 21300000, guid: 6c86d1b6f908f44f8910300ccb7bf708, type: 3}
     race: {fileID: 21300000, guid: 1e2b3febcdb5040a5b479d4350c61d50, type: 3}
     details: {fileID: 21300000, guid: 57726de73b8e94aa4989b3878c9a4cc9, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: body.pickup
     full: {fileID: 21300000, guid: f515ec4e549f34a1b9fe14ce39cfa479, type: 3}
     race: {fileID: 21300000, guid: 3ab6927b346c64022aa926919e9afdc9, type: 3}
     details: {fileID: 21300000, guid: d5c23a36e7d2d4eecb0e40a9d57ab743, type: 3}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: top.spoiler
     full: {fileID: 21300000, guid: 4e57c027a4e5848869f156f6f1032868, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 15
+      y: 7
+      width: 162
+      height: 53
   - id: top.roofrack
     full: {fileID: 21300000, guid: 6266e433a55be4bf68581fb00fc7127d, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 53
+      y: 119
+      width: 86
+      height: 94
   - id: top.lightbar
     full: {fileID: 21300000, guid: 317bbd6611dfc45f68d9c188c4d5d7e1, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 36
+      y: 202
+      width: 120
+      height: 28
   - id: top.haybales
     full: {fileID: 21300000, guid: e81b484604beb410aada3bcf7fb98287, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 16
+      y: 31
+      width: 141
+      height: 98
   - id: top.goldwing
     full: {fileID: 21300000, guid: 94644f12535f0480b82bab16d07f9682, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 15
+      y: 7
+      width: 162
+      height: 53
   - id: top.skirack
     full: {fileID: 21300000, guid: aac0077c6b1ac4403b1b0bf446fd3d95, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 55
+      y: 101
+      width: 82
+      height: 134
   - id: top.chicken
     full: {fileID: 21300000, guid: 202c51297ecaf486ab9ab4a60a739ccf, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 59
+      y: 100
+      width: 74
+      height: 118
   - id: decal.stripes
     full: {fileID: 21300000, guid: cc41bfdfb330b416aaafb62c91c154af, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 79
+      y: 30
+      width: 34
+      height: 288
   - id: decal.number
     full: {fileID: 21300000, guid: 7da9da85303d54d5eb11c06a089e436d, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 73
+      y: 253
+      width: 46
+      height: 46
   - id: decal.flames
     full: {fileID: 21300000, guid: 1019cb08774b6487a8dc82e4571b2b3a, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 58
+      y: 232
+      width: 76
+      height: 86
   - id: decal.checkers
     full: {fileID: 21300000, guid: 6ed2b32fe34784faf8dfa7e620e6f269, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 59
+      y: 249
+      width: 74
+      height: 26
   - id: decal.crest
     full: {fileID: 21300000, guid: 3e3c414811bdb41b49d518010a42605a, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 64
+      y: 248
+      width: 64
+      height: 52
   - id: decal.frost
     full: {fileID: 21300000, guid: 0bade0864551d4a3c884646a31b302ab, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 67
+      y: 242
+      width: 58
+      height: 64
   - id: trail.sparkle
     full: {fileID: 21300000, guid: 8c9ca149451e64c92a41f2e5ac99a07b, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: trail.aurora
     full: {fileID: 21300000, guid: 8c9ca149451e64c92a41f2e5ac99a07b, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: trail.flame
     full: {fileID: 21300000, guid: 9c918ccca77e440f0b64a8345c3eabc4, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: trail.flake
     full: {fileID: 21300000, guid: 40836c9d07f2b4829b52a9e4e1e47732, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: trail.confetti
     full: {fileID: 21300000, guid: 066b0418d292045389c205aa6add3332, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: trail.winterconfetti
     full: {fileID: 21300000, guid: 066b0418d292045389c205aa6add3332, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: trail.standard
     full: {fileID: 21300000, guid: 26cdb5cd2b21448e9a9e79c38ccf602e, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: gadget.haybale
     full: {fileID: 21300000, guid: 22ce31e37e24342d79461191809c3103, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: challenge.chicken
     full: {fileID: 21300000, guid: 02e36d4e7435e4495b43b475468fc33a, type: 3}
     race: {fileID: 0}
     details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0

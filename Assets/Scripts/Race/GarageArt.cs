@@ -18,6 +18,22 @@ namespace SomeGame.Race
         {
             public string id;
             public Sprite full, race, details;
+            [Tooltip("Where on the full picture the part itself is, in pixels (a top's or a decal's; empty: all of it).")]
+            public Rect bounds;
+
+            [NonSerialized] Sprite _alone;
+
+            /// <summary>Just the part (a top or a decal cut out of the car-sized picture it's drawn on).</summary>
+            public Sprite Alone
+            {
+                get
+                {
+                    if (full == null || bounds.width <= 0f) return full;
+                    if (_alone != null) return _alone;
+                    var rect = new Rect(full.rect.x + bounds.x, full.rect.y + bounds.y, bounds.width, bounds.height);
+                    return _alone = Sprite.Create(full.texture, rect, new Vector2(0.5f, 0.5f), full.pixelsPerUnit);
+                }
+            }
         }
 
         public List<Entry> entries = new();

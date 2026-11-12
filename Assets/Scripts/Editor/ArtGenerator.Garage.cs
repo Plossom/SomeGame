@@ -127,8 +127,30 @@ namespace SomeGame.EditorTools
             Add("trail.sparkle", "Sparkle"); Add("trail.aurora", "Sparkle"); Add("trail.flame", "TrailFlame"); Add("trail.flake", "TrailFlake"); Add("trail.confetti", "TrailConfetti"); Add("trail.winterconfetti", "TrailConfetti"); Add("trail.standard", "Smoke");
             Add("gadget.haybale", "HayBale");
             Add("challenge.chicken", "Chicken");
+            // A top's or a decal's picture covers the whole car (it's laid over it): where on it the part itself is,
+            // for showing it on its own in the garage.
+            foreach (var entry in art.entries)
+                if (entry.full != null && (entry.id.StartsWith("top.") || entry.id.StartsWith("decal.")))
+                    entry.bounds = OpaqueBounds(AssetDatabase.GetAssetPath(entry.full));
             EditorUtility.SetDirty(art);
             AssetDatabase.SaveAssets();
+        }
+
+        static Rect OpaqueBounds(string path)
+        {
+            var tex = new Texture2D(2, 2);
+            tex.LoadImage(System.IO.File.ReadAllBytes(path));
+            int minX = tex.width, minY = tex.height, maxX = -1, maxY = -1;
+            var pixels = tex.GetPixels32();
+            for (int y = 0; y < tex.height; y++)
+                for (int x = 0; x < tex.width; x++)
+                    if (pixels[y * tex.width + x].a > 10) { minX = Mathf.Min(minX, x); maxX = Mathf.Max(maxX, x); minY = Mathf.Min(minY, y); maxY = Mathf.Max(maxY, y); }
+            int w = tex.width, h = tex.height;
+            Object.DestroyImmediate(tex);
+            if (maxX < 0) return default;
+            minX = Mathf.Max(0, minX - 2); minY = Mathf.Max(0, minY - 2);
+            maxX = Mathf.Min(w - 1, maxX + 2); maxY = Mathf.Min(h - 1, maxY + 2);
+            return new Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
         }
 
         // ---------- bodies ----------
