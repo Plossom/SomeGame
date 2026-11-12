@@ -382,10 +382,10 @@ MonoBehaviour:
     huts: 1
     seed: 7
   swells:
-  - from: 398
-    to: 470
+  - from: 396
+    to: 472
     speed: 8
-    period: 5.2
+    period: 3.4
     offset: 0
   currents:
   - from: 158
@@ -2408,4 +2408,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: d1189db705918dbb
+  bakedSignature: 

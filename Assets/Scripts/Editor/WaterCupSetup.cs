@@ -99,6 +99,8 @@ namespace SomeGame.EditorTools
             lso.FindProperty("dolphin").objectReferenceValue = Sprite("Dolphin");
             lso.FindProperty("bridge").objectReferenceValue = Sprite("LagoonBridge");
             lso.FindProperty("ring").objectReferenceValue = Sprite("SplashRing");
+            lso.FindProperty("gull").objectReferenceValue = Sprite("Gull");
+            lso.FindProperty("shoal").objectReferenceValue = Sprite("FishShoal");
             lso.ApplyModifiedPropertiesWithoutUndo();
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
         }
@@ -142,7 +144,7 @@ namespace SomeGame.EditorTools
                 new() { cell = "Umbrella", uv = LagoonSheet.Cell("Umbrella"), position = new Vector2(46f, -13.5f), size = 6f, angle = -15f },
                 new() { cell = "Canoe", uv = LagoonSheet.Cell("Canoe"), position = new Vector2(30f, -17f), size = 6f, angle = 70f },
             };
-            t.swells = new List<TrackLayout.Swell> { new() { from = 398f, to = 470f, speed = 8f, period = 5.2f } };
+            t.swells = new List<TrackLayout.Swell> { new() { from = 396f, to = 472f, speed = 8f, period = 3.4f } };
             t.currents = new List<TrackLayout.Current>
             {
                 new() { from = 158f, to = 206f, lateral = 0f, width = 4.5f, push = 0.3f },

@@ -53,6 +53,8 @@ namespace SomeGame.Track
     {
         [SerializeField] Material sand, jungle, shallows, foam, plain, current, scenery;
         [SerializeField] Sprite dolphin, bridge, ring;
+        [Tooltip("Gulls gliding over the lagoon (their shadows on the water), and shoals of little fish under it.")]
+        [SerializeField] Sprite gull, shoal;
 
         const int HaloOrder = -66, FoamOrder = -65, SandOrder = -64, JungleOrder = -63, DecorOrder = 4,
                   CurrentOrder = -46, SwellOrder = -45, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
@@ -60,7 +62,8 @@ namespace SomeGame.Track
         static readonly Color SwellDark = new(0.02f, 0.25f, 0.45f, 1f);
 
         readonly List<GameObject> _parts = new();
-        readonly List<(TrackLayout.Swell swell, MeshFilter filter, Mesh mesh)> _swells = new();
+        // Each swell zone rolls a train of crests, one every period: (the zone, its crests' meshes).
+        readonly List<(TrackLayout.Swell swell, List<(MeshFilter filter, Mesh mesh)> crests)> _swells = new();
         readonly Dictionary<(int, SomeGame.Car.CarMovement), float> _behind = new(); // (swell, car) → signed distance to the crest last frame
         readonly List<(SpriteRenderer body, SpriteRenderer shadow)> _dolphins = new();
         readonly List<(SpriteRenderer sr, float born)> _splashes = new();
@@ -77,13 +80,20 @@ namespace SomeGame.Track
             foreach (var c in layout.currents) BuildCurrent(path, c);
             foreach (var s in layout.swells)
             {
-                var go = Part("Swell", plain, SwellOrder, out var filter);
-                var mesh = new Mesh { name = "Swell", hideFlags = HideFlags.DontSave };
-                mesh.MarkDynamic();
-                filter.sharedMesh = mesh;
-                Assign(null, mesh);
-                _swells.Add((s, filter, mesh));
-                go.SetActive(false);
+                float duration = Mathf.Repeat(s.to - s.from, path.Length) / s.speed;
+                int count = Mathf.CeilToInt(duration / s.period) + 1;
+                var crests = new List<(MeshFilter, Mesh)>();
+                for (int k = 0; k < count; k++)
+                {
+                    var go = Part("Swell", plain, SwellOrder, out var filter);
+                    var mesh = new Mesh { name = "Swell", hideFlags = HideFlags.DontSave };
+                    mesh.MarkDynamic();
+                    filter.sharedMesh = mesh;
+                    Assign(null, mesh);
+                    crests.Add((filter, mesh));
+                    go.SetActive(false);
+                }
+                _swells.Add((s, crests));
             }
             foreach (float d in layout.footbridges) BuildBridge(path, d);
             if (Application.isPlaying)
@@ -256,22 +266,85 @@ namespace SomeGame.Track
             UpdateCurrents(path);
             UpdateDolphins(path, now);
             UpdateSplashes(now);
+            UpdateLife(path, now);
+        }
+
+        // ------------------------------------------------------------------ gulls and shoals
+
+        readonly List<(SpriteRenderer body, SpriteRenderer shadow, float phase, float lap)> _gulls = new();
+        readonly List<(SpriteRenderer sr, float phase, float lateral, float speed)> _shoals = new();
+
+        void UpdateLife(TrackPath path, float now)
+        {
+            if (gull != null && _gulls.Count == 0)
+                for (int i = 0; i < 5; i++)
+                {
+                    var body = NewSprite("Gull", gull, 40);
+                    var shadow = NewSprite("GullShadow", gull, 5);
+                    shadow.color = new Color(0f, 0.12f, 0.2f, 0.25f);
+                    _gulls.Add((body, shadow, i * 1.37f, path.Length * i / 5f));
+                }
+            if (shoal != null && _shoals.Count == 0)
+                for (int i = 0; i < 9; i++)
+                {
+                    var sr = NewSprite("Shoal", shoal, -44);
+                    _shoals.Add((sr, path.Length * i / 9f, (i % 2 == 0 ? 1f : -1f) * (2f + i % 3), 2.5f + (i % 4) * 0.7f));
+                }
+            // Gulls circle lazily along the lap, high over the water, wings beating now and then.
+            foreach (var (body, shadow, phase, lap) in _gulls)
+            {
+                float d = lap + now * 6f;
+                Vector2 c = path.PointAt(d) + path.NormalAt(d) * (Mathf.Sin(now * 0.3f + phase) * 14f);
+                Vector2 dir = path.TangentAt(d) + path.NormalAt(d) * Mathf.Cos(now * 0.3f + phase) * 0.5f;
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+                float flap = Mathf.Repeat(now + phase, 3f) < 0.8f ? 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(now * 9f)) : 1f;
+                body.transform.position = c;
+                body.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+                body.transform.localScale = new Vector3(flap, 1f, 1f) * 1.3f;
+                shadow.transform.position = c + new Vector2(2.5f, -4f);
+                shadow.transform.rotation = body.transform.rotation;
+                shadow.transform.localScale = body.transform.localScale * 0.9f;
+            }
+            // Shoals of fish darting along under the water beside the channel.
+            foreach (var (sr, phase, lateral, speed) in _shoals)
+            {
+                float d = phase + now * speed;
+                float w = track.OffRoadAt(d) + 2.5f + Mathf.Abs(lateral);
+                Vector2 p = path.PointAt(d) + path.NormalAt(d) * (Mathf.Sign(lateral) * w + Mathf.Sin(now * 0.8f + phase) * 1.5f);
+                Vector2 t = path.TangentAt(d);
+                sr.transform.position = p;
+                sr.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(t.y, t.x) * Mathf.Rad2Deg - 90f + Mathf.Sin(now * 2f + phase) * 12f);
+                sr.transform.localScale = Vector3.one * 1.6f;
+            }
         }
 
         void UpdateSwell(int index, TrackPath path, float now)
         {
-            var (swell, filter, mesh) = _swells[index];
+            var (swell, crests) = _swells[index];
             float length = Mathf.Repeat(swell.to - swell.from, path.Length);
             float duration = length / swell.speed;
-            float cycle = Mathf.Repeat(now + swell.offset, Mathf.Max(swell.period, duration + 0.5f));
-            bool active = cycle < duration;
-            if (filter.gameObject.activeSelf != active) filter.gameObject.SetActive(active);
-            if (!active) { ForgetSwell(index); return; }
-            float progress = cycle / duration;
-            float crest = path.WrapDistance(swell.from + length * progress);
-            float height = Mathf.Clamp01(progress / 0.15f) * Mathf.Clamp01((1f - progress) / 0.12f);
-            BuildSwellMesh(mesh, path, crest, height, now);
+            float clock = now + swell.offset;
+            int newest = Mathf.FloorToInt(clock / swell.period);
+            for (int slot = 0; slot < crests.Count; slot++)
+            {
+                // Crest number n (one born every period) uses slot n % count.
+                int n = newest - ((newest - slot) % crests.Count + crests.Count) % crests.Count;
+                float age = clock - n * swell.period;
+                var (filter, mesh) = crests[slot];
+                bool active = age >= 0f && age < duration;
+                if (filter.gameObject.activeSelf != active) filter.gameObject.SetActive(active);
+                if (!active) continue;
+                float progress = age / duration;
+                float crest = path.WrapDistance(swell.from + length * progress);
+                float height = Mathf.Clamp01(progress / 0.12f) * Mathf.Clamp01((1f - progress) / 0.1f);
+                BuildSwellMesh(mesh, path, crest, height, now);
+                Ride(index * 1000 + (n & 0xFFFF) % 1000, swell, path, crest, height, now);
+            }
+        }
 
+        // Boats crossing a crest from behind at speed are thrown up, with a boost on top.
+        void Ride(int key, TrackLayout.Swell swell, TrackPath path, float crest, float height, float now)
+        {
             foreach (var car in _cars)
             {
                 if (car == null || !car.isActiveAndEnabled || car.IsAirborne) continue;
@@ -279,26 +352,18 @@ namespace SomeGame.Track
                 if (sensor == null) continue;
                 var point = sensor.Current;
                 float delta = path.DeltaDistance(crest, point.Distance);
-                var key = car;
-                bool had = _behind.TryGetValue((index, key), out float before);
-                _behind[(index, key)] = delta;
+                bool had = _behind.TryGetValue((key, car), out float before);
+                _behind[(key, car)] = delta;
                 if (!had || before >= 0f || delta < 0f || delta > 3f) continue;
                 if (Mathf.Abs(point.Lateral) > track.OffRoadAt(point.Distance) + 0.5f || height < 0.4f) continue;
                 if (car.ForwardSpeed < swell.speed + 2f) continue;
-                // Over the crest from behind: thrown up, a boost on top.
                 car.Launch(0.55f + 0.25f * height);
                 car.GiveBoost(0.6f);
                 Splash(car.Body.position, 2.2f, now);
                 if (_race != null && _race.Player != null && car.gameObject == _race.Player.gameObject && _combo != null)
                     _combo.Announce("WAVE JUMP!", new Color(0.35f, 0.85f, 1f));
             }
-        }
-
-        void ForgetSwell(int index)
-        {
-            var stale = new List<(int, SomeGame.Car.CarMovement)>();
-            foreach (var key in _behind.Keys) if (key.Item1 == index) stale.Add(key);
-            foreach (var key in stale) _behind.Remove(key);
+            if (_behind.Count > 2000) _behind.Clear();
         }
 
         // Across the channel at the crest: a dark swell rising behind, a white foaming crest line, then calm.

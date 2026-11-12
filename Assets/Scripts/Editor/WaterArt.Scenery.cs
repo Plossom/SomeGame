@@ -24,6 +24,8 @@ namespace SomeGame.EditorTools
             Write(f, "Dolphin", 128, 256, DolphinPixel, 64, false);
             Write(f, "LagoonBridge", 128, 512, BridgePixel, 64, false);
             Write(f, "SplashRing", 128, 128, SplashPixel, 64, false);
+            Write(f, "Gull", 128, 64, GullPixel, 64, false);
+            Write(f, "FishShoal", 128, 128, ShoalPixel, 64, false);
             Write(f, "LagoonStreaks", 64, 256, StreakPixel, 32, true);
             Water("LagoonCurrent", "LagoonStreaks", new Color(1f, 1f, 1f, 0.8f), new Color(0f, 0f, 0f, 0f), 1f, 0f);
             var current = AssetDatabase.LoadAssetAtPath<Material>($"{f}/LagoonCurrent.mat");
@@ -346,6 +348,33 @@ namespace SomeGame.EditorTools
                     c = Over(c, Hex("6B4A2E"), Fill(post));
                     c = Over(c, Line, Stroke(post, 2f));
                 }
+            }
+            return c;
+        }
+
+        // A gull from above, gliding: white body, grey wings with black tips, a yellow beak.
+        static Color GullPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float wings = Mathf.Min(Polygon(x, y, new[] { new Vector2(64, 36), new Vector2(8, 26), new Vector2(4, 32), new Vector2(60, 44) }),
+                                    Polygon(x, y, new[] { new Vector2(64, 36), new Vector2(120, 26), new Vector2(124, 32), new Vector2(68, 44) })) - 2f;
+            c = Over(c, Hex("C8D2DA"), Fill(wings));
+            c = Over(c, Hex("2A2F36"), Fill(wings) * Mathf.Clamp01((Mathf.Abs(x - 64f) - 46f) / 4f));
+            float body = Ellipse(x, y, 64, 34, 7, 20);
+            c = Over(c, Color.white, Fill(body));
+            c = Over(c, Hex("FFC93C"), Fill(Triangle(x, y, new Vector2(61, 52), new Vector2(67, 52), new Vector2(64, 60))));
+            return Over(c, Line, Stroke(Mathf.Min(wings, body), 1.6f) * 0.7f);
+        }
+
+        // A shoal of little fish under the water: dark, soft, all swimming the same way.
+        static Color ShoalPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            for (int i = 0; i < 9; i++)
+            {
+                float fx = 30 + Hash(i, 2) * 68, fy = 24 + Hash(i, 7) * 80;
+                float fish = Mathf.Min(Ellipse(x, y, fx, fy, 4.5f, 9f), Triangle(x, y, new Vector2(fx - 5, fy - 14), new Vector2(fx + 5, fy - 14), new Vector2(fx, fy - 6)));
+                c = Over(c, new Color(0.05f, 0.25f, 0.33f, 0.45f), Fill(fish));
             }
             return c;
         }

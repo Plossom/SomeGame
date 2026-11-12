@@ -39406,6 +39406,8 @@ MonoBehaviour:
   dolphin: {fileID: 21300000, guid: a29bdb6ef4bfa4fb1806d1fc89c60956, type: 3}
   bridge: {fileID: 21300000, guid: 6686edf7cc2654a30af7f3a3a2055bd3, type: 3}
   ring: {fileID: 21300000, guid: 1bcca3c55e7c7493c945906948bfb2fe, type: 3}
+  gull: {fileID: 21300000, guid: a91676102b07f4c569016c93deba5886, type: 3}
+  shoal: {fileID: 21300000, guid: 75116a03ac61e4153b4dc9f92ed348fa, type: 3}
 --- !u!4 &1905064030
 Transform:
   m_ObjectHideFlags: 0
