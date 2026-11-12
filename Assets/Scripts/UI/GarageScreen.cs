@@ -40,7 +40,9 @@ namespace SomeGame.UI
         [SerializeField] RectTransform tray;
         [SerializeField] GarageCarousel carousel;
         [SerializeField] RectTransform cardsParent, tileTemplate;
-        [SerializeField] TMP_Text trayTitle, trayCount, itemName, itemBlurb;
+        [SerializeField] TMP_Text trayCount, itemName, itemBlurb;
+        [Tooltip("The row of part tabs at the top of the tray: jump straight to another part.")]
+        [SerializeField] RectTransform tabTemplate;
         [SerializeField] UnityEngine.UI.Button doneButton;
         [Tooltip("EQUIP / EQUIPPED / what it takes, under the cards.")]
         [SerializeField] UnityEngine.UI.Button actionButton;
@@ -81,6 +83,9 @@ namespace SomeGame.UI
         int _focus = -1;               // the slot being changed (-1: all the hotspots)
         float _openedAt = -10f, _closingAt = -1f, _focusAt = -10f, _unfocusAt = -10f, _changedAt = -10f, _shakeAt = -10f, _tryAt = -10f, _messageUntil;
         int _browsing;
+        float _switchAt = -10f;
+        Vector2 _highlightAt;
+        readonly List<RectTransform> _tabs = new();
         int _shake = -1;
         Garage.Part _picked;
         RivalCharacter[] _rivals;
@@ -117,6 +122,18 @@ namespace SomeGame.UI
                 _hotspots.Add(spot);
             }
             tileTemplate.gameObject.SetActive(false);
+            tabTemplate.gameObject.SetActive(false);
+            for (int i = 0; i < SlotNames.Length; i++)
+            {
+                var tab = Instantiate(tabTemplate, tabTemplate.parent);
+                tab.gameObject.SetActive(true);
+                tab.name = SlotNames[i];
+                tab.Find("Label").GetComponent<TMP_Text>().text = SlotNames[i];
+                if (slotIcons != null && i < slotIcons.Length) tab.Find("Icon").GetComponent<UnityEngine.UI.Image>().sprite = slotIcons[i];
+                int slot = i;
+                tab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Focus(slot));
+                _tabs.Add(tab);
+            }
             cardTemplate.gameObject.SetActive(false);
             if (detail != null) detail.SetActive(false);
             rivalsPanel.SetActive(false);
@@ -147,8 +164,10 @@ namespace SomeGame.UI
         void Focus(int slot)
         {
             if (_focus == slot) return;
+            // Already in a part: jump across (the tray stays up, the cards swap, the highlight glides over).
+            if (_focus >= 0) _switchAt = Time.unscaledTime;
+            else _focusAt = _switchAt = Time.unscaledTime;
             _focus = slot;
-            _focusAt = Time.unscaledTime;
             _picked = null;
             _messageUntil = 0f;
             tray.gameObject.SetActive(true);
@@ -264,8 +283,13 @@ namespace SomeGame.UI
             var slot = (Garage.Slot)_focus;
             int open = 0, all = 0;
             foreach (var part in _shown) { all++; if (part != null && Garage.IsUnlocked(part)) open++; }
-            trayTitle.text = SlotNames[_focus];
             trayCount.text = $"{open} / {all} OPEN";
+            for (int i = 0; i < _tabs.Count; i++)
+            {
+                bool on = i == _focus;
+                _tabs[i].Find("Face").GetComponent<UnityEngine.UI.Image>().color = on ? Theme.Orange : Theme.Ink;
+                _tabs[i].Find("Label").GetComponent<TMP_Text>().color = on ? Theme.Rust : Theme.InkSoft;
+            }
             var equipped = Garage.Equipped(slot);
             for (int i = 0; i < _tiles.Count; i++) FillTile(_tiles[i], _shown[i], equipped, look);
             ShowAction();
@@ -539,7 +563,9 @@ namespace SomeGame.UI
             highlight.gameObject.SetActive(_focus >= 0);
             if (_focus >= 0)
             {
-                highlight.rectTransform.anchoredPosition = carRoot.anchoredPosition + Anchors[_focus] * carRoot.localScale.x;
+                Vector2 to = carRoot.anchoredPosition + Anchors[_focus] * carRoot.localScale.x;
+                _highlightAt = t - _switchAt < 0.02f && t - _focusAt < 0.02f ? to : Vector2.Lerp(_highlightAt, to, 1f - Mathf.Exp(-14f * dt));
+                highlight.rectTransform.anchoredPosition = _highlightAt;
                 highlight.rectTransform.localScale = Vector3.one * (0.9f + 0.15f * Mathf.Sin(t * 4f)) * focus;
             }
 
@@ -547,8 +573,13 @@ namespace SomeGame.UI
             tray.anchoredPosition = new Vector2(0f, Mathf.Lerp(-1200f, 0f, focus));
             if (focus <= 0.001f && _focus < 0 && tray.gameObject.activeSelf) tray.gameObject.SetActive(false);
             // The carousel rises in a moment after the tray; a locked pick shakes the middle card and the button.
-            float rise = EaseOutBack(Mathf.Clamp01((t - _focusAt - 0.12f) / 0.4f));
-            carousel.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, rise);
+            float rise = EaseOutBack(Mathf.Clamp01((t - _switchAt - 0.08f) / 0.35f));
+            for (int i = 0; i < _tabs.Count; i++)
+            {
+                float tabPop = i == _focus ? 1f + 0.18f * Mathf.Sin(Mathf.Clamp01((t - _switchAt) / 0.3f) * Mathf.PI) : 1f;
+                _tabs[i].localScale = Vector3.one * (i == _focus ? 1.08f : 0.94f) * tabPop;
+            }
+            carousel.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, rise) * 0.86f; // the cards a touch smaller than built
             float shake = Mathf.Clamp01((t - _shakeAt) / 0.4f);
             float wobble = Mathf.Sin(shake * Mathf.PI * 6f) * (1f - shake);
             if (_shake >= 0 && _shake < _tiles.Count) _tiles[_shake].Find("Preview").localRotation = Quaternion.Euler(0f, 0f, wobble * 10f);

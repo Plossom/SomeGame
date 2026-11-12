@@ -23,6 +23,9 @@ namespace SomeGame.UI
         [SerializeField] RectTransform chickens;
         [SerializeField] GameObject lockCover, prizeWon;
         [SerializeField] VehicleIcon prizeCar;
+        [Tooltip("The prize panel: gold once won, its caption and line saying so.")]
+        [SerializeField] TMP_Text prizeCaption, prizeSub;
+        [SerializeField] UnityEngine.UI.Image prizeFace, prizeOutline;
         [Tooltip("The frost over the medallion sticking out past the card (like a race card's).")]
         [SerializeField] UnityEngine.UI.Image[] edgeVeils;
 
@@ -67,6 +70,11 @@ namespace SomeGame.UI
             look.Top = part;
             prizeCar.Dress(look);
             prizeWon.SetActive(won);
+            prizeCaption.text = won ? "YOU WON IT!" : "WIN THE PRIZE";
+            prizeCaption.color = won ? new Color(0.55f, 0.95f, 0.5f) : Theme.Amber;
+            prizeSub.text = won ? "IT'S IN YOUR GARAGE" : "A CHICKEN FOR YOUR ROOF";
+            prizeOutline.color = won ? Theme.Amber : Theme.Ink;
+            prizeFace.color = won ? Color.Lerp(Theme.Ink, Theme.Amber, 0.18f) : Theme.Ink;
             var rival = Resources.Load<RivalCharacter>("Rivals/" + cup.challengeAfterRival);
             string first = rival != null ? rival.displayName.Split(' ')[0].ToUpperInvariant() : "THE RIVAL";
             lockLabel.text = $"BEAT {first} IN\n{(rival != null && rival.homeRace != null ? rival.homeRace.displayName.ToUpperInvariant() : "THEIR RACE")}";
@@ -102,6 +110,9 @@ namespace SomeGame.UI
             // The medallion's chicken pecks now and then; the chickens on the track bob and peck about.
             float p = Mathf.Repeat(t, 2.4f);
             tabIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, p < 0.5f ? 8f * Mathf.Sin(p / 0.5f * Mathf.PI * 3f) : 0f);
+            // The won stamp breathes; the prize car turns gently on its stage.
+            if (prizeWon.activeSelf) prizeWon.transform.localScale = Vector3.one * (1f + 0.05f * Mathf.Sin(t * 3f));
+            prizeCar.transform.localRotation = Quaternion.Euler(0f, 0f, -30f + 12f * Mathf.Sin(t * 0.8f));
             foreach (var (rt, home, phase) in _hens)
             {
                 float peck = Mathf.Max(0f, Mathf.Sin(t * 2.6f + phase));
