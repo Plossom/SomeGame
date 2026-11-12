@@ -646,14 +646,15 @@ namespace SomeGame.EditorTools
             Img(Stretch("Outline", swatch), "Circle", new Color(0.06f, 0.07f, 0.08f));
             Img(At("Color", swatch, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(190f, 190f)), "Circle", Color.white);
             Img(At("Shine", swatch, new Vector2(0.5f, 0.5f), new Vector2(-42f, 46f), new Vector2(56f, 56f)), "Circle", new Color(1f, 1f, 1f, 0.45f));
-            var mini = At("Car", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(104f, 182f));
-            mini.pivot = new Vector2(0.5f, 0.5f); mini.localRotation = Quaternion.Euler(0f, 0f, -20f);
+            // The car wearing the part, straight on the card (big enough to see the part).
+            var mini = At("Car", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(140f, 245f));
+            mini.pivot = new Vector2(0.5f, 0.5f); mini.localRotation = Quaternion.Euler(0f, 0f, -14f);
             var miniBody = Img(Stretch("Body", mini), "Car", Theme.Orange); miniBody.preserveAspect = false;
             var miniDetails = Img(Stretch("Details", mini), "CarDetails", Color.white); miniDetails.preserveAspect = false;
             Configure(mini.gameObject.AddComponent<VehicleIcon>(), ("body", miniBody), ("details", miniDetails));
             var iconRt = At("Icon", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(184f, 184f));
             iconRt.pivot = new Vector2(0.5f, 0.5f);
-            Img(At("Pic", iconRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(148f, 148f)), "Sparkle", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            Img(At("Pic", iconRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(230f, 230f)), "Sparkle", Color.white).rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Txt(At("Question", preview, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(210f, 210f)), "?", 150, Theme.Amber, _black);
             var veil = At("Veil", tile, new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(168f, 168f));
             Img(veil, "Circle", Theme.WithAlpha(Theme.Ink, 0.4f));

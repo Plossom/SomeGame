@@ -539,7 +539,12 @@ namespace SomeGame.UI
                 iconRoot.SetActive(false);
                 question.SetActive(false);
             }
-            tile.Find("Veil").gameObject.SetActive(!open);
+            // Only a colour (or a mystery) sits on a round face; a car or a trail lies straight on the card.
+            bool round = mystery || part.Slot == Garage.Slot.Paint;
+            tile.Find("Face").gameObject.SetActive(round);
+            tile.Find("Veil").gameObject.SetActive(!open && round);
+            var tint = open || round ? Color.white : new Color(1f, 1f, 1f, 0.55f);
+            foreach (var g in preview.GetComponentsInChildren<UnityEngine.UI.Graphic>(true)) if (g.transform != preview) g.canvasRenderer.SetAlpha(tint.a);
             tile.Find("Card").GetComponent<UnityEngine.UI.Image>().color = open ? Color.white : new Color(0.79f, 0.8f, 0.8f);
             tile.Find("Lock").gameObject.SetActive(!open && !mystery);
             tile.Find("Equipped").gameObject.SetActive(!mystery && part == equipped);
@@ -580,11 +585,11 @@ namespace SomeGame.UI
         static Color TrailTint(Garage.Part trail, Color paint) => trail.Id switch
         {
             "flame" => new Color(1f, 0.6f, 0.2f),
-            "flake" => new Color(0.8f, 0.93f, 1f),
+            "flake" => new Color(0.45f, 0.72f, 0.95f), // (deep enough to show on a white card)
             "confetti" => new Color(1f, 0.45f, 0.6f),
-            "winterconfetti" => new Color(0.6f, 0.85f, 1f),
+            "winterconfetti" => new Color(0.35f, 0.65f, 1f),
             "aurora" => new Color(0.55f, 1f, 0.8f),
-            "standard" => new Color(0.85f, 0.85f, 0.85f),
+            "standard" => new Color(0.5f, 0.52f, 0.55f),
             _ => Color.Lerp(paint, Color.white, 0.4f),
         };
 
