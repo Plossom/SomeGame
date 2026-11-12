@@ -69,7 +69,7 @@ namespace SomeGame.UI
                 // like the race's recolouring leaves it at the end), so it doesn't change colour as the race opens.
                 if (!GameSession.Online)
                 {
-                    var look = SomeGame.Car.CarLook.Player;
+                    var look = SomeGame.Car.CarLook.For(SomeGame.Car.CarLook.VehicleOf(level));
                     if (Theme.TryMap(look.Paint, Theme.Valley, palette, out var cupPaint)) look.Paint = cupPaint;
                     vehicle.Dress(look);
                 }
@@ -82,8 +82,10 @@ namespace SomeGame.UI
             {
                 rival.sprite = character.driving;
                 vsName.text = character.displayName.ToUpperInvariant();
-                var look = SomeGame.Car.CarLook.Player;
+                var vehicleOf = SomeGame.Car.CarLook.VehicleOf(level);
+                var look = SomeGame.Car.CarLook.For(vehicleOf);
                 if (Theme.TryMap(look.Paint, Theme.Valley, palette, out var duelPaint)) look.Paint = duelPaint;
+                vsCar.Show(vehicleOf == SomeGame.Track.TrackLayout.Vehicle.Snowmobile);
                 vsCar.Dress(look);
                 if (previewFrame != null)
                 {

@@ -236,7 +236,8 @@ namespace SomeGame.EditorTools
             var ccBody = Img(Stretch("Body", cardCar), "Car", Theme.Orange); ccBody.preserveAspect = false;
             var ccDetails = Img(Stretch("Details", cardCar), "CarDetails", Color.white); ccDetails.preserveAspect = false;
             var garageCar = cardCar.gameObject.AddComponent<VehicleIcon>();
-            Configure(garageCar, ("body", ccBody), ("details", ccDetails), ("shadow", ccShadow));
+            Configure(garageCar, ("body", ccBody), ("details", ccDetails), ("shadow", ccShadow),
+                ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
             Configure(carSpin.gameObject.AddComponent<GarageSpin>(), ("target", carSpin), ("idleSpeed", 24f));
             var garageButton = carButtonRt.gameObject.AddComponent<Button>();
             garageButton.targetGraphic = carFaceImage; garageButton.transition = Selectable.Transition.None;
@@ -447,6 +448,12 @@ namespace SomeGame.EditorTools
             var stars = Txt(At("Count", starsPill, new Vector2(1f, 0.5f), new Vector2(-30f, 2f), new Vector2(130f, 90f)), "24", 64, Color.white, _black, TextAlignmentOptions.Right);
             stars.rectTransform.pivot = new Vector2(1f, 0.5f);
             var rivals = SquareButton(safe, "Rivals", new Vector2(1f, 1f), new Vector2(-48f, -190f), "IconCards", 124f);
+            // The page: the cup and the vehicle under GARAGE, a dot per vehicle.
+            var pageTitle = Txt(At("Page", safe, new Vector2(0.5f, 1f), new Vector2(0f, -180f), new Vector2(700f, 56f)), "VALLEY CUP  ·  CAR", 40, Theme.Amber, _condItalic);
+            pageTitle.characterSpacing = 6f;
+            var pageDots = new Image[2];
+            for (int i = 0; i < 2; i++)
+                pageDots[i] = Img(At($"Dot{i}", safe, new Vector2(0.5f, 1f), new Vector2(-18f + i * 36f, -250f), new Vector2(20f, 20f)), "Circle", Theme.Amber);
 
             // The stage: everything placed from its middle.
             var stage = Stretch("Stage", safe);
@@ -468,10 +475,40 @@ namespace SomeGame.EditorTools
             var body = Img(Stretch("Body", carRoot), "Car", Theme.Orange); body.preserveAspect = false;
             var details = Img(Stretch("Details", carRoot), "CarDetails", Color.white); details.preserveAspect = false;
             var vehicle = carRoot.gameObject.AddComponent<VehicleIcon>();
-            Configure(vehicle, ("body", body), ("details", details), ("shadow", carShadow));
+            Configure(vehicle, ("body", body), ("details", details), ("shadow", carShadow),
+                ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
             var carHit = Img(Stretch("Hit", carRoot), null, new Color(0f, 0f, 0f, 0f), raycast: true);
             var carButton = carRoot.gameObject.AddComponent<Button>();
             carButton.targetGraphic = carHit; carButton.transition = Selectable.Transition.None;
+            // The other vehicles peeking in at the sides, high up (tap or swipe to go to their page).
+            RectTransform PeekAt(string name, float side)
+            {
+                var peek = At(name, stage, new Vector2(0.5f, 0.5f), new Vector2(side * 560f, -300f), new Vector2(200f, 340f));
+                peek.pivot = new Vector2(0.5f, 0.5f);
+                peek.gameObject.AddComponent<CanvasGroup>();
+                var hit = Img(peek, null, new Color(0f, 0f, 0f, 0f), raycast: true);
+                var peekCar = At("Car", peek, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(140f, 245f));
+                peekCar.pivot = new Vector2(0.5f, 0.5f); peekCar.localRotation = Quaternion.Euler(0f, 0f, -side * 18f);
+                var pShadow = Img(At("Shadow", peekCar, new Vector2(0.5f, 0.5f), new Vector2(6f, -8f), new Vector2(116f, 200f)), "CarShadow", new Color(0f, 0f, 0f, 0.5f)); pShadow.preserveAspect = false;
+                var pBody = Img(Stretch("Body", peekCar), "Car", Theme.Orange); pBody.preserveAspect = false;
+                var pDetails = Img(Stretch("Details", peekCar), "CarDetails", Color.white); pDetails.preserveAspect = false;
+                Configure(peekCar.gameObject.AddComponent<VehicleIcon>(), ("body", pBody), ("details", pDetails), ("shadow", pShadow),
+                    ("snowmobileBody", Sprite("SnowmobileIcon")), ("snowmobileDetails", Sprite("SnowmobileDetails")), ("snowmobileShadow", Sprite("SnowmobileShadow")));
+                var arrow = Img(At("Arrow", peek, new Vector2(0.5f, 0.5f), new Vector2(-side * 40f, 160f), new Vector2(50f, 60f)), "NavArrow", Theme.Amber).rectTransform;
+                arrow.pivot = new Vector2(0.5f, 0.5f); arrow.localRotation = Quaternion.Euler(0f, 0f, -side * 90f);
+                var label = Txt(At("Name", peek, new Vector2(0.5f, 0f), new Vector2(-side * 60f, -14f), new Vector2(260f, 46f)), "SNOWMOBILE", 34, Theme.Cream, _black,
+                    side > 0f ? TextAlignmentOptions.Right : TextAlignmentOptions.Left);
+                label.rectTransform.pivot = new Vector2(side > 0f ? 1f : 0f, 0.5f);
+                label.rectTransform.anchoredPosition = new Vector2(-side * 10f, -14f);
+                label.characterSpacing = 3f;
+                var button = peek.gameObject.AddComponent<Button>();
+                button.targetGraphic = hit; button.transition = Selectable.Transition.None;
+                peek.gameObject.AddComponent<ButtonFeedback>();
+                return peek;
+            }
+            var peekLeft = PeekAt("PeekLeft", -1f);
+            var peekRight = PeekAt("PeekRight", 1f);
+
             var highlight = Img(At("Highlight", stage, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(190f, 190f)), "Ring", Theme.WithAlpha(Theme.Amber, 0.8f));
             highlight.rectTransform.pivot = new Vector2(0.5f, 0.5f);
 
@@ -518,7 +555,7 @@ namespace SomeGame.EditorTools
             var tabs = At("Tabs", tray, new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(816f, 170f));
             tabs.pivot = new Vector2(0f, 1f);
             var tabRow = tabs.gameObject.AddComponent<HorizontalLayoutGroup>();
-            tabRow.spacing = 0f; tabRow.childControlWidth = tabRow.childControlHeight = false; tabRow.childForceExpandWidth = true; tabRow.childAlignment = TextAnchor.MiddleLeft;
+            tabRow.spacing = 0f; tabRow.childControlWidth = tabRow.childControlHeight = false; tabRow.childForceExpandWidth = false; tabRow.childAlignment = TextAnchor.MiddleLeft;
             var tabT = Rt("Tab", tabs);
             tabT.sizeDelta = new Vector2(136f, 170f);
             Img(tabT, null, new Color(0f, 0f, 0f, 0f), raycast: true);
@@ -732,6 +769,7 @@ namespace SomeGame.EditorTools
 
             var screen = host.gameObject.AddComponent<GarageScreen>();
             Configure(screen, ("panel", panel.gameObject), ("group", group), ("sheet", sheet), ("closeButton", close), ("rivalsButton", rivals), ("starsLabel", stars),
+                ("pageTitle", pageTitle), ("peekLeft", peekLeft), ("peekRight", peekRight),
                 ("carRoot", carRoot), ("car", vehicle), ("podium", podium), ("podiumRing", podiumRing), ("burst", burst), ("highlight", highlight),
                 ("carButton", carButton), ("sparkle", Sprite("Sparkle")), ("hotspotTemplate", spot), ("hint", hint), ("buildName", buildName),
                 ("tray", tray), ("carousel", carousel), ("cardsParent", cardsParent), ("tileTemplate", tile),
@@ -746,6 +784,7 @@ namespace SomeGame.EditorTools
             var slotSprites = new Sprite[slotIcons.Length];
             for (int i = 0; i < slotIcons.Length; i++) slotSprites[i] = Sprite(slotIcons[i]);
             SetArray(gso, "slotIcons", slotSprites);
+            SetArray(gso, "pageDots", pageDots);
             gso.ApplyModifiedPropertiesWithoutUndo();
             detail.gameObject.SetActive(false);
             rivalsHost.gameObject.SetActive(false);

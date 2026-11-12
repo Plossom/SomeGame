@@ -3,6 +3,8 @@ using SomeGame.Car;
 using SomeGame.Race;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using Vehicle = SomeGame.Track.TrackLayout.Vehicle;
 
 namespace SomeGame.UI
 {
@@ -18,13 +20,19 @@ namespace SomeGame.UI
     /// button shakes). DONE (or a tap on the car) goes back to all the hotspots. The rivals' cards are behind their
     /// own button.
     /// </summary>
-    public class GarageScreen : MonoBehaviour
+    public class GarageScreen : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] GameObject panel;
         [SerializeField] CanvasGroup group;
         [SerializeField] RectTransform sheet;
         [SerializeField] UnityEngine.UI.Button closeButton, rivalsButton;
         [SerializeField] TMP_Text starsLabel;
+        [Header("The vehicles: a page each")]
+        [Tooltip("The page's name under GARAGE (the cup and the vehicle) and a dot per page.")]
+        [SerializeField] TMP_Text pageTitle;
+        [SerializeField] UnityEngine.UI.Image[] pageDots;
+        [Tooltip("The other vehicles peeking in at the sides: tap (or swipe) to go to their page.")]
+        [SerializeField] RectTransform peekLeft, peekRight;
         [Header("The car")]
         [SerializeField] RectTransform carRoot;
         [SerializeField] VehicleIcon car;
@@ -90,6 +98,10 @@ namespace SomeGame.UI
         Garage.Part _picked;
         RivalCharacter[] _rivals;
         Vector2 _carHome;
+        Vehicle _vehicle = Vehicle.Car;
+        float _pageAt = -10f, _pageDir, _dragX;
+        bool _paging;
+        static string[] VehicleNames => new[] { "CAR", "SNOWMOBILE" };
 
         void Awake()
         {
@@ -134,17 +146,22 @@ namespace SomeGame.UI
                 tab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Focus(slot));
                 _tabs.Add(tab);
             }
+            peekLeft.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Page(-1));
+            peekRight.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => Page(1));
             cardTemplate.gameObject.SetActive(false);
             if (detail != null) detail.SetActive(false);
             rivalsPanel.SetActive(false);
             panel.SetActive(false);
         }
 
-        public void Open()
+        /// <summary>Opens the garage on a vehicle's page (the vehicle of the cup on show).</summary>
+        public void Open(Vehicle vehicle = Vehicle.Car)
         {
             _rivals = RivalCharacter.All;
             Garage.MarkSeen();
+            _vehicle = vehicle;
             _openedAt = Time.unscaledTime;
+            _pageAt = -10f;
             _closingAt = -1f;
             _focus = -1;
             _unfocusAt = -10f;
@@ -153,6 +170,43 @@ namespace SomeGame.UI
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.5f);
             Refresh();
         }
+
+        // ---------------------------------------------------------------- the vehicles' pages
+
+        int PageIndex => System.Array.IndexOf(Garage.Vehicles, _vehicle);
+
+        /// <summary>To the next vehicle's page (+1, the one on the right) or the one before (-1).</summary>
+        void Page(int step)
+        {
+            int to = PageIndex + step;
+            if (_focus >= 0 || to < 0 || to >= Garage.Vehicles.Length) return;
+            _vehicle = Garage.Vehicles[to];
+            _pageAt = Time.unscaledTime;
+            _pageDir = step;
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.45f);
+            Refresh();
+        }
+
+        public void OnBeginDrag(PointerEventData e)
+        {
+            _paging = _focus < 0;
+            _dragX = 0f;
+        }
+
+        public void OnDrag(PointerEventData e)
+        {
+            if (_paging) _dragX += e.delta.x / Mathf.Max(0.01f, GetComponentInParent<Canvas>().rootCanvas.scaleFactor);
+        }
+
+        public void OnEndDrag(PointerEventData e)
+        {
+            if (!_paging) return;
+            _paging = false;
+            if (Mathf.Abs(_dragX) > 140f) Page(_dragX < 0f ? 1 : -1);
+            _dragX = 0f;
+        }
+
+        bool Fits(int slot) => Garage.Fits((Garage.Slot)slot, _vehicle);
 
         public void Close()
         {
@@ -163,7 +217,7 @@ namespace SomeGame.UI
 
         void Focus(int slot)
         {
-            if (_focus == slot) return;
+            if (_focus == slot || !Fits(slot)) return;
             // Already in a part: jump across (the tray stays up, the cards swap, the highlight glides over).
             if (_focus >= 0) _switchAt = Time.unscaledTime;
             else _focusAt = _switchAt = Time.unscaledTime;
@@ -191,7 +245,7 @@ namespace SomeGame.UI
             foreach (var tile in _tiles) Destroy(tile.gameObject);
             _tiles.Clear(); _shown.Clear();
             var slot = (Garage.Slot)_focus;
-            var equipped = Garage.Equipped(slot);
+            var equipped = Garage.Equipped(slot, _vehicle);
             int equippedAt = 0;
             foreach (var cup in CupList.Instance.cups)
             {
@@ -227,14 +281,14 @@ namespace SomeGame.UI
             _browsing = index;
             _messageUntil = 0f;
             var part = _shown[index];
-            var look = CarLook.Player;
+            var look = CarLook.For(_vehicle);
             if (part != null)
             {
                 if (part.Slot == Garage.Slot.Paint) look.Paint = part.Color;
                 if (part.Slot == Garage.Slot.Body) look.Body = part;
                 if (part.Slot == Garage.Slot.Top) look.Top = part;
                 if (part.Slot == Garage.Slot.Decal) look.Decal = part;
-                if (part != Garage.Equipped(part.Slot)) _tryAt = Time.unscaledTime;
+                if (part != Garage.Equipped(part.Slot, _vehicle)) _tryAt = Time.unscaledTime;
             }
             car.Dress(look);
             ShowAction();
@@ -244,7 +298,7 @@ namespace SomeGame.UI
         {
             var part = _browsing >= 0 && _browsing < _shown.Count ? _shown[_browsing] : null;
             bool open = part != null && Garage.IsUnlocked(part);
-            bool on = part != null && part == Garage.Equipped(part.Slot);
+            bool on = part != null && part == Garage.Equipped(part.Slot, _vehicle);
             if (Time.unscaledTime >= _messageUntil)
             {
                 itemName.text = part != null ? part.Name : "A RIVAL'S GADGET";
@@ -275,10 +329,20 @@ namespace SomeGame.UI
         void Refresh()
         {
             starsLabel.text = ProgressStore.TotalStars.ToString();
-            var look = CarLook.Player;
+            var look = CarLook.For(_vehicle);
+            bool snow = _vehicle == Vehicle.Snowmobile;
+            car.Show(snow);
             car.Dress(look);
-            buildName.text = $"{look.Body.Name}  ·  {Garage.Equipped(Garage.Slot.Paint).Name}";
-            for (int i = 0; i < _hotspots.Count; i++) _hotspots[i].Value.text = Garage.Equipped((Garage.Slot)i).Name;
+            buildName.text = $"{(snow ? "SNOWMOBILE" : look.Body.Name)}  ·  {Garage.Equipped(Garage.Slot.Paint, _vehicle).Name}";
+            for (int i = 0; i < _hotspots.Count; i++) _hotspots[i].Value.text = Garage.Equipped((Garage.Slot)i, _vehicle).Name;
+            for (int i = 0; i < _tabs.Count; i++) _tabs[i].gameObject.SetActive(Fits(i));
+            hint.text = $"TAP A HOTSPOT TO CHANGE YOUR {(snow ? "SNOWMOBILE" : "CAR")}";
+            // The page: its name, its dot, the other vehicles peeking in at the sides (in their own setup).
+            int page = PageIndex;
+            pageTitle.text = $"{Garage.CupNamed(Garage.CupOf(_vehicle))?.displayName ?? ""}  ·  {VehicleNames[page]}";
+            for (int i = 0; i < pageDots.Length; i++) pageDots[i].color = i == page ? Theme.Amber : Theme.WithAlpha(Theme.Cream, 0.35f);
+            Peek(peekLeft, page - 1);
+            Peek(peekRight, page + 1);
             if (_focus < 0) return;
             var slot = (Garage.Slot)_focus;
             int open = 0, all = 0;
@@ -290,7 +354,7 @@ namespace SomeGame.UI
                 _tabs[i].Find("Face").GetComponent<UnityEngine.UI.Image>().color = on ? Theme.Orange : Theme.Ink;
                 _tabs[i].Find("Label").GetComponent<TMP_Text>().color = on ? Theme.Rust : Theme.InkSoft;
             }
-            var equipped = Garage.Equipped(slot);
+            var equipped = Garage.Equipped(slot, _vehicle);
             for (int i = 0; i < _tiles.Count; i++) FillTile(_tiles[i], _shown[i], equipped, look);
             ShowAction();
         }
@@ -417,15 +481,27 @@ namespace SomeGame.UI
             }
             _picked = part;
             _messageUntil = 0f;
-            if (Garage.Equipped(part.Slot) != part)
+            if (Garage.Equipped(part.Slot, _vehicle) != part)
             {
-                Garage.Equip(part);
+                Garage.Equip(part, _vehicle);
                 _changedAt = Time.unscaledTime;
                 Sparks();
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.star, 0.6f);
             }
             Refresh();
-            car.Dress(CarLook.Player);
+            car.Dress(CarLook.For(_vehicle));
+        }
+
+        void Peek(RectTransform peek, int page)
+        {
+            bool show = page >= 0 && page < Garage.Vehicles.Length;
+            peek.gameObject.SetActive(show);
+            if (!show) return;
+            var vehicle = Garage.Vehicles[page];
+            var icon = peek.Find("Car").GetComponent<VehicleIcon>();
+            icon.Show(vehicle == Vehicle.Snowmobile);
+            icon.Dress(CarLook.For(vehicle));
+            peek.Find("Name").gameObject.SetActive(false); // the page title names the vehicle; the peek just shows it
         }
 
         // Sparks fly off the part that changed.
@@ -524,7 +600,10 @@ namespace SomeGame.UI
             float fall = 1f - Bounce(drop);
             float pop = 1f + 0.12f * Mathf.Sin(Mathf.Clamp01((t - _changedAt) / 0.35f) * Mathf.PI)
                            + 0.05f * Mathf.Sin(Mathf.Clamp01((t - _tryAt) / 0.25f) * Mathf.PI);
-            carRoot.anchoredPosition = _carHome + new Vector2(0f, 700f * fall + Rise * focus + Mathf.Sin(t * 1.4f) * 8f);
+            // A page change: the new vehicle slides in from its side (the swipe drags it a little meanwhile).
+            float slide = 1f - EaseOut((t - _pageAt) / 0.45f);
+            float dragOffset = _paging ? Mathf.Clamp(_dragX * 0.5f, -220f, 220f) : 0f;
+            carRoot.anchoredPosition = _carHome + new Vector2(_pageDir * 900f * slide + dragOffset, 700f * fall + Rise * focus + Mathf.Sin(t * 1.4f) * 8f);
             carRoot.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * pop;
             podium.anchoredPosition = _carHome + new Vector2(0f, Rise * focus);
             podium.localScale = Vector3.one * Mathf.Lerp(1f, FocusScale, focus) * Mathf.Lerp(0.6f, 1f, EaseOut(drop));
@@ -539,7 +618,8 @@ namespace SomeGame.UI
             for (int i = 0; i < _hotspots.Count; i++)
             {
                 var spot = _hotspots[i];
-                float appear = Mathf.Clamp01((t - _openedAt - 0.6f - i * 0.08f) / 0.35f);
+                float since = Mathf.Min(t - _openedAt - 0.6f, t - _pageAt - 0.3f);
+                float appear = Fits(i) ? Mathf.Clamp01((since - i * 0.06f) / 0.35f) : 0f;
                 float stay = 1f - focus;
                 Vector2 anchor = carRoot.anchoredPosition + Anchors[i] * carRoot.localScale.x;
                 Vector2 home = _carHome + Spots[i];
@@ -553,10 +633,20 @@ namespace SomeGame.UI
                 spot.Line.anchoredPosition = at + d.normalized * 70f;
                 spot.Line.sizeDelta = new Vector2(length, spot.Line.sizeDelta.y);
                 spot.Line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
-                bool active = stay > 0.01f;
+                bool active = stay > 0.01f && Fits(i);
                 if (spot.Root.gameObject.activeSelf != active) spot.Root.gameObject.SetActive(active);
             }
             hint.alpha = Mathf.Clamp01((t - _openedAt - 1.1f) / 0.4f) * (1f - focus);
+            // The other vehicles peek in at the sides (not while a part is open); they nod now and then.
+            foreach (var (peek, side) in new[] { (peekLeft, -1f), (peekRight, 1f) })
+            {
+                if (!peek.gameObject.activeSelf) continue;
+                float show = Mathf.Clamp01((t - _openedAt - 0.9f) / 0.4f) * (1f - focus);
+                peek.localScale = Vector3.one * Mathf.Lerp(0.6f, 1f, show);
+                peek.GetComponent<CanvasGroup>().alpha = show;
+                float nudge = Mathf.Repeat(t, 3.5f) < 0.5f ? Mathf.Sin(Mathf.Repeat(t, 3.5f) / 0.5f * Mathf.PI) * 14f : 0f;
+                peek.Find("Arrow").localPosition = new Vector3(-side * 40f + side * nudge, peek.Find("Arrow").localPosition.y, 0f);
+            }
             buildName.alpha = hint.alpha;
 
             // The part being changed pulses.

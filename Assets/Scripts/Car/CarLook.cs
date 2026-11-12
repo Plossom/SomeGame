@@ -1,5 +1,6 @@
 using SomeGame.Race;
 using UnityEngine;
+using Vehicle = SomeGame.Track.TrackLayout.Vehicle;
 
 namespace SomeGame.Car
 {
@@ -12,11 +13,19 @@ namespace SomeGame.Car
         public Garage.Part Body, Top, Decal, Trail;
         public Color Paint;
 
-        public static CarLook Player => new()
+        /// <summary>Your car as built in the garage.</summary>
+        public static CarLook Player => For(Vehicle.Car);
+
+        /// <summary>A vehicle as built in the garage (each vehicle has its own page there).</summary>
+        public static CarLook For(Vehicle vehicle) => new()
         {
-            Body = Garage.Equipped(Garage.Slot.Body), Top = Garage.Equipped(Garage.Slot.Top), Decal = Garage.Equipped(Garage.Slot.Decal),
-            Trail = Garage.Equipped(Garage.Slot.Trail), Paint = Garage.Color,
+            Body = Garage.Equipped(Garage.Slot.Body, vehicle), Top = Garage.Equipped(Garage.Slot.Top, vehicle), Decal = Garage.Equipped(Garage.Slot.Decal, vehicle),
+            Trail = Garage.Equipped(Garage.Slot.Trail, vehicle), Paint = Garage.ColorOf(vehicle),
         };
+
+        /// <summary>The vehicle a race is driven in (the car, or the snowmobile on a snowmobile track).</summary>
+        public static Vehicle VehicleOf(LevelDefinition level) =>
+            level != null && level.track != null ? level.track.vehicle : Vehicle.Car;
 
         public static CarLook Of(string body, string top, string decal, Color paint) => new()
         {

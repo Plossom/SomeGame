@@ -113,14 +113,19 @@ namespace SomeGame.UI
             ApplyLook(cup != null ? cup.look : CupLook.Valley, cup != null ? cup.mapBackground : null);
             PaintCar();
             Garage.Changed += PaintCar;
-            if (garageButton != null) garageButton.onClick.AddListener(() => { garage.Open(); garageDot.SetActive(false); });
+            if (garageButton != null) garageButton.onClick.AddListener(() => { garage.Open(MapVehicle); garageDot.SetActive(false); });
         }
 
         // The car on the map road: a snowmobile on the Winter Cup.
         void ShowVehicle(CupLook look)
         {
             if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Show(look == CupLook.Winter);
+            PaintCar();
         }
+
+        /// <summary>The vehicle of the cup on show: the snowmobile on the Winter Cup, the car elsewhere (its garage page).</summary>
+        SomeGame.Track.TrackLayout.Vehicle MapVehicle => CupList.Selected != null && CupList.Selected.look == CupLook.Winter
+            ? SomeGame.Track.TrackLayout.Vehicle.Snowmobile : SomeGame.Track.TrackLayout.Vehicle.Car;
 
         static LevelCatalog CatalogOf(CupDefinition cup) =>
             cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
@@ -243,8 +248,13 @@ namespace SomeGame.UI
         // The car on the map wears your paint (also after a cup switch has recoloured the screen).
         void PaintCar()
         {
-            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Dress(SomeGame.Car.CarLook.Player);
-            if (garageCar != null) garageCar.Dress(SomeGame.Car.CarLook.Player);
+            var look = SomeGame.Car.CarLook.For(MapVehicle);
+            if (car != null && car.TryGetComponent(out VehicleIcon icon)) icon.Dress(look);
+            if (garageCar != null)
+            {
+                garageCar.Show(MapVehicle == SomeGame.Track.TrackLayout.Vehicle.Snowmobile);
+                garageCar.Dress(look);
+            }
             if (garageBuild != null) garageBuild.text = Garage.Equipped(Garage.Slot.Body).Name;
         }
 

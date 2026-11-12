@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Vehicle = SomeGame.Track.TrackLayout.Vehicle;
 
 namespace SomeGame.Race
 {
@@ -151,24 +152,47 @@ namespace SomeGame.Race
         /// <summary>All three stars in every race of the cup.</summary>
         public static bool CupGold(string cupName) => CupMaxStars(cupName) > 0 && CupStars(cupName) >= CupMaxStars(cupName);
 
-        static string Key(Slot slot) => "Garage." + slot;
+        // ---------------------------------------------------------------- one setup per vehicle
 
-        /// <summary>The part in a slot (falls back to the first of its kind if it is not, or no longer, open).</summary>
-        public static Part Equipped(Slot slot)
+        public static readonly Vehicle[] Vehicles = { Vehicle.Car, Vehicle.Snowmobile };
+
+        /// <summary>What can be changed on a vehicle: everything on the car; on the snowmobile its paint, trail and gadget.</summary>
+        public static Slot[] SlotsOf(Vehicle vehicle) => vehicle == Vehicle.Snowmobile
+            ? new[] { Slot.Paint, Slot.Trail, Slot.Gadget }
+            : new[] { Slot.Paint, Slot.Body, Slot.Top, Slot.Decal, Slot.Trail, Slot.Gadget };
+
+        public static bool Fits(Slot slot, Vehicle vehicle) => System.Array.IndexOf(SlotsOf(vehicle), slot) >= 0;
+
+        /// <summary>The cup a vehicle belongs to (its page in the garage): the car the Valley Cup's, the snowmobile the Winter Cup's.</summary>
+        public static string CupOf(Vehicle vehicle) => vehicle == Vehicle.Snowmobile ? "Winter" : "Valley";
+
+        static string Key(Slot slot, Vehicle vehicle) => vehicle == Vehicle.Snowmobile ? "Garage.Snow." + slot : "Garage." + slot;
+
+        /// <summary>The part in a slot of a vehicle (falls back to the first of its kind if it is not, or no longer, open).
+        /// The snowmobile starts out with the car's choices until it gets its own.</summary>
+        public static Part Equipped(Slot slot, Vehicle vehicle = Vehicle.Car)
         {
-            string id = PlayerPrefs.GetString(Key(slot), "");
-            if (slot == Slot.Paint && id == "" && PlayerPrefs.HasKey(PaintKey)) id = LegacyPaint();
+            if (vehicle == Vehicle.Snowmobile)
+            {
+                if (!Fits(slot, vehicle)) return Find("", slot);
+                if (!PlayerPrefs.HasKey(Key(slot, vehicle))) return Equipped(slot, Vehicle.Car);
+            }
+            string id = PlayerPrefs.GetString(Key(slot, vehicle), "");
+            if (vehicle == Vehicle.Car && slot == Slot.Paint && id == "" && PlayerPrefs.HasKey(PaintKey)) id = LegacyPaint();
             var part = Find(id, slot);
             return IsUnlocked(part) ? part : Find("", slot);
         }
 
-        public static void Equip(Part part)
+        public static void Equip(Part part, Vehicle vehicle = Vehicle.Car)
         {
-            if (part == null || !IsUnlocked(part) || Equipped(part.Slot) == part) return;
-            PlayerPrefs.SetString(Key(part.Slot), part.Id);
+            if (part == null || !IsUnlocked(part) || !Fits(part.Slot, vehicle) || Equipped(part.Slot, vehicle) == part) return;
+            PlayerPrefs.SetString(Key(part.Slot, vehicle), part.Id);
             PlayerPrefs.Save();
             Changed?.Invoke();
         }
+
+        /// <summary>A vehicle's paint.</summary>
+        public static Color ColorOf(Vehicle vehicle) => Equipped(Slot.Paint, vehicle).Color;
 
         // ---------------------------------------------------------------- paints (as before)
 

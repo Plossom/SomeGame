@@ -159,9 +159,10 @@ namespace SomeGame.Race
         // Your car as you built it in the garage; online races keep the room's colours.
         void PaintPlayer()
         {
-            SomeGame.Car.CarLook.Player.Apply(player, CarTrack);
+            var vehicle = track.Layout != null ? track.Layout.vehicle : SomeGame.Track.TrackLayout.Vehicle.Car;
+            SomeGame.Car.CarLook.For(vehicle).Apply(player, CarTrack);
             // The gadget from the garage (not in the practice drive).
-            if (Garage.Equipped(Garage.Slot.Gadget).Id == "haybale" && (Level == null || !(Level.isTutorial || Level.isChallenge)))
+            if (Garage.Equipped(Garage.Slot.Gadget, vehicle).Id == "haybale" && (Level == null || !(Level.isTutorial || Level.isChallenge)))
                 player.gameObject.AddComponent<SomeGame.Car.HayBaleGadget>();
         }
 
