@@ -183,6 +183,7 @@ MonoBehaviour:
     enabled: 0
     from: 0
     to: 0
+    dropAt: -1
   coast:
     enabled: 1
     lighthouse: {x: -2, y: 154}
@@ -562,4 +563,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: cc55c1fe377a231b
+  bakedSignature: 

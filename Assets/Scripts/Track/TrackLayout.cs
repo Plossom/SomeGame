@@ -325,6 +325,8 @@ namespace SomeGame.Track
             public bool enabled;
             [Tooltip("Lap distances where it touches down and where it lifts off again.")]
             public float from, to;
+            [Tooltip("Drive onto its floats while it skims along and it flies you here (a lap distance further on): a shortcut through the air. -1 = no rides.")]
+            public float dropAt = -1f;
         }
 
         [Header("Coast at night (Water Cup)")]

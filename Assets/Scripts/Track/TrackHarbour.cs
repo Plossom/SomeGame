@@ -495,7 +495,6 @@ namespace SomeGame.Track
 
         Transform _plane;
         SpriteRenderer _planeShadow;
-        int _planeLap = -1;
         float _planeStart = -100f;
         bool _planeBeaten;
         const float PlaneAir = 1.6f, PlaneSkimSpeed = 13f, PlaneLandSpeed = 22f;
@@ -510,14 +509,61 @@ namespace SomeGame.Track
             _planeShadow.gameObject.SetActive(false);
         }
 
+        // Taking a boat for a flight: the one it carries, and once it has set it down, where it flies off from.
+        SomeGame.Car.CarMovement _passenger;
+        Vector2 _flyOffFrom, _flyOffDir;
+        float _flyOffAt = -100f;
+        const float PlaneRideSpeed = 30f;
+
         void UpdatePlane()
         {
             if (_plane == null || _race == null || _race.Player == null) return;
             var s = track.Layout.seaplane;
             var path = track.Path;
             var sensor = _race.Player.GetComponent<TrackSensor>();
+            var car = _race.Player.GetComponent<SomeGame.Car.CarMovement>();
             float pd = sensor.Current.Distance;
             float now = Time.time;
+            float unit = 9f / Mathf.Max(seaplane.bounds.size.x, seaplane.bounds.size.y);
+            var planeRenderer = _plane.GetComponent<SpriteRenderer>();
+
+            // Carrying a boat: it flies with the boat hanging under it, up over the harbour and down to the drop.
+            if (_passenger != null)
+            {
+                if (_passenger.IsAirborne)
+                {
+                    Vector2 at = _passenger.Body.position, heading = _passenger.transform.up;
+                    float h = _passenger.AirHeight;
+                    Show(true);
+                    _plane.position = at + heading * 0.4f + new Vector2(-0.6f, 2.2f) * h;
+                    _plane.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(heading.y, heading.x) * Mathf.Rad2Deg);
+                    _plane.localScale = Vector3.one * unit * (1f + 0.35f * h);
+                    planeRenderer.sortingOrder = PlaneOrder;
+                    _planeShadow.transform.position = at + new Vector2(1.2f, -1.6f) * h;
+                    _planeShadow.transform.rotation = _plane.rotation;
+                    _planeShadow.transform.localScale = Vector3.one * unit * 0.9f;
+                    return;
+                }
+                // Set down: it climbs away on its own.
+                _flyOffFrom = _plane.position;
+                _flyOffDir = _passenger.transform.up;
+                _flyOffAt = now;
+                _passenger = null;
+            }
+            if (now - _flyOffAt < 2.5f)
+            {
+                float u = (now - _flyOffAt) / 2.5f;
+                Show(true);
+                _plane.position = _flyOffFrom + _flyOffDir * (PlaneRideSpeed * 2.5f * u) + new Vector2(-0.6f, 2.2f) * u;
+                _plane.localScale = Vector3.one * unit * (1.2f + 0.6f * u);
+                planeRenderer.color = new Color(1f, 1f, 1f, 1f - u * u);
+                _planeShadow.transform.position = _flyOffFrom + _flyOffDir * (PlaneRideSpeed * 2.5f * u) + new Vector2(1.2f, -1.6f) * (1f + u);
+                _planeShadow.color = new Color(0f, 0.12f, 0.2f, 0.35f * (1f - u));
+                return;
+            }
+            planeRenderer.color = Color.white;
+            _planeShadow.color = new Color(0f, 0.12f, 0.2f, 0.35f);
+
             // Each lap, as the player comes up to it, it glides down from behind, lands ahead and skims along.
             float trigger = s.from - 30f;
             if (pd > trigger && pd < s.from && now - _planeStart > 20f)
@@ -527,30 +573,67 @@ namespace SomeGame.Track
             }
             float t = now - _planeStart;
             float skim = Mathf.Repeat(s.to - s.from, path.Length) / PlaneSkimSpeed;
-            bool active = t >= 0f && t < PlaneAir + skim + PlaneAir;
-            _plane.gameObject.SetActive(active);
-            _planeShadow.gameObject.SetActive(active);
+            bool active = t >= 0f && t < PlaneAir + skim + PlaneAir && now - _flyOffAt > 20f;
+            Show(active);
             if (!active) return;
             float d, height;
             if (t < PlaneAir) { d = s.from - PlaneLandSpeed * (PlaneAir - t); height = 1f - t / PlaneAir; }
             else if (t < PlaneAir + skim) { d = s.from + (t - PlaneAir) * PlaneSkimSpeed; height = 0f; }
             else { float u = t - PlaneAir - skim; d = s.to + u * PlaneLandSpeed; height = u / PlaneAir; }
-            Vector2 p = path.PointAt(d) + path.NormalAt(d) * 2.4f, dir = path.TangentAt(d);
+            const float lane = 2.4f;
+            Vector2 p = path.PointAt(d) + path.NormalAt(d) * lane, dir = path.TangentAt(d);
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg; // (its nose points right in the picture)
             _plane.position = p + new Vector2(-0.6f, 2.2f) * height;
             _plane.rotation = Quaternion.Euler(0f, 0f, angle);
-            _plane.localScale = Vector3.one * (9f / Mathf.Max(seaplane.bounds.size.x, seaplane.bounds.size.y)) * (1f + 0.35f * height);
-            _plane.GetComponent<SpriteRenderer>().sortingOrder = height > 0.05f ? PlaneOrder : DuckOrder + 1;
+            _plane.localScale = Vector3.one * unit * (1f + 0.35f * height);
+            planeRenderer.sortingOrder = height > 0.05f ? PlaneOrder : DuckOrder + 1;
             _planeShadow.transform.position = p;
             _planeShadow.transform.rotation = _plane.rotation;
-            _planeShadow.transform.localScale = Vector3.one * (9f / Mathf.Max(seaplane.bounds.size.x, seaplane.bounds.size.y)) * 0.9f;
-            // Overtaken on the water: BEAT THE PLANE!
-            if (!_planeBeaten && height <= 0f && path.DeltaDistance(d, pd) > 3f && path.DeltaDistance(d, pd) < 20f)
+            _planeShadow.transform.localScale = Vector3.one * unit * 0.9f;
+            if (height > 0f || car == null || car.IsAirborne || sensor.Branch >= 0) return;
+            float behind = path.DeltaDistance(d, pd);
+            // Driven onto its floats from behind (in its lane): it takes you for a flight - a shortcut over the harbour.
+            if (s.dropAt >= 0f && behind > -4f && behind < 1.5f && Mathf.Abs(sensor.Current.Lateral - lane) < 2f)
+            {
+                Board(car, path, pd, s.dropAt);
+                return;
+            }
+            // Overtaken on the water (past it in the other lane): BEAT THE PLANE!
+            if (!_planeBeaten && behind > 3f && behind < 20f)
             {
                 _planeBeaten = true;
                 if (_combo != null) _combo.Announce("BEAT THE PLANE!", new Color(1f, 0.82f, 0.25f));
-                _race.Player.GetComponent<SomeGame.Car.CarMovement>()?.GiveBoost(0.7f);
+                car.GiveBoost(0.7f);
             }
+        }
+
+        void Show(bool on)
+        {
+            if (_plane.gameObject.activeSelf != on) _plane.gameObject.SetActive(on);
+            if (_planeShadow.gameObject.activeSelf != on) _planeShadow.gameObject.SetActive(on);
+        }
+
+        void Board(SomeGame.Car.CarMovement car, TrackPath path, float from, float drop)
+        {
+            // Up off the water ahead, straight across to the drop, down onto the channel there facing on.
+            Vector2 start = car.Body.position, end = path.PointAt(drop - 6f);
+            var cable = new List<Vector2>();
+            for (int k = 1; k <= 8; k++) cable.Add(Vector2.Lerp(start + (Vector2)car.transform.up * 8f, end, k / 8f));
+            Vector2 fwd = path.TangentAt(drop);
+            var arrival = new Pose(path.PointAt(drop), Quaternion.Euler(0f, 0f, Mathf.Atan2(fwd.y, fwd.x) * Mathf.Rad2Deg - 90f));
+            float top = car.Stats != null ? car.Stats.topSpeed : 18f;
+            var progress = car.GetComponent<SomeGame.Race.RaceProgress>();
+            bool ok = car.RideLift(cable, arrival, PlaneRideSpeed, top * 1.05f, () =>
+            {
+                if (progress != null) progress.LiftArrived(from, drop);
+                car.GiveBoost(0.6f);
+                if (_combo != null) _combo.Announce("TOUCHDOWN!", new Color(0.4f, 0.9f, 1f));
+            });
+            if (!ok) return;
+            _passenger = car;
+            _planeBeaten = true;
+            if (_combo != null) _combo.Announce("FLY AWAY!", new Color(1f, 0.82f, 0.25f));
+            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.8f);
         }
 
         // ------------------------------------------------------------------ the last lap: sunset

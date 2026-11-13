@@ -423,6 +423,7 @@ MonoBehaviour:
     enabled: 0
     from: 0
     to: 0
+    dropAt: -1
   coast:
     enabled: 0
     lighthouse: {x: 0, y: 0}

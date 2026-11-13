@@ -204,8 +204,9 @@ namespace SomeGame.Track
         void BuildQuay(TrackLayout.Island island, List<Vector2> shore, int index)
         {
             Mesh("QuayShadow", plain, HaloOrder, Ring(shore, 0f, 2.6f, new Color(0.02f, 0.2f, 0.28f, 0.45f), new Color(0.02f, 0.2f, 0.28f, 0f), 1f));
-            Mesh("QuayFloor", quay != null ? quay : plain, SandOrder, Fill(shore, Color.white, 1f / 4f));
-            Mesh("QuayEdge", plain, JungleOrder, Ring(shore, -0.9f, 0f, new Color(0.55f, 0.52f, 0.47f), new Color(0.42f, 0.4f, 0.36f), 1f));
+            // (over any beach it meets: a beach runs on under the quay's paving, so they join in a clean promenade edge)
+            Mesh("QuayFloor", quay != null ? quay : plain, JungleOrder + 1, Fill(shore, Color.white, 1f / 4f));
+            Mesh("QuayEdge", plain, JungleOrder + 2, Ring(shore, -0.9f, 0f, new Color(0.55f, 0.52f, 0.47f), new Color(0.42f, 0.4f, 0.36f), 1f));
             // Tyre fenders on the wall (dark rounded blocks just over the water).
             var fv = new List<Vector3>(); var fu = new List<Vector2>(); var ft = new List<int>(); var fc = new List<Color32>();
             float walked = 0f;
@@ -220,7 +221,7 @@ namespace SomeGame.Track
                 TrackMeshes.AddQuad(fv, fu, ft, a + n * 0.25f, t * 0.45f, n * 0.3f, Vector2.one);
                 for (int k = 0; k < 4; k++) fc.Add(new Color32(34, 36, 40, 255));
             }
-            Mesh("QuayFenders", plain, JungleOrder + 1, TrackMeshes.Quads("QuayFenders", fv, fu, ft, fc));
+            Mesh("QuayFenders", plain, JungleOrder + 3, TrackMeshes.Quads("QuayFenders", fv, fu, ft, fc));
             if (harbourScenery != null)
             {
                 var random = new System.Random(island.seed * 7919 + index * 104729 + 31);
@@ -378,6 +379,28 @@ namespace SomeGame.Track
         }
 
         readonly List<List<Vector2>> _shores = new();
+        readonly Dictionary<SomeGame.Car.CarMovement, float> _stranded = new();
+
+        // A boat that comes down on land (a jump gone wrong) or ends up far out of the course is lifted back onto the
+        // water, a little before where it left it.
+        void ResetStranded()
+        {
+            foreach (var car in _cars)
+            {
+                if (car == null || car.IsAirborne || car.IsPuppet) continue;
+                var sensor = car.GetComponent<TrackSensor>();
+                if (sensor == null) continue;
+                bool land = OnLand(car.Body.position);
+                bool lost = sensor.Branch < 0 && Mathf.Abs(sensor.Current.Lateral) > track.OffRoadAt(sensor.Current.Distance) + 16f;
+                if (!land && !lost) { _stranded.Remove(car); continue; }
+                if (!_stranded.TryGetValue(car, out float since)) _stranded[car] = since = Time.time;
+                if (Time.time - since < (land ? 0.2f : 1.2f)) continue;
+                _stranded.Remove(car);
+                var pose = track.RespawnBefore(sensor.Current.Distance, 4f);
+                float top = car.Stats != null ? car.Stats.topSpeed : 18f;
+                if (!car.CarryBack(pose, top * 0.45f, fromWater: true)) car.Respawn(pose);
+            }
+        }
 
         bool OnLand(Vector2 p)
         {
@@ -565,6 +588,7 @@ namespace SomeGame.Track
             UpdateDolphins(path, now);
             UpdateSplashes(now);
             UpdateLife(path, now);
+            ResetStranded();
             // Crabs scuttle sideways along the sandbar, stop, scuttle back.
             foreach (var (t, centre, across, range, phase) in _crabs)
             {
