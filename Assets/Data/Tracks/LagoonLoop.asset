@@ -451,7 +451,7 @@ MonoBehaviour:
   lakes: []
   oil: []
   rampLength: 3
-  rampWidth: 2.8
+  rampWidth: 3.6
   shortcuts: []
   branches: []
   banks: []
@@ -2424,4 +2424,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: e9d6922cfcc41287
+  bakedSignature: 

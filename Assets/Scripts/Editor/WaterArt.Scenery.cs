@@ -25,6 +25,9 @@ namespace SomeGame.EditorTools
             Write(f, "LagoonBridge", 128, 512, BridgePixel, 64, false);
             Write(f, "SplashRing", 128, 128, SplashPixel, 64, false);
             Write(f, "Gull", 128, 64, GullPixel, 64, false);
+            Write(f, "Sunbather", 128, 192, SunbatherPixel, 64, false);
+            Write(f, "SandcastleTop", 128, 128, SandcastlePixel, 64, false);
+            Write(f, "Crab", 96, 64, CrabPixel, 32, false);
             Write(f, "FishShoal", 128, 128, ShoalPixel, 64, false);
             Write(f, "LagoonStreaks", 64, 256, StreakPixel, 32, true);
             Water("LagoonCurrent", "LagoonStreaks", new Color(1f, 1f, 1f, 0.8f), new Color(0f, 0f, 0f, 0f), 1f, 0f);
@@ -364,6 +367,72 @@ namespace SomeGame.EditorTools
             c = Over(c, Color.white, Fill(body));
             c = Over(c, Hex("FFC93C"), Fill(Triangle(x, y, new Vector2(61, 52), new Vector2(67, 52), new Vector2(64, 60))));
             return Over(c, Line, Stroke(Mathf.Min(wings, body), 1.6f) * 0.7f);
+        }
+
+        // A tourist sunbathing on a striped towel: sunglasses, a sunhat, a cool drink.
+        static Color SunbatherPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float towel = RoundRect(x, y, 64, 96, 34, 80, 6);
+            c = Over(c, Shadow, Fill(towel + 2f));
+            c = Over(c, Mathf.Repeat(y, 24f) < 12f ? Hex("FF4F86") : Color.white, Fill(towel));
+            float legs = Mathf.Min(Capsule(x, y, 54, 30, 58, 80, 8f), Capsule(x, y, 74, 30, 70, 80, 8f));
+            float body = RoundRect(x, y, 64, 104, 20, 28, 12);
+            float arms = Mathf.Min(Capsule(x, y, 44, 124, 30, 96, 6f), Capsule(x, y, 84, 124, 98, 96, 6f));
+            c = Over(c, Hex("F2B48C"), Fill(Mathf.Min(legs, arms)));
+            c = Over(c, Hex("F2B48C"), Fill(body));
+            c = Over(c, Hex("2EC4B6"), Fill(RoundRect(x, y, 64, 88, 20, 9, 5)));
+            c = Over(c, Line, Stroke(Mathf.Min(Mathf.Min(legs, arms), body), 2f));
+            float hat = Circle(x, y, 64, 148, 20);
+            c = Over(c, Hex("F2D49B"), Fill(hat));
+            c = Over(c, Hex("FF4F86"), Fill(Shell(Circle(x, y, 64, 148, 12), 2f)));
+            c = Over(c, Line, Stroke(hat, 2f));
+            c = Over(c, Hex("1C1F24"), Fill(Mathf.Min(Circle(x, y, 57, 136, 4.5f), Circle(x, y, 71, 136, 4.5f))));
+            // A drink with a straw beside the towel.
+            float cup = Circle(x, y, 112, 150, 7);
+            c = Over(c, Hex("FFC93C"), Fill(cup));
+            c = Over(c, Line, Stroke(cup, 1.6f));
+            return Over(c, Hex("FF4F86"), Fill(Capsule(x, y, 112, 150, 120, 162, 1.4f)));
+        }
+
+        static Color SandcastlePixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            c = Over(c, Shadow, Fill(Circle(x, y, 70, 58, 44)));
+            float moat = Shell(Circle(x, y, 64, 64, 46), 4f);
+            c = Over(c, Hex("4FC3D9"), Fill(moat));
+            foreach (var (tx, ty, r) in new[] { (44f, 44f, 13f), (84f, 44f, 13f), (44f, 84f, 13f), (84f, 84f, 13f), (64f, 64f, 17f) })
+            {
+                float tower = Circle(x, y, tx, ty, r);
+                c = Over(c, Hex("E2C58E"), Fill(tower));
+                c = Over(c, Hex("F2DCAA"), Fill(Circle(x, y, tx - 3, ty + 3, r * 0.6f)));
+                c = Over(c, Line, Stroke(tower, 1.8f) * 0.7f);
+            }
+            c = Over(c, Hex("6B4A2E"), Fill(Capsule(x, y, 64, 64, 64, 96, 1.4f)));
+            return Over(c, Hex("FF4F86"), Fill(Triangle(x, y, new Vector2(64, 96), new Vector2(64, 86), new Vector2(80, 91))));
+        }
+
+        // A red crab from above, claws up.
+        static Color CrabPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float legs = float.MaxValue;
+            foreach (float s in new[] { -1f, 1f })
+                for (int k = 0; k < 3; k++)
+                    legs = Mathf.Min(legs, Capsule(x, y, 48 + s * 14, 26 + k * 7, 48 + s * 32, 18 + k * 9, 2f));
+            float claws = Mathf.Min(Circle(x, y, 26, 50, 8), Circle(x, y, 70, 50, 8));
+            float arms = Mathf.Min(Capsule(x, y, 38, 36, 28, 46, 2.6f), Capsule(x, y, 58, 36, 68, 46, 2.6f));
+            float body = Ellipse(x, y, 48, 30, 18, 13);
+            float all = Min(legs, claws, arms, body);
+            c = Over(c, Hex("E5413A"), Fill(all));
+            c = Over(c, Hex("FF7A5E"), Fill(Ellipse(x, y, 44, 34, 9, 6)));
+            c = Over(c, Line, Stroke(all, 1.8f));
+            foreach (float s in new[] { -1f, 1f })
+            {
+                c = Over(c, Color.white, Fill(Circle(x, y, 48 + s * 7, 44, 4)));
+                c = Over(c, Line, Fill(Circle(x, y, 48 + s * 7, 45, 2f)));
+            }
+            return c;
         }
 
         // A shoal of little fish under the water: dark, soft, all swimming the same way.

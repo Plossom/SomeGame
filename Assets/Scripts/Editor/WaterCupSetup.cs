@@ -102,6 +102,9 @@ namespace SomeGame.EditorTools
             lso.FindProperty("ring").objectReferenceValue = Sprite("SplashRing");
             lso.FindProperty("gull").objectReferenceValue = Sprite("Gull");
             lso.FindProperty("shoal").objectReferenceValue = Sprite("FishShoal");
+            lso.FindProperty("sunbather").objectReferenceValue = Sprite("Sunbather");
+            lso.FindProperty("sandcastle").objectReferenceValue = Sprite("SandcastleTop");
+            lso.FindProperty("crab").objectReferenceValue = Sprite("Crab");
             lso.ApplyModifiedPropertiesWithoutUndo();
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
         }
@@ -113,6 +116,7 @@ namespace SomeGame.EditorTools
             var t = Asset<TrackLayout>("Assets/Data/Tracks/LagoonLoop.asset");
             t.waypoints = WAYPOINTS;
             t.roadWidth = 9f;
+            t.rampWidth = 3.6f; // (the sandbar's kicker a little wider)
             t.widths = new List<TrackLayout.WidthKey>();
             t.kerbWidth = 0.7f;
             t.sampleSpacing = 1f;

@@ -55,9 +55,11 @@ namespace SomeGame.Track
         [SerializeField] Sprite dolphin, bridge, ring;
         [Tooltip("Gulls gliding over the lagoon (their shadows on the water), and shoals of little fish under it.")]
         [SerializeField] Sprite gull, shoal;
+        [Tooltip("What lies about on a sandbar: a sunbather, a sandcastle, crabs.")]
+        [SerializeField] Sprite sunbather, sandcastle, crab;
 
-        const int HaloOrder = -66, FoamOrder = -65, SandOrder = -64, JungleOrder = -63, DecorOrder = 4,
-                  CurrentOrder = -46, SwellOrder = -45, BarOrder = -44, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
+        const int HaloOrder = -68, FoamOrder = -67, SandOrder = -63, JungleOrder = -62, DecorOrder = 4,
+                  CurrentOrder = -46, SwellOrder = -45, BarUnder = -66, PropOrder = 2, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
 
         static readonly Color SwellDark = new(0.02f, 0.25f, 0.45f, 1f);
 
@@ -74,7 +76,7 @@ namespace SomeGame.Track
         protected override void Build(TrackPath path, TrackLayout layout)
         {
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
-            _parts.Clear(); _swells.Clear(); _dolphins.Clear(); _splashes.Clear(); _behind.Clear(); _shores.Clear();
+            _parts.Clear(); _swells.Clear(); _dolphins.Clear(); _splashes.Clear(); _behind.Clear(); _shores.Clear(); _crabs.Clear();
             if (layout.biome != TrackLayout.Biome.Lagoon) return;
             for (int i = 0; i < layout.lagoonIslands.Count; i++) BuildIsland(layout.lagoonIslands[i], i);
             foreach (var c in layout.currents) BuildCurrent(path, c);
@@ -257,38 +259,88 @@ namespace SomeGame.Track
             var near = new List<Vector2>();
             var far = new List<Vector2>();
             float len = Mathf.Repeat(gap.to - gap.from, path.Length);
+            // Its ends run well in under the islands' beaches (drawn under them), so the sand flows on into theirs.
             for (int i = 0; i <= 8; i++)
             {
-                float d = gap.from + 1f + (len - 2f) * i / 8f;
+                float t = i / 8f, d = gap.from + 1f + (len - 2f) * t;
+                float bulge = 1f + 2.5f * Mathf.Sin(t * Mathf.PI); // wider in the middle, like a real sandbar
                 Vector2 p = path.PointAt(d), n = path.NormalAt(d);
-                near.Add(p + n * (ShoreReach(path, d, 1f) + 2.5f));
-                far.Add(p - n * (ShoreReach(path, d, -1f) + 2.5f));
+                near.Add(p + n * (ShoreReach(path, d, 1f) + 7f + bulge));
+                far.Add(p - n * (ShoreReach(path, d, -1f) + 7f + bulge));
             }
             var poly = new List<Vector2>(near);
             for (int i = far.Count - 1; i >= 0; i--) poly.Add(far[i]);
-            // rounded ends where it meets the water: smooth the outline
-            var rough = poly.ToArray();
-            var shore = Smooth(rough, 4);
+            var shore = Smooth(poly.ToArray(), 4);
             if (SignedArea(shore) < 0f) shore.Reverse();
-            Mesh("SandbarHalo", shallows, BarOrder - 3, Ring(shore, 0f, 3.5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
-            Mesh("SandbarFoam", foam, BarOrder - 2, Ring(shore, -0.3f, 1.1f, Color.white, Color.white, 1f, true));
-            Mesh("Sandbar", sand, BarOrder, Fill(shore, Color.white, 1f / 4f));
-            // A few shells and a starfish on it.
+            Mesh("SandbarHalo", shallows, BarUnder - 3, Ring(shore, 0f, 3.5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
+            Mesh("SandbarFoam", foam, BarUnder - 0, Ring(shore, -0.3f, 1.1f, Color.white, Color.white, 1f, true));
+            Mesh("Sandbar", sand, BarUnder + 1, Fill(shore, Color.white, 1f / 4f));
+
+            // A grassy ridge along its middle from island to island, soft edged.
+            float mid = gap.from + len * 0.5f;
+            Vector2 c = path.PointAt(mid), across = path.NormalAt(mid), along = path.TangentAt(mid);
+            float reachL = ShoreReach(path, mid, 1f) + 6f, reachR = ShoreReach(path, mid, -1f) + 6f;
+            var ridge = new List<Vector2>();
+            for (int k = 0; k <= 10; k++)
+            {
+                float lat = Mathf.Lerp(-reachR, reachL, k / 10f);
+                ridge.Add(c + across * lat + along * (1.6f + 0.5f * Mathf.Sin(k * 1.7f)));
+            }
+            for (int k = 10; k >= 0; k--)
+            {
+                float lat = Mathf.Lerp(-reachR, reachL, k / 10f);
+                ridge.Add(c + across * lat - along * (1.6f + 0.5f * Mathf.Cos(k * 1.3f)));
+            }
+            var grass = Smooth(ridge.ToArray(), 3);
+            if (SignedArea(grass) < 0f) grass.Reverse();
+            Mesh("SandbarGrass", jungle, BarUnder + 2, Fill(grass, Color.white, 1f / 4f));
+            Mesh("SandbarGrassEdge", jungle, BarUnder + 2, Ring(grass, 0f, 0.8f, Color.white, new Color(1f, 1f, 1f, 0f), 0.25f));
+
+            // What is on it: bushes and a palm on the ridge, a sunbather, a sandcastle, flamingos paddling at its edge.
             if (scenery != null)
             {
                 var vertices = new List<Vector3>(); var uvs = new List<Vector2>(); var triangles = new List<int>(); var tints = new List<Color32>();
-                var mid = path.PointAt(gap.from + len * 0.5f);
-                foreach (var (o, cell, size) in new[] { (new Vector2(-4f, 1f), "Flowers", 2.6f), (new Vector2(5f, -2f), "Rock", 2.4f) })
+                void Put(Vector2 at, string cell, float size, float angle)
                 {
+                    Vector2 r = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * size * 0.5f;
                     int first = vertices.Count;
-                    TrackMeshes.AddQuad(vertices, uvs, triangles, mid + o, new Vector2(size * 0.5f, 0f), new Vector2(0f, size * 0.5f), Vector2.one);
+                    TrackMeshes.AddQuad(vertices, uvs, triangles, at, r, new Vector2(-r.y, r.x), Vector2.one);
                     var uv = LagoonSheet.Cell(cell);
                     for (int k = first; k < uvs.Count; k++) uvs[k] = new Vector2(uv.x + uvs[k].x * uv.width, uv.y + uvs[k].y * uv.height);
                     for (int k = 0; k < 4; k++) tints.Add(new Color32(255, 255, 255, 255));
                 }
-                Mesh("SandbarDecor", scenery, BarOrder + 1, TrackMeshes.Quads("SandbarDecor", vertices, uvs, triangles, tints));
+                Put(c + across * (reachL * 0.45f), "Bush", 3f, 0.3f);
+                Put(c - across * (reachR * 0.5f), "Bush", 2.6f, 1.2f);
+                Put(c + across * (reachL * 0.15f), "Flowers", 2.4f, 0f);
+                Put(c - across * (reachR * 0.2f), "PalmTall", 5.5f, 0.8f);
+                Put(c + across * (reachL * 0.7f) + along * 3.2f, "Umbrella", 4.5f, -0.4f);
+                Put(c - across * (reachR * 0.75f) - along * 3.6f, "Flamingos", 4.5f, 2f);
+                Mesh("SandbarDecor", scenery, PropOrder, TrackMeshes.Quads("SandbarDecor", vertices, uvs, triangles, tints));
             }
+            // A sunbather and a sandcastle (their own pictures), and crabs that scuttle to and fro.
+            if (sunbather != null)
+            {
+                var sb = NewSprite("Sunbather", sunbather, PropOrder + 1);
+                sb.transform.position = c + across * (reachL * 0.45f) - along * 3.4f;
+                sb.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(across.y, across.x) * Mathf.Rad2Deg);
+                sb.transform.localScale = Vector3.one * 1.1f;
+            }
+            if (sandcastle != null)
+            {
+                var sc = NewSprite("Sandcastle", sandcastle, PropOrder + 1);
+                sc.transform.position = c - across * (reachR * 0.35f) + along * 3.4f;
+                sc.transform.localScale = Vector3.one * 0.9f;
+            }
+            if (crab != null)
+                for (int k = 0; k < 2; k++)
+                {
+                    var cr = NewSprite("Crab", crab, PropOrder + 1);
+                    cr.transform.localScale = Vector3.one * 0.55f;
+                    _crabs.Add((cr.transform, c + along * (k == 0 ? 3.8f : -3.8f), across, (k == 0 ? reachL : reachR) * 0.6f, k * 2.3f));
+                }
         }
+
+        readonly List<(Transform t, Vector2 centre, Vector2 across, float range, float phase)> _crabs = new();
 
         void BuildBridge(TrackPath path, float d)
         {
@@ -328,6 +380,15 @@ namespace SomeGame.Track
             UpdateDolphins(path, now);
             UpdateSplashes(now);
             UpdateLife(path, now);
+            // Crabs scuttle sideways along the sandbar, stop, scuttle back.
+            foreach (var (t, centre, across, range, phase) in _crabs)
+            {
+                if (t == null) continue;
+                float u = Mathf.Sin(now * 0.7f + phase);
+                float x = Mathf.Sign(u) * Mathf.Pow(Mathf.Abs(u), 0.6f) * range;
+                t.position = centre + across * x;
+                t.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(across.y, across.x) * Mathf.Rad2Deg + 90f + Mathf.Sin(now * 14f) * 6f);
+            }
         }
 
         // ------------------------------------------------------------------ gulls and shoals
