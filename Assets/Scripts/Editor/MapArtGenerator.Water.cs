@@ -25,15 +25,15 @@ namespace SomeGame.EditorTools
         // edge) and is shrunk until it keeps clear of the lane.
         static readonly (Vector2 c, Vector2 r, IslandLook look)[] SeaIslandPlan =
         {
-            (new Vector2(700f, 495f), new Vector2(150f, 52f), IslandLook.Jungle),
-            (new Vector2(420f, 905f), new Vector2(175f, 62f), IslandLook.Jungle),
-            (new Vector2(760f, 1250f), new Vector2(115f, 34f), IslandLook.Jungle),
-            (new Vector2(30f, 610f), new Vector2(130f, 56f), IslandLook.Cliff),
-            (new Vector2(1130f, 880f), new Vector2(110f, 46f), IslandLook.Jungle),
-            (new Vector2(150f, 1262f), new Vector2(90f, 26f), IslandLook.Sand),
-            (new Vector2(1000f, 1065f), new Vector2(64f, 20f), IslandLook.Rock),
-            (new Vector2(440f, 1372f), new Vector2(70f, 16f), IslandLook.Sand),
-            (new Vector2(1090f, 380f), new Vector2(80f, 32f), IslandLook.Rock),
+            (new Vector2(700f, 570f), new Vector2(150f, 52f), IslandLook.Jungle),
+            (new Vector2(420f, 948f), new Vector2(175f, 62f), IslandLook.Jungle),
+            (new Vector2(760f, 1265f), new Vector2(115f, 34f), IslandLook.Jungle),
+            (new Vector2(30f, 676f), new Vector2(130f, 56f), IslandLook.Cliff),
+            (new Vector2(1130f, 925f), new Vector2(110f, 46f), IslandLook.Jungle),
+            (new Vector2(150f, 1276f), new Vector2(90f, 26f), IslandLook.Sand),
+            (new Vector2(1000f, 1095f), new Vector2(64f, 20f), IslandLook.Rock),
+            (new Vector2(440f, 1377f), new Vector2(70f, 16f), IslandLook.Sand),
+            (new Vector2(1090f, 465f), new Vector2(80f, 32f), IslandLook.Rock),
         };
 
         static readonly List<(Vector2 c, Vector2 r, IslandLook look)> SeaIslands = new();
@@ -306,21 +306,21 @@ namespace SomeGame.EditorTools
             // with flamingos, and a jetty off the beach with its boats.
             (Vector2 p, Action<Vector2, float> draw, float size, float r)[] things =
             {
-                (new Vector2(560f, 1300f), (q, s) => Sailboat(q, s), 0.85f, 26f),
-                (new Vector2(220f, 1330f), (q, s) => Sailboat(q, s), 0.9f, 26f),
-                (new Vector2(1080f, 960f), (q, s) => Sailboat(q, s), 1.05f, 30f),
-                (new Vector2(60f, 1180f), (q, s) => Sailboat(q, s), 0.95f, 26f),
-                (new Vector2(860f, 940f), (q, s) => Seaplane(q, s), 1.1f, 40f),
-                (new Vector2(300f, 470f), (q, s) => FloatingBar(q, s), 1.1f, 36f),
-                (new Vector2(1000f, 230f), (q, s) => Kayaks(q, s), 1f, 28f),
-                (new Vector2(370f, 565f), (q, s) => Sandbar(q, s), 1.15f, 48f),
-                (new Vector2(900f, 1010f), (q, s) => Wreck(q, s), 1.2f, 50f),
-                (new Vector2(1060f, 1160f), (q, s) => Rocks(q, s), 1f, 22f),
-                (new Vector2(320f, 1240f), (q, s) => Rocks(q, s), 0.85f, 20f),
-                (new Vector2(1080f, 200f), (q, s) => Reef(q, s), 1.2f, 40f),
-                (new Vector2(120f, 720f), (q, s) => Reef(q, s), 1f, 36f),
-                (new Vector2(990f, 790f), (q, s) => Reef(q, s), 1f, 36f),
-                (new Vector2(700f, 860f), (q, s) => Reef(q, s), 0.9f, 32f),
+                (new Vector2(560f, 1311f), (q, s) => Sailboat(q, s), 0.85f, 26f),
+                (new Vector2(220f, 1339f), (q, s) => Sailboat(q, s), 0.9f, 26f),
+                (new Vector2(1080f, 998f), (q, s) => Sailboat(q, s), 1.05f, 30f),
+                (new Vector2(60f, 1201f), (q, s) => Sailboat(q, s), 0.95f, 26f),
+                (new Vector2(860f, 980f), (q, s) => Seaplane(q, s), 1.1f, 40f),
+                (new Vector2(300f, 547f), (q, s) => FloatingBar(q, s), 1.1f, 36f),
+                (new Vector2(1000f, 327f), (q, s) => Kayaks(q, s), 1f, 28f),
+                (new Vector2(370f, 635f), (q, s) => Sandbar(q, s), 1.15f, 48f),
+                (new Vector2(900f, 1044f), (q, s) => Wreck(q, s), 1.2f, 50f),
+                (new Vector2(1060f, 1182f), (q, s) => Rocks(q, s), 1f, 22f),
+                (new Vector2(320f, 1256f), (q, s) => Rocks(q, s), 0.85f, 20f),
+                (new Vector2(1080f, 299f), (q, s) => Reef(q, s), 1.2f, 40f),
+                (new Vector2(120f, 777f), (q, s) => Reef(q, s), 1f, 36f),
+                (new Vector2(990f, 842f), (q, s) => Reef(q, s), 1f, 36f),
+                (new Vector2(700f, 906f), (q, s) => Reef(q, s), 0.9f, 32f),
             };
             foreach (var (p, draw, size, r) in things)
             {

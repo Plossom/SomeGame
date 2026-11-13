@@ -177,7 +177,7 @@ namespace SomeGame.UI
         void Dolphins()
         {
             if (fish == null) return;
-            var spots = new[] { (new Vector2(800f, 1000f), 1f, 0f), (new Vector2(260f, 640f), 1.25f, 4f), (new Vector2(700f, 1250f), 0.8f, 8f) };
+            var spots = new[] { (new Vector2(800f, 1035f), 1f, 0f), (new Vector2(250f, 700f), 1.25f, 4f), (new Vector2(640f, 1270f), 0.8f, 8f) };
             foreach (var (spot, s, shift) in spots)
                 for (int k = 0; k < 3; k++)
                 {
