@@ -88,24 +88,25 @@ namespace SomeGame.UI
             return 1f + t * t * ((s + 1f) * t + s);
         }
 
-        // A race still in the making: its number on a greyed-out badge, nothing to tap.
+        // A race still in the making: it looks like any open race (its number, empty stars), nothing to tap yet.
         void BindSoon(string label)
         {
-            face.color = Theme.Stone;
+            face.color = Theme.Orange;
             ring.gameObject.SetActive(true);
-            ring.color = Theme.StoneDark;
+            ring.color = Theme.White;
             dashedRing.gameObject.SetActive(false);
             shadow.gameObject.SetActive(true);
-            shadow.color = Theme.StoneDark;
+            shadow.color = Theme.OrangeDeep;
             number.gameObject.SetActive(true);
             number.text = label;
-            number.color = Theme.StoneDark;
+            number.color = Theme.White;
             lockIcon.gameObject.SetActive(false);
-            starsPill.SetActive(false);
+            starsPill.SetActive(true);
+            foreach (var star in stars) star.color = Theme.WithAlpha(Theme.Stone, 0.3f);
             requirement.SetActive(false);
             (captionRoot != null ? captionRoot : caption.gameObject).SetActive(false);
             selection.SetActive(false);
-            _targetScale = 0.85f;
+            _targetScale = 1f;
             if (!_scaled) { _scale = _targetScale; _scaled = true; if (!_manual && _appearAt < 0f) transform.localScale = Vector3.one * _scale; }
             _wasSelected = false;
             button.interactable = false;

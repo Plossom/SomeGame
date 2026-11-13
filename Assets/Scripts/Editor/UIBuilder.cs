@@ -174,7 +174,8 @@ namespace SomeGame.EditorTools
             var ambienceComp = ambience.gameObject.AddComponent<MapAmbience>();
             Configure(ambienceComp, ("cloud", Sprite("MapCloud")), ("bird", Sprite("MapBird")), ("balloon", Sprite("MapBalloon")),
                 ("sparkle", Sprite("Sparkle")), ("puff", Sprite("Smoke")), ("chair", Sprite("LiftChair")),
-                ("fisher", Sprite("MapFisher")), ("rowboat", Sprite("MapRowboat")), ("ring", Sprite("Ring")), ("fish", Sprite("Fish")));
+                ("fisher", Sprite("MapFisher")), ("rowboat", Sprite("MapRowboat")), ("ring", Sprite("Ring")), ("fish", Sprite("Fish")),
+                ("sailboat", Sprite("MapSailboat")), ("seaplane", Sprite("MapSeaplane")), ("jetski", Sprite("MapJetski")), ("whaleTail", Sprite("MapWhaleTail")));
             var node = BuildNode(world);
             var lockedPage = BuildLockedPage(map);
             var car = At("Car", world, Vector2.zero, Vector2.zero, new Vector2(64f, 112f));

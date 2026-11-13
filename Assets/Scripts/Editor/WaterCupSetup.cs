@@ -39,7 +39,7 @@ namespace SomeGame.EditorTools
             cup.displayName = "WATER CUP";
             cup.races = catalog;
             cup.icon = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/CupWater.png");
-            cup.accent = new Color(1f, 0.42f, 0.32f);
+            cup.accent = new Color(1f, 0.31f, 0.53f); // hibiscus pink
             cup.look = CupLook.Water;
             var map = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/MapWater.png");
             if (map != null) cup.mapBackground = map;

@@ -24,6 +24,11 @@ namespace SomeGame.UI
         [SerializeField] Sprite rowboat;
         [SerializeField] Sprite ring;
         [SerializeField] Sprite fish;
+        [Header("The Water Cup's sea")]
+        [SerializeField] Sprite sailboat;
+        [SerializeField] Sprite seaplane;
+        [SerializeField] Sprite jetski;
+        [SerializeField] Sprite whaleTail;
 
         readonly List<Action<float>> _animations = new();
 
@@ -50,6 +55,11 @@ namespace SomeGame.UI
                 Glints(new Vector2(585f, 900f), new Vector2(560f, 420f), 16);
                 Birds();
                 Dolphins();
+                Sailboats();
+                Seaplane();
+                JetSki();
+                Whale();
+                LeapingFish();
             }
             else
             {
@@ -211,6 +221,141 @@ namespace SomeGame.UI
                         }
                     });
                 }
+        }
+
+        // Sailboats rocking at anchor, drifting a little to and fro.
+        void Sailboats()
+        {
+            if (sailboat == null) return;
+            foreach (var (spot, s, shift) in new[] { (new Vector2(100f, 545f), 1.05f, 0f), (new Vector2(1120f, 790f), 0.9f, 2f), (new Vector2(690f, 1345f), 0.65f, 4f), (new Vector2(1070f, 1335f), 0.6f, 1f) })
+            {
+                var rt = Make("Sailboat", sailboat, new Vector2(48f, 60f) * s, Color.white, new Vector2(0.5f, 0.05f));
+                Vector2 at = MapScenery.ToCanvas(spot);
+                _animations.Add(t =>
+                {
+                    rt.anchoredPosition = at + new Vector2(Mathf.Sin(t * 0.12f + shift) * 26f * s, Mathf.Sin(t * 1.1f + shift) * 1.5f);
+                    rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(t * 0.9f + shift) * 4f);
+                });
+            }
+        }
+
+        // Now and then a seaplane flies across the sky.
+        void Seaplane()
+        {
+            if (seaplane == null) return;
+            var rt = Make("Seaplane", seaplane, new Vector2(84f, 42f), Color.white, new Vector2(0.5f, 0.5f));
+            _animations.Add(t =>
+            {
+                float p = Mathf.Repeat(t + 6f, 26f) / 11f;
+                if (p > 1f) { rt.anchoredPosition = new Vector2(-400f, 0f); return; }
+                rt.anchoredPosition = new Vector2(Mathf.Lerp(-100f, MapLayout.Size.x + 100f, p), SkyY + 90f + p * 40f + Mathf.Sin(t * 2f) * 3f);
+                rt.localRotation = Quaternion.Euler(0f, 0f, 3f + Mathf.Sin(t * 2f) * 2f);
+            });
+        }
+
+        // A jet skier racing round a loop just off the beach, foam rings in its wake.
+        void JetSki()
+        {
+            if (jetski == null) return;
+            Vector2 centre = new(640f, 215f), radii = new(70f, 16f);
+            var foam = new List<(RectTransform rt, UnityEngine.UI.Image image, float shift)>();
+            for (int i = 0; i < 6; i++)
+            {
+                var f = Make("JetFoam", ring, Vector2.one, Color.white, new Vector2(0.5f, 0.5f));
+                foam.Add((f, ImageOf(f), i / 6f));
+            }
+            var rt = Make("JetSki", jetski, new Vector2(40f, 25f), Color.white, new Vector2(0.5f, 0.3f));
+            const float period = 6f;
+            Vector2 At(float t)
+            {
+                float a = t / period * Mathf.PI * 2f;
+                return MapScenery.ToCanvas(centre + new Vector2(Mathf.Cos(a) * radii.x, Mathf.Sin(a) * radii.y));
+            }
+            _animations.Add(t =>
+            {
+                Vector2 p = At(t), ahead = At(t + 0.05f);
+                rt.anchoredPosition = p;
+                bool right = ahead.x >= p.x;
+                rt.localScale = new Vector3(right ? 1f : -1f, 1f, 1f);
+                rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(t * 6f) * 4f);
+                foreach (var (f, image, shift) in foam)
+                {
+                    float age = Mathf.Repeat(t / 1.2f + shift, 1f);
+                    f.anchoredPosition = At(t - age * 1.2f);
+                    f.sizeDelta = new Vector2(Mathf.Lerp(6f, 30f, age), Mathf.Lerp(3f, 12f, age));
+                    image.color = new Color(1f, 1f, 1f, 0.7f * (1f - age));
+                }
+            });
+        }
+
+        // A whale far out: a spout of spray, then its tail rises and slips back under.
+        void Whale()
+        {
+            if (whaleTail == null) return;
+            Vector2 at = MapScenery.ToCanvas(new Vector2(1075f, 1300f));
+            var tail = Make("WhaleTail", whaleTail, new Vector2(52f, 39f), Color.white, new Vector2(0.5f, 0.05f));
+            var spray = new List<(RectTransform rt, UnityEngine.UI.Image image, float shift)>();
+            for (int i = 0; i < 5; i++)
+            {
+                var p = Make("Spout", puff, Vector2.one, Color.white, new Vector2(0.5f, 0.5f));
+                spray.Add((p, ImageOf(p), i / 5f));
+            }
+            var ripple = Make("WhaleRipple", ring, Vector2.one, Color.white, new Vector2(0.5f, 0.5f));
+            var rippleImage = ImageOf(ripple);
+            _animations.Add(t =>
+            {
+                float c = Mathf.Repeat(t + 3f, 15f);
+                // The spout (0..2 s): puffs shooting up and spreading.
+                foreach (var (p, image, shift) in spray)
+                {
+                    float u = (c - shift * 0.5f) / 1.4f;
+                    bool on = u >= 0f && u <= 1f;
+                    p.gameObject.SetActive(on);
+                    if (!on) continue;
+                    p.anchoredPosition = at + new Vector2(-20f + Mathf.Sin(shift * 9f) * 6f * u, 60f * u);
+                    p.sizeDelta = Vector2.one * Mathf.Lerp(6f, 22f, u);
+                    image.color = new Color(1f, 1f, 1f, 0.85f * (1f - u));
+                }
+                // The tail (4..7 s): rises, holds, slips under with a ripple.
+                float k = (c - 4f) / 3f;
+                bool up = k >= 0f && k <= 1f;
+                tail.gameObject.SetActive(up);
+                if (up)
+                {
+                    float h = Mathf.Sin(k * Mathf.PI);
+                    tail.localScale = new Vector3(1f, Mathf.Clamp01(h * 1.3f), 1f);
+                    tail.anchoredPosition = at;
+                }
+                float r = (c - 4f) / 3.5f;
+                bool ringOn = r >= 0f && r <= 1f;
+                ripple.gameObject.SetActive(ringOn);
+                if (ringOn)
+                {
+                    ripple.anchoredPosition = at;
+                    ripple.sizeDelta = new Vector2(Mathf.Lerp(20f, 90f, r), Mathf.Lerp(8f, 30f, r));
+                    rippleImage.color = new Color(1f, 1f, 1f, 0.6f * (1f - r));
+                }
+            });
+        }
+
+        // Little orange fish leaping out by the reefs.
+        void LeapingFish()
+        {
+            if (fish == null) return;
+            foreach (var (spot, shift) in new[] { (new Vector2(120f, 790f), 0f), (new Vector2(995f, 850f), 2.3f), (new Vector2(1075f, 310f), 4.1f) })
+            {
+                var rt = Make("Fish", fish, new Vector2(7f, 14f), Hex("FF8A4C"), new Vector2(0.5f, 0.5f));
+                Vector2 from = MapScenery.ToCanvas(spot);
+                _animations.Add(t =>
+                {
+                    float u = Mathf.Repeat(t + shift, 5f) / 0.8f;
+                    bool on = u <= 1f;
+                    rt.gameObject.SetActive(on);
+                    if (!on) return;
+                    rt.anchoredPosition = from + new Vector2(28f * u, Mathf.Sin(u * Mathf.PI) * 22f);
+                    rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(30f, -150f, u));
+                });
+            }
         }
 
         // A hot-air balloon drifting slowly across, bobbing.

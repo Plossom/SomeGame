@@ -98,7 +98,8 @@ namespace SomeGame.EditorTools
                 // Warm at the horizon, clear blue above, a big sun on the right with a soft glow.
                 float t = Mathf.InverseLerp(Horizon, 1948f, y);
                 Color sky = Color.Lerp(Hex("FFE8C2"), Hex("6FC6EE"), Mathf.SmoothStep(0f, 1f, Mathf.Pow(t, 0.7f)));
-                float sun = Circle(x, y, 890f, 1610f, 52f);
+                // (the picture is stretched upward by Stretch: squashed here, the sun shows round)
+                float sun = Sdf.Ellipse(x, y, 890f, 1610f, 52f, 52f / Stretch);
                 sky = Over(sky, Hex("FFF4C8"), Gauss(Mathf.Max(0f, sun), 120f) * 0.6f);
                 sky = Over(sky, Hex("FFF6D2"), Cov(sun));
                 sky = WaterClouds(sky, x, y);
@@ -151,7 +152,7 @@ namespace SomeGame.EditorTools
             }
             // The beach along the bottom right (the lane comes in over open water on the left): wet sand, a foam
             // line, dry sand; the shore curves away out of the picture to the left.
-            float shore = y - (110f + 24f * Mathf.Sin(x / 95f + 1f) + 10f * Mathf.Sin(x / 37f) - Mathf.Pow(Mathf.Max(0f, 330f - x) / 330f, 1.6f) * 300f);
+            float shore = y - (108f + 22f * Mathf.Sin(x / 95f + 1f) + 9f * Mathf.Sin(x / 37f) - Mathf.Pow(Mathf.Max(0f, 140f - x) / 140f, 2f) * 40f);
             sea = Over(sea, Hex("E2C58E"), Cov(shore + 8f));
             sea = Over(sea, Color.white, Cov(Mathf.Abs(shore + 4f) - 3f) * 0.9f);
             sea = Over(sea, Hex("F6E2B2"), Cov(shore + 16f));
@@ -332,10 +333,13 @@ namespace SomeGame.EditorTools
             items.Add((jetty.y, () => Jetty(jetty, 1.5f)));
 
             // The beach in front (bottom right): palms, umbrellas and a towel or two.
-            foreach (var (p, s) in new[] { (new Vector2(1150f, 50f), 2.3f), (new Vector2(820f, 20f), 1.7f), (new Vector2(620f, 15f), 1.4f) })
+            foreach (var (p, s) in new[] { (new Vector2(1150f, 50f), 2.3f), (new Vector2(820f, 20f), 1.7f), (new Vector2(620f, 15f), 1.4f), (new Vector2(380f, 10f), 1.3f) })
                 items.Add((p.y, () => MapPalm(p, s, false)));
-            foreach (var p in new[] { new Vector2(700f, 55f), new Vector2(900f, 75f), new Vector2(1060f, 30f) })
+            foreach (var p in new[] { new Vector2(700f, 55f), new Vector2(900f, 75f), new Vector2(1060f, 30f), new Vector2(200f, 50f), new Vector2(480f, 40f) })
                 items.Add((p.y, () => BeachUmbrella(p, SizeAt(p.y) * 1.4f)));
+            // A sandcastle and a beach ball on the sand at the left.
+            items.Add((30f, () => Sandcastle(new Vector2(90f, 30f), 1.2f)));
+            items.Add((60f, () => { Ellipse(new Vector2(300f, 52f), 10f, 3f, new Color(0.4f, 0.3f, 0.1f, 0.2f)); Disc(new Vector2(298f, 62f), 10f, Hex("FF5A4E")); Disc(new Vector2(298f, 62f), 6f, Color.white); Disc(new Vector2(298f, 62f), 3f, Hex("2EC4B6")); }));
 
             // The horizon: a chain of little atolls with palms all along it, like the far forests of the other maps;
             // the lane winds in between them and is lost behind the one in front of its end.
@@ -344,8 +348,14 @@ namespace SomeGame.EditorTools
             var spots = new List<(Vector2 c, float rx, float ry)>
             {
                 (laneEnd + new Vector2(-4f, 10f), 70f, 14f), // over the lane's end, hiding it
-                (laneEnd + new Vector2(-125f, 12f), 48f, 5f),
-                (laneEnd + new Vector2(125f, 16f), 52f, 5f),
+                (laneEnd + new Vector2(-125f, 12f), 48f, 6.5f),
+                (laneEnd + new Vector2(125f, 16f), 52f, 6.5f),
+                // and more round and behind race 8
+                (laneEnd + new Vector2(-60f, 46f), 50f, 6.5f),
+                (laneEnd + new Vector2(72f, 50f), 56f, 6.5f),
+                (laneEnd + new Vector2(-200f, 30f), 44f, 6f),
+                (laneEnd + new Vector2(210f, 36f), 46f, 6f),
+                (laneEnd + new Vector2(6f, 76f), 64f, 6f),
             };
             // Two rows: the far one right on the horizon, a closer one of bigger islands in front of it.
             for (float ax = -20f; ax < 1200f; ax += 70f + (float)atolls.NextDouble() * 40f)
@@ -358,7 +368,7 @@ namespace SomeGame.EditorTools
             }
             foreach (var (c, rx, ry) in spots)
             {
-                int count = 2 + atolls.Next(3) + (ry > 6f ? 2 : 0);
+                int count = 2 + atolls.Next(3) + (ry > 6f ? 3 : 0);
                 var tops = new List<(Vector2, bool)>();
                 for (int k = 0; k < count; k++) tops.Add((c + new Vector2((k - (count - 1) * 0.5f) * rx * 0.45f + (float)atolls.NextDouble() * 6f, ry * 0.3f), atolls.NextDouble() < 0.5));
                 items.Add((c.y + 1f, () =>
@@ -454,6 +464,19 @@ namespace SomeGame.EditorTools
             Shape(Box(p + new Vector2(0, 9 * s), 12 * s), (x, y) => RoundRect(x, y, p.x, p.y + 9 * s, 6 * s, 9 * s, 5 * s), red ? Hex("E8423A") : Color.white);
             Rect(p + new Vector2(0, 9 * s), 6 * s, 2 * s, red ? Color.white : Hex("E8423A"));
             Shape(Box(p + new Vector2(0, 9 * s), 12 * s), (x, y) => Shell(RoundRect(x, y, p.x, p.y + 9 * s, 6 * s, 9 * s, 5 * s), 1f), SeaLine);
+        }
+
+        static void Sandcastle(Vector2 p, float s)
+        {
+            Ellipse(p + new Vector2(6 * s, 0), 34 * s, 7 * s, new Color(0.4f, 0.3f, 0.1f, 0.2f));
+            Rect(p + new Vector2(0, 12 * s), 26 * s, 12 * s, Hex("E2C58E"));
+            foreach (float fx in new[] { -18f, 0f, 18f })
+            {
+                Rect(p + new Vector2(fx * s, 30 * s), 7 * s, 9 * s, Hex("EED7A1"));
+                for (int k = -1; k <= 1; k += 2) Rect(p + new Vector2((fx + k * 4f) * s, 41 * s), 2 * s, 2.5f * s, Hex("EED7A1"));
+            }
+            Rect(p + new Vector2(0, 52 * s), 0.8f * s, 10 * s, Hex("6B4A2E"));
+            Poly(new[] { new Vector2(p.x + 0.8f * s, p.y + 62 * s), new Vector2(p.x + 12 * s, p.y + 58 * s), new Vector2(p.x + 0.8f * s, p.y + 54 * s) }, Hex("FF4F86"));
         }
 
         // A green cliff with a waterfall pouring into the sea, mist at its foot.

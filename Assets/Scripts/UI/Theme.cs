@@ -34,11 +34,11 @@ namespace SomeGame.UI
             Stone = Hex("CCD8E4"), StoneDark = Hex("7B8CA1"), Leaf = Hex("6FA7B8"),
         };
 
-        /// <summary>Sunny lagoon: sea-foam white plates, deep sea navy, coral buttons, sunshine yellow, turquoise.</summary>
+        /// <summary>Sunny lagoon: sea-foam white plates, deep sea navy, hibiscus pink buttons, sunshine yellow, turquoise.</summary>
         public static readonly Palette Water = new()
         {
             Cream = Hex("ECFAF7"), CreamDark = Hex("C6EBE6"), Ink = Hex("0B3A57"), InkSoft = Hex("176284"),
-            Orange = Hex("FF6B52"), OrangeDeep = Hex("C2412E"), Amber = Hex("FFD24D"), Rust = Hex("0F86A8"),
+            Orange = Hex("FF4F86"), OrangeDeep = Hex("C21F5B"), Amber = Hex("FFD24D"), Rust = Hex("0F86A8"),
             Stone = Hex("D2E5E4"), StoneDark = Hex("7B9CA4"), Leaf = Hex("2EC4B6"),
         };
 

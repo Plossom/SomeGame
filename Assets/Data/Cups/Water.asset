@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: WATER CUP
   races: {fileID: 11400000, guid: 1fcdd65cf2fee432d8abac7cefcb4c81, type: 2}
   icon: {fileID: 21300000, guid: 72c55e762a67246beada00e8cb9e64c1, type: 3}
-  accent: {r: 1, g: 0.42, b: 0.32, a: 1}
+  accent: {r: 1, g: 0.31, b: 0.53, a: 1}
   look: 2
   mapBackground: {fileID: 21300000, guid: cb920d2598e894e47a12812f8f7b783c, type: 3}
   starsRequired: 40
