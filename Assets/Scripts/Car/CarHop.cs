@@ -72,6 +72,9 @@ namespace SomeGame.Car
 
         void Hop() => _time = 0f;
 
+        /// <summary>How high the water lifts a car at a position (0 sea level .. 1 a roof's height), or null.</summary>
+        public static System.Func<Vector2, float> Lift;
+
         // Up on the roofs the car is a bit bigger (closer to the camera); it rests on the roof, so its shadow
         // falls right under it as on the road.
         Vector3 BaseScale => Vector3.Scale(_visualScale * Mathf.Lerp(1f, roofScale, _elevation), new Vector3(1f - wallSquash * _tilt, 1f, 1f));
@@ -81,7 +84,9 @@ namespace SomeGame.Car
         {
             // Upstairs in a house the car rests on that floor, so it looks the same as downstairs.
             bool up = _sensor != null && (_sensor.Elevated || _sensor.Aboard || _sensor.OnViaduct); // on the roofs, on a train, on a viaduct
-            _elevation = Mathf.MoveTowards(_elevation, up ? 1f : 0f, Time.deltaTime * 4f);
+            // Lifted by the water (a lock staircase): partly up.
+            float lift = Lift != null ? Lift(transform.position) : 0f;
+            _elevation = Mathf.MoveTowards(_elevation, up ? 1f : lift, Time.deltaTime * 4f);
             // On a banked wall the car leans on its side, more the higher up it rides.
             float lean = _sensor != null && _sensor.OnBank ? Mathf.Lerp(0.5f, 1f, _sensor.BankHeight) : 0f;
             _tilt = Mathf.MoveTowards(_tilt, lean, Time.deltaTime * 5f);

@@ -74,7 +74,7 @@ namespace SomeGame.Track
             }
             _ringSprite = RadialSprite(64, (d) => Mathf.Max(Mathf.Clamp01(1f - Mathf.Abs(d - 0.84f) / 0.16f), 0.28f * Mathf.Clamp01((0.8f - d) / 0.1f)));
             _discSprite = RadialSprite(64, (d) => Mathf.Clamp01(1f - d) * Mathf.Clamp01(1f - d));
-            if (_camera != null) _blizzard = Blizzard(_camera.transform);
+            if (_camera != null && layout.biome != TrackLayout.Biome.Lagoon) _blizzard = Blizzard(_camera.transform); // (no snow on the sea: only its whirlpools)
             _burst = Burst();
             BuildBolt();
             foreach (var span in layout.twisters) BuildTwister(span);

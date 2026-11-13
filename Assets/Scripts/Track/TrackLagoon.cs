@@ -119,7 +119,7 @@ namespace SomeGame.Track
                 _swells.Add((s, crests));
             }
             foreach (float d in layout.footbridges) BuildBridge(path, d);
-            foreach (var gap in layout.gaps) if (!gap.hidden) { if (gap.barge) BuildBarge(path, gap); else BuildSandbar(path, gap); }
+            foreach (var gap in layout.gaps) if (!gap.hidden) { if (gap.barge) BuildBarge(path, gap); else if (!gap.drop) BuildSandbar(path, gap); }
             if (Application.isPlaying)
             {
                 _cars = FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None);
@@ -155,6 +155,7 @@ namespace SomeGame.Track
             if (SignedArea(shore) < 0f) shore.Reverse();
             _shores.Add(shore);
             if (island.kind == TrackLayout.IslandKind.Quay) { BuildQuay(island, shore, index); return; }
+            if (island.kind == TrackLayout.IslandKind.Cliff) { BuildCliff(island, shore, index); return; }
             // Pale shallows fading out round the shore, then a ring of foam, the sand, the jungle (or rock) inside.
             Mesh("IslandHalo", shallows, HaloOrder, Ring(shore, 0f, 5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
             Mesh("IslandFoam", foam, FoamOrder, Ring(shore, -0.4f, 1.4f, Color.white, Color.white, 1f, true));
@@ -174,6 +175,25 @@ namespace SomeGame.Track
                 go.transform.SetParent(transform, false);
                 var points = Offset(shore, -0.5f);
                 go.GetComponent<PolygonCollider2D>().points = points.ToArray();
+                _parts.Add(go);
+            }
+        }
+
+        // A cliff on a stormy coast: dark wet rock dropping into the sea (a deep shadow on the water at its foot, surf
+        // breaking along it), rough grass on top running out to the rock at the edge.
+        void BuildCliff(TrackLayout.Island island, List<Vector2> shore, int index)
+        {
+            Mesh("CliffShadow", plain, HaloOrder, Ring(shore, 0f, 4f, new Color(0f, 0.04f, 0.08f, 0.55f), new Color(0f, 0.04f, 0.08f, 0f), 1f));
+            Mesh("CliffSurf", foam, FoamOrder, Ring(shore, -0.3f, 1.6f, Color.white, Color.white, 1f, true));
+            Mesh("CliffTop", jungle, SandOrder, Fill(shore, new Color(0.62f, 0.72f, 0.6f), 1f / 4f));
+            Mesh("CliffRock", plain, JungleOrder, Ring(shore, -island.beach, 0f, new Color(0.25f, 0.27f, 0.3f, 0f), new Color(0.25f, 0.27f, 0.3f), 1f));
+            Mesh("CliffEdge", plain, JungleOrder + 1, Ring(shore, -1.1f, 0f, new Color(0.17f, 0.18f, 0.21f), new Color(0.12f, 0.13f, 0.15f), 1f));
+            BuildDecor(island, shore, Offset(shore, -1.2f), index);
+            if (Application.isPlaying)
+            {
+                var go = new GameObject("CliffShore", typeof(PolygonCollider2D)) { hideFlags = HideFlags.DontSave };
+                go.transform.SetParent(transform, false);
+                go.GetComponent<PolygonCollider2D>().points = Offset(shore, -0.5f).ToArray();
                 _parts.Add(go);
             }
         }
@@ -313,7 +333,7 @@ namespace SomeGame.Track
                 Put(random.Next(3) == 0 ? "BeachBar" : random.Next(2) == 0 ? "Umbrella" : "Hut", p, R(5.5f, 7f), Mathf.Atan2(normal.y, normal.x) - Mathf.PI * 0.5f);
                 h++;
             }
-            string[] green = island.kind == TrackLayout.IslandKind.Rock ? new[] { "Rock", "Bush", "Rock" } : new[] { "Palm", "PalmTall", "PalmPair", "Palm", "Bush", "Flowers" };
+            string[] green = island.kind is TrackLayout.IslandKind.Rock or TrackLayout.IslandKind.Cliff ? new[] { "Rock", "Bush", "Rock" } : new[] { "Palm", "PalmTall", "PalmPair", "Palm", "Bush", "Flowers" };
             for (int n = 0, tries = 0; n < island.palms && tries < island.palms * 60; tries++)
             {
                 var p = new Vector2(R(bounds.xMin, bounds.xMax), R(bounds.yMin, bounds.yMax));
@@ -821,7 +841,7 @@ namespace SomeGame.Track
 
         // ------------------------------------------------------------------ geometry
 
-        static List<Vector2> Smooth(Vector2[] points, int steps)
+        internal static List<Vector2> Smooth(Vector2[] points, int steps)
         {
             var result = new List<Vector2>();
             int n = points.Length;
@@ -837,7 +857,7 @@ namespace SomeGame.Track
             return result;
         }
 
-        static float SignedArea(List<Vector2> poly)
+        internal static float SignedArea(List<Vector2> poly)
         {
             float a = 0f;
             for (int i = 0; i < poly.Count; i++) { var p = poly[i]; var q = poly[(i + 1) % poly.Count]; a += p.x * q.y - q.x * p.y; }
@@ -851,7 +871,7 @@ namespace SomeGame.Track
             return new Vector2(t.y, -t.x); // counter-clockwise loop: outward is to the right
         }
 
-        static List<Vector2> Offset(List<Vector2> poly, float by)
+        internal static List<Vector2> Offset(List<Vector2> poly, float by)
         {
             var result = new List<Vector2>(poly.Count);
             for (int i = 0; i < poly.Count; i++) result.Add(poly[i] + OutwardNormal(poly, i) * by);
@@ -875,7 +895,7 @@ namespace SomeGame.Track
         }
 
         // A strip along the loop from offset a to offset b (outward), coloured from ca to cb across.
-        static Mesh Ring(List<Vector2> poly, float a, float b, Color ca, Color cb, float uvAlong, bool uAcross = false)
+        internal static Mesh Ring(List<Vector2> poly, float a, float b, Color ca, Color cb, float uvAlong, bool uAcross = false)
         {
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
@@ -900,7 +920,7 @@ namespace SomeGame.Track
         }
 
         // The inside of a simple loop (ear clipping), world-mapped UVs.
-        static Mesh Fill(List<Vector2> poly, Color color, float uvScale)
+        internal static Mesh Fill(List<Vector2> poly, Color color, float uvScale)
         {
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();

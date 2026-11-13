@@ -228,7 +228,7 @@ namespace SomeGame.Track
         [Tooltip("Wooden footbridges over the channel (lap distances): you race underneath.")]
         public List<float> footbridges = new();
 
-        public enum IslandKind { Jungle, Sand, Rock, Quay }
+        public enum IslandKind { Jungle, Sand, Rock, Quay, Cliff }
 
         [Serializable]
         public class Island
@@ -325,6 +325,43 @@ namespace SomeGame.Track
             public bool enabled;
             [Tooltip("Lap distances where it touches down and where it lifts off again.")]
             public float from, to;
+        }
+
+        [Header("Coast at night (Water Cup)")]
+        [Tooltip("A rocky coast at night in a gale: a lighthouse beam sweeping a dark sea, headlights, rain and lightning, a tide " +
+                 "rising lap by lap, a staircase of locks up the cliff, a wreck to sail through. The storm breaks on the last lap.")]
+        public Coast coast = new();
+
+        [Serializable]
+        public class Coast
+        {
+            public bool enabled;
+            [Tooltip("Where the lighthouse stands (its beam turns round it).")]
+            public Vector2 lighthouse;
+            [Min(1f)] public float beamPeriod = 7f;
+            [Tooltip("How dark the night is (0 day .. 1 black).")]
+            [Range(0f, 1f)] public float darkness = 0.72f;
+            [Tooltip("The tide flats (outline): dry sand at low tide, flooded by the last lap - then the branch across them opens.")]
+            public Vector2[] flats = { };
+            public int tideBranch = -1;
+            public List<TideRock> rocks = new();
+            [Tooltip("The lock staircase: lap distances of its gates (the water lifts the boats a step at each), and where the top " +
+                     "ends (the cliff edge: from there on the boats are back at sea level).")]
+            public float[] gates = { };
+            public float top;
+            [Min(1f)] public float gatePeriod = 3.6f;
+            [Range(0.2f, 0.9f)] public float gateOpen = 0.55f;
+            [Tooltip("A wrecked ship lying along the channel (lap distance): sail in through its broken side and out at the other end.")]
+            public float wreck = -1f;
+        }
+
+        [Serializable]
+        public class TideRock
+        {
+            public Vector2 position;
+            [Min(0.5f)] public float radius = 1.6f;
+            [Tooltip("Only out of the water before this lap (0 = always).")]
+            [Min(0)] public int untilLap;
         }
 
         [Header("Water, jumps and oil")]

@@ -369,6 +369,19 @@ MonoBehaviour:
     enabled: 1
     from: 180
     to: 245
+  coast:
+    enabled: 0
+    lighthouse: {x: 0, y: 0}
+    beamPeriod: 7
+    darkness: 0.72
+    flats: []
+    tideBranch: -1
+    rocks: []
+    gates: []
+    top: 0
+    gatePeriod: 3.6
+    gateOpen: 0.55
+    wreck: -1
   waterWorld: 0
   biome: 2
   gaps:

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
+  m_Name: Water03
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
+  displayName: Lighthouse Run
+  chapter: "WATER CUP \xB7 RACE 3"
+  track: {fileID: 11400000, guid: 91c77fe3fb748498f8f7d835128d727d, type: 2}
+  isTutorial: 0
+  isChallenge: 0
+  preview: {fileID: 21300000, guid: 74ea565d13d114042be49faf60cb6169, type: 3}
+  laps: 3
+  description: A wild coast at night in a gale. Only the lighthouse beam and your headlights show the rocks. Brave the whirlpool, race through the sea caves, ride the locks up the cliff and take the Leap of Faith - and the tide rises every lap.
+  difficulty: 4
+  rivalCount: 7
+  rivalSpeedScale: 0.98
+  rivalCornerScale: 1.05
+  starsRequired: 44

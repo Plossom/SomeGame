@@ -26253,6 +26253,7 @@ GameObject:
   - component: {fileID: 1295174596}
   - component: {fileID: 1295174598}
   - component: {fileID: 1295174599}
+  - component: {fileID: 1295174600}
   m_Layer: 0
   m_Name: Track
   m_TagString: Untagged
@@ -26984,6 +26985,24 @@ MonoBehaviour:
   seaplane: {fileID: 21300000, guid: 49808f780f2f649c48351d7105842e71, type: 3}
   screenDrop: {fileID: 21300000, guid: 5cc62b83c99024dde845ffbdda4e1b99, type: 3}
   slideTower: {fileID: 21300000, guid: be3fe65a14893469d8605064b578b892, type: 3}
+--- !u!114 &1295174600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9785d496e830641db9b563a4e0705c9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackCoast
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+  sand: {fileID: 2100000, guid: 3f19bc6965e0e4e628d7ff16959bce6b, type: 2}
+  foamParticles: {fileID: 2100000, guid: e83888ef2dc58433ca63ff64168d23b1, type: 2}
+  wreck: {fileID: 21300000, guid: 30d6097792c164152adfdccb90d1d41d, type: 3}
+  rock: {fileID: 21300000, guid: 37dd280f96b164ea3ab875471dcc964d, type: 3}
 --- !u!1 &1297106806
 GameObject:
   m_ObjectHideFlags: 0

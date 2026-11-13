@@ -93,6 +93,7 @@ namespace SomeGame.EditorTools
                 RenderTexture.active = rt;
                 tex.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
                 tex.Apply();
+                if (layout.coast != null && layout.coast.enabled) Night(tex, layout, cam);
                 RenderTexture.active = previous;
                 Object.DestroyImmediate(rt);
                 string path = $"{Folder}/{level.name}.png";
@@ -114,6 +115,31 @@ namespace SomeGame.EditorTools
             EditorSceneManager.OpenScene(UIBuilder.RaceScenePath);
             Shader.SetGlobalFloat("_LagoonCalm", 0f);
             return "previews: " + log;
+        }
+
+        // A night coast's picture at night too: dark blue, the lighthouse beam sweeping out across the bay.
+        static void Night(Texture2D tex, SomeGame.Track.TrackLayout layout, Camera cam)
+        {
+            int w = tex.width, h = tex.height;
+            var px = tex.GetPixels();
+            float worldH = cam.orthographicSize * 2f, worldW = worldH * w / h;
+            Vector2 origin = (Vector2)cam.transform.position - new Vector2(worldW, worldH) * 0.5f;
+            Vector2 lighthouse = layout.coast.lighthouse;
+            const float beamAngle = -35f;
+            Color night = new(0.03f, 0.07f, 0.16f), beam = new(1f, 0.93f, 0.7f);
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    Vector2 p = origin + new Vector2((x + 0.5f) / w * worldW, (y + 0.5f) / h * worldH), q = p - lighthouse;
+                    float diff = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(q.y, q.x) * Mathf.Rad2Deg, beamAngle));
+                    float lit = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(4f, 8f, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(100f, 200f, q.magnitude)));
+                    lit = Mathf.Max(lit, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(5f, 14f, q.magnitude)));
+                    var c = px[y * w + x];
+                    var dark = Color.Lerp(c, night, 0.62f);
+                    px[y * w + x] = Color.Lerp(dark, Color.Lerp(c, beam, 0.2f), lit * 0.85f);
+                }
+            tex.SetPixels(px);
+            tex.Apply();
         }
     }
 }

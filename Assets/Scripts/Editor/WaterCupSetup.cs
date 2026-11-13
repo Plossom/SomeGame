@@ -22,6 +22,7 @@ namespace SomeGame.EditorTools
             WaterArt.GenerateLagoon();
             WaterArt.GenerateLagoonScenery();
             WaterArt.GenerateHarbour();
+            WaterArt.GenerateCoast();
             ArtGenerator.BuildGarageArt();
             return SetUp();
         }
@@ -35,8 +36,10 @@ namespace SomeGame.EditorTools
             var level = Level("Water01", "Lagoon Loop", layout);
             var harbour = BuildHarborHavoc();
             var level2 = HarbourLevel(harbour);
+            var coast = BuildLighthouseRun();
+            var level3 = CoastLevel(coast);
             var catalog = Asset<LevelCatalog>("Assets/Data/Levels/WaterCatalog.asset");
-            catalog.levels = new List<LevelDefinition> { level, level2 };
+            catalog.levels = new List<LevelDefinition> { level, level2, level3 };
             EditorUtility.SetDirty(catalog);
             var cup = Asset<CupDefinition>("Assets/Data/Cups/Water.asset");
             cup.displayName = "WATER CUP";
@@ -47,7 +50,7 @@ namespace SomeGame.EditorTools
             var map = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/MapWater.png");
             if (map != null) cup.mapBackground = map;
             cup.starsRequired = 40;
-            cup.comingSoonRaces = new List<string> { "Lighthouse Run", "Jungle Rapids", "Pirate Bay", "Coral Coast", "Storm Chasers", "Storm Rally" };
+            cup.comingSoonRaces = new List<string> { "Jungle Rapids", "Pirate Bay", "Coral Coast", "Storm Chasers", "Storm Rally" };
             EditorUtility.SetDirty(cup);
             var list = AssetDatabase.LoadAssetAtPath<CupList>("Assets/Resources/Cups.asset");
             if (!list.cups.Contains(cup)) list.cups.Insert(Mathf.Min(2, list.cups.Count), cup);
@@ -133,6 +136,18 @@ namespace SomeGame.EditorTools
                          ("cruiseShip", "CruiseShip"), ("fireboat", "Fireboat"), ("waterArc", "WaterArc"), ("seaplane", "SeaplaneTop"), ("screenDrop", "ScreenDrop"), ("slideTower", "SlideTower") })
                 hso.FindProperty(field).objectReferenceValue = Sprite(sprite);
             hso.ApplyModifiedPropertiesWithoutUndo();
+
+            // The night coast.
+            var coastPart = Object.FindAnyObjectByType<TrackCoast>(FindObjectsInactive.Include);
+            if (coastPart == null) coastPart = trackObject.gameObject.AddComponent<TrackCoast>();
+            var cso = new SerializedObject(coastPart);
+            cso.FindProperty("track").objectReferenceValue = trackObject;
+            cso.FindProperty("plain").objectReferenceValue = Mat("Plain");
+            cso.FindProperty("sand").objectReferenceValue = Mat("LagoonSandMat");
+            cso.FindProperty("foamParticles").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/BoatFoam.mat");
+            cso.FindProperty("wreck").objectReferenceValue = Sprite("Wreck");
+            cso.FindProperty("rock").objectReferenceValue = Sprite("CoastRock");
+            cso.ApplyModifiedPropertiesWithoutUndo();
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
         }
 
@@ -358,6 +373,119 @@ namespace SomeGame.EditorTools
             return level;
         }
 
+        // ------------------------------------------------------------------ race 3: Lighthouse Run
+
+        static TrackLayout BuildLighthouseRun()
+        {
+            var t = Asset<TrackLayout>("Assets/Data/Tracks/LighthouseRun.asset");
+            t.waypoints = COAST;
+            t.roadWidth = 8f;
+            t.rampWidth = 3.4f;
+            t.widths = new List<TrackLayout.WidthKey>();
+            t.kerbWidth = 0.7f;
+            t.sampleSpacing = 1f;
+            t.checkpointCount = 8;
+            t.boundaryMargin = 28f;
+            t.biome = TrackLayout.Biome.Lagoon;
+            t.vehicle = TrackLayout.Vehicle.Boat;
+            t.sceneryMaterial = Mat("SceneryLagoon");
+            t.skyLife = 0f;
+            var path = new TrackPath(t.waypoints, t.sampleSpacing);
+            Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
+
+            // The cliff (the road runs through it: the sea caves, the locks, the pond on top), its lip over the bay, and
+            // the harbour wall and rocky west shore.
+            t.lagoonIslands = new List<TrackLayout.Island>
+            {
+                new() { points = CLIFFN, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 40, seed = 21 },
+                new() { points = LIP, kind = TrackLayout.IslandKind.Cliff, beach = 3f, palms = 8, seed = 22 },
+                new() { points = SHORE, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 30, seed = 23 },
+            };
+            t.decor = new List<TrackLayout.Decor>
+            {
+                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = new Vector2(-2f, 154f), size = 14f },
+            };
+            // Across the tide flats: only once the tide is in (the last lap).
+            t.branches = new List<TrackLayout.Branch>
+            {
+                new() { kind = TrackLayout.BranchKind.Road, from = 57f, to = 188f, width = 6.5f, openFromLap = 3,
+                        points = new[] { new Vector2(70f, 16f), new Vector2(82f, 36f), new Vector2(94f, 56f) } },
+            };
+            t.coast = new TrackLayout.Coast
+            {
+                enabled = true, lighthouse = new Vector2(-2f, 154f), beamPeriod = 7f, darkness = 0.95f,
+                flats = FLATS, tideBranch = 0,
+                rocks = new List<TrackLayout.TideRock>
+                {
+                    new() { position = At(20f, 8.5f), radius = 1.8f },
+                    new() { position = At(72f, -8.5f), radius = 1.6f, untilLap = 3 },
+                    new() { position = At(140f, 3.2f), radius = 1.4f, untilLap = 3 },
+                    new() { position = At(160f, -3.4f), radius = 1.5f },
+                    new() { position = At(176f, 2.8f), radius = 1.3f, untilLap = 2 },
+                    new() { position = At(400f, 3f), radius = 1.4f, untilLap = 3 },
+                    new() { position = At(462f, -3.2f), radius = 1.5f },
+                    new() { position = At(480f, 8f), radius = 1.8f },
+                    // Either side of the way across the flats.
+                    new() { position = new Vector2(71.8f, 28.6f), radius = 1.5f },
+                    new() { position = new Vector2(80.3f, 23.4f), radius = 1.3f },
+                    new() { position = new Vector2(83.8f, 48.6f), radius = 1.4f },
+                    new() { position = new Vector2(92.3f, 43.4f), radius = 1.5f },
+                },
+                gates = new[] { 258f, 278f, 298f }, top = 368f, gatePeriod = 3.6f, gateOpen = 0.55f,
+                wreck = 430f,
+            };
+            // The sea caves into the cliff, then the Leap of Faith off the cliff edge where the pond spills over.
+            t.caves = new List<TrackLayout.Cave> { new() { branch = -1, from = 208f, to = 242f } };
+            t.gaps = new List<TrackLayout.Gap> { new() { from = 368f, to = 390f, drop = true, slowMotion = true, trickJump = true, tricks = 3 } };
+            // The whirlpool by the reef, the gale's swells on the open sea.
+            t.vortices = new List<TrackLayout.Vortex> { new() { position = At(110f, -17f), radius = 16f, pull = 4f } };
+            t.swells = new List<TrackLayout.Swell> { new() { from = 92f, to = 170f, speed = 8f, period = 3f } };
+            t.currents = new List<TrackLayout.Current>();
+            t.dolphins = new List<float>();
+            t.footbridges = new List<float>();
+            t.geysers = new List<TrackLayout.Geyser>();
+            t.bouncers = new List<TrackLayout.Bouncer>();
+            t.rings = new List<TrackLayout.Ring> { new() { distance = 330f, lateral = 0f } };
+            t.dashPanels = new List<TrackLayout.DashPanel>
+            {
+                new() { distance = 10f, lateral = -1.5f },
+                new() { distance = 320f, lateral = 1.5f },
+                new() { distance = 452f, lateral = 0f },
+            };
+            t.boats = new List<TrackLayout.Boat>
+            {
+                new() { kind = TrackLayout.BoatKind.Trawler, position = new Vector2(150f, 60f), angle = 100f },
+                new() { kind = TrackLayout.BoatKind.Buoy, position = At(124f, 9f) },
+                new() { kind = TrackLayout.BoatKind.Buoy, position = At(445f, 9f) },
+            };
+            t.scenery = new List<TrackScenery.Kind>
+            {
+                new() { name = "Rock", uv = LagoonSheet.Cell("Rock"), count = 12, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(4f, 30f) },
+            };
+            t.lastLapShow = false;
+            t.bakedSignature = null;
+            EditorUtility.SetDirty(t);
+            AssetDatabase.SaveAssets();
+            return t;
+        }
+
+        static LevelDefinition CoastLevel(TrackLayout track)
+        {
+            var level = Asset<LevelDefinition>("Assets/Data/Levels/Water03.asset");
+            level.displayName = "Lighthouse Run";
+            level.chapter = "WATER CUP · RACE 3";
+            level.track = track;
+            level.laps = 3;
+            level.description = "A wild coast at night in a gale. Only the lighthouse beam and your headlights show the rocks. Brave the whirlpool, race through the sea caves, ride the locks up the cliff and take the Leap of Faith - and the tide rises every lap.";
+            level.difficulty = 4;
+            level.rivalCount = 7;
+            level.rivalSpeedScale = 0.98f;
+            level.rivalCornerScale = 1.05f;
+            level.starsRequired = 44;
+            EditorUtility.SetDirty(level);
+            return level;
+        }
+
         static LevelDefinition Level(string file, string title, TrackLayout track)
         {
             var level = Asset<LevelDefinition>($"Assets/Data/Levels/{file}.asset");
@@ -385,5 +513,11 @@ namespace SomeGame.EditorTools
             NORTH = new Vector2[] { new(-70.0f, 215.0f), new(150.0f, 215.0f), new(150.0f, 170.0f), new(141.0f, 122.0f), new(141.0f, 100.2f), new(135.2f, 115.1f), new(126.3f, 127.5f), new(114.3f, 136.8f), new(100.8f, 142.1f), new(91.2f, 142.5f), new(72.3f, 136.8f), new(52.5f, 144.4f), new(32.5f, 145.7f), new(24.8f, 144.1f), new(16.3f, 140.5f), new(2.4f, 129.9f), new(-2.0f, 137.0f), new(-70.0f, 205.0f) },
             TOWN = new Vector2[] { new(40.7f, 132.4f), new(50.2f, 131.0f), new(64.0f, 124.9f), new(71.4f, 123.3f), new(78.5f, 124.1f), new(93.6f, 129.2f), new(99.0f, 128.6f), new(111.2f, 122.7f), new(120.4f, 113.3f), new(125.8f, 103.4f), new(128.6f, 94.1f), new(133.3f, 53.8f), new(132.6f, 35.8f), new(129.5f, 18.0f), new(122.6f, 12.1f), new(114.1f, 7.9f), new(108.0f, 6.9f), new(72.0f, 7.2f), new(72.0f, 5.8f), new(60.9f, 5.0f), new(53.3f, 2.8f), new(44.4f, 5.2f), new(28.5f, 6.7f), new(3.6f, 6.0f), new(-0.8f, 8.2f), new(-5.0f, 12.6f), new(-7.4f, 17.6f), new(-2.5f, 28.0f), new(-1.2f, 34.8f), new(-5.0f, 51.7f), new(-1.6f, 61.1f), new(3.2f, 93.0f), new(3.5f, 104.6f), new(9.9f, 117.5f), new(17.4f, 125.3f), new(29.0f, 131.2f) },
             PIER = new Vector2[] { new(65.2f, -7.3f), new(72.0f, -6.4f), new(108.0f, -7.2f), new(108.0f, -5.5f), new(117.6f, -3.9f), new(121.8f, -1.9f), new(116.0f, -10.4f), new(109.9f, -16.2f), new(103.5f, -19.4f), new(93.8f, -21.4f), new(86.2f, -21.2f), new(80.4f, -19.1f), new(69.4f, -12.1f) };
+
+        static readonly Vector2[] COAST = new Vector2[] { new(0.0f, 0.0f), new(28.0f, -2.0f), new(56.0f, 2.0f), new(84.0f, -2.0f), new(108.0f, 10.0f), new(120.0f, 32.0f), new(118.0f, 58.0f), new(104.0f, 78.0f), new(98.0f, 100.0f), new(92.0f, 120.0f), new(78.0f, 132.0f), new(56.0f, 136.0f), new(32.0f, 136.0f), new(8.0f, 136.0f), new(-14.0f, 132.0f), new(-30.0f, 120.0f), new(-38.0f, 100.0f), new(-40.0f, 76.0f), new(-38.0f, 52.0f), new(-32.0f, 30.0f), new(-22.0f, 12.0f), new(-12.0f, 3.0f) };
+        static readonly Vector2[] CLIFFN = new Vector2[] { new(200.0f, 230.0f), new(200.0f, 96.0f), new(140.0f, 96.0f), new(120.0f, 98.0f), new(104.5f, 102.6f), new(99.3f, 121.3f), new(95.2f, 127.5f), new(89.6f, 133.1f), new(76.0f, 140.1f), new(52.7f, 143.2f), new(11.3f, 143.2f), new(-8.3f, 141.0f), new(-18.9f, 137.5f), new(-29.0f, 131.1f), new(-36.3f, 123.3f), new(-41.4f, 113.2f), new(-60.0f, 110.0f), new(-110.0f, 108.0f), new(-110.0f, 230.0f) },
+            LIP = new Vector2[] { new(89.1f, 107.1f), new(70.0f, 114.0f), new(50.0f, 117.0f), new(10.0f, 118.0f), new(-25.3f, 114.5f), new(-16.6f, 122.8f), new(-4.4f, 127.5f), new(12.9f, 129.3f), new(53.3f, 129.2f), new(70.5f, 127.1f), new(79.2f, 123.4f), new(86.9f, 114.6f) },
+            SHORE = new Vector2[] { new(-60.0f, 60.0f), new(-50.0f, 20.0f), new(-34.0f, 0.0f), new(-14.0f, -8.0f), new(10.0f, -11.0f), new(120.0f, -14.0f), new(150.0f, -24.0f), new(200.0f, -22.0f), new(200.0f, -70.0f), new(-110.0f, -70.0f), new(-110.0f, 108.0f), new(-58.0f, 100.0f) },
+            FLATS = new Vector2[] { new(96.0f, 74.0f), new(98.7f, 73.1f), new(106.5f, 63.1f), new(110.0f, 56.0f), new(110.0f, 32.0f), new(98.0f, 12.0f), new(74.0f, 8.0f), new(70.8f, 6.6f), new(63.2f, 8.3f) };
     }
 }
