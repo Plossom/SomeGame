@@ -54,7 +54,7 @@ namespace SomeGame.EditorTools
             float v = Mathf.Lerp(0.8f, 1f, Mathf.Clamp01(-hull / 14f)) - Mathf.Clamp01((x - 110f) / 60f) * 0.07f;
             c = Over(c, new Color(v, v, v), Fill(hull));
             // The cockpit well, set well back.
-            float well = RoundRect(x, y, 96, 108, 44, 40, 18);
+            float well = RoundRect(x, y, 96, 150, 44, 40, 18);
             c = Over(c, new Color(0.7f, 0.7f, 0.7f), Fill(well));
             c = Over(c, Line, Stroke(well, 2.2f));
             return Over(c, Line, Stroke(hull, 4.5f));
@@ -65,35 +65,39 @@ namespace SomeGame.EditorTools
             Color c = new(0, 0, 0, 0);
             float hull = SpeedHullSdf(x, y);
             // A white racing stripe down the long foredeck, a thin white line along the gunwale.
-            float stripe = Mathf.Max(Mathf.Abs(x - 96f) - 9f + (y - 160f) * 0.045f, 160f - y);
+            float stripe = Mathf.Max(Mathf.Abs(x - 96f) - 9f + (y - 200f) * 0.07f, 200f - y);
             c = Over(c, White(0.95f), Fill(stripe) * Fill(hull + 10f));
             c = Over(c, White(0.85f), Fill(Shell(hull + 6f, 1.6f)) * Mathf.Clamp01((y - 130f) / 30f));
             // Two cleats near the bow (the decals have the foredeck).
             foreach (float cx in new[] { 80f, 112f }) c = Over(c, Hex("C9D3DC"), Fill(RoundRect(x, y, cx, 286, 2.6f, 6, 1.5f)));
             // A low wraparound windscreen in front of the cockpit.
-            float screen = Mathf.Max(Shell(Circle(x, y, 96, 110, 52), 5.5f), 132f - y);
+            float screen = Mathf.Max(Shell(Circle(x, y, 96, 152, 52), 5.5f), 174f - y);
             c = Over(c, Glass, Fill(screen));
-            c = Over(c, White(0.8f), Fill(Capsule(x, y, 66, 150, 80, 156, 1.6f)));
+            c = Over(c, White(0.8f), Fill(Capsule(x, y, 66, 192, 80, 198, 1.6f)));
             c = Over(c, Hex("C9D3DC"), Stroke(screen, 2.2f));
             // Two bucket seats side by side, a bench across the stern; the driver (left) at the wheel.
-            foreach (var (sx, sy, hw, hh) in new[] { (74f, 108f, 17f, 16f), (118f, 108f, 17f, 16f), (96f, 74f, 38f, 10f) })
+            foreach (var (sx, sy, hw, hh) in new[] { (74f, 150f, 17f, 16f), (118f, 150f, 17f, 16f), (96f, 116f, 38f, 10f) })
             {
                 float seat = RoundRect(x, y, sx, sy, hw, hh, 7);
                 c = Over(c, Cushion, Fill(seat));
                 c = Over(c, CushionShade, Fill(RoundRect(x, y, sx, sy - hh * 0.4f, hw - 3, hh * 0.35f, 4)));
                 c = Over(c, Line, Stroke(seat, 2f));
             }
-            float arms = Mathf.Min(Capsule(x, y, 64, 118, 68, 136, 5.5f), Capsule(x, y, 84, 118, 80, 136, 5.5f));
+            float arms = Mathf.Min(Capsule(x, y, 64, 160, 68, 178, 5.5f), Capsule(x, y, 84, 160, 80, 178, 5.5f));
             c = Over(c, Skin, Fill(arms));
             c = Over(c, Line, Stroke(arms, 1.8f));
-            c = Over(c, Motor, Fill(Shell(Circle(x, y, 74, 138, 8), 1.8f)));
-            float shoulders = Ellipse(x, y, 74, 114, 16, 9);
+            c = Over(c, Motor, Fill(Shell(Circle(x, y, 74, 180, 8), 1.8f)));
+            float shoulders = Ellipse(x, y, 74, 156, 16, 9);
             c = Over(c, Hex("FFD24D"), Fill(shoulders));
             c = Over(c, Line, Stroke(shoulders, 1.8f));
-            float helmet = Circle(x, y, 74, 118, 10);
+            float helmet = Circle(x, y, 74, 160, 10);
             c = Over(c, Color.white, Fill(helmet));
-            c = Over(c, Hex("1D2733"), Fill(Mathf.Max(Circle(x, y, 74, 118, 8.5f), 122f - y)));
+            c = Over(c, Hex("1D2733"), Fill(Mathf.Max(Circle(x, y, 74, 160, 8.5f), 164f - y)));
             c = Over(c, Line, Stroke(helmet, 1.8f));
+            // A teak sun deck across the stern behind the bench.
+            float sunDeck = RoundRect(x, y, 96, 72, 44, 18, 6);
+            c = Over(c, Mathf.Repeat(x, 9f) < 1.6f ? Hex("8A5A32") : Hex("B9814D"), Fill(sunDeck));
+            c = Over(c, Line, Stroke(sunDeck, 2f));
             // Twin outboards on the transom.
             foreach (float mx in new[] { 76f, 116f })
             {

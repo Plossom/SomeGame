@@ -40,17 +40,17 @@ namespace SomeGame.EditorTools
         {
             Color c = new(0, 0, 0, 0);
             // An arch across the boat behind the seats, a radar dome on top with its bar.
-            float arch = Mathf.Min(RoundRect(x, y, 96, 138, 58, 7, 3), Mathf.Min(RoundRect(x, y, 40, 138, 6, 12, 3), RoundRect(x, y, 152, 138, 6, 12, 3)));
-            c = Over(c, new Color(0f, 0.05f, 0.1f, 0.3f), Fill(arch + 2f) * Fill(Mathf.Abs(y - 132f) - 10f));
+            float arch = Mathf.Min(RoundRect(x, y, 96, 110, 58, 7, 3), Mathf.Min(RoundRect(x, y, 40, 110, 6, 12, 3), RoundRect(x, y, 152, 110, 6, 12, 3)));
+            c = Over(c, new Color(0f, 0.05f, 0.1f, 0.3f), Fill(arch + 2f) * Fill(Mathf.Abs(y - 104f) - 10f));
             c = Over(c, Hex("E9EEF2"), Fill(arch));
             c = Over(c, Line, Stroke(arch, 2.2f));
-            float dome = Circle(x, y, 96, 138, 16);
+            float dome = Circle(x, y, 96, 110, 16);
             c = Over(c, Color.white, Fill(dome));
-            c = Over(c, Hex("C9D3DC"), Fill(Circle(x, y, 99, 135, 11)));
+            c = Over(c, Hex("C9D3DC"), Fill(Circle(x, y, 99, 107, 11)));
             c = Over(c, Line, Stroke(dome, 2.2f));
-            float bar = RotRect(x, y, 96, 138, 22, 3.5f, 1.5f, 0.6f);
+            float bar = RotRect(x, y, 96, 110, 22, 3.5f, 1.5f, 0.6f);
             c = Over(c, Hex("2A2F36"), Fill(bar));
-            return Over(c, Hex("E5413A"), Fill(Circle(x, y, 96, 138, 3.5f)));
+            return Over(c, Hex("E5413A"), Fill(Circle(x, y, 96, 110, 3.5f)));
         }
 
         static Color SurfboardPixel(float x, float y)
