@@ -34,10 +34,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _CausticScale: 0.4
-    - _Glint: 0.06
+    - _Glint: 0.035
     - _Wobble: 0.012
     m_Colors:
-    - _CausticColor: {r: 1, g: 1, b: 0.92, a: 0.1}
+    - _CausticColor: {r: 1, g: 1, b: 0.92, a: 0.08}
     - _Flow: {r: 0.01, g: 0.006, b: 0.035, a: 0.02}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

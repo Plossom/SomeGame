@@ -41,6 +41,7 @@ namespace SomeGame.EditorTools
             foreach (var guid in AssetDatabase.FindAssets("t:LevelCatalog"))
                 foreach (var l in AssetDatabase.LoadAssetAtPath<LevelCatalog>(AssetDatabase.GUIDToAssetPath(guid)).levels)
                     if (l != null && !levels.Contains(l)) levels.Add(l);
+            Shader.SetGlobalFloat("_LagoonCalm", 1f); // calm lagoon water in the pictures
             var log = new System.Text.StringBuilder();
             foreach (var level in levels)
             {
@@ -111,6 +112,7 @@ namespace SomeGame.EditorTools
             AssetDatabase.SaveAssets();
             // Reopen the scene without saving the temporary changes.
             EditorSceneManager.OpenScene(UIBuilder.RaceScenePath);
+            Shader.SetGlobalFloat("_LagoonCalm", 0f);
             return "previews: " + log;
         }
     }

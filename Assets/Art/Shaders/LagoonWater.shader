@@ -31,6 +31,7 @@ Shader "SomeGame/LagoonWater"
             float4 _MainTex_ST;
             fixed4 _Tint, _CausticColor;
             float _CausticScale, _Wobble, _Glint;
+            float _LagoonCalm; // global: 1 while the track's picture is taken (no light play in the preview)
             float4 _Flow;
 
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; fixed4 color : COLOR; };
@@ -55,10 +56,10 @@ Shader "SomeGame/LagoonWater"
                 float a = tex2D(_Caustics, cuv + wob * 2.0 + t * _Flow.zw).r;
                 float b = tex2D(_Caustics, cuv * 1.13 + float2(0.37, 0.61) - wob * 1.5 - t * _Flow.zw * 0.83).r;
                 float caustic = pow(saturate(a * b * 1.6), 1.4);
-                col.rgb += _CausticColor.rgb * caustic * _CausticColor.a;
+                col.rgb += _CausticColor.rgb * caustic * _CausticColor.a * (1.0 - 0.85 * _LagoonCalm);
                 // Glints: where both layers peak, a short bright flash.
                 float glint = saturate((a * b - 0.8) * 8.0) * pow(0.5 + 0.5 * sin(t * 2.6 + (a - b) * 14.0), 6.0);
-                col.rgb += glint * _Glint;
+                col.rgb += glint * _Glint * (1.0 - _LagoonCalm);
                 return col;
             }
             ENDCG

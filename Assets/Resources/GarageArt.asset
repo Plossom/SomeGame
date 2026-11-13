@@ -450,7 +450,7 @@ MonoBehaviour:
     bounds:
       serializedVersion: 2
       x: 30
-      y: 118
+      y: 90
       width: 132
       height: 40
   - id: top.surfboard
