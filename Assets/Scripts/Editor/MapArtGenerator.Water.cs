@@ -149,8 +149,9 @@ namespace SomeGame.EditorTools
                     sea = Over(sea, Hex("FFF4D0"), Cov(glitter) * 0.8f * fade);
                 }
             }
-            // The beach along the bottom: wet sand, a foam line, dry sand.
-            float shore = y - (110f + 24f * Mathf.Sin(x / 95f + 1f) + 10f * Mathf.Sin(x / 37f));
+            // The beach along the bottom right (the lane comes in over open water on the left): wet sand, a foam
+            // line, dry sand; the shore curves away out of the picture to the left.
+            float shore = y - (110f + 24f * Mathf.Sin(x / 95f + 1f) + 10f * Mathf.Sin(x / 37f) - Mathf.Pow(Mathf.Max(0f, 520f - x) / 520f, 1.6f) * 300f);
             sea = Over(sea, Hex("E2C58E"), Cov(shore + 8f));
             sea = Over(sea, Color.white, Cov(Mathf.Abs(shore + 4f) - 3f) * 0.9f);
             sea = Over(sea, Hex("F6E2B2"), Cov(shore + 16f));
@@ -330,11 +331,30 @@ namespace SomeGame.EditorTools
             var jetty = new Vector2(980f, 105f);
             items.Add((jetty.y, () => Jetty(jetty, 1.5f)));
 
-            // The beach in front: palms, umbrellas and a towel or two.
-            foreach (var (p, s) in new[] { (new Vector2(40f, 40f), 2.3f), (new Vector2(1150f, 60f), 2f), (new Vector2(250f, 20f), 1.6f), (new Vector2(700f, 30f), 1.5f) })
-                items.Add((p.y, () => MapPalm(p, s, true)));
-            foreach (var p in new[] { new Vector2(470f, 50f), new Vector2(580f, 70f), new Vector2(840f, 40f) })
+            // The beach in front (bottom right): palms, umbrellas and a towel or two.
+            foreach (var (p, s) in new[] { (new Vector2(1150f, 50f), 2.3f), (new Vector2(820f, 20f), 1.7f), (new Vector2(620f, 15f), 1.4f) })
+                items.Add((p.y, () => MapPalm(p, s, false)));
+            foreach (var p in new[] { new Vector2(700f, 55f), new Vector2(900f, 75f), new Vector2(1060f, 30f) })
                 items.Add((p.y, () => BeachUmbrella(p, SizeAt(p.y) * 1.4f)));
+
+            // The horizon: a chain of little atolls with palms all along it, like the far forests of the other maps.
+            var atolls = new System.Random(5);
+            for (float ax = -20f; ax < 1200f; ax += 95f + (float)atolls.NextDouble() * 50f)
+            {
+                var c = new Vector2(ax, Horizon - 22f - (float)atolls.NextDouble() * 16f);
+                float rx = 34f + (float)atolls.NextDouble() * 26f;
+                int count = 2 + atolls.Next(3);
+                var tops = new List<(Vector2, bool)>();
+                for (int k = 0; k < count; k++) tops.Add((c + new Vector2((k - (count - 1) * 0.5f) * rx * 0.5f + (float)atolls.NextDouble() * 6f, 1f), atolls.NextDouble() < 0.5));
+                items.Add((c.y + 1f, () =>
+                {
+                    Ellipse(c + new Vector2(0f, -1f), rx + 12f, 6f, new Color(0.6f, 0.95f, 0.88f, 0.7f));
+                    Ellipse(c, rx + 3f, 4.5f, new Color(1f, 1f, 1f, 0.9f));
+                    Ellipse(c, rx, 3.6f, Hex("F3DDA8"));
+                    Ellipse(c + new Vector2(0f, 2f), rx * 0.7f, 2.6f, Hex("3E9B4F"));
+                }));
+                foreach (var (p, lean) in tops) items.Add((p.y, () => MapPalm(p, SizeAt(p.y) * 0.62f, lean)));
+            }
 
             items.Sort((a, b) => b.y.CompareTo(a.y)); // far (high) first
             foreach (var (_, draw) in items) draw();
