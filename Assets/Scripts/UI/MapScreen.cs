@@ -260,10 +260,7 @@ namespace SomeGame.UI
                 // A locked cup: its vehicle a dark silhouette with a lock; a cup still to come: a question mark, no garage.
                 bool soon = _cup != null && CupList.IsComingSoon(_cup);
                 bool locked = !soon && _cup != null && !CupList.IsUnlocked(_cup);
-                garageCar.gameObject.SetActive(!soon);
-                foreach (var image in garageCar.GetComponentsInChildren<UnityEngine.UI.Image>(true))
-                    if (image.name != "Shadow" && image.sprite != null && locked) image.color = new Color(0.05f, 0.1f, 0.14f, 0.85f);
-                if (!locked && !soon) garageCar.Dress(look);
+                garageCar.gameObject.SetActive(!soon && !locked); // (just the lock, or the question mark)
                 if (garageButton != null)
                 {
                     garageButton.interactable = !soon;

@@ -470,7 +470,7 @@ namespace SomeGame.UI
             car.Dress(look);
             // A vehicle whose cup is still locked: a dark silhouette with a lock, nothing to choose.
             Silhouette(car, !vehicleOpen);
-            LockMark(carRoot, !vehicleOpen, 150f);
+            LockMark(carRoot, !vehicleOpen, 220f);
             tray.gameObject.SetActive(vehicleOpen);
             buildName.gameObject.SetActive(false);
             hint.gameObject.SetActive(false);
@@ -491,6 +491,7 @@ namespace SomeGame.UI
                 badgeCar.Show(Garage.Vehicles[i]);
                 badgeCar.Dress(CarLook.For(Garage.Vehicles[i]));
                 Silhouette(badgeCar, !Garage.VehicleOpen(Garage.Vehicles[i]));
+                LockMark(_badges[i], !Garage.VehicleOpen(Garage.Vehicles[i]), 56f, dark: true);
             }
             Peek(peekLeft, Neighbour(-1));  // above
             Peek(peekRight, Neighbour(1)); // below
@@ -685,25 +686,19 @@ namespace SomeGame.UI
             icon.Show(vehicle);
             icon.Dress(CarLook.For(vehicle));
             Silhouette(icon, !Garage.VehicleOpen(vehicle));
+            LockMark(peek, !Garage.VehicleOpen(vehicle), 90f);
             peek.Find("Name").gameObject.SetActive(false); // the page title names the vehicle; the peek just shows it
         }
 
-        static readonly Color SilhouetteColor = new(0.05f, 0.1f, 0.14f, 0.85f);
-
-        // A locked vehicle shows only its dark outline (its own colours come back once open).
+        // A locked vehicle isn't shown at all (just a lock in its place, see LockMark).
         static void Silhouette(VehicleIcon icon, bool on)
         {
             foreach (var image in icon.GetComponentsInChildren<UnityEngine.UI.Image>(true))
-            {
-                if (image.name is "Shadow" or "LockMark" || image.sprite == null) continue; // (not the shadow, nor the invisible touch area)
-                if (on) image.color = SilhouetteColor;
-                else if (image.color == SilhouetteColor) image.color = image.name == "Body" ? CarLook.For(Vehicle.Car).Paint : Color.white;
-            }
-            if (!on) icon.Dress(CarLook.For(icon.Vehicle)); // (the paint back)
+                if (image.name != "LockMark" && image.sprite != null) image.enabled = !on;
         }
 
         // A lock over a locked vehicle.
-        void LockMark(Transform over, bool on, float size)
+        void LockMark(Transform over, bool on, float size, bool dark = false)
         {
             var mark = over.Find("LockMark");
             if (mark == null)
@@ -718,10 +713,11 @@ namespace SomeGame.UI
                 image.sprite = lockSprite;
                 image.color = Theme.Cream;
                 image.raycastTarget = false;
+                image.preserveAspect = true;
                 mark = rt;
             }
             mark.gameObject.SetActive(on);
-            mark.GetComponent<UnityEngine.UI.Image>().color = Theme.Cream;
+            mark.GetComponent<UnityEngine.UI.Image>().color = dark ? Theme.Ink : Theme.Cream;
             mark.SetAsLastSibling();
         }
 
