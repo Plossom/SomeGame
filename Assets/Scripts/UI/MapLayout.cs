@@ -16,6 +16,9 @@ namespace SomeGame.UI
         /// <summary>Race stops on this road (the cup's races, or its races and a "coming soon" stop).</summary>
         public int Stops { get; }
 
+        /// <summary>The road's width in the far distance (78 in front).</summary>
+        public float FarWidth { get; set; } = 30f;
+
         /// <summary>Nudges single stops along the road (by stop index; negative: further down, towards the bottom).</summary>
         public float[] StopShifts { get; set; }
         List<Vector2> _samples;
@@ -120,8 +123,8 @@ namespace SomeGame.UI
         /// <summary>The sea lane: buoys from the beach at the bottom out round the islands to the far reef.</summary>
         public static readonly MapRoad Water = new(new Vector2[]
         {
-            new(-40f, 270f), new(190f, 463f), new(540f, 481f), new(880f, 592f), new(1010f, 794f), new(830f, 987f), new(440f, 1024f), new(170f, 1171f), new(200f, 1383f), new(560f, 1475f), new(850f, 1570f), new(872f, 1680f), new(862f, 1790f),
-        }, 1, 12, 8); // (race 8 at its end, among the palm atolls on the horizon)
+            new(-40f, 270f), new(190f, 463f), new(540f, 481f), new(880f, 592f), new(1010f, 794f), new(830f, 987f), new(440f, 1024f), new(170f, 1171f), new(200f, 1383f), new(560f, 1475f), new(845f, 1565f), new(865f, 1680f), new(865f, 1790f),
+        }, 1, 12, 8) { FarWidth = 56f }; // (a sea lane narrows less into the distance) // (race 8 at its end, among the palm atolls on the horizon)
 
         public static MapRoad Of(CupLook look) => look switch { CupLook.Winter => Winter, CupLook.Water => Water, _ => Valley };
 
@@ -140,6 +143,6 @@ namespace SomeGame.UI
         public static Vector2 PointAt(float distance, out Vector2 tangent) => Current.PointAt(distance, out tangent);
 
         /// <summary>Road width at a height on the map: narrower further up (into the distance).</summary>
-        public static float WidthAt(float y) => Mathf.Lerp(78f, 30f, Mathf.InverseLerp(1040f, 1922f, y));
+        public static float WidthAt(float y) => Mathf.Lerp(78f, Current.FarWidth, Mathf.InverseLerp(1040f, 1922f, y));
     }
 }

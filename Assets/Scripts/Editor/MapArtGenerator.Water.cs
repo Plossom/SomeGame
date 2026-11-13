@@ -347,8 +347,15 @@ namespace SomeGame.EditorTools
                 (laneEnd + new Vector2(-125f, 12f), 48f, 5f),
                 (laneEnd + new Vector2(125f, 16f), 52f, 5f),
             };
-            for (float ax = -20f; ax < 1200f; ax += 95f + (float)atolls.NextDouble() * 50f)
-                if (Mathf.Abs(ax - laneEnd.x) > 175f) spots.Add((new Vector2(ax, Horizon - 22f - (float)atolls.NextDouble() * 16f), 34f + (float)atolls.NextDouble() * 26f, 4.5f));
+            // Two rows: the far one right on the horizon, a closer one of bigger islands in front of it.
+            for (float ax = -20f; ax < 1200f; ax += 70f + (float)atolls.NextDouble() * 40f)
+                if (Mathf.Abs(ax - laneEnd.x) > 150f) spots.Add((new Vector2(ax, Horizon - 20f - (float)atolls.NextDouble() * 14f), 30f + (float)atolls.NextDouble() * 24f, 4.5f));
+            for (float ax = 20f; ax < 1200f; ax += 150f + (float)atolls.NextDouble() * 70f)
+            {
+                var c = new Vector2(ax, Horizon - 62f - (float)atolls.NextDouble() * 18f);
+                if (Mathf.Abs(ax - laneEnd.x) < 170f || RoadDistance(c) < RoadWidth(c.y) * 0.5f + 70f) continue;
+                spots.Add((c, 48f + (float)atolls.NextDouble() * 26f, 7f));
+            }
             foreach (var (c, rx, ry) in spots)
             {
                 int count = 2 + atolls.Next(3) + (ry > 6f ? 2 : 0);
