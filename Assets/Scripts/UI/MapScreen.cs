@@ -125,7 +125,7 @@ namespace SomeGame.UI
         }
 
         /// <summary>The vehicle of the cup on show: the snowmobile on the Winter Cup, the car elsewhere (its garage page).</summary>
-        SomeGame.Track.TrackLayout.Vehicle MapVehicle => Garage.VehicleOfCup(CupList.Selected != null ? CupList.Selected.look.ToString() : "Valley");
+        SomeGame.Track.TrackLayout.Vehicle MapVehicle => Garage.VehicleOfCup((_cup ?? CupList.Selected)?.look.ToString() ?? "Valley");
 
         static LevelCatalog CatalogOf(CupDefinition cup) =>
             cup.HasRaces ? cup.races : ScriptableObject.CreateInstance<LevelCatalog>(); // empty: a cup still in the making
@@ -240,7 +240,7 @@ namespace SomeGame.UI
         // The cup on show's own stars (those still counting up held back).
         void WriteCounters()
         {
-            int cupStars = _cup != null ? Garage.CupStars(_cup.name) : ProgressStore.TotalStars;
+            int cupStars = _cup != null ? (CupList.IsPlayable(_cup) ? Garage.CupStars(_cup.name) : 0) : ProgressStore.TotalStars; // (a locked or coming-soon cup: none yet)
             int pending = ProgressStore.TotalStars - (_starsShown ?? ProgressStore.TotalStars);
             totalStars.text = Mathf.Max(0, cupStars - pending).ToString();
             if (garageDot != null) garageDot.SetActive(Garage.HasNew);
@@ -257,6 +257,35 @@ namespace SomeGame.UI
             {
                 garageCar.Show(MapVehicle);
                 garageCar.Dress(look);
+                // A locked cup: its vehicle a dark silhouette with a lock; a cup still to come: a question mark, no garage.
+                bool soon = _cup != null && CupList.IsComingSoon(_cup);
+                bool locked = !soon && _cup != null && !CupList.IsUnlocked(_cup);
+                garageCar.gameObject.SetActive(!soon);
+                foreach (var image in garageCar.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+                    if (image.name != "Shadow" && image.sprite != null && locked) image.color = new Color(0.05f, 0.1f, 0.14f, 0.85f);
+                if (!locked && !soon) garageCar.Dress(look);
+                if (garageButton != null)
+                {
+                    garageButton.interactable = !soon;
+                    var mark = garageCar.transform.parent.parent.Find("Mark");
+                    if (mark == null && (locked || soon))
+                    {
+                        var go = new GameObject("Mark", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                        mark = go.transform;
+                        var rt = (RectTransform)mark;
+                        rt.SetParent(garageCar.transform.parent.parent, false);
+                        rt.sizeDelta = Vector2.one * 64f;
+                        go.GetComponent<UnityEngine.UI.Image>().raycastTarget = false;
+                    }
+                    if (mark != null)
+                    {
+                        mark.gameObject.SetActive(locked || soon);
+                        var image = mark.GetComponent<UnityEngine.UI.Image>();
+                        image.sprite = soon ? soonSprite : lockSprite;
+                        image.color = Theme.Cream;
+                        mark.SetAsLastSibling();
+                    }
+                }
             }
             if (garageBuild != null) garageBuild.text = Garage.Equipped(Garage.Slot.Body).Name;
         }
@@ -755,7 +784,7 @@ namespace SomeGame.UI
 
             _cup = cup;
             SetLockedView(!open, cup);
-            if (!open) return;
+            if (!open) { PaintCar(); WriteCounters(); return; } // (its garage button locked or a question mark, no stars)
             CupList.Selected = cup;
             catalog = CatalogOf(cup);
             MapLayout.Current = MapLayout.Of(cup.look);

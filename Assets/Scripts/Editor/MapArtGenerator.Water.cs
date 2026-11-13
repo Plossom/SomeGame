@@ -336,8 +336,8 @@ namespace SomeGame.EditorTools
                 if (!Fits(p, r * s * 0.8f, r * s * 1.5f, r * s)) continue;
                 Put(p, r * s, () => draw(p, s));
             }
-            var jetty = new Vector2(980f, 105f);
-            items.Add((jetty.y, () => Jetty(jetty, 1.5f)));
+            var tower = new Vector2(985f, 70f);
+            items.Add((tower.y, () => LifeguardTower(tower, 1.4f)));
 
             // The beach in front (bottom right): palms, umbrellas and a towel or two.
             foreach (var (p, s) in new[] { (new Vector2(1150f, 50f), 2.3f), (new Vector2(820f, 20f), 1.7f), (new Vector2(620f, 15f), 1.4f), (new Vector2(380f, 10f), 1.3f) })
@@ -570,6 +570,22 @@ namespace SomeGame.EditorTools
                 Color c = (i % 4) switch { 0 => Hex("FF8A4C"), 1 => Hex("E86AA6"), 2 => Hex("9A6AD8"), _ => Hex("FFD24D") };
                 Ellipse(q, 6 * s, 3.5f * s, new Color(c.r, c.g, c.b, 0.7f));
             }
+        }
+
+        // A lifeguard tower on the beach: red and white, on stilts, a flag on top.
+        static void LifeguardTower(Vector2 p, float s)
+        {
+            Ellipse(p + new Vector2(8 * s, 0), 30 * s, 6 * s, new Color(0.4f, 0.3f, 0.1f, 0.2f));
+            foreach (float fx in new[] { -14f, 14f })
+                Shape(Box(p + new Vector2(fx * s, 18 * s), 24 * s), (x, y) => Capsule(x, y, p.x + fx * s, p.y, p.x + fx * 0.6f * s, p.y + 36 * s, 1.8f * s), Hex("6B4A2E"));
+            Rect(p + new Vector2(0, 38 * s), 20 * s, 3 * s, Hex("8A5A32"));
+            Rect(p + new Vector2(0, 52 * s), 16 * s, 12 * s, Hex("E8423A"));
+            Rect(p + new Vector2(0, 52 * s), 16 * s, 3 * s, Color.white);
+            Rect(p + new Vector2(0, 50 * s), 8 * s, 5 * s, Hex("8FDDFF"));
+            Poly(new[] { new Vector2(p.x - 20 * s, p.y + 64 * s), new Vector2(p.x + 20 * s, p.y + 64 * s), new Vector2(p.x, p.y + 76 * s) }, Color.white);
+            Poly(new[] { new Vector2(p.x - 20 * s, p.y + 64 * s), new Vector2(p.x + 20 * s, p.y + 64 * s), new Vector2(p.x, p.y + 76 * s) }, SeaLine, 1.6f);
+            Rect(p + new Vector2(0, 82 * s), 0.8f * s, 7 * s, Hex("6B4A2E"));
+            Poly(new[] { new Vector2(p.x + 0.8f * s, p.y + 90 * s), new Vector2(p.x + 12 * s, p.y + 86 * s), new Vector2(p.x + 0.8f * s, p.y + 82 * s) }, Hex("FF4F86"));
         }
 
         static void Jetty(Vector2 p, float s)

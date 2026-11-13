@@ -217,6 +217,13 @@ namespace SomeGame.Race
         /// <summary>What can be changed on a vehicle: everything, each from its own cup's shop.</summary>
         public static Slot[] SlotsOf(Vehicle vehicle) => new[] { Slot.Paint, Slot.Body, Slot.Top, Slot.Decal, Slot.Trail, Slot.Gadget };
 
+        /// <summary>A vehicle is open once its cup is (until then the garage shows it locked, a silhouette).</summary>
+        public static bool VehicleOpen(Vehicle vehicle)
+        {
+            var cup = CupNamed(CupOf(vehicle));
+            return cup == null || CupList.IsUnlocked(cup);
+        }
+
         public static bool Fits(Slot slot, Vehicle vehicle) => System.Array.IndexOf(SlotsOf(vehicle), slot) >= 0;
 
         /// <summary>The cup a vehicle belongs to (its page in the garage): the car the Valley Cup's, the snowmobile the Winter Cup's.</summary>

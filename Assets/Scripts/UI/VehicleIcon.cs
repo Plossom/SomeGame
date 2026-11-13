@@ -23,6 +23,7 @@ namespace SomeGame.UI
         Sprite _carBody, _carDetails, _carShadow;
         bool _remembered;
         Vehicle _vehicle;
+        public Vehicle Vehicle => _vehicle;
         CarLook? _look;
         UnityEngine.UI.Image _decal, _top;
 

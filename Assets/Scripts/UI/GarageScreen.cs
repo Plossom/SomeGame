@@ -170,7 +170,7 @@ namespace SomeGame.UI
                 badge.name = Garage.Vehicles[i].ToString();
                 badge.anchoredPosition = new Vector2((i - (Garage.Vehicles.Length - 1) * 0.5f) * BadgeSpacing, 0f);
                 int index = i;
-                badge.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => { if (index != PageIndex) Page(index - PageIndex); });
+                badge.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => { if (index != PageIndex) Page(Shortest(index - PageIndex)); });
                 _badges.Add(badge);
             }
             vehicleBar.sizeDelta = new Vector2(Garage.Vehicles.Length * BadgeSpacing + 32f, vehicleBar.sizeDelta.y);
@@ -205,6 +205,7 @@ namespace SomeGame.UI
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.5f);
             // Straight into choosing: the part tabs on top, the chips below, on the paint.
             Focus((int)Garage.Slot.Paint);
+            if (_focus < 0) Refresh(); // (a locked vehicle: nothing to choose, just its silhouette)
             _focusAt = _switchAt = _openedAt;
         }
 
@@ -239,10 +240,18 @@ namespace SomeGame.UI
             Snap();
         }
 
+        // The vehicles go round: after the last comes the first again (and before the first the last).
         int Neighbour(int step)
         {
-            int to = PageIndex + step;
-            return to >= 0 && to < Garage.Vehicles.Length ? to : -1;
+            int n = Garage.Vehicles.Length;
+            return n < 2 ? -1 : ((PageIndex + step) % n + n) % n;
+        }
+
+        static int Shortest(int step)
+        {
+            int n = Garage.Vehicles.Length;
+            step = ((step % n) + n) % n;
+            return step > n / 2 ? step - n : step;
         }
 
         // A vehicle change in the making (step +1: the one below comes up, -1: the one above comes down): the colours
@@ -327,7 +336,7 @@ namespace SomeGame.UI
             _dragY = _dragVelocity = 0f;
         }
 
-        bool Fits(int slot) => Garage.Fits((Garage.Slot)slot, _vehicle);
+        bool Fits(int slot) => Garage.VehicleOpen(_vehicle) && Garage.Fits((Garage.Slot)slot, _vehicle);
 
         public void Close()
         {
@@ -454,10 +463,15 @@ namespace SomeGame.UI
         {
             // The stars of the vehicle's cup: they open its things.
             string cupName = Garage.CupOf(_vehicle);
-            starsLabel.text = $"{Garage.CupStars(cupName)}<size=60%>/{Garage.CupMaxStars(cupName)}</size>";
+            bool vehicleOpen = Garage.VehicleOpen(_vehicle);
+            starsLabel.text = $"{(vehicleOpen ? Garage.CupStars(cupName) : 0)}<size=60%>/{Garage.CupMaxStars(cupName)}</size>";
             var look = CarLook.For(_vehicle);
             car.Show(_vehicle);
             car.Dress(look);
+            // A vehicle whose cup is still locked: a dark silhouette with a lock, nothing to choose.
+            Silhouette(car, !vehicleOpen);
+            LockMark(carRoot, !vehicleOpen, 150f);
+            tray.gameObject.SetActive(vehicleOpen);
             buildName.gameObject.SetActive(false);
             hint.gameObject.SetActive(false);
             for (int i = 0; i < _hotspots.Count; i++)
@@ -476,9 +490,10 @@ namespace SomeGame.UI
                 var badgeCar = _badges[i].Find("Car").GetComponent<VehicleIcon>();
                 badgeCar.Show(Garage.Vehicles[i]);
                 badgeCar.Dress(CarLook.For(Garage.Vehicles[i]));
+                Silhouette(badgeCar, !Garage.VehicleOpen(Garage.Vehicles[i]));
             }
-            Peek(peekLeft, page - 1);  // above
-            Peek(peekRight, page + 1); // below
+            Peek(peekLeft, Neighbour(-1));  // above
+            Peek(peekRight, Neighbour(1)); // below
             if (_focus < 0) return;
             var slot = (Garage.Slot)_focus;
             int open = 0, all = 0;
@@ -669,7 +684,45 @@ namespace SomeGame.UI
             var icon = peek.Find("Car").GetComponent<VehicleIcon>();
             icon.Show(vehicle);
             icon.Dress(CarLook.For(vehicle));
+            Silhouette(icon, !Garage.VehicleOpen(vehicle));
             peek.Find("Name").gameObject.SetActive(false); // the page title names the vehicle; the peek just shows it
+        }
+
+        static readonly Color SilhouetteColor = new(0.05f, 0.1f, 0.14f, 0.85f);
+
+        // A locked vehicle shows only its dark outline (its own colours come back once open).
+        static void Silhouette(VehicleIcon icon, bool on)
+        {
+            foreach (var image in icon.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+            {
+                if (image.name is "Shadow" or "LockMark" || image.sprite == null) continue; // (not the shadow, nor the invisible touch area)
+                if (on) image.color = SilhouetteColor;
+                else if (image.color == SilhouetteColor) image.color = image.name == "Body" ? CarLook.For(Vehicle.Car).Paint : Color.white;
+            }
+            if (!on) icon.Dress(CarLook.For(icon.Vehicle)); // (the paint back)
+        }
+
+        // A lock over a locked vehicle.
+        void LockMark(Transform over, bool on, float size)
+        {
+            var mark = over.Find("LockMark");
+            if (mark == null)
+            {
+                if (!on) return;
+                var lockSprite = tileTemplate.Find("Lock")?.GetComponent<UnityEngine.UI.Image>()?.sprite;
+                var go = new GameObject("LockMark", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                var rt = (RectTransform)go.transform;
+                rt.SetParent(over, false);
+                rt.sizeDelta = Vector2.one * size;
+                var image = go.GetComponent<UnityEngine.UI.Image>();
+                image.sprite = lockSprite;
+                image.color = Theme.Cream;
+                image.raycastTarget = false;
+                mark = rt;
+            }
+            mark.gameObject.SetActive(on);
+            mark.GetComponent<UnityEngine.UI.Image>().color = Theme.Cream;
+            mark.SetAsLastSibling();
         }
 
         // Sparks fly off the part that changed.
@@ -876,7 +929,7 @@ namespace SomeGame.UI
 
             // The vehicle bar: the ring glides along with the change (and pops as it lands); the badge on show a
             // little bigger.
-            float shownAt = PageIndex + _scrubDir * k;
+            float shownAt = _scrubDir != 0 ? Mathf.Lerp(PageIndex, Neighbour(_scrubDir), k) : PageIndex; // (round the end it glides back across)
             for (int i = 0; i < _badges.Count; i++)
                 _badges[i].localScale = Vector3.one * Mathf.Lerp(0.82f, 1f, Mathf.Clamp01(1f - Mathf.Abs(shownAt - i)));
             vehicleRing.anchoredPosition = new Vector2((shownAt - (_badges.Count - 1) * 0.5f) * BadgeSpacing, 0f);
