@@ -151,7 +151,7 @@ namespace SomeGame.EditorTools
             }
             // The beach along the bottom right (the lane comes in over open water on the left): wet sand, a foam
             // line, dry sand; the shore curves away out of the picture to the left.
-            float shore = y - (110f + 24f * Mathf.Sin(x / 95f + 1f) + 10f * Mathf.Sin(x / 37f) - Mathf.Pow(Mathf.Max(0f, 520f - x) / 520f, 1.6f) * 300f);
+            float shore = y - (110f + 24f * Mathf.Sin(x / 95f + 1f) + 10f * Mathf.Sin(x / 37f) - Mathf.Pow(Mathf.Max(0f, 330f - x) / 330f, 1.6f) * 300f);
             sea = Over(sea, Hex("E2C58E"), Cov(shore + 8f));
             sea = Over(sea, Color.white, Cov(Mathf.Abs(shore + 4f) - 3f) * 0.9f);
             sea = Over(sea, Hex("F6E2B2"), Cov(shore + 16f));
