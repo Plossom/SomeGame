@@ -261,6 +261,8 @@ namespace SomeGame.UI
                 bool soon = _cup != null && CupList.IsComingSoon(_cup);
                 bool locked = !soon && _cup != null && !CupList.IsUnlocked(_cup);
                 garageCar.gameObject.SetActive(!soon && !locked); // (just the lock, or the question mark)
+                var glow = garageCar.transform.parent.parent.Find("Glow");
+                if (glow != null) glow.gameObject.SetActive(!soon && !locked); // (no light behind a lock)
                 if (garageButton != null)
                 {
                     garageButton.interactable = !soon;

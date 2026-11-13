@@ -209,7 +209,9 @@ namespace SomeGame.UI
             _focusAt = _switchAt = _openedAt;
         }
 
-        static Theme.Palette PaletteOf(Vehicle vehicle) => vehicle switch { Vehicle.Snowmobile => Theme.Winter, Vehicle.Boat => Theme.Water, _ => Theme.Valley };
+        // A vehicle's page in its cup's colours; a locked one all in greys.
+        static Theme.Palette PaletteOf(Vehicle vehicle) => !Garage.VehicleOpen(vehicle) ? Theme.Locked
+            : vehicle switch { Vehicle.Snowmobile => Theme.Winter, Vehicle.Boat => Theme.Water, _ => Theme.Valley };
 
         // Morphs the garage's colours to a palette (or jumps there). A morph still running is finished first.
         void Morph(Theme.Palette to, bool instant = false)
