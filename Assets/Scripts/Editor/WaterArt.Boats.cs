@@ -43,8 +43,8 @@ namespace SomeGame.EditorTools
 
         // A long, slim racing hull: a narrow transom, widest just behind the middle, a long fine bow to a point.
         static float SpeedHullSdf(float x, float y) =>
-            Polygon(x, y, new[] { new Vector2(42, 42), new Vector2(150, 42), new Vector2(158, 130), new Vector2(152, 205), new Vector2(128, 272), new Vector2(96, 330),
-                                  new Vector2(64, 272), new Vector2(40, 205), new Vector2(34, 130) }) - 5f;
+            Polygon(x, y, new[] { new Vector2(46, 46), new Vector2(146, 46), new Vector2(154, 130), new Vector2(152, 215), new Vector2(140, 268), new Vector2(118, 306),
+                                  new Vector2(96, 316), new Vector2(74, 306), new Vector2(52, 268), new Vector2(40, 215), new Vector2(38, 130) }) - 9f; // a full, rounded bow
 
         static Color SpeedHull(float x, float y)
         {
@@ -69,7 +69,7 @@ namespace SomeGame.EditorTools
             c = Over(c, White(0.95f), Fill(stripe) * Fill(hull + 10f));
             c = Over(c, White(0.85f), Fill(Shell(hull + 6f, 1.6f)) * Mathf.Clamp01((y - 130f) / 30f));
             // Two cleats near the bow (the decals have the foredeck).
-            foreach (float cx in new[] { 82f, 110f }) c = Over(c, Hex("C9D3DC"), Fill(RoundRect(x, y, cx, 280, 2.6f, 6, 1.5f)));
+            foreach (float cx in new[] { 80f, 112f }) c = Over(c, Hex("C9D3DC"), Fill(RoundRect(x, y, cx, 286, 2.6f, 6, 1.5f)));
             // A low wraparound windscreen in front of the cockpit.
             float screen = Mathf.Max(Shell(Circle(x, y, 96, 110, 52), 5.5f), 132f - y);
             c = Over(c, Glass, Fill(screen));
