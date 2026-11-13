@@ -58,8 +58,8 @@ namespace SomeGame.Track
         [Tooltip("What lies about on a sandbar: a sunbather, a sandcastle, crabs.")]
         [SerializeField] Sprite sunbather, sandcastle, crab;
 
-        const int HaloOrder = -68, FoamOrder = -67, SandOrder = -63, JungleOrder = -62, DecorOrder = 4,
-                  CurrentOrder = -46, SwellOrder = -45, BarUnder = -66, PropOrder = 2, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
+        const int HaloOrder = -69, FoamOrder = -68, SandOrder = -63, JungleOrder = -62, DecorOrder = 4,
+                  CurrentOrder = -46, SwellOrder = -45, BarUnder = -66, PropOrder = 5, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
 
         static readonly Color SwellDark = new(0.02f, 0.25f, 0.45f, 1f);
 
@@ -256,45 +256,55 @@ namespace SomeGame.Track
         // A sandbar across the channel from island to island (a trick jump over it).
         void BuildSandbar(TrackPath path, TrackLayout.Gap gap)
         {
-            var near = new List<Vector2>();
-            var far = new List<Vector2>();
+            // Laid out across the channel at the middle of the gap: "a" across (to the left island +), "b" along.
             float len = Mathf.Repeat(gap.to - gap.from, path.Length);
-            // Its ends run well in under the islands' beaches (drawn under them), so the sand flows on into theirs.
-            for (int i = 0; i <= 8; i++)
-            {
-                float t = i / 8f, d = gap.from + 1f + (len - 2f) * t;
-                float bulge = 1f + 2.5f * Mathf.Sin(t * Mathf.PI); // wider in the middle, like a real sandbar
-                Vector2 p = path.PointAt(d), n = path.NormalAt(d);
-                near.Add(p + n * (ShoreReach(path, d, 1f) + 7f + bulge));
-                far.Add(p - n * (ShoreReach(path, d, -1f) + 7f + bulge));
-            }
-            var poly = new List<Vector2>(near);
-            for (int i = far.Count - 1; i >= 0; i--) poly.Add(far[i]);
-            var shore = Smooth(poly.ToArray(), 4);
-            if (SignedArea(shore) < 0f) shore.Reverse();
-            Mesh("SandbarHalo", shallows, BarUnder - 3, Ring(shore, 0f, 3.5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
-            Mesh("SandbarFoam", foam, BarUnder - 0, Ring(shore, -0.3f, 1.1f, Color.white, Color.white, 1f, true));
-            Mesh("Sandbar", sand, BarUnder + 1, Fill(shore, Color.white, 1f / 4f));
-
-            // A grassy ridge along its middle from island to island, soft edged.
             float mid = gap.from + len * 0.5f;
             Vector2 c = path.PointAt(mid), across = path.NormalAt(mid), along = path.TangentAt(mid);
-            float reachL = ShoreReach(path, mid, 1f) + 6f, reachR = ShoreReach(path, mid, -1f) + 6f;
-            var ridge = new List<Vector2>();
-            for (int k = 0; k <= 10; k++)
+            float reachL = ShoreReach(path, mid, 1f), reachR = ShoreReach(path, mid, -1f);
+            float road = track.OffRoadAt(mid) + 0.4f;
+            float half = Mathf.Max(3f, len * 0.5f - 1.2f);
+            // Its half width along the channel: the gap's over the water, flaring out into the islands' shores in
+            // smooth curves (no corners where it meets them).
+            float Width(float a)
             {
-                float lat = Mathf.Lerp(-reachR, reachL, k / 10f);
-                ridge.Add(c + across * lat + along * (1.6f + 0.5f * Mathf.Sin(k * 1.7f)));
+                float reach = a >= 0f ? reachL : reachR, x = Mathf.Abs(a);
+                return half + 7f * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(road + 0.5f, reach + 1.5f, x));
             }
-            for (int k = 10; k >= 0; k--)
-            {
-                float lat = Mathf.Lerp(-reachR, reachL, k / 10f);
-                ridge.Add(c + across * lat - along * (1.6f + 0.5f * Mathf.Cos(k * 1.3f)));
-            }
-            var grass = Smooth(ridge.ToArray(), 3);
-            if (SignedArea(grass) < 0f) grass.Reverse();
-            Mesh("SandbarGrass", jungle, BarUnder + 2, Fill(grass, Color.white, 1f / 4f));
-            Mesh("SandbarGrassEdge", jungle, BarUnder + 2, Ring(grass, 0f, 0.8f, Color.white, new Color(1f, 1f, 1f, 0f), 0.25f));
+            var outline = new List<Vector2>();
+            const int steps = 24;
+            float from = -(reachR + 7f), to = reachL + 7f;
+            for (int k = 0; k <= steps; k++) { float a = Mathf.Lerp(from, to, k / (float)steps); outline.Add(c + across * a + along * Width(a)); }
+            for (int k = steps; k >= 0; k--) { float a = Mathf.Lerp(from, to, k / (float)steps); outline.Add(c + across * a - along * Width(a)); }
+            var shore = Smooth(outline.ToArray(), 3);
+            if (SignedArea(shore) < 0f) shore.Reverse();
+            // Like an island: shallows and foam round it, sand, green in the middle fading out into the sand. Its sand
+            // lies under the islands (they keep their own look), its green over their beaches (it runs on into their
+            // jungle without a seam).
+            Mesh("SandbarHalo", shallows, BarUnder - 4, Ring(shore, 0f, 4.5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
+            Mesh("SandbarFoam", foam, BarUnder - 1, Ring(shore, -0.4f, 1.3f, Color.white, Color.white, 1f, true));
+            Mesh("Sandbar", sand, BarUnder, Fill(shore, Color.white, 1f / 4f));
+            // The green: the same shape, narrower all round (built the same way, so it never tangles).
+            var greenOutline = new List<Vector2>();
+            for (int k = 0; k <= steps; k++) { float a = Mathf.Lerp(from + 2f, to - 2f, k / (float)steps); greenOutline.Add(c + across * a + along * Mathf.Max(1f, Width(a) - 3f)); }
+            for (int k = steps; k >= 0; k--) { float a = Mathf.Lerp(from + 2f, to - 2f, k / (float)steps); greenOutline.Add(c + across * a - along * Mathf.Max(1f, Width(a) - 3f)); }
+            var green = Smooth(greenOutline.ToArray(), 3);
+            if (SignedArea(green) < 0f) green.Reverse();
+            Mesh("SandbarGrass", jungle, JungleOrder + 1, Fill(green, Color.white, 1f / 4f));
+            Mesh("SandbarGrassEdge", jungle, JungleOrder + 1, Ring(green, 0f, 2.2f, Color.white, new Color(1f, 1f, 1f, 0f), 0.25f));
+            // Beside the channel it is solid ground: no going round the ramp. (Over the channel the gap decides:
+            // jump it, or run aground and be carried back.)
+            if (Application.isPlaying)
+                foreach (float side in new[] { 1f, -1f })
+                {
+                    var solid = new List<Vector2>();
+                    float a0 = road + 0.3f, a1 = (side > 0f ? reachL : reachR) + 6f;
+                    for (int k = 0; k <= 8; k++) { float a = Mathf.Lerp(a0, a1, k / 8f) * side; solid.Add(c + across * a + along * (Width(a) - 0.6f)); }
+                    for (int k = 8; k >= 0; k--) { float a = Mathf.Lerp(a0, a1, k / 8f) * side; solid.Add(c + across * a - along * (Width(a) - 0.6f)); }
+                    var go = new GameObject("SandbarShore", typeof(PolygonCollider2D)) { hideFlags = HideFlags.DontSave };
+                    go.transform.SetParent(transform, false);
+                    go.GetComponent<PolygonCollider2D>().points = solid.ToArray();
+                    _parts.Add(go);
+                }
 
             // What is on it: bushes and a palm on the ridge, a sunbather, a sandcastle, flamingos paddling at its edge.
             if (scenery != null)
