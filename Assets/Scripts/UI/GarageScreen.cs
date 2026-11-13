@@ -74,6 +74,17 @@ namespace SomeGame.UI
         const float PeekScale = PeekCarWidth / 420f;
         float _scrub, _scrubTarget, _dragVelocity;
         int _scrubDir, _scrubDirWas;
+        UnityEngine.UI.Image _spotlight, _podiumGlow;
+
+        void FindGlows()
+        {
+            if (_spotlight != null && _podiumGlow != null) return;
+            foreach (var g in panel.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+            {
+                if (g.name == "Spotlight") _spotlight = g;
+                else if (g.name == "Glow" && g.transform.parent == podium) _podiumGlow = g;
+            }
+        }
         float _landedAt = -10f, _armsSpringUntil = -10f;
         bool _armsToNew;
         readonly Vector2[] _armEnd = new Vector2[6], _armVelocity = new Vector2[6];
@@ -201,6 +212,7 @@ namespace SomeGame.UI
             _mapPalette = _palette = Theme.Current;
             _scrubDir = 0; _scrub = _scrubTarget = 0f; _scrubPlan = null; _snapping = false;
             _morph = null;
+            FindGlows();
             Morph(PaletteOf(_vehicle), instant: true);
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.5f);
             // Straight into choosing: the part tabs on top, the chips below, on the paint.
@@ -220,7 +232,7 @@ namespace SomeGame.UI
             if (to == _palette) return;
             var plan = Theme.RecolorPlan(transform, _palette, to);
             // Not what shows your paint or a part's own colours (the cars, the paint swatches, the trail icons).
-            plan.RemoveAll(p => p.graphic.name is "Body" or "Color" or "Pic");
+            plan.RemoveAll(p => p.graphic.name is "Body" or "Color" or "Pic" or "Spotlight" || p.graphic == _podiumGlow);
             // Nor the hotspots: which one is chosen sets their colours (straight in the new cup's).
             plan.RemoveAll(p => _hotspots.Exists(h => p.graphic.transform == h.Button.Find("Face") || p.graphic.transform == h.Button.Find("Label") || p.graphic == h.Name));
             _palette = to;
@@ -264,7 +276,7 @@ namespace SomeGame.UI
             RestoreScrubColours();
             _scrubDir = step;
             _scrubPlan = Theme.RecolorPlan(transform, _palette, PaletteOf(Garage.Vehicles[Neighbour(step)]));
-            _scrubPlan.RemoveAll(p => p.graphic.name is "Body" or "Color" or "Pic");
+            _scrubPlan.RemoveAll(p => p.graphic.name is "Body" or "Color" or "Pic" or "Spotlight" || p.graphic == _podiumGlow);
             _scrubPlan.RemoveAll(p => _hotspots.Exists(h => p.graphic.transform == h.Button.Find("Face") || p.graphic.transform == h.Button.Find("Label") || p.graphic == h.Name));
         }
 
@@ -804,6 +816,13 @@ namespace SomeGame.UI
         {
             if (!panel.activeSelf) return;
             float t = Time.unscaledTime, dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            // The light over the stage: the cup's warm (or icy, or pink) glow; a plain white one over a locked vehicle.
+            // (the glow picture is warm itself: over a locked vehicle the lights simply fade out, leaving plain grey)
+            FindGlows();
+            bool lit = Garage.VehicleOpen(_vehicle);
+            var amber = PaletteOf(_vehicle).Amber;
+            if (_spotlight != null) _spotlight.color = Color.Lerp(_spotlight.color, lit ? Theme.WithAlpha(amber, 0.32f) : Theme.WithAlpha(amber, 0f), 1f - Mathf.Exp(-6f * dt));
+            if (_podiumGlow != null) _podiumGlow.color = Color.Lerp(_podiumGlow.color, lit ? Theme.WithAlpha(amber, 0.22f) : Theme.WithAlpha(amber, 0f), 1f - Mathf.Exp(-6f * dt));
             float open = Mathf.Clamp01((t - _openedAt) / 0.3f);
             float shut = _closingAt >= 0f ? Mathf.Clamp01((t - _closingAt) / 0.25f) : 0f;
             group.alpha = open * (1f - shut);
