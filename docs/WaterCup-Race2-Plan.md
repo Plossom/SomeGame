@@ -1,93 +1,131 @@
-# Water Cup · Race 2 — "Harbor Havoc" — plan
+# Water Cup · Races 2 and 3 — plan
 
-**Pitch:** rush hour in the busiest, silliest harbour in the tropics. You don't race *round* the harbour, you race
-*through* it: across a ferry's car deck, down the slide of a harbour water park, through a rising canal lock, along the
-wake of a gigantic cruise ship, past cranes, seals and a fireboat. Everything moves, so every lap plays a little
-differently.
+By now the player is good, so these races are tougher than the openers of the earlier cups:
+- **Rivals:** they start almost at full pace (speed scale 0.95–1.0), take more risks and use every shortcut.
+- **Channels:** narrower (about 7.5 instead of 9), with sharper bends.
+- **Hazards:** more of them, and timed, so you have to read them rather than react.
+- **Shortcuts:** each one pays off only if you get its timing right.
 
-Race 2, difficulty 2: three laps of about 40 s, wide enough to be fair, but full of things to choose and to dodge.
+Both races keep the lagoon look (animated water, foam edges) and the cup's palette, but each adds its own world.
 
 ---
 
-## 1. The lap
+# Race 2 — "Harbor Havoc"  (difficulty 3)
+
+**Pitch:** rush hour in the busiest, silliest harbour in the tropics. You race *through* it, not round it, and
+everything moves, so no two laps are the same. Three laps of about 40 s.
 
 ```
-                     ╔═══════════ CRUISE SHIP (steaming slowly along the outer harbour) ═══════════╗
-   (5) WAKE SURF ≈≈≈ its wake: rolling swells to chain WAVE JUMPs ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
-        │                                                                                   │
-   (4) THE LOCK ── gates open/close in rhythm ── water rises: you come out on the HIGH canal  │
-        │                                                                                   │
-   (3) WATER PARK: ┌ conveyor up the tower → giant yellow SLIDE (fast, risky)                 │
-                   └ or the long way round past the rubber-duck basin (300 ducks to scatter)  │
-        │                                                                                   │
-   (2) CONTAINER PORT: gantry crane swings boxes across, a stack of containers = a kicker,    │
-        jump the loaded barge                                                               │
-        │                                                                                   │
-   (1) THE FERRY: docked on your side → drive ON over its car deck, OUT the stern = shortcut │
-                  out mid-crossing → the long way round its berth                           │
-        │                                                                                   │
-   START ── fish market quay, fireboat arcs over the channel ── seals on the buoys ──────────┘
+                 ╔════════ CRUISE SHIP steaming along the outer harbour ════════╗
+   (E) WAKE SURF ≈≈≈ chain WAVE JUMPs on its wake (avoid its hull!) ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+        │                                                               │
+   (C) WATER PARK: conveyor up the tower → giant yellow SLIDE (fast, but a queue)
+        or the long way round through the RUBBER DUCK basin (~300 ducks) │
+        │                                                               │
+   (B) CONTAINER PORT: the crane swings a container across the lane;    │
+        jump the loaded barge off a container ramp (trick jump)         │
+        │                                                               │
+   (A) THE FERRY: docked → drive up its bow ramp, across the car deck,  │
+        out the stern = shortcut;  mid-crossing → the long way round    │
+        │                                                               │
+   START ── FISH MARKET quay (fish flying across), FIREBOAT arcs, seals on buoys ──┘
 ```
 
-## 2. The set pieces (new)
+| # | Set piece | What happens |
+|---|-----------|--------------|
+| A | **The Ferry** | A car ferry shuttles across the harbour mouth on a timetable. Docked on your side: up the bow ramp, over the car deck (painted lanes, cars honking, a deckhand waving), out the stern. Missing it means the long way round. A moving shortcut: FERRY HOP! |
+| B | **Container Port** | A gantry crane swings a container on its hook across the lane (a sweeper in the air, its shadow on the water). A barge loaded with containers lies across the lane: jump it off a ramp of stacked containers, as a trick jump. |
+| C | **Water Park** | A route choice. **Fast but risky:** a conveyor drags your boat up the slide tower, then you shoot down a twisting giant yellow slide into the park pool; only one boat on the belt at a time, so rivals can block you. **Safe:** through the rubber duck regatta, ~300 ducks bobbing and scattering with squeaks. DUCK HUNT! |
+| E | **Cruise Ship** | A gigantic cruise ship (three screens long: pool deck, sunbathers, waving passengers, a smoking funnel) steams along the outer harbour. Surf its wake to chain WAVE JUMPs; its horn shakes the screen. Its hull is a moving wall: get too close and you bounce off. |
+| F | **Fireboat** | A red fireboat sprays arcs of water across the channel, with a rainbow in them. Drive through and droplets splash over your screen and you're shoved sideways. |
+| G | **Seaplane** | Each lap it lands ahead of the leader, skims along, and takes off again. Overtake it before it lifts off: BEAT THE PLANE! |
 
-| # | Set piece | What happens | Why it's fun |
-|---|-----------|--------------|--------------|
-| A | **The Ferry** | A big car ferry shuttles across the harbour mouth on a timetable. Docked on your side: its bow ramp is down, you race up onto its car deck (painted lanes, parked cars honking, a deckhand waving), and out over the stern ramp to the far side. Mid-crossing: you take the long way round. | A **moving shortcut**: timing matters, and rivals queue up behind you. FERRY HOP! |
-| B | **Container Port** | A gantry crane swings a container on its hook across the channel (a sweeper in the air, with its shadow on the water). A loaded barge lies across the lane with containers stacked like steps: jump it from a container ramp. | Old sweeper and jump systems in a new look. |
-| C | **Water Park** (route choice) | A conveyor belt drags your boat up a tower, then you shoot down a twisting **giant yellow water slide** with loops, into the park pool and back out to the channel. The other way round: the **rubber duck regatta**, a basin full of ~300 rubber ducks that bob and scatter (squeak!) as you plough through. | Two very different routes. The slide is faster when there's no queue. DUCK HUNT! |
-| D | **The Lock** | A canal lock chamber: the gates open and close in rhythm (sliding doors). Inside, the water rises fast and lifts the boats up like an elevator (the boats grow, shadows stretch) onto the **high canal** above the harbour, which runs on a stone aqueduct. Then a big drop back down a spillway. | A real **height change** for boats, and a spillway jump (slow motion at the top). |
-| E | **Cruise Ship Wake** | A gigantic cruise ship (three screens long: pool deck, sunbathers, waving passengers, a funnel puffing smoke) steams slowly along the outer harbour. Its wake is a field of rolling swells. Surf them and chain WAVE JUMPs. Its horn blast shakes the camera. | Lagoon's swells turned into a fun ride with an enormous moving landmark. |
-| F | **Fireboat** | A red fireboat by the quay sprays big arcs of water across the channel (with a rainbow in them). Drive through a jet and water droplets splash over the screen, and the jet pushes you sideways. | A new screen effect, a dodge with a little reward: a short boost. |
-| G | **Seaplane** | Each lap a seaplane lands in the channel ahead of the leader, skims along, and takes off again. Overtake it before it lifts off: BEAT THE PLANE! | A moving rival that isn't a racer. |
+**Life:** seals barking on buoys, pelicans diving, fishmongers tossing fish across the quay (the flying-fish hazard),
+yachts bobbing on their ropes, gulls stealing chips, people on the piers ducking when you jump over them.
 
-**Little life everywhere:** seals barking on the buoys as you pass, pelicans diving for fish, fishmongers tossing fish
-across the market quay (the flying-fish hazard), moored yachts bobbing on their ropes, gulls stealing chips, people on
-the piers ducking when you fly over them.
+**Last lap:** the sun sets, the harbour and the cruise ship light up, and fireworks go off as you cross the line.
 
-**Last lap:** the sun sets over the harbour (the dusk system): the harbour lights come on, the cruise ship lights up,
-and fireworks go off over the water as you cross the line.
+**Harbour world (new art):**
+- the waterfront: quay walls of stone with tyre fenders (instead of buoy lines), wooden piers on stilts, harbour houses in four colours, a fish market hall whose roof fades as you pass under it
+- the harbour: cranes, container stacks, a lighthouse at the harbour mouth
+- the big pieces: the ferry, the cruise ship, the fireboat, the seaplane, the barge, the water-park tower and slide
 
-## 3. Old mechanics brought back
-- **Branches:** water park slide or duck basin; ferry or the long way round.
-- **Swells** (Lagoon Loop): the cruise ship's wake.
-- **Currents:** the outflow of the lock spillway.
-- **Trick jump:** over the barge, or off the spillway. Swipe the arrows.
-- **Drawbridge rhythm:** the lock gates.
-- **Ride / flume** (Winter Cup): the slide and its conveyor.
-- **Dash panels, boost rings, gummiboats, flying fish, sweepers:** the crane's container is a sweeper in the air.
-- **Dusk and fireworks** on the last lap.
+---
 
-## 4. New systems (engine)
+# Race 3 — "Lighthouse Run"  (difficulty 3–4)
+
+**Pitch:** a wild rocky coast at night in a gale, with one lighthouse. Its beam sweeps across a dark sea, so you see
+the rocks only when the light passes, or in your own headlights. The race climbs the cliff in a flight of locks to the
+lighthouse and leaps back down to the sea. Three laps of about 45 s.
+
+```
+                          ✦ LIGHTHOUSE on the cliff top ✦
+                                 │  (beam sweeping the whole bay)
+   (D) LEAP OF FAITH ── off the cliff edge, slow motion, back down into the bay
+        │                                  ▲
+        │                       (C) THE LOCK STAIRCASE: three locks up the cliff face,
+        │                           gates in rhythm, the water lifts you lock by lock
+   (B) SEA CAVES: under the cliff, glowing crystals, dripping water, a low tunnel
+        │                                  │
+   (A) TIDE FLATS: the tide goes out lap by lap → a shortcut over the sandbanks opens,
+        but the rocks come out too         │
+        │                                  │
+   START ── harbour wall in the rain ── WHIRLPOOL by the reef (it pulls you in) ──┘
+```
+
+| # | Set piece | What happens |
+|---|-----------|--------------|
+| — | **Darkness and the beam** (new visual) | The race is at night in a gale. The sea is dark, and the lighthouse beam sweeps across the bay every few seconds, lighting rocks, wrecks and buoys as it passes. Your boat's headlights cut a cone ahead of you. Rain streaks across the screen, the camera shakes on the waves, and lightning flashes now and then. |
+| A | **The tide** (new mechanic) | The tide drops lap by lap. Lap 1: deep water. Lap 2: rocks break the surface. Lap 3: a shortcut across the sandbanks opens. It's fast but narrow, with rocks either side, and only light when the beam passes. |
+| B | **Sea Caves** | A tunnel under the cliff: dark, lit by glowing blue crystals, water dripping, bats flying out as you enter, echoing engine sound. Inside, a fork: the low tunnel (fast, needs a hop under a fallen rock arch) or the wide grotto. |
+| C | **The lock staircase** | Three locks up the cliff face, their gates opening in rhythm. In each, the water rises fast and lifts the boats (they grow, their shadows lengthen). At the top you race across the cliff-top pond past the lighthouse, keeper waving from the gallery. |
+| D | **Leap of Faith** | Off the cliff edge, back down into the bay. Slow motion at the top of the jump, then a huge splash. A trick jump: nail the arrows for a big boost. |
+| — | **Whirlpool** | By the reef, a whirlpool (the storm vortex returns) pulls boats in. Ride its edge for speed, get dragged round, or get spat out. |
+| — | **Wrecks and rocks** | A wrecked ship's hull you sail through (in one side, out the other), rocks that only show in the beam, and a buoy bell clanging. |
+
+**Life:** puffins on the rocks, seals in the caves, the keeper on the gallery, a fishing trawler riding the swell, gulls
+blown sideways by the gale, foam blowing off the waves.
+
+**Last lap:** the storm breaks. On the last lap the clouds tear open, the moon comes out, the sea calms, and the
+lighthouse beam turns gold.
+
+**Coast world (new art):**
+- the land: dark wet rocks and cliffs, grass on the cliff tops
+- the lighthouse with its gallery and beam, the lock staircase with gates and stone walls
+- the caves: entrance, crystals
+- the sea: wrecks, the whirlpool, the tide sandbanks
+- the life: puffins, bats
+- the effects: rain, lightning, moonlight
+
+---
+
+# Engine work (shared)
 
 | System | What | Builds on |
 |--------|------|-----------|
-| **Moving ferry** | A platform that travels on a timetable and carries cars on its deck. The way across is open only while it's docked (the route opens and closes). | turntables / platforms, branches with `openFromLap`-style gating |
-| **Lock elevator** | A stretch where the boats rise: the upstairs look (bigger cars, longer shadows) driven by the lock's water level; gates as sliding doors. | `upstairs`, sliding doors |
-| **Big moving ship** | A three-screen ship sprite moving along a path, its wake made from swells following it. | swells, train-line mover |
-| **Rubber ducks** | Hundreds of tiny physics bodies, pooled, that a boat pushes aside. | — |
-| **Screen splash** | Droplets on the screen when you drive through spray. | UI overlay |
-| **Harbour world** | Quay walls (stone with tyre fenders in place of buoys) along the edges, wooden piers on stilts with shadows, colourful harbour houses with awnings, cranes, container stacks, the market hall roof that fades as you pass under it. | lagoon renderer, houses' fading roofs |
+| **Moving ferry** | A platform travelling on a timetable that carries the boats on its deck. Its route opens only while it's docked. | turntables / platforms, branches with gating |
+| **Big moving ship** | A long ship on a path, with wake swells following it and its hull as a moving wall. | swells, train-line mover |
+| **Rubber ducks** | Hundreds of tiny pooled physics bodies. | — |
+| **Screen effects** | Droplets (fireboat spray) and rain streaks on the screen. | UI overlay |
+| **Lock elevator** | Rising water lifts the boats (the upstairs look, driven by the water level); gates as sliding doors. | upstairs, sliding doors |
+| **Night and beam** | A dark overlay with light cut out by the sweeping beam and each boat's headlights. | night / dusk |
+| **Tide** | A water level falling over the race: rocks and sandbanks appear, and a shortcut branch opens on lap 3. | branches `openFromLap`, fjord lap events |
+| **Harbour and coast edges** | Quay walls with fenders, rocky shores, piers on stilts. | lagoon renderer |
 
-## 5. New art
-Harbour scenery sheet:
-- harbour houses in 4 colours, the market hall, bollards and nets, container stacks
-- the gantry crane, moored yachts, fishing boats, piers, the lighthouse at the harbour mouth
-- seals, pelicans, crates of fish, lobster pots, people on the quay
+# Order of work (each step playable, checked with screenshots, committed)
 
-Big pieces:
-- the ferry (with its ramps), the cruise ship, the fireboat with its arcs, the seaplane, the barge
-- the water-park slide and tower, the lock and its gates, the aqueduct
+**Race 2**
+1. Harbour world and lap
+2. Ferry
+3. Container port and water park
+4. Cruise ship, fireboat and seaplane
+5. Life, last lap, combos (FERRY HOP!, DUCK HUNT!, BEAT THE PLANE!), AI, balancing, track picture, map stop
 
-Also: the track's picture and the map stop.
+**Race 3**
 
-## 6. Phases (each ends playable, checked with screenshots, committed)
-1. **Harbour world and lap:** the track, quay walls, piers, houses, and basic scenery. Drive a lap on autopilot.
-2. **Ferry** (moving shortcut) and the route choice. AI takes it when it's docked.
-3. **Water park:** slide ride and duck basin.
-4. **Lock:** rising water, high canal, spillway trick jump.
-5. **Cruise ship and its wake;** fireboat with screen splash; seaplane.
-6. **Life, last-lap dusk and fireworks, combos** (FERRY HOP!, DUCK HUNT!, BEAT THE PLANE!), AI, balancing, star times, track picture, and its place on the map.
-
-**Scope note:** the ferry, the lock and the cruise ship are the three big new systems. If it gets too much for one
-race, the lock (D) moves to race 3 or 4 and race 2 keeps A, B, C, E, F, G.
+6. Coast world and lap
+7. Night and beam, rain and lightning
+8. Tide
+9. Sea caves
+10. Lock staircase and the Leap of Faith
+11. Whirlpool, wrecks, life, storm break, AI, balancing, track picture, map stop
