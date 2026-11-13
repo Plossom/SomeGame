@@ -251,7 +251,7 @@ namespace SomeGame.EditorTools
             for (int i = 1; i < road.Count; i++)
             {
                 var (p, dist) = road[i];
-                if (dist < next || p.y < 120f) continue;
+                if (dist < next || p.y < 120f || p.y > 1395f) continue; // (none in the far distance)
                 float w = RoadWidth(p.y), s = SizeAt(p.y);
                 next = dist + Mathf.Lerp(90f, 50f, Mathf.InverseLerp(200f, 1400f, p.y));
                 Vector2 dir = (p - road[i - 1].p).normalized, normal = new(-dir.y, dir.x);
@@ -337,21 +337,29 @@ namespace SomeGame.EditorTools
             foreach (var p in new[] { new Vector2(700f, 55f), new Vector2(900f, 75f), new Vector2(1060f, 30f) })
                 items.Add((p.y, () => BeachUmbrella(p, SizeAt(p.y) * 1.4f)));
 
-            // The horizon: a chain of little atolls with palms all along it, like the far forests of the other maps.
+            // The horizon: a chain of little atolls with palms all along it, like the far forests of the other maps;
+            // the lane winds in between them and is lost behind the one in front of its end.
             var atolls = new System.Random(5);
-            for (float ax = -20f; ax < 1200f; ax += 95f + (float)atolls.NextDouble() * 50f)
+            var laneEnd = Unstretch(MapLayout.Samples[MapLayout.Samples.Count - 1]);
+            var spots = new List<(Vector2 c, float rx, float ry)>
             {
-                var c = new Vector2(ax, Horizon - 22f - (float)atolls.NextDouble() * 16f);
-                float rx = 34f + (float)atolls.NextDouble() * 26f;
-                int count = 2 + atolls.Next(3);
+                (laneEnd + new Vector2(-4f, 10f), 70f, 14f), // over the lane's end, hiding it
+                (laneEnd + new Vector2(-125f, 12f), 48f, 5f),
+                (laneEnd + new Vector2(125f, 16f), 52f, 5f),
+            };
+            for (float ax = -20f; ax < 1200f; ax += 95f + (float)atolls.NextDouble() * 50f)
+                if (Mathf.Abs(ax - laneEnd.x) > 175f) spots.Add((new Vector2(ax, Horizon - 22f - (float)atolls.NextDouble() * 16f), 34f + (float)atolls.NextDouble() * 26f, 4.5f));
+            foreach (var (c, rx, ry) in spots)
+            {
+                int count = 2 + atolls.Next(3) + (ry > 6f ? 2 : 0);
                 var tops = new List<(Vector2, bool)>();
-                for (int k = 0; k < count; k++) tops.Add((c + new Vector2((k - (count - 1) * 0.5f) * rx * 0.5f + (float)atolls.NextDouble() * 6f, 1f), atolls.NextDouble() < 0.5));
+                for (int k = 0; k < count; k++) tops.Add((c + new Vector2((k - (count - 1) * 0.5f) * rx * 0.45f + (float)atolls.NextDouble() * 6f, ry * 0.3f), atolls.NextDouble() < 0.5));
                 items.Add((c.y + 1f, () =>
                 {
-                    Ellipse(c + new Vector2(0f, -1f), rx + 12f, 6f, new Color(0.6f, 0.95f, 0.88f, 0.7f));
-                    Ellipse(c, rx + 3f, 4.5f, new Color(1f, 1f, 1f, 0.9f));
-                    Ellipse(c, rx, 3.6f, Hex("F3DDA8"));
-                    Ellipse(c + new Vector2(0f, 2f), rx * 0.7f, 2.6f, Hex("3E9B4F"));
+                    Ellipse(c + new Vector2(0f, -1f), rx + 12f, ry + 2f, new Color(0.6f, 0.95f, 0.88f, 0.7f));
+                    Ellipse(c, rx + 3f, ry, new Color(1f, 1f, 1f, 0.9f));
+                    Ellipse(c, rx, ry - 0.9f, Hex("F3DDA8"));
+                    Ellipse(c + new Vector2(0f, ry * 0.45f), rx * 0.7f, ry * 0.6f, Hex("3E9B4F"));
                 }));
                 foreach (var (p, lean) in tops) items.Add((p.y, () => MapPalm(p, SizeAt(p.y) * 0.62f, lean)));
             }

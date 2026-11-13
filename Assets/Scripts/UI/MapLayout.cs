@@ -121,8 +121,8 @@ namespace SomeGame.UI
         public static readonly MapRoad Water = new(new Vector2[]
         {
             new(-40f, 130f), new(190f, 340f), new(540f, 360f), new(880f, 480f), new(1010f, 700f), new(830f, 910f), new(440f, 950f),
-            new(170f, 1110f), new(200f, 1340f), new(560f, 1440f), new(900f, 1540f),
-        }, 1, 10, 8); // (it ends at race 8)
+            new(170f, 1110f), new(200f, 1340f), new(560f, 1440f), new(900f, 1540f), new(990f, 1680f), new(830f, 1780f), new(700f, 1830f),
+        }, 1, 10, 8); // (after race 8 it winds on into the atolls on the horizon)
 
         public static MapRoad Of(CupLook look) => look switch { CupLook.Winter => Winter, CupLook.Water => Water, _ => Valley };
 
