@@ -44,6 +44,7 @@ namespace SomeGame.EditorTools
             var map = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/MapWater.png");
             if (map != null) cup.mapBackground = map;
             cup.starsRequired = 40;
+            cup.comingSoonRaces = new List<string> { "Harbor Havoc", "Lighthouse Run", "Jungle Rapids", "Pirate Bay", "Coral Coast", "Storm Chasers", "Storm Rally" };
             EditorUtility.SetDirty(cup);
             var list = AssetDatabase.LoadAssetAtPath<CupList>("Assets/Resources/Cups.asset");
             if (!list.cups.Contains(cup)) list.cups.Insert(Mathf.Min(2, list.cups.Count), cup);

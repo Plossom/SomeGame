@@ -21,6 +21,8 @@ namespace SomeGame.Race
         [Tooltip("The painted landscape behind the map road.")]
         public Sprite mapBackground;
         [Min(0)] public int starsRequired;
+        [Tooltip("Races still in the making, after the playable ones: they show on the map as greyed-out stops.")]
+        public List<string> comingSoonRaces = new();
         [Header("Challenge")]
         [Tooltip("The cup's funny challenge on the map (not a race).")]
         public LevelDefinition challenge;

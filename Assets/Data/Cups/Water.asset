@@ -19,5 +19,13 @@ MonoBehaviour:
   look: 2
   mapBackground: {fileID: 21300000, guid: cb920d2598e894e47a12812f8f7b783c, type: 3}
   starsRequired: 40
+  comingSoonRaces:
+  - Harbor Havoc
+  - Lighthouse Run
+  - Jungle Rapids
+  - Pirate Bay
+  - Coral Coast
+  - Storm Chasers
+  - Storm Rally
   challenge: {fileID: 0}
   challengeAfterRival: 

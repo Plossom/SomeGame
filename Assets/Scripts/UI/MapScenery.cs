@@ -78,7 +78,11 @@ namespace SomeGame.UI
         /// <summary>The chimneys (painting space) and the size of their houses, for the smoke.</summary>
         public static IEnumerable<(Vector2 top, float scale)> Chimneys(CupLook look)
         {
-            if (look == CupLook.Water) yield break; // (no chimneys in the tropics)
+            if (look == CupLook.Water)
+            {
+                yield return (new Vector2(250f, 1588f), 2.2f); // (no chimneys in the tropics: the volcano smokes)
+                yield break;
+            }
             if (look == CupLook.Winter)
                 foreach (var p in Cabins) yield return (CabinChimney(p), CabinScale(p));
             else

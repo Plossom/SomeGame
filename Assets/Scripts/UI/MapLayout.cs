@@ -120,8 +120,8 @@ namespace SomeGame.UI
         /// <summary>The sea lane: buoys from the beach at the bottom out round the islands to the far reef.</summary>
         public static readonly MapRoad Water = new(new Vector2[]
         {
-            new(-60f, 190f), new(230f, 372f), new(640f, 430f), new(900f, 640f), new(760f, 880f), new(360f, 960f),
-            new(230f, 1170f), new(470f, 1360f), new(850f, 1420f), new(900f, 1630f), new(560f, 1770f),
+            new(-40f, 130f), new(190f, 340f), new(540f, 360f), new(880f, 480f), new(1010f, 700f), new(830f, 910f), new(440f, 950f),
+            new(170f, 1110f), new(200f, 1340f), new(560f, 1440f), new(900f, 1540f), new(1000f, 1720f), new(760f, 1840f),
         }, 1, 10, 8);
 
         public static MapRoad Of(CupLook look) => look switch { CupLook.Winter => Winter, CupLook.Water => Water, _ => Valley };

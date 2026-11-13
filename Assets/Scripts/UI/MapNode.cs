@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SomeGame.UI
 {
-    public enum MapNodeState { Hidden, Locked, Open, Won }
+    public enum MapNodeState { Hidden, Locked, Open, Won, Soon }
 
     /// <summary>
     /// One stop on the map road: a round badge with the race number (white with a hard shadow once
@@ -88,6 +88,30 @@ namespace SomeGame.UI
             return 1f + t * t * ((s + 1f) * t + s);
         }
 
+        // A race still in the making: its number on a greyed-out badge, nothing to tap.
+        void BindSoon(string label)
+        {
+            face.color = Theme.Stone;
+            ring.gameObject.SetActive(true);
+            ring.color = Theme.StoneDark;
+            dashedRing.gameObject.SetActive(false);
+            shadow.gameObject.SetActive(true);
+            shadow.color = Theme.StoneDark;
+            number.gameObject.SetActive(true);
+            number.text = label;
+            number.color = Theme.StoneDark;
+            lockIcon.gameObject.SetActive(false);
+            starsPill.SetActive(false);
+            requirement.SetActive(false);
+            (captionRoot != null ? captionRoot : caption.gameObject).SetActive(false);
+            selection.SetActive(false);
+            _targetScale = 0.85f;
+            if (!_scaled) { _scale = _targetScale; _scaled = true; if (!_manual && _appearAt < 0f) transform.localScale = Vector3.one * _scale; }
+            _wasSelected = false;
+            button.interactable = false;
+            button.onClick.RemoveAllListeners();
+        }
+
         public System.Collections.IEnumerator PlayUnlock(Sprite sparkle, Action open)
         {
             _manual = true;
@@ -154,6 +178,7 @@ namespace SomeGame.UI
 
         public void Bind(string label, MapNodeState state, int earnedStars, int starsRequired, bool selected, string captionText, Action onClick)
         {
+            if (state == MapNodeState.Soon) { BindSoon(label); return; }
             bool hidden = state == MapNodeState.Hidden;
             bool won = state == MapNodeState.Won;
             // A won race looks like any open race; its stars show the result.

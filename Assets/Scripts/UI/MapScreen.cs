@@ -929,11 +929,13 @@ namespace SomeGame.UI
         {
             nodeTemplate.gameObject.SetActive(false);
 
-            int stops = Mathf.Min(MapLayout.StopCount, catalog.Count + 1);
+            // The cup's races, then its races still in the making (greyed out), else one "more soon" stop.
+            int soon = _cup != null && _cup.comingSoonRaces != null ? _cup.comingSoonRaces.Count : 0;
+            int stops = Mathf.Min(MapLayout.StopCount, catalog.Count + Mathf.Max(1, soon));
             for (int i = 0; i < stops; i++)
             {
                 var node = Instantiate(nodeTemplate, world);
-                node.name = i < catalog.Count ? $"Node{i + 1}" : "NodeSoon";
+                node.name = i < catalog.Count ? $"Node{i + 1}" : soon > 0 ? $"NodeSoon{i + 1}" : "NodeSoon";
                 var rect = (RectTransform)node.transform;
                 rect.anchoredPosition = MapLayout.StopPosition(i);
                 node.gameObject.SetActive(true);
@@ -1066,7 +1068,9 @@ namespace SomeGame.UI
                 int index = i;
                 if (i >= catalog.Count)
                 {
-                    _nodes[i].Bind("?", MapNodeState.Hidden, 0, 0, false, "MORE SOON", null);
+                    bool upcoming = _cup != null && _cup.comingSoonRaces != null && i - catalog.Count < _cup.comingSoonRaces.Count;
+                    if (upcoming) _nodes[i].Bind((i + 1).ToString(), MapNodeState.Soon, 0, 0, false, null, null);
+                    else _nodes[i].Bind("?", MapNodeState.Hidden, 0, 0, false, "MORE SOON", null);
                     continue;
                 }
                 var level = catalog[i];

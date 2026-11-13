@@ -19,15 +19,48 @@ namespace SomeGame.EditorTools
         static readonly Color SeaLine = Hex("0F3A55"); // outlines
         const float Horizon = 1470f;
 
-        // Islands in the sea (painting space): centre and radii.
-        static readonly (Vector2 c, Vector2 r)[] SeaIslands =
+        public enum IslandLook { Jungle, Sand, Rock, Cliff }
+
+        // Islands in the sea (painting space): centre, radii and look. Each sits in a bend of the lane (or by the
+        // edge) and is shrunk until it keeps clear of the lane.
+        static readonly (Vector2 c, Vector2 r, IslandLook look)[] SeaIslandPlan =
         {
-            (new Vector2(1050f, 1140f), new Vector2(160f, 46f)),
-            (new Vector2(70f, 760f), new Vector2(140f, 52f)),
-            (new Vector2(560f, 1290f), new Vector2(120f, 30f)),
-            (new Vector2(1080f, 470f), new Vector2(110f, 44f)),
-            (new Vector2(330f, 560f), new Vector2(60f, 20f)),
+            (new Vector2(700f, 495f), new Vector2(150f, 52f), IslandLook.Jungle),
+            (new Vector2(420f, 905f), new Vector2(175f, 62f), IslandLook.Jungle),
+            (new Vector2(760f, 1250f), new Vector2(115f, 34f), IslandLook.Jungle),
+            (new Vector2(30f, 610f), new Vector2(130f, 56f), IslandLook.Cliff),
+            (new Vector2(1130f, 880f), new Vector2(110f, 46f), IslandLook.Jungle),
+            (new Vector2(150f, 1262f), new Vector2(90f, 26f), IslandLook.Sand),
+            (new Vector2(1000f, 1065f), new Vector2(64f, 20f), IslandLook.Rock),
+            (new Vector2(440f, 1372f), new Vector2(70f, 16f), IslandLook.Sand),
+            (new Vector2(1090f, 380f), new Vector2(80f, 32f), IslandLook.Rock),
         };
+
+        static readonly List<(Vector2 c, Vector2 r, IslandLook look)> SeaIslands = new();
+
+        // Lane clearance of an ellipse: the least distance from its rim to the lane's edge.
+        static float LaneClearance(Vector2 c, Vector2 r)
+        {
+            float best = float.MaxValue;
+            for (int k = 0; k < 28; k++)
+            {
+                float a = k / 28f * Mathf.PI * 2f;
+                var q = c + new Vector2(Mathf.Cos(a) * r.x, Mathf.Sin(a) * r.y);
+                best = Mathf.Min(best, RoadDistance(q) - RoadWidth(q.y) * 0.5f);
+            }
+            return best;
+        }
+
+        static void PlanIslands()
+        {
+            SeaIslands.Clear();
+            foreach (var (c, r0, look) in SeaIslandPlan)
+            {
+                var r = r0;
+                for (int i = 0; i < 30 && LaneClearance(c, r + new Vector2(30f, 14f)) < 16f; i++) r *= 0.93f;
+                if (r.x > 30f) SeaIslands.Add((c, r, look));
+            }
+        }
 
         [MenuItem("SomeGame/Generate Water Map Art")]
         public static void GenerateWater()
@@ -42,6 +75,7 @@ namespace SomeGame.EditorTools
                 for (int py = 0; py < _h; py++)
                     for (int px = 0; px < _w; px++)
                         _px[py * _w + px] = WaterLandscape((px + 0.5f) / Scale, (py + 0.5f) / Scale / Stretch);
+                PlanIslands();
                 WaterIslandsBase();
                 SeaLane();
                 WaterObjects();
@@ -148,14 +182,23 @@ namespace SomeGame.EditorTools
 
         static void WaterIslandsBase()
         {
-            foreach (var (centre, r) in SeaIslands)
+            foreach (var (centre, r, look) in SeaIslands)
             {
-                // Pale shallows, a ring of foam, the beach, the jungle.
+                // Pale shallows, a ring of foam, the beach, the green (or the rock) on top.
                 Ellipse(centre + new Vector2(0f, -4f), r.x + 34f, r.y + 14f, new Color(0.6f, 0.95f, 0.88f, 0.75f));
                 Ellipse(centre, r.x + 8f, r.y + 4f, new Color(1f, 1f, 1f, 0.9f));
-                Ellipse(centre, r.x, r.y, Hex("F3DDA8"));
-                Ellipse(centre + new Vector2(0f, r.y * 0.25f), r.x * 0.72f, r.y * 0.62f, Hex("3E9B4F"));
-                Ellipse(centre + new Vector2(-r.x * 0.15f, r.y * 0.38f), r.x * 0.4f, r.y * 0.3f, Hex("5BB862"));
+                Ellipse(centre, r.x, r.y, look == IslandLook.Rock ? Hex("9AA5AB") : Hex("F3DDA8"));
+                if (look == IslandLook.Jungle || look == IslandLook.Cliff)
+                {
+                    Ellipse(centre + new Vector2(0f, r.y * 0.25f), r.x * 0.74f, r.y * 0.64f, Hex("3E9B4F"));
+                    Ellipse(centre + new Vector2(-r.x * 0.15f, r.y * 0.4f), r.x * 0.42f, r.y * 0.32f, Hex("5BB862"));
+                }
+                if (look == IslandLook.Rock)
+                    for (int k = 0; k < 4; k++)
+                    {
+                        var q = centre + new Vector2((k - 1.5f) * r.x * 0.42f, r.y * (0.1f + 0.25f * (k % 2)));
+                        Ellipse(q, r.x * 0.2f, r.y * 0.55f, k % 2 == 0 ? Hex("7E8A90") : Hex("B4BDC2"));
+                    }
             }
         }
 
@@ -191,7 +234,14 @@ namespace SomeGame.EditorTools
                 foreach (var (q, qr) in occupied) if ((q - p).sqrMagnitude < (r + qr) * (r + qr) * 0.55f) return false;
                 return true;
             }
-            for (int i = 0; i < MapLayout.StopCount; i++) occupied.Add((Unstretch(MapLayout.StopPosition(i)), 120f));
+            // Clear of the lane, its stops and what is there already.
+            bool Fits(Vector2 p, float hw, float h, float r)
+            {
+                if (WaterBlocked(p, hw, h)) return false;
+                for (int i = 0; i < MapLayout.StopCount; i++) if (Vector2.Distance(p, Unstretch(MapLayout.StopPosition(i))) < 95f + r) return false;
+                return Free(p, r);
+            }
+            void Put(Vector2 p, float r, Action draw) { occupied.Add((p, r)); items.Add((p.y, draw)); }
 
             // Buoys along both sides of the lane.
             var road = RoadPoints();
@@ -216,47 +266,74 @@ namespace SomeGame.EditorTools
                 }
             }
 
-            // Palms and huts on the islands.
             var rng = new System.Random(31);
             float Range(float a, float b) => a + (float)rng.NextDouble() * (b - a);
-            foreach (var (centre, r) in SeaIslands)
+
+            // On the islands: palms (the jungle ones crowded), huts, a lighthouse, a waterfall off the cliff.
+            foreach (var (centre, r, look) in SeaIslands)
             {
-                int palms = Mathf.RoundToInt(r.x / 22f);
-                for (int k = 0; k < palms * 6 && palms > 0; k++)
+                if (look == IslandLook.Cliff)
+                {
+                    var top = centre + new Vector2(r.x * 0.2f, r.y * 0.3f);
+                    items.Add((centre.y + 1f, () => CliffFall(top, SizeAt(centre.y) * 1.4f)));
+                }
+                if (look == IslandLook.Rock && centre.y > 1000f)
+                {
+                    var lh = centre + new Vector2(0f, r.y * 0.3f);
+                    Put(lh, 40f, () => MapLighthouse(lh, SizeAt(lh.y) * 1.5f));
+                }
+                int palms = look switch { IslandLook.Jungle => Mathf.RoundToInt(r.x / 16f), IslandLook.Cliff => 3, IslandLook.Sand => 2, _ => 0 };
+                for (int k = 0; k < palms * 8 && palms > 0; k++)
                 {
                     var p = centre + new Vector2(Range(-r.x * 0.75f, r.x * 0.75f), Range(-r.y * 0.3f, r.y * 0.55f));
                     if (Sdf.Ellipse(p.x, p.y, centre.x, centre.y, r.x * 0.8f, r.y * 0.8f) > 0f) continue;
-                    float s = SizeAt(p.y) * Range(0.85f, 1.15f);
-                    if (!Free(p, 22f * s)) continue;
-                    occupied.Add((p, 22f * s));
+                    float s = SizeAt(p.y) * Range(0.8f, 1.15f);
+                    if (!Fits(p, 26f * s, 90f * s, 18f * s)) continue;
                     palms--;
-                    items.Add((p.y, () => MapPalm(p, s, rng.NextDouble() < 0.5)));
+                    bool lean = rng.NextDouble() < 0.5;
+                    Put(p, 18f * s, () => MapPalm(p, s, lean));
+                }
+                if (look == IslandLook.Jungle && r.x > 90f)
+                {
+                    var hut = centre + new Vector2(r.x * 0.62f, -r.y * 0.55f);
+                    float s = SizeAt(hut.y);
+                    if (Fits(hut, 34f * s, 80f * s, 30f * s)) Put(hut, 30f * s, () => StiltHut(hut, s));
                 }
             }
-            foreach (var (p, s) in new[] { (new Vector2(820f, 1090f), 1.15f), (new Vector2(170f, 690f), 1.2f), (new Vector2(990f, 410f), 1.1f) })
-            {
-                float sc = SizeAt(p.y) * s;
-                if (WaterBlocked(p, 30f * sc, 60f * sc)) continue;
-                occupied.Add((p, 34f * sc));
-                items.Add((p.y, () => StiltHut(p, sc)));
-            }
 
-            // The lighthouse on its islet by the horizon, sailboats, the pirate wreck.
-            items.Add((1380f, () => MapLighthouse(new Vector2(1090f, 1382f), SizeAt(1382f) * 1.5f)));
-            foreach (var (p, s) in new[] { (new Vector2(370f, 1400f), 0.8f), (new Vector2(860f, 1330f), 0.9f), (new Vector2(130f, 1210f), 1f), (new Vector2(640f, 760f), 1.1f) })
+            // Out on the water: sailboats, kayaks, a seaplane, a floating bar, rocks, reefs, the wreck, a sandbar
+            // with flamingos, and a jetty off the beach with its boats.
+            (Vector2 p, Action<Vector2, float> draw, float size, float r)[] things =
             {
-                float sc = SizeAt(p.y) * s;
-                if (WaterBlocked(p, 26f * sc, 70f * sc) || !Free(p, 30f * sc)) continue;
-                occupied.Add((p, 30f * sc));
-                items.Add((p.y, () => Sailboat(p, sc)));
+                (new Vector2(560f, 1300f), (q, s) => Sailboat(q, s), 0.85f, 26f),
+                (new Vector2(220f, 1330f), (q, s) => Sailboat(q, s), 0.9f, 26f),
+                (new Vector2(1080f, 960f), (q, s) => Sailboat(q, s), 1.05f, 30f),
+                (new Vector2(60f, 1180f), (q, s) => Sailboat(q, s), 0.95f, 26f),
+                (new Vector2(860f, 940f), (q, s) => Seaplane(q, s), 1.1f, 40f),
+                (new Vector2(300f, 470f), (q, s) => FloatingBar(q, s), 1.1f, 36f),
+                (new Vector2(1000f, 230f), (q, s) => Kayaks(q, s), 1f, 28f),
+                (new Vector2(370f, 565f), (q, s) => Sandbar(q, s), 1.15f, 48f),
+                (new Vector2(900f, 1010f), (q, s) => Wreck(q, s), 1.2f, 50f),
+                (new Vector2(1060f, 1160f), (q, s) => Rocks(q, s), 1f, 22f),
+                (new Vector2(320f, 1240f), (q, s) => Rocks(q, s), 0.85f, 20f),
+                (new Vector2(1080f, 200f), (q, s) => Reef(q, s), 1.2f, 40f),
+                (new Vector2(120f, 720f), (q, s) => Reef(q, s), 1f, 36f),
+                (new Vector2(990f, 790f), (q, s) => Reef(q, s), 1f, 36f),
+                (new Vector2(700f, 860f), (q, s) => Reef(q, s), 0.9f, 32f),
+            };
+            foreach (var (p, draw, size, r) in things)
+            {
+                float s = SizeAt(p.y) * size;
+                if (!Fits(p, r * s * 0.8f, r * s * 1.5f, r * s)) continue;
+                Put(p, r * s, () => draw(p, s));
             }
-            var wreck = new Vector2(1000f, 860f);
-            if (!WaterBlocked(wreck, 50f, 80f)) items.Add((wreck.y, () => Wreck(wreck, SizeAt(wreck.y) * 1.3f)));
+            var jetty = new Vector2(980f, 105f);
+            items.Add((jetty.y, () => Jetty(jetty, 1.5f)));
 
             // The beach in front: palms, umbrellas and a towel or two.
-            foreach (var (p, s) in new[] { (new Vector2(40f, 40f), 2.3f), (new Vector2(1150f, 60f), 2f), (new Vector2(250f, 20f), 1.6f) })
+            foreach (var (p, s) in new[] { (new Vector2(40f, 40f), 2.3f), (new Vector2(1150f, 60f), 2f), (new Vector2(250f, 20f), 1.6f), (new Vector2(700f, 30f), 1.5f) })
                 items.Add((p.y, () => MapPalm(p, s, true)));
-            foreach (var p in new[] { new Vector2(520f, 50f), new Vector2(760f, 40f), new Vector2(940f, 70f) })
+            foreach (var p in new[] { new Vector2(470f, 50f), new Vector2(580f, 70f), new Vector2(840f, 40f) })
                 items.Add((p.y, () => BeachUmbrella(p, SizeAt(p.y) * 1.4f)));
 
             items.Sort((a, b) => b.y.CompareTo(a.y)); // far (high) first
@@ -342,6 +419,108 @@ namespace SomeGame.EditorTools
             Shape(Box(p + new Vector2(0, 9 * s), 12 * s), (x, y) => RoundRect(x, y, p.x, p.y + 9 * s, 6 * s, 9 * s, 5 * s), red ? Hex("E8423A") : Color.white);
             Rect(p + new Vector2(0, 9 * s), 6 * s, 2 * s, red ? Color.white : Hex("E8423A"));
             Shape(Box(p + new Vector2(0, 9 * s), 12 * s), (x, y) => Shell(RoundRect(x, y, p.x, p.y + 9 * s, 6 * s, 9 * s, 5 * s), 1f), SeaLine);
+        }
+
+        // A green cliff with a waterfall pouring into the sea, mist at its foot.
+        static void CliffFall(Vector2 p, float s)
+        {
+            Poly(new[] { new Vector2(p.x - 50 * s, p.y), new Vector2(p.x + 40 * s, p.y), new Vector2(p.x + 30 * s, p.y + 70 * s), new Vector2(p.x - 10 * s, p.y + 92 * s), new Vector2(p.x - 46 * s, p.y + 64 * s) }, Hex("6E7E78"));
+            Poly(new[] { new Vector2(p.x - 46 * s, p.y + 64 * s), new Vector2(p.x - 10 * s, p.y + 92 * s), new Vector2(p.x + 30 * s, p.y + 70 * s), new Vector2(p.x + 20 * s, p.y + 82 * s), new Vector2(p.x - 14 * s, p.y + 104 * s), new Vector2(p.x - 44 * s, p.y + 78 * s) }, Hex("3E9B4F"));
+            // The fall: white streaks down the face, a pool of foam and mist below.
+            Shape(Box(p + new Vector2(0, 45 * s), 50 * s), (x, y) => RoundRect(x, y, p.x - 4 * s, p.y + 46 * s, 9 * s, 44 * s, 4 * s), new Color(0.78f, 0.95f, 1f, 0.95f));
+            for (int i = 0; i < 4; i++)
+            {
+                float fx = p.x - 10 * s + i * 4 * s;
+                Shape(Box(p + new Vector2(0, 45 * s), 50 * s), (x, y) => Capsule(x, y, fx, p.y + 88 * s, fx, p.y + 4 * s, 0.9f * s), Color.white);
+            }
+            Ellipse(p + new Vector2(-4 * s, 2 * s), 26 * s, 8 * s, new Color(1f, 1f, 1f, 0.85f));
+            Ellipse(p + new Vector2(-4 * s, 10 * s), 32 * s, 12 * s, new Color(1f, 1f, 1f, 0.35f));
+            Poly(new[] { new Vector2(p.x - 50 * s, p.y), new Vector2(p.x + 40 * s, p.y), new Vector2(p.x + 30 * s, p.y + 70 * s), new Vector2(p.x - 10 * s, p.y + 92 * s), new Vector2(p.x - 46 * s, p.y + 64 * s) }, SeaLine, 2f);
+        }
+
+        static void Seaplane(Vector2 p, float s)
+        {
+            Ellipse(p, 46 * s, 7 * s, new Color(1f, 1f, 1f, 0.6f));
+            foreach (float fx in new[] { -16f, 16f }) Rect(p + new Vector2(fx * s, 4 * s), 22 * s, 3 * s, Color.white);
+            Rect(p + new Vector2(0, 16 * s), 30 * s, 7 * s, Hex("FFC93C"));
+            Rect(p + new Vector2(0, 26 * s), 52 * s, 3 * s, Hex("FF6B52"));
+            Poly(new[] { new Vector2(p.x - 30 * s, p.y + 16 * s), new Vector2(p.x - 44 * s, p.y + 34 * s), new Vector2(p.x - 36 * s, p.y + 16 * s) }, Hex("FF6B52"));
+            Rect(p + new Vector2(14 * s, 19 * s), 7 * s, 3 * s, Hex("8FDDFF"));
+            Shape(Box(p + new Vector2(32 * s, 16 * s), 10 * s), (x, y) => Capsule(x, y, p.x + 32 * s, p.y + 8 * s, p.x + 32 * s, p.y + 24 * s, 1.4f * s), Hex("2A2F36"));
+        }
+
+        static void FloatingBar(Vector2 p, float s)
+        {
+            Ellipse(p, 40 * s, 9 * s, new Color(1f, 1f, 1f, 0.6f));
+            Rect(p + new Vector2(0, 5 * s), 34 * s, 5 * s, Hex("A57A4C"));
+            Rect(p + new Vector2(0, 14 * s), 14 * s, 6 * s, Hex("C99A4C"));
+            BeachUmbrella(p + new Vector2(14 * s, 8 * s), s * 0.75f);
+            foreach (float fx in new[] { -24f, -12f }) Disc(p + new Vector2(fx * s, 12 * s), 3 * s, Hex("FF6B52"));
+        }
+
+        static void Kayaks(Vector2 p, float s)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var q = p + new Vector2(i * 30 * s, i * 10 * s);
+                Ellipse(q, 20 * s, 4 * s, new Color(1f, 1f, 1f, 0.55f));
+                Shape(Box(q + new Vector2(0, 4 * s), 24 * s), (x, y) => Sdf.Ellipse(x, y, q.x, q.y + 4 * s, 20 * s, 3.5f * s), i == 0 ? Hex("FFC93C") : Hex("2EC4B6"));
+                Disc(q + new Vector2(0, 10 * s), 4 * s, Hex("F2C6A0"));
+                Shape(Box(q + new Vector2(0, 10 * s), 18 * s), (x, y) => Capsule(x, y, q.x - 14 * s, q.y + 4 * s, q.x + 14 * s, q.y + 14 * s, 1.1f * s), Hex("2A2F36"));
+            }
+        }
+
+        static void Sandbar(Vector2 p, float s)
+        {
+            Ellipse(p + new Vector2(0, -3 * s), 74 * s, 16 * s, new Color(0.6f, 0.95f, 0.88f, 0.8f));
+            Ellipse(p, 60 * s, 10 * s, new Color(1f, 1f, 1f, 0.9f));
+            Ellipse(p, 54 * s, 8 * s, Hex("F6E2B2"));
+            // Flamingos standing on it.
+            foreach (float fx in new[] { -26f, -6f, 16f })
+            {
+                var q = p + new Vector2(fx * s, 2 * s);
+                Shape(Box(q + new Vector2(0, 10 * s), 10 * s), (x, y) => Capsule(x, y, q.x, q.y, q.x, q.y + 10 * s, 0.7f * s), Hex("E86AA6"));
+                Ellipse(q + new Vector2(0, 14 * s), 6 * s, 4 * s, Hex("FF8FB8"));
+                Shape(Box(q + new Vector2(4 * s, 20 * s), 10 * s), (x, y) => Capsule(x, y, q.x + 3 * s, q.y + 15 * s, q.x + 5 * s, q.y + 24 * s, 1.1f * s), Hex("FF8FB8"));
+                Disc(q + new Vector2(5 * s, 25 * s), 2.2f * s, Hex("FF8FB8"));
+            }
+        }
+
+        static void Rocks(Vector2 p, float s)
+        {
+            Ellipse(p, 30 * s, 7 * s, new Color(1f, 1f, 1f, 0.65f));
+            Ellipse(p + new Vector2(-8 * s, 8 * s), 16 * s, 12 * s, Hex("8E9AA0"));
+            Ellipse(p + new Vector2(10 * s, 5 * s), 12 * s, 8 * s, Hex("6E7A80"));
+            Ellipse(p + new Vector2(-12 * s, 12 * s), 7 * s, 5 * s, Hex("B4BDC2"));
+        }
+
+        static void Reef(Vector2 p, float s)
+        {
+            // Under the water: a soft patch of colourful coral.
+            Ellipse(p, 50 * s, 16 * s, new Color(0.65f, 0.95f, 0.88f, 0.55f));
+            var rng = new System.Random((int)(p.x * 7 + p.y));
+            for (int i = 0; i < 14; i++)
+            {
+                var q = p + new Vector2((float)(rng.NextDouble() - 0.5) * 80 * s, (float)(rng.NextDouble() - 0.5) * 22 * s);
+                Color c = (i % 4) switch { 0 => Hex("FF8A4C"), 1 => Hex("E86AA6"), 2 => Hex("9A6AD8"), _ => Hex("FFD24D") };
+                Ellipse(q, 6 * s, 3.5f * s, new Color(c.r, c.g, c.b, 0.7f));
+            }
+        }
+
+        static void Jetty(Vector2 p, float s)
+        {
+            // Planks out from the beach, posts, a speedboat and a rowing boat tied up beside it.
+            Rect(p + new Vector2(0, 60 * s), 9 * s, 62 * s, Hex("A57A4C"));
+            for (int i = 0; i < 9; i++) Rect(p + new Vector2(0, 4 * s + i * 14 * s), 9 * s, 0.8f * s, Hex("6B4A2E"));
+            foreach (float fx in new[] { -10f, 10f })
+                for (int i = 0; i < 4; i++) Rect(p + new Vector2(fx * s, 10 * s + i * 32 * s), 1.6f * s, 4 * s, Hex("4A2E18"));
+            var b = p + new Vector2(26 * s, 70 * s);
+            Ellipse(b, 20 * s, 4 * s, new Color(1f, 1f, 1f, 0.6f));
+            Poly(new[] { new Vector2(b.x - 18 * s, b.y + 6 * s), new Vector2(b.x + 22 * s, b.y + 6 * s), new Vector2(b.x + 14 * s, b.y), new Vector2(b.x - 14 * s, b.y) }, Hex("FF6B52"));
+            Rect(b + new Vector2(2 * s, 9 * s), 6 * s, 3 * s, Hex("8FDDFF"));
+            var r = p + new Vector2(-24 * s, 40 * s);
+            Ellipse(r, 14 * s, 3 * s, new Color(1f, 1f, 1f, 0.6f));
+            Poly(new[] { new Vector2(r.x - 13 * s, r.y + 5 * s), new Vector2(r.x + 13 * s, r.y + 5 * s), new Vector2(r.x + 9 * s, r.y), new Vector2(r.x - 9 * s, r.y) }, Hex("8A5A32"));
         }
 
         static void BeachUmbrella(Vector2 p, float s)
