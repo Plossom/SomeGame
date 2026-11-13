@@ -153,6 +153,7 @@ MonoBehaviour:
     angle: 80
     drift: 7
   fireworks: 0
+  lastLapShow: 0
   cows: []
   fences: []
   trains: []
@@ -403,6 +404,25 @@ MonoBehaviour:
   - 262
   footbridges:
   - 40
+  ferry:
+    branch: -1
+    at: 0.5
+    docked: 7
+    away: 5
+  cranes: []
+  duckBasins: []
+  ducks: 160
+  cruiseShip:
+    enabled: 0
+    from: 0
+    to: 0
+    lateral: 22
+    speed: 6
+  fireJets: []
+  seaplane:
+    enabled: 0
+    from: 0
+    to: 0
   waterWorld: 0
   biome: 2
   gaps:
@@ -422,6 +442,7 @@ MonoBehaviour:
     width: 0
     tricks: 2
     plunge: 0
+    barge: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: 65.13384, y: 11.912613}

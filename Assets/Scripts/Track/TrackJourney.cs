@@ -163,7 +163,7 @@ namespace SomeGame.Track
             if (fenceSprite != null && layout.fences != null) foreach (var stretch in layout.fences) BuildFence(stretch, fenceSprite, 1.2f, 2.2f, 7);
             if (buntingSprite != null && layout.buntings != null) foreach (var stretch in layout.buntings) BuildFence(stretch, buntingSprite, 1.1f, 3.4f, 8);
             if (layout.coasters != null) foreach (var coaster in layout.coasters) BuildCoaster(coaster);
-            if (layout.fireworks && particleMaterial != null) BuildFireworks();
+            if ((layout.fireworks || layout.lastLapShow) && particleMaterial != null) BuildFireworks();
             for (int g = 0; g < layout.gaps.Count; g++) if (layout.gaps[g].IsDrawbridge && bridgeLeafSprite != null) BuildDrawbridge(layout.gaps[g]);
             if (stoneBridgeSprite != null)
                 foreach (var (from, to) in track.Bridges)
@@ -988,6 +988,8 @@ namespace SomeGame.Track
         void UpdateFireworks()
         {
             if (_fireworks == null || Time.time < _nextFirework) return;
+            // A last-lap show: only once the player is on the last lap.
+            if (!track.Layout.fireworks && (_race == null || _race.Player == null || _race.Player.TotalLaps < 2 || _race.Player.CurrentLap < _race.Player.TotalLaps)) return;
             _nextFirework = Time.time + Random.Range(0.5f, 1.3f);
             var cam = Camera.main;
             if (cam == null) return;

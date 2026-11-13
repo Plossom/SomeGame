@@ -140,6 +140,8 @@ namespace SomeGame.Track
         public List<Boat> boats = new();
         [Tooltip("Fireworks over the scenery, away from the road.")]
         public bool fireworks;
+        [Tooltip("Fireworks only on the player's last lap (and a sunset glow over everything on it).")]
+        public bool lastLapShow;
 
         [Tooltip("Cows chilling on the road (farm).")]
         public List<Cow> cows = new();
@@ -226,7 +228,7 @@ namespace SomeGame.Track
         [Tooltip("Wooden footbridges over the channel (lap distances): you race underneath.")]
         public List<float> footbridges = new();
 
-        public enum IslandKind { Jungle, Sand, Rock }
+        public enum IslandKind { Jungle, Sand, Rock, Quay }
 
         [Serializable]
         public class Island
@@ -263,6 +265,66 @@ namespace SomeGame.Track
             [Min(1f)] public float width = 3.5f;
             [Tooltip("Extra speed it gives (fraction of top speed).")]
             [Range(0f, 0.6f)] public float push = 0.25f;
+        }
+
+        [Header("Harbour (Water Cup)")]
+        [Tooltip("A car ferry berthed across a branch: while it is docked the branch runs in through its bow, over its car deck and out of its stern; then it closes up and sails out (booms drop across the branch).")]
+        public Ferry ferry = new();
+        [Tooltip("Gantry cranes swinging a container across the channel now and then (lap distances).")]
+        public List<Crane> cranes = new();
+        [Tooltip("Rubber ducks bobbing on these stretches of the channel (lap distances from, to): boats plough through them.")]
+        public List<Vector2> duckBasins = new();
+        [Min(0)] public int ducks = 160;
+        [Tooltip("A cruise ship steaming along beside the channel, its wake rolling across it.")]
+        public CruiseShip cruiseShip = new();
+        [Tooltip("Fireboats spraying arcs of water across the channel.")]
+        public List<FireJet> fireJets = new();
+        [Tooltip("A seaplane that lands in the channel ahead of you, skims along and takes off again.")]
+        public Seaplane seaplane = new();
+
+        [Serializable]
+        public class Ferry
+        {
+            [Tooltip("The branch it lies across (-1 = none).")]
+            public int branch = -1;
+            [Tooltip("Where along the branch it berths (0..1).")]
+            [Range(0f, 1f)] public float at = 0.5f;
+            [Min(1f)] public float docked = 7f, away = 5f;
+        }
+
+        [Serializable]
+        public class Crane
+        {
+            public float distance;
+            [Min(2f)] public float period = 5f;
+            public float offset;
+        }
+
+        [Serializable]
+        public class CruiseShip
+        {
+            public bool enabled;
+            [Tooltip("Lap distances it steams between (beside the channel), and how far out from the centre line.")]
+            public float from, to, lateral = 22f;
+            [Min(1f)] public float speed = 6f;
+        }
+
+        [Serializable]
+        public class FireJet
+        {
+            public float distance;
+            [Tooltip("The side the fireboat lies on (+1 left).")]
+            public float side = 1f;
+            [Min(1f)] public float period = 4f;
+            public float offset;
+        }
+
+        [Serializable]
+        public class Seaplane
+        {
+            public bool enabled;
+            [Tooltip("Lap distances where it touches down and where it lifts off again.")]
+            public float from, to;
         }
 
         [Header("Water, jumps and oil")]
@@ -787,6 +849,8 @@ namespace SomeGame.Track
             [Min(1)] public int tricks = 3;
             [Tooltip("A hatch in the road: no ramp - drive in and you drop down through it, onto the road below at 'to' (into the mines).")]
             public bool plunge;
+            [Tooltip("Lagoon: what lies across the channel to jump over (a sandbar, or a barge loaded with containers).")]
+            public bool barge;
             public bool IsDrawbridge => period > 0f;
         }
 

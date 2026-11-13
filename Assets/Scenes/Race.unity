@@ -26252,6 +26252,7 @@ GameObject:
   - component: {fileID: 1295174597}
   - component: {fileID: 1295174596}
   - component: {fileID: 1295174598}
+  - component: {fileID: 1295174599}
   m_Layer: 0
   m_Name: Track
   m_TagString: Untagged
@@ -26607,6 +26608,8 @@ MonoBehaviour:
   roofShadowOffset: {x: 0.9, y: -1.2}
   meadowRoad: {fileID: 2100000, guid: c09e7ff0c663846d8a9b78bcff0b65d6, type: 2}
   snowRoad: {fileID: 2100000, guid: b132e69c7717c459cb31383d8a47b7e0, type: 2}
+  lagoonRoad: {fileID: 2100000, guid: c421cef1b72bf4d92b819af27b68fac8, type: 2}
+  lagoonEdges: {fileID: 2100000, guid: 6b0ce423357e848ef977c5a3e71f5ee0, type: 2}
   roadTile: 4
   edgeLineWidth: 0.28
   iceMargin: 2.5
@@ -26956,6 +26959,31 @@ MonoBehaviour:
   track: {fileID: 1295174578}
   plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
   particleMaterial: {fileID: 2100000, guid: 970fa64395a764d15821512587ad2582, type: 2}
+--- !u!114 &1295174599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 445a96f7ed0044f3d9b341105b38ca7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackHarbour
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+  ferry: {fileID: 21300000, guid: 7c7189ad4be18414385a74a627190e16, type: 3}
+  ferryDeck: {fileID: 21300000, guid: 2d012005b7c65495c8b0ec5629206fab, type: 3}
+  boom: {fileID: 21300000, guid: be6aeb5aea8bf4113b7ce0bdbda2f872, type: 3}
+  container: {fileID: 21300000, guid: 270456ccfa25d4d0cbe691fe149e59b4, type: 3}
+  duck: {fileID: 21300000, guid: 109fd350142fa40099eac4872d7892dc, type: 3}
+  cruiseShip: {fileID: 21300000, guid: aadeacd8b0e9148a3b4cb519d94f5751, type: 3}
+  fireboat: {fileID: 21300000, guid: 7a6d1a38bf5994f84ab1297cf6866157, type: 3}
+  waterArc: {fileID: 21300000, guid: c66d30e0de73d4f0081a5f3ffbef3471, type: 3}
+  seaplane: {fileID: 21300000, guid: 49808f780f2f649c48351d7105842e71, type: 3}
+  screenDrop: {fileID: 21300000, guid: 5cc62b83c99024dde845ffbdda4e1b99, type: 3}
+  slideTower: {fileID: 21300000, guid: be3fe65a14893469d8605064b578b892, type: 3}
 --- !u!1 &1297106806
 GameObject:
   m_ObjectHideFlags: 0
@@ -39411,6 +39439,9 @@ MonoBehaviour:
   sunbather: {fileID: 21300000, guid: 0f339fc900be3498cb69906b5ff98833, type: 3}
   sandcastle: {fileID: 21300000, guid: 188dc9f7a09ba4c1cb05b68cae74f6f8, type: 3}
   crab: {fileID: 21300000, guid: 554b41bb2e8fe49e9a8572858aa7c06c, type: 3}
+  quay: {fileID: 2100000, guid: 292fb7dac84f3470d8066ea86760c5cd, type: 2}
+  harbourScenery: {fileID: 2100000, guid: 7bce4edcc7a48459b9cb95ee519b73f6, type: 2}
+  barge: {fileID: 21300000, guid: 44fc64986806b4f6e9512da668f31ec4, type: 3}
 --- !u!4 &1905064030
 Transform:
   m_ObjectHideFlags: 0

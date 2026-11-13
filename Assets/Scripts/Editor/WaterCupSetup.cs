@@ -21,6 +21,7 @@ namespace SomeGame.EditorTools
             WaterArt.GenerateBoats();
             WaterArt.GenerateLagoon();
             WaterArt.GenerateLagoonScenery();
+            WaterArt.GenerateHarbour();
             ArtGenerator.BuildGarageArt();
             return SetUp();
         }
@@ -32,8 +33,10 @@ namespace SomeGame.EditorTools
             WireRaceScene();
             var layout = BuildLagoonLoop();
             var level = Level("Water01", "Lagoon Loop", layout);
+            var harbour = BuildHarborHavoc();
+            var level2 = HarbourLevel(harbour);
             var catalog = Asset<LevelCatalog>("Assets/Data/Levels/WaterCatalog.asset");
-            catalog.levels = new List<LevelDefinition> { level };
+            catalog.levels = new List<LevelDefinition> { level, level2 };
             EditorUtility.SetDirty(catalog);
             var cup = Asset<CupDefinition>("Assets/Data/Cups/Water.asset");
             cup.displayName = "WATER CUP";
@@ -44,7 +47,7 @@ namespace SomeGame.EditorTools
             var map = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/MapWater.png");
             if (map != null) cup.mapBackground = map;
             cup.starsRequired = 40;
-            cup.comingSoonRaces = new List<string> { "Harbor Havoc", "Lighthouse Run", "Jungle Rapids", "Pirate Bay", "Coral Coast", "Storm Chasers", "Storm Rally" };
+            cup.comingSoonRaces = new List<string> { "Lighthouse Run", "Jungle Rapids", "Pirate Bay", "Coral Coast", "Storm Chasers", "Storm Rally" };
             EditorUtility.SetDirty(cup);
             var list = AssetDatabase.LoadAssetAtPath<CupList>("Assets/Resources/Cups.asset");
             if (!list.cups.Contains(cup)) list.cups.Insert(Mathf.Min(2, list.cups.Count), cup);
@@ -105,7 +108,31 @@ namespace SomeGame.EditorTools
             lso.FindProperty("sunbather").objectReferenceValue = Sprite("Sunbather");
             lso.FindProperty("sandcastle").objectReferenceValue = Sprite("SandcastleTop");
             lso.FindProperty("crab").objectReferenceValue = Sprite("Crab");
+            lso.FindProperty("quay").objectReferenceValue = Mat("QuayStoneMat");
+            lso.FindProperty("harbourScenery").objectReferenceValue = Mat("SceneryHarbourWater");
+            lso.FindProperty("barge").objectReferenceValue = Sprite("Barge");
             lso.ApplyModifiedPropertiesWithoutUndo();
+
+            // The ferry route and the other branches on the water: channel water with foam edges.
+            var branches = Object.FindAnyObjectByType<TrackBranches>(FindObjectsInactive.Include);
+            if (branches != null)
+            {
+                var bso = new SerializedObject(branches);
+                bso.FindProperty("lagoonRoad").objectReferenceValue = Mat("LagoonChannel");
+                bso.FindProperty("lagoonEdges").objectReferenceValue = Mat("LagoonFoamMat");
+                bso.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // The harbour's moving set pieces.
+            var harbour = Object.FindAnyObjectByType<TrackHarbour>(FindObjectsInactive.Include);
+            if (harbour == null) harbour = trackObject.gameObject.AddComponent<TrackHarbour>();
+            var hso = new SerializedObject(harbour);
+            hso.FindProperty("track").objectReferenceValue = trackObject;
+            hso.FindProperty("plain").objectReferenceValue = Mat("Plain");
+            foreach (var (field, sprite) in new[] { ("ferry", "Ferry"), ("ferryDeck", "FerryDeck"), ("boom", "Boom"), ("container", "Container"), ("duck", "RubberDuck"),
+                         ("cruiseShip", "CruiseShip"), ("fireboat", "Fireboat"), ("waterArc", "WaterArc"), ("seaplane", "SeaplaneTop"), ("screenDrop", "ScreenDrop"), ("slideTower", "SlideTower") })
+                hso.FindProperty(field).objectReferenceValue = Sprite(sprite);
+            hso.ApplyModifiedPropertiesWithoutUndo();
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
         }
 
@@ -203,6 +230,134 @@ namespace SomeGame.EditorTools
             return t;
         }
 
+        // ------------------------------------------------------------------ race 2: Harbor Havoc
+
+        static TrackLayout BuildHarborHavoc()
+        {
+            var t = Asset<TrackLayout>("Assets/Data/Tracks/HarborHavoc.asset");
+            t.waypoints = HARBOUR;
+            t.roadWidth = 7.5f; // (narrower than the lagoon: this is a harder race)
+            t.rampWidth = 3.4f;
+            // The duck basin: the channel opens out where the ducks bob.
+            t.widths = new List<TrackLayout.WidthKey>
+            {
+                new() { distance = 425f, width = 7.5f }, new() { distance = 440f, width = 15f },
+                new() { distance = 468f, width = 15f }, new() { distance = 482f, width = 7.5f },
+            };
+            t.kerbWidth = 0.7f;
+            t.sampleSpacing = 1f;
+            t.checkpointCount = 8;
+            t.boundaryMargin = 28f;
+            t.biome = TrackLayout.Biome.Lagoon;
+            t.vehicle = TrackLayout.Vehicle.Boat;
+            t.sceneryMaterial = Mat("SceneryHarbourWater");
+            t.skyLife = 0f;
+            var path = new TrackPath(t.waypoints, t.sampleSpacing);
+            Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
+
+            // The waterfront: the fish market quay, the water park's beach, the container port, the old town inside
+            // the loop and the ferry pier.
+            t.lagoonIslands = new List<TrackLayout.Island>
+            {
+                new() { points = SOUTH, kind = TrackLayout.IslandKind.Quay, beach = 2f, palms = 40, huts = 9, seed = 11 },
+                new() { points = WEST, kind = TrackLayout.IslandKind.Jungle, beach = 7f, palms = 30, huts = 2, seed = 12 },
+                new() { points = NORTH, kind = TrackLayout.IslandKind.Quay, beach = 2f, palms = 40, huts = 8, seed = 13 },
+                new() { points = TOWN, kind = TrackLayout.IslandKind.Quay, beach = 2f, palms = 90, huts = 26, seed = 14 },
+                new() { points = PIER, kind = TrackLayout.IslandKind.Quay, beach = 2f, palms = 6, huts = 1, seed = 15 },
+            };
+            Rect H(string n) => HarbourSheet.Cell(n);
+            t.decor = new List<TrackLayout.Decor>
+            {
+                new() { cell = "FishStall", uv = H("FishStall"), position = new Vector2(12f, -12f), size = 6f, angle = 0f },
+                new() { cell = "FishStall", uv = H("FishStall"), position = new Vector2(38f, -13f), size = 6f, angle = 10f },
+                new() { cell = "Nets", uv = H("Nets"), position = new Vector2(2f, -12f), size = 5f, angle = 30f },
+                new() { cell = "People", uv = H("People"), position = new Vector2(24f, -19f), size = 4.5f, angle = 0f },
+                new() { cell = "Seal", uv = H("Seal"), position = new Vector2(150f, 30f), size = 3.5f, angle = 40f },
+                new() { cell = "Seal", uv = H("Seal"), position = new Vector2(-30f, 40f), size = 3.5f, angle = -20f },
+                new() { cell = "Cafe", uv = H("Cafe"), position = new Vector2(-36f, 60f), size = 7f, angle = 0f },
+                new() { cell = "Lifebuoys", uv = H("Lifebuoys"), position = new Vector2(-24f, 30f), size = 4f, angle = 0f },
+            };
+            // A branch through the ferry: while it is docked (doors open) you race in over its bow and out of its stern.
+            t.branches = new List<TrackLayout.Branch>
+            {
+                new() { kind = TrackLayout.BranchKind.Road, from = 50f, to = 165f, width = 7f,
+                        points = new[] { new Vector2(62f, -1f), new Vector2(76f, 0f), new Vector2(90f, 0f), new Vector2(104f, 0f), new Vector2(116f, 2f), new Vector2(126f, 7f) } },
+            };
+            t.ferry = new TrackLayout.Ferry { branch = 0, at = 0.5f, docked = 7f, away = 5f };
+            // Out at sea beside the long straight the cruise ship steams by; its wake rolls in as swells (WAVE JUMPs).
+            t.cruiseShip = new TrackLayout.CruiseShip { enabled = true, from = 150f, to = 255f, lateral = -22f, speed = 6f };
+            t.swells = new List<TrackLayout.Swell> { new() { from = 170f, to = 248f, speed = 8f, period = 3.2f } };
+            t.seaplane = new TrackLayout.Seaplane { enabled = true, from = 180f, to = 245f };
+            // Fireboats spraying across the channel: at the fish market and out on the straight.
+            t.fireJets = new List<TrackLayout.FireJet>
+            {
+                new() { distance = 24f, side = -1f, period = 4f },
+                new() { distance = 215f, side = -1f, period = 4.6f, offset = 1.5f },
+            };
+            // The container port: two gantry cranes swinging containers across, then the barge to jump.
+            t.cranes = new List<TrackLayout.Crane> { new() { distance = 296f, period = 5f }, new() { distance = 316f, period = 5.6f, offset = 2.2f } };
+            t.gaps = new List<TrackLayout.Gap> { new() { from = 356f, to = 368f, trickJump = true, tricks = 3, barge = true, rampLateral = 0f } };
+            // The water park: the giant slide (fast) or the long way through the rubber duck regatta.
+            t.duckBasins = new List<Vector2> { new(432f, 476f) };
+            t.ducks = 160;
+            t.rides = new List<TrackLayout.Ride>
+            {
+                new() { type = TrackLayout.RideType.Flume, from = 405f, lateral = -3f, to = 482f, toLateral = -2f, speed = 30f,
+                        points = new[] { At(414f, -10f), At(426f, -15f), At(441f, -19f), At(456f, -19.5f), At(470f, -15f) } },
+            };
+            t.currents = new List<TrackLayout.Current>();
+            t.dolphins = new List<float>();
+            t.footbridges = new List<float> { 270f };
+            t.geysers = new List<TrackLayout.Geyser>();
+            t.bouncers = new List<TrackLayout.Bouncer>
+            {
+                new() { position = At(140f, 1.5f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.1f },
+            };
+            t.rings = new List<TrackLayout.Ring> { new() { distance = 149f, lateral = 1.5f } };
+            t.dashPanels = new List<TrackLayout.DashPanel>
+            {
+                new() { distance = 8f, lateral = 1.5f },
+                new() { distance = 336f, lateral = -1.5f },
+                new() { distance = 500f, lateral = 0f },
+            };
+            t.boats = new List<TrackLayout.Boat>
+            {
+                new() { kind = TrackLayout.BoatKind.Sailboat, position = new Vector2(176f, 0f), angle = 20f, drift = 6f },
+                new() { kind = TrackLayout.BoatKind.Sailboat, position = new Vector2(190f, 90f), angle = -30f, drift = 8f },
+                new() { kind = TrackLayout.BoatKind.Trawler, position = new Vector2(168f, 150f), angle = 100f },
+                new() { kind = TrackLayout.BoatKind.Buoy, position = new Vector2(150f, -20f) },
+                new() { kind = TrackLayout.BoatKind.Buoy, position = new Vector2(152f, 60f) },
+                new() { kind = TrackLayout.BoatKind.Rowboat, position = new Vector2(12f, 0f) + new Vector2(0f, -1f) * 9.5f + new Vector2(12f, -1.5f), angle = 80f },
+            };
+            // Out on the open water only a few seals (the quays bring their own bits and pieces).
+            t.lastLapShow = true; // (the sun sets on the last lap, fireworks over the harbour)
+            t.scenery = new List<TrackScenery.Kind>
+            {
+                new() { name = "Seal", uv = H("Seal"), count = 8, sizeRange = new Vector2(2.6f, 3.4f), clearance = new Vector2(3f, 30f) },
+            };
+            t.bakedSignature = null;
+            EditorUtility.SetDirty(t);
+            AssetDatabase.SaveAssets();
+            return t;
+        }
+
+        static LevelDefinition HarbourLevel(TrackLayout track)
+        {
+            var level = Asset<LevelDefinition>("Assets/Data/Levels/Water02.asset");
+            level.displayName = "Harbor Havoc";
+            level.chapter = "WATER CUP · RACE 2";
+            level.track = track;
+            level.laps = 3;
+            level.description = "Rush hour in the busiest harbour in the tropics. Hop the ferry while its doors are open, dodge the cranes' containers and the fireboats, jump the barge, take the giant slide or plough through the rubber ducks, and beat the seaplane!";
+            level.difficulty = 3;
+            level.rivalCount = 7;
+            level.rivalSpeedScale = 0.97f;
+            level.rivalCornerScale = 1.05f;
+            level.starsRequired = 42;
+            EditorUtility.SetDirty(level);
+            return level;
+        }
+
         static LevelDefinition Level(string file, string title, TrackLayout track)
         {
             var level = Asset<LevelDefinition>($"Assets/Data/Levels/{file}.asset");
@@ -223,5 +378,12 @@ namespace SomeGame.EditorTools
         static readonly Vector2[] WAYPOINTS = new Vector2[] { new(0.0f, 0.0f), new(28.1f, 0.0f), new(54.6f, 4.7f), new(74.9f, 18.7f), new(82.7f, 40.6f), new(76.4f, 62.4f), new(59.3f, 74.9f), new(45.2f, 90.5f), new(48.4f, 110.8f), new(65.5f, 123.2f), new(73.3f, 143.5f), new(62.4f, 162.2f), new(40.6f, 168.5f), new(20.3f, 159.1f), new(10.9f, 140.4f), new(-4.7f, 124.8f), new(-25.0f, 120.1f), new(-43.7f, 107.6f), new(-49.9f, 84.2f), new(-40.6f, 62.4f), new(-45.2f, 39.0f), new(-39.0f, 17.2f), new(-21.8f, 3.1f) };
         static readonly Vector2[] BEACH = new Vector2[] { new(-58.0f, -16.0f), new(-50.4f, -15.2f), new(-42.8f, -14.4f), new(-35.2f, -13.6f), new(-27.6f, -12.8f), new(-18.6f, -6.2f), new(-11.5f, -7.7f), new(-3.9f, -8.2f), new(4.0f, -8.1f), new(12.1f, -8.6f), new(19.9f, -8.5f), new(27.6f, -7.9f), new(35.6f, -7.4f), new(43.0f, -6.3f), new(52.0f, -14.0f), new(59.0f, -17.0f), new(66.0f, -20.0f), new(73.0f, -23.0f), new(80.0f, -26.0f), new(77.3f, -32.7f), new(74.7f, -39.3f), new(72.0f, -46.0f), new(64.6f, -46.6f), new(57.1f, -47.1f), new(49.7f, -47.7f), new(42.3f, -48.3f), new(34.9f, -48.9f), new(27.4f, -49.4f), new(20.0f, -50.0f), new(12.9f, -49.7f), new(5.7f, -49.4f), new(-1.4f, -49.1f), new(-8.6f, -48.9f), new(-15.7f, -48.6f), new(-22.9f, -48.3f), new(-30.0f, -48.0f), new(-36.8f, -45.2f), new(-43.6f, -42.4f), new(-50.4f, -39.6f), new(-57.2f, -36.8f), new(-64.0f, -34.0f), new(-61.0f, -25.0f) }, PALM = new Vector2[] { new(-25.8f, 18.9f), new(-16.9f, 20.1f), new(-10.2f, 19.0f), new(-3.5f, 18.0f), new(3.2f, 16.9f), new(9.9f, 15.8f), new(15.9f, 16.2f), new(21.9f, 16.7f), new(28.0f, 17.1f), new(34.0f, 17.6f), new(40.0f, 18.0f), new(45.3f, 22.7f), new(50.7f, 27.3f), new(56.0f, 32.0f), new(59.0f, 40.0f), new(62.0f, 48.0f), new(56.7f, 52.0f), new(51.3f, 56.0f), new(46.0f, 60.0f), new(41.3f, 65.3f), new(36.7f, 70.7f), new(32.0f, 76.0f), new(37.1f, 84.0f), new(35.4f, 87.9f), new(35.1f, 92.4f), new(35.2f, 97.4f), new(24.7f, 104.3f), new(19.3f, 108.7f), new(14.0f, 113.0f), new(6.4f, 111.3f), new(-3.2f, 113.6f), new(-9.1f, 111.8f), new(-15.9f, 105.3f), new(-23.0f, 102.7f), new(-32.5f, 103.2f), new(-29.7f, 93.1f), new(-29.4f, 86.2f), new(-29.2f, 79.3f), new(-32.3f, 69.5f), new(-30.8f, 64.7f), new(-30.2f, 59.5f), new(-31.1f, 54.1f), new(-32.7f, 48.9f), new(-34.7f, 42.1f), new(-34.1f, 33.9f), new(-31.5f, 26.2f) }, LIGHT = new Vector2[] { new(60.8f, 137.0f), new(56.9f, 152.4f), new(46.6f, 157.0f), new(36.7f, 156.2f), new(27.1f, 149.3f), new(24.3f, 142.4f), new(32.3f, 132.9f), new(44.5f, 122.3f), new(48.2f, 124.8f), new(54.0f, 128.3f) },
             EASTBANK = new Vector2[] { new(66.6f, -3.2f), new(73.1f, 3.2f), new(79.5f, 9.7f), new(84.7f, 17.4f), new(88.2f, 25.7f), new(90.3f, 34.2f), new(90.9f, 43.4f), new(89.6f, 52.2f), new(87.0f, 60.5f), new(82.3f, 69.2f), new(74.8f, 76.1f), new(68.9f, 80.5f), new(65.8f, 85.4f), new(71.9f, 92.4f), new(74.7f, 90.3f), new(82.4f, 88.3f), new(91.4f, 77.0f), new(98.9f, 65.7f), new(105.2f, 56.0f), new(106.4f, 44.3f), new(104.7f, 31.6f), new(101.8f, 20.7f), new(95.9f, 10.8f), new(89.7f, 0.0f), new(80.8f, -7.4f), new(69.8f, -9.2f) }, NORTHBANK = new Vector2[] { new(85.5f, 141.4f), new(81.2f, 152.5f), new(75.9f, 160.7f), new(69.1f, 167.7f), new(60.4f, 172.8f), new(51.8f, 175.7f), new(42.4f, 177.0f), new(32.3f, 176.0f), new(23.4f, 173.2f), new(13.8f, 169.7f), new(8.6f, 175.9f), new(17.9f, 183.7f), new(28.7f, 187.4f), new(42.3f, 191.3f), new(55.3f, 190.2f), new(66.7f, 186.7f), new(76.9f, 176.6f), new(85.1f, 166.7f), new(93.5f, 157.2f), new(95.0f, 141.1f) }, WESTBANK = new Vector2[] { new(-35.7f, 128.6f), new(-42.4f, 122.4f), new(-49.7f, 115.0f), new(-54.4f, 106.2f), new(-56.9f, 97.5f), new(-58.1f, 88.5f), new(-56.8f, 77.7f), new(-52.9f, 69.5f), new(-50.0f, 63.7f), new(-49.8f, 60.7f), new(-51.7f, 55.5f), new(-56.1f, 48.4f), new(-62.9f, 50.2f), new(-63.4f, 59.2f), new(-60.1f, 61.5f), new(-60.2f, 59.0f), new(-64.9f, 62.2f), new(-67.2f, 73.9f), new(-69.3f, 89.2f), new(-69.8f, 100.7f), new(-65.9f, 111.4f), new(-58.1f, 122.0f), new(-48.2f, 131.1f), new(-38.4f, 134.1f) }, NW = new Vector2[] { new(-62.0f, 150.0f), new(-64.9f, 156.4f), new(-72.0f, 159.0f), new(-79.1f, 156.4f), new(-82.0f, 150.0f), new(-79.1f, 143.6f), new(-72.0f, 141.0f), new(-64.9f, 143.6f) };
+
+        static readonly Vector2[] HARBOUR = new Vector2[] { new(0.0f, 0.0f), new(28.0f, 0.0f), new(52.0f, -4.0f), new(66.0f, -18.0f), new(86.0f, -28.0f), new(110.0f, -24.0f), new(126.0f, -8.0f), new(136.0f, 16.0f), new(140.0f, 46.0f), new(138.0f, 78.0f), new(132.0f, 106.0f), new(118.0f, 126.0f), new(96.0f, 136.0f), new(72.0f, 130.0f), new(50.0f, 138.0f), new(28.0f, 138.0f), new(8.0f, 126.0f), new(-4.0f, 104.0f), new(-10.0f, 80.0f), new(-12.0f, 54.0f), new(-8.0f, 34.0f), new(-14.0f, 16.0f) };
+        static readonly Vector2[] SOUTH = new Vector2[] { new(-70.0f, -60.0f), new(-15.9f, 4.6f), new(-9.2f, -2.4f), new(-2.1f, -6.4f), new(6.0f, -7.8f), new(19.3f, -7.0f), new(19.4f, -12.0f), new(23.2f, -14.8f), new(28.5f, -12.9f), new(29.7f, -10.0f), new(29.1f, -6.9f), new(47.7f, -9.5f), new(51.3f, -11.7f), new(60.8f, -22.5f), new(71.0f, -29.4f), new(81.0f, -33.8f), new(92.0f, -35.0f), new(109.1f, -31.7f), new(121.0f, -24.6f), new(133.0f, -9.4f), new(141.0f, 8.9f), new(141.0f, -30.0f), new(128.0f, -75.0f), new(-70.0f, -75.0f) },
+            WEST = new Vector2[] { new(-70.0f, 205.0f), new(-2.0f, 137.0f), new(2.4f, 129.9f), new(-3.5f, 121.4f), new(-9.2f, 109.2f), new(-16.4f, 99.1f), new(-20.8f, 79.0f), new(-22.2f, 61.3f), new(-14.7f, 34.9f), new(-20.0f, 22.6f), new(-20.9f, 16.4f), new(-15.9f, 4.6f), new(-70.0f, -60.0f) },
+            NORTH = new Vector2[] { new(-70.0f, 215.0f), new(150.0f, 215.0f), new(150.0f, 170.0f), new(141.0f, 122.0f), new(141.0f, 100.2f), new(135.2f, 115.1f), new(126.3f, 127.5f), new(114.3f, 136.8f), new(100.8f, 142.1f), new(91.2f, 142.5f), new(72.3f, 136.8f), new(52.5f, 144.4f), new(32.5f, 145.7f), new(24.8f, 144.1f), new(16.3f, 140.5f), new(2.4f, 129.9f), new(-2.0f, 137.0f), new(-70.0f, 205.0f) },
+            TOWN = new Vector2[] { new(40.7f, 132.4f), new(50.2f, 131.0f), new(64.0f, 124.9f), new(71.4f, 123.3f), new(78.5f, 124.1f), new(93.6f, 129.2f), new(99.0f, 128.6f), new(111.2f, 122.7f), new(120.4f, 113.3f), new(125.8f, 103.4f), new(128.6f, 94.1f), new(133.3f, 53.8f), new(132.6f, 35.8f), new(129.5f, 18.0f), new(122.6f, 12.1f), new(114.1f, 7.9f), new(108.0f, 6.9f), new(72.0f, 7.2f), new(72.0f, 5.8f), new(60.9f, 5.0f), new(53.3f, 2.8f), new(44.4f, 5.2f), new(28.5f, 6.7f), new(3.6f, 6.0f), new(-0.8f, 8.2f), new(-5.0f, 12.6f), new(-7.4f, 17.6f), new(-2.5f, 28.0f), new(-1.2f, 34.8f), new(-5.0f, 51.7f), new(-1.6f, 61.1f), new(3.2f, 93.0f), new(3.5f, 104.6f), new(9.9f, 117.5f), new(17.4f, 125.3f), new(29.0f, 131.2f) },
+            PIER = new Vector2[] { new(65.2f, -7.3f), new(72.0f, -6.4f), new(108.0f, -7.2f), new(108.0f, -5.5f), new(117.6f, -3.9f), new(121.8f, -1.9f), new(116.0f, -10.4f), new(109.9f, -16.2f), new(103.5f, -19.4f), new(93.8f, -21.4f), new(86.2f, -21.2f), new(80.4f, -19.1f), new(69.4f, -12.1f) };
     }
 }

@@ -506,7 +506,10 @@ namespace SomeGame.Track
 
         /// <summary>Whether a branch is open on the current lap.</summary>
         public bool BranchOpen(int i) =>
-            layout == null || layout.branches == null || i < 0 || i >= layout.branches.Count || layout.branches[i].openFromLap <= PhaseLap;
+            layout == null || layout.branches == null || i < 0 || i >= layout.branches.Count || layout.branches[i].openFromLap <= PhaseLap && (BranchGate == null || BranchGate(i));
+
+        /// <summary>A branch that opens and closes during the race (the harbour's ferry route), or null.</summary>
+        public static System.Func<int, bool> BranchGate;
 
         bool FjordOn => layout != null && layout.fjord != null && layout.fjord.enabled;
 

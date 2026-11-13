@@ -24,11 +24,14 @@ namespace SomeGame.Track
         [Tooltip("Road surface of the meadow and of the snow biome.")]
         [SerializeField] Material meadowRoad;
         [SerializeField] Material snowRoad;
+        [Tooltip("The lagoon's channel water and foam edges (Water Cup).")]
+        [SerializeField] Material lagoonRoad, lagoonEdges;
         [SerializeField, Min(0.1f)] float roadTile = 4f;
         [SerializeField, Min(0.01f)] float edgeLineWidth = 0.28f;
         [Tooltip("How far the ice reaches beyond the branch's width on each side (it fades out there).")]
         [SerializeField, Min(0f)] float iceMargin = 2.5f;
         [SerializeField, Min(0.1f)] float iceTile = 10f;
+        Material _edgeMaterial;
 
         protected override void Build(TrackPath path, TrackLayout layout)
         {
@@ -55,9 +58,11 @@ namespace SomeGame.Track
                     continue;
                 }
                 float outer = hw + layout.kerbWidth;
-                Strip(roadData, branch.Points, -outer, outer, outer * 2f / roadTile, roadTile);
-                Strip(edgeData, branch.Points, outer - edgeLineWidth, outer, 1f, 4f);
-                Strip(edgeData, branch.Points, -outer, -outer + edgeLineWidth, 1f, 4f);
+                bool water = layout.biome == TrackLayout.Biome.Lagoon;
+                Strip(roadData, branch.Points, -outer, outer, water ? 1f / 8f * outer * 2f : outer * 2f / roadTile, water ? 8f : roadTile, null, water);
+                float edge = water ? 1.1f : edgeLineWidth; // (foam on the lagoon)
+                Strip(edgeData, branch.Points, outer - edge, outer, 1f, 4f);
+                Strip(edgeData, branch.Points, -outer, -outer + edge, 1f, 4f);
             }
             Assign(roads, roadData.ToMesh("BranchRoads"));
             Assign(edges, edgeData.ToMesh("BranchEdges"));
@@ -92,12 +97,20 @@ namespace SomeGame.Track
             }
 
             var roadRenderer = roads != null ? roads.GetComponent<MeshRenderer>() : null;
-            var material = layout.roadMaterial != null ? layout.roadMaterial : layout.biome == TrackLayout.Biome.Snow && snowRoad != null ? snowRoad : meadowRoad;
+            bool lagoon = layout.biome == TrackLayout.Biome.Lagoon && lagoonRoad != null;
+            var material = layout.roadMaterial != null ? layout.roadMaterial : lagoon ? lagoonRoad : layout.biome == TrackLayout.Biome.Snow && snowRoad != null ? snowRoad : meadowRoad;
             if (roadRenderer != null && material != null) roadRenderer.sharedMaterial = material;
+            // (the edges: white lines on a road, foam on the lagoon; the road's own line material remembered)
+            var edgeRenderer = edges != null ? edges.GetComponent<MeshRenderer>() : null;
+            if (edgeRenderer != null)
+            {
+                if (_edgeMaterial == null) _edgeMaterial = edgeRenderer.sharedMaterial;
+                edgeRenderer.sharedMaterial = lagoon && lagoonEdges != null ? lagoonEdges : _edgeMaterial;
+            }
         }
 
         // A strip along an open polyline between two sideways offsets; u runs across (0..uMax), v along.
-        static void Strip(MeshData data, IReadOnlyList<Vector2> points, float lateralA, float lateralB, float uMax, float vLength, Color? color = null)
+        static void Strip(MeshData data, IReadOnlyList<Vector2> points, float lateralA, float lateralB, float uMax, float vLength, Color? color = null, bool worldUv = false)
         {
             int n = points.Count;
             if (n < 2) return;
@@ -110,8 +123,17 @@ namespace SomeGame.Track
                 Vector2 dir = (next - prev).normalized, left = new(-dir.y, dir.x);
                 data.Vertices.Add(points[i] + left * lateralA);
                 data.Vertices.Add(points[i] + left * lateralB);
-                data.Uvs.Add(new Vector2(0f, along / vLength));
-                data.Uvs.Add(new Vector2(uMax, along / vLength));
+                if (worldUv)
+                {
+                    // (water: mapped in world space, so it matches the channel it joins)
+                    data.Uvs.Add((points[i] + left * lateralA) / vLength);
+                    data.Uvs.Add((points[i] + left * lateralB) / vLength);
+                }
+                else
+                {
+                    data.Uvs.Add(new Vector2(0f, along / vLength));
+                    data.Uvs.Add(new Vector2(uMax, along / vLength));
+                }
                 Color32 c = color ?? Color.white;
                 data.Colors.Add(c);
                 data.Colors.Add(c);

@@ -1,0 +1,639 @@
+fileFormatVersion: 2
+guid: 38094139026004a7c880fbe2a015b58d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4537984204638607523
+    second: SceneryHarbourWater_0
+  - first:
+      213: 3422040511143193063
+    second: SceneryHarbourWater_1
+  - first:
+      213: 6553061634090491972
+    second: SceneryHarbourWater_2
+  - first:
+      213: -110970390505644832
+    second: SceneryHarbourWater_3
+  - first:
+      213: 9220072474769341558
+    second: SceneryHarbourWater_4
+  - first:
+      213: -2283837558813818029
+    second: SceneryHarbourWater_5
+  - first:
+      213: -7481908238021670925
+    second: SceneryHarbourWater_6
+  - first:
+      213: 3444542978763812106
+    second: SceneryHarbourWater_7
+  - first:
+      213: -4275627644282816173
+    second: SceneryHarbourWater_8
+  - first:
+      213: 6775752449787903426
+    second: SceneryHarbourWater_9
+  - first:
+      213: 4903596512888109325
+    second: SceneryHarbourWater_10
+  - first:
+      213: -6365519139765146399
+    second: SceneryHarbourWater_11
+  - first:
+      213: -1265949753687736564
+    second: SceneryHarbourWater_12
+  - first:
+      213: -8012729729351005439
+    second: SceneryHarbourWater_13
+  - first:
+      213: -8030488730842022414
+    second: SceneryHarbourWater_14
+  - first:
+      213: -4120176896038965251
+    second: SceneryHarbourWater_15
+  - first:
+      213: 4056749142122408045
+    second: SceneryHarbourWater_16
+  - first:
+      213: -4697573124584557337
+    second: SceneryHarbourWater_17
+  - first:
+      213: 9008598528119878392
+    second: SceneryHarbourWater_18
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryHarbourWater_0
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 784
+        width: 220
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d57ae2eb867d501c0800000000000000
+      internalID: -4537984204638607523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_1
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 793
+        width: 102
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e9afa1d6b78d7f20800000000000000
+      internalID: 3422040511143193063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_2
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 805
+        width: 156
+        height: 186
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 440643b26d621fa50800000000000000
+      internalID: 6553061634090491972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_3
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 809
+        width: 128
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ec135d8401c57ef0800000000000000
+      internalID: -110970390505644832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_4
+      rect:
+        serializedVersion: 2
+        x: 802
+        y: 828
+        width: 192
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67cbbf5d01744ff70800000000000000
+      internalID: 9220072474769341558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_5
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 545
+        width: 96
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 353053e27dd2e40e0800000000000000
+      internalID: -2283837558813818029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_6
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 608
+        width: 101
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f746ae291cea2890800000000000000
+      internalID: -7481908238021670925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_7
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 560
+        width: 177
+        height: 169
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0d68c6d6997dcf20800000000000000
+      internalID: 3444542978763812106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_8
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 557
+        width: 216
+        height: 154
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 359beae8f4be9a4c0800000000000000
+      internalID: -4275627644282816173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_9
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 541
+        width: 54
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cd379f14fe480e50800000000000000
+      internalID: 6775752449787903426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_10
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 541
+        width: 46
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d093a805c031d0440800000000000000
+      internalID: 4903596512888109325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_11
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 269
+        width: 238
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ec295f711229a7a0800000000000000
+      internalID: -6365519139765146399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_12
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 303
+        width: 157
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0ff2f308617e6ee0800000000000000
+      internalID: -1265949753687736564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_13
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 351
+        width: 156
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10b42d0b3c01dc090800000000000000
+      internalID: -8012729729351005439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_14
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 311
+        width: 154
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fd3261fb09fd8090800000000000000
+      internalID: -8030488730842022414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_15
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 33
+        width: 204
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dff63d351f032d6c0800000000000000
+      internalID: -4120176896038965251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_16
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 33
+        width: 204
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d68a317e9d77c4830800000000000000
+      internalID: 4056749142122408045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_17
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 33
+        width: 204
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e437bac12edeceb0800000000000000
+      internalID: -4697573124584557337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryHarbourWater_18
+      rect:
+        serializedVersion: 2
+        x: 797
+        y: 33
+        width: 204
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f231b8b1a8f40d70800000000000000
+      internalID: 9008598528119878392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryHarbourWater_0: -4537984204638607523
+      SceneryHarbourWater_1: 3422040511143193063
+      SceneryHarbourWater_10: 4903596512888109325
+      SceneryHarbourWater_11: -6365519139765146399
+      SceneryHarbourWater_12: -1265949753687736564
+      SceneryHarbourWater_13: -8012729729351005439
+      SceneryHarbourWater_14: -8030488730842022414
+      SceneryHarbourWater_15: -4120176896038965251
+      SceneryHarbourWater_16: 4056749142122408045
+      SceneryHarbourWater_17: -4697573124584557337
+      SceneryHarbourWater_18: 9008598528119878392
+      SceneryHarbourWater_2: 6553061634090491972
+      SceneryHarbourWater_3: -110970390505644832
+      SceneryHarbourWater_4: 9220072474769341558
+      SceneryHarbourWater_5: -2283837558813818029
+      SceneryHarbourWater_6: -7481908238021670925
+      SceneryHarbourWater_7: 3444542978763812106
+      SceneryHarbourWater_8: -4275627644282816173
+      SceneryHarbourWater_9: 6775752449787903426
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

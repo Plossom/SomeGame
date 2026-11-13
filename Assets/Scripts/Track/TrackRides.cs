@@ -101,7 +101,11 @@ namespace SomeGame.Track
             var v = new List<Vector3>(); var c = new List<Color>(); var t = new List<int>();
             var sv = new List<Vector3>(); var sc = new List<Color>(); var st = new List<int>();
             float[] lanes = { -1f, -0.6f, 0f, 0.6f, 1f };
-            Color[] cols = { TubeEdge, TubeMid, TubeCore, TubeMid, TubeEdge };
+            // On the water a giant yellow water slide; elsewhere a see-through ice tube.
+            bool slide = track.Layout != null && track.Layout.biome == TrackLayout.Biome.Lagoon;
+            Color edge = slide ? Lin(0.96f, 0.62f, 0.08f) : TubeEdge, mid = slide ? Lin(1f, 0.82f, 0.18f) : TubeMid,
+                  core = slide ? Lin(0.45f, 0.85f, 1f) : TubeCore, ring = slide ? Lin(1f, 0.36f, 0.5f) : TubeRing;
+            Color[] cols = { edge, mid, core, mid, edge };
             float along = 0f;
             for (int i = 0; i < course.Count; i++)
             {
@@ -131,7 +135,7 @@ namespace SomeGame.Track
             for (float a = 2f; a < along - 2f; a += 3.5f)
             {
                 Vector2 p = At(course, a, out Vector2 d), n = Left(d);
-                AddQuad(p - n * TubeHalf - d * 0.18f, p - n * TubeHalf + d * 0.18f, p + n * TubeHalf + d * 0.18f, p + n * TubeHalf - d * 0.18f, TubeRing, v, c, t);
+                AddQuad(p - n * TubeHalf - d * 0.18f, p - n * TubeHalf + d * 0.18f, p + n * TubeHalf + d * 0.18f, p + n * TubeHalf - d * 0.18f, ring, v, c, t);
                 if (Mathf.Repeat(a, 7f) < 3.5f)
                 {
                     // A post under the tube.
@@ -147,7 +151,7 @@ namespace SomeGame.Track
             {
                 int i = start ? 0 : course.Count - 1;
                 Vector2 p = course[i], d = Dir(course, i) * (start ? 1f : -1f), n = Left(d);
-                Disc(p + d * 0.6f, n, d, TubeHalf * 1.25f, TubeHalf * 0.75f, TubeEdge, mv, mc, mt);
+                Disc(p + d * 0.6f, n, d, TubeHalf * 1.25f, TubeHalf * 0.75f, edge, mv, mc, mt);
                 Disc(p + d * 0.9f, n, d, TubeHalf * 0.85f, TubeHalf * 0.55f, Mouth, mv, mc, mt);
             }
             Part("FlumeMouths", MakeMesh("FlumeMouths", mv, mc, mt), plain, MouthOrder);

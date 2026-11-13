@@ -3,6 +3,24 @@ using UnityEngine;
 
 namespace SomeGame.Track
 {
+    /// <summary>The harbour scenery sheet (16 cells of 256 px, 4 x 4, row 0 at the bottom), shared by the art and the race.</summary>
+    public static class HarbourSheet
+    {
+        public static readonly string[] Cells =
+        {
+            "HouseRed", "HouseBlue", "HouseYellow", "HouseTeal",
+            "Containers", "Crates", "Bollards", "Barrels",
+            "Car", "People", "Nets", "FishStall",
+            "Palm", "Cafe", "Seal", "Lifebuoys",
+        };
+
+        public static Rect Cell(string name)
+        {
+            int i = System.Array.IndexOf(Cells, name);
+            return new Rect((i % 4) * 0.25f, (i / 4) * 0.25f, 0.25f, 0.25f);
+        }
+    }
+
     /// <summary>The lagoon scenery sheet (16 cells of 256 px, 4 x 4, row 0 at the bottom), shared by the art and the race.</summary>
     public static class LagoonSheet
     {
@@ -57,6 +75,9 @@ namespace SomeGame.Track
         [SerializeField] Sprite gull, shoal;
         [Tooltip("What lies about on a sandbar: a sunbather, a sandcastle, crabs.")]
         [SerializeField] Sprite sunbather, sandcastle, crab;
+        [Tooltip("Quays (harbour races): their paving and the harbour scenery sheet.")]
+        [SerializeField] Material quay, harbourScenery;
+        [SerializeField] Sprite barge;
 
         const int HaloOrder = -69, FoamOrder = -68, SandOrder = -63, JungleOrder = -62, DecorOrder = 4,
                   CurrentOrder = -46, SwellOrder = -45, BarUnder = -66, PropOrder = 5, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
@@ -98,7 +119,7 @@ namespace SomeGame.Track
                 _swells.Add((s, crests));
             }
             foreach (float d in layout.footbridges) BuildBridge(path, d);
-            foreach (var gap in layout.gaps) if (!gap.hidden) BuildSandbar(path, gap);
+            foreach (var gap in layout.gaps) if (!gap.hidden) { if (gap.barge) BuildBarge(path, gap); else BuildSandbar(path, gap); }
             if (Application.isPlaying)
             {
                 _cars = FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None);
@@ -133,6 +154,7 @@ namespace SomeGame.Track
             var shore = Smooth(island.points, 8);
             if (SignedArea(shore) < 0f) shore.Reverse();
             _shores.Add(shore);
+            if (island.kind == TrackLayout.IslandKind.Quay) { BuildQuay(island, shore, index); return; }
             // Pale shallows fading out round the shore, then a ring of foam, the sand, the jungle (or rock) inside.
             Mesh("IslandHalo", shallows, HaloOrder, Ring(shore, 0f, 5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
             Mesh("IslandFoam", foam, FoamOrder, Ring(shore, -0.4f, 1.4f, Color.white, Color.white, 1f, true));
@@ -152,6 +174,105 @@ namespace SomeGame.Track
                 go.transform.SetParent(transform, false);
                 var points = Offset(shore, -0.5f);
                 go.GetComponent<PolygonCollider2D>().points = points.ToArray();
+                _parts.Add(go);
+            }
+        }
+
+        // A quay: stone paving to a hard edge, a dark shadow on the water along the wall, tyre fenders hanging down,
+        // bollards along the edge, harbour houses along the waterfront (their balconies to the water) and the
+        // harbour's bits and pieces behind.
+        void BuildQuay(TrackLayout.Island island, List<Vector2> shore, int index)
+        {
+            Mesh("QuayShadow", plain, HaloOrder, Ring(shore, 0f, 2.6f, new Color(0.02f, 0.2f, 0.28f, 0.45f), new Color(0.02f, 0.2f, 0.28f, 0f), 1f));
+            Mesh("QuayFloor", quay != null ? quay : plain, SandOrder, Fill(shore, Color.white, 1f / 4f));
+            Mesh("QuayEdge", plain, JungleOrder, Ring(shore, -0.9f, 0f, new Color(0.55f, 0.52f, 0.47f), new Color(0.42f, 0.4f, 0.36f), 1f));
+            // Tyre fenders on the wall (dark rounded blocks just over the water).
+            var fv = new List<Vector3>(); var fu = new List<Vector2>(); var ft = new List<int>(); var fc = new List<Color32>();
+            float walked = 0f;
+            for (int i = 0; i < shore.Count; i++)
+            {
+                var a = shore[i]; var b = shore[(i + 1) % shore.Count];
+                float seg = Vector2.Distance(a, b);
+                walked += seg;
+                if (walked < 5f) continue;
+                walked = 0f;
+                Vector2 n = OutwardNormal(shore, i), t = new(-n.y, n.x);
+                TrackMeshes.AddQuad(fv, fu, ft, a + n * 0.25f, t * 0.45f, n * 0.3f, Vector2.one);
+                for (int k = 0; k < 4; k++) fc.Add(new Color32(34, 36, 40, 255));
+            }
+            Mesh("QuayFenders", plain, JungleOrder + 1, TrackMeshes.Quads("QuayFenders", fv, fu, ft, fc));
+            if (harbourScenery != null)
+            {
+                var random = new System.Random(island.seed * 7919 + index * 104729 + 31);
+                float R(float a, float b) => a + (float)random.NextDouble() * (b - a);
+                var vertices = new List<Vector3>(); var uvs = new List<Vector2>(); var triangles = new List<int>(); var tints = new List<Color32>();
+                var placed = new List<(Vector2 p, float r)>();
+                void Put(string cell, Vector2 p, float size, float angle)
+                {
+                    Vector2 r = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * size * 0.5f;
+                    int first = vertices.Count;
+                    TrackMeshes.AddQuad(vertices, uvs, triangles, p, r, new Vector2(-r.y, r.x), Vector2.one);
+                    var uv = HarbourSheet.Cell(cell);
+                    for (int k = first; k < uvs.Count; k++) uvs[k] = new Vector2(uv.x + uvs[k].x * uv.width, uv.y + uvs[k].y * uv.height);
+                    for (int k = 0; k < 4; k++) tints.Add(new Color32(255, 255, 255, 255));
+                    placed.Add((p, size * 0.4f));
+                }
+                bool Free(Vector2 p, float r)
+                {
+                    foreach (var (q, s) in placed) if ((q - p).sqrMagnitude < (r + s) * (r + s)) return false;
+                    return true;
+                }
+                // Bollards along the edge.
+                walked = 0f;
+                for (int i = 0; i < shore.Count; i++)
+                {
+                    walked += Vector2.Distance(shore[i], shore[(i + 1) % shore.Count]);
+                    if (walked < 9f) continue;
+                    walked = 0f;
+                    Vector2 n = OutwardNormal(shore, i);
+                    Put("Bollards", shore[i] - n * 1.4f, 2.2f, Mathf.Atan2(n.y, n.x) + Mathf.PI * 0.5f);
+                }
+                // Houses along the waterfront, balconies to the water.
+                string[] houses = { "HouseRed", "HouseBlue", "HouseYellow", "HouseTeal" };
+                walked = 0f;
+                int h = 0;
+                for (int i = 0; i < shore.Count && h < island.huts; i++)
+                {
+                    walked += Vector2.Distance(shore[i], shore[(i + 1) % shore.Count]);
+                    if (walked < 9.5f) continue;
+                    Vector2 n = OutwardNormal(shore, i);
+                    var p = shore[i] - n * 6f;
+                    if (!Inside(shore, p) || !Inside(shore, p - n * 4f) || !Free(p, 4f)) continue;
+                    walked = 0f;
+                    Put(houses[random.Next(houses.Length)], p, R(8.5f, 9.5f), Mathf.Atan2(n.y, n.x) + Mathf.PI * 0.5f);
+                    h++;
+                }
+                // The harbour's bits and pieces on the paving.
+                string[] bits = { "Crates", "Barrels", "Containers", "People", "Nets", "FishStall", "Cafe", "Car", "People", "Lifebuoys", "Palm" };
+                var bounds = BoundsOf(shore);
+                for (int n = 0, tries = 0; n < island.palms && tries < island.palms * 60; tries++)
+                {
+                    var p = new Vector2(R(bounds.xMin, bounds.xMax), R(bounds.yMin, bounds.yMax));
+                    if (!Inside(shore, p)) continue;
+                    string cell = bits[random.Next(bits.Length)];
+                    float size = cell is "Containers" ? R(8f, 9f) : cell is "Palm" ? R(6f, 7.5f) : R(4f, 5.5f);
+                    bool inner = true;
+                    for (int k = 0; k < 8 && inner; k++)
+                    {
+                        float a = k * Mathf.PI / 4f;
+                        inner = Inside(shore, p + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * size * 0.5f);
+                    }
+                    if (!inner || !Free(p, size * 0.4f)) continue;
+                    Put(cell, p, size, cell is "Containers" or "Car" ? random.Next(4) * Mathf.PI * 0.5f : R(0f, Mathf.PI * 2f));
+                    n++;
+                }
+                Mesh("QuayDecor", harbourScenery, DecorOrder, TrackMeshes.Quads("QuayDecor", vertices, uvs, triangles, tints));
+            }
+            if (Application.isPlaying)
+            {
+                var go = new GameObject("QuayWall", typeof(PolygonCollider2D)) { hideFlags = HideFlags.DontSave };
+                go.transform.SetParent(transform, false);
+                go.GetComponent<PolygonCollider2D>().points = shore.ToArray();
                 _parts.Add(go);
             }
         }
@@ -254,6 +375,40 @@ namespace SomeGame.Track
         }
 
         // A sandbar across the channel from island to island (a trick jump over it).
+        /// <summary>A barge loaded with containers lying across the channel: jump it off the kicker (its ends are solid).</summary>
+        void BuildBarge(TrackPath path, TrackLayout.Gap gap)
+        {
+            float len = Mathf.Repeat(gap.to - gap.from, path.Length);
+            float mid = gap.from + len * 0.5f;
+            Vector2 c = path.PointAt(mid), across = path.NormalAt(mid);
+            float road = track.OffRoadAt(mid);
+            float reach = road + 3.4f;
+            if (barge != null)
+            {
+                var sr = NewSprite("Barge", barge, PropOrder);
+                sr.transform.position = c;
+                sr.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(across.y, across.x) * Mathf.Rad2Deg - 90f);
+                sr.transform.localScale = Vector3.one * (reach * 2f / Mathf.Max(0.01f, barge.bounds.size.y));
+                var shadow = NewSprite("BargeShadow", barge, HaloOrder + 2);
+                shadow.transform.position = c + new Vector2(0.6f, -0.8f);
+                shadow.transform.rotation = sr.transform.rotation;
+                shadow.transform.localScale = sr.transform.localScale;
+                shadow.color = new Color(0f, 0.12f, 0.2f, 0.35f);
+            }
+            if (!Application.isPlaying) return;
+            // Beside the channel its ends are solid: no going round it.
+            float halfAlong = Mathf.Max(2f, len * 0.5f - 1.5f);
+            foreach (float side in new[] { 1f, -1f })
+            {
+                var go = new GameObject("BargeEnd", typeof(BoxCollider2D)) { hideFlags = HideFlags.DontSave };
+                go.transform.SetParent(transform, false);
+                go.transform.position = c + across * side * (road + 0.3f + (reach + 3f - road) * 0.5f);
+                go.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(across.y, across.x) * Mathf.Rad2Deg);
+                go.GetComponent<BoxCollider2D>().size = new Vector2(reach + 3f - road, halfAlong * 2f);
+                _parts.Add(go);
+            }
+        }
+
         void BuildSandbar(TrackPath path, TrackLayout.Gap gap)
         {
             // Laid out across the channel at the middle of the gap: "a" across (to the left island +), "b" along.

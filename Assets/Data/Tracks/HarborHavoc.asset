@@ -1,0 +1,545 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: HarborHavoc
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: 0}
+  - {x: 28, y: 0}
+  - {x: 52, y: -4}
+  - {x: 66, y: -18}
+  - {x: 86, y: -28}
+  - {x: 110, y: -24}
+  - {x: 126, y: -8}
+  - {x: 136, y: 16}
+  - {x: 140, y: 46}
+  - {x: 138, y: 78}
+  - {x: 132, y: 106}
+  - {x: 118, y: 126}
+  - {x: 96, y: 136}
+  - {x: 72, y: 130}
+  - {x: 50, y: 138}
+  - {x: 28, y: 138}
+  - {x: 8, y: 126}
+  - {x: -4, y: 104}
+  - {x: -10, y: 80}
+  - {x: -12, y: 54}
+  - {x: -8, y: 34}
+  - {x: -14, y: 16}
+  roadWidth: 7.5
+  widths:
+  - distance: 425
+    width: 7.5
+  - distance: 440
+    width: 15
+  - distance: 468
+    width: 15
+  - distance: 482
+    width: 7.5
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 8
+  sections: 1
+  finishAtLastLine: 0
+  sectionLines: []
+  boundaryMargin: 28
+  rooms: []
+  houses: []
+  upstairs: []
+  stairs: []
+  decor:
+  - cell: FishStall
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 12, y: -12}
+    size: 6
+    angle: 0
+    flat: 0
+  - cell: FishStall
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 38, y: -13}
+    size: 6
+    angle: 10
+    flat: 0
+  - cell: Nets
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 2, y: -12}
+    size: 5
+    angle: 30
+    flat: 0
+  - cell: People
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    position: {x: 24, y: -19}
+    size: 4.5
+    angle: 0
+    flat: 0
+  - cell: Seal
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: 150, y: 30}
+    size: 3.5
+    angle: 40
+    flat: 0
+  - cell: Seal
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -30, y: 40}
+    size: 3.5
+    angle: -20
+    flat: 0
+  - cell: Cafe
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -36, y: 60}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lifebuoys
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -24, y: 30}
+    size: 4
+    angle: 0
+    flat: 0
+  logJumps: []
+  rings:
+  - distance: 149
+    lateral: 1.5
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings: []
+  padLook: 0
+  boats:
+  - kind: 0
+    position: {x: 176, y: 0}
+    angle: 20
+    drift: 6
+  - kind: 0
+    position: {x: 190, y: 90}
+    angle: -30
+    drift: 8
+  - kind: 6
+    position: {x: 168, y: 150}
+    angle: 100
+    drift: 0
+  - kind: 3
+    position: {x: 150, y: -20}
+    angle: 0
+    drift: 0
+  - kind: 3
+    position: {x: 152, y: 60}
+    angle: 0
+    drift: 0
+  - kind: 1
+    position: {x: 24, y: -11}
+    angle: 80
+    drift: 0
+  fireworks: 0
+  lastLapShow: 1
+  cows: []
+  fences: []
+  trains: []
+  props: []
+  bankMaterial: {fileID: 0}
+  sceneryMaterial: {fileID: 2100000, guid: 7bce4edcc7a48459b9cb95ee519b73f6, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 2
+  noSnowfall: 0
+  lagoonIslands:
+  - points:
+    - {x: -70, y: -60}
+    - {x: -15.9, y: 4.6}
+    - {x: -9.2, y: -2.4}
+    - {x: -2.1, y: -6.4}
+    - {x: 6, y: -7.8}
+    - {x: 19.3, y: -7}
+    - {x: 19.4, y: -12}
+    - {x: 23.2, y: -14.8}
+    - {x: 28.5, y: -12.9}
+    - {x: 29.7, y: -10}
+    - {x: 29.1, y: -6.9}
+    - {x: 47.7, y: -9.5}
+    - {x: 51.3, y: -11.7}
+    - {x: 60.8, y: -22.5}
+    - {x: 71, y: -29.4}
+    - {x: 81, y: -33.8}
+    - {x: 92, y: -35}
+    - {x: 109.1, y: -31.7}
+    - {x: 121, y: -24.6}
+    - {x: 133, y: -9.4}
+    - {x: 141, y: 8.9}
+    - {x: 141, y: -30}
+    - {x: 128, y: -75}
+    - {x: -70, y: -75}
+    kind: 3
+    beach: 2
+    palms: 40
+    huts: 9
+    seed: 11
+  - points:
+    - {x: -70, y: 205}
+    - {x: -2, y: 137}
+    - {x: 2.4, y: 129.9}
+    - {x: -3.5, y: 121.4}
+    - {x: -9.2, y: 109.2}
+    - {x: -16.4, y: 99.1}
+    - {x: -20.8, y: 79}
+    - {x: -22.2, y: 61.3}
+    - {x: -14.7, y: 34.9}
+    - {x: -20, y: 22.6}
+    - {x: -20.9, y: 16.4}
+    - {x: -15.9, y: 4.6}
+    - {x: -70, y: -60}
+    kind: 0
+    beach: 7
+    palms: 30
+    huts: 2
+    seed: 12
+  - points:
+    - {x: -70, y: 215}
+    - {x: 150, y: 215}
+    - {x: 150, y: 170}
+    - {x: 141, y: 122}
+    - {x: 141, y: 100.2}
+    - {x: 135.2, y: 115.1}
+    - {x: 126.3, y: 127.5}
+    - {x: 114.3, y: 136.8}
+    - {x: 100.8, y: 142.1}
+    - {x: 91.2, y: 142.5}
+    - {x: 72.3, y: 136.8}
+    - {x: 52.5, y: 144.4}
+    - {x: 32.5, y: 145.7}
+    - {x: 24.8, y: 144.1}
+    - {x: 16.3, y: 140.5}
+    - {x: 2.4, y: 129.9}
+    - {x: -2, y: 137}
+    - {x: -70, y: 205}
+    kind: 3
+    beach: 2
+    palms: 40
+    huts: 8
+    seed: 13
+  - points:
+    - {x: 40.7, y: 132.4}
+    - {x: 50.2, y: 131}
+    - {x: 64, y: 124.9}
+    - {x: 71.4, y: 123.3}
+    - {x: 78.5, y: 124.1}
+    - {x: 93.6, y: 129.2}
+    - {x: 99, y: 128.6}
+    - {x: 111.2, y: 122.7}
+    - {x: 120.4, y: 113.3}
+    - {x: 125.8, y: 103.4}
+    - {x: 128.6, y: 94.1}
+    - {x: 133.3, y: 53.8}
+    - {x: 132.6, y: 35.8}
+    - {x: 129.5, y: 18}
+    - {x: 122.6, y: 12.1}
+    - {x: 114.1, y: 7.9}
+    - {x: 108, y: 6.9}
+    - {x: 72, y: 7.2}
+    - {x: 72, y: 5.8}
+    - {x: 60.9, y: 5}
+    - {x: 53.3, y: 2.8}
+    - {x: 44.4, y: 5.2}
+    - {x: 28.5, y: 6.7}
+    - {x: 3.6, y: 6}
+    - {x: -0.8, y: 8.2}
+    - {x: -5, y: 12.6}
+    - {x: -7.4, y: 17.6}
+    - {x: -2.5, y: 28}
+    - {x: -1.2, y: 34.8}
+    - {x: -5, y: 51.7}
+    - {x: -1.6, y: 61.1}
+    - {x: 3.2, y: 93}
+    - {x: 3.5, y: 104.6}
+    - {x: 9.9, y: 117.5}
+    - {x: 17.4, y: 125.3}
+    - {x: 29, y: 131.2}
+    kind: 3
+    beach: 2
+    palms: 90
+    huts: 26
+    seed: 14
+  - points:
+    - {x: 65.2, y: -7.3}
+    - {x: 72, y: -6.4}
+    - {x: 108, y: -7.2}
+    - {x: 108, y: -5.5}
+    - {x: 117.6, y: -3.9}
+    - {x: 121.8, y: -1.9}
+    - {x: 116, y: -10.4}
+    - {x: 109.9, y: -16.2}
+    - {x: 103.5, y: -19.4}
+    - {x: 93.8, y: -21.4}
+    - {x: 86.2, y: -21.2}
+    - {x: 80.4, y: -19.1}
+    - {x: 69.4, y: -12.1}
+    kind: 3
+    beach: 2
+    palms: 6
+    huts: 1
+    seed: 15
+  swells:
+  - from: 170
+    to: 248
+    speed: 8
+    period: 3.2
+    offset: 0
+  currents: []
+  dolphins: []
+  footbridges:
+  - 270
+  ferry:
+    branch: 0
+    at: 0.5
+    docked: 7
+    away: 5
+  cranes:
+  - distance: 296
+    period: 5
+    offset: 0
+  - distance: 316
+    period: 5.6
+    offset: 2.2
+  duckBasins:
+  - {x: 432, y: 476}
+  ducks: 160
+  cruiseShip:
+    enabled: 1
+    from: 150
+    to: 255
+    lateral: -22
+    speed: 6
+  fireJets:
+  - distance: 24
+    side: -1
+    period: 4
+    offset: 0
+  - distance: 215
+    side: -1
+    period: 4.6
+    offset: 1.5
+  seaplane:
+    enabled: 1
+    from: 180
+    to: 245
+  waterWorld: 0
+  biome: 2
+  gaps:
+  - from: 356
+    to: 368
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 0
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 1
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+    barge: 1
+  elevatedRoad: 0
+  bouncers:
+  - position: {x: 123.20822, y: -9.401062}
+    radius: 2.2
+    airTime: 0.85
+    speedBoost: 1.1
+    target: {x: 0, y: 0}
+  geysers: []
+  sweepers: []
+  skyLife: 0
+  rivers: []
+  lakes: []
+  oil: []
+  rampLength: 3
+  rampWidth: 3.4
+  shortcuts: []
+  branches:
+  - kind: 0
+    from: 50
+    to: 165
+    points:
+    - {x: 62, y: -1}
+    - {x: 76, y: 0}
+    - {x: 90, y: 0}
+    - {x: 104, y: 0}
+    - {x: 116, y: 2}
+    - {x: 126, y: 7}
+    width: 7
+    openFromLap: 0
+  banks: []
+  penguins: []
+  dashPanels:
+  - distance: 8
+    lateral: 1.5
+    length: 4
+    width: 3.2
+  - distance: 336
+    lateral: -1.5
+    length: 4
+    width: 3.2
+  - distance: 500
+    lateral: 0
+    length: 4
+    width: 3.2
+  icePatches: []
+  slopes: []
+  snowPiles: []
+  viaducts: []
+  fallingTrees: []
+  avalanche:
+    enabled: 0
+    from: -60
+    delay: 2
+    speed: 13
+    maxBehind: 90
+    stopAt: 0
+  train:
+    enabled: 0
+    points: []
+    speed: 12
+    trains: 2
+    wagons: 6
+    ramps: []
+    leapAt: 0
+  gifts: []
+  night: 0
+  santa: 0
+  snowballFights: []
+  turntables: []
+  nets: []
+  snowTunnels: []
+  chairlifts: []
+  helix:
+    enabled: 0
+    centre: {x: 0, y: 0}
+    radius: 12
+    entry: 0
+    from: 0
+    to: 0
+    exit: 0
+    turns: 6
+    mountainRadius: 40
+  holes: []
+  platforms: []
+  hatches: []
+  vortices: []
+  abyss: 0
+  islands: []
+  splits: []
+  slidingDoors: []
+  pools: []
+  bowling: []
+  billiards: []
+  glassFloors: []
+  storms: []
+  twisters: []
+  snowBase: 0
+  noHeadlights: 0
+  rides:
+  - type: 0
+    from: 405
+    lateral: -3
+    to: 482
+    toLateral: -2
+    points:
+    - {x: -6.890641, y: 122.091225}
+    - {x: -16.97159, y: 111.99604}
+    - {x: -26.103481, y: 96.606125}
+    - {x: -29.677498, y: 80.38632}
+    - {x: -26.912285, y: 64.48807}
+    speed: 30
+    jib: 0
+  pinball: []
+  rinks: []
+  slalom: []
+  fjord:
+    enabled: 0
+    center: {x: 0, y: 0}
+    radii: {x: 40, y: 20}
+    angle: 0
+    iceRoad: -1
+    crackLap: 2
+    breakLap: 3
+    panels: []
+    shipFrom: {x: 0, y: 0}
+    shipTo: {x: 0, y: 0}
+    shipSpeed: 7
+    shipWait: 4
+    refreeze: 6
+    floes: []
+  chasms: []
+  caves: []
+  scenery:
+  - name: Seal
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 8
+    sizeRange: {x: 2.6, y: 3.4}
+    clearance: {x: 3, y: 30}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery: []
+  bakedSignature: 
