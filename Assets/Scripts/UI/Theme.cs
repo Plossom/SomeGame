@@ -34,12 +34,13 @@ namespace SomeGame.UI
             Stone = Hex("CCD8E4"), StoneDark = Hex("7B8CA1"), Leaf = Hex("6FA7B8"),
         };
 
-        /// <summary>Sunny lagoon: sea-foam white plates, deep sea navy, hibiscus pink buttons, sunshine yellow, turquoise.</summary>
+        /// <summary>Tropical lagoon: sea-foam white plates, deep lagoon teal (not the Winter Cup's navy), hibiscus pink
+        /// buttons, sunshine yellow stars, a fresh turquoise for the small headings.</summary>
         public static readonly Palette Water = new()
         {
-            Cream = Hex("ECFAF7"), CreamDark = Hex("C6EBE6"), Ink = Hex("0B3A57"), InkSoft = Hex("176284"),
-            Orange = Hex("FF4F86"), OrangeDeep = Hex("C21F5B"), Amber = Hex("FFD24D"), Rust = Hex("0F86A8"),
-            Stone = Hex("D2E5E4"), StoneDark = Hex("7B9CA4"), Leaf = Hex("2EC4B6"),
+            Cream = Hex("EEFBF7"), CreamDark = Hex("C9EDE4"), Ink = Hex("0C4A50"), InkSoft = Hex("1B6E6F"),
+            Orange = Hex("FF4F86"), OrangeDeep = Hex("C21F5B"), Amber = Hex("FFD24D"), Rust = Hex("10928A"),
+            Stone = Hex("D3E8E2"), StoneDark = Hex("7FA39C"), Leaf = Hex("2EC4B6"),
         };
 
         /// <summary>Greys for a locked or coming-soon cup's page: no colour until it is earned.</summary>

@@ -995,8 +995,8 @@ namespace SomeGame.EditorTools
 
             // The places that earn stars as a track to climb: a bar filling from the left through three round badges
             // (one, two, three stars) with the place under each; earned ones gold, the next one ringed.
-            var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1286f), new Vector2(W - 80f, 140f));
-            const float NodeGap = 250f, TrackLeft = -310f, TrackRight = 250f;
+            var timesRt = At("StarTimes", card, new Vector2(0.5f, 1f), new Vector2(0f, -1304f), new Vector2(W - 80f, 140f));
+            const float NodeGap = 250f, TrackLeft = -250f, TrackRight = 250f; // (from the first star to the last)
             var trackRt = At("Track", timesRt, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(TrackRight - TrackLeft, 24f));
             trackRt.pivot = new Vector2(0f, 0.5f); trackRt.anchoredPosition = new Vector2(TrackLeft, 22f);
             Rounded(Img(trackRt, "Round", Theme.CreamDark, sliced: true), 12f);

@@ -36,7 +36,7 @@ namespace SomeGame.UI
         [Tooltip("The track's gold fill (up to the last star earned) and the ring on the next star to win.")]
         [SerializeField] RectTransform starFill, starNext;
         [SerializeField] Sprite sparkle;
-        const float FillFirst = 60f, NodeGap = 250f;
+        const float NodeGap = 250f;
         [SerializeField] UnityEngine.UI.Button closeButton;
         [SerializeField] UnityEngine.UI.Button startButton;
         [SerializeField] UnityEngine.UI.Image startFace, startShadow;
@@ -166,7 +166,7 @@ namespace SomeGame.UI
             }
             if (starFill != null)
             {
-                float width = _starsShown <= 0f ? 0f : _starsShown < 1f ? FillFirst * _starsShown : FillFirst + (_starsShown - 1f) * NodeGap;
+                float width = Mathf.Max(0f, _starsShown - 1f) * NodeGap; // (the track starts at the first star)
                 starFill.sizeDelta = new Vector2(Mathf.Max(width, 24f), starFill.sizeDelta.y);
                 starFill.gameObject.SetActive(width > 1f);
             }
@@ -271,7 +271,7 @@ namespace SomeGame.UI
             if (starNext != null)
             {
                 int next = Mathf.FloorToInt(_starsShown + 0.001f);
-                bool show = _canEnter && next < 3 && starGroups != null && next < starGroups.Length;
+                bool show = false; // (no ring blinking on the next star)
                 starNext.gameObject.SetActive(show);
                 if (show)
                 {
