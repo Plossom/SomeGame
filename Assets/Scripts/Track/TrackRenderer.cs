@@ -113,7 +113,7 @@ namespace SomeGame.Track
             if (edgeLines != null) Assign(edgeLines, BuildEdgeLines(path, keep));
             Assign(startLine, BuildStartLine(path, hw));
             if (gridLines != null) Assign(gridLines, BuildGrid(path, layout));
-            if (runoff != null) Assign(runoff, water || layout.abyss ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path));
+            if (runoff != null) Assign(runoff, water || layout.abyss || layout.biome == TrackLayout.Biome.Lagoon ? new Mesh { name = "Runoff", hideFlags = HideFlags.DontSave } : BuildRunoff(path));
             if (centerLine != null)
             {
                 float cycle = path.Length / Mathf.Max(1, Mathf.Round(path.Length / centerLineCycle));

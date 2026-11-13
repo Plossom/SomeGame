@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using SomeGame.UI;
 using UnityEditor;
 using UnityEngine;
@@ -33,7 +34,8 @@ namespace SomeGame.EditorTools
             (new Vector2(150f, 1276f), new Vector2(90f, 26f), IslandLook.Sand),
             (new Vector2(1000f, 1095f), new Vector2(64f, 20f), IslandLook.Rock),
             (new Vector2(440f, 1377f), new Vector2(70f, 16f), IslandLook.Sand),
-            (new Vector2(1090f, 465f), new Vector2(80f, 32f), IslandLook.Rock),
+            (new Vector2(1115f, 420f), new Vector2(70f, 28f), IslandLook.Rock),
+            (new Vector2(505f, 1215f), new Vector2(80f, 22f), IslandLook.Jungle),
         };
 
         static readonly List<(Vector2 c, Vector2 r, IslandLook look)> SeaIslands = new();
@@ -285,6 +287,7 @@ namespace SomeGame.EditorTools
                     Put(lh, 40f, () => MapLighthouse(lh, SizeAt(lh.y) * 1.5f));
                 }
                 int palms = look switch { IslandLook.Jungle => Mathf.RoundToInt(r.x / 16f), IslandLook.Cliff => 3, IslandLook.Sand => 2, _ => 0 };
+                var placed = new List<(Vector2 p, float s, bool lean)>();
                 for (int k = 0; k < palms * 8 && palms > 0; k++)
                 {
                     var p = centre + new Vector2(Range(-r.x * 0.75f, r.x * 0.75f), Range(-r.y * 0.3f, r.y * 0.55f));
@@ -292,9 +295,13 @@ namespace SomeGame.EditorTools
                     float s = SizeAt(p.y) * Range(0.8f, 1.15f);
                     if (!Fits(p, 26f * s, 90f * s, 18f * s)) continue;
                     palms--;
-                    bool lean = rng.NextDouble() < 0.5;
-                    Put(p, 18f * s, () => MapPalm(p, s, lean));
+                    placed.Add((p, s, rng.NextDouble() < 0.5));
+                    occupied.Add((p, 18f * s));
                 }
+                // (the island below race 4 without its rightmost palm, next to its hut)
+                if (centre == new Vector2(645f, 535f) && placed.Count > 1)
+                    placed.Remove(placed.Find(q => q.p.x == placed.Max(o => o.p.x)));
+                foreach (var (p, s, lean) in placed) items.Add((p.y, () => MapPalm(p, s, lean)));
                 if (look == IslandLook.Jungle && r.x > 90f)
                 {
                     var hut = centre + new Vector2(r.x * 0.62f, -r.y * 0.55f);
