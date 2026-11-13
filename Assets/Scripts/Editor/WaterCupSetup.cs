@@ -151,7 +151,9 @@ namespace SomeGame.EditorTools
                 new() { from = 158f, to = 206f, lateral = 0f, width = 4.5f, push = 0.3f },
                 new() { from = 298f, to = 338f, lateral = 0f, width = 4f, push = 0.25f },
             };
-            t.dolphins = new List<float> { 118f, 262f };
+            t.dolphins = new List<float> { 175f, 262f };
+            // A sandbar joins the islands across the channel: a trick jump over it (swipe the arrows).
+            t.gaps = new List<TrackLayout.Gap> { new() { from = 107f, to = 121f, trickJump = true, tricks = 2, rampLateral = 0f } };
             // Flying fish leaping across the channel (a hit spins you round).
             t.geysers = new List<TrackLayout.Geyser>
             {
@@ -161,13 +163,13 @@ namespace SomeGame.EditorTools
             t.footbridges = new List<float> { 40f };
             t.bouncers = new List<TrackLayout.Bouncer>
             {
-                new() { position = At(86f, 1.5f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.1f },
+                new() { position = At(68f, 1.5f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.1f },
                 new() { position = At(358f, -1.5f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.1f },
             };
-            t.rings = new List<TrackLayout.Ring> { new() { distance = 95f, lateral = 1.5f }, new() { distance = 367f, lateral = -1.5f } };
+            t.rings = new List<TrackLayout.Ring> { new() { distance = 77f, lateral = 1.5f }, new() { distance = 367f, lateral = -1.5f } };
             t.dashPanels = new List<TrackLayout.DashPanel>
             {
-                new() { distance = 124f, lateral = 0f },
+                new() { distance = 140f, lateral = 0f },
                 new() { distance = 232f, lateral = -1.5f },
                 new() { distance = 500f, lateral = 1.5f },
             };

@@ -34,7 +34,7 @@ namespace SomeGame.EditorTools
             (new Vector2(150f, 1276f), new Vector2(90f, 26f), IslandLook.Sand),
             (new Vector2(1000f, 1095f), new Vector2(64f, 20f), IslandLook.Rock),
             (new Vector2(440f, 1377f), new Vector2(70f, 16f), IslandLook.Sand),
-            (new Vector2(1115f, 420f), new Vector2(70f, 28f), IslandLook.Rock),
+            (new Vector2(1115f, 365f), new Vector2(70f, 28f), IslandLook.Rock),
             (new Vector2(505f, 1215f), new Vector2(80f, 22f), IslandLook.Jungle),
         };
 

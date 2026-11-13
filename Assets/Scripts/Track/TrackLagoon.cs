@@ -57,7 +57,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite gull, shoal;
 
         const int HaloOrder = -66, FoamOrder = -65, SandOrder = -64, JungleOrder = -63, DecorOrder = 4,
-                  CurrentOrder = -46, SwellOrder = -45, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
+                  CurrentOrder = -46, SwellOrder = -45, BarOrder = -44, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
 
         static readonly Color SwellDark = new(0.02f, 0.25f, 0.45f, 1f);
 
@@ -74,7 +74,7 @@ namespace SomeGame.Track
         protected override void Build(TrackPath path, TrackLayout layout)
         {
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
-            _parts.Clear(); _swells.Clear(); _dolphins.Clear(); _splashes.Clear(); _behind.Clear();
+            _parts.Clear(); _swells.Clear(); _dolphins.Clear(); _splashes.Clear(); _behind.Clear(); _shores.Clear();
             if (layout.biome != TrackLayout.Biome.Lagoon) return;
             for (int i = 0; i < layout.lagoonIslands.Count; i++) BuildIsland(layout.lagoonIslands[i], i);
             foreach (var c in layout.currents) BuildCurrent(path, c);
@@ -96,6 +96,7 @@ namespace SomeGame.Track
                 _swells.Add((s, crests));
             }
             foreach (float d in layout.footbridges) BuildBridge(path, d);
+            foreach (var gap in layout.gaps) if (!gap.hidden) BuildSandbar(path, gap);
             if (Application.isPlaying)
             {
                 _cars = FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None);
@@ -129,6 +130,7 @@ namespace SomeGame.Track
             if (island.points == null || island.points.Length < 3) return;
             var shore = Smooth(island.points, 8);
             if (SignedArea(shore) < 0f) shore.Reverse();
+            _shores.Add(shore);
             // Pale shallows fading out round the shore, then a ring of foam, the sand, the jungle (or rock) inside.
             Mesh("IslandHalo", shallows, HaloOrder, Ring(shore, 0f, 5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
             Mesh("IslandFoam", foam, FoamOrder, Ring(shore, -0.4f, 1.4f, Color.white, Color.white, 1f, true));
@@ -232,11 +234,70 @@ namespace SomeGame.Track
             Mesh("Current", current, CurrentOrder, TrackMeshes.Quads("Current", vertices, uvs, triangles, colors));
         }
 
+        readonly List<List<Vector2>> _shores = new();
+
+        bool OnLand(Vector2 p)
+        {
+            foreach (var shore in _shores) if (Inside(shore, p)) return true;
+            return false;
+        }
+
+        // How far out from the centre line the land begins on one side (+1 left, -1 right): the first island shore.
+        float ShoreReach(TrackPath path, float d, float side, float max = 40f)
+        {
+            Vector2 p = path.PointAt(d), n = path.NormalAt(d) * side;
+            for (float r = track.OffRoadAt(d); r < max; r += 0.4f)
+                if (OnLand(p + n * r)) return r;
+            return track.OffRoadAt(d) + 6f;
+        }
+
+        // A sandbar across the channel from island to island (a trick jump over it).
+        void BuildSandbar(TrackPath path, TrackLayout.Gap gap)
+        {
+            var near = new List<Vector2>();
+            var far = new List<Vector2>();
+            float len = Mathf.Repeat(gap.to - gap.from, path.Length);
+            for (int i = 0; i <= 8; i++)
+            {
+                float d = gap.from + 1f + (len - 2f) * i / 8f;
+                Vector2 p = path.PointAt(d), n = path.NormalAt(d);
+                near.Add(p + n * (ShoreReach(path, d, 1f) + 2.5f));
+                far.Add(p - n * (ShoreReach(path, d, -1f) + 2.5f));
+            }
+            var poly = new List<Vector2>(near);
+            for (int i = far.Count - 1; i >= 0; i--) poly.Add(far[i]);
+            // rounded ends where it meets the water: smooth the outline
+            var rough = poly.ToArray();
+            var shore = Smooth(rough, 4);
+            if (SignedArea(shore) < 0f) shore.Reverse();
+            Mesh("SandbarHalo", shallows, BarOrder - 3, Ring(shore, 0f, 3.5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
+            Mesh("SandbarFoam", foam, BarOrder - 2, Ring(shore, -0.3f, 1.1f, Color.white, Color.white, 1f, true));
+            Mesh("Sandbar", sand, BarOrder, Fill(shore, Color.white, 1f / 4f));
+            // A few shells and a starfish on it.
+            if (scenery != null)
+            {
+                var vertices = new List<Vector3>(); var uvs = new List<Vector2>(); var triangles = new List<int>(); var tints = new List<Color32>();
+                var mid = path.PointAt(gap.from + len * 0.5f);
+                foreach (var (o, cell, size) in new[] { (new Vector2(-4f, 1f), "Flowers", 2.6f), (new Vector2(5f, -2f), "Rock", 2.4f) })
+                {
+                    int first = vertices.Count;
+                    TrackMeshes.AddQuad(vertices, uvs, triangles, mid + o, new Vector2(size * 0.5f, 0f), new Vector2(0f, size * 0.5f), Vector2.one);
+                    var uv = LagoonSheet.Cell(cell);
+                    for (int k = first; k < uvs.Count; k++) uvs[k] = new Vector2(uv.x + uvs[k].x * uv.width, uv.y + uvs[k].y * uv.height);
+                    for (int k = 0; k < 4; k++) tints.Add(new Color32(255, 255, 255, 255));
+                }
+                Mesh("SandbarDecor", scenery, BarOrder + 1, TrackMeshes.Quads("SandbarDecor", vertices, uvs, triangles, tints));
+            }
+        }
+
         void BuildBridge(TrackPath path, float d)
         {
             if (bridge == null) return;
-            Vector2 p = path.PointAt(d), t = path.TangentAt(d);
-            float length = (track.OffRoadAt(d) + 7f) * 2f; // from shore to shore
+            Vector2 t = path.TangentAt(d), n = path.NormalAt(d);
+            // From shore to shore: as far out as the land on each side, a little onto it.
+            float left = ShoreReach(path, d, 1f) + 3f, right = ShoreReach(path, d, -1f) + 3f;
+            float length = left + right;
+            Vector2 p = path.PointAt(d) + n * ((left - right) * 0.5f);
             float angle = Mathf.Atan2(t.y, t.x) * Mathf.Rad2Deg; // the planks run across the channel
             var size = bridge.bounds.size;
             for (int k = 0; k < 2; k++)

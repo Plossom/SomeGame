@@ -118,7 +118,7 @@ MonoBehaviour:
     flat: 0
   logJumps: []
   rings:
-  - distance: 95
+  - distance: 77
     lateral: 1.5
   - distance: 367
     lateral: -1.5
@@ -399,16 +399,32 @@ MonoBehaviour:
     width: 4
     push: 0.25
   dolphins:
-  - 118
+  - 175
   - 262
   footbridges:
   - 40
   waterWorld: 0
   biome: 2
-  gaps: []
+  gaps:
+  - from: 107
+    to: 121
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 0
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 1
+    kicker: 0
+    width: 0
+    tricks: 2
+    plunge: 0
   elevatedRoad: 0
   bouncers:
-  - position: {x: 76.72868, y: 24.385838}
+  - position: {x: 65.13384, y: 11.912613}
     radius: 2.2
     airTime: 0.85
     speedBoost: 1.1
@@ -441,7 +457,7 @@ MonoBehaviour:
   banks: []
   penguins: []
   dashPanels:
-  - distance: 124
+  - distance: 140
     lateral: 0
     length: 4
     width: 3.2

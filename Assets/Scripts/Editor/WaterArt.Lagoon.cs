@@ -24,8 +24,8 @@ namespace SomeGame.EditorTools
             Write(f, "LagoonJungle", 128, 128, JunglePixel, 32, true);
             Write(f, "LagoonFoam", 32, 128, FoamPixel, 32, true);
             Write(f, "LagoonBuoys", 64, 128, BuoyPixel, 32, true);
-            Water("LagoonSea", "LagoonShallows", Color.white, new Color(1f, 1f, 0.92f, 0.2f), 0.4f, 0.3f);
-            Water("LagoonChannel", "LagoonDeep", Color.white, new Color(0.8f, 0.97f, 1f, 0.22f), 0.28f, 0.45f);
+            Water("LagoonSea", "LagoonShallows", Color.white, new Color(1f, 1f, 0.92f, 0.1f), 0.4f, 0.06f);
+            Water("LagoonChannel", "LagoonDeep", Color.white, new Color(0.8f, 0.97f, 1f, 0.12f), 0.28f, 0.1f);
             Water("LagoonRunoff", "LagoonShallows", new Color(1f, 1f, 0.94f), new Color(1f, 1f, 0.9f, 0.16f), 0.45f, 0.2f);
             // The boats' foam (wakes and spray): a soft white puff, as a particle material.
             Write(f, "FoamPuff", 64, 64, (x, y) =>
