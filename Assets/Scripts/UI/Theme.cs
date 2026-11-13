@@ -35,11 +35,11 @@ namespace SomeGame.UI
         };
 
         /// <summary>Tropical lagoon: sea-foam white plates, deep lagoon teal (not the Winter Cup's navy), hibiscus pink
-        /// buttons, sunshine yellow stars, a fresh turquoise for the small headings.</summary>
+        /// buttons and headings, light pink stars, highlights and lights.</summary>
         public static readonly Palette Water = new()
         {
             Cream = Hex("EEFBF7"), CreamDark = Hex("C9EDE4"), Ink = Hex("0C4A50"), InkSoft = Hex("1B6E6F"),
-            Orange = Hex("FF4F86"), OrangeDeep = Hex("C21F5B"), Amber = Hex("FFD24D"), Rust = Hex("10928A"),
+            Orange = Hex("FF4F86"), OrangeDeep = Hex("C21F5B"), Amber = Hex("FFA6C9"), Rust = Hex("E0336E"),
             Stone = Hex("D3E8E2"), StoneDark = Hex("7FA39C"), Leaf = Hex("2EC4B6"),
         };
 

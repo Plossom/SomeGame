@@ -26,7 +26,7 @@ namespace SomeGame.EditorTools
         static readonly (Vector2 c, Vector2 r, IslandLook look)[] SeaIslandPlan =
         {
             (new Vector2(645f, 535f), new Vector2(150f, 52f), IslandLook.Jungle),
-            (new Vector2(420f, 948f), new Vector2(175f, 62f), IslandLook.Jungle),
+            (new Vector2(470f, 920f), new Vector2(175f, 62f), IslandLook.Jungle),
             (new Vector2(760f, 1265f), new Vector2(115f, 34f), IslandLook.Jungle),
             (new Vector2(30f, 676f), new Vector2(130f, 56f), IslandLook.Cliff),
             (new Vector2(1130f, 925f), new Vector2(110f, 46f), IslandLook.Jungle),

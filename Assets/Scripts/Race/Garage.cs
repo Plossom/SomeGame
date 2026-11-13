@@ -57,11 +57,11 @@ namespace SomeGame.Race
             new(W, Slot.Paint, "midnight", "BLACK", "For racing after dark.", Unlock.Stars, 8, hex: "#2B2D35"),
             new(W, Slot.Paint, "pearl", "WHITE", "Fresh snow shine.", Unlock.Stars, 14, hex: "#F4F2EC"),
             new(W, Slot.Paint, "berry", "DARK RED", "A splash of red in the snow.", Unlock.Stars, 20, hex: "#C2304A"),
-            new(S, Slot.Paint, "coral", "CORAL", "Bright as a reef.", hex: "#FF6B52"),
+            new(S, Slot.Paint, "coral", "HOT PINK", "Bright as a hibiscus.", hex: "#FF4F86"),
             new(S, Slot.Paint, "turquoise", "TURQUOISE", "The colour of the lagoon.", Unlock.Stars, 1, hex: "#22B8C9"),
             new(S, Slot.Paint, "sunshine", "YELLOW", "Like a beach umbrella.", Unlock.Stars, 2, hex: "#FFC93C"),
             new(S, Slot.Paint, "navy", "NAVY", "Proper sailor blue.", Unlock.Stars, 6, hex: "#1B4E7A"),
-            new(S, Slot.Paint, "flamingo", "PINK", "Flamingo pink.", Unlock.Stars, 12, hex: "#FF7FAE"),
+            new(S, Slot.Paint, "flamingo", "CORAL", "Bright as a reef.", Unlock.Stars, 12, hex: "#FF6B52"),
 
             new(V, Slot.Body, "buggy", "DUNE BUGGY", "Roll cage, big tyres, no roof. Pure fun."),
             new(V, Slot.Body, "rally", "RALLY HATCH", "Wide arches and a roof over your head.", Unlock.Stars, 5),

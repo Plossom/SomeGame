@@ -216,7 +216,7 @@ namespace SomeGame.EditorTools
             foreach (var (sx, sy, r) in new[] { (30f, 44f, 5f), (22f, 48f, 4f), (36f, 40f, 4f), (16f, 42f, 3f), (26f, 38f, 3f) })
                 c = Over(c, White(0.95f), Fill(Circle(x, y, sx, sy, r)));
             float hull = Polygon(x, y, new[] { new Vector2(38, 36), new Vector2(88, 36), new Vector2(108, 50), new Vector2(36, 50) }) - 1f;
-            c = Over(c, Hex("FF6B52"), Fill(hull));
+            c = Over(c, Hex("FF4F86"), Fill(hull));
             c = Over(c, White(1f), Fill(Capsule(x, y, 42, 42, 92, 42, 1.8f)) * Fill(hull));
             float screen = Polygon(x, y, new[] { new Vector2(58, 50), new Vector2(80, 50), new Vector2(72, 60), new Vector2(62, 60) });
             c = Over(c, Hex("A8E4FF"), Fill(screen));

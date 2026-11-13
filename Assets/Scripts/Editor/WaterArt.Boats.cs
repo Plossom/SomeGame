@@ -41,70 +41,68 @@ namespace SomeGame.EditorTools
 
         // ------------------------------------------------------------------ speedboat
 
-        // A pointed hull: square stern, widest a third of the way up, a sharp bow.
+        // A long, slim racing hull: a narrow transom, widest just behind the middle, a long fine bow to a point.
         static float SpeedHullSdf(float x, float y) =>
-            Polygon(x, y, new[] { new Vector2(36, 46), new Vector2(156, 46), new Vector2(162, 150), new Vector2(150, 232), new Vector2(96, 326), new Vector2(42, 232), new Vector2(30, 150) }) - 6f;
+            Polygon(x, y, new[] { new Vector2(42, 42), new Vector2(150, 42), new Vector2(158, 130), new Vector2(152, 205), new Vector2(128, 272), new Vector2(96, 330),
+                                  new Vector2(64, 272), new Vector2(40, 205), new Vector2(34, 130) }) - 5f;
 
         static Color SpeedHull(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
             float hull = SpeedHullSdf(x, y);
-            // Rounded sides: lighter down the middle, darker at the chines; a crease down the bow.
-            float v = Mathf.Lerp(0.8f, 1f, Mathf.Clamp01(-hull / 16f)) - Mathf.Clamp01((x - 120f) / 70f) * 0.08f;
+            // Rounded topsides: lighter down the centre line, darker towards the chines.
+            float v = Mathf.Lerp(0.8f, 1f, Mathf.Clamp01(-hull / 14f)) - Mathf.Clamp01((x - 110f) / 60f) * 0.07f;
             c = Over(c, new Color(v, v, v), Fill(hull));
-            c = Over(c, new Color(0.97f, 0.97f, 0.97f), Fill(Capsule(x, y, 96, 240, 96, 312, 2.2f)) * Fill(hull + 3f));
-            // The cockpit well, a shade deeper.
-            float well = RoundRect(x, y, 96, 142, 50, 70, 26);
-            c = Over(c, new Color(0.72f, 0.72f, 0.72f), Fill(well));
-            c = Over(c, Line, Stroke(well, 2.5f));
+            // The cockpit well, set well back.
+            float well = RoundRect(x, y, 96, 108, 44, 40, 18);
+            c = Over(c, new Color(0.7f, 0.7f, 0.7f), Fill(well));
+            c = Over(c, Line, Stroke(well, 2.2f));
             return Over(c, Line, Stroke(hull, 4.5f));
         }
 
         static Color SpeedDetails(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            // A white stripe along the gunwale.
             float hull = SpeedHullSdf(x, y);
-            c = Over(c, White(0.9f), Fill(Shell(hull + 7f, 2.2f)) * Mathf.Clamp01((y - 160f) / 30f));
-            // Teak deck at the bow with a cleat.
-            float deck = Polygon(x, y, new[] { new Vector2(78, 270), new Vector2(114, 270), new Vector2(96, 306) }) - 5f;
-            c = Over(c, Mathf.Repeat(x, 9f) < 1.6f ? Hex("8A5A32") : Hex("B9814D"), Fill(deck));
-            c = Over(c, Line, Stroke(deck, 2f));
-            c = Over(c, Hex("C9D3DC"), Fill(RoundRect(x, y, 96, 290, 6, 2.6f, 1.5f)));
-            // Seats: the driver's and a bench at the back.
-            foreach (var (sx, sy, hw, hh) in new[] { (74f, 168f, 18f, 16f), (118f, 168f, 18f, 16f), (96f, 98f, 42f, 16f) })
+            // A white racing stripe down the long foredeck, a thin white line along the gunwale.
+            float stripe = Mathf.Max(Mathf.Abs(x - 96f) - 9f + (y - 160f) * 0.045f, 160f - y);
+            c = Over(c, White(0.95f), Fill(stripe) * Fill(hull + 10f));
+            c = Over(c, White(0.85f), Fill(Shell(hull + 6f, 1.6f)) * Mathf.Clamp01((y - 130f) / 30f));
+            // Two cleats near the bow (the decals have the foredeck).
+            foreach (float cx in new[] { 82f, 110f }) c = Over(c, Hex("C9D3DC"), Fill(RoundRect(x, y, cx, 280, 2.6f, 6, 1.5f)));
+            // A low wraparound windscreen in front of the cockpit.
+            float screen = Mathf.Max(Shell(Circle(x, y, 96, 110, 52), 5.5f), 132f - y);
+            c = Over(c, Glass, Fill(screen));
+            c = Over(c, White(0.8f), Fill(Capsule(x, y, 66, 150, 80, 156, 1.6f)));
+            c = Over(c, Hex("C9D3DC"), Stroke(screen, 2.2f));
+            // Two bucket seats side by side, a bench across the stern; the driver (left) at the wheel.
+            foreach (var (sx, sy, hw, hh) in new[] { (74f, 108f, 17f, 16f), (118f, 108f, 17f, 16f), (96f, 74f, 38f, 10f) })
             {
                 float seat = RoundRect(x, y, sx, sy, hw, hh, 7);
                 c = Over(c, Cushion, Fill(seat));
                 c = Over(c, CushionShade, Fill(RoundRect(x, y, sx, sy - hh * 0.4f, hw - 3, hh * 0.35f, 4)));
-                c = Over(c, Line, Stroke(seat, 2.2f));
+                c = Over(c, Line, Stroke(seat, 2f));
             }
-            // Windscreen: a curved band of glass in a chrome frame.
-            float screen = Mathf.Max(Shell(Circle(x, y, 96, 150, 64), 6f), 196f - y);
-            screen = Mathf.Max(screen, Mathf.Abs(x - 96f) - 56f);
-            c = Over(c, Glass, Fill(screen));
-            c = Over(c, White(0.8f), Fill(Capsule(x, y, 70, 207, 84, 211, 1.8f)));
-            c = Over(c, Hex("C9D3DC"), Stroke(screen, 2.5f));
-            // The driver: shoulders, arms to the wheel, a red cap and shades.
-            float arms = Mathf.Min(Capsule(x, y, 66, 168, 66, 194, 6.5f), Capsule(x, y, 84, 172, 76, 192, 6f));
+            float arms = Mathf.Min(Capsule(x, y, 64, 118, 68, 136, 5.5f), Capsule(x, y, 84, 118, 80, 136, 5.5f));
             c = Over(c, Skin, Fill(arms));
-            c = Over(c, Line, Stroke(arms, 2f));
-            float wheel = Shell(Circle(x, y, 72, 196, 8), 2f);
-            c = Over(c, Motor, Fill(wheel));
-            float shoulders = Ellipse(x, y, 74, 166, 18, 11);
-            c = Over(c, Hex("3FB8C8"), Fill(shoulders));
-            c = Over(c, Line, Stroke(shoulders, 2f));
-            float head = Circle(x, y, 74, 170, 11);
-            c = Over(c, Skin, Fill(head));
-            float cap = Mathf.Min(Circle(x, y, 74, 168, 10.5f), Ellipse(x, y, 74, 180, 8, 5));
-            c = Over(c, Hex("E5413A"), Fill(cap));
-            c = Over(c, Line, Stroke(head, 2f));
-            // The outboard behind the stern: a dark cowl with a light top.
-            float motor = RoundRect(x, y, 96, 30, 22, 20, 8);
-            c = Over(c, Motor, Fill(motor));
-            c = Over(c, MotorLight, Fill(RoundRect(x, y, 96, 34, 14, 12, 5)));
-            c = Over(c, White(0.85f), Fill(RoundRect(x, y, 96, 22, 10, 2.2f, 1)));
-            c = Over(c, Line, Stroke(motor, 2.5f));
+            c = Over(c, Line, Stroke(arms, 1.8f));
+            c = Over(c, Motor, Fill(Shell(Circle(x, y, 74, 138, 8), 1.8f)));
+            float shoulders = Ellipse(x, y, 74, 114, 16, 9);
+            c = Over(c, Hex("FFD24D"), Fill(shoulders));
+            c = Over(c, Line, Stroke(shoulders, 1.8f));
+            float helmet = Circle(x, y, 74, 118, 10);
+            c = Over(c, Color.white, Fill(helmet));
+            c = Over(c, Hex("1D2733"), Fill(Mathf.Max(Circle(x, y, 74, 118, 8.5f), 122f - y)));
+            c = Over(c, Line, Stroke(helmet, 1.8f));
+            // Twin outboards on the transom.
+            foreach (float mx in new[] { 76f, 116f })
+            {
+                float motor = RoundRect(x, y, mx, 28, 14, 17, 6);
+                c = Over(c, Motor, Fill(motor));
+                c = Over(c, MotorLight, Fill(RoundRect(x, y, mx, 33, 7, 9, 3)));
+                c = Over(c, White(0.85f), Fill(RoundRect(x, y, mx, 22, 6, 1.8f, 1)));
+                c = Over(c, Line, Stroke(motor, 2.2f));
+            }
             return c;
         }
 
