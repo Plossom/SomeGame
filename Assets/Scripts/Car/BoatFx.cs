@@ -90,14 +90,14 @@ namespace SomeGame.Car
             Vector2 forward = transform.up, right = transform.right;
             float speed = _car.Body.linearVelocity.magnitude;
             // The wake: a pair of foam puffs every little stretch, spreading sideways (a V), and the churn behind.
-            while (_travelled > 0.22f && speed > 1.5f)
+            while (_travelled > 0.3f && speed > 1.5f)
             {
-                _travelled -= 0.22f;
+                _travelled -= 0.3f;
                 Vector2 stern = p - forward * 0.85f;
-                float spread = Mathf.Lerp(0.8f, 2.2f, Mathf.Clamp01(speed / 20f));
+                float spread = Mathf.Lerp(0.7f, 1.8f, Mathf.Clamp01(speed / 20f));
                 for (int side = -1; side <= 1; side += 2)
-                    Emit(_wake, stern + right * (0.42f * side), right * (spread * side) - forward * 0.3f, Random.Range(0.85f, 1.1f), 1.6f);
-                Emit(_wake, stern - forward * 0.2f, -forward * 0.6f + right * Random.Range(-0.3f, 0.3f), Random.Range(1.1f, 1.4f), 0.9f);
+                    Emit(_wake, stern + right * (0.4f * side), right * (spread * side) - forward * 0.3f, Random.Range(0.65f, 0.85f), 1.15f, WakeAlpha);
+                Emit(_wake, stern - forward * 0.2f, -forward * 0.6f + right * Random.Range(-0.3f, 0.3f), Random.Range(0.8f, 1.05f), 0.7f, WakeAlpha);
             }
             if (speed <= 1.5f) _travelled = 0f;
             // Spray off the bow: in hard turns (sideways speed), drifts and boosts.
@@ -130,7 +130,10 @@ namespace SomeGame.Car
             }
         }
 
-        static void Emit(ParticleSystem system, Vector2 position, Vector2 velocity, float size, float life)
+        // The wake a little see-through (it reads as foam, not a white trail).
+        const float WakeAlpha = 0.75f;
+
+        static void Emit(ParticleSystem system, Vector2 position, Vector2 velocity, float size, float life, float alpha = 1f)
         {
             var e = new ParticleSystem.EmitParams
             {
@@ -138,7 +141,7 @@ namespace SomeGame.Car
                 velocity = velocity,
                 startSize = size,
                 startLifetime = life,
-                startColor = Color.white,
+                startColor = new Color(1f, 1f, 1f, alpha),
                 rotation = Random.Range(0f, 360f),
             };
             system.Emit(e, 1);

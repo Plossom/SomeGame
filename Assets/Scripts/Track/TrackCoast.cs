@@ -22,7 +22,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite wreck, rock;
 
         const int FlatsOrder = -44, LockWallOrder = -42, LockTintOrder = -47, FallOrder = -41, RockOrder = 4, WreckOrder = 5,
-                  GateOrder = 20, LampOrder = 21, RainOrder = 57, NightOrder = 58;
+                  GateOrder = 20, LampOrder = 21, RainOrder = 59, NightOrder = 58;
 
         readonly List<GameObject> _parts = new();
         SomeGame.Car.CarMovement[] _cars = { };
@@ -34,7 +34,7 @@ namespace SomeGame.Track
         {
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
             _parts.Clear(); _gates.Clear(); _rocks.Clear();
-            _flats = null; _flatsCollider = null; _night = null; _rain = null;
+            _flats = null; _flatsCollider = null; _night = null; _rainMesh = null;
             Release();
             _coast = layout.coast;
             if (layout.biome != TrackLayout.Biome.Lagoon || _coast == null || !_coast.enabled) return;
@@ -344,9 +344,9 @@ namespace SomeGame.Track
             Vector2 lip = path.PointAt(gap.from), along = path.TangentAt(gap.from), across = path.NormalAt(gap.from);
             float half = track.OffRoadAt(gap.from) + 1.5f;
             var random = new System.Random(5);
-            for (int i = 0; i < 26; i++)
+            for (int i = 0; i < 40; i++)
             {
-                float x = Mathf.Lerp(-half, half, (i + 0.5f) / 26f), w = 0.25f + (float)random.NextDouble() * 0.3f;
+                float x = Mathf.Lerp(-half, half, (i + 0.5f) / 40f), w = 0.2f + (float)random.NextDouble() * 0.3f;
                 float down = len * (0.5f + (float)random.NextDouble() * 0.35f);
                 Vector2 a = lip + across * x, b = a + along * down;
                 int s = v.Count;
@@ -356,7 +356,7 @@ namespace SomeGame.Track
                 t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3 });
             }
             // A dark band: the cliff face under the falling water.
-            Quad(v, u, t, c, lip - across * half, lip + across * half, lip + across * half + along * len * 0.9f, lip - across * half + along * len * 0.9f, new Color32(20, 26, 32, 120));
+            Quad(v, u, t, c, lip - across * half, lip + across * half, lip + across * half + along * len * 0.9f, lip - across * half + along * len * 0.9f, new Color32(20, 26, 32, 50));
             Quad(v, u, t, c, lip - across * half - along * 0.6f, lip + across * half - along * 0.6f, lip + across * half + along * 0.4f, lip - across * half + along * 0.4f, new Color32(255, 255, 255, 235));
             Part("Waterfall", plain, FallOrder, Quads("Waterfall", v, u, t, c));
             if (!Application.isPlaying || foamParticles == null) return;
@@ -385,15 +385,16 @@ namespace SomeGame.Track
         Vector3[] _nightLocal;
         Color32[] _nightColors;
         float _nightSize = -1f;
-        ParticleSystem _rain;
-        float _break, _flash, _nextStrike, _thunderAt = -1f;
-        const int Cols = 18, Rows = 38;
+                float _break, _flash, _nextStrike, _thunderAt = -1f;
+        const int Cols = 40, Rows = 84;
         static readonly Color NightColor = new(0.01f, 0.03f, 0.08f), MoonColor = new(0.05f, 0.11f, 0.26f);
 
         void BuildNight(Camera cam)
         {
             if (_night != null) { Destroy(_night.gameObject); _night = null; }
-            float h = cam.orthographicSize + 4f, w = cam.orthographicSize * cam.aspect + 4f;
+            // Built a size up (the camera zooms out a little at speed), so it is only rebuilt for a real zoom.
+            float size = cam.orthographicSize * 1.3f;
+            float h = size + 4f, w = size * cam.aspect + 4f;
             var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
             for (int y = 0; y <= Rows; y++)
                 for (int x = 0; x <= Cols; x++)
@@ -415,43 +416,66 @@ namespace SomeGame.Track
             _night = go.GetComponent<MeshFilter>();
             _nightLocal = v.ToArray();
             _nightColors = c.ToArray();
-            _nightSize = cam.orthographicSize;
+            _nightSize = size;
         }
+
+        // Rain: thin streaks blowing across the screen (a mesh on the camera, moved every frame).
+        MeshFilter _rainMesh;
+        Vector3[] _rainVerts;
+        Vector2[] _rainDrops;
+        Color32[] _rainColors;
+        const int Drops = 150;
+        static readonly Vector2 RainWind = new(7f, -15f);
 
         void BuildRain(Camera cam)
         {
-            if (foamParticles == null) return;
-            var go = new GameObject("Rain") { hideFlags = HideFlags.DontSave };
-            go.transform.SetParent(cam.transform, false);
-            go.transform.localPosition = new Vector3(0f, 0f, 6f);
-            _rain = go.AddComponent<ParticleSystem>();
-            _rain.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            var main = _rain.main;
-            main.startLifetime = 0.35f; main.startSpeed = 0f; main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.14f);
-            main.startColor = new Color(0.85f, 0.92f, 1f, 0.55f);
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-            main.maxParticles = 1200;
-            var shape = _rain.shape; shape.shapeType = ParticleSystemShapeType.Box;
-            shape.scale = new Vector3(cam.orthographicSize * cam.aspect * 2f + 8f, cam.orthographicSize * 2f + 8f, 0.1f);
-            var vel = _rain.velocityOverLifetime; vel.enabled = true; vel.space = ParticleSystemSimulationSpace.World;
-            vel.x = new ParticleSystem.MinMaxCurve(7f, 9f); vel.y = new ParticleSystem.MinMaxCurve(-15f, -12f); vel.z = 0f;
-            var em = _rain.emission; em.rateOverTime = 900f;
-            var r = go.GetComponent<ParticleSystemRenderer>();
-            r.sharedMaterial = foamParticles;
-            r.renderMode = ParticleSystemRenderMode.Stretch;
-            r.velocityScale = 0.06f;
-            r.lengthScale = 1f;
-            r.sortingOrder = RainOrder;
-            _rain.Play();
+            var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
+            _rainDrops = new Vector2[Drops];
+            float h = cam.orthographicSize + 2f, w = cam.orthographicSize * cam.aspect + 2f;
+            for (int i = 0; i < Drops; i++)
+            {
+                _rainDrops[i] = new Vector2(Random.Range(-w, w), Random.Range(-h, h));
+                Quad(v, u, t, c, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, new Color32(200, 220, 255, 0));
+            }
+            var go = Part("Rain", plain, RainOrder, Quads("Rain", v, u, t, c), cam.transform);
+            go.transform.localPosition = new Vector3(0f, 0f, 4f);
+            go.transform.localRotation = Quaternion.identity;
             _parts.Add(go);
+            _rainMesh = go.GetComponent<MeshFilter>();
+            _rainVerts = v.ToArray();
+            _rainColors = c.ToArray();
+        }
+
+        void UpdateRain(Camera cam, float dt, float amount)
+        {
+            if (_rainMesh == null) return;
+            float h = cam.orthographicSize + 2f, w = cam.orthographicSize * cam.aspect + 2f;
+            Vector2 dir = RainWind.normalized, side = new Vector2(-dir.y, dir.x) * 0.035f, len = dir * 1.1f;
+            byte a = (byte)(110f * amount);
+            for (int i = 0; i < Drops; i++)
+            {
+                var p = _rainDrops[i] + RainWind * dt * (0.8f + (i % 5) * 0.1f);
+                if (p.y < -h) p = new Vector2(Random.Range(-w - 6f, w), h);
+                if (p.x > w) p.x -= 2f * w;
+                _rainDrops[i] = p;
+                int k = i * 4;
+                // (Quad's corner order: a, b, d, c)
+                _rainVerts[k] = p - side; _rainVerts[k + 1] = p + side; _rainVerts[k + 2] = p - side - len; _rainVerts[k + 3] = p + side - len;
+                var col = new Color32(205, 225, 255, a);
+                _rainColors[k] = col; _rainColors[k + 1] = col; _rainColors[k + 2] = new Color32(205, 225, 255, 0); _rainColors[k + 3] = new Color32(205, 225, 255, 0);
+            }
+            var mesh = _rainMesh.sharedMesh;
+            mesh.vertices = _rainVerts;
+            mesh.colors32 = _rainColors;
+            mesh.RecalculateBounds();
         }
 
         void UpdateNight(float dt)
         {
             var cam = Camera.main;
             if (cam == null) return;
-            if (_night == null || Mathf.Abs(cam.orthographicSize - _nightSize) > 0.5f) BuildNight(cam);
-            if (_rain == null) BuildRain(cam);
+            if (_night == null || cam.orthographicSize > _nightSize || cam.orthographicSize < _nightSize * 0.5f) BuildNight(cam);
+            if (_rainMesh == null) BuildRain(cam);
             _break = Mathf.MoveTowards(_break, LastLap ? 1f : 0f, dt / 5f);
             // Lightning: two quick flashes, thunder a moment later (not once the storm has broken).
             if (_break < 0.1f && Time.time > _nextStrike)
@@ -468,9 +492,9 @@ namespace SomeGame.Track
             }
             float flash = _flash > 0f ? (_flash > 0.75f || (_flash > 0.45f && _flash < 0.6f) ? 1f : _flash * 0.5f) : 0f;
             _flash = Mathf.Max(0f, _flash - dt * 2.2f);
-            if (_rain != null) { var em = _rain.emission; em.rateOverTime = 900f * (1f - _break); }
+            UpdateRain(cam, dt, 1f - _break);
 
-            float darkness = Mathf.Lerp(_coast.darkness, _coast.darkness * 0.55f, _break) * (1f - flash * 0.85f);
+            float darkness = Mathf.Lerp(_coast.darkness, _coast.darkness * 0.55f, _break) * (1f - flash * 0.5f);
             Color night = Color.Lerp(NightColor, MoonColor, _break);
             Color beamColor = Color.Lerp(new Color(1f, 0.97f, 0.8f), new Color(1f, 0.78f, 0.25f), _break);
             float wash = Mathf.Lerp(0.1f, 0.24f, _break);
@@ -495,28 +519,27 @@ namespace SomeGame.Track
                 Vector2 q = p - lighthouse;
                 float r = q.magnitude;
                 float diff = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(q.y, q.x) * Mathf.Rad2Deg, beamAngle));
-                float halfAngle = Mathf.Max(6f, Mathf.Atan2(3f, Mathf.Max(0.1f, r)) * Mathf.Rad2Deg);
+                float halfAngle = Mathf.Max(4.5f, Mathf.Atan2(2.5f, Mathf.Max(0.1f, r)) * Mathf.Rad2Deg);
                 float beam = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(halfAngle * 0.5f, halfAngle, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(110f, 180f, r)));
                 beam = Mathf.Max(beam, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(4f, 12f, r)));
-                // Headlights: a cone ahead of each boat, a little pool of light round it.
-                float head = 0f;
+                // Headlights: a warm cone of light from each boat's nose, a dim pool round the boat.
+                float cone = 0f, pool = 0f;
                 foreach (var (cp, f) in lights)
                 {
-                    Vector2 o = p - cp;
+                    Vector2 o = p - (cp + f * 0.9f);
                     float a = Vector2.Dot(o, f);
+                    pool = Mathf.Max(pool, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(1.2f, 3f, (p - cp).magnitude)));
+                    if (a <= -0.5f || a >= 20f) continue;
                     float side = Mathf.Abs(o.x * f.y - o.y * f.x);
-                    float pool = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(1.6f, 3.6f, o.magnitude));
-                    float cone = 0f;
-                    if (a > 0f && a < 18f)
-                    {
-                        float width = 1.3f + a * 0.3f;
-                        cone = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(width * 0.5f, width, side))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(9f, 18f, a)));
-                    }
-                    head = Mathf.Max(head, Mathf.Max(pool * 0.9f, cone * 0.85f));
+                    float width = 0.8f + Mathf.Max(0f, a) * 0.36f;
+                    float c = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(width * 0.45f, width, side))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(11f, 20f, a)));
+                    cone = Mathf.Max(cone, c);
                 }
-                float lit = Mathf.Clamp01(beam * 0.95f + head);
-                float alpha = darkness * (1f - lit) + beam * wash;
+                float lit = Mathf.Clamp01(beam * 0.8f + cone * 0.95f + pool * 0.45f);
+                const float headWash = 0.2f;
+                float alpha = darkness * (1f - lit) + beam * wash + cone * headWash;
                 Color col = Color.Lerp(night, beamColor, Mathf.Clamp01(beam * wash / Mathf.Max(0.01f, alpha)));
+                col = Color.Lerp(col, new Color(1f, 0.9f, 0.6f), Mathf.Clamp01(cone * headWash / Mathf.Max(0.01f, alpha)));
                 _nightColors[i] = new Color(col.r, col.g, col.b, Mathf.Clamp01(alpha));
             }
             _night.sharedMesh.colors32 = _nightColors;
