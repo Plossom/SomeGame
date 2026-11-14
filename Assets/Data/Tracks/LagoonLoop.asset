@@ -428,6 +428,7 @@ MonoBehaviour:
     enabled: 0
     lighthouse: {x: 0, y: 0}
     beamPeriod: 7
+    lights: []
     darkness: 0.72
     flats: []
     tideBranch: -1

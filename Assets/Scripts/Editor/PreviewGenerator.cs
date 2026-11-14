@@ -134,6 +134,9 @@ namespace SomeGame.EditorTools
                     float diff = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(q.y, q.x) * Mathf.Rad2Deg, beamAngle));
                     float lit = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(4f, 8f, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(100f, 200f, q.magnitude)));
                     lit = Mathf.Max(lit, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(5f, 14f, q.magnitude)));
+                    if (layout.coast.lights != null)
+                        foreach (var lamp in layout.coast.lights)
+                            lit = Mathf.Max(lit, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(7f, 17f, Vector2.Distance(p, lamp))));
                     var c = px[y * w + x];
                     var dark = Color.Lerp(c, night, 0.62f);
                     px[y * w + x] = Color.Lerp(dark, Color.Lerp(c, beam, 0.2f), lit * 0.85f);

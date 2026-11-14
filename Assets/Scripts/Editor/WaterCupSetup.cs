@@ -405,6 +405,7 @@ namespace SomeGame.EditorTools
             {
                 new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = new Vector2(-2f, 154f), size = 14f },
             };
+            foreach (var light in LIGHTS) t.decor.Add(new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = light, size = 7f });
             // Across the tide flats: only once the tide is in (the last lap).
             t.branches = new List<TrackLayout.Branch>
             {
@@ -415,6 +416,9 @@ namespace SomeGame.EditorTools
             {
                 enabled = true, lighthouse = new Vector2(-2f, 154f), beamPeriod = 7f, darkness = 0.95f,
                 flats = FLATS, tideBranch = 0,
+                // Small lighthouses all round the course (the only light besides the big one): on the cliffs and shores,
+                // or out on rocks in the bay.
+                lights = LIGHTS,
                 rocks = new List<TrackLayout.TideRock>
                 {
                     new() { position = At(20f, 8.5f), radius = 1.8f },
@@ -514,6 +518,8 @@ namespace SomeGame.EditorTools
             TOWN = new Vector2[] { new(40.7f, 132.4f), new(50.2f, 131.0f), new(64.0f, 124.9f), new(71.4f, 123.3f), new(78.5f, 124.1f), new(93.6f, 129.2f), new(99.0f, 128.6f), new(111.2f, 122.7f), new(120.4f, 113.3f), new(125.8f, 103.4f), new(128.6f, 94.1f), new(133.3f, 53.8f), new(132.6f, 35.8f), new(129.5f, 18.0f), new(122.6f, 12.1f), new(114.1f, 7.9f), new(108.0f, 6.9f), new(72.0f, 7.2f), new(72.0f, 5.8f), new(60.9f, 5.0f), new(53.3f, 2.8f), new(44.4f, 5.2f), new(28.5f, 6.7f), new(3.6f, 6.0f), new(-0.8f, 8.2f), new(-5.0f, 12.6f), new(-7.4f, 17.6f), new(-2.5f, 28.0f), new(-1.2f, 34.8f), new(-5.0f, 51.7f), new(-1.6f, 61.1f), new(3.2f, 93.0f), new(3.5f, 104.6f), new(9.9f, 117.5f), new(17.4f, 125.3f), new(29.0f, 131.2f) },
             PIER = new Vector2[] { new(65.2f, -7.3f), new(72.0f, -6.4f), new(108.0f, -7.2f), new(108.0f, -5.5f), new(117.6f, -3.9f), new(121.8f, -1.9f), new(116.0f, -10.4f), new(109.9f, -16.2f), new(103.5f, -19.4f), new(93.8f, -21.4f), new(86.2f, -21.2f), new(80.4f, -19.1f), new(69.4f, -12.1f) };
 
+        static readonly Vector2[] LIGHTS = { new(-1.5f, -11.9f), new(44.7f, -14.6f), new(84.9f, -17f), new(130.6f, 15.6f), new(129.7f, 62.1f), new(112.9f, 102.5f),
+            new(72.8f, 121.2f), new(35.6f, 124f), new(-4.2f, 122.4f), new(-24.5f, 104f), new(-27.7f, 66.7f), new(-19.1f, 30.5f) };
         static readonly Vector2[] COAST = new Vector2[] { new(0.0f, 0.0f), new(28.0f, -2.0f), new(56.0f, 2.0f), new(84.0f, -2.0f), new(108.0f, 10.0f), new(120.0f, 32.0f), new(118.0f, 58.0f), new(104.0f, 78.0f), new(98.0f, 100.0f), new(92.0f, 120.0f), new(78.0f, 132.0f), new(56.0f, 136.0f), new(32.0f, 136.0f), new(8.0f, 136.0f), new(-14.0f, 132.0f), new(-30.0f, 120.0f), new(-38.0f, 100.0f), new(-40.0f, 76.0f), new(-38.0f, 52.0f), new(-32.0f, 30.0f), new(-22.0f, 12.0f), new(-12.0f, 3.0f) };
         static readonly Vector2[] CLIFFN = new Vector2[] { new(200.0f, 230.0f), new(200.0f, 96.0f), new(140.0f, 96.0f), new(120.0f, 98.0f), new(104.5f, 102.6f), new(99.3f, 121.3f), new(95.2f, 127.5f), new(89.6f, 133.1f), new(76.0f, 140.1f), new(52.7f, 143.2f), new(11.3f, 143.2f), new(-8.3f, 141.0f), new(-18.9f, 137.5f), new(-29.0f, 131.1f), new(-36.3f, 123.3f), new(-41.4f, 113.2f), new(-60.0f, 110.0f), new(-110.0f, 108.0f), new(-110.0f, 230.0f) },
             LIP = new Vector2[] { new(89.1f, 107.1f), new(70.0f, 114.0f), new(50.0f, 117.0f), new(10.0f, 118.0f), new(-25.3f, 114.5f), new(-16.6f, 122.8f), new(-4.4f, 127.5f), new(12.9f, 129.3f), new(53.3f, 129.2f), new(70.5f, 127.1f), new(79.2f, 123.4f), new(86.9f, 114.6f) },

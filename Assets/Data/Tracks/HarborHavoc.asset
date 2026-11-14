@@ -382,6 +382,7 @@ MonoBehaviour:
     enabled: 0
     lighthouse: {x: 0, y: 0}
     beamPeriod: 7
+    lights: []
     darkness: 0.72
     flats: []
     tideBranch: -1
@@ -563,5 +564,197 @@ MonoBehaviour:
     along: {x: 0, y: 0}
     canopy: 0
     indoor: 0
-  bakedScenery: []
+  bakedScenery:
+  - position: {x: 148.13069, y: 132.21318}
+    right: {x: -0.007844686, y: -1.4656016}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 146.91891, y: 111.034424}
+    right: {x: -1.2824466, y: -0.66785365}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 170.1551, y: 69.24998}
+    right: {x: -1.0944376, y: 0.88646185}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -36, y: 60}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -30, y: 40}
+    right: {x: 1.6444621, y: -0.59853524}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 150, y: 30}
+    right: {x: 1.3405777, y: 1.1248783}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -24, y: 30}
+    right: {x: 2, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 149.00475, y: 23.672464}
+    right: {x: -0.9285224, y: -1.0624521}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 151.88309, y: 18.796995}
+    right: {x: -1.3183736, y: -0.2479154}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 163.49811, y: 15.221132}
+    right: {x: -1.2971593, y: 0.44282025}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 148.84544, y: -2.8921523}
+    right: {x: -0.44495776, y: 1.2437482}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 12, y: -12}
+    right: {x: 3, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 2, y: -12}
+    right: {x: 2.1650634, y: 1.25}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 38, y: -13}
+    right: {x: 2.9544232, y: 0.52094454}
+    uv:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 24, y: -19}
+    right: {x: 2.25, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 149.81017, y: -28.75335}
+    right: {x: -1.0109566, y: -1.2924606}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
   bakedSignature: 

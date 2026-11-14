@@ -341,6 +341,8 @@ namespace SomeGame.Track
             [Tooltip("Where the lighthouse stands (its beam turns round it).")]
             public Vector2 lighthouse;
             [Min(1f)] public float beamPeriod = 7f;
+            [Tooltip("Small lighthouses round the course: each lights the water round it and turns a short beam.")]
+            public Vector2[] lights = { };
             [Tooltip("How dark the night is (0 day .. 1 black).")]
             [Range(0f, 1f)] public float darkness = 0.72f;
             [Tooltip("The tide flats (outline): dry sand at low tide, flooded by the last lap - then the branch across them opens.")]

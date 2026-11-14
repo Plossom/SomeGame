@@ -5,8 +5,8 @@ namespace SomeGame.Track
 {
     /// <summary>
     /// A rocky coast at night in a gale (Water Cup race 3, <see cref="TrackLayout.coast"/>):
-    /// - the dark: a night over everything, cut open by the lighthouse's beam sweeping round the bay and by every boat's
-    ///   headlights; lightning now and then lights up the whole bay (thunder follows);
+    /// - the dark: a night over everything, cut open by the big lighthouse's beam sweeping round the bay and by the small
+    ///   lighthouses all round the course (a pool of light round each, a short turning beam); no lights on the boats; lightning now and then lights up the whole bay (thunder follows);
     /// - rain blowing across the screen;
     /// - the tide, rising lap by lap: the flats are dry sand on the first lap, wet on the second, and flooded on the last,
     ///   when the branch across them opens; some rocks stand out of the water only until the tide covers them;
@@ -25,7 +25,6 @@ namespace SomeGame.Track
                   GateOrder = 20, LampOrder = 21, RainOrder = 59, NightOrder = 58;
 
         readonly List<GameObject> _parts = new();
-        SomeGame.Car.CarMovement[] _cars = { };
         SomeGame.Race.RaceManager _race;
         SomeGame.CameraRig.CameraShake _shake;
         TrackLayout.Coast _coast;
@@ -40,11 +39,20 @@ namespace SomeGame.Track
             if (layout.biome != TrackLayout.Biome.Lagoon || _coast == null || !_coast.enabled) return;
             BuildFlats();
             foreach (var r in _coast.rocks) BuildRock(r);
+            // The small lighthouses are solid (out in the bay they stand on their own rocks).
+            if (Application.isPlaying && _coast.lights != null)
+                foreach (var lamp in _coast.lights)
+                {
+                    var go = new GameObject("LighthouseBase", typeof(CircleCollider2D)) { hideFlags = HideFlags.DontSave };
+                    go.transform.SetParent(transform, false);
+                    go.transform.position = lamp;
+                    go.GetComponent<CircleCollider2D>().radius = 2f;
+                    _parts.Add(go);
+                }
             BuildLocks(path);
             if (_coast.wreck >= 0f) BuildWreck(path);
             foreach (var gap in layout.gaps) if (gap.drop) BuildFall(path, gap);
             if (!Application.isPlaying) return;
-            _cars = FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None);
             _race = FindAnyObjectByType<SomeGame.Race.RaceManager>();
             _shake = FindAnyObjectByType<SomeGame.CameraRig.CameraShake>();
             _nextStrike = Time.time + 6f;
@@ -500,17 +508,17 @@ namespace SomeGame.Track
             float wash = Mathf.Lerp(0.1f, 0.24f, _break);
             Vector2 lighthouse = _coast.lighthouse;
             float beamAngle = Track.Clock / _coast.beamPeriod * 360f;
-            // The lit cars (near the camera).
+            // The small lighthouses near the camera (no lights on the boats: only the lighthouses light the sea).
             Vector2 camPos = cam.transform.position;
             float reach = cam.orthographicSize * 2f + 30f;
-            var lights = new List<(Vector2 p, Vector2 f)>();
-            foreach (var car in _cars)
-            {
-                if (car == null) continue;
-                Vector2 p = car.transform.position;
-                if ((p - camPos).sqrMagnitude > reach * reach) continue;
-                lights.Add((p, car.transform.up));
-            }
+            var lamps = new List<(Vector2 p, float angle)>();
+            if (_coast.lights != null)
+                for (int k = 0; k < _coast.lights.Length; k++)
+                {
+                    var lp = _coast.lights[k];
+                    if ((lp - camPos).sqrMagnitude > reach * reach) continue;
+                    lamps.Add((lp, Track.Clock / (4.5f + (k % 3) * 0.8f) * 360f * (k % 2 == 0 ? 1f : -1f) + k * 47f));
+                }
             var tr = _night.transform;
             for (int i = 0; i < _nightLocal.Length; i++)
             {
@@ -522,24 +530,22 @@ namespace SomeGame.Track
                 float halfAngle = Mathf.Max(4.5f, Mathf.Atan2(2.5f, Mathf.Max(0.1f, r)) * Mathf.Rad2Deg);
                 float beam = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(halfAngle * 0.5f, halfAngle, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(110f, 180f, r)));
                 beam = Mathf.Max(beam, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(4f, 12f, r)));
-                // Headlights: a warm cone of light from each boat's nose, a dim pool round the boat.
-                float cone = 0f, pool = 0f;
-                foreach (var (cp, f) in lights)
+                // The small lighthouses: a pool of light round each, and its short turning beam.
+                float lamp = 0f;
+                foreach (var (lp, la) in lamps)
                 {
-                    Vector2 o = p - (cp + f * 0.9f);
-                    float a = Vector2.Dot(o, f);
-                    pool = Mathf.Max(pool, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(1.2f, 3f, (p - cp).magnitude)));
-                    if (a <= -0.5f || a >= 20f) continue;
-                    float side = Mathf.Abs(o.x * f.y - o.y * f.x);
-                    float width = 0.8f + Mathf.Max(0f, a) * 0.36f;
-                    float c = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(width * 0.45f, width, side))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(11f, 20f, a)));
-                    cone = Mathf.Max(cone, c);
+                    Vector2 o = p - lp;
+                    float d = o.magnitude;
+                    if (d > 50f) continue;
+                    float pool = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(7f, 17f, d));
+                    float off = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(o.y, o.x) * Mathf.Rad2Deg, la));
+                    float ray = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(5f, 9f, off))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(25f, 48f, d)));
+                    lamp = Mathf.Max(lamp, Mathf.Max(pool, ray * 0.85f));
                 }
-                float lit = Mathf.Clamp01(beam * 0.8f + cone * 0.95f + pool * 0.45f);
-                const float headWash = 0.2f;
-                float alpha = darkness * (1f - lit) + beam * wash + cone * headWash;
-                Color col = Color.Lerp(night, beamColor, Mathf.Clamp01(beam * wash / Mathf.Max(0.01f, alpha)));
-                col = Color.Lerp(col, new Color(1f, 0.9f, 0.6f), Mathf.Clamp01(cone * headWash / Mathf.Max(0.01f, alpha)));
+                float glow = Mathf.Max(beam, lamp);
+                float lit = Mathf.Clamp01(glow * 0.85f);
+                float alpha = darkness * (1f - lit) + glow * wash;
+                Color col = Color.Lerp(night, beamColor, Mathf.Clamp01(glow * wash / Mathf.Max(0.01f, alpha)));
                 _nightColors[i] = new Color(col.r, col.g, col.b, Mathf.Clamp01(alpha));
             }
             _night.sharedMesh.colors32 = _nightColors;
