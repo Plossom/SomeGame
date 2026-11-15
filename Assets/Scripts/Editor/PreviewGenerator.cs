@@ -117,7 +117,7 @@ namespace SomeGame.EditorTools
             return "previews: " + log;
         }
 
-        // A night coast's picture at night too: dark blue, the lighthouse beam sweeping out across the bay.
+        // A night coast's picture at night too: dark blue, pools of light round the lighthouses.
         static void Night(Texture2D tex, SomeGame.Track.TrackLayout layout, Camera cam)
         {
             int w = tex.width, h = tex.height;
@@ -125,15 +125,12 @@ namespace SomeGame.EditorTools
             float worldH = cam.orthographicSize * 2f, worldW = worldH * w / h;
             Vector2 origin = (Vector2)cam.transform.position - new Vector2(worldW, worldH) * 0.5f;
             Vector2 lighthouse = layout.coast.lighthouse;
-            const float beamAngle = -35f;
             Color night = new(0.03f, 0.07f, 0.16f), beam = new(1f, 0.93f, 0.7f);
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                 {
                     Vector2 p = origin + new Vector2((x + 0.5f) / w * worldW, (y + 0.5f) / h * worldH), q = p - lighthouse;
-                    float diff = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(q.y, q.x) * Mathf.Rad2Deg, beamAngle));
-                    float lit = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(4f, 8f, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(100f, 200f, q.magnitude)));
-                    lit = Mathf.Max(lit, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(5f, 14f, q.magnitude)));
+                    float lit = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(10f, 32f, q.magnitude));
                     if (layout.coast.lights != null)
                         foreach (var lamp in layout.coast.lights)
                             lit = Mathf.Max(lit, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(6f, 21f, Vector2.Distance(p, lamp))));

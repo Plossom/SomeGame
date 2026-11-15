@@ -559,32 +559,27 @@ namespace SomeGame.Track
             Color beamColor = Color.Lerp(new Color(1f, 0.97f, 0.8f), new Color(1f, 0.78f, 0.25f), _break);
             float wash = Mathf.Lerp(0.1f, 0.24f, _break);
             Vector2 lighthouse = _coast.lighthouse;
-            float beamAngle = Track.Clock / _coast.beamPeriod * 360f;
             // The small lighthouses near the camera (no lights on the boats: only the lighthouses light the sea).
             Vector2 camPos = cam.transform.position;
             float reach = cam.orthographicSize * 2f + 30f;
-            var lamps = new List<(Vector2 p, float angle)>();
+            var lamps = new List<Vector2>();
             if (_coast.lights != null)
                 for (int k = 0; k < _coast.lights.Length; k++)
                 {
                     var lp = _coast.lights[k];
                     if ((lp - camPos).sqrMagnitude > reach * reach) continue;
-                    lamps.Add((lp, Track.Clock / (4.5f + (k % 3) * 0.8f) * 360f * (k % 2 == 0 ? 1f : -1f) + k * 47f));
+                    lamps.Add(lp);
                 }
             var tr = _night.transform;
             for (int i = 0; i < _nightLocal.Length; i++)
             {
                 Vector2 p = tr.TransformPoint(_nightLocal[i]);
-                // The beam: a wedge turning round the lighthouse (a glow round its lamp).
-                Vector2 q = p - lighthouse;
-                float r = q.magnitude;
-                float diff = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(q.y, q.x) * Mathf.Rad2Deg, beamAngle));
-                float halfAngle = Mathf.Max(4.5f, Mathf.Atan2(2.5f, Mathf.Max(0.1f, r)) * Mathf.Rad2Deg);
-                float beam = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(halfAngle * 0.2f, halfAngle * 1.3f, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(110f, 180f, r)));
-                beam = Mathf.Max(beam, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(4f, 12f, r)));
-                // The small lighthouses: a pool of light round each, and its short turning beam.
+                float r = (p - lighthouse).magnitude;
+                // The big lighthouse: a wide steady pool of light (no beam sweeping across the screen).
+                float beam = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(10f, 32f, r));
+                // The small lighthouses: a pool of light round each.
                 float lamp = 0f;
-                foreach (var (lp, la) in lamps)
+                foreach (var lp in lamps)
                 {
                     Vector2 o = p - lp;
                     float d = o.magnitude;

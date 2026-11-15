@@ -62,6 +62,8 @@ namespace SomeGame.Track
         {
             base.OnDisable();
             Track.BranchGate = null;
+            if (_dropCanvas != null) Destroy(_dropCanvas.gameObject);
+            _drops.Clear();
         }
 
         SpriteRenderer Sprite(string name, Sprite sprite, Vector2 at, float size, float angle, int order, Transform parent = null)
@@ -456,7 +458,9 @@ namespace SomeGame.Track
             if (screenDrop == null) return;
             if (_dropCanvas == null)
             {
-                var go = new GameObject("ScreenDrops", typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler)) { hideFlags = HideFlags.DontSave };
+                // (In the race's scene, under the track: it goes when the race ends - never left on screen for the next one.)
+                var go = new GameObject("ScreenDrops", typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler));
+                go.transform.SetParent(transform, false);
                 _dropCanvas = go.GetComponent<Canvas>();
                 _dropCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 _dropCanvas.sortingOrder = 15;
