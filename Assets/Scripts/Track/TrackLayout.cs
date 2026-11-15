@@ -341,7 +341,7 @@ namespace SomeGame.Track
             [Tooltip("Where the lighthouse stands (its beam turns round it).")]
             public Vector2 lighthouse;
             [Min(1f)] public float beamPeriod = 7f;
-            [Tooltip("Small lighthouses round the course: each lights the water round it and turns a short beam.")]
+            [Tooltip("Small lighthouses round the course: each lights the water round it.")]
             public Vector2[] lights = { };
             [Tooltip("How dark the night is (0 day .. 1 black).")]
             [Range(0f, 1f)] public float darkness = 0.72f;
@@ -357,6 +357,12 @@ namespace SomeGame.Track
             [Range(0.2f, 0.9f)] public float gateOpen = 0.55f;
             [Tooltip("A wrecked ship lying along the channel (lap distance): sail in through its broken side and out at the other end.")]
             public float wreck = -1f;
+            [Tooltip("Lightning flashes now and then (and thunder).")]
+            public bool lightning;
+            [Tooltip("A whirlpool beside the channel (radius 0 = none): it drags the boats round and in towards its eye.")]
+            public Vector2 whirlpool;
+            [Min(0f)] public float whirlRadius;
+            [Min(0f)] public float whirlPull = 5f;
         }
 
         [Serializable]

@@ -14,27 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
   waypoints:
   - {x: 0, y: 0}
-  - {x: 28, y: -2}
-  - {x: 56, y: 2}
-  - {x: 84, y: -2}
-  - {x: 108, y: 10}
-  - {x: 120, y: 32}
-  - {x: 118, y: 58}
-  - {x: 104, y: 78}
-  - {x: 98, y: 100}
-  - {x: 92, y: 120}
-  - {x: 78, y: 132}
-  - {x: 56, y: 136}
-  - {x: 32, y: 136}
-  - {x: 8, y: 136}
-  - {x: -14, y: 132}
-  - {x: -30, y: 120}
-  - {x: -38, y: 100}
-  - {x: -40, y: 76}
-  - {x: -38, y: 52}
-  - {x: -32, y: 30}
-  - {x: -22, y: 12}
-  - {x: -12, y: 3}
+  - {x: 30, y: -2}
+  - {x: 56, y: 4}
+  - {x: 76, y: 18}
+  - {x: 96, y: 16}
+  - {x: 112, y: 30}
+  - {x: 112, y: 50}
+  - {x: 102, y: 66}
+  - {x: 108, y: 84}
+  - {x: 124, y: 96}
+  - {x: 134, y: 112}
+  - {x: 126, y: 132}
+  - {x: 106, y: 144}
+  - {x: 80, y: 148}
+  - {x: 54, y: 148}
+  - {x: 30, y: 146}
+  - {x: 8, y: 140}
+  - {x: -8, y: 126}
+  - {x: -16, y: 104}
+  - {x: -22, y: 80}
+  - {x: -24, y: 56}
+  - {x: -20, y: 32}
+  - {x: -12, y: 12}
   roadWidth: 8
   widths: []
   kerbWidth: 0.7
@@ -56,7 +57,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: -2, y: 154}
+    position: {x: 40, y: 168}
     size: 14
     angle: 0
     flat: 0
@@ -67,7 +68,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: -1.5, y: -11.9}
+    position: {x: 72.3, y: -1.8}
     size: 7
     angle: 0
     flat: 0
@@ -78,7 +79,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: 44.7, y: -14.6}
+    position: {x: 85, y: 30.4}
     size: 7
     angle: 0
     flat: 0
@@ -89,7 +90,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: 84.9, y: -17}
+    position: {x: 104.2, y: 4}
     size: 7
     angle: 0
     flat: 0
@@ -100,7 +101,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: 130.6, y: 15.6}
+    position: {x: 99.7, y: 35.6}
     size: 7
     angle: 0
     flat: 0
@@ -111,7 +112,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: 129.7, y: 62.1}
+    position: {x: 124, y: 58.4}
     size: 7
     angle: 0
     flat: 0
@@ -122,7 +123,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: 112.9, y: 102.5}
+    position: {x: 90.1, y: 76.1}
     size: 7
     angle: 0
     flat: 0
@@ -133,7 +134,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: 72.8, y: 121.2}
+    position: {x: 125.2, y: 78.1}
     size: 7
     angle: 0
     flat: 0
@@ -144,7 +145,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: 35.6, y: 124}
+    position: {x: 49.9, y: 45.2}
     size: 7
     angle: 0
     flat: 0
@@ -155,7 +156,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: -4.2, y: 122.4}
+    position: {x: 20.3, y: 69.8}
     size: 7
     angle: 0
     flat: 0
@@ -166,7 +167,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: -24.5, y: 104}
+    position: {x: 70, y: 85.5}
     size: 7
     angle: 0
     flat: 0
@@ -177,7 +178,7 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: -27.7, y: 66.7}
+    position: {x: 40.2, y: 105}
     size: 7
     angle: 0
     flat: 0
@@ -188,13 +189,145 @@ MonoBehaviour:
       y: 0.75
       width: 0.25
       height: 0.25
-    position: {x: -19.1, y: 30.5}
+    position: {x: 26.3, y: -15.2}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: 141.2, y: 128.3}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: 108.1, y: 131.3}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: 88.8, y: 158.3}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: 62.1, y: 137.3}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: 34.7, y: 157.8}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: 14.9, y: 131.1}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -18.4, y: 130.1}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -50, y: 92}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -52, y: 64}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -50, y: 38}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -30, y: -9}
+    size: 7
+    angle: 0
+    flat: 0
+  - cell: Lighthouse
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    position: {x: -56, y: 112}
     size: 7
     angle: 0
     flat: 0
   logJumps: []
   rings:
-  - distance: 330
+  - distance: 340
     lateral: 0
   waterfalls: []
   dusk: 0
@@ -203,15 +336,11 @@ MonoBehaviour:
   padLook: 0
   boats:
   - kind: 6
-    position: {x: 150, y: 60}
+    position: {x: 170, y: 40}
     angle: 100
     drift: 0
   - kind: 3
-    position: {x: 107.3053, y: 23.832561}
-    angle: 0
-    drift: 0
-  - kind: 3
-    position: {x: -26.96216, y: 43.488728}
+    position: {x: 102.81783, y: 32.057728}
     angle: 0
     drift: 0
   fireworks: 0
@@ -227,72 +356,227 @@ MonoBehaviour:
   noSnowfall: 0
   lagoonIslands:
   - points:
-    - {x: 200, y: 230}
-    - {x: 200, y: 96}
-    - {x: 140, y: 96}
-    - {x: 120, y: 98}
-    - {x: 104.5, y: 102.6}
-    - {x: 99.3, y: 121.3}
-    - {x: 95.2, y: 127.5}
-    - {x: 89.6, y: 133.1}
-    - {x: 76, y: 140.1}
-    - {x: 52.7, y: 143.2}
-    - {x: 11.3, y: 143.2}
-    - {x: -8.3, y: 141}
-    - {x: -18.9, y: 137.5}
-    - {x: -29, y: 131.1}
-    - {x: -36.3, y: 123.3}
-    - {x: -41.4, y: 113.2}
-    - {x: -60, y: 110}
-    - {x: -110, y: 108}
-    - {x: -110, y: 230}
+    - {x: -46, y: 70}
+    - {x: -44, y: 30}
+    - {x: -36, y: 6}
+    - {x: -20, y: -6}
+    - {x: 0, y: -11}
+    - {x: 30, y: -12}
+    - {x: 60, y: -10}
+    - {x: 100, y: -14}
+    - {x: 140, y: -26}
+    - {x: 220, y: -30}
+    - {x: 220, y: -80}
+    - {x: -120, y: -80}
+    - {x: -120, y: 240}
+    - {x: 220, y: 240}
+    - {x: 220, y: 100}
+    - {x: 160, y: 100}
+    - {x: 140, y: 124}
+    - {x: 138.8, y: 123.8}
+    - {x: 134.6, y: 132.1}
+    - {x: 129.3, y: 138.7}
+    - {x: 119.4, y: 145.8}
+    - {x: 105.6, y: 151.4}
+    - {x: 92.9, y: 153.9}
+    - {x: 75, y: 155.3}
+    - {x: 35.1, y: 153.8}
+    - {x: 12, y: 149.2}
+    - {x: -1.6, y: 142.3}
+    - {x: -13.8, y: 130}
+    - {x: -20.4, y: 114.2}
+    - {x: -30, y: 112}
+    - {x: -40.4, y: 112.7}
+    - {x: -44, y: 100}
     kind: 4
     beach: 4
-    palms: 40
+    palms: 60
     huts: 0
-    seed: 21
+    seed: 31
   - points:
-    - {x: 89.1, y: 107.1}
-    - {x: 70, y: 114}
-    - {x: 50, y: 117}
-    - {x: 10, y: 118}
-    - {x: -25.3, y: 114.5}
-    - {x: -16.6, y: 122.8}
-    - {x: -4.4, y: 127.5}
-    - {x: 12.9, y: 129.3}
-    - {x: 53.3, y: 129.2}
-    - {x: 70.5, y: 127.1}
-    - {x: 79.2, y: 123.4}
-    - {x: 86.9, y: 114.6}
+    - {x: 118, y: 120}
+    - {x: 96, y: 130}
+    - {x: 60, y: 132}
+    - {x: 20, y: 128}
+    - {x: -4.4, y: 117.9}
+    - {x: -1.2, y: 123.5}
+    - {x: 3.7, y: 128.7}
+    - {x: 16.3, y: 135.9}
+    - {x: 36.6, y: 139.9}
+    - {x: 65.7, y: 141.4}
+    - {x: 91.2, y: 140}
+    - {x: 106.8, y: 136.2}
+    - {x: 118.4, y: 129.7}
+    - {x: 124.7, y: 121.2}
     kind: 4
     beach: 3
     palms: 8
     huts: 0
-    seed: 22
+    seed: 32
   - points:
-    - {x: -60, y: 60}
-    - {x: -50, y: 20}
-    - {x: -34, y: 0}
-    - {x: -14, y: -8}
-    - {x: 10, y: -11}
-    - {x: 120, y: -14}
-    - {x: 150, y: -24}
-    - {x: 200, y: -22}
-    - {x: 200, y: -70}
-    - {x: -110, y: -70}
-    - {x: -110, y: 108}
-    - {x: -58, y: 100}
+    - {x: 66.2, y: -3.4}
+    - {x: 66.5, y: 0.3}
+    - {x: 69.6, y: 3.8}
+    - {x: 73.5, y: 3.5}
+    - {x: 76.9, y: 2}
+    - {x: 79, y: -1.7}
+    - {x: 77.2, y: -5.7}
+    - {x: 73.7, y: -6.7}
+    - {x: 69.1, y: -7.3}
     kind: 4
-    beach: 4
-    palms: 30
+    beach: 2
+    palms: 0
     huts: 0
-    seed: 23
-  swells:
-  - from: 92
-    to: 170
-    speed: 8
-    period: 3
-    offset: 0
+    seed: 40
+  - points:
+    - {x: 79, y: 28.5}
+    - {x: 80.2, y: 32.9}
+    - {x: 82.3, y: 36.5}
+    - {x: 86.3, y: 36.5}
+    - {x: 88.8, y: 34}
+    - {x: 90.7, y: 30.7}
+    - {x: 90.1, y: 26.7}
+    - {x: 87.1, y: 24.6}
+    - {x: 81.4, y: 25.8}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 41
+  - points:
+    - {x: 98.4, y: 2.1}
+    - {x: 98.4, y: 6.2}
+    - {x: 101.1, y: 9.5}
+    - {x: 109.1, y: 8.5}
+    - {x: 110.3, y: 4.1}
+    - {x: 109.1, y: -0.1}
+    - {x: 105, y: -1.4}
+    - {x: 101.3, y: -1.6}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 42
+  - points:
+    - {x: 94.1, y: 37.5}
+    - {x: 97.3, y: 41.4}
+    - {x: 101.3, y: 41}
+    - {x: 104.3, y: 39.1}
+    - {x: 105.1, y: 35.7}
+    - {x: 104.2, y: 31.6}
+    - {x: 101.2, y: 29.8}
+    - {x: 96.9, y: 30.5}
+    - {x: 94.5, y: 33.9}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 43
+  - points:
+    - {x: 118.6, y: 60.4}
+    - {x: 121.3, y: 62.8}
+    - {x: 124.6, y: 64.3}
+    - {x: 127.5, y: 61.9}
+    - {x: 129.7, y: 58.3}
+    - {x: 128.9, y: 55.1}
+    - {x: 124.7, y: 53.4}
+    - {x: 120.7, y: 53.4}
+    - {x: 119, y: 56.6}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 44
+  - points:
+    - {x: 84.7, y: 77.9}
+    - {x: 87.5, y: 81.2}
+    - {x: 91.1, y: 81.9}
+    - {x: 94.1, y: 80}
+    - {x: 96.1, y: 76.1}
+    - {x: 94.3, y: 72.4}
+    - {x: 90.9, y: 70.8}
+    - {x: 87.5, y: 70.2}
+    - {x: 84.8, y: 74.2}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 45
+  - points:
+    - {x: 120, y: 76.4}
+    - {x: 120, y: 79.9}
+    - {x: 122.2, y: 82.9}
+    - {x: 125.9, y: 83}
+    - {x: 129.8, y: 81.5}
+    - {x: 131.1, y: 78}
+    - {x: 129.2, y: 74.9}
+    - {x: 125.9, y: 72.7}
+    - {x: 121.7, y: 73.5}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 46
+  - points:
+    - {x: 39, y: 49.2}
+    - {x: 52, y: 57.4}
+    - {x: 57.1, y: 53}
+    - {x: 60.2, y: 45}
+    - {x: 59.2, y: 38.4}
+    - {x: 51.7, y: 35.5}
+    - {x: 45, y: 34.7}
+    - {x: 40.2, y: 40.9}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 47
+  - points:
+    - {x: 12.7, y: 67}
+    - {x: 13.6, y: 72.7}
+    - {x: 16.4, y: 75.6}
+    - {x: 21.2, y: 76.4}
+    - {x: 26.5, y: 74.8}
+    - {x: 27.5, y: 70}
+    - {x: 25.2, y: 64.5}
+    - {x: 21.2, y: 62.6}
+    - {x: 16.6, y: 64.3}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 48
+  - points:
+    - {x: 61.3, y: 87.8}
+    - {x: 65.4, y: 93.6}
+    - {x: 71.3, y: 93.6}
+    - {x: 77.5, y: 91.5}
+    - {x: 78.2, y: 85}
+    - {x: 76.5, y: 80}
+    - {x: 71.4, y: 76.1}
+    - {x: 65.1, y: 78}
+    - {x: 62.4, y: 82.4}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 49
+  - points:
+    - {x: 34.5, y: 106.7}
+    - {x: 37.2, y: 110.6}
+    - {x: 41.1, y: 110.2}
+    - {x: 44.3, y: 108.5}
+    - {x: 46.7, y: 105}
+    - {x: 44.4, y: 101.6}
+    - {x: 40.8, y: 98.8}
+    - {x: 37.2, y: 100.7}
+    - {x: 35, y: 102.8}
+    kind: 4
+    beach: 2
+    palms: 0
+    huts: 0
+    seed: 50
+  swells: []
   currents: []
   dolphins: []
   footbridges: []
@@ -318,83 +602,66 @@ MonoBehaviour:
     dropAt: -1
   coast:
     enabled: 1
-    lighthouse: {x: -2, y: 154}
+    lighthouse: {x: 40, y: 168}
     beamPeriod: 7
     lights:
-    - {x: -1.5, y: -11.9}
-    - {x: 44.7, y: -14.6}
-    - {x: 84.9, y: -17}
-    - {x: 130.6, y: 15.6}
-    - {x: 129.7, y: 62.1}
-    - {x: 112.9, y: 102.5}
-    - {x: 72.8, y: 121.2}
-    - {x: 35.6, y: 124}
-    - {x: -4.2, y: 122.4}
-    - {x: -24.5, y: 104}
-    - {x: -27.7, y: 66.7}
-    - {x: -19.1, y: 30.5}
+    - {x: 72.3, y: -1.8}
+    - {x: 85, y: 30.4}
+    - {x: 104.2, y: 4}
+    - {x: 99.7, y: 35.6}
+    - {x: 124, y: 58.4}
+    - {x: 90.1, y: 76.1}
+    - {x: 125.2, y: 78.1}
+    - {x: 49.9, y: 45.2}
+    - {x: 20.3, y: 69.8}
+    - {x: 70, y: 85.5}
+    - {x: 40.2, y: 105}
+    - {x: 26.3, y: -15.2}
+    - {x: 141.2, y: 128.3}
+    - {x: 108.1, y: 131.3}
+    - {x: 88.8, y: 158.3}
+    - {x: 62.1, y: 137.3}
+    - {x: 34.7, y: 157.8}
+    - {x: 14.9, y: 131.1}
+    - {x: -18.4, y: 130.1}
+    - {x: -50, y: 92}
+    - {x: -52, y: 64}
+    - {x: -50, y: 38}
+    - {x: -30, y: -9}
+    - {x: -56, y: 112}
     darkness: 0.95
-    flats:
-    - {x: 96, y: 74}
-    - {x: 98.7, y: 73.1}
-    - {x: 106.5, y: 63.1}
-    - {x: 110, y: 56}
-    - {x: 110, y: 32}
-    - {x: 98, y: 12}
-    - {x: 74, y: 8}
-    - {x: 70.8, y: 6.6}
-    - {x: 63.2, y: 8.3}
-    tideBranch: 0
+    flats: []
+    tideBranch: -1
     rocks:
-    - position: {x: 20.246283, y: 6.5314536}
-      radius: 1.8
-      untilLap: 0
-    - position: {x: 69.267365, y: -9.052817}
-      radius: 1.6
-      untilLap: 3
-    - position: {x: 117.27214, y: 34.951336}
-      radius: 1.4
-      untilLap: 3
-    - position: {x: 122.42966, y: 55.155247}
-      radius: 1.5
-      untilLap: 0
-    - position: {x: 109.201996, y: 66.22421}
-      radius: 1.3
-      untilLap: 2
-    - position: {x: -36.803368, y: 85.72654}
-      radius: 1.4
-      untilLap: 3
-    - position: {x: -32.81819, y: 23.90295}
-      radius: 1.5
-      untilLap: 0
-    - position: {x: -14.366417, y: 15.328572}
-      radius: 1.8
-      untilLap: 0
-    - position: {x: 71.8, y: 28.6}
-      radius: 1.5
-      untilLap: 0
-    - position: {x: 80.3, y: 23.4}
+    - position: {x: 39.04465, y: 2.3585443}
       radius: 1.3
       untilLap: 0
-    - position: {x: 83.8, y: 48.6}
-      radius: 1.4
+    - position: {x: 129.94646, y: 97.830315}
+      radius: 1.3
       untilLap: 0
-    - position: {x: 92.3, y: 43.4}
-      radius: 1.5
+    - position: {x: -17.166948, y: 87.75992}
+      radius: 1.3
+      untilLap: 0
+    - position: {x: -24.400711, y: 36.28064}
+      radius: 1.4
       untilLap: 0
     gates:
-    - 258
-    - 278
-    - 298
-    top: 368
+    - 268
+    - 290
+    - 312
+    top: 392
     gatePeriod: 3.6
     gateOpen: 0.55
-    wreck: 430
+    wreck: 450
+    lightning: 0
+    whirlpool: {x: 28.342562, y: 14.922176}
+    whirlRadius: 12
+    whirlPull: 5
   waterWorld: 0
   biome: 2
   gaps:
-  - from: 368
-    to: 390
+  - from: 392
+    to: 412
     rampLateral: 0
     period: 0
     raised: 0
@@ -421,16 +688,7 @@ MonoBehaviour:
   rampLength: 3
   rampWidth: 3.4
   shortcuts: []
-  branches:
-  - kind: 0
-    from: 57
-    to: 188
-    points:
-    - {x: 70, y: 16}
-    - {x: 82, y: 36}
-    - {x: 94, y: 56}
-    width: 6.5
-    openFromLap: 3
+  branches: []
   banks: []
   penguins: []
   dashPanels:
@@ -438,11 +696,11 @@ MonoBehaviour:
     lateral: -1.5
     length: 4
     width: 3.2
-  - distance: 320
+  - distance: 330
     lateral: 1.5
     length: 4
     width: 3.2
-  - distance: 452
+  - distance: 470
     lateral: 0
     length: 4
     width: 3.2
@@ -487,10 +745,7 @@ MonoBehaviour:
   holes: []
   platforms: []
   hatches: []
-  vortices:
-  - position: {x: 117.44945, y: -4.3692074}
-    radius: 16
-    pull: 4
+  vortices: []
   abyss: 0
   islands: []
   splits: []
@@ -525,8 +780,8 @@ MonoBehaviour:
   chasms: []
   caves:
   - branch: -1
-    from: 208
-    to: 242
+    from: 222
+    to: 250
     stalagmites: []
     level: -99
     wallsOnly: 0
@@ -539,9 +794,9 @@ MonoBehaviour:
       y: 0.25
       width: 0.25
       height: 0.25
-    count: 12
-    sizeRange: {x: 3, y: 5}
-    clearance: {x: 4, y: 30}
+    count: 10
+    sizeRange: {x: 2.5, y: 4}
+    clearance: {x: 4, y: 20}
     alignToRoad: 0
     clustered: 0
     cornerOnly: 0
@@ -552,7 +807,7 @@ MonoBehaviour:
     canopy: 0
     indoor: 0
   bakedScenery:
-  - position: {x: -2, y: 154}
+  - position: {x: 40, y: 168}
     right: {x: 7, y: 0}
     uv:
       serializedVersion: 2
@@ -564,7 +819,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 35.6, y: 124}
+  - position: {x: 88.8, y: 158.3}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -576,7 +831,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -4.2, y: 122.4}
+  - position: {x: 34.7, y: 157.8}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -588,7 +843,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 72.8, y: 121.2}
+  - position: {x: 62.1, y: 137.3}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -600,19 +855,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 49.83163, y: 115.77738}
-    right: {x: 1.4208723, y: -0.66138077}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -24.5, y: 104}
+  - position: {x: 108.1, y: 131.3}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -624,7 +867,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 112.9, y: 102.5}
+  - position: {x: 14.9, y: 131.1}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -636,31 +879,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 63.060455, y: 92.6329}
-    right: {x: 1.1360477, y: 1.1396948}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 130.30043, y: 78.23337}
-    right: {x: 0.70315486, y: 2.0606654}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -27.7, y: 66.7}
+  - position: {x: -18.4, y: 130.1}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -672,7 +891,19 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 129.7, y: 62.1}
+  - position: {x: 85.142746, y: 129.39221}
+    right: {x: -1.4395818, y: 1.0986387}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 141.2, y: 128.3}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -684,8 +915,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -21.520334, y: 58.596066}
-    right: {x: -1.8859962, y: 0.9583407}
+  - position: {x: 51.606194, y: 124.309395}
+    right: {x: -0.198612, y: 1.5759699}
     uv:
       serializedVersion: 2
       x: 0.5
@@ -696,8 +927,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: -6.635632, y: 48.56131}
-    right: {x: -1.0537623, y: 1.1843187}
+  - position: {x: 64.28757, y: 124.26738}
+    right: {x: 1.1789788, y: -0.5487853}
     uv:
       serializedVersion: 2
       x: 0.5
@@ -708,19 +939,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 47.91468, y: 34.47485}
-    right: {x: -1.9312701, y: -1.0692408}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -19.1, y: 30.5}
+  - position: {x: -56, y: 112}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -732,7 +951,19 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 130.6, y: 15.6}
+  - position: {x: -0.64832413, y: 105.870735}
+    right: {x: -1.2238277, y: -1.5771008}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 40.2, y: 105}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -744,8 +975,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 53.89872, y: 14.246744}
-    right: {x: -0.51062495, y: 1.8214273}
+  - position: {x: 91.0969, y: 101.046104}
+    right: {x: -1.5808002, y: 0.03281303}
     uv:
       serializedVersion: 2
       x: 0.5
@@ -756,8 +987,8 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 28.106176, y: 14.001598}
-    right: {x: -1.1771158, y: -1.3392655}
+  - position: {x: -0.64390403, y: 94.64267}
+    right: {x: 1.3217286, y: 1.0822158}
     uv:
       serializedVersion: 2
       x: 0.5
@@ -768,55 +999,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 78.98498, y: 11.62196}
-    right: {x: 1.4160609, y: 0.6911204}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 124.27923, y: 8.62649}
-    right: {x: 2.3130198, y: -0.4365025}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 148.13757, y: 1.3314668}
-    right: {x: 0.6661994, y: -2.2492735}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: 117.03631, y: -11.824603}
-    right: {x: 1.6585498, y: -0.17792392}
-    uv:
-      serializedVersion: 2
-      x: 0.5
-      y: 0.25
-      width: 0.25
-      height: 0.25
-    tint:
-      serializedVersion: 2
-      rgba: 4294967295
-    canopy: 0
-  - position: {x: -1.5, y: -11.9}
+  - position: {x: -50, y: 92}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -828,7 +1011,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 44.7, y: -14.6}
+  - position: {x: 70, y: 85.5}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -840,7 +1023,19 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  - position: {x: 84.9, y: -17}
+  - position: {x: -44.124958, y: 80.08953}
+    right: {x: -0.40079045, y: -1.4652404}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 125.2, y: 78.1}
     right: {x: 3.5, y: 0}
     uv:
       serializedVersion: 2
@@ -852,4 +1047,184 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 011d05112b3b47e5
+  - position: {x: 90.1, y: 76.1}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 20.3, y: 69.8}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -52, y: 64}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 124, y: 58.4}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -46.348576, y: 52.99626}
+    right: {x: 1.498267, y: 0.14123973}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 49.9, y: 45.2}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -1.1107442, y: 44.965378}
+    right: {x: -0.7358174, y: 1.0860445}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -50, y: 38}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 99.7, y: 35.6}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 85, y: 30.4}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 104.2, y: 4}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 115.22668, y: -1.1832476}
+    right: {x: 1.2310213, y: -1.4672705}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 72.3, y: -1.8}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -30, y: -9}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 26.3, y: -15.2}
+    right: {x: 3.5, y: 0}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  bakedSignature: 08ecef54c96b6eb4

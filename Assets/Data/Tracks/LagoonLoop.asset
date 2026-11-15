@@ -438,6 +438,10 @@ MonoBehaviour:
     gatePeriod: 3.6
     gateOpen: 0.55
     wreck: -1
+    lightning: 0
+    whirlpool: {x: 0, y: 0}
+    whirlRadius: 0
+    whirlPull: 5
   waterWorld: 0
   biome: 2
   gaps:

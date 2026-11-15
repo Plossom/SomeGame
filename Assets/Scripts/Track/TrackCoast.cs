@@ -6,7 +6,7 @@ namespace SomeGame.Track
     /// <summary>
     /// A rocky coast at night in a gale (Water Cup race 3, <see cref="TrackLayout.coast"/>):
     /// - the dark: a night over everything, cut open by the big lighthouse's beam sweeping round the bay and by the small
-    ///   lighthouses all round the course (a pool of light round each, a short turning beam); no lights on the boats; lightning now and then lights up the whole bay (thunder follows);
+    ///   lighthouses all round the course (a steady pool of light round each); no lights on the boats; (optional) lightning now and then lights up the whole bay (thunder follows);
     /// - rain blowing across the screen;
     /// - the tide, rising lap by lap: the flats are dry sand on the first lap, wet on the second, and flooded on the last,
     ///   when the branch across them opens; some rocks stand out of the water only until the tide covers them;
@@ -22,10 +22,11 @@ namespace SomeGame.Track
         [SerializeField] Sprite wreck, rock;
 
         const int FlatsOrder = -44, LockWallOrder = -42, LockTintOrder = -47, FallOrder = -41, RockOrder = 4, WreckOrder = 5,
-                  GateOrder = 20, LampOrder = 21, RainOrder = 59, NightOrder = 58;
+                  GateOrder = 20, LampOrder = 21, RainOrder = 59, NightOrder = 58, CurrentOrder = -46;
 
         readonly List<GameObject> _parts = new();
         SomeGame.Race.RaceManager _race;
+        SomeGame.Car.CarMovement[] _cars = { };
         SomeGame.CameraRig.CameraShake _shake;
         TrackLayout.Coast _coast;
 
@@ -52,8 +53,10 @@ namespace SomeGame.Track
             BuildLocks(path);
             if (_coast.wreck >= 0f) BuildWreck(path);
             foreach (var gap in layout.gaps) if (gap.drop) BuildFall(path, gap);
+            if (_coast.whirlRadius > 0f) BuildWhirlpool();
             if (!Application.isPlaying) return;
             _race = FindAnyObjectByType<SomeGame.Race.RaceManager>();
+            _cars = FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None);
             _shake = FindAnyObjectByType<SomeGame.CameraRig.CameraShake>();
             _nextStrike = Time.time + 6f;
             SomeGame.Car.CarHop.Lift = Lift;
@@ -344,7 +347,7 @@ namespace SomeGame.Track
             }
         }
 
-        // The pond spilling over the cliff edge: foam at the lip, white water streaming down the face, spray at the foot.
+        // The pond spilling over the cliff edge: foam at the lip, white water streaming down the face.
         void BuildFall(TrackPath path, TrackLayout.Gap gap)
         {
             var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
@@ -352,39 +355,88 @@ namespace SomeGame.Track
             Vector2 lip = path.PointAt(gap.from), along = path.TangentAt(gap.from), across = path.NormalAt(gap.from);
             float half = track.OffRoadAt(gap.from) + 1.5f;
             var random = new System.Random(5);
-            for (int i = 0; i < 40; i++)
+            for (int i = 0; i < 18; i++)
             {
-                float x = Mathf.Lerp(-half, half, (i + 0.5f) / 40f), w = 0.2f + (float)random.NextDouble() * 0.3f;
+                float x = Mathf.Lerp(-half, half, (i + 0.5f) / 18f), w = 0.12f + (float)random.NextDouble() * 0.16f;
                 float down = len * (0.5f + (float)random.NextDouble() * 0.35f);
                 Vector2 a = lip + across * x, b = a + along * down;
                 int s = v.Count;
                 v.Add(a - across * w); v.Add(a + across * w); v.Add(b - across * w * 1.6f); v.Add(b + across * w * 1.6f);
                 for (int k = 0; k < 4; k++) u.Add(Vector2.zero);
-                c.Add(new Color32(240, 250, 255, 230)); c.Add(new Color32(240, 250, 255, 230)); c.Add(new Color32(240, 250, 255, 0)); c.Add(new Color32(240, 250, 255, 0));
+                c.Add(new Color32(225, 240, 255, 170)); c.Add(new Color32(225, 240, 255, 170)); c.Add(new Color32(240, 250, 255, 0)); c.Add(new Color32(240, 250, 255, 0));
                 t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3 });
             }
-            // A dark band: the cliff face under the falling water.
-            Quad(v, u, t, c, lip - across * half, lip + across * half, lip + across * half + along * len * 0.9f, lip - across * half + along * len * 0.9f, new Color32(20, 26, 32, 50));
-            Quad(v, u, t, c, lip - across * half - along * 0.6f, lip + across * half - along * 0.6f, lip + across * half + along * 0.4f, lip - across * half + along * 0.4f, new Color32(255, 255, 255, 235));
+            // White water foaming over the lip.
+            Quad(v, u, t, c, lip - across * half - along * 0.6f, lip + across * half - along * 0.6f, lip + across * half + along * 0.4f, lip - across * half + along * 0.4f, new Color32(235, 245, 255, 190));
             Part("Waterfall", plain, FallOrder, Quads("Waterfall", v, u, t, c));
-            if (!Application.isPlaying || foamParticles == null) return;
-            var go = new GameObject("FallSpray") { hideFlags = HideFlags.DontSave };
-            go.transform.SetParent(transform, false);
-            go.transform.position = path.PointAt(gap.to - len * 0.15f);
-            var ps = go.AddComponent<ParticleSystem>();
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            var main = ps.main;
-            main.startLifetime = 1.4f; main.startSpeed = new ParticleSystem.MinMaxCurve(0.5f, 2.5f); main.startSize = new ParticleSystem.MinMaxCurve(1f, 2.6f);
-            main.startColor = new Color(1f, 1f, 1f, 0.5f);
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-            var shape = ps.shape; shape.shapeType = ParticleSystemShapeType.Box; shape.scale = new Vector3(half * 2f, 3f, 1f);
-            go.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(across.y, across.x) * Mathf.Rad2Deg);
-            var em = ps.emission; em.rateOverTime = 40f;
-            var r = go.GetComponent<ParticleSystemRenderer>();
-            r.sharedMaterial = foamParticles;
-            r.sortingOrder = FallOrder + 1;
-            ps.Play();
-            _parts.Add(go);
+        }
+
+        // ------------------------------------------------------------------ the whirlpool
+
+        Transform _whirl;
+
+        // Foam arms spiralling in to a dark eye (the whole thing turns); it drags the boats round and in.
+        void BuildWhirlpool()
+        {
+            float radius = _coast.whirlRadius;
+            var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
+            // The dark funnel: rings darkening towards the eye.
+            const int seg = 40;
+            for (int ring = 0; ring < 6; ring++)
+            {
+                float r0 = radius * (1f - ring / 6f), r1 = radius * (1f - (ring + 1) / 6f);
+                byte a0 = (byte)(ring * 30), a1 = (byte)((ring + 1) * 30);
+                for (int k = 0; k < seg; k++)
+                {
+                    float x0 = k * Mathf.PI * 2f / seg, x1 = (k + 1) * Mathf.PI * 2f / seg;
+                    Vector2 p00 = new Vector2(Mathf.Cos(x0), Mathf.Sin(x0)) * r0, p01 = new Vector2(Mathf.Cos(x1), Mathf.Sin(x1)) * r0;
+                    Vector2 p10 = new Vector2(Mathf.Cos(x0), Mathf.Sin(x0)) * r1, p11 = new Vector2(Mathf.Cos(x1), Mathf.Sin(x1)) * r1;
+                    int s0 = v.Count;
+                    v.Add(p00); v.Add(p01); v.Add(p10); v.Add(p11);
+                    for (int q = 0; q < 4; q++) u.Add(Vector2.zero);
+                    c.Add(new Color32(4, 24, 40, a0)); c.Add(new Color32(4, 24, 40, a0)); c.Add(new Color32(4, 24, 40, a1)); c.Add(new Color32(4, 24, 40, a1));
+                    t.AddRange(new[] { s0, s0 + 2, s0 + 1, s0 + 1, s0 + 2, s0 + 3 });
+                }
+            }
+            // The foam arms: thin strips spiralling in.
+            for (int arm = 0; arm < 5; arm++)
+            {
+                float start = arm * Mathf.PI * 2f / 5f;
+                for (int k = 0; k < 30; k++)
+                {
+                    float f0 = k / 30f, f1 = (k + 1) / 30f;
+                    float r0 = radius * (1f - f0 * 0.9f), r1 = radius * (1f - f1 * 0.9f);
+                    float a0 = start + f0 * 4f, a1 = start + f1 * 4f;
+                    Vector2 d0 = new(Mathf.Cos(a0), Mathf.Sin(a0)), d1 = new(Mathf.Cos(a1), Mathf.Sin(a1));
+                    float w0 = 0.15f + 0.45f * (1f - f0), w1 = 0.15f + 0.45f * (1f - f1);
+                    int s0 = v.Count;
+                    v.Add(d0 * (r0 - w0)); v.Add(d0 * (r0 + w0)); v.Add(d1 * (r1 - w1)); v.Add(d1 * (r1 + w1));
+                    for (int q = 0; q < 4; q++) u.Add(Vector2.zero);
+                    byte al0 = (byte)(200 * Mathf.Sin(f0 * Mathf.PI)), al1 = (byte)(200 * Mathf.Sin(f1 * Mathf.PI));
+                    c.Add(new Color32(235, 248, 255, al0)); c.Add(new Color32(235, 248, 255, al0)); c.Add(new Color32(235, 248, 255, al1)); c.Add(new Color32(235, 248, 255, al1));
+                    t.AddRange(new[] { s0, s0 + 2, s0 + 1, s0 + 1, s0 + 2, s0 + 3 });
+                }
+            }
+            var go = Part("Whirlpool", plain, CurrentOrder, Quads("Whirlpool", v, u, t, c));
+            go.transform.position = _coast.whirlpool;
+            _whirl = go.transform;
+        }
+
+        void UpdateWhirlpool(float dt)
+        {
+            if (_whirl == null) return;
+            _whirl.rotation = Quaternion.Euler(0f, 0f, Track.Clock * 70f);
+            float radius = _coast.whirlRadius;
+            foreach (var car in _cars)
+            {
+                if (car == null || car.IsAirborne) continue;
+                Vector2 o = _coast.whirlpool - car.Body.position;
+                float d = o.magnitude;
+                if (d > radius || d < 0.01f) continue;
+                float k = 1f - d / radius;
+                Vector2 inward = o / d, round = new Vector2(-inward.y, inward.x);
+                car.Body.linearVelocity += (inward * 0.6f + round) * (_coast.whirlPull * k * dt);
+            }
         }
 
         // ------------------------------------------------------------------ the night, the beam, rain and lightning
@@ -486,7 +538,7 @@ namespace SomeGame.Track
             if (_rainMesh == null) BuildRain(cam);
             _break = Mathf.MoveTowards(_break, LastLap ? 1f : 0f, dt / 5f);
             // Lightning: two quick flashes, thunder a moment later (not once the storm has broken).
-            if (_break < 0.1f && Time.time > _nextStrike)
+            if (_coast.lightning && _break < 0.1f && Time.time > _nextStrike)
             {
                 _nextStrike = Time.time + Random.Range(6f, 13f);
                 _flash = 1f;
@@ -528,7 +580,7 @@ namespace SomeGame.Track
                 float r = q.magnitude;
                 float diff = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(q.y, q.x) * Mathf.Rad2Deg, beamAngle));
                 float halfAngle = Mathf.Max(4.5f, Mathf.Atan2(2.5f, Mathf.Max(0.1f, r)) * Mathf.Rad2Deg);
-                float beam = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(halfAngle * 0.5f, halfAngle, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(110f, 180f, r)));
+                float beam = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(halfAngle * 0.2f, halfAngle * 1.3f, diff))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(110f, 180f, r)));
                 beam = Mathf.Max(beam, 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(4f, 12f, r)));
                 // The small lighthouses: a pool of light round each, and its short turning beam.
                 float lamp = 0f;
@@ -536,11 +588,10 @@ namespace SomeGame.Track
                 {
                     Vector2 o = p - lp;
                     float d = o.magnitude;
-                    if (d > 50f) continue;
-                    float pool = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(7f, 17f, d));
-                    float off = Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(o.y, o.x) * Mathf.Rad2Deg, la));
-                    float ray = (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(5f, 9f, off))) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(25f, 48f, d)));
-                    lamp = Mathf.Max(lamp, Mathf.Max(pool, ray * 0.85f));
+                    if (d > 22f) continue;
+                    // A steady, soft pool of light round it.
+                    float pool = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(6f, 21f, d));
+                    lamp = Mathf.Max(lamp, pool);
                 }
                 float glow = Mathf.Max(beam, lamp);
                 float lit = Mathf.Clamp01(glow * 0.85f);
@@ -559,6 +610,7 @@ namespace SomeGame.Track
             _tide = Mathf.MoveTowards(_tide, target, dt / 4f);
             ApplyTide(_tide);
             UpdateGates();
+            UpdateWhirlpool(dt);
             UpdateNight(dt);
         }
     }
