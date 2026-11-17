@@ -12,7 +12,6 @@ namespace SomeGame.Track
     ///   when the branch across them opens; some rocks stand out of the water only until the tide covers them;
     /// - the lock staircase up the cliff: mitre gates opening and shutting in a rhythm (a red or green lamp on each), the
     ///   water lifting the boats a step at each lock, up to the cliff-top pond;
-    /// - the waterfall where the pond spills over the cliff edge (the Leap of Faith: a drop gap);
     /// - a wreck lying along the channel: sail in through its broken bow and out through its stern;
     /// - on the last lap the storm breaks: the rain stops, the dark lifts to moonlight and the beam turns gold.
     /// </summary>
@@ -21,7 +20,7 @@ namespace SomeGame.Track
         [SerializeField] Material plain, sand, foamParticles;
         [SerializeField] Sprite wreck, rock;
 
-        const int FlatsOrder = -44, LockWallOrder = -42, LockTintOrder = -47, FallOrder = -41, RockOrder = 4, WreckOrder = 5,
+        const int FlatsOrder = -44, LockWallOrder = -42, LockTintOrder = -47, RockOrder = 4, WreckOrder = 5,
                   GateOrder = 20, LampOrder = 21, RainOrder = 59, NightOrder = 58, CurrentOrder = -46;
 
         readonly List<GameObject> _parts = new();
@@ -52,7 +51,6 @@ namespace SomeGame.Track
                 }
             BuildLocks(path);
             if (_coast.wreck >= 0f) BuildWreck(path);
-            foreach (var gap in layout.gaps) if (gap.drop) BuildFall(path, gap);
             if (_coast.whirlRadius > 0f) BuildWhirlpool();
             if (!Application.isPlaying) return;
             _race = FindAnyObjectByType<SomeGame.Race.RaceManager>();
@@ -320,7 +318,7 @@ namespace SomeGame.Track
             return level / gates.Length * 0.8f;
         }
 
-        // ------------------------------------------------------------------ the wreck and the waterfall
+        // ------------------------------------------------------------------ the wreck
 
         void BuildWreck(TrackPath path)
         {
@@ -345,30 +343,6 @@ namespace SomeGame.Track
                 go.GetComponent<BoxCollider2D>().size = new Vector2(1.4f, length * 0.62f);
                 _parts.Add(go);
             }
-        }
-
-        // The pond spilling over the cliff edge: foam at the lip, white water streaming down the face.
-        void BuildFall(TrackPath path, TrackLayout.Gap gap)
-        {
-            var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
-            float len = Mathf.Repeat(gap.to - gap.from, path.Length);
-            Vector2 lip = path.PointAt(gap.from), along = path.TangentAt(gap.from), across = path.NormalAt(gap.from);
-            float half = track.OffRoadAt(gap.from) + 1.5f;
-            var random = new System.Random(5);
-            for (int i = 0; i < 18; i++)
-            {
-                float x = Mathf.Lerp(-half, half, (i + 0.5f) / 18f), w = 0.12f + (float)random.NextDouble() * 0.16f;
-                float down = len * (0.5f + (float)random.NextDouble() * 0.35f);
-                Vector2 a = lip + across * x, b = a + along * down;
-                int s = v.Count;
-                v.Add(a - across * w); v.Add(a + across * w); v.Add(b - across * w * 1.6f); v.Add(b + across * w * 1.6f);
-                for (int k = 0; k < 4; k++) u.Add(Vector2.zero);
-                c.Add(new Color32(225, 240, 255, 170)); c.Add(new Color32(225, 240, 255, 170)); c.Add(new Color32(240, 250, 255, 0)); c.Add(new Color32(240, 250, 255, 0));
-                t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3 });
-            }
-            // White water foaming over the lip.
-            Quad(v, u, t, c, lip - across * half - along * 0.6f, lip + across * half - along * 0.6f, lip + across * half + along * 0.4f, lip - across * half + along * 0.4f, new Color32(235, 245, 255, 190));
-            Part("Waterfall", plain, FallOrder, Quads("Waterfall", v, u, t, c));
         }
 
         // ------------------------------------------------------------------ the whirlpool

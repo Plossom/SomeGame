@@ -19,7 +19,7 @@ MonoBehaviour:
   isChallenge: 0
   preview: {fileID: 21300000, guid: 74ea565d13d114042be49faf60cb6169, type: 3}
   laps: 3
-  description: Big air in a sunny bay! Chain wave jumps, trick over two sandbars, bounce off the gummiboats through the rings, pinball through the bumper bay, take the giant slide and nail the Leap of Faith down the waterfall.
+  description: Big air in a sunny bay! Chain wave jumps, trick over two sandbars, bounce off the gummiboats through the rings, pinball through the bumper bay, take the giant slide and nail the Leap of Faith.
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.98

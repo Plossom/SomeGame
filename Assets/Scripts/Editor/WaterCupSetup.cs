@@ -420,19 +420,19 @@ namespace SomeGame.EditorTools
             };
             t.branches = new List<TrackLayout.Branch>();
             t.caves = new List<TrackLayout.Cave>();
-            // A sunny day: no night; the coast brings the waterfall at the big drop and the whirlpool.
+            // A sunny day: no night; the coast brings the whirlpool.
             t.coast = new TrackLayout.Coast
             {
                 enabled = true, night = false, lights = new Vector2[0], flats = new Vector2[0], tideBranch = -1,
                 rocks = new List<TrackLayout.TideRock>(), gates = new float[0], wreck = -1f, lightning = false,
                 whirlpool = At(590f, 16f), whirlRadius = 11f, whirlPull = 6f,
             };
-            // The jumps: two sandbar trick jumps and the big Leap of Faith down the waterfall (slow motion, 4 tricks).
+            // The jumps: two sandbar trick jumps and the big Leap of Faith (4 tricks).
             t.gaps = new List<TrackLayout.Gap>
             {
                 new() { from = 98f, to = 112f, trickJump = true, tricks = 2 },
                 new() { from = 384f, to = 400f, trickJump = true, tricks = 3 },
-                new() { from = 520f, to = 544f, drop = true, slowMotion = true, trickJump = true, tricks = 4 },
+                new() { from = 520f, to = 544f, drop = true, trickJump = true, tricks = 4 },
             };
             // Rollers on the start straight: chain the WAVE JUMPs.
             t.swells = new List<TrackLayout.Swell> { new() { from = 22f, to = 84f, speed = 8f, period = 2.6f } };
@@ -504,7 +504,7 @@ namespace SomeGame.EditorTools
             level.chapter = "WATER CUP · RACE 3";
             level.track = track;
             level.laps = 3;
-            level.description = "Big air in a sunny bay! Chain wave jumps, trick over two sandbars, bounce off the gummiboats through the rings, pinball through the bumper bay, take the giant slide and nail the Leap of Faith down the waterfall.";
+            level.description = "Big air in a sunny bay! Chain wave jumps, trick over two sandbars, bounce off the gummiboats through the rings, pinball through the bumper bay, take the giant slide and nail the Leap of Faith.";
             level.difficulty = 4;
             level.rivalCount = 7;
             level.rivalSpeedScale = 0.98f;

@@ -443,7 +443,7 @@ MonoBehaviour:
     drop: 1
     hidden: 0
     collapse: 0
-    slowMotion: 1
+    slowMotion: 0
     trickJump: 1
     kicker: 0
     width: 0
@@ -1739,4 +1739,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 9fa1888fe38549bb
+  bakedSignature: 4d0af9b16c1c8470
