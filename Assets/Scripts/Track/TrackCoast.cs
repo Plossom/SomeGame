@@ -606,7 +606,7 @@ namespace SomeGame.Track
             ApplyTide(_tide);
             UpdateGates();
             UpdateWhirlpool(dt);
-            UpdateNight(dt);
+            if (_coast.night) UpdateNight(dt);
         }
     }
 }

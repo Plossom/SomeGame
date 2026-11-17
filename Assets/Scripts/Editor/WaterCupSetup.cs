@@ -378,10 +378,15 @@ namespace SomeGame.EditorTools
         static TrackLayout BuildLighthouseRun()
         {
             var t = Asset<TrackLayout>("Assets/Data/Tracks/LighthouseRun.asset");
-            t.waypoints = COAST;
+            t.waypoints = FUN;
             t.roadWidth = 8f;
-            t.rampWidth = 3.4f;
-            t.widths = new List<TrackLayout.WidthKey>();
+            t.rampWidth = 3.6f;
+            // The bumper bay: the channel opens out wide.
+            t.widths = new List<TrackLayout.WidthKey>
+            {
+                new() { distance = 244f, width = 8f }, new() { distance = 256f, width = 17f },
+                new() { distance = 296f, width = 17f }, new() { distance = 308f, width = 8f },
+            };
             t.kerbWidth = 0.7f;
             t.sampleSpacing = 1f;
             t.checkpointCount = 8;
@@ -389,73 +394,103 @@ namespace SomeGame.EditorTools
             t.biome = TrackLayout.Biome.Lagoon;
             t.vehicle = TrackLayout.Vehicle.Boat;
             t.sceneryMaterial = Mat("SceneryLagoon");
-            t.skyLife = 0f;
+            t.skyLife = 1f;
             var path = new TrackPath(t.waypoints, t.sampleSpacing);
             Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
 
-            // The coast all round (the harbour wall, the west shore, the cliff the road runs through: sea caves, locks,
-            // the pond on top), the cliff's lip over the bay, and rocky islets: a slalom between them up the east side,
-            // a few more out in the bay. Every islet has its lighthouse.
+            // A sunny bay: the big island inside the loop, the shore all along the north and west, rocky islets in the
+            // weave. Lighthouses on the islets and the headland.
             t.lagoonIslands = new List<TrackLayout.Island>
             {
-                new() { points = C_NORTH, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 60, seed = 31 },
-                new() { points = C_LIP1, kind = TrackLayout.IslandKind.Cliff, beach = 3f, palms = 8, seed = 32 },
+                new() { points = F_INNER, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 80, huts = 6, seed = 51 },
+                new() { points = F_OUTER, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 90, huts = 5, seed = 52 },
+                new() { points = F_ISLET0, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 0, seed = 53 },
+                new() { points = F_ISLET1, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 0, seed = 54 },
+                new() { points = F_ISLET2, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 0, seed = 55 },
             };
-            var islets = new[] { ISLET0, ISLET1, ISLET2, ISLET3, ISLET4, ISLET5, ISLET6, ISLET7, ISLET8, ISLET9, ISLET10 };
-            for (int i = 0; i < islets.Length; i++)
-                t.lagoonIslands.Add(new() { points = islets[i], kind = TrackLayout.IslandKind.Cliff, beach = 2f, palms = 0, seed = 40 + i }); // (nothing on them but the lighthouse)
-            // The big lighthouse on the cliff top above the pond, the small ones all round.
             t.decor = new List<TrackLayout.Decor>
             {
-                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = new Vector2(40f, 168f), size = 14f },
+                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = new Vector2(152.2f, 156.9f), size = 12f },
+                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = At(155f, -12f), size = 6f },
+                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = At(186f, 12f), size = 6f },
+                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = At(212f, -12f), size = 6f },
+                new() { cell = "BeachBar", uv = LagoonSheet.Cell("BeachBar"), position = At(30f, 16f), size = 8f },
+                new() { cell = "Flamingos", uv = LagoonSheet.Cell("Flamingos"), position = At(420f, -16f), size = 6f },
+                new() { cell = "Umbrella", uv = LagoonSheet.Cell("Umbrella"), position = At(560f, 15f), size = 5f },
             };
-            foreach (var light in LIGHTS) t.decor.Add(new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = light, size = 7f });
             t.branches = new List<TrackLayout.Branch>();
+            t.caves = new List<TrackLayout.Cave>();
+            // A sunny day: no night; the coast brings the waterfall at the big drop and the whirlpool.
             t.coast = new TrackLayout.Coast
             {
-                enabled = true, lighthouse = new Vector2(40f, 168f), beamPeriod = 7f, darkness = 0.95f,
-                lights = LIGHTS,
-                flats = new Vector2[0], tideBranch = -1,
-                // A few rocks at the channel's edge (they show in the lighthouses' light).
-                rocks = new List<TrackLayout.TideRock>
-                {
-                    new() { position = At(40f, 3.2f), radius = 1.3f },
-                    new() { position = At(208f, -3.2f), radius = 1.3f },
-                    new() { position = At(428f, 3.2f), radius = 1.3f },
-                    new() { position = At(480f, -3.2f), radius = 1.4f },
-                },
-                gates = new[] { 268f, 290f, 312f }, top = 392f, gatePeriod = 3.6f, gateOpen = 0.55f,
-                wreck = 450f,
-                lightning = false,
-                whirlpool = At(30f, 17f), whirlRadius = 12f, whirlPull = 5f,
+                enabled = true, night = false, lights = new Vector2[0], flats = new Vector2[0], tideBranch = -1,
+                rocks = new List<TrackLayout.TideRock>(), gates = new float[0], wreck = -1f, lightning = false,
+                whirlpool = At(590f, 16f), whirlRadius = 11f, whirlPull = 6f,
             };
-            // The sea caves through the headland, then the Leap of Faith off the cliff edge where the pond spills over.
-            t.caves = new List<TrackLayout.Cave> { new() { branch = -1, from = 222f, to = 250f } };
-            t.gaps = new List<TrackLayout.Gap> { new() { from = 392f, to = 412f, drop = true, slowMotion = true, trickJump = true, tricks = 3 } };
-            t.vortices = new List<TrackLayout.Vortex>();
-            t.swells = new List<TrackLayout.Swell>();
-            t.currents = new List<TrackLayout.Current>();
-            t.dolphins = new List<float>();
-            t.footbridges = new List<float>();
-            t.geysers = new List<TrackLayout.Geyser>();
-            t.bouncers = new List<TrackLayout.Bouncer>();
-            t.rings = new List<TrackLayout.Ring> { new() { distance = 340f, lateral = 0f } };
+            // The jumps: two sandbar trick jumps and the big Leap of Faith down the waterfall (slow motion, 4 tricks).
+            t.gaps = new List<TrackLayout.Gap>
+            {
+                new() { from = 98f, to = 112f, trickJump = true, tricks = 2 },
+                new() { from = 384f, to = 400f, trickJump = true, tricks = 3 },
+                new() { from = 520f, to = 544f, drop = true, slowMotion = true, trickJump = true, tricks = 4 },
+            };
+            // Rollers on the start straight: chain the WAVE JUMPs.
+            t.swells = new List<TrackLayout.Swell> { new() { from = 22f, to = 84f, speed = 8f, period = 2.6f } };
+            // The weave: a gummiboat at every turn bounces you up - fly through the ring behind each.
+            t.bouncers = new List<TrackLayout.Bouncer>
+            {
+                new() { position = At(148f, -1.6f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.15f },
+                new() { position = At(174f, 1.6f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.15f },
+                new() { position = At(200f, -1.6f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.15f },
+                new() { position = At(226f, 1.6f), radius = 2.2f, airTime = 0.85f, speedBoost = 1.15f },
+                new() { position = At(470f, 0f), radius = 2.2f, airTime = 0.9f, speedBoost = 1.2f },
+            };
+            t.rings = new List<TrackLayout.Ring>
+            {
+                new() { distance = 117f, lateral = 0f },
+                new() { distance = 157f, lateral = -1.6f }, new() { distance = 183f, lateral = 1.6f },
+                new() { distance = 209f, lateral = -1.6f }, new() { distance = 235f, lateral = 1.6f },
+                new() { distance = 405f, lateral = 0f }, new() { distance = 480f, lateral = 0f }, new() { distance = 550f, lateral = 0f },
+            };
+            // The bumper bay: pinball bumpers to bounce off (each a boost).
+            t.pinball = new List<TrackLayout.PinballBumper>
+            {
+                new() { position = At(262f, -4f), radius = 1.5f }, new() { position = At(268f, 3.5f), radius = 1.5f },
+                new() { position = At(276f, -1f), radius = 1.6f }, new() { position = At(284f, 4.5f), radius = 1.5f },
+                new() { position = At(290f, -4.5f), radius = 1.5f },
+            };
+            // The water park's yellow slide over the headland: a fast way round the north-west corner.
+            t.rides = new List<TrackLayout.Ride>
+            {
+                new() { type = TrackLayout.RideType.Flume, from = 432f, lateral = -2.5f, to = 500f, toLateral = -2f, speed = 30f,
+                        points = new[] { At(442f, -12f), At(458f, -17f), At(474f, -18f), At(490f, -12f) } },
+            };
+            t.currents = new List<TrackLayout.Current> { new() { from = 600f, to = 650f, lateral = 0f, width = 4.5f, push = 0.3f } };
             t.dashPanels = new List<TrackLayout.DashPanel>
             {
-                new() { distance = 10f, lateral = -1.5f },
-                new() { distance = 330f, lateral = 1.5f },
-                new() { distance = 470f, lateral = 0f },
+                new() { distance = 12f, lateral = 0f }, new() { distance = 90f, lateral = 0f },
+                new() { distance = 372f, lateral = 0f }, new() { distance = 510f, lateral = 0f }, new() { distance = 655f, lateral = 0f },
             };
+            t.dolphins = new List<float> { 330f, 620f };
+            t.footbridges = new List<float> { 440f };
+            t.geysers = new List<TrackLayout.Geyser> { new() { distance = 568f, side = 1f, period = 4.2f, active = 1f } };
+            t.vortices = new List<TrackLayout.Vortex>();
             t.boats = new List<TrackLayout.Boat>
             {
-                new() { kind = TrackLayout.BoatKind.Trawler, position = new Vector2(170f, 40f), angle = 100f },
-                new() { kind = TrackLayout.BoatKind.Buoy, position = At(120f, 9f) },
+                new() { kind = TrackLayout.BoatKind.Sailboat, position = new Vector2(80f, -24f), angle = 20f, drift = 7f },
+                new() { kind = TrackLayout.BoatKind.Sailboat, position = new Vector2(190f, 60f), angle = -30f, drift = 8f },
+                new() { kind = TrackLayout.BoatKind.Rowboat, position = new Vector2(150f, 20f), angle = 60f },
+                new() { kind = TrackLayout.BoatKind.Buoy, position = new Vector2(30f, -14f) },
             };
+            Rect Cell(string n) => LagoonSheet.Cell(n);
+            var all = new Vector2(0f, path.Length - 1f);
             t.scenery = new List<TrackScenery.Kind>
             {
-                new() { name = "Rock", uv = LagoonSheet.Cell("Rock"), count = 10, sizeRange = new Vector2(2.5f, 4f), clearance = new Vector2(4f, 20f) },
+                new() { name = "Coral", uv = Cell("Coral"), count = 40, sizeRange = new Vector2(3.5f, 6f), clearance = new Vector2(1.2f, 9f), along = all },
+                new() { name = "CoralPink", uv = Cell("CoralPink"), count = 34, sizeRange = new Vector2(3.5f, 6f), clearance = new Vector2(1.2f, 9f), along = all },
+                new() { name = "Turtle", uv = Cell("Turtle"), count = 8, sizeRange = new Vector2(2.6f, 3.4f), clearance = new Vector2(1.5f, 7f), along = all },
             };
-            t.lastLapShow = false;
+            t.lastLapShow = true; // (sunset and fireworks on the last lap)
             t.bakedSignature = null;
             EditorUtility.SetDirty(t);
             AssetDatabase.SaveAssets();
@@ -469,7 +504,7 @@ namespace SomeGame.EditorTools
             level.chapter = "WATER CUP · RACE 3";
             level.track = track;
             level.laps = 3;
-            level.description = "A wild coast at night in a gale. Only the lighthouse beam and your headlights show the rocks. Brave the whirlpool, race through the sea caves, ride the locks up the cliff and take the Leap of Faith - and the tide rises every lap.";
+            level.description = "Big air in a sunny bay! Chain wave jumps, trick over two sandbars, bounce off the gummiboats through the rings, pinball through the bumper bay, take the giant slide and nail the Leap of Faith down the waterfall.";
             level.difficulty = 4;
             level.rivalCount = 7;
             level.rivalSpeedScale = 0.98f;
@@ -507,20 +542,11 @@ namespace SomeGame.EditorTools
             TOWN = new Vector2[] { new(40.7f, 132.4f), new(50.2f, 131.0f), new(64.0f, 124.9f), new(71.4f, 123.3f), new(78.5f, 124.1f), new(93.6f, 129.2f), new(99.0f, 128.6f), new(111.2f, 122.7f), new(120.4f, 113.3f), new(125.8f, 103.4f), new(128.6f, 94.1f), new(133.3f, 53.8f), new(132.6f, 35.8f), new(129.5f, 18.0f), new(122.6f, 12.1f), new(114.1f, 7.9f), new(108.0f, 6.9f), new(72.0f, 7.2f), new(72.0f, 5.8f), new(60.9f, 5.0f), new(53.3f, 2.8f), new(44.4f, 5.2f), new(28.5f, 6.7f), new(3.6f, 6.0f), new(-0.8f, 8.2f), new(-5.0f, 12.6f), new(-7.4f, 17.6f), new(-2.5f, 28.0f), new(-1.2f, 34.8f), new(-5.0f, 51.7f), new(-1.6f, 61.1f), new(3.2f, 93.0f), new(3.5f, 104.6f), new(9.9f, 117.5f), new(17.4f, 125.3f), new(29.0f, 131.2f) },
             PIER = new Vector2[] { new(65.2f, -7.3f), new(72.0f, -6.4f), new(108.0f, -7.2f), new(108.0f, -5.5f), new(117.6f, -3.9f), new(121.8f, -1.9f), new(116.0f, -10.4f), new(109.9f, -16.2f), new(103.5f, -19.4f), new(93.8f, -21.4f), new(86.2f, -21.2f), new(80.4f, -19.1f), new(69.4f, -12.1f) };
 
-        static readonly Vector2[] COAST = new Vector2[] { new(0.0f, 0.0f), new(30.0f, -2.0f), new(56.0f, 4.0f), new(76.0f, 18.0f), new(96.0f, 16.0f), new(112.0f, 30.0f), new(112.0f, 50.0f), new(102.0f, 66.0f), new(108.0f, 84.0f), new(124.0f, 96.0f), new(134.0f, 112.0f), new(126.0f, 132.0f), new(106.0f, 144.0f), new(80.0f, 148.0f), new(54.0f, 148.0f), new(30.0f, 146.0f), new(8.0f, 140.0f), new(-8.0f, 126.0f), new(-16.0f, 104.0f), new(-22.0f, 80.0f), new(-24.0f, 56.0f), new(-20.0f, 32.0f), new(-12.0f, 12.0f) },
-            C_NORTH = new Vector2[] { new(-46.0f, 70.0f), new(-44.0f, 30.0f), new(-36.0f, 6.0f), new(-20.0f, -6.0f), new(0.0f, -11.0f), new(30.0f, -12.0f), new(60.0f, -10.0f), new(100.0f, -14.0f), new(140.0f, -26.0f), new(220.0f, -30.0f), new(220.0f, -80.0f), new(-120.0f, -80.0f), new(-120.0f, 240.0f), new(220.0f, 240.0f), new(220.0f, 100.0f), new(160.0f, 100.0f), new(140.0f, 124.0f), new(138.8f, 123.8f), new(134.6f, 132.1f), new(129.3f, 138.7f), new(119.4f, 145.8f), new(105.6f, 151.4f), new(92.9f, 153.9f), new(75.0f, 155.3f), new(35.1f, 153.8f), new(12.0f, 149.2f), new(-1.6f, 142.3f), new(-13.8f, 130.0f), new(-20.4f, 114.2f), new(-30.0f, 112.0f), new(-40.4f, 112.7f), new(-44.0f, 100.0f) },
-            C_LIP1 = new Vector2[] { new(118.0f, 120.0f), new(96.0f, 130.0f), new(60.0f, 132.0f), new(20.0f, 128.0f), new(-4.4f, 117.9f), new(-1.2f, 123.5f), new(3.7f, 128.7f), new(16.3f, 135.9f), new(36.6f, 139.9f), new(65.7f, 141.4f), new(91.2f, 140.0f), new(106.8f, 136.2f), new(118.4f, 129.7f), new(124.7f, 121.2f) },
-            ISLET0 = new Vector2[] { new(66.2f, -3.4f), new(66.5f, 0.3f), new(69.6f, 3.8f), new(73.5f, 3.5f), new(76.9f, 2.0f), new(79.0f, -1.7f), new(77.2f, -5.7f), new(73.7f, -6.7f), new(69.1f, -7.3f) },
-            ISLET1 = new Vector2[] { new(79.0f, 28.5f), new(80.2f, 32.9f), new(82.3f, 36.5f), new(86.3f, 36.5f), new(88.8f, 34.0f), new(90.7f, 30.7f), new(90.1f, 26.7f), new(87.1f, 24.6f), new(81.4f, 25.8f) },
-            ISLET2 = new Vector2[] { new(98.4f, 2.1f), new(98.4f, 6.2f), new(101.1f, 9.5f), new(109.1f, 8.5f), new(110.3f, 4.1f), new(109.1f, -0.1f), new(105.0f, -1.4f), new(101.3f, -1.6f) },
-            ISLET3 = new Vector2[] { new(94.1f, 37.5f), new(97.3f, 41.4f), new(101.3f, 41.0f), new(104.3f, 39.1f), new(105.1f, 35.7f), new(104.2f, 31.6f), new(101.2f, 29.8f), new(96.9f, 30.5f), new(94.5f, 33.9f) },
-            ISLET4 = new Vector2[] { new(118.6f, 60.4f), new(121.3f, 62.8f), new(124.6f, 64.3f), new(127.5f, 61.9f), new(129.7f, 58.3f), new(128.9f, 55.1f), new(124.7f, 53.4f), new(120.7f, 53.4f), new(119.0f, 56.6f) },
-            ISLET5 = new Vector2[] { new(84.7f, 77.9f), new(87.5f, 81.2f), new(91.1f, 81.9f), new(94.1f, 80.0f), new(96.1f, 76.1f), new(94.3f, 72.4f), new(90.9f, 70.8f), new(87.5f, 70.2f), new(84.8f, 74.2f) },
-            ISLET6 = new Vector2[] { new(120.0f, 76.4f), new(120.0f, 79.9f), new(122.2f, 82.9f), new(125.9f, 83.0f), new(129.8f, 81.5f), new(131.1f, 78.0f), new(129.2f, 74.9f), new(125.9f, 72.7f), new(121.7f, 73.5f) },
-            ISLET7 = new Vector2[] { new(39.0f, 49.2f), new(52.0f, 57.4f), new(57.1f, 53.0f), new(60.2f, 45.0f), new(59.2f, 38.4f), new(51.7f, 35.5f), new(45.0f, 34.7f), new(40.2f, 40.9f) },
-            ISLET8 = new Vector2[] { new(12.7f, 67.0f), new(13.6f, 72.7f), new(16.4f, 75.6f), new(21.2f, 76.4f), new(26.5f, 74.8f), new(27.5f, 70.0f), new(25.2f, 64.5f), new(21.2f, 62.6f), new(16.6f, 64.3f) },
-            ISLET9 = new Vector2[] { new(61.3f, 87.8f), new(65.4f, 93.6f), new(71.3f, 93.6f), new(77.5f, 91.5f), new(78.2f, 85.0f), new(76.5f, 80.0f), new(71.4f, 76.1f), new(65.1f, 78.0f), new(62.4f, 82.4f) },
-            ISLET10 = new Vector2[] { new(34.5f, 106.7f), new(37.2f, 110.6f), new(41.1f, 110.2f), new(44.3f, 108.5f), new(46.7f, 105.0f), new(44.4f, 101.6f), new(40.8f, 98.8f), new(37.2f, 100.7f), new(35.0f, 102.8f) },
-            LIGHTS = new Vector2[] { new(72.3f, -1.8f), new(85.0f, 30.4f), new(104.2f, 4.0f), new(99.7f, 35.6f), new(124.0f, 58.4f), new(90.1f, 76.1f), new(125.2f, 78.1f), new(49.9f, 45.2f), new(20.3f, 69.8f), new(70.0f, 85.5f), new(40.2f, 105.0f), new(26.3f, -15.2f), new(141.2f, 128.3f), new(108.1f, 131.3f), new(88.8f, 158.3f), new(62.1f, 137.3f), new(34.7f, 157.8f), new(14.9f, 131.1f), new(-18.4f, 130.1f), new(-50.0f, 92.0f), new(-52.0f, 64.0f), new(-50.0f, 38.0f), new(-30.0f, -9.0f), new(-56.0f, 112.0f) };
+        static readonly Vector2[] FUN = new Vector2[] { new(0.0f, 0.0f), new(32.0f, 0.0f), new(64.0f, 0.0f), new(92.0f, 4.0f), new(114.0f, 18.0f), new(124.0f, 40.0f), new(116.0f, 60.0f), new(126.0f, 80.0f), new(118.0f, 100.0f), new(130.0f, 118.0f), new(150.0f, 128.0f), new(170.0f, 138.0f), new(176.0f, 160.0f), new(164.0f, 180.0f), new(140.0f, 186.0f), new(112.0f, 182.0f), new(86.0f, 184.0f), new(60.0f, 186.0f), new(34.0f, 180.0f), new(14.0f, 166.0f), new(4.0f, 146.0f), new(-2.0f, 124.0f), new(-12.0f, 104.0f), new(-26.0f, 86.0f), new(-30.0f, 62.0f), new(-26.0f, 38.0f), new(-16.0f, 16.0f) },
+            F_INNER = new Vector2[] { new(4.4f, 13.3f), new(0.8f, 16.3f), new(-5.4f, 25.3f), new(-12.0f, 40.1f), new(-15.8f, 57.3f), new(-15.3f, 72.3f), new(-12.8f, 81.1f), new(-1.3f, 94.9f), new(7.1f, 109.7f), new(12.0f, 121.7f), new(19.1f, 146.3f), new(25.5f, 157.8f), new(32.6f, 163.5f), new(40.4f, 167.5f), new(61.0f, 172.0f), new(109.4f, 168.0f), new(140.6f, 172.0f), new(150.9f, 170.6f), new(156.8f, 167.8f), new(160.2f, 163.2f), new(162.2f, 157.7f), new(161.5f, 152.1f), new(159.2f, 147.0f), new(131.6f, 135.3f), new(123.3f, 130.5f), new(112.7f, 120.1f), new(105.8f, 108.6f), new(104.1f, 102.0f), new(104.4f, 95.0f), new(111.3f, 80.6f), new(103.9f, 68.6f), new(102.0f, 58.8f), new(103.9f, 50.5f), new(109.9f, 39.7f), new(107.4f, 32.9f), new(102.5f, 26.2f), new(91.1f, 18.8f), new(78.2f, 15.2f), new(59.0f, 13.8f) },
+            F_OUTER = new Vector2[] { new(-90.0f, 260.0f), new(240.0f, 260.0f), new(240.0f, 150.0f), new(150.0f, 110.0f), new(135.3f, 96.9f), new(133.6f, 99.6f), new(140.1f, 106.9f), new(174.9f, 122.5f), new(181.9f, 128.9f), new(187.1f, 137.6f), new(190.8f, 151.0f), new(190.5f, 164.3f), new(185.5f, 177.3f), new(176.9f, 188.7f), new(170.8f, 193.5f), new(162.6f, 197.4f), new(142.0f, 200.9f), new(132.7f, 200.6f), new(109.4f, 197.0f), new(60.4f, 201.1f), new(46.4f, 199.3f), new(32.4f, 195.5f), new(13.3f, 185.4f), new(5.0f, 178.4f), new(-0.5f, 171.7f), new(-8.5f, 155.5f), new(-15.5f, 130.7f), new(-19.5f, 121.3f), new(-25.0f, 111.6f), new(-35.0f, 100.1f), new(-39.9f, 91.7f), new(-43.7f, 78.0f), new(-45.0f, 60.6f), new(-43.4f, 46.0f), new(-39.2f, 30.0f), new(-90.0f, 30.0f) },
+            F_ISLET0 = new Vector2[] { new(134.4f, 56.5f), new(133.8f, 54.8f), new(132.7f, 53.5f), new(131.2f, 52.7f), new(129.4f, 52.5f), new(127.8f, 53.0f), new(126.4f, 54.1f), new(125.6f, 55.7f), new(125.4f, 57.4f), new(125.9f, 59.1f), new(127.0f, 60.4f), new(128.6f, 61.3f), new(130.3f, 61.4f), new(132.0f, 60.9f), new(133.4f, 59.8f), new(134.2f, 58.3f) },
+            F_ISLET1 = new Vector2[] { new(118.4f, 81.4f), new(118.0f, 78.7f), new(116.8f, 77.3f), new(115.3f, 76.5f), new(113.5f, 76.3f), new(111.9f, 76.9f), new(110.5f, 78.0f), new(109.7f, 79.5f), new(109.5f, 81.3f), new(110.0f, 82.9f), new(111.1f, 84.3f), new(112.7f, 85.1f), new(114.4f, 85.3f), new(117.0f, 84.2f) },
+            F_ISLET2 = new Vector2[] { new(134.4f, 98.2f), new(133.9f, 96.6f), new(132.8f, 95.2f), new(131.2f, 94.4f), new(129.5f, 94.2f), new(127.5f, 94.9f), new(125.4f, 99.1f), new(125.9f, 100.8f), new(127.1f, 102.2f), new(128.6f, 103.0f), new(130.4f, 103.2f), new(132.0f, 102.7f), new(133.4f, 101.5f), new(134.2f, 100.0f) };
     }
 }

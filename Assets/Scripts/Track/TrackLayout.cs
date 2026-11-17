@@ -338,6 +338,8 @@ namespace SomeGame.Track
         public class Coast
         {
             public bool enabled;
+            [Tooltip("Night (a dark sky lit only by the lighthouses, rain); off: a sunny day.")]
+            public bool night = true;
             [Tooltip("Where the lighthouse stands (its beam turns round it).")]
             public Vector2 lighthouse;
             [Min(1f)] public float beamPeriod = 7f;

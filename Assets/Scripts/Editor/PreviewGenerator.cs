@@ -93,7 +93,7 @@ namespace SomeGame.EditorTools
                 RenderTexture.active = rt;
                 tex.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
                 tex.Apply();
-                if (layout.coast != null && layout.coast.enabled) Night(tex, layout, cam);
+                if (layout.coast != null && layout.coast.enabled && layout.coast.night) Night(tex, layout, cam);
                 RenderTexture.active = previous;
                 Object.DestroyImmediate(rt);
                 string path = $"{Folder}/{level.name}.png";

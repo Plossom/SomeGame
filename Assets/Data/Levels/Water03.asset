@@ -19,7 +19,7 @@ MonoBehaviour:
   isChallenge: 0
   preview: {fileID: 21300000, guid: 74ea565d13d114042be49faf60cb6169, type: 3}
   laps: 3
-  description: A wild coast at night in a gale. Only the lighthouse beam and your headlights show the rocks. Brave the whirlpool, race through the sea caves, ride the locks up the cliff and take the Leap of Faith - and the tide rises every lap.
+  description: Big air in a sunny bay! Chain wave jumps, trick over two sandbars, bounce off the gummiboats through the rings, pinball through the bumper bay, take the giant slide and nail the Leap of Faith down the waterfall.
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.98

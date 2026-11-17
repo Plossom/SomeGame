@@ -426,6 +426,7 @@ MonoBehaviour:
     dropAt: -1
   coast:
     enabled: 0
+    night: 1
     lighthouse: {x: 0, y: 0}
     beamPeriod: 7
     lights: []
