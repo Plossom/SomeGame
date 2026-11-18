@@ -34,6 +34,8 @@ namespace SomeGame.EditorTools
             Write(f, "Fortress", 640, 448, FortressPixel, 24, false);
             Write(f, "Bolt", 64, 256, BoltPixel, 32, false);
             Write(f, "LogJam", 320, 640, LogJamPixel, 28, false);
+            Write(f, "SceneryForest", 1024, 1024, ForestCell, 128, false);
+            ArtGenerator.Material("SceneryForest", "SceneryForest");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
@@ -186,6 +188,177 @@ namespace SomeGame.EditorTools
             {
                 float a = i / 18f * Mathf.PI * 2f;
                 c = Over(c, White(0.7f), Fill(Circle(x, y, 256 + Mathf.Cos(a) * 100, 150 + Mathf.Sin(a) * 50, 7 + Hash(i, 2) * 6)));
+            }
+            return c;
+        }
+
+        // ------------------------------------------------------------------ the forest sheet
+
+        static Color ForestCell(float x, float y)
+        {
+            int col = (int)(x / 256), row = (int)(y / 256);
+            float lx = x - col * 256, ly = y - row * 256;
+            return SomeGame.Track.ForestSheet.Cells[row * 4 + col] switch
+            {
+                "Oak" => Crown(lx, ly, 96, Hex("3E8A2E"), Hex("5FB13F"), 1),
+                "OakBig" => Crown(lx, ly, 118, Hex("2F7A2A"), Hex("4FA03A"), 2),
+                "Pine" => Pine(lx, ly, Hex("1F5E3A"), Hex("2F7F4C")),
+                "PineDark" => Pine(lx, ly, Hex("174A30"), Hex("23663F")),
+                "Birch" => Crown(lx, ly, 80, Hex("6FA83A"), Hex("A8D45A"), 3),
+                "Bush" => Crown(lx, ly, 60, Hex("3F8A35"), Hex("6DBA4A"), 4),
+                "Fern" => Fern(lx, ly),
+                "Mushrooms" => Mushrooms(lx, ly),
+                "Stump" => Stump(lx, ly),
+                "Log" => ForestLog(lx, ly),
+                "Rock" => MossRock(lx, ly),
+                "Flowers" => Flowerbed(lx, ly),
+                "Reeds" => Reeds(lx, ly),
+                "LilyPads" => LilyPads(lx, ly),
+                "Willow" => Willow(lx, ly),
+                _ => new Color(0, 0, 0, 0),
+            };
+        }
+
+        // A tree crown from above: a lumpy round mass of leaves, lit from the top left, a shadow to the bottom right.
+        static Color Crown(float x, float y, float r, Color dark, Color light, int seed)
+        {
+            Color c = new(0, 0, 0, 0);
+            float crown = float.MaxValue;
+            for (int i = 0; i < 9; i++)
+            {
+                float a = i / 9f * Mathf.PI * 2f + seed;
+                float rr = r * (0.42f + 0.12f * Hash(i, seed));
+                crown = SMin(crown, Circle(x, y, 128 + Mathf.Cos(a) * r * 0.5f, 128 + Mathf.Sin(a) * r * 0.5f, rr), 18f);
+            }
+            crown = SMin(crown, Circle(x, y, 128, 128, r * 0.62f), 18f);
+            c = Over(c, new Color(0f, 0.08f, 0.02f, 0.4f), Fill(crown - 10f) * (1f - Fill(crown)));
+            float lit = Mathf.Clamp01(0.5f + ((128 - x) + (y - 128)) / (r * 2.2f));
+            float n = Noise(x * 0.08f + seed, y * 0.08f, 32);
+            c = Over(c, Color.Lerp(dark, light, lit * 0.8f + n * 0.3f), Fill(crown));
+            for (int i = 0; i < 14; i++)
+            {
+                float bx = 128 + (Hash(i, seed + 3) - 0.5f) * r * 1.2f, by = 128 + (Hash(i, seed + 7) - 0.5f) * r * 1.2f;
+                c = Over(c, Color.Lerp(light, Color.white, 0.15f), Fill(Circle(x, y, bx, by, r * 0.1f)) * Fill(crown + 6f) * 0.5f);
+            }
+            return Over(c, Shade(dark, 0.55f), Stroke(crown, 3f));
+        }
+
+        static Color Pine(float x, float y, Color dark, Color light)
+        {
+            Color c = new(0, 0, 0, 0);
+            float star = Star(x, y, 128, 128, 104, 70, 9);
+            c = Over(c, new Color(0f, 0.08f, 0.02f, 0.4f), Fill(Star(x, y, 138, 118, 104, 70, 9)) * (1f - Fill(star)));
+            c = Over(c, dark, Fill(star));
+            c = Over(c, light, Fill(Star(x, y, 124, 132, 66, 42, 9, 0.3f)));
+            c = Over(c, Color.Lerp(light, Color.white, 0.2f), Fill(Star(x, y, 122, 134, 32, 18, 7, 0.6f)));
+            return Over(c, Shade(dark, 0.55f), Stroke(star, 3f));
+        }
+
+        static Color Willow(float x, float y)
+        {
+            Color c = Crown(x, y, 112, Hex("4E8F3A"), Hex("8CC65A"), 5);
+            for (int i = 0; i < 18; i++)
+            {
+                float a = i / 18f * Mathf.PI * 2f;
+                Vector2 from = new(128 + Mathf.Cos(a) * 40, 128 + Mathf.Sin(a) * 40), to = new(128 + Mathf.Cos(a) * 112, 128 + Mathf.Sin(a) * 112);
+                c = Over(c, Hex("9ED36A"), Stroke(SegDist(new Vector2(x, y), from, to), 3f) * 0.7f);
+            }
+            return c;
+        }
+
+        static Color Fern(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            for (int i = 0; i < 7; i++)
+            {
+                float a = i / 7f * Mathf.PI * 2f;
+                Vector2 tip = new(128 + Mathf.Cos(a) * 92, 128 + Mathf.Sin(a) * 92);
+                float leaf = Capsule(x, y, 128, 128, tip.x, tip.y, 14);
+                c = Over(c, Hex("4E9E3A"), Fill(leaf));
+                c = Over(c, Hex("2F6E26"), Stroke(SegDist(new Vector2(x, y), new Vector2(128, 128), tip), 3f) * Fill(leaf));
+            }
+            return c;
+        }
+
+        static Color Mushrooms(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            var spots = new[] { new Vector3(110, 120, 34), new Vector3(160, 150, 26), new Vector3(150, 96, 20) };
+            foreach (var m in spots)
+            {
+                float cap = Circle(x, y, m.x, m.y, m.z);
+                c = Over(c, new Color(0, 0, 0, 0.3f), Fill(Circle(x, y, m.x + 5, m.y - 5, m.z)) * (1f - Fill(cap)));
+                c = Over(c, Hex("E0413A"), Fill(cap));
+                for (int i = 0; i < 5; i++) c = Over(c, Color.white, Fill(Circle(x, y, m.x + Mathf.Cos(i * 1.3f) * m.z * 0.55f, m.y + Mathf.Sin(i * 1.3f) * m.z * 0.55f, m.z * 0.16f)));
+                c = Over(c, Line, Stroke(cap, 2.5f));
+            }
+            return c;
+        }
+
+        static Color Stump(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float s = Circle(x, y, 128, 128, 52);
+            c = Over(c, Hex("6B4426"), Fill(s));
+            c = Over(c, Hex("C9A57A"), Fill(s + 8f));
+            for (int i = 1; i < 5; i++) c = Over(c, Hex("A07E58"), Stroke(Circle(x, y, 128, 128, i * 9f), 2f) * Fill(s + 8f));
+            return Over(c, Line, Stroke(s, 3f));
+        }
+
+        static Color ForestLog(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float log = RotRect(x, y, 128, 128, 100, 24, 22, 0.5f);
+            c = Over(c, Mathf.Repeat(x + y, 22f) < 3f ? Hex("5A3A20") : Hex("7A5230"), Fill(log));
+            c = Over(c, Moss, Fill(log) * Mathf.Clamp01((Mossy(x, y) - 0.6f) * 5f));
+            return Over(c, Line, Stroke(log, 3f));
+        }
+
+        static Color MossRock(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float rock = SMin(Circle(x, y, 118, 122, 62), Circle(x, y, 160, 140, 40), 16f);
+            c = Over(c, new Color(0, 0, 0, 0.35f), Fill(rock - 8f) * (1f - Fill(rock)));
+            c = Over(c, Color.Lerp(StoneDark, StoneLight, Mathf.Clamp01(0.5f + (x - y) / 200f)), Fill(rock));
+            c = Over(c, Moss, Fill(rock) * Mathf.Clamp01((Mossy(x, y) - 0.5f) * 5f));
+            return Over(c, Line, Stroke(rock, 3f));
+        }
+
+        static Color Flowerbed(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            Color[] cols = { Hex("FF6F91"), Hex("FFD23F"), Hex("B266FF"), Color.white };
+            for (int i = 0; i < 22; i++)
+            {
+                float fx = 50 + Hash(i, 1) * 156, fy = 50 + Hash(i, 2) * 156;
+                c = Over(c, Hex("3E8A2E"), Fill(Circle(x, y, fx, fy, 14)));
+                c = Over(c, cols[i % 4], Fill(Star(x, y, fx, fy, 10, 5, 5)));
+            }
+            return c;
+        }
+
+        static Color Reeds(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            for (int i = 0; i < 24; i++)
+            {
+                float rx = 60 + Hash(i, 3) * 136, ry = 60 + Hash(i, 4) * 136;
+                c = Over(c, Hex("6E9A3A"), Fill(Ellipse(x, y, rx, ry, 5, 22)));
+                c = Over(c, Hex("6B4426"), Fill(Ellipse(x, y, rx, ry + 16, 4, 8)));
+            }
+            return c;
+        }
+
+        static Color LilyPads(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            for (int i = 0; i < 6; i++)
+            {
+                float px = 70 + Hash(i, 5) * 116, py = 70 + Hash(i, 6) * 116, r = 20 + Hash(i, 7) * 12;
+                float pad = Mathf.Max(Circle(x, y, px, py, r), -Triangle(x, y, new Vector2(px, py), new Vector2(px + r * 1.2f, py + r * 0.3f), new Vector2(px + r * 1.2f, py - r * 0.3f)));
+                c = Over(c, Hex("4FA03A"), Fill(pad));
+                c = Over(c, Hex("2F7A2A"), Stroke(pad, 2f));
+                if (i % 2 == 0) c = Over(c, Hex("FF9EC4"), Fill(Star(x, y, px - r * 0.3f, py, 9, 4, 6)));
             }
             return c;
         }

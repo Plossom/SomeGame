@@ -444,6 +444,8 @@ MonoBehaviour:
     rain: 0
     river: 0
     riverMargin: 2.6
+    caves: []
+    caveRoof: 9
   coast:
     enabled: 0
     night: 1

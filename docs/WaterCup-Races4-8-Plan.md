@@ -11,6 +11,16 @@ towards the finale, mostly through **narrow channels where you can fall off the 
 | 7 | Storm Chasers | a storm out at sea, rocky stacks, a giant whirlpool | cliff-top channels where you fall off the sides, lightning strikes, the whirlpool | 5 |
 | 8 | Storm Rally | the storm fortress on its rock | the narrowest channels, waves washing over them, trick leaps between the stacks, the fortress gate | 5 |
 
+## Routes (each race its own shape)
+- **4 Jungle Rapids:** a figure of eight; the creek crosses over itself on a sandstone aqueduct.
+- **5 Pirate Bay:** a trefoil knot crossing itself three times, over and under in turn.
+- **6 Coral Coast:** a maze of long rows and hairpins through the reef.
+- **7 Storm Chasers:** round a mountain range, with an alpha loop over itself.
+- **8 Storm Rally:** three loops in a chain, crossing itself four times.
+- Races 4, 5, 7 and 8 have water caves into mountains: the roof fades while you are inside, the water goes dark and crystals glow.
+- Race 4 is a small forest creek with a new forest scenery sheet: oaks, pines, birches and willows (their crowns overhang the creek), ferns, mushrooms, reeds and lily pads.
+- All five are two laps.
+
 ## New system: ledges (falling off the sides)
 - Stretches of the course run along the top of the rocks: beyond the rim there is a sheer drop down to the sea far below.
 - Leave the channel there and you fall (the boat shrinks and tumbles away), then you are carried back.

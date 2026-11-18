@@ -4,6 +4,24 @@ using SomeGame.Car;
 
 namespace SomeGame.Track
 {
+    /// <summary>The forest scenery sheet (16 cells of 256 px, 4 x 4, row 0 at the bottom), shared by the art and the race.</summary>
+    public static class ForestSheet
+    {
+        public static readonly string[] Cells =
+        {
+            "Oak", "OakBig", "Pine", "PineDark",
+            "Birch", "Bush", "Fern", "Mushrooms",
+            "Stump", "Log", "Rock", "Flowers",
+            "Reeds", "LilyPads", "Willow", "Clearing",
+        };
+
+        public static Rect Cell(string name)
+        {
+            int i = System.Array.IndexOf(Cells, name);
+            return new Rect((i % 4) * 0.25f, (i / 4) * 0.25f, 0.25f, 0.25f);
+        }
+    }
+
     /// <summary>
     /// The Water Cup's later races (<see cref="TrackLayout.wild"/>):
     /// - ledges: stretches where the channel runs along the top of the rocks (a rim, then a cliff face dropping away
@@ -42,13 +60,14 @@ namespace SomeGame.Track
         {
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
             _parts.Clear(); _overheads.Clear(); _crocs.Clear(); _doors.Clear(); _coins.Clear(); _planks.Clear(); _jellies.Clear();
-            _mantas.Clear(); _strikes.Clear(); _waves.Clear(); _balls.Clear(); _fallen.Clear();
+            _mantas.Clear(); _strikes.Clear(); _waves.Clear(); _balls.Clear(); _fallen.Clear(); _caveViews.Clear();
             _rain = null; _storm = null;
             Release();
             _wild = layout.wild;
             if (layout.biome != TrackLayout.Biome.Lagoon || _wild == null || !_wild.enabled) return;
             if (_wild.river) BuildRiver(path, layout);
             foreach (var ledge in _wild.ledges) BuildLedge(path, ledge);
+            foreach (var cave in _wild.caves) BuildCave(path, cave);
             foreach (var prop in _wild.props) BuildProp(prop);
             foreach (var c in _wild.crocs) BuildCroc(path, c);
             for (int i = 0; i < _wild.doors.Count; i++) BuildDoor(path, _wild.doors[i], i);
@@ -155,15 +174,43 @@ namespace SomeGame.Track
                     new Color(1f, 1f, 1f, 0f), Color.white, 1f / 4f);
             }
             if (!Application.isPlaying) return;
+            // Solid banks, broken where the river crosses itself (an aqueduct over it, or the river below one).
             foreach (float side in new[] { 1f, -1f })
             {
                 var pts = new List<Vector2>();
-                for (float d = 0f; d <= path.Length; d += 1f) pts.Add(path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + margin + 0.4f));
-                var go = new GameObject("RiverShore", typeof(EdgeCollider2D)) { hideFlags = HideFlags.DontSave };
-                go.transform.SetParent(transform, false);
-                go.GetComponent<EdgeCollider2D>().points = pts.ToArray();
-                _parts.Add(go);
+                for (float d = 0f; d <= path.Length + 0.5f; d += 1f)
+                {
+                    Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + margin + 0.4f);
+                    if (track.OnViaduct(d) || InOtherWater(path, p, d, margin))
+                    {
+                        Shore(pts);
+                        pts = new List<Vector2>();
+                        continue;
+                    }
+                    pts.Add(p);
+                }
+                Shore(pts);
             }
+        }
+
+        void Shore(List<Vector2> pts)
+        {
+            if (pts.Count < 2) return;
+            var go = new GameObject("RiverShore", typeof(EdgeCollider2D)) { hideFlags = HideFlags.DontSave };
+            go.transform.SetParent(transform, false);
+            go.GetComponent<EdgeCollider2D>().points = pts.ToArray();
+            _parts.Add(go);
+        }
+
+        // Inside the river somewhere else along the lap (not the stretch it belongs to)?
+        bool InOtherWater(TrackPath path, Vector2 p, float d, float margin)
+        {
+            for (float o = 0f; o < path.Length; o += 2f)
+            {
+                if (Mathf.Abs(path.DeltaDistance(d, o)) < 20f) continue;
+                if ((path.PointAt(o) - p).sqrMagnitude < (track.OffRoadAt(o) + margin + 1.5f) * (track.OffRoadAt(o) + margin + 1.5f)) return true;
+            }
+            return false;
         }
 
         // A strip along the whole lap from one sideways offset to another (functions of the lap distance), world UVs.
@@ -185,6 +232,138 @@ namespace SomeGame.Track
                 t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3, s, s + 1, s + 2, s + 1, s + 3, s + 2 });
             }
             Mesh(name, material, order, TrackMeshes.Quads(name, v, u, t, c));
+        }
+
+        // ------------------------------------------------------------------ water caves
+
+        class CaveView { public Vector2 Span; public MeshRenderer Roof, Gloom, RoofRocks; public Color32[] RoofColors, RoofRockColors; public float Shown = -1f; public readonly List<(SpriteRenderer sr, float phase)> Crystals = new(); public float Inside; }
+        readonly List<CaveView> _caveViews = new();
+        const int CaveGloomOrder = 9, CrystalOrder = 10, RoofOrder = 33, RoofRockOrder = 34, MouthOrder = 35;
+
+        // The channel runs into the mountain: the mountain's top carries on over it as a roof (it fades away while you
+        // are inside, so you see your boat), dark rock arches at the mouths, dark water inside, crystals glowing on
+        // the walls.
+        void BuildCave(TrackPath path, Vector2 span)
+        {
+            var view = new CaveView { Span = span };
+            float len = Mathf.Repeat(span.y - span.x, path.Length), roof = _wild.caveRoof;
+            Color top = new(0.62f, 0.72f, 0.6f), rim = new(0.32f, 0.33f, 0.36f);
+            var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
+            var gv = new List<Vector3>(); var gu = new List<Vector2>(); var gt = new List<int>(); var gc = new List<Color32>();
+            int steps = Mathf.CeilToInt(len);
+            for (int i = 0; i <= steps; i++)
+            {
+                float d = span.x + len * i / steps;
+                Vector2 p = path.PointAt(d), n = path.NormalAt(d);
+                // The roof narrows to an arch over the water at each mouth (it merges into the mountain either side),
+                // its ends darker rock.
+                float end = Mathf.Clamp01(Mathf.Min(i, steps - i) / 3f);
+                float taper = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(Mathf.Min(i, steps - i) / 10f));
+                float half = track.OffRoadAt(d) + 1.6f + (roof - 1.6f) * taper;
+                var col = (Color32)Color.Lerp(rim, top, end);
+                v.Add(p + n * half); v.Add(p - n * half);
+                u.Add((p + n * half) / 4f); u.Add((p - n * half) / 4f);
+                c.Add(col); c.Add(col);
+                float g = track.OffRoadAt(d) + 0.8f;
+                gv.Add(p + n * g); gv.Add(p - n * g);
+                gu.Add(Vector2.zero); gu.Add(Vector2.zero);
+                var dark = new Color32(5, 18, 34, (byte)(170 * end + 60));
+                gc.Add(dark); gc.Add(dark);
+                if (i == steps) break;
+                int s0 = i * 2;
+                t.AddRange(new[] { s0, s0 + 2, s0 + 1, s0 + 1, s0 + 2, s0 + 3, s0, s0 + 1, s0 + 2, s0 + 1, s0 + 3, s0 + 2 });
+                gt.AddRange(new[] { s0, s0 + 2, s0 + 1, s0 + 1, s0 + 2, s0 + 3, s0, s0 + 1, s0 + 2, s0 + 1, s0 + 3, s0 + 2 });
+            }
+            view.Roof = Mesh("CaveRoof", ground != null ? ground : plain, RoofOrder, TrackMeshes.Quads("CaveRoof", v, u, t, c)).GetComponent<MeshRenderer>();
+            view.RoofColors = c.ToArray();
+            view.Gloom = Mesh("CaveGloom", plain, CaveGloomOrder, TrackMeshes.Quads("CaveGloom", gv, gu, gt, gc)).GetComponent<MeshRenderer>();
+            // The mouths: dark arches of rock where the channel goes in and comes out.
+            var mv = new List<Vector3>(); var mu = new List<Vector2>(); var mt = new List<int>(); var mc = new List<Color32>();
+            foreach (float at in new[] { span.x, span.x + len })
+            {
+                Vector2 p = path.PointAt(at), n = path.NormalAt(at), f = path.TangentAt(at) * (at == span.x ? 1f : -1f);
+                float half = track.OffRoadAt(at) + 1.2f;
+                for (int k = 0; k < 12; k++)
+                {
+                    float a0 = Mathf.PI * k / 12f, a1 = Mathf.PI * (k + 1) / 12f;
+                    Vector2 q0 = p + n * Mathf.Cos(a0) * half + f * Mathf.Sin(a0) * 1.8f, q1 = p + n * Mathf.Cos(a1) * half + f * Mathf.Sin(a1) * 1.8f;
+                    Vector2 o0 = p + n * Mathf.Cos(a0) * (half + 2.4f) + f * Mathf.Sin(a0) * 4.2f, o1 = p + n * Mathf.Cos(a1) * (half + 2.4f) + f * Mathf.Sin(a1) * 4.2f;
+                    int s0 = mv.Count;
+                    mv.Add(q0); mv.Add(q1); mv.Add(o0); mv.Add(o1);
+                    for (int z = 0; z < 4; z++) { mu.Add(Vector2.zero); mc.Add(new Color32(48, 50, 56, 255)); }
+                    mt.AddRange(new[] { s0, s0 + 2, s0 + 1, s0 + 1, s0 + 2, s0 + 3, s0, s0 + 1, s0 + 2, s0 + 1, s0 + 3, s0 + 2 });
+                }
+            }
+            Mesh("CaveMouths", plain, MouthOrder, TrackMeshes.Quads("CaveMouths", mv, mu, mt, mc));
+            // Boulders and crags over the roof: a mountain, not a meadow.
+            if (scenery != null)
+            {
+                var rv = new List<Vector3>(); var ru = new List<Vector2>(); var rt = new List<int>(); var rc = new List<Color32>();
+                var random = new System.Random((int)(span.x * 7f) + 1);
+                for (float a = 2f; a < len - 2f; a += 2.2f)
+                    for (int k = 0; k < 2; k++)
+                    {
+                        float d = span.x + a, lat = ((float)random.NextDouble() * 2f - 1f) * (track.OffRoadAt(d) + roof * 0.7f);
+                        Vector2 p = path.PointAt(d) + path.NormalAt(d) * lat;
+                        float size = 3f + (float)random.NextDouble() * 3f, ang = (float)random.NextDouble() * 6.28f;
+                        Vector2 r = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * size * 0.5f;
+                        int first = rv.Count;
+                        TrackMeshes.AddQuad(rv, ru, rt, p, r, new Vector2(-r.y, r.x), Vector2.one);
+                        var uv = LagoonSheet.Cell(random.Next(3) == 0 ? "Bush" : "Rock");
+                        for (int z = first; z < ru.Count; z++) ru[z] = new Vector2(uv.x + ru[z].x * uv.width, uv.y + ru[z].y * uv.height);
+                        for (int z = 0; z < 4; z++) rc.Add(new Color32(255, 255, 255, 255));
+                    }
+                view.RoofRocks = Mesh("CaveRoofRocks", scenery, RoofRockOrder, TrackMeshes.Quads("CaveRoofRocks", rv, ru, rt, rc)).GetComponent<MeshRenderer>();
+                view.RoofRockColors = rc.ToArray();
+            }
+            // Crystals glowing on the walls inside (seen once the roof fades).
+            if (Application.isPlaying)
+            {
+                if (_glow == null) _glow = Glow();
+                var random = new System.Random((int)(span.x * 3f));
+                for (float a = 3f; a < len - 3f; a += 4.5f)
+                    foreach (float side in new[] { 1f, -1f })
+                    {
+                        float d = span.x + a + (float)random.NextDouble() * 2f;
+                        Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 0.9f);
+                        var sr = Sprite("CaveCrystal", _glow, p, 2.4f + (float)random.NextDouble() * 1.4f, 0f, CrystalOrder);
+                        sr.color = random.NextDouble() < 0.5 ? new Color(0.4f, 0.9f, 1f, 0f) : new Color(0.75f, 0.55f, 1f, 0f);
+                        view.Crystals.Add((sr, (float)random.NextDouble() * 6f));
+                    }
+            }
+            _caveViews.Add(view);
+        }
+
+        void UpdateCaves(float dt)
+        {
+            if (_caveViews.Count == 0 || _race == null || _race.Player == null) return;
+            float pd = _race.Player.GetComponent<TrackSensor>().Current.Distance;
+            foreach (var view in _caveViews)
+            {
+                float into = track.Path.DeltaDistance(view.Span.x - 2f, pd);
+                bool inside = into >= 0f && into <= Mathf.Repeat(view.Span.y - view.Span.x, track.Path.Length) + 4f;
+                view.Inside = Mathf.MoveTowards(view.Inside, inside ? 1f : 0f, dt * 3f);
+                if (Mathf.Abs(view.Inside - view.Shown) > 0.01f)
+                {
+                    view.Shown = view.Inside;
+                    byte alpha = (byte)(255f * Mathf.Lerp(1f, 0.12f, view.Inside));
+                    var cols = new Color32[view.RoofColors.Length];
+                    for (int k = 0; k < cols.Length; k++) { cols[k] = view.RoofColors[k]; cols[k].a = alpha; }
+                    view.Roof.GetComponent<MeshFilter>().sharedMesh.colors32 = cols;
+                    if (view.RoofRocks != null)
+                    {
+                        var rcols = new Color32[view.RoofRockColors.Length];
+                        for (int k = 0; k < rcols.Length; k++) { rcols[k] = view.RoofRockColors[k]; rcols[k].a = alpha; }
+                        view.RoofRocks.GetComponent<MeshFilter>().sharedMesh.colors32 = rcols;
+                    }
+                }
+                foreach (var (sr, phase) in view.Crystals)
+                {
+                    var col = sr.color;
+                    col.a = view.Inside * (0.55f + 0.3f * Mathf.Sin(Time.time * 2f + phase));
+                    sr.color = col;
+                }
+            }
         }
 
         // ------------------------------------------------------------------ ledges
@@ -840,6 +1019,7 @@ namespace SomeGame.Track
             float dt = Time.deltaTime;
             UpdateLedges();
             UpdateOverheads(dt);
+            UpdateCaves(dt);
             UpdateCrocs();
             UpdateDoors();
             UpdateCannon();

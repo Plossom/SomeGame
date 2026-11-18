@@ -18,8 +18,8 @@ MonoBehaviour:
   isTutorial: 0
   isChallenge: 0
   preview: {fileID: 21300000, guid: 2ebcc14dc0ceb42689b4db70512fec63, type: 3}
-  laps: 3
-  description: Into the storm! Race along narrow ledges high above the raging sea - one slip and you fall. Watch for the rings where lightning will strike, skirt the giant whirlpool and leap from stack to stack.
+  laps: 2
+  description: Into the storm-swept mountains! Narrow cliff-top ledges - one slip and you fall - a long water cave through the mountain, lightning, the whirlpool inside the alpha loop and leaps from rock to rock.
   difficulty: 5
   rivalCount: 7
   rivalSpeedScale: 1

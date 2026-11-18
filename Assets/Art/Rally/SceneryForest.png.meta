@@ -1,0 +1,795 @@
+fileFormatVersion: 2
+guid: 51e5d7070c8394522b01a7221287446b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5704822798948110538
+    second: SceneryForest_0
+  - first:
+      213: 4236795330824679406
+    second: SceneryForest_1
+  - first:
+      213: -4135569402972737553
+    second: SceneryForest_2
+  - first:
+      213: -258165865545619202
+    second: SceneryForest_3
+  - first:
+      213: -1044180251886835785
+    second: SceneryForest_4
+  - first:
+      213: 7674800986300306321
+    second: SceneryForest_5
+  - first:
+      213: -9167357517715385847
+    second: SceneryForest_6
+  - first:
+      213: 5840114644627018693
+    second: SceneryForest_7
+  - first:
+      213: 7791152074120902418
+    second: SceneryForest_8
+  - first:
+      213: -2933374115077672954
+    second: SceneryForest_9
+  - first:
+      213: -407788732548494881
+    second: SceneryForest_10
+  - first:
+      213: 9068866124885646301
+    second: SceneryForest_11
+  - first:
+      213: 2090399687918085916
+    second: SceneryForest_12
+  - first:
+      213: -9044414011570793673
+    second: SceneryForest_13
+  - first:
+      213: -5374216295223219090
+    second: SceneryForest_14
+  - first:
+      213: -5160305892298764878
+    second: SceneryForest_15
+  - first:
+      213: -549918016035848317
+    second: SceneryForest_16
+  - first:
+      213: -5831770775625895714
+    second: SceneryForest_17
+  - first:
+      213: -6911300600943418693
+    second: SceneryForest_18
+  - first:
+      213: -8177527200647603059
+    second: SceneryForest_19
+  - first:
+      213: 1123158852630527410
+    second: SceneryForest_20
+  - first:
+      213: 1806582274179038836
+    second: SceneryForest_21
+  - first:
+      213: 1567499030674468949
+    second: SceneryForest_22
+  - first:
+      213: 7216371386293097203
+    second: SceneryForest_23
+  - first:
+      213: 5785798863591844894
+    second: SceneryForest_24
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SceneryForest_0
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 827
+        width: 35
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63fe52ac3e564d0b0800000000000000
+      internalID: -5704822798948110538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_1
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 856
+        width: 28
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eefa6d7e7ee1cca30800000000000000
+      internalID: 4236795330824679406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_2
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 845
+        width: 17
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fefe5d70a818b96c0800000000000000
+      internalID: -4135569402972737553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_3
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 937
+        width: 13
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef8a50b538fca6cf0800000000000000
+      internalID: -258165865545619202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_4
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 821
+        width: 22
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b7aeccd7935281f0800000000000000
+      internalID: -1044180251886835785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 818
+        width: 137
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1935f3e85de528a60800000000000000
+      internalID: 7674800986300306321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_6
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 771
+        width: 243
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 902519b88e007c080800000000000000
+      internalID: -9167357517715385847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_7
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 806
+        width: 21
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c3dc88b3514c0150800000000000000
+      internalID: 5840114644627018693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_8
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 808
+        width: 23
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2173609388bbf1c60800000000000000
+      internalID: 7791152074120902418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_9
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 585
+        width: 110
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6003875b8cf8a47d0800000000000000
+      internalID: -2933374115077672954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_10
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 576
+        width: 188
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd94a0dee4e375af0800000000000000
+      internalID: -407788732548494881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_11
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 563
+        width: 162
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddbd16111b51bdd70800000000000000
+      internalID: 9068866124885646301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_12
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 602
+        width: 55
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c17e1f4d077920d10800000000000000
+      internalID: 2090399687918085916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_13
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 550
+        width: 85
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 733d1c63069cb7280800000000000000
+      internalID: -9044414011570793673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_14
+      rect:
+        serializedVersion: 2
+        x: 917
+        y: 617
+        width: 53
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6caa19d0c2fa65b0800000000000000
+      internalID: -5374216295223219090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_15
+      rect:
+        serializedVersion: 2
+        x: 952
+        y: 599
+        width: 31
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bd4d25a129e268b0800000000000000
+      internalID: -5160305892298764878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_16
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 550
+        width: 31
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38f789e5a7c4e58f0800000000000000
+      internalID: -549918016035848317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_17
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 293
+        width: 184
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed0705ba063611fa0800000000000000
+      internalID: -5831770775625895714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_18
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 314
+        width: 143
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb2e2d898b02610a0800000000000000
+      internalID: -6911300600943418693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_19
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 279
+        width: 205
+        height: 210
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8c1e406656938e80800000000000000
+      internalID: -8177527200647603059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_20
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 326
+        width: 119
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bdb0659603469f00800000000000000
+      internalID: 1123158852630527410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_21
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 20
+        width: 212
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47e75f5b105421910800000000000000
+      internalID: 1806582274179038836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_22
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 0
+        width: 249
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 550fe1d3010e0c510800000000000000
+      internalID: 1567499030674468949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_23
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 19
+        width: 219
+        height: 216
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f21b47ba83b52460800000000000000
+      internalID: 7216371386293097203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SceneryForest_24
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 19
+        width: 219
+        height: 216
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1c204679694b4050800000000000000
+      internalID: 5785798863591844894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SceneryForest_0: -5704822798948110538
+      SceneryForest_1: 4236795330824679406
+      SceneryForest_10: -407788732548494881
+      SceneryForest_11: 9068866124885646301
+      SceneryForest_12: 2090399687918085916
+      SceneryForest_13: -9044414011570793673
+      SceneryForest_14: -5374216295223219090
+      SceneryForest_15: -5160305892298764878
+      SceneryForest_16: -549918016035848317
+      SceneryForest_17: -5831770775625895714
+      SceneryForest_18: -6911300600943418693
+      SceneryForest_19: -8177527200647603059
+      SceneryForest_2: -4135569402972737553
+      SceneryForest_20: 1123158852630527410
+      SceneryForest_21: 1806582274179038836
+      SceneryForest_22: 1567499030674468949
+      SceneryForest_23: 7216371386293097203
+      SceneryForest_24: 5785798863591844894
+      SceneryForest_3: -258165865545619202
+      SceneryForest_4: -1044180251886835785
+      SceneryForest_5: 7674800986300306321
+      SceneryForest_6: -9167357517715385847
+      SceneryForest_7: 5840114644627018693
+      SceneryForest_8: 7791152074120902418
+      SceneryForest_9: -2933374115077672954
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

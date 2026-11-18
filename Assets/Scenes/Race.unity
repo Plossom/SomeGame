@@ -26863,6 +26863,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayers
   track: {fileID: 1295174578}
   plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+  lagoonDeck: {fileID: 2100000, guid: c421cef1b72bf4d92b819af27b68fac8, type: 2}
 --- !u!114 &1295174592
 MonoBehaviour:
   m_ObjectHideFlags: 0

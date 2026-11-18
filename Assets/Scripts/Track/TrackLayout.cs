@@ -368,6 +368,10 @@ namespace SomeGame.Track
             [Tooltip("A river through the land: the world is jungle, the river a ribbon of water this wide beyond the channel's edge, sandy banks, solid shores.")]
             public bool river;
             [Min(0.5f)] public float riverMargin = 2.6f;
+            [Tooltip("Water caves (lap distances from, to): the channel runs into the mountain - its rock roof fades while you are inside, dark water, glowing crystals.")]
+            public List<Vector2> caves = new();
+            [Tooltip("How wide the mountain's roof reaches out over each side of a cave.")]
+            [Min(2f)] public float caveRoof = 9f;
         }
 
         [Serializable]

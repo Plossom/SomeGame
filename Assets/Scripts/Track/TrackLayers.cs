@@ -12,11 +12,14 @@ namespace SomeGame.Track
     public class TrackLayers : TrackDerivedBehaviour
     {
         [SerializeField] Material plain;
+        [Tooltip("On the water: the channel's water, carried over on an aqueduct.")]
+        [SerializeField] Material lagoonDeck;
 
         // Above the cars on the ground, below the cars up on the deck (they are lifted by UpperBoost).
         const int ShadowOrder = -44, DeckOrder = 30, RailOrder = 31, UpperBoost = 40;
         static readonly Color Stone = new Color(0.55f, 0.58f, 0.64f).linear, StoneDark = new Color(0.32f, 0.35f, 0.41f).linear,
-            Rail = new Color(0.94f, 0.96f, 1f).linear, RailBlue = new Color(0.25f, 0.45f, 0.75f).linear;
+            Rail = new Color(0.94f, 0.96f, 1f).linear, RailBlue = new Color(0.25f, 0.45f, 0.75f).linear,
+            Sandstone = new Color(0.62f, 0.52f, 0.4f).linear, SandstoneLight = new Color(0.86f, 0.76f, 0.6f).linear, SandstoneDark = new Color(0.5f, 0.41f, 0.31f).linear;
 
         readonly List<GameObject> _parts = new();
         readonly List<Collider2D> _railings = new();
@@ -47,7 +50,7 @@ namespace SomeGame.Track
                 float w = track.OffRoadAt(d);
                 int k = dv.Count;
                 dv.Add(p + n * (w + 0.9f)); dv.Add(p - n * (w + 0.9f));
-                duv.Add(new Vector2(0f, d / 4f)); duv.Add(new Vector2(1f, d / 4f));
+                if (layout.biome == TrackLayout.Biome.Lagoon) { duv.Add((p + n * (w + 0.9f)) / 8f); duv.Add((p - n * (w + 0.9f)) / 8f); } else { duv.Add(new Vector2(0f, d / 4f)); duv.Add(new Vector2(1f, d / 4f)); }
                 if (i > 0) dt.AddRange(new[] { k - 2, k, k - 1, k - 1, k, k + 1 });
                 // Its shadow, well off to the side (it stands high).
                 Vector2 so = new(2.4f, -3.2f);
@@ -75,8 +78,9 @@ namespace SomeGame.Track
                 for (int i = 1; i < line.Count; i++)
                 {
                     Vector2 a = line[i - 1], b = line[i], d = (b - a).normalized, n = new(-d.y, d.x);
-                    Quad(a - n * 0.55f, b - n * 0.55f, b + n * 0.55f, a + n * 0.55f, StoneDark, rv, rc, rt);
-                    Quad(a - n * 0.32f, b - n * 0.32f, b + n * 0.32f, a + n * 0.32f, i % 4 < 2 ? Rail : RailBlue, rv, rc, rt);
+                    bool water = layout.biome == TrackLayout.Biome.Lagoon;
+                    Quad(a - n * 0.55f, b - n * 0.55f, b + n * 0.55f, a + n * 0.55f, water ? Sandstone : StoneDark, rv, rc, rt);
+                    Quad(a - n * 0.32f, b - n * 0.32f, b + n * 0.32f, a + n * 0.32f, water ? (i % 6 < 1 ? SandstoneDark : SandstoneLight) : i % 4 < 2 ? Rail : RailBlue, rv, rc, rt);
                 }
                 if (!Application.isPlaying) continue;
                 var go = new GameObject("ViaductRailing") { hideFlags = HideFlags.DontSave };
@@ -88,7 +92,7 @@ namespace SomeGame.Track
                 _railings.Add(edge);
             }
             Part("ViaductShadow", Mesh("ViaductShadow", sv, sc, st, null), plain, ShadowOrder);
-            var deckMaterial = track.Layout.roadMaterial != null ? track.Layout.roadMaterial : plain;
+            var deckMaterial = layout.biome == TrackLayout.Biome.Lagoon && lagoonDeck != null ? lagoonDeck : track.Layout.roadMaterial != null ? track.Layout.roadMaterial : plain;
             var deckColors = new List<Color>(); foreach (var _ in dv) deckColors.Add(Color.white);
             Part("ViaductDeck", Mesh("ViaductDeck", dv, deckColors, dt, duv), deckMaterial, DeckOrder);
             Part("ViaductRails", Mesh("ViaductRails", rv, rc, rt, null), plain, RailOrder);

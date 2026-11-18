@@ -18,8 +18,8 @@ MonoBehaviour:
   isTutorial: 0
   isChallenge: 0
   preview: {fileID: 21300000, guid: deecf5a2f29484c3ebd05bbe54efdf70, type: 3}
-  laps: 3
-  description: Shoot the rapids of a jungle river! Dodge the boulders and the crocodiles, slip through the temple's stone doors, trick over the log jam and bounce your way home past the great waterfall.
+  laps: 2
+  description: A tiny creek through the deep forest! Under the trees, over yourself on the old aqueduct, past crocodiles and the temple's stone doors, over the log jam, into the mountain through a water cave and down the rapids.
   difficulty: 3
   rivalCount: 7
   rivalSpeedScale: 0.98

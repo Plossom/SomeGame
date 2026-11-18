@@ -18,8 +18,8 @@ MonoBehaviour:
   isTutorial: 0
   isChallenge: 0
   preview: {fileID: 21300000, guid: 95fb3e109d4ab412ba0d382d4b8de836, type: 3}
-  laps: 3
-  description: The final showdown at the storm fortress! The narrowest ledges of the cup, waves crashing across them, lightning, big trick leaps from rock to rock - and the finish through the fortress gate.
+  laps: 2
+  description: 'The final showdown: three loops in a chain, crossing over and under themselves four times on the narrowest ledges of the cup. Waves crash across, lightning strikes, a sea cave, big trick leaps and the storm fortress.'
   difficulty: 5
   rivalCount: 7
   rivalSpeedScale: 1.02
