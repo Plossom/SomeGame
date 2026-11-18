@@ -58,7 +58,7 @@ namespace SomeGame.Track
             _shake = FindAnyObjectByType<SomeGame.CameraRig.CameraShake>();
             _nextStrike = Time.time + 6f;
             SomeGame.Car.CarHop.Lift = Lift;
-            SomeGame.Track.Track.Obstacle = GateShut;
+            if (_gates.Count > 0) SomeGame.Track.Track.Obstacle = GateShut;
         }
 
         protected override void OnDisable()

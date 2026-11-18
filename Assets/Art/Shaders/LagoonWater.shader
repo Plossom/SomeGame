@@ -32,6 +32,7 @@ Shader "SomeGame/LagoonWater"
             fixed4 _Tint, _CausticColor;
             float _CausticScale, _Wobble, _Glint;
             float _LagoonCalm; // global: 1 while the track's picture is taken (no light play in the preview)
+            float4 _LagoonMood; // global: the race's tint over the water (rgb), and how much (a)
             float4 _Flow;
 
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; fixed4 color : COLOR; };
@@ -52,6 +53,7 @@ Shader "SomeGame/LagoonWater"
                 float2 uv = i.uv;
                 float2 wob = float2(sin(uv.y * 6.2 + t * 0.9), cos(uv.x * 5.3 + t * 0.75)) * _Wobble;
                 fixed4 col = tex2D(_MainTex, uv + wob + t * _Flow.xy) * _Tint * i.color;
+                col.rgb = lerp(col.rgb, col.rgb * _LagoonMood.rgb, _LagoonMood.a);
                 float2 cuv = uv * _CausticScale;
                 float a = tex2D(_Caustics, cuv + wob * 2.0 + t * _Flow.zw).r;
                 float b = tex2D(_Caustics, cuv * 1.13 + float2(0.37, 0.61) - wob * 1.5 - t * _Flow.zw * 0.83).r;

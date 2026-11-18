@@ -23,6 +23,7 @@ namespace SomeGame.EditorTools
             WaterArt.GenerateLagoonScenery();
             WaterArt.GenerateHarbour();
             WaterArt.GenerateCoast();
+            WaterArt.GenerateWild();
             ArtGenerator.BuildGarageArt();
             return SetUp();
         }
@@ -38,8 +39,10 @@ namespace SomeGame.EditorTools
             var level2 = HarbourLevel(harbour);
             var coast = BuildLighthouseRun();
             var level3 = CoastLevel(coast);
+            var level4 = WildLevel("Water04", "Jungle Rapids", 4, BuildJungleRapids(), 3, 0.98f, 46,
+                "Shoot the rapids of a jungle river! Dodge the boulders and the crocodiles, slip through the temple's stone doors, trick over the log jam and bounce your way home past the great waterfall.");
             var catalog = Asset<LevelCatalog>("Assets/Data/Levels/WaterCatalog.asset");
-            catalog.levels = new List<LevelDefinition> { level, level2, level3 };
+            catalog.levels = new List<LevelDefinition> { level, level2, level3, level4 };
             EditorUtility.SetDirty(catalog);
             var cup = Asset<CupDefinition>("Assets/Data/Cups/Water.asset");
             cup.displayName = "WATER CUP";
@@ -50,7 +53,7 @@ namespace SomeGame.EditorTools
             var map = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/MapWater.png");
             if (map != null) cup.mapBackground = map;
             cup.starsRequired = 40;
-            cup.comingSoonRaces = new List<string> { "Jungle Rapids", "Pirate Bay", "Coral Coast", "Storm Chasers", "Storm Rally" };
+            cup.comingSoonRaces = new List<string> { "Pirate Bay", "Coral Coast", "Storm Chasers", "Storm Rally" };
             EditorUtility.SetDirty(cup);
             var list = AssetDatabase.LoadAssetAtPath<CupList>("Assets/Resources/Cups.asset");
             if (!list.cups.Contains(cup)) list.cups.Insert(Mathf.Min(2, list.cups.Count), cup);
@@ -114,6 +117,7 @@ namespace SomeGame.EditorTools
             lso.FindProperty("quay").objectReferenceValue = Mat("QuayStoneMat");
             lso.FindProperty("harbourScenery").objectReferenceValue = Mat("SceneryHarbourWater");
             lso.FindProperty("barge").objectReferenceValue = Sprite("Barge");
+            lso.FindProperty("logJam").objectReferenceValue = Sprite("LogJam");
             lso.ApplyModifiedPropertiesWithoutUndo();
 
             // The ferry route and the other branches on the water: channel water with foam edges.
@@ -136,6 +140,24 @@ namespace SomeGame.EditorTools
                          ("cruiseShip", "CruiseShip"), ("fireboat", "Fireboat"), ("waterArc", "WaterArc"), ("seaplane", "SeaplaneTop"), ("screenDrop", "ScreenDrop"), ("slideTower", "SlideTower") })
                 hso.FindProperty(field).objectReferenceValue = Sprite(sprite);
             hso.ApplyModifiedPropertiesWithoutUndo();
+
+            // The wild water of races 4-8.
+            var wildPart = Object.FindAnyObjectByType<TrackWild>(FindObjectsInactive.Include);
+            if (wildPart == null) wildPart = trackObject.gameObject.AddComponent<TrackWild>();
+            var wso = new SerializedObject(wildPart);
+            wso.FindProperty("track").objectReferenceValue = trackObject;
+            wso.FindProperty("plain").objectReferenceValue = Mat("Plain");
+            wso.FindProperty("scenery").objectReferenceValue = Mat("SceneryLagoon");
+            wso.FindProperty("ground").objectReferenceValue = Mat("LagoonJungleMat");
+            wso.FindProperty("water").objectReferenceValue = Mat("LagoonSea");
+            wso.FindProperty("sand").objectReferenceValue = Mat("LagoonSandMat");
+            wso.FindProperty("foam").objectReferenceValue = Mat("LagoonFoamMat");
+            string[] wildSprites = { "Crocodile", "TempleRuin", "TempleStatue", "TempleArch", "StoneDoor", "JungleFalls", "PirateShip", "SkullRock", "Cannonball",
+                "TargetRing", "Coin", "PlankRamp", "TreasureChest", "Jellyfish", "MantaRay", "CoralArch", "Fortress", "Bolt" };
+            var list = wso.FindProperty("sprites");
+            list.arraySize = wildSprites.Length;
+            for (int i = 0; i < wildSprites.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = Sprite(wildSprites[i]);
+            wso.ApplyModifiedPropertiesWithoutUndo();
 
             // The night coast.
             var coastPart = Object.FindAnyObjectByType<TrackCoast>(FindObjectsInactive.Include);
@@ -514,6 +536,152 @@ namespace SomeGame.EditorTools
             return level;
         }
 
+        static LevelDefinition WildLevel(string file, string title, int number, TrackLayout track, int difficulty, float rivalSpeed, int stars, string description)
+        {
+            var level = Asset<LevelDefinition>($"Assets/Data/Levels/{file}.asset");
+            level.displayName = title;
+            level.chapter = $"WATER CUP · RACE {number}";
+            level.track = track;
+            level.laps = 3;
+            level.description = description;
+            level.difficulty = difficulty;
+            level.rivalCount = 7;
+            level.rivalSpeedScale = rivalSpeed;
+            level.rivalCornerScale = 1.05f;
+            level.starsRequired = stars;
+            EditorUtility.SetDirty(level);
+            return level;
+        }
+
+        // A fresh track asset for a wild-water race, its lists cleared (it is laid out from scratch each time).
+        static TrackLayout WildTrack(string file, Vector2[] waypoints, float width)
+        {
+            var t = Asset<TrackLayout>($"Assets/Data/Tracks/{file}.asset");
+            t.waypoints = waypoints;
+            t.roadWidth = width;
+            t.rampWidth = Mathf.Min(3.6f, width * 0.5f);
+            t.widths = new List<TrackLayout.WidthKey>();
+            t.kerbWidth = 0.7f;
+            t.sampleSpacing = 1f;
+            t.checkpointCount = 8;
+            t.boundaryMargin = 28f;
+            t.biome = TrackLayout.Biome.Lagoon;
+            t.vehicle = TrackLayout.Vehicle.Boat;
+            t.sceneryMaterial = Mat("SceneryLagoon");
+            t.skyLife = 1f;
+            t.lagoonIslands = new List<TrackLayout.Island>();
+            t.decor = new List<TrackLayout.Decor>();
+            t.branches = new List<TrackLayout.Branch>();
+            t.caves = new List<TrackLayout.Cave>();
+            t.gaps = new List<TrackLayout.Gap>();
+            t.swells = new List<TrackLayout.Swell>();
+            t.bouncers = new List<TrackLayout.Bouncer>();
+            t.rings = new List<TrackLayout.Ring>();
+            t.pinball = new List<TrackLayout.PinballBumper>();
+            t.rides = new List<TrackLayout.Ride>();
+            t.currents = new List<TrackLayout.Current>();
+            t.dashPanels = new List<TrackLayout.DashPanel>();
+            t.dolphins = new List<float>();
+            t.footbridges = new List<float>();
+            t.geysers = new List<TrackLayout.Geyser>();
+            t.vortices = new List<TrackLayout.Vortex>();
+            t.boats = new List<TrackLayout.Boat>();
+            t.scenery = new List<TrackScenery.Kind>();
+            t.cranes = new List<TrackLayout.Crane>();
+            t.duckBasins = new List<Vector2>();
+            t.fireJets = new List<TrackLayout.FireJet>();
+            t.ferry = new TrackLayout.Ferry();
+            t.cruiseShip = new TrackLayout.CruiseShip();
+            t.seaplane = new TrackLayout.Seaplane();
+            t.coast = new TrackLayout.Coast { enabled = false, night = false };
+            t.wild = new TrackLayout.Wild { enabled = true };
+            t.lastLapShow = false;
+            return t;
+        }
+
+        static void Save(TrackLayout t)
+        {
+            t.bakedSignature = null;
+            EditorUtility.SetDirty(t);
+            AssetDatabase.SaveAssets();
+        }
+
+        static TrackLayout.Piece Piece(string sprite, Vector2 at, float size, float angle = 0f, bool overhead = false) =>
+            new() { sprite = sprite, position = at, size = size, angle = angle, overhead = overhead };
+
+        // ------------------------------------------------------------------ race 4: Jungle Rapids
+
+        static TrackLayout BuildJungleRapids()
+        {
+            var t = WildTrack("JungleRapids", R4, 7.5f);
+            var path = new TrackPath(t.waypoints, t.sampleSpacing);
+            Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
+            float Ang(float d) => Mathf.Atan2(path.NormalAt(d).y, path.NormalAt(d).x) * Mathf.Rad2Deg - 90f;
+            // The croc basin: the river opens out a little.
+            t.widths = new List<TrackLayout.WidthKey>
+            {
+                new() { distance = 142f, width = 7.5f }, new() { distance = 152f, width = 10f },
+                new() { distance = 212f, width = 10f }, new() { distance = 222f, width = 7.5f },
+            };
+            var w = t.wild;
+            w.river = true; w.riverMargin = 2.6f;
+            w.mood = new Color(0.5f, 0.95f, 0.55f, 0.85f); // (a green jungle river)
+            // Rapids: a strong current down two stretches, boulders to dodge in it.
+            t.currents = new List<TrackLayout.Current>
+            {
+                new() { from = 62f, to = 126f, lateral = 0f, width = 6f, push = 0.45f },
+                new() { from = 520f, to = 584f, lateral = 0f, width = 6f, push = 0.45f },
+            };
+            t.coast = new TrackLayout.Coast
+            {
+                enabled = true, night = false, lights = new Vector2[0], flats = new Vector2[0], tideBranch = -1, gates = new float[0], wreck = -1f,
+                rocks = new List<TrackLayout.TideRock>
+                {
+                    new() { position = At(76f, 2.4f), radius = 1.2f }, new() { position = At(92f, -2.2f), radius = 1.3f },
+                    new() { position = At(106f, 1.6f), radius = 1.1f }, new() { position = At(118f, -2.6f), radius = 1.2f },
+                    new() { position = At(534f, -2.2f), radius = 1.2f }, new() { position = At(550f, 2.4f), radius = 1.3f },
+                    new() { position = At(566f, -1.2f), radius = 1.1f },
+                },
+            };
+            // The crocodile basin, then the temple: its gate over the river, stone doors before and after it.
+            w.crocs = new List<Vector2> { new(162f, 0f), new(182f, 2f), new(202f, -2f) };
+            w.doors = new List<float> { 238f, 264f };
+            w.doorPeriod = 4.2f;
+            w.props = new List<TrackLayout.Piece>
+            {
+                Piece("TempleArch", At(251f), 15f, Ang(251f), true),
+                Piece("TempleRuin", At(251f, 17f), 13f, 20f),
+                Piece("TempleRuin", At(300f, -18f), 11f, -15f),
+                Piece("TempleStatue", At(232f, 8.5f), 3.4f), Piece("TempleStatue", At(232f, -8.5f), 3.4f),
+                Piece("TempleStatue", At(270f, 8.5f), 3.4f), Piece("TempleStatue", At(270f, -8.5f), 3.4f),
+                Piece("TempleStatue", At(40f, -9f), 3.2f), Piece("TempleStatue", At(610f, 9f), 3.2f),
+                Piece("JungleFalls", new Vector2(20f, 196f), 30f),
+            };
+            // A log jam to trick over, gummiboats to bounce off, rope bridges.
+            t.gaps = new List<TrackLayout.Gap> { new() { from = 300f, to = 314f, trickJump = true, tricks = 2, logs = true } };
+            t.rings = new List<TrackLayout.Ring> { new() { distance = 320f }, new() { distance = 368f, lateral = 1.5f }, new() { distance = 388f, lateral = -1.5f } };
+            t.bouncers = new List<TrackLayout.Bouncer>
+            {
+                new() { position = At(360f, 1.5f), radius = 2.1f, airTime = 0.85f, speedBoost = 1.15f },
+                new() { position = At(380f, -1.5f), radius = 2.1f, airTime = 0.85f, speedBoost = 1.15f },
+            };
+            t.footbridges = new List<float> { 20f, 420f, 640f };
+            t.dashPanels = new List<TrackLayout.DashPanel> { new() { distance = 44f }, new() { distance = 290f }, new() { distance = 500f }, new() { distance = 600f } };
+            Rect Cell(string n) => LagoonSheet.Cell(n);
+            t.scenery = new List<TrackScenery.Kind>
+            {
+                new() { name = "PalmTall", uv = Cell("PalmTall"), count = 90, sizeRange = new Vector2(6f, 9f), clearance = new Vector2(5f, 40f) },
+                new() { name = "Palm", uv = Cell("Palm"), count = 90, sizeRange = new Vector2(5f, 8f), clearance = new Vector2(5f, 40f) },
+                new() { name = "PalmPair", uv = Cell("PalmPair"), count = 40, sizeRange = new Vector2(6f, 8f), clearance = new Vector2(6f, 40f) },
+                new() { name = "Bush", uv = Cell("Bush"), count = 120, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(4.5f, 40f) },
+                new() { name = "Flowers", uv = Cell("Flowers"), count = 60, sizeRange = new Vector2(2.5f, 4f), clearance = new Vector2(4.5f, 40f) },
+                new() { name = "Rock", uv = Cell("Rock"), count = 20, sizeRange = new Vector2(2.5f, 4f), clearance = new Vector2(4.5f, 40f) },
+            };
+            t.lastLapShow = true;
+            Save(t);
+            return t;
+        }
+
         static LevelDefinition Level(string file, string title, TrackLayout track)
         {
             var level = Asset<LevelDefinition>($"Assets/Data/Levels/{file}.asset");
@@ -548,5 +716,7 @@ namespace SomeGame.EditorTools
             F_ISLET0 = new Vector2[] { new(134.4f, 56.5f), new(133.8f, 54.8f), new(132.7f, 53.5f), new(131.2f, 52.7f), new(129.4f, 52.5f), new(127.8f, 53.0f), new(126.4f, 54.1f), new(125.6f, 55.7f), new(125.4f, 57.4f), new(125.9f, 59.1f), new(127.0f, 60.4f), new(128.6f, 61.3f), new(130.3f, 61.4f), new(132.0f, 60.9f), new(133.4f, 59.8f), new(134.2f, 58.3f) },
             F_ISLET1 = new Vector2[] { new(118.4f, 81.4f), new(118.0f, 78.7f), new(116.8f, 77.3f), new(115.3f, 76.5f), new(113.5f, 76.3f), new(111.9f, 76.9f), new(110.5f, 78.0f), new(109.7f, 79.5f), new(109.5f, 81.3f), new(110.0f, 82.9f), new(111.1f, 84.3f), new(112.7f, 85.1f), new(114.4f, 85.3f), new(117.0f, 84.2f) },
             F_ISLET2 = new Vector2[] { new(134.4f, 98.2f), new(133.9f, 96.6f), new(132.8f, 95.2f), new(131.2f, 94.4f), new(129.5f, 94.2f), new(127.5f, 94.9f), new(125.4f, 99.1f), new(125.9f, 100.8f), new(127.1f, 102.2f), new(128.6f, 103.0f), new(130.4f, 103.2f), new(132.0f, 102.7f), new(133.4f, 101.5f), new(134.2f, 100.0f) };
+
+        static readonly Vector2[] R4 = new Vector2[] { new(0.0f, 0.0f), new(30.0f, 4.0f), new(56.0f, 0.0f), new(78.0f, -12.0f), new(100.0f, -10.0f), new(116.0f, 6.0f), new(118.0f, 28.0f), new(104.0f, 44.0f), new(84.0f, 50.0f), new(70.0f, 66.0f), new(74.0f, 88.0f), new(92.0f, 100.0f), new(116.0f, 104.0f), new(132.0f, 120.0f), new(130.0f, 144.0f), new(110.0f, 158.0f), new(84.0f, 156.0f), new(62.0f, 144.0f), new(40.0f, 148.0f), new(20.0f, 160.0f), new(0.0f, 156.0f), new(-14.0f, 138.0f), new(-12.0f, 114.0f), new(-24.0f, 96.0f), new(-34.0f, 74.0f), new(-28.0f, 50.0f), new(-30.0f, 26.0f), new(-18.0f, 8.0f) };
     }
 }

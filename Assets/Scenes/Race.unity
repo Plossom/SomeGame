@@ -26254,6 +26254,7 @@ GameObject:
   - component: {fileID: 1295174598}
   - component: {fileID: 1295174599}
   - component: {fileID: 1295174600}
+  - component: {fileID: 1295174601}
   m_Layer: 0
   m_Name: Track
   m_TagString: Untagged
@@ -27003,6 +27004,44 @@ MonoBehaviour:
   foamParticles: {fileID: 2100000, guid: e83888ef2dc58433ca63ff64168d23b1, type: 2}
   wreck: {fileID: 21300000, guid: 30d6097792c164152adfdccb90d1d41d, type: 3}
   rock: {fileID: 21300000, guid: 37dd280f96b164ea3ab875471dcc964d, type: 3}
+--- !u!114 &1295174601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295174575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84de0861ab6da46f99c67f01ec6a969c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackWild
+  track: {fileID: 1295174578}
+  plain: {fileID: 2100000, guid: 866c0f735252c4f5b8cf2ee4ad5fe9bb, type: 2}
+  scenery: {fileID: 2100000, guid: 1550ddcd6b7bd4ab3adbdbf4660ffab7, type: 2}
+  ground: {fileID: 2100000, guid: 43383a25ec2ca4660823714b8fdc3be0, type: 2}
+  water: {fileID: 2100000, guid: 3d08ec25ef1264f9580e319109356ee3, type: 2}
+  sand: {fileID: 2100000, guid: 3f19bc6965e0e4e628d7ff16959bce6b, type: 2}
+  foam: {fileID: 2100000, guid: 6b0ce423357e848ef977c5a3e71f5ee0, type: 2}
+  sprites:
+  - {fileID: 21300000, guid: 0454c48623aed42559442b3c1db753f3, type: 3}
+  - {fileID: 21300000, guid: 4e848e666a3b94d478bdc13e3c03d9ad, type: 3}
+  - {fileID: 21300000, guid: f5ac546bc66634159af5a6faba99754a, type: 3}
+  - {fileID: 21300000, guid: eebabd7bede7a4cdfbea684a628f4acf, type: 3}
+  - {fileID: 21300000, guid: 3d817ba2c85244fa9a27df57d2e8f611, type: 3}
+  - {fileID: 21300000, guid: b8a5c7ac880f04229b7f8db33fe07158, type: 3}
+  - {fileID: 21300000, guid: be4e942e539de483c9066cf353d6987a, type: 3}
+  - {fileID: 21300000, guid: f3d6a5fa1f61440af9420d495932150f, type: 3}
+  - {fileID: 21300000, guid: 338aab08883004077bf4e0bf054e3f24, type: 3}
+  - {fileID: 21300000, guid: 49bfba8c7fac746859834fb08c332e25, type: 3}
+  - {fileID: 21300000, guid: 89b8803baa7874c2e8af3d276bb8be6c, type: 3}
+  - {fileID: 21300000, guid: 634ad4a79c5e24ac59bf66603d551228, type: 3}
+  - {fileID: 21300000, guid: 9ffe8d0ac4fad432eab1222b90daa56c, type: 3}
+  - {fileID: 21300000, guid: c59c292aa47354fb9a644489742e0fff, type: 3}
+  - {fileID: 21300000, guid: 95050e5e85bdf407cb72995d87c94c0b, type: 3}
+  - {fileID: 21300000, guid: f2579e3559c7942a2808372148872433, type: 3}
+  - {fileID: 21300000, guid: 63dab48de7f214bc7a558e7d21e6069b, type: 3}
+  - {fileID: 21300000, guid: 570b957e59ae241de9bc71dac83050f3, type: 3}
 --- !u!1 &1297106806
 GameObject:
   m_ObjectHideFlags: 0
@@ -39461,6 +39500,7 @@ MonoBehaviour:
   quay: {fileID: 2100000, guid: 292fb7dac84f3470d8066ea86760c5cd, type: 2}
   harbourScenery: {fileID: 2100000, guid: 7bce4edcc7a48459b9cb95ee519b73f6, type: 2}
   barge: {fileID: 21300000, guid: 44fc64986806b4f6e9512da668f31ec4, type: 3}
+  logJam: {fileID: 21300000, guid: 9412a1c1cb0f04013a081b72ecfd2522, type: 3}
 --- !u!4 &1905064030
 Transform:
   m_ObjectHideFlags: 0

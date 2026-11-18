@@ -329,6 +329,67 @@ namespace SomeGame.Track
             public float dropAt = -1f;
         }
 
+        [Header("Wild water (Water Cup races 4-8)")]
+        public Wild wild = new();
+
+        [Serializable]
+        public class Wild
+        {
+            public bool enabled;
+            [Tooltip("Tint over all the water (rgb), and how much (a): green jungle river, dark storm sea.")]
+            public Color mood = new(1f, 1f, 1f, 0f);
+            [Tooltip("Stretches where the channel runs along a ledge: leave it there and you fall (or, on a reef, run aground).")]
+            public List<Ledge> ledges = new();
+            [Tooltip("Pictures placed by hand (by sprite name): temples, ships, rocks. Overhead ones are drawn over the boats and fade while you are under them.")]
+            public List<Piece> props = new();
+            [Tooltip("Crocodiles (lap distance, lateral): they surface now and then; hit one and you spin.")]
+            public List<Vector2> crocs = new();
+            [Tooltip("Stone doors across the channel (lap distances): they slide shut and open again in a rhythm.")]
+            public List<float> doors = new();
+            [Min(1f)] public float doorPeriod = 4f;
+            [Tooltip("A ship firing at the channel: where it lies, and the stretch it aims at (lap distances).")]
+            public Vector2 cannon;
+            public Vector2 cannonAims;
+            [Min(0.5f)] public float cannonEvery = 1.6f;
+            [Tooltip("Gold coins (lap distance, lateral): each one a little boost.")]
+            public List<Vector2> coins = new();
+            [Tooltip("Plank ramps on the channel (lap distance, lateral): drive over one and you fly.")]
+            public List<Vector2> planks = new();
+            [Tooltip("Swarms of jellyfish (lap distance from, to): they drift across the channel; touch one and you spin.")]
+            public List<Vector2> jellyfish = new();
+            [Tooltip("Manta rays leaping across the channel (lap distances).")]
+            public List<float> mantas = new();
+            [Tooltip("Lightning strikes on the channel (lap distances from, to): a ring warns, then the bolt.")]
+            public List<Vector2> lightning = new();
+            [Tooltip("Waves washing across the channel (lap distances from, to): warned, then they shove you sideways.")]
+            public List<Vector2> waves = new();
+            [Tooltip("Rain over the race.")]
+            public bool rain;
+            [Tooltip("A river through the land: the world is jungle, the river a ribbon of water this wide beyond the channel's edge, sandy banks, solid shores.")]
+            public bool river;
+            [Min(0.5f)] public float riverMargin = 2.6f;
+        }
+
+        [Serializable]
+        public class Ledge
+        {
+            public float from, to;
+            [Tooltip("Which side drops away: 0 both, +1 left, -1 right.")]
+            public float side;
+            [Tooltip("A reef instead of a cliff: you run aground rather than fall.")]
+            public bool reef;
+        }
+
+        [Serializable]
+        public class Piece
+        {
+            public string sprite;
+            public Vector2 position;
+            [Min(0.5f)] public float size = 8f;
+            public float angle;
+            public bool overhead;
+        }
+
         [Header("Coast at night (Water Cup)")]
         [Tooltip("A rocky coast at night in a gale: a lighthouse beam sweeping a dark sea, headlights, rain and lightning, a tide " +
                  "rising lap by lap, a staircase of locks up the cliff, a wreck to sail through. The storm breaks on the last lap.")]
@@ -900,6 +961,8 @@ namespace SomeGame.Track
             public bool plunge;
             [Tooltip("Lagoon: what lies across the channel to jump over (a sandbar, or a barge loaded with containers).")]
             public bool barge;
+            [Tooltip("Lagoon: a jam of logs across a river instead.")]
+            public bool logs;
             public bool IsDrawbridge => period > 0f;
         }
 

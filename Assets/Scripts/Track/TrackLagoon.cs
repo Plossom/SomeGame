@@ -77,7 +77,7 @@ namespace SomeGame.Track
         [SerializeField] Sprite sunbather, sandcastle, crab;
         [Tooltip("Quays (harbour races): their paving and the harbour scenery sheet.")]
         [SerializeField] Material quay, harbourScenery;
-        [SerializeField] Sprite barge;
+        [SerializeField] Sprite barge, logJam;
 
         const int HaloOrder = -69, FoamOrder = -68, SandOrder = -63, JungleOrder = -62, DecorOrder = 4,
                   CurrentOrder = -46, SwellOrder = -45, BarUnder = -66, PropOrder = 5, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
@@ -98,6 +98,9 @@ namespace SomeGame.Track
         {
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
             _parts.Clear(); _swells.Clear(); _dolphins.Clear(); _splashes.Clear(); _behind.Clear(); _shores.Clear(); _crabs.Clear();
+            // The race's tint over the water (a green river, a dark storm sea), none elsewhere.
+            var mood = layout.biome == TrackLayout.Biome.Lagoon && layout.wild != null && layout.wild.enabled ? layout.wild.mood : new Color(1f, 1f, 1f, 0f);
+            Shader.SetGlobalVector("_LagoonMood", mood);
             if (layout.biome != TrackLayout.Biome.Lagoon) return;
             for (int i = 0; i < layout.lagoonIslands.Count; i++) BuildIsland(layout.lagoonIslands[i], i);
             foreach (var c in layout.currents) BuildCurrent(path, c);
@@ -119,7 +122,7 @@ namespace SomeGame.Track
                 _swells.Add((s, crests));
             }
             foreach (float d in layout.footbridges) BuildBridge(path, d);
-            foreach (var gap in layout.gaps) if (!gap.hidden) { if (gap.barge) BuildBarge(path, gap); else if (!gap.drop) BuildSandbar(path, gap); }
+            foreach (var gap in layout.gaps) if (!gap.hidden) { if (gap.barge || gap.logs) BuildBarge(path, gap); else if (!gap.drop && !gap.IsDrawbridge) BuildSandbar(path, gap); }
             if (Application.isPlaying)
             {
                 _cars = FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None);
@@ -426,13 +429,14 @@ namespace SomeGame.Track
             Vector2 c = path.PointAt(mid), across = path.NormalAt(mid);
             float road = track.OffRoadAt(mid);
             float reach = road + 3.4f;
-            if (barge != null)
+            var picture = gap.logs ? logJam : barge;
+            if (picture != null)
             {
-                var sr = NewSprite("Barge", barge, PropOrder);
+                var sr = NewSprite(gap.logs ? "LogJam" : "Barge", picture, PropOrder);
                 sr.transform.position = c;
                 sr.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(across.y, across.x) * Mathf.Rad2Deg - 90f);
-                sr.transform.localScale = Vector3.one * (reach * 2f / Mathf.Max(0.01f, barge.bounds.size.y));
-                var shadow = NewSprite("BargeShadow", barge, HaloOrder + 2);
+                sr.transform.localScale = Vector3.one * (reach * 2f / Mathf.Max(0.01f, picture.bounds.size.y));
+                var shadow = NewSprite("BargeShadow", picture, HaloOrder + 2);
                 shadow.transform.position = c + new Vector2(0.6f, -0.8f);
                 shadow.transform.rotation = sr.transform.rotation;
                 shadow.transform.localScale = sr.transform.localScale;

@@ -424,6 +424,26 @@ MonoBehaviour:
     from: 0
     to: 0
     dropAt: -1
+  wild:
+    enabled: 0
+    mood: {r: 1, g: 1, b: 1, a: 0}
+    ledges: []
+    props: []
+    crocs: []
+    doors: []
+    doorPeriod: 4
+    cannon: {x: 0, y: 0}
+    cannonAims: {x: 0, y: 0}
+    cannonEvery: 1.6
+    coins: []
+    planks: []
+    jellyfish: []
+    mantas: []
+    lightning: []
+    waves: []
+    rain: 0
+    river: 0
+    riverMargin: 2.6
   coast:
     enabled: 0
     night: 1
@@ -463,6 +483,7 @@ MonoBehaviour:
     tricks: 2
     plunge: 0
     barge: 0
+    logs: 0
   elevatedRoad: 0
   bouncers:
   - position: {x: 65.13384, y: 11.912613}
