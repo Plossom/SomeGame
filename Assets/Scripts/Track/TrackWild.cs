@@ -208,9 +208,18 @@ namespace SomeGame.Track
                     Vector2 p0 = path.PointAt(d0), p1 = path.PointAt(d1), n0 = path.NormalAt(d0) * side, n1 = path.NormalAt(d1) * side;
                     float r0 = track.OffRoadAt(d0), r1 = track.OffRoadAt(d1);
                     Strip(v, u, t, rimC, p0 + n0 * r0, p1 + n1 * r1, p1 + n1 * (r1 + 0.9f), p0 + n0 * (r0 + 0.9f), Fade(rimTop, k0), Fade(rimTop, k1), Fade(rimTop, k1), Fade(rimTop, k0));
-                    float depth = ledge.reef ? 7f : 5.5f;
-                    Strip(fv, fu, ft, faceC, p0 + n0 * (r0 + 0.9f), p1 + n1 * (r1 + 0.9f), p1 + n1 * (r1 + depth), p0 + n0 * (r0 + depth),
-                        Fade(faceTop, k0), Fade(faceTop, k1), Fade(faceBottom, 0f), Fade(faceBottom, 0f));
+                    if (ledge.reef)
+                        Strip(fv, fu, ft, faceC, p0 + n0 * (r0 + 0.9f), p1 + n1 * (r1 + 0.9f), p1 + n1 * (r1 + 7f), p0 + n0 * (r0 + 7f),
+                            Fade(faceTop, k0), Fade(faceTop, k1), Fade(faceBottom, 0f), Fade(faceBottom, 0f));
+                    else
+                    {
+                        // The rock face (solid, darkening as it drops), then its deep shadow on the sea far below.
+                        Strip(fv, fu, ft, faceC, p0 + n0 * (r0 + 0.9f), p1 + n1 * (r1 + 0.9f), p1 + n1 * (r1 + 4f), p0 + n0 * (r0 + 4f),
+                            Fade(faceTop, k0), Fade(faceTop, k1), Fade(new Color(0.1f, 0.11f, 0.13f), k1), Fade(new Color(0.1f, 0.11f, 0.13f), k0));
+                        var deep = new Color(0.02f, 0.1f, 0.18f, 0.75f);
+                        Strip(fv, fu, ft, faceC, p0 + n0 * (r0 + 4f), p1 + n1 * (r1 + 4f), p1 + n1 * (r1 + 12f), p0 + n0 * (r0 + 12f),
+                            Fade(deep, k0), Fade(deep, k1), Fade(deep, 0f), Fade(deep, 0f));
+                    }
                 }
             }
             Mesh("LedgeFace", plain, FaceOrder, TrackMeshes.Quads("LedgeFace", fv, fu, ft, faceC));

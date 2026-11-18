@@ -1,0 +1,1292 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: PirateBay
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: 0}
+  - {x: 32, y: -4}
+  - {x: 62, y: 2}
+  - {x: 86, y: 16}
+  - {x: 100, y: 38}
+  - {x: 122, y: 46}
+  - {x: 146, y: 40}
+  - {x: 166, y: 52}
+  - {x: 172, y: 76}
+  - {x: 160, y: 98}
+  - {x: 138, y: 106}
+  - {x: 118, y: 120}
+  - {x: 112, y: 144}
+  - {x: 92, y: 160}
+  - {x: 66, y: 158}
+  - {x: 46, y: 146}
+  - {x: 24, y: 150}
+  - {x: 2, y: 140}
+  - {x: -14, y: 120}
+  - {x: -20, y: 96}
+  - {x: -36, y: 78}
+  - {x: -40, y: 54}
+  - {x: -30, y: 30}
+  - {x: -16, y: 10}
+  roadWidth: 7
+  widths: []
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 8
+  sections: 1
+  finishAtLastLine: 0
+  sectionLines: []
+  boundaryMargin: 28
+  rooms: []
+  houses: []
+  upstairs: []
+  stairs: []
+  decor: []
+  logJumps: []
+  rings:
+  - distance: 262
+    lateral: 0
+  - distance: 282
+    lateral: 1.5
+  - distance: 540
+    lateral: 0
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings: []
+  padLook: 0
+  boats:
+  - kind: 1
+    position: {x: 180, y: 10}
+    angle: 40
+    drift: 0
+  - kind: 3
+    position: {x: 190, y: 30}
+    angle: 0
+    drift: 0
+  - kind: 0
+    position: {x: 230, y: -20}
+    angle: 20
+    drift: 8
+  fireworks: 0
+  lastLapShow: 1
+  cows: []
+  fences: []
+  trains: []
+  props: []
+  bankMaterial: {fileID: 0}
+  sceneryMaterial: {fileID: 2100000, guid: 1550ddcd6b7bd4ab3adbdbf4660ffab7, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 2
+  noSnowfall: 0
+  lagoonIslands:
+  - points:
+    - {x: 2.8, y: 9.6}
+    - {x: -2.2, y: 11.5}
+    - {x: -6.4, y: 14.6}
+    - {x: -11.9, y: 20.5}
+    - {x: -17.7, y: 28.7}
+    - {x: -28.7, y: 50}
+    - {x: -30.2, y: 56.1}
+    - {x: -30.1, y: 62.7}
+    - {x: -26.5, y: 74.4}
+    - {x: -15.1, y: 85.7}
+    - {x: -10.5, y: 92.7}
+    - {x: -8.2, y: 99.6}
+    - {x: -5.8, y: 113.7}
+    - {x: -3, y: 119.2}
+    - {x: 6, y: 130.2}
+    - {x: 16.8, y: 137.4}
+    - {x: 25.8, y: 140.1}
+    - {x: 39.9, y: 136.2}
+    - {x: 47.4, y: 136.1}
+    - {x: 55.1, y: 138.9}
+    - {x: 69.1, y: 148.5}
+    - {x: 82.3, y: 151}
+    - {x: 90.5, y: 149.9}
+    - {x: 97.7, y: 145.2}
+    - {x: 103.7, y: 138.3}
+    - {x: 106.9, y: 120.3}
+    - {x: 109.5, y: 114.8}
+    - {x: 113.2, y: 110.2}
+    - {x: 120.5, y: 104.3}
+    - {x: 133.6, y: 97}
+    - {x: 152.9, y: 90.9}
+    - {x: 156.8, y: 86.6}
+    - {x: 160.4, y: 80.4}
+    - {x: 162.2, y: 72.5}
+    - {x: 160.4, y: 63}
+    - {x: 156.6, y: 56.3}
+    - {x: 149.7, y: 51.5}
+    - {x: 144, y: 50}
+    - {x: 130.7, y: 54.7}
+    - {x: 123.2, y: 56}
+    - {x: 113, y: 54.9}
+    - {x: 104.1, y: 52}
+    - {x: 96.3, y: 47.7}
+    - {x: 91, y: 43.1}
+    - {x: 86.9, y: 37.2}
+    - {x: 80.9, y: 25.5}
+    - {x: 77.6, y: 21.9}
+    - {x: 66.8, y: 14.9}
+    - {x: 52.2, y: 9.3}
+    - {x: 40, y: 6.7}
+    - {x: 28.9, y: 6}
+    - {x: 14.9, y: 7.1}
+    kind: 0
+    beach: 5
+    palms: 70
+    huts: 4
+    seed: 61
+  - points:
+    - {x: 150, y: 221}
+    - {x: 195, y: 100}
+    - {x: 182.2, y: 74.3}
+    - {x: 180.9, y: 82.4}
+    - {x: 177.3, y: 91.3}
+    - {x: 172.1, y: 99.5}
+    - {x: 166.8, y: 105.3}
+    - {x: 159, y: 110.1}
+    - {x: 142.5, y: 114.9}
+    - {x: 132.3, y: 120.5}
+    - {x: 127, y: 124.7}
+    - {x: 125.6, y: 127.6}
+    - {x: 123.6, y: 141.8}
+    - {x: 121.2, y: 148}
+    - {x: 114.5, y: 156.8}
+    - {x: 105.4, y: 164.4}
+    - {x: 98.4, y: 168.3}
+    - {x: 91.7, y: 170.4}
+    - {x: 84.4, y: 171}
+    - {x: 76.2, y: 170.5}
+    - {x: 59.8, y: 166.3}
+    - {x: 45.7, y: 156.6}
+    - {x: 43.3, y: 155.9}
+    - {x: 41.1, y: 156.4}
+    - {x: 47, y: 175.5}
+    - {x: 34.6, y: 179.2}
+    - {x: 21.9, y: 179.9}
+    - {x: 13, y: 178.4}
+    - {x: 3.4, y: 175.2}
+    - {x: -12.7, y: 166.4}
+    - {x: -27, y: 153.6}
+    - {x: -37.4, y: 139.6}
+    - {x: -43.7, y: 126.4}
+    - {x: -47.3, y: 108.4}
+    - {x: -27.8, y: 103.6}
+    - {x: -29.8, y: 99.3}
+    - {x: -40.1, y: 89.4}
+    - {x: -44.8, y: 82.7}
+    - {x: -48.9, y: 71.2}
+    - {x: -50.3, y: 58.8}
+    - {x: -49.3, y: 49.3}
+    - {x: -45.9, y: 39.1}
+    - {x: -37.4, y: 22.8}
+    - {x: -30, y: 11.1}
+    - {x: -23.9, y: 3.8}
+    - {x: -15.5, y: -3.7}
+    - {x: -9.1, y: -7.4}
+    - {x: 0.2, y: -10.4}
+    - {x: 17.6, y: -13.4}
+    - {x: 34.2, y: -13.9}
+    - {x: 51.1, y: -11.6}
+    - {x: 66.9, y: -6.8}
+    - {x: 78.6, y: -1.4}
+    - {x: 89.4, y: 5.7}
+    - {x: 96.9, y: 13.4}
+    - {x: 106.2, y: 30.1}
+    - {x: 112, y: 33.7}
+    - {x: 119.8, y: 35.8}
+    - {x: 124.2, y: 35.7}
+    - {x: 137.4, y: 31}
+    - {x: 144.7, y: 29.9}
+    - {x: 153.8, y: 31.6}
+    - {x: 163, y: 36}
+    - {x: 150, y: 10}
+    - {x: 40, y: -20}
+    - {x: -100.3, y: -20}
+    - {x: -100.3, y: 221}
+    kind: 0
+    beach: 5
+    palms: 80
+    huts: 3
+    seed: 62
+  - points:
+    - {x: 139, y: -24}
+    - {x: 138.3, y: -27.4}
+    - {x: 136.4, y: -30.4}
+    - {x: 133.4, y: -32.3}
+    - {x: 130, y: -33}
+    - {x: 126.6, y: -32.3}
+    - {x: 123.6, y: -30.4}
+    - {x: 121.7, y: -27.4}
+    - {x: 121, y: -24}
+    - {x: 121.7, y: -20.6}
+    - {x: 123.6, y: -17.6}
+    - {x: 126.6, y: -15.7}
+    - {x: 130, y: -15}
+    - {x: 133.4, y: -15.7}
+    - {x: 136.4, y: -17.6}
+    - {x: 138.3, y: -20.6}
+    kind: 1
+    beach: 3
+    palms: 4
+    huts: 0
+    seed: 63
+  - points:
+    - {x: 183, y: 20}
+    - {x: 182.5, y: 17.3}
+    - {x: 180.9, y: 15.1}
+    - {x: 178.7, y: 13.5}
+    - {x: 176, y: 13}
+    - {x: 173.3, y: 13.5}
+    - {x: 171.1, y: 15.1}
+    - {x: 169.5, y: 17.3}
+    - {x: 169, y: 20}
+    - {x: 169.5, y: 22.7}
+    - {x: 171.1, y: 24.9}
+    - {x: 173.3, y: 26.5}
+    - {x: 176, y: 27}
+    - {x: 178.7, y: 26.5}
+    - {x: 180.9, y: 24.9}
+    - {x: 182.5, y: 22.7}
+    kind: 2
+    beach: 2
+    palms: 2
+    huts: 0
+    seed: 64
+  swells:
+  - from: 120
+    to: 150
+    speed: 8
+    period: 2.8
+    offset: 0
+  currents: []
+  dolphins: []
+  footbridges:
+  - 92
+  ferry:
+    branch: -1
+    at: 0.5
+    docked: 7
+    away: 5
+  cranes: []
+  duckBasins: []
+  ducks: 160
+  cruiseShip:
+    enabled: 0
+    from: 0
+    to: 0
+    lateral: 22
+    speed: 6
+  fireJets: []
+  seaplane:
+    enabled: 0
+    from: 0
+    to: 0
+    dropAt: -1
+  wild:
+    enabled: 1
+    mood: {r: 1, g: 0.96, b: 0.85, a: 0.25}
+    ledges:
+    - from: 404
+      to: 478
+      side: -1
+      reef: 0
+    props:
+    - sprite: PirateShip
+      position: {x: 206, y: 58}
+      size: 30
+      angle: 10
+      overhead: 0
+    - sprite: SkullRock
+      position: {x: 109.63639, y: 147.24933}
+      size: 17
+      angle: -50.490997
+      overhead: 1
+    - sprite: TreasureChest
+      position: {x: 29.702944, y: -14.055392}
+      size: 3.4
+      angle: 15
+      overhead: 0
+    - sprite: TreasureChest
+      position: {x: -22.564941, y: 37.221092}
+      size: 3.4
+      angle: -20
+      overhead: 0
+    - sprite: TreasureChest
+      position: {x: 60.87426, y: 142.80302}
+      size: 3.2
+      angle: 40
+      overhead: 0
+    crocs: []
+    doors: []
+    doorPeriod: 4
+    cannon: {x: 200, y: 58}
+    cannonAims: {x: 150, y: 236}
+    cannonEvery: 1.5
+    coins:
+    - {x: 160, y: 2}
+    - {x: 169, y: -2}
+    - {x: 178, y: 2}
+    - {x: 187, y: -2}
+    - {x: 196, y: 2}
+    - {x: 205, y: -2}
+    - {x: 410, y: -2.4}
+    - {x: 419, y: -2.4}
+    - {x: 428, y: -2.4}
+    - {x: 437, y: -2.4}
+    - {x: 446, y: -2.4}
+    - {x: 455, y: -2.4}
+    - {x: 464, y: -2.4}
+    - {x: 40, y: 0}
+    - {x: 48, y: 0}
+    - {x: 56, y: 0}
+    - {x: 64, y: 0}
+    - {x: 72, y: 0}
+    planks:
+    - {x: 252, y: 0}
+    - {x: 272, y: 1.5}
+    jellyfish: []
+    mantas: []
+    lightning: []
+    waves: []
+    rain: 0
+    river: 0
+    riverMargin: 2.6
+  coast:
+    enabled: 1
+    night: 0
+    lighthouse: {x: 0, y: 0}
+    beamPeriod: 7
+    lights: []
+    darkness: 0.72
+    flats: []
+    tideBranch: -1
+    rocks:
+    - position: {x: 166.57727, y: 58.266724}
+      radius: 1.2
+      untilLap: 0
+    - position: {x: 172.55815, y: 83.41924}
+      radius: 1.2
+      untilLap: 0
+    gates: []
+    top: 0
+    gatePeriod: 3.6
+    gateOpen: 0.55
+    wreck: 580
+    lightning: 0
+    whirlpool: {x: 0, y: 0}
+    whirlRadius: 0
+    whirlPull: 5
+  waterWorld: 0
+  biome: 2
+  gaps:
+  - from: 520
+    to: 534
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 0
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 1
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+    barge: 0
+    logs: 0
+  elevatedRoad: 0
+  bouncers: []
+  geysers: []
+  sweepers: []
+  skyLife: 1
+  rivers: []
+  lakes: []
+  oil: []
+  rampLength: 3
+  rampWidth: 3.5
+  shortcuts: []
+  branches: []
+  banks: []
+  penguins: []
+  dashPanels:
+  - distance: 12
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 300
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 392
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 500
+    lateral: 0
+    length: 4
+    width: 3.2
+  icePatches: []
+  slopes: []
+  snowPiles: []
+  viaducts: []
+  fallingTrees: []
+  avalanche:
+    enabled: 0
+    from: -60
+    delay: 2
+    speed: 13
+    maxBehind: 90
+    stopAt: 0
+  train:
+    enabled: 0
+    points: []
+    speed: 12
+    trains: 2
+    wagons: 6
+    ramps: []
+    leapAt: 0
+  gifts: []
+  night: 0
+  santa: 0
+  snowballFights: []
+  turntables: []
+  nets: []
+  snowTunnels: []
+  chairlifts: []
+  helix:
+    enabled: 0
+    centre: {x: 0, y: 0}
+    radius: 12
+    entry: 0
+    from: 0
+    to: 0
+    exit: 0
+    turns: 6
+    mountainRadius: 40
+  holes: []
+  platforms: []
+  hatches: []
+  vortices: []
+  abyss: 0
+  islands: []
+  splits: []
+  slidingDoors: []
+  pools: []
+  bowling: []
+  billiards: []
+  glassFloors: []
+  storms: []
+  twisters: []
+  snowBase: 0
+  noHeadlights: 0
+  rides: []
+  pinball: []
+  rinks: []
+  slalom: []
+  fjord:
+    enabled: 0
+    center: {x: 0, y: 0}
+    radii: {x: 40, y: 20}
+    angle: 0
+    iceRoad: -1
+    crackLap: 2
+    breakLap: 3
+    panels: []
+    shipFrom: {x: 0, y: 0}
+    shipTo: {x: 0, y: 0}
+    shipSpeed: 7
+    shipWait: 4
+    refreeze: 6
+    floes: []
+  chasms: []
+  caves:
+  - branch: -1
+    from: 322
+    to: 346
+    stalagmites: []
+    level: -99
+    wallsOnly: 0
+    seamless: 0
+  scenery:
+  - name: Coral
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 30
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.2, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 605.24475}
+    canopy: 0
+    indoor: 0
+  - name: CoralPink
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    count: 26
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 1.2, y: 8}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 605.24475}
+    canopy: 0
+    indoor: 0
+  - name: Canoe
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    count: 3
+    sizeRange: {x: 5, y: 6}
+    clearance: {x: 8, y: 0}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery:
+  - position: {x: 80.075356, y: 172.5759}
+    right: {x: -1.786951, y: 1.3637388}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 75.42988, y: 170.55333}
+    right: {x: -1.5626708, y: -0.50366986}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 194.66849, y: 169.80534}
+    right: {x: 0.054466054, y: -2.6373992}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 26.34003, y: 169.39104}
+    right: {x: -0.27706033, y: 2.5419064}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 70.99497, y: 169.20822}
+    right: {x: -0.9514572, y: 2.2835305}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 30.836052, y: 163.29964}
+    right: {x: -0.55665267, y: -1.8457458}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 54.041035, y: 162.09622}
+    right: {x: -2.1163902, y: -1.0949544}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 47.186165, y: 158.9236}
+    right: {x: -0.832235, y: -1.8657981}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 12.065654, y: 158.3181}
+    right: {x: -1.5600106, y: -0.79210305}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 7.9171534, y: 156.05617}
+    right: {x: -0.36687317, y: 1.4614615}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 35.702682, y: 155.95871}
+    right: {x: 1.9562404, y: 0.3759165}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 2.683082, y: 151.68379}
+    right: {x: -1.6531682, y: 0.19311824}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -3.5222888, y: 150.54713}
+    right: {x: 0.40455195, y: -2.1373188}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 125.35103, y: 143.83012}
+    right: {x: -0.10663759, y: -1.832242}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -10.06112, y: 140.37871}
+    right: {x: 1.3805737, y: 1.6592553}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 125.73112, y: 133.3293}
+    right: {x: 0.77347124, y: 1.6397005}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 128.69583, y: 125.96333}
+    right: {x: 1.5117093, y: -0.7458615}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 130.86661, y: 123.07034}
+    right: {x: -1.9465624, y: 1.164838}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 137.01602, y: 118.58216}
+    right: {x: -0.24397664, y: 1.9359345}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -26.563581, y: 116.47094}
+    right: {x: 1.1726068, y: 2.0103126}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 142.70996, y: 112.73971}
+    right: {x: -1.7821522, y: 1.0741825}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -26.455807, y: 109.348785}
+    right: {x: 2.2364464, y: 0.57442224}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 163.29048, y: 108.7458}
+    right: {x: -2.1034772, y: -0.888058}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -31.430183, y: 104.58987}
+    right: {x: -0.5171664, y: -2.007694}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -27.212612, y: 104.327065}
+    right: {x: -1.9972286, y: -1.4272554}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 171.66742, y: 101.328255}
+    right: {x: -1.8644003, y: 0.20612723}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -36.842216, y: 91.36984}
+    right: {x: 2.2371986, y: -1.0475657}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 178.36061, y: 88.39912}
+    right: {x: 0.21647497, y: -1.5167333}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 180.88103, y: 85.7035}
+    right: {x: 1.42794, y: 0.9021701}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -48.75909, y: 75.817345}
+    right: {x: -1.2786741, y: -1.116716}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 183.69264, y: 68.479355}
+    right: {x: -0.5839666, y: -1.7732067}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 184.45818, y: 58.943306}
+    right: {x: -2.0716038, y: 0.7493888}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -51.72345, y: 57.9524}
+    right: {x: -2.3471422, y: 0.36493552}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 140.02138, y: 48.913467}
+    right: {x: -0.011385224, y: 1.7856599}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -52.408382, y: 47.359734}
+    right: {x: 0.1219387, y: 2.172389}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 176.61795, y: 43.530178}
+    right: {x: 0.74195844, y: -2.245448}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -47.133904, y: 42.39704}
+    right: {x: 1.6555156, y: 0.39277586}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 120.62277, y: 34.063927}
+    right: {x: -1.7932132, y: -0.88495517}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 113.719406, y: 32.58942}
+    right: {x: -0.32837692, y: -1.5222468}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 158.8281, y: 31.611}
+    right: {x: 1.4182885, y: 1.3337547}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 108.79004, y: 27.819065}
+    right: {x: 1.4780324, y: 1.1272974}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -38.869484, y: 27.728666}
+    right: {x: -1.9691535, y: 1.1803666}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 104.80255, y: 21.270454}
+    right: {x: 2.036822, y: 1.1578715}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 98.398155, y: 18.390934}
+    right: {x: -1.6597351, y: 0.42182347}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -36.20479, y: 16.182184}
+    right: {x: -1.0604345, y: -2.0198796}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -31.451641, y: 11.162077}
+    right: {x: -1.7476891, y: 0.20532912}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -31.231361, y: 7.221736}
+    right: {x: 0.10298589, y: -2.344131}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 92.415634, y: 5.3452005}
+    right: {x: 1.2258686, y: -1.4530319}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -24.372002, y: 3.2971158}
+    right: {x: -1.728368, y: -0.052299365}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -15.689892, y: -2.9244685}
+    right: {x: -1.1451553, y: -0.97598845}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -5.8710794, y: -10.0626}
+    right: {x: 2.1026182, y: 1.0069569}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 5.708439, y: -10.290311}
+    right: {x: -0.04869423, y: 2.0135014}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 25.746014, y: -12.839582}
+    right: {x: 0.77765536, y: -1.4655747}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 33.98319, y: -13.189159}
+    right: {x: 2.074663, y: -0.45275328}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 22.423368, y: -13.483513}
+    right: {x: -1.3274617, y: -1.2944685}
+    uv:
+      serializedVersion: 2
+      x: 0.25
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 12.357549, y: -14.063687}
+    right: {x: -1.5886979, y: 0.87528}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 7.4624763, y: -14.549334}
+    right: {x: 1.2274396, y: 1.9958911}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 47.18061, y: -14.71191}
+    right: {x: -2.25053, y: -0.74776626}
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 45.792534, y: -23.913528}
+    right: {x: -2.7311172, y: 0.066237204}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.75
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  bakedSignature: 5732d3fbbe69bb3f
