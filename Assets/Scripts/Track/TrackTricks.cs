@@ -167,10 +167,28 @@ namespace SomeGame.Track
             for (int i = _attempts.Count - 1; i >= 0; i--)
             {
                 var a = _attempts[i];
-                if (a.Car == null || (!a.Car.IsAirborne && !a.Ended))
+                // Already being carried back (it came down in the water): nothing more to do.
+                if (a.Car != null && a.Car.IsCarried && !a.Succeeded)
                 {
-                    // Landed: a success earns a big boost on top of the tricks' own.
+                    if (a == _shown) { _shown = null; Slow(false); }
+                    _attempts.RemoveAt(i);
+                    continue;
+                }
+                if (a.Car == null || (!a.Car.IsAirborne && !a.Ended) || (a.Failed && !a.Car.IsAirborne))
+                {
+                    // Landed: a success earns a big boost on top of the tricks' own. Down without every arrow done
+                    // (wrong, too slow, or the flight simply ended first): back before the jump - no driving on.
                     if (a.Car != null && a.Succeeded) a.Car.GiveBoost(1f);
+                    else if (a.Car != null)
+                    {
+                        if (!a.Failed && a.Player)
+                        {
+                            _shakeAt = Time.unscaledTime;
+                            if (_combo != null) _combo.Banner("MISSED!", new Color(1f, 0.4f, 0.35f));
+                            Missed?.Invoke();
+                        }
+                        SendBack(a);
+                    }
                     if (a == _shown) { _shown = null; Slow(false); }
                     _attempts.RemoveAt(i);
                     continue;
@@ -204,6 +222,18 @@ namespace SomeGame.Track
                 _playerInput.TapsBlocked = _shown != null; // the whole trick-jump flight: no tap spins after the arrows
             }
             DrawUi();
+        }
+
+        // A failed trick jump: carried back through the air to the run-up before the jump (unless the water already
+        // took it - then it is on its way back anyway).
+        void SendBack(Attempt a)
+        {
+            var car = a.Car;
+            if (car.IsCarried || car.IsAirborne) return;
+            var gap = track.Layout.gaps[a.Gap];
+            var pose = track.RespawnBefore(gap.from, 6f);
+            float top = car.Stats != null ? car.Stats.topSpeed : 18f;
+            if (!car.CarryBack(pose, top * 0.45f, fromWater: true)) car.Respawn(pose);
         }
 
         // All the tricks done: the flight is brought round onto the landing (on the road, facing along it), so a
