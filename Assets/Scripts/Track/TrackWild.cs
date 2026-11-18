@@ -809,7 +809,7 @@ namespace SomeGame.Track
                 // A grey-blue gloom over the storm (not darkness: everything stays easy to see).
                 var gv = new List<Vector3>(); var gu = new List<Vector2>(); var gt = new List<int>(); var gc = new List<Color32>();
                 TrackMeshes.AddQuad(gv, gu, gt, Vector2.zero, Vector2.right * 400f, Vector2.up * 400f, Vector2.one);
-                for (int k = 0; k < 4; k++) gc.Add(new Color32(30, 45, 70, 40));
+                for (int k = 0; k < 4; k++) gc.Add(new Color32(25, 38, 62, 70));
                 var gloom = Mesh("StormGloom", plain, StormOrder, TrackMeshes.Quads("StormGloom", gv, gu, gt, gc), cam.transform);
                 gloom.transform.localPosition = new Vector3(0f, 0f, 5f);
                 _storm = gloom.GetComponent<MeshRenderer>();

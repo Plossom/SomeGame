@@ -128,7 +128,7 @@ MonoBehaviour:
     dropAt: -1
   wild:
     enabled: 1
-    mood: {r: 0.5, g: 0.95, b: 0.55, a: 0.85}
+    mood: {r: 0.32, g: 0.85, b: 0.38, a: 1}
     ledges: []
     props:
     - sprite: TempleArch
@@ -5534,4 +5534,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 
+  bakedSignature: e3968dd3bbb28c87

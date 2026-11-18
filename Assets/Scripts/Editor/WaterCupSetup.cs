@@ -45,8 +45,10 @@ namespace SomeGame.EditorTools
                 "Pirates! Dodge the cannonballs where the red rings mark, grab the gold coins, launch off the plank ramps, sail through the jaws of skull rock and along the cliff's edge - don't fall off!");
             var level6 = WildLevel("Water06", "Coral Coast", 6, BuildCoralCoast(), 4, 1f, 50,
                 "Thread the narrow channels through the reef - touch the coral and you run aground! Dodge the drifting jellyfish and the leaping manta rays, sail under the coral arch and trick over the reef crest.");
+            var level7 = WildLevel("Water07", "Storm Chasers", 7, BuildStormChasers(), 5, 1f, 52,
+                "Into the storm! Race along narrow ledges high above the raging sea - one slip and you fall. Watch for the rings where lightning will strike, skirt the giant whirlpool and leap from stack to stack.");
             var catalog = Asset<LevelCatalog>("Assets/Data/Levels/WaterCatalog.asset");
-            catalog.levels = new List<LevelDefinition> { level, level2, level3, level4, level5, level6 };
+            catalog.levels = new List<LevelDefinition> { level, level2, level3, level4, level5, level6, level7 };
             EditorUtility.SetDirty(catalog);
             var cup = Asset<CupDefinition>("Assets/Data/Cups/Water.asset");
             cup.displayName = "WATER CUP";
@@ -57,7 +59,7 @@ namespace SomeGame.EditorTools
             var map = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/MapWater.png");
             if (map != null) cup.mapBackground = map;
             cup.starsRequired = 40;
-            cup.comingSoonRaces = new List<string> { "Storm Chasers", "Storm Rally" };
+            cup.comingSoonRaces = new List<string> { "Storm Rally" };
             EditorUtility.SetDirty(cup);
             var list = AssetDatabase.LoadAssetAtPath<CupList>("Assets/Resources/Cups.asset");
             if (!list.cups.Contains(cup)) list.cups.Insert(Mathf.Min(2, list.cups.Count), cup);
@@ -629,7 +631,7 @@ namespace SomeGame.EditorTools
             };
             var w = t.wild;
             w.river = true; w.riverMargin = 2.6f;
-            w.mood = new Color(0.5f, 0.95f, 0.55f, 0.85f); // (a green jungle river)
+            w.mood = new Color(0.32f, 0.85f, 0.38f, 1f); // (a green jungle river)
             // Rapids: a strong current down two stretches, boulders to dodge in it.
             t.currents = new List<TrackLayout.Current>
             {
@@ -826,6 +828,76 @@ namespace SomeGame.EditorTools
             return t;
         }
 
+        // ------------------------------------------------------------------ race 7: Storm Chasers
+
+        static TrackLayout BuildStormChasers()
+        {
+            var t = WildTrack("StormChasers", R7, 6f);
+            var path = new TrackPath(t.waypoints, t.sampleSpacing);
+            Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
+            t.lagoonIslands = new List<TrackLayout.Island>
+            {
+                new() { points = R7_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 5f, palms = 30, seed = 80 },
+                new() { points = R7_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 81 },
+                new() { points = R7_LAND2, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 82 },
+                new() { points = R7_LAND3, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 83 },
+                new() { points = R7_LAND4, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 84 },
+                new() { points = R7_LAND5, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 85 },
+                new() { points = R7_LAND6, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 86 },
+                new() { points = R7_LAND7, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 87 },
+            };
+            var w = t.wild;
+            w.mood = new Color(0.16f, 0.24f, 0.42f, 1f); // (a dark storm sea)
+            w.rain = true;
+            // Most of the lap runs along ledges high above the sea: fall off either side.
+            t.widths = new List<TrackLayout.WidthKey>
+            {
+                new() { distance = 24f, width = 6f }, new() { distance = 40f, width = 5.5f }, new() { distance = 300f, width = 5.5f }, new() { distance = 310f, width = 6.5f },
+                new() { distance = 348f, width = 6.5f }, new() { distance = 358f, width = 5.5f }, new() { distance = 620f, width = 5.5f }, new() { distance = 636f, width = 6f },
+            };
+            w.ledges = new List<TrackLayout.Ledge>
+            {
+                new() { from = 24f, to = 150f, side = 0f },
+                new() { from = 176f, to = 300f, side = 0f },
+                new() { from = 356f, to = 466f, side = 0f },
+                new() { from = 492f, to = 620f, side = 0f },
+            };
+            w.lightning = new List<Vector2> { new(60f, 210f), new(380f, 540f) };
+            w.props = new List<TrackLayout.Piece> { Piece("TreasureChest", At(10f, -9f), 3f, 10f) };
+            t.decor = new List<TrackLayout.Decor>
+            {
+                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = new Vector2(60f, 230f), size = 12f },
+                new() { cell = "Lighthouse", uv = LagoonSheet.Cell("Lighthouse"), position = new Vector2(140f, 40f), size = 10f },
+            };
+            // The giant whirlpool beside the open stretch, and a leap from stack to stack.
+            t.coast = new TrackLayout.Coast
+            {
+                enabled = true, night = false, lights = new Vector2[0], flats = new Vector2[0], tideBranch = -1, gates = new float[0], wreck = -1f,
+                rocks = new List<TrackLayout.TideRock>(),
+                whirlpool = At(326f, -15f), whirlRadius = 16f, whirlPull = 8f,
+            };
+            t.gaps = new List<TrackLayout.Gap>
+            {
+                new() { from = 470f, to = 488f, drop = true, trickJump = true, tricks = 3 },
+                new() { from = 156f, to = 170f, drop = true, trickJump = true, tricks = 2 },
+            };
+            t.swells = new List<TrackLayout.Swell> { new() { from = 302f, to = 352f, speed = 9f, period = 2.4f } };
+            t.rings = new List<TrackLayout.Ring> { new() { distance = 176f }, new() { distance = 494f } };
+            t.dashPanels = new List<TrackLayout.DashPanel> { new() { distance = 14f }, new() { distance = 150f }, new() { distance = 464f }, new() { distance = 630f } };
+            t.boats = new List<TrackLayout.Boat>
+            {
+                new() { kind = TrackLayout.BoatKind.Trawler, position = new Vector2(220f, 100f), angle = 100f },
+                new() { kind = TrackLayout.BoatKind.Buoy, position = new Vector2(30f, -20f) },
+            };
+            t.scenery = new List<TrackScenery.Kind>
+            {
+                new() { name = "Rock", uv = LagoonSheet.Cell("Rock"), count = 26, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(14f, 40f) },
+            };
+            t.lastLapShow = false;
+            Save(t);
+            return t;
+        }
+
         static LevelDefinition Level(string file, string title, TrackLayout track)
         {
             var level = Asset<LevelDefinition>($"Assets/Data/Levels/{file}.asset");
@@ -877,5 +949,15 @@ namespace SomeGame.EditorTools
             R6_LAND4 = new Vector2[] { new(51.9f, 198.8f), new(50.6f, 194.3f), new(47.6f, 190.7f), new(43.5f, 188.5f), new(38.8f, 188.1f), new(34.3f, 189.4f), new(30.7f, 192.4f), new(28.5f, 196.5f), new(28.1f, 201.2f), new(29.4f, 205.7f), new(32.4f, 209.3f), new(36.5f, 211.5f), new(41.2f, 211.9f), new(45.7f, 210.6f), new(49.3f, 207.6f), new(51.5f, 203.5f) },
             R6_LAND5 = new Vector2[] { new(-41.0f, 139.1f), new(-42.1f, 135.8f), new(-44.3f, 133.0f), new(-47.4f, 131.4f), new(-50.9f, 131.0f), new(-54.2f, 132.1f), new(-57.0f, 134.3f), new(-58.6f, 137.4f), new(-59.0f, 140.9f), new(-57.9f, 144.2f), new(-55.7f, 147.0f), new(-52.6f, 148.6f), new(-49.1f, 149.0f), new(-45.8f, 147.9f), new(-43.0f, 145.7f), new(-41.4f, 142.6f) },
             R6_LAND6 = new Vector2[] { new(120.0f, -31.0f), new(118.8f, -34.7f), new(116.3f, -37.7f), new(112.9f, -39.6f), new(109.0f, -40.0f), new(105.3f, -38.8f), new(102.3f, -36.3f), new(100.4f, -32.9f), new(100.0f, -29.0f), new(101.2f, -25.3f), new(103.7f, -22.3f), new(107.1f, -20.4f), new(111.0f, -20.0f), new(114.7f, -21.2f), new(117.7f, -23.7f), new(119.6f, -27.1f) };
+
+        static readonly Vector2[] R7 = new Vector2[] { new(0.0f, 0.0f), new(34.0f, 0.0f), new(64.0f, 6.0f), new(88.0f, 22.0f), new(98.0f, 46.0f), new(92.0f, 70.0f), new(104.0f, 92.0f), new(128.0f, 100.0f), new(152.0f, 94.0f), new(170.0f, 108.0f), new(172.0f, 134.0f), new(156.0f, 154.0f), new(130.0f, 160.0f), new(104.0f, 152.0f), new(82.0f, 160.0f), new(64.0f, 176.0f), new(40.0f, 180.0f), new(18.0f, 168.0f), new(6.0f, 146.0f), new(-14.0f, 130.0f), new(-32.0f, 112.0f), new(-36.0f, 86.0f), new(-28.0f, 62.0f), new(-34.0f, 38.0f), new(-24.0f, 16.0f) },
+            R7_LAND0 = new Vector2[] { new(-14.1f, 88.1f), new(-13.8f, 96.4f), new(-12.1f, 102.5f), new(19.6f, 128.4f), new(26.9f, 137.5f), new(34.0f, 152.8f), new(38.9f, 156.4f), new(43.5f, 158.3f), new(48.4f, 158.1f), new(54.0f, 156.4f), new(63.1f, 146.9f), new(69.1f, 142.1f), new(80.8f, 135.6f), new(90.9f, 131.8f), new(100.0f, 130.2f), new(109.3f, 130.4f), new(117.6f, 132.5f), new(131.1f, 138.0f), new(133.9f, 138.0f), new(144.4f, 135.3f), new(148.2f, 131.9f), new(151.0f, 127.5f), new(151.0f, 120.9f), new(149.3f, 116.7f), new(134.1f, 121.6f), new(126.8f, 122.0f), new(117.7f, 120.9f), new(108.4f, 118.6f), new(99.6f, 115.1f), new(92.2f, 110.7f), new(86.3f, 105.5f), new(80.9f, 99.1f), new(76.0f, 91.0f), new(70.6f, 75.5f), new(69.9f, 68.3f), new(70.5f, 62.4f), new(75.9f, 46.4f), new(74.2f, 41.2f), new(71.2f, 36.3f), new(66.1f, 31.9f), new(57.7f, 27.2f), new(49.1f, 24.4f), new(23.6f, 21.1f), new(8.5f, 20.8f), new(1.4f, 23.2f), new(-6.4f, 29.4f), new(-10.1f, 34.1f), new(-11.9f, 38.6f), new(-6.8f, 53.7f), new(-6.4f, 66.6f), new(-8.5f, 75.0f) },
+            R7_LAND1 = new Vector2[] { new(153.9f, 38.6f), new(152.3f, 33.4f), new(148.9f, 29.2f), new(144.1f, 26.6f), new(138.6f, 26.1f), new(133.4f, 27.7f), new(129.2f, 31.1f), new(126.6f, 35.9f), new(126.1f, 41.4f), new(127.7f, 46.6f), new(131.1f, 50.8f), new(135.9f, 53.4f), new(141.4f, 53.9f), new(146.6f, 52.3f), new(150.8f, 48.9f), new(153.4f, 44.1f) },
+            R7_LAND2 = new Vector2[] { new(-55.1f, 68.5f), new(-56.8f, 62.9f), new(-60.5f, 58.4f), new(-65.6f, 55.6f), new(-71.5f, 55.1f), new(-77.1f, 56.8f), new(-81.6f, 60.5f), new(-84.4f, 65.6f), new(-84.9f, 71.5f), new(-83.2f, 77.1f), new(-79.5f, 81.6f), new(-74.4f, 84.4f), new(-68.5f, 84.9f), new(-62.9f, 83.2f), new(-58.4f, 79.5f), new(-55.6f, 74.4f) },
+            R7_LAND3 = new Vector2[] { new(211.9f, 148.8f), new(210.6f, 144.3f), new(207.6f, 140.7f), new(203.5f, 138.5f), new(198.8f, 138.1f), new(194.3f, 139.4f), new(190.7f, 142.4f), new(188.5f, 146.5f), new(188.1f, 151.2f), new(189.4f, 155.7f), new(192.4f, 159.3f), new(196.5f, 161.5f), new(201.2f, 161.9f), new(205.7f, 160.6f), new(209.3f, 157.6f), new(211.5f, 153.5f) },
+            R7_LAND4 = new Vector2[] { new(72.9f, 228.7f), new(71.5f, 223.9f), new(68.2f, 220.0f), new(63.8f, 217.6f), new(58.7f, 217.1f), new(53.9f, 218.5f), new(50.0f, 221.8f), new(47.6f, 226.2f), new(47.1f, 231.3f), new(48.5f, 236.1f), new(51.8f, 240.0f), new(56.2f, 242.4f), new(61.3f, 242.9f), new(66.1f, 241.5f), new(70.0f, 238.2f), new(72.4f, 233.8f) },
+            R7_LAND5 = new Vector2[] { new(-49.1f, 168.9f), new(-50.3f, 164.8f), new(-53.0f, 161.5f), new(-56.8f, 159.5f), new(-61.1f, 159.1f), new(-65.2f, 160.3f), new(-68.5f, 163.0f), new(-70.5f, 166.8f), new(-70.9f, 171.1f), new(-69.7f, 175.2f), new(-67.0f, 178.5f), new(-63.2f, 180.5f), new(-58.9f, 180.9f), new(-54.8f, 179.7f), new(-51.5f, 177.0f), new(-49.5f, 173.2f) },
+            R7_LAND6 = new Vector2[] { new(130.9f, -31.1f), new(129.7f, -35.2f), new(127.0f, -38.5f), new(123.2f, -40.5f), new(118.9f, -40.9f), new(114.8f, -39.7f), new(111.5f, -37.0f), new(109.5f, -33.2f), new(109.1f, -28.9f), new(110.3f, -24.8f), new(113.0f, -21.5f), new(116.8f, -19.5f), new(121.1f, -19.1f), new(125.2f, -20.3f), new(128.5f, -23.0f), new(130.5f, -26.8f) },
+            R7_LAND7 = new Vector2[] { new(219.0f, 59.1f), new(217.9f, 55.8f), new(215.7f, 53.0f), new(212.6f, 51.4f), new(209.1f, 51.0f), new(205.8f, 52.1f), new(203.0f, 54.3f), new(201.4f, 57.4f), new(201.0f, 60.9f), new(202.1f, 64.2f), new(204.3f, 67.0f), new(207.4f, 68.6f), new(210.9f, 69.0f), new(214.2f, 67.9f), new(217.0f, 65.7f), new(218.6f, 62.6f) };
     }
 }
