@@ -236,9 +236,9 @@ namespace SomeGame.Track
 
         // ------------------------------------------------------------------ water caves
 
-        class CaveView { public Vector2 Span; public MeshRenderer Roof, Gloom, RoofRocks; public Color32[] RoofColors, RoofRockColors; public float Shown = -1f; public readonly List<(SpriteRenderer sr, float phase)> Crystals = new(); public float Inside; }
+        class CaveView { public Vector2 Span; public MeshRenderer Roof, Gloom, RoofRocks, Walls; public Color32[] RoofColors, RoofRockColors, WallColors; public float Shown = -1f; public readonly List<(SpriteRenderer sr, float phase)> Crystals = new(); public float Inside; }
         readonly List<CaveView> _caveViews = new();
-        const int CaveGloomOrder = 9, CrystalOrder = 10, RoofOrder = 33, RoofRockOrder = 34, MouthOrder = 35;
+        const int CaveWallOrder = 6, CaveGloomOrder = 5, CrystalOrder = 7, RoofOrder = 33, RoofRockOrder = 34, MouthOrder = 35;
 
         // The channel runs into the mountain: the mountain's top carries on over it as a roof (it fades away while you
         // are inside, so you see your boat), dark rock arches at the mouths, dark water inside, crystals glowing on
@@ -277,6 +277,26 @@ namespace SomeGame.Track
             view.Roof = Mesh("CaveRoof", ground != null ? ground : plain, RoofOrder, TrackMeshes.Quads("CaveRoof", v, u, t, c)).GetComponent<MeshRenderer>();
             view.RoofColors = c.ToArray();
             view.Gloom = Mesh("CaveGloom", plain, CaveGloomOrder, TrackMeshes.Quads("CaveGloom", gv, gu, gt, gc)).GetComponent<MeshRenderer>();
+            // The inside (shown once you are in): solid rock walls either side of the water, out to where the roof
+            // reaches - they hide the mountain's top and edges below - a lighter ledge of wet rock along the water.
+            var wv = new List<Vector3>(); var wu = new List<Vector2>(); var wt = new List<int>(); var wc = new List<Color32>();
+            var noise = new System.Random((int)(span.x * 5f));
+            foreach (float side in new[] { 1f, -1f })
+                for (int i = 0; i < steps; i++)
+                {
+                    float d0 = span.x + len * i / steps, d1 = span.x + len * (i + 1) / steps;
+                    Vector2 p0 = path.PointAt(d0), p1 = path.PointAt(d1), n0 = path.NormalAt(d0) * side, n1 = path.NormalAt(d1) * side;
+                    float e0 = track.OffRoadAt(d0) + 0.3f, e1 = track.OffRoadAt(d1) + 0.3f, o0 = track.OffRoadAt(d0) + roof + 2f, o1 = track.OffRoadAt(d1) + roof + 2f;
+                    float j0 = (float)noise.NextDouble() * 0.5f;
+                    // wet ledge
+                    Quad4(wv, wu, wt, wc, p0 + n0 * e0, p1 + n1 * e1, p1 + n1 * (e1 + 0.8f + j0), p0 + n0 * (e0 + 0.8f + j0), new Color32(70, 84, 98, 255));
+                    // rock
+                    var rock = (byte)(36 + noise.Next(14));
+                    Quad4(wv, wu, wt, wc, p0 + n0 * (e0 + 0.8f + j0), p1 + n1 * (e1 + 0.8f + j0), p1 + n1 * o1, p0 + n0 * o0, new Color32(rock, (byte)(rock + 4), (byte)(rock + 12), 255));
+                }
+            view.Walls = Mesh("CaveWalls", plain, CaveWallOrder, TrackMeshes.Quads("CaveWalls", wv, wu, wt, wc)).GetComponent<MeshRenderer>();
+            view.WallColors = wc.ToArray();
+            SetAlpha(view.Walls, view.WallColors, 0);
             // The mouths: dark arches of rock where the channel goes in and comes out.
             var mv = new List<Vector3>(); var mu = new List<Vector2>(); var mt = new List<int>(); var mc = new List<Color32>();
             foreach (float at in new[] { span.x, span.x + len })
@@ -334,6 +354,22 @@ namespace SomeGame.Track
             _caveViews.Add(view);
         }
 
+        static void Quad4(List<Vector3> v, List<Vector2> u, List<int> t, List<Color32> c, Vector2 a, Vector2 b, Vector2 cc, Vector2 d, Color32 col)
+        {
+            int s = v.Count;
+            v.Add(a); v.Add(b); v.Add(d); v.Add(cc);
+            for (int k = 0; k < 4; k++) { u.Add(Vector2.zero); c.Add(col); }
+            t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3, s, s + 1, s + 2, s + 1, s + 3, s + 2 });
+        }
+
+        static void SetAlpha(MeshRenderer r, Color32[] baseColors, byte alpha)
+        {
+            if (r == null || baseColors == null) return;
+            var cols = new Color32[baseColors.Length];
+            for (int k = 0; k < cols.Length; k++) { cols[k] = baseColors[k]; cols[k].a = (byte)(baseColors[k].a * alpha / 255); }
+            r.GetComponent<MeshFilter>().sharedMesh.colors32 = cols;
+        }
+
         void UpdateCaves(float dt)
         {
             if (_caveViews.Count == 0 || _race == null || _race.Player == null) return;
@@ -345,17 +381,12 @@ namespace SomeGame.Track
                 view.Inside = Mathf.MoveTowards(view.Inside, inside ? 1f : 0f, dt * 3f);
                 if (Mathf.Abs(view.Inside - view.Shown) > 0.01f)
                 {
+                    // Outside: the mountain over the channel. Inside: the roof gone, the cave's walls round you.
                     view.Shown = view.Inside;
-                    byte alpha = (byte)(255f * Mathf.Lerp(1f, 0.12f, view.Inside));
-                    var cols = new Color32[view.RoofColors.Length];
-                    for (int k = 0; k < cols.Length; k++) { cols[k] = view.RoofColors[k]; cols[k].a = alpha; }
-                    view.Roof.GetComponent<MeshFilter>().sharedMesh.colors32 = cols;
-                    if (view.RoofRocks != null)
-                    {
-                        var rcols = new Color32[view.RoofRockColors.Length];
-                        for (int k = 0; k < rcols.Length; k++) { rcols[k] = view.RoofRockColors[k]; rcols[k].a = alpha; }
-                        view.RoofRocks.GetComponent<MeshFilter>().sharedMesh.colors32 = rcols;
-                    }
+                    byte roofAlpha = (byte)(255f * Mathf.Clamp01(1f - view.Inside * 1.4f));
+                    SetAlpha(view.Roof, view.RoofColors, roofAlpha);
+                    SetAlpha(view.RoofRocks, view.RoofRockColors, roofAlpha);
+                    SetAlpha(view.Walls, view.WallColors, (byte)(255f * Mathf.Clamp01(view.Inside * 1.4f)));
                 }
                 foreach (var (sr, phase) in view.Crystals)
                 {

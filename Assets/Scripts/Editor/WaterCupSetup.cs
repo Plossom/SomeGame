@@ -40,7 +40,7 @@ namespace SomeGame.EditorTools
             var coast = BuildLighthouseRun();
             var level3 = CoastLevel(coast);
             var level4 = WildLevel("Water04", "Jungle Rapids", 4, BuildJungleRapids(), 3, 0.98f, 46,
-                "A tiny creek through the deep forest! Under the trees, over yourself on the old aqueduct, past crocodiles and the temple's stone doors, over the log jam, into the mountain through a water cave and down the rapids.");
+                "A tiny creek through the deep forest! Under the trees, over yourself on the old aqueduct, past crocodiles and the temple's stone doors, over the log jam, into the mountain through a water cave and down the rapids.", laps: 1);
             var level5 = WildLevel("Water05", "Pirate Bay", 5, BuildPirateBay(), 4, 0.99f, 48,
                 "A knot of a course - over and under yourself three times! Dodge the pirate ship's cannonballs, grab the gold, launch off the plank ramps, sail into the jaws of skull rock and through its cave, and keep off the cliff's edge.");
             var level6 = WildLevel("Water06", "Coral Coast", 6, BuildCoralCoast(), 4, 1f, 50,
@@ -553,13 +553,13 @@ namespace SomeGame.EditorTools
             return level;
         }
 
-        static LevelDefinition WildLevel(string file, string title, int number, TrackLayout track, int difficulty, float rivalSpeed, int stars, string description)
+        static LevelDefinition WildLevel(string file, string title, int number, TrackLayout track, int difficulty, float rivalSpeed, int stars, string description, int laps = 2)
         {
             var level = Asset<LevelDefinition>($"Assets/Data/Levels/{file}.asset");
             level.displayName = title;
             level.chapter = $"WATER CUP · RACE {number}";
             level.track = track;
-            level.laps = 2; // (long, wild laps)
+            level.laps = laps; // (long, wild laps)
             level.description = description;
             level.difficulty = difficulty;
             level.rivalCount = 7;
@@ -679,7 +679,7 @@ namespace SomeGame.EditorTools
                 Piece("TempleRuin", At(374f, 16f), 12f, 20f), Piece("TempleRuin", At(374f, -16f), 10f, -15f),
                 Piece("TempleStatue", At(350f, 6.5f), 3f), Piece("TempleStatue", At(350f, -6.5f), 3f),
                 Piece("TempleStatue", At(398f, 6.5f), 3f), Piece("TempleStatue", At(398f, -6.5f), 3f),
-                Piece("JungleFalls", At(686f, 26f), 26f),
+                Piece("JungleFalls", At(686f, 44f), 24f),
             };
             t.gaps = new List<TrackLayout.Gap> { new() { from = 440f, to = 454f, trickJump = true, tricks = 2, logs = true } };
             t.bouncers = new List<TrackLayout.Bouncer>

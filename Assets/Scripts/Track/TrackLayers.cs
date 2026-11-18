@@ -16,7 +16,7 @@ namespace SomeGame.Track
         [SerializeField] Material lagoonDeck;
 
         // Above the cars on the ground, below the cars up on the deck (they are lifted by UpperBoost).
-        const int ShadowOrder = -44, DeckOrder = 30, RailOrder = 31, UpperBoost = 40;
+        const int ShadowOrder = -44, DeckOrder = 30, RailOrder = 31, UpperBoost = 40, LagoonDeckOrder = 24, LagoonBoost = 18;
         static readonly Color Stone = new Color(0.55f, 0.58f, 0.64f).linear, StoneDark = new Color(0.32f, 0.35f, 0.41f).linear,
             Rail = new Color(0.94f, 0.96f, 1f).linear, RailBlue = new Color(0.25f, 0.45f, 0.75f).linear,
             Sandstone = new Color(0.62f, 0.52f, 0.4f).linear, SandstoneLight = new Color(0.86f, 0.76f, 0.6f).linear, SandstoneDark = new Color(0.5f, 0.41f, 0.31f).linear;
@@ -43,14 +43,21 @@ namespace SomeGame.Track
             var rv = new List<Vector3>(); var rc = new List<Color>(); var rt = new List<int>();
             var sv = new List<Vector3>(); var sc = new List<Color>(); var st = new List<int>();
             var sides = new List<Vector2>[2] { new(), new() };
+            // On the water an aqueduct: exactly as wide as the channel it carries, fading in and out at its ends so it
+            // runs on from the channel without a seam.
+            bool lagoon = layout.biome == TrackLayout.Biome.Lagoon;
+            float spread = lagoon ? 0f : 0.9f;
+            var deckColors = new List<Color>();
             for (int i = 0; i <= steps; i++)
             {
                 float d = span.from + length * i / steps;
                 Vector2 p = path.PointAt(d), n = path.NormalAt(d);
                 float w = track.OffRoadAt(d);
                 int k = dv.Count;
-                dv.Add(p + n * (w + 0.9f)); dv.Add(p - n * (w + 0.9f));
-                if (layout.biome == TrackLayout.Biome.Lagoon) { duv.Add((p + n * (w + 0.9f)) / 8f); duv.Add((p - n * (w + 0.9f)) / 8f); } else { duv.Add(new Vector2(0f, d / 4f)); duv.Add(new Vector2(1f, d / 4f)); }
+                dv.Add(p + n * (w + spread)); dv.Add(p - n * (w + spread));
+                float ends = lagoon ? Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(Mathf.Min(i, steps - i) / 7f)) : 1f;
+                deckColors.Add(new Color(1f, 1f, 1f, ends)); deckColors.Add(new Color(1f, 1f, 1f, ends));
+                if (lagoon) { duv.Add((p + n * w) / 8f); duv.Add((p - n * w) / 8f); } else { duv.Add(new Vector2(0f, d / 4f)); duv.Add(new Vector2(1f, d / 4f)); }
                 if (i > 0) dt.AddRange(new[] { k - 2, k, k - 1, k - 1, k, k + 1 });
                 // Its shadow, well off to the side (it stands high).
                 Vector2 so = new(2.4f, -3.2f);
@@ -59,7 +66,7 @@ namespace SomeGame.Track
                 var shade = new Color(0f, 0.04f, 0.12f, 0.3f * fade);
                 sv.Add(p + n * (w + 1f) + so * fade); sv.Add(p - n * (w + 1f) + so * fade); sc.Add(shade); sc.Add(shade);
                 if (i > 0) st.AddRange(new[] { j - 2, j, j - 1, j - 1, j, j + 1 });
-                sides[0].Add(p + n * (w + 0.6f)); sides[1].Add(p - n * (w + 0.6f));
+                sides[0].Add(p + n * (w + (lagoon ? 0.25f : 0.6f))); sides[1].Add(p - n * (w + (lagoon ? 0.25f : 0.6f)));
             }
             // Piers under it, every few metres, and the stone edges of the deck.
             for (float s = 3f; s < length - 3f; s += 9f)
@@ -78,9 +85,20 @@ namespace SomeGame.Track
                 for (int i = 1; i < line.Count; i++)
                 {
                     Vector2 a = line[i - 1], b = line[i], d = (b - a).normalized, n = new(-d.y, d.x);
-                    bool water = layout.biome == TrackLayout.Biome.Lagoon;
-                    Quad(a - n * 0.55f, b - n * 0.55f, b + n * 0.55f, a + n * 0.55f, water ? Sandstone : StoneDark, rv, rc, rt);
-                    Quad(a - n * 0.32f, b - n * 0.32f, b + n * 0.32f, a + n * 0.32f, water ? (i % 6 < 1 ? SandstoneDark : SandstoneLight) : i % 4 < 2 ? Rail : RailBlue, rv, rc, rt);
+                    if (lagoon)
+                    {
+                        // Low sandstone parapets, rising out of the channel's edge at each end.
+                        float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(Mathf.Min(i, line.Count - 1 - i) / 7f));
+                        Color outer = Sandstone, top = i % 6 < 1 ? SandstoneDark : SandstoneLight;
+                        outer.a = k; top.a = k;
+                        Quad(a - n * 0.32f, b - n * 0.32f, b + n * 0.32f, a + n * 0.32f, outer, rv, rc, rt);
+                        Quad(a - n * 0.18f, b - n * 0.18f, b + n * 0.18f, a + n * 0.18f, top, rv, rc, rt);
+                    }
+                    else
+                    {
+                        Quad(a - n * 0.55f, b - n * 0.55f, b + n * 0.55f, a + n * 0.55f, StoneDark, rv, rc, rt);
+                        Quad(a - n * 0.32f, b - n * 0.32f, b + n * 0.32f, a + n * 0.32f, i % 4 < 2 ? Rail : RailBlue, rv, rc, rt);
+                    }
                 }
                 if (!Application.isPlaying) continue;
                 var go = new GameObject("ViaductRailing") { hideFlags = HideFlags.DontSave };
@@ -93,9 +111,9 @@ namespace SomeGame.Track
             }
             Part("ViaductShadow", Mesh("ViaductShadow", sv, sc, st, null), plain, ShadowOrder);
             var deckMaterial = layout.biome == TrackLayout.Biome.Lagoon && lagoonDeck != null ? lagoonDeck : track.Layout.roadMaterial != null ? track.Layout.roadMaterial : plain;
-            var deckColors = new List<Color>(); foreach (var _ in dv) deckColors.Add(Color.white);
-            Part("ViaductDeck", Mesh("ViaductDeck", dv, deckColors, dt, duv), deckMaterial, DeckOrder);
-            Part("ViaductRails", Mesh("ViaductRails", rv, rc, rt, null), plain, RailOrder);
+            // (on the water under the trees' crowns: they overhang the aqueduct's ends)
+            Part("ViaductDeck", Mesh("ViaductDeck", dv, deckColors, dt, duv), deckMaterial, lagoon ? LagoonDeckOrder : DeckOrder);
+            Part("ViaductRails", Mesh("ViaductRails", rv, rc, rt, null), plain, lagoon ? LagoonDeckOrder + 1 : RailOrder);
         }
 
         protected override void Start()
@@ -122,7 +140,7 @@ namespace SomeGame.Track
                 foreach (var sr in car.GetComponentsInChildren<SpriteRenderer>(true))
                 {
                     if (!_baseOrder.ContainsKey(sr)) _baseOrder[sr] = sr.sortingOrder;
-                    sr.sortingOrder = _baseOrder[sr] + (up ? UpperBoost : 0);
+                    sr.sortingOrder = _baseOrder[sr] + (up ? (track.Layout.biome == TrackLayout.Biome.Lagoon ? LagoonBoost : UpperBoost) : 0);
                 }
                 var collider = car.GetComponent<Collider2D>();
                 if (collider != null) foreach (var rail in _railings) Physics2D.IgnoreCollision(collider, rail, !up);

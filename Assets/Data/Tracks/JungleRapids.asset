@@ -240,8 +240,8 @@ MonoBehaviour:
       angle: 0
       overhead: 0
     - sprite: JungleFalls
-      position: {x: -129.88596, y: 30.517933}
-      size: 26
+      position: {x: -140.94476, y: 16.315723}
+      size: 24
       angle: 0
       overhead: 0
     crocs:
