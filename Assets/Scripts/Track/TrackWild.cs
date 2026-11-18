@@ -194,9 +194,9 @@ namespace SomeGame.Track
             var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var rimC = new List<Color32>();
             var fv = new List<Vector3>(); var fu = new List<Vector2>(); var ft = new List<int>(); var faceC = new List<Color32>();
             float len = Mathf.Repeat(ledge.to - ledge.from, path.Length);
-            Color rimTop = ledge.reef ? new Color(0.98f, 0.86f, 0.62f) : new Color(0.56f, 0.53f, 0.49f);
-            Color faceTop = ledge.reef ? new Color(0.36f, 0.86f, 0.8f) : new Color(0.24f, 0.24f, 0.26f);
-            Color faceBottom = ledge.reef ? new Color(0.45f, 0.92f, 0.85f) : new Color(0.08f, 0.12f, 0.18f);
+            Color rimTop = ledge.reef ? new Color(1f, 0.55f, 0.55f) : new Color(0.56f, 0.53f, 0.49f);
+            Color faceTop = ledge.reef ? new Color(0.98f, 0.78f, 0.55f, 0.92f) : new Color(0.24f, 0.24f, 0.26f);
+            Color faceBottom = ledge.reef ? new Color(0.98f, 0.8f, 0.6f) : new Color(0.08f, 0.12f, 0.18f);
             foreach (float side in new[] { 1f, -1f })
             {
                 if (ledge.side != 0f && Mathf.Sign(ledge.side) != side) continue;
@@ -230,12 +230,12 @@ namespace SomeGame.Track
                 var cv = new List<Vector3>(); var cu = new List<Vector2>(); var ct = new List<int>(); var cc = new List<Color32>();
                 var random = new System.Random((int)(ledge.from * 13f));
                 string[] cells = { "Coral", "CoralPink", "Seaweed" };
-                for (float a = 2f; a < len - 2f; a += 2.2f)
+                for (float a = 2f; a < len - 2f; a += 1.3f)
                     foreach (float side in new[] { 1f, -1f })
                     {
                         if (ledge.side != 0f && Mathf.Sign(ledge.side) != side) continue;
                         float d = ledge.from + a;
-                        Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 2.2f + (float)random.NextDouble() * 3f);
+                        Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 1.6f + (float)random.NextDouble() * 3.6f);
                         float size = 2.4f + (float)random.NextDouble() * 1.6f, ang = (float)random.NextDouble() * 6.28f;
                         Vector2 r = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * size * 0.5f;
                         int first = cv.Count;
