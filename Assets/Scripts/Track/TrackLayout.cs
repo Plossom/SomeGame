@@ -372,6 +372,27 @@ namespace SomeGame.Track
             public List<Vector2> caves = new();
             [Tooltip("How wide the mountain's roof reaches out over each side of a cave.")]
             [Min(2f)] public float caveRoof = 9f;
+            [Tooltip("Galleons lying along the channel (lap distances from, to; a straight stretch): sail in at the stern and right through their insides - the hold, the galley, the mess, the bunks - while their top deck fades away.")]
+            public List<Vector2> galleons = new();
+            [Tooltip("Wrecks lying along the channel (lap distances from, to): up the gangplank, along the deck, off the bow.")]
+            public List<Vector2> deckShips = new();
+            [Tooltip("Ships firing at the channel: where each lies, the stretch it aims at, seconds between shots.")]
+            public List<Cannon> cannons = new();
+            [Tooltip("The kraken: its head out in the water, and the stretch its tentacles slam down on (lap distances).")]
+            public Vector2 kraken;
+            public Vector2 krakenReach;
+            [Tooltip("Sharks circling (centre x, y and radius): their fins cut across the channel.")]
+            public List<Vector3> sharks = new();
+            [Tooltip("Parrots flying along the course.")]
+            [Min(0)] public int parrots;
+        }
+
+        [Serializable]
+        public class Cannon
+        {
+            public Vector2 position;
+            public Vector2 aims;
+            [Min(0.5f)] public float every = 1.6f;
         }
 
         [Serializable]

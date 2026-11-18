@@ -313,6 +313,13 @@ MonoBehaviour:
     caves:
     - {x: 470, y: 548}
     caveRoof: 12
+    galleons: []
+    deckShips: []
+    cannons: []
+    kraken: {x: 0, y: 0}
+    krakenReach: {x: 0, y: 0}
+    sharks: []
+    parrots: 0
   coast:
     enabled: 1
     night: 0

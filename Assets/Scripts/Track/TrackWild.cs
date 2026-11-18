@@ -60,7 +60,7 @@ namespace SomeGame.Track
         {
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
             _parts.Clear(); _overheads.Clear(); _crocs.Clear(); _doors.Clear(); _coins.Clear(); _planks.Clear(); _jellies.Clear();
-            _mantas.Clear(); _strikes.Clear(); _waves.Clear(); _balls.Clear(); _fallen.Clear(); _caveViews.Clear();
+            _mantas.Clear(); _strikes.Clear(); _waves.Clear(); _balls.Clear(); _fallen.Clear(); _caveViews.Clear(); _ships.Clear(); _snores.Clear(); _tentacles.Clear(); _fins.Clear(); _parrots.Clear(); _krakenHead = null;
             _rain = null; _storm = null;
             Release();
             _wild = layout.wild;
@@ -68,6 +68,8 @@ namespace SomeGame.Track
             if (_wild.river) BuildRiver(path, layout);
             foreach (var ledge in _wild.ledges) BuildLedge(path, ledge);
             foreach (var cave in _wild.caves) BuildCave(path, cave);
+            foreach (var g in _wild.galleons) BuildShip(path, g, true);
+            foreach (var g in _wild.deckShips) BuildShip(path, g, false);
             foreach (var prop in _wild.props) BuildProp(prop);
             foreach (var c in _wild.crocs) BuildCroc(path, c);
             for (int i = 0; i < _wild.doors.Count; i++) BuildDoor(path, _wild.doors[i], i);
@@ -82,6 +84,9 @@ namespace SomeGame.Track
             _shake = FindAnyObjectByType<SomeGame.CameraRig.CameraShake>();
             _glow = Glow();
             if (_doors.Count > 0) Track.Obstacle = DoorShut;
+            BuildKraken();
+            BuildSharks();
+            BuildParrots(path);
         }
 
         protected override void OnDisable()
@@ -238,7 +243,7 @@ namespace SomeGame.Track
 
         class CaveView { public Vector2 Span; public MeshRenderer Roof, Gloom, RoofRocks, Walls; public Color32[] RoofColors, RoofRockColors, WallColors; public float Shown = -1f; public readonly List<(SpriteRenderer sr, float phase)> Crystals = new(); public float Inside; }
         readonly List<CaveView> _caveViews = new();
-        const int CaveWallOrder = 6, CaveGloomOrder = 5, CrystalOrder = 7, RoofOrder = 33, RoofRockOrder = 34, MouthOrder = 35;
+        const int ShipInsideOrder = 3, DeckShipOrder = -40, SnoreOrder = 36, ParrotOrder = 41, CaveWallOrder = 6, CaveGloomOrder = 5, CrystalOrder = 7, RoofOrder = 33, RoofRockOrder = 34, MouthOrder = 35;
 
         // The channel runs into the mountain: the mountain's top carries on over it as a roof (it fades away while you
         // are inside, so you see your boat), dark rock arches at the mouths, dark water inside, crystals glowing on
@@ -287,12 +292,12 @@ namespace SomeGame.Track
                     float d0 = span.x + len * i / steps, d1 = span.x + len * (i + 1) / steps;
                     Vector2 p0 = path.PointAt(d0), p1 = path.PointAt(d1), n0 = path.NormalAt(d0) * side, n1 = path.NormalAt(d1) * side;
                     float e0 = track.OffRoadAt(d0) + 0.3f, e1 = track.OffRoadAt(d1) + 0.3f, o0 = track.OffRoadAt(d0) + roof + 2f, o1 = track.OffRoadAt(d1) + roof + 2f;
-                    float j0 = (float)noise.NextDouble() * 0.5f;
+                    // (the ledge's width wanders smoothly along the wall)
+                    float j0 = 0.25f + 0.25f * Mathf.Sin(d0 * 0.7f + side), j1 = 0.25f + 0.25f * Mathf.Sin(d1 * 0.7f + side);
                     // wet ledge
-                    Quad4(wv, wu, wt, wc, p0 + n0 * e0, p1 + n1 * e1, p1 + n1 * (e1 + 0.8f + j0), p0 + n0 * (e0 + 0.8f + j0), new Color32(70, 84, 98, 255));
+                    Quad4(wv, wu, wt, wc, p0 + n0 * e0, p1 + n1 * e1, p1 + n1 * (e1 + 0.8f + j1), p0 + n0 * (e0 + 0.8f + j0), new Color32(70, 84, 98, 255));
                     // rock
-                    var rock = (byte)(36 + noise.Next(14));
-                    Quad4(wv, wu, wt, wc, p0 + n0 * (e0 + 0.8f + j0), p1 + n1 * (e1 + 0.8f + j0), p1 + n1 * o1, p0 + n0 * o0, new Color32(rock, (byte)(rock + 4), (byte)(rock + 12), 255));
+                    Quad4(wv, wu, wt, wc, p0 + n0 * (e0 + 0.8f + j0), p1 + n1 * (e1 + 0.8f + j1), p1 + n1 * o1, p0 + n0 * o0, new Color32(40, 44, 52, 255));
                 }
             view.Walls = Mesh("CaveWalls", plain, CaveWallOrder, TrackMeshes.Quads("CaveWalls", wv, wu, wt, wc)).GetComponent<MeshRenderer>();
             view.WallColors = wc.ToArray();
@@ -394,6 +399,247 @@ namespace SomeGame.Track
                     col.a = view.Inside * (0.55f + 0.3f * Mathf.Sin(Time.time * 2f + phase));
                     sr.color = col;
                 }
+            }
+        }
+
+        // ------------------------------------------------------------------ pirate ships
+
+        class ShipView
+        {
+            public float From, To, Length;
+            public bool Galleon;
+            public Vector2 Centre, Forward, Right;
+            public float Scale;
+            public SpriteRenderer Top;
+            public float Inside;
+            public bool Aboard;
+        }
+        readonly List<ShipView> _ships = new();
+        readonly List<(SpriteRenderer sr, float born, Vector2 from)> _snores = new();
+        float _nextSnore, _nextSteam;
+        readonly Dictionary<CarMovement, float> _bowLaunched = new();
+
+        // A ship lying along a straight stretch of the channel. A galleon: its insides (drawn under the boats) cut open
+        // along a flooded aisle as wide as the channel, its top deck over them fading away while you are aboard. A
+        // wreck: its deck is the way on - up the gangplank, along the deck, off the bow.
+        void BuildShip(TrackPath path, Vector2 span, bool galleon)
+        {
+            float len = Mathf.Repeat(span.y - span.x, path.Length), mid = span.x + len * 0.5f;
+            var view = new ShipView { From = span.x, To = span.x + len, Length = len, Galleon = galleon };
+            view.Centre = path.PointAt(mid);
+            view.Forward = (path.PointAt(span.x + len) - path.PointAt(span.x)).normalized;
+            view.Right = new Vector2(view.Forward.y, -view.Forward.x);
+            float angle = Heading(view.Forward);
+            var inside = Find(galleon ? "GalleonInside" : "DeckShip");
+            if (inside == null) return;
+            view.Scale = len / inside.bounds.size.y;
+            var sr = Sprite(galleon ? "GalleonInside" : "DeckShip", inside, view.Centre, len, angle, galleon ? ShipInsideOrder : DeckShipOrder);
+            sr.transform.localScale = Vector3.one * view.Scale;
+            if (galleon)
+            {
+                var top = Sprite("GalleonTop", Find("GalleonTop"), view.Centre, len, angle, RoofOrder);
+                if (top.sprite != null) top.transform.localScale = Vector3.one * view.Scale;
+                view.Top = top;
+            }
+            _ships.Add(view);
+            if (!Application.isPlaying) return;
+            // Its sides: walls along the aisle (or the deck's edges).
+            foreach (float side in new[] { 1f, -1f })
+            {
+                var pts = new List<Vector2>();
+                for (float a = 1.5f; a <= len - 1.5f; a += 1f)
+                {
+                    float d = span.x + a;
+                    pts.Add(path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 0.2f));
+                }
+                var go = new GameObject("ShipSide", typeof(EdgeCollider2D)) { hideFlags = HideFlags.DontSave };
+                go.transform.SetParent(transform, false);
+                go.GetComponent<EdgeCollider2D>().points = pts.ToArray();
+                _parts.Add(go);
+            }
+        }
+
+        // A point on a ship's picture (pixels, 256 x 768, stern at the bottom) in the world.
+        Vector2 OnShip(ShipView v, float px, float py) => v.Centre + v.Right * ((px - 128f) / 12f * v.Scale) + v.Forward * ((py - 384f) / 12f * v.Scale);
+
+        void UpdateShips(float dt)
+        {
+            if (_ships.Count == 0 || _race == null || _race.Player == null) return;
+            var path = track.Path;
+            var player = _race.Player.GetComponent<CarMovement>();
+            float pd = _race.Player.GetComponent<TrackSensor>().Current.Distance;
+            foreach (var view in _ships)
+            {
+                float into = path.DeltaDistance(view.From, pd);
+                bool aboard = into >= -1f && into <= view.Length + 1f;
+                if (aboard && !view.Aboard) Say(player, view.Galleon ? "ALL ABOARD!" : "ON DECK!", new Color(1f, 0.82f, 0.3f));
+                if (!aboard && view.Aboard && into > view.Length) Say(player, "ARRR!", new Color(1f, 0.5f, 0.3f));
+                view.Aboard = aboard;
+                bool near = into >= -12f && into <= view.Length + 2f;
+                view.Inside = Mathf.MoveTowards(view.Inside, near ? 1f : 0f, dt * 2.5f);
+                if (view.Top != null) view.Top.color = new Color(1f, 1f, 1f, 1f - view.Inside);
+                if (view.Galleon && view.Inside > 0.5f)
+                {
+                    // Snores rising from the hammocks, steam from the galley's pot.
+                    if (Time.time >= _nextSnore)
+                    {
+                        _nextSnore = Time.time + 0.45f;
+                        float px = Random.value < 0.5f ? 58f : 198f, py = 200f + Random.Range(0, 3) * 44f;
+                        var z = Sprite("Snore", Find("Snore"), OnShip(view, px, py), 1.1f, Random.Range(-15f, 15f), SnoreOrder);
+                        _snores.Add((z, Time.time, z.transform.position));
+                    }
+                    if (Time.time >= _nextSteam && _glow != null)
+                    {
+                        _nextSteam = Time.time + 0.35f;
+                        Burst(OnShip(view, 40f, 574f) + Random.insideUnitCircle * 0.4f, new Color(1f, 1f, 1f, 0.7f), 2.4f);
+                        Burst(OnShip(view, 40f, 536f), new Color(1f, 0.6f, 0.2f, 0.8f), 1.6f); // (the stove's fire)
+                    }
+                }
+                if (view.Galleon) continue;
+                // Off the bow of a wreck: launched into the air.
+                foreach (var car in _cars)
+                {
+                    if (!Free(car)) continue;
+                    var sensor = car.GetComponent<TrackSensor>();
+                    if (sensor == null) continue;
+                    float at = path.DeltaDistance(view.From, sensor.Current.Distance);
+                    if (at < view.Length - 4f || at > view.Length) continue;
+                    if (_bowLaunched.TryGetValue(car, out float t) && Time.time - t < 2f) continue;
+                    _bowLaunched[car] = Time.time;
+                    car.Launch(1.05f);
+                    car.GiveBoost(0.6f);
+                    Say(car, "WALK THE PLANK!", new Color(1f, 0.82f, 0.3f));
+                    if (IsPlayer(car)) SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.jump, 0.7f);
+                }
+            }
+            for (int i = _snores.Count - 1; i >= 0; i--)
+            {
+                var (z, born, from) = _snores[i];
+                float k = (Time.time - born) / 1.6f;
+                if (z == null || k >= 1f) { if (z != null) Destroy(z.gameObject); _snores.RemoveAt(i); continue; }
+                z.transform.position = from + new Vector2(Mathf.Sin(k * 6f) * 0.4f, k * 2.4f);
+                z.color = new Color(1f, 1f, 1f, 1f - k * k);
+            }
+        }
+
+        // ------------------------------------------------------------------ the kraken, sharks and parrots
+
+        SpriteRenderer _krakenHead;
+        readonly List<(SpriteRenderer ring, SpriteRenderer arm, Vector2 at, float slams, float angle)> _tentacles = new();
+        float _nextTentacle;
+
+        void BuildKraken()
+        {
+            if (_wild.krakenReach == Vector2.zero) return;
+            _krakenHead = Sprite("KrakenHead", Find("KrakenHead"), _wild.kraken, 13f, 0f, PropOrder);
+        }
+
+        void UpdateKraken()
+        {
+            if (_krakenHead == null) return;
+            _krakenHead.transform.localScale = Vector3.one * (13f / Mathf.Max(0.01f, _krakenHead.sprite != null ? _krakenHead.sprite.bounds.size.x : 1f)) * (1f + 0.04f * Mathf.Sin(Time.time * 1.7f));
+            var path = track.Path;
+            if (PlayerIn(new List<Vector2> { _wild.krakenReach }, out float pd) && Time.time >= _nextTentacle)
+            {
+                _nextTentacle = Time.time + Random.Range(1.6f, 2.6f);
+                float d = pd + Random.Range(10f, 18f);
+                float half = track.HalfWidthAt(d);
+                Vector2 at = path.PointAt(d) + path.NormalAt(d) * Random.Range(-half, half);
+                var ring = Sprite("KrakenRing", Find("TargetRing"), at, 4f, 0f, RingOrder);
+                ring.color = new Color(0.8f, 0.5f, 1f, 0.8f);
+                Vector2 from = (at - _wild.kraken).normalized;
+                var arm = Sprite("Tentacle", Find("Tentacle"), at, 7f, Heading(from), BallOrder);
+                arm.color = new Color(1f, 1f, 1f, 0f);
+                _tentacles.Add((ring, arm, at, Time.time + 1.1f, Heading(from)));
+            }
+            for (int i = _tentacles.Count - 1; i >= 0; i--)
+            {
+                var (ring, arm, at, slams, angle) = _tentacles[i];
+                float t = Time.time - slams;
+                if (ring != null) ring.color = new Color(0.8f, 0.5f, 1f, t < 0f ? 0.5f + 0.5f * Mathf.Sin(Time.time * 16f) : 0f);
+                // Rising out of the water before the slam, down across the channel, lying there a moment, sinking.
+                float rise = t < 0f ? Mathf.Clamp01((t + 0.6f) / 0.6f) : 1f;
+                float sink = t > 0.9f ? 1f - Mathf.Clamp01((t - 0.9f) / 0.4f) : 1f;
+                if (arm != null)
+                {
+                    arm.color = new Color(1f, 1f, 1f, rise * sink);
+                    float tilt = t < 0f ? 40f * (1f - rise) : 0f;
+                    arm.transform.rotation = Quaternion.Euler(0f, 0f, angle + tilt);
+                    arm.transform.localScale = Vector3.one * (7f / Mathf.Max(0.01f, arm.sprite != null ? arm.sprite.bounds.size.y : 1f)) * (t < 0f ? 0.6f + 0.6f * rise : 1.2f);
+                }
+                if (t >= 0f && t < Time.deltaTime + 0.001f)
+                {
+                    Burst(at, new Color(0.9f, 0.97f, 1f), 5f);
+                    if (_shake != null) _shake.Shake(0.25f);
+                    SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.splash, 0.6f);
+                    foreach (var car in _cars)
+                    {
+                        if (!Free(car)) continue;
+                        Vector2 o = car.Body.position - at;
+                        if (o.sqrMagnitude > 2.8f * 2.8f) continue;
+                        car.Bump(o.sqrMagnitude > 0.01f ? o.normalized : Vector2.up, 8f);
+                        car.Slip(Random.value < 0.5f ? -1 : 1);
+                        Say(car, "KRAKEN!", new Color(0.8f, 0.5f, 1f));
+                    }
+                }
+                if (t < 1.3f) continue;
+                if (ring != null) Destroy(ring.gameObject);
+                if (arm != null) Destroy(arm.gameObject);
+                _tentacles.RemoveAt(i);
+            }
+        }
+
+        readonly List<(SpriteRenderer fin, Vector3 circle, float phase)> _fins = new();
+        readonly Dictionary<CarMovement, float> _bitten = new();
+
+        void BuildSharks()
+        {
+            foreach (var c in _wild.sharks)
+                for (int k = 0; k < 2; k++)
+                    _fins.Add((Sprite("SharkFin", Find("SharkFin"), (Vector2)c, 1.8f, 0f, CrocOrder), c, k * Mathf.PI));
+        }
+
+        void UpdateSharks()
+        {
+            foreach (var (fin, c, phase) in _fins)
+            {
+                if (fin == null) continue;
+                float a = Time.time * 0.55f + phase;
+                Vector2 at = new Vector2(c.x, c.y) + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * c.z;
+                fin.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, 0f, a * Mathf.Rad2Deg + 180f));
+                foreach (var car in _cars)
+                {
+                    if (!Free(car) || car.IsSlipping) continue;
+                    if ((car.Body.position - at).sqrMagnitude > 1.4f * 1.4f) continue;
+                    if (_bitten.TryGetValue(car, out float t) && Time.time - t < 2f) continue;
+                    _bitten[car] = Time.time;
+                    car.Slip(Random.value < 0.5f ? -1 : 1);
+                    Say(car, "CHOMP!", new Color(0.7f, 0.8f, 0.9f));
+                }
+            }
+        }
+
+        readonly List<(SpriteRenderer sr, float offset, float lateral, float speed)> _parrots = new();
+
+        void BuildParrots(TrackPath path)
+        {
+            for (int i = 0; i < _wild.parrots; i++)
+                _parrots.Add((Sprite("Parrot", Find("Parrot"), Vector2.zero, 1.8f, 0f, ParrotOrder), path.Length * i / Mathf.Max(1, _wild.parrots), (i % 2 == 0 ? 1f : -1f) * (6f + i % 3 * 3f), 7f + i % 4));
+        }
+
+        void UpdateParrots()
+        {
+            var path = track.Path;
+            foreach (var (sr, offset, lateral, speed) in _parrots)
+            {
+                if (sr == null) continue;
+                float d = offset + Time.time * speed;
+                Vector2 at = path.PointAt(d) + path.NormalAt(d) * (lateral + Mathf.Sin(Time.time * 0.8f + offset) * 3f);
+                sr.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, 0f, Heading(path.TangentAt(d))));
+                // Flapping: the wings narrow and widen.
+                float flap = 0.75f + 0.25f * Mathf.Abs(Mathf.Sin(Time.time * 9f + offset));
+                float u = 1.8f / Mathf.Max(0.01f, sr.sprite != null ? sr.sprite.bounds.size.x : 1f);
+                sr.transform.localScale = new Vector3(u * flap, u, 1f);
             }
         }
 
@@ -649,22 +895,30 @@ namespace SomeGame.Track
         readonly List<(Transform ball, SpriteRenderer ring, Vector2 from, Vector2 to, float fired, float lands)> _balls = new();
         float _nextShot;
 
+        readonly Dictionary<int, float> _nextShots = new();
+
         void UpdateCannon()
         {
-            if (_wild.cannonAims == Vector2.zero || _race == null || _race.Player == null) return;
+            if (_race == null || _race.Player == null) return;
             var path = track.Path;
             float pd = _race.Player.GetComponent<TrackSensor>().Current.Distance;
-            bool inRange = path.DeltaDistance(_wild.cannonAims.x, pd) >= -15f && path.DeltaDistance(pd, _wild.cannonAims.y) >= 0f;
-            if (inRange && Time.time >= _nextShot)
+            // Every ship in range fires at the water a little ahead of the player (the old single-ship fields too).
+            var guns = new List<TrackLayout.Cannon>(_wild.cannons);
+            if (_wild.cannonAims != Vector2.zero) guns.Add(new TrackLayout.Cannon { position = _wild.cannon, aims = _wild.cannonAims, every = _wild.cannonEvery });
+            for (int g = 0; g < guns.Count; g++)
             {
-                _nextShot = Time.time + _wild.cannonEvery * Random.Range(0.8f, 1.2f);
-                float d = pd + Random.Range(9f, 20f);
+                var gun = guns[g];
+                bool inRange = path.DeltaDistance(gun.aims.x, pd) >= -15f && path.DeltaDistance(pd, gun.aims.y) >= 0f;
+                _nextShots.TryGetValue(g, out float next);
+                if (!inRange || Time.time < next) continue;
+                _nextShots[g] = Time.time + gun.every * Random.Range(0.8f, 1.2f);
+                float d = pd + Random.Range(8f, 20f);
                 float half = track.HalfWidthAt(d);
                 Vector2 to = path.PointAt(d) + path.NormalAt(d) * Random.Range(-half, half);
                 var ring = Sprite("CannonTarget", Find("TargetRing"), to, 3.6f, 0f, RingOrder);
-                var ball = Sprite("Cannonball", Find("Cannonball"), _wild.cannon, 0.9f, 0f, BallOrder);
-                float flight = 1.15f;
-                _balls.Add((ball.transform, ring, _wild.cannon, to, Time.time, Time.time + flight));
+                var ball = Sprite("Cannonball", Find("Cannonball"), gun.position, 0.9f, 0f, BallOrder);
+                _balls.Add((ball.transform, ring, gun.position, to, Time.time, Time.time + 1.15f));
+                Burst(gun.position, new Color(1f, 0.85f, 0.6f), 4f); // (the muzzle flash)
                 SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.thunder, 0.25f);
             }
             for (int i = _balls.Count - 1; i >= 0; i--)
@@ -1054,6 +1308,10 @@ namespace SomeGame.Track
             UpdateCrocs();
             UpdateDoors();
             UpdateCannon();
+            UpdateShips(dt);
+            UpdateKraken();
+            UpdateSharks();
+            UpdateParrots();
             UpdateCoins();
             UpdatePlanks();
             UpdateJellies();

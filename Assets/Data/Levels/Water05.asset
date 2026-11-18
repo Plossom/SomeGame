@@ -19,7 +19,7 @@ MonoBehaviour:
   isChallenge: 0
   preview: {fileID: 21300000, guid: 8605ee6e5f57c46a990c876b2429d789, type: 3}
   laps: 2
-  description: A knot of a course - over and under yourself three times! Dodge the pirate ship's cannonballs, grab the gold, launch off the plank ramps, sail into the jaws of skull rock and through its cave, and keep off the cliff's edge.
+  description: A pirate movie! Sail right through a galleon - past the galley and the snoring pirates in their hammocks - into the jaws of skull rock, between two ships firing broadsides, over a wreck's deck and off its bow, and past the kraken and the sharks.
   difficulty: 4
   rivalCount: 7
   rivalSpeedScale: 0.99

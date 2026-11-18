@@ -446,6 +446,13 @@ MonoBehaviour:
     riverMargin: 2.6
     caves: []
     caveRoof: 9
+    galleons: []
+    deckShips: []
+    cannons: []
+    kraken: {x: 0, y: 0}
+    krakenReach: {x: 0, y: 0}
+    sharks: []
+    parrots: 0
   coast:
     enabled: 0
     night: 1
