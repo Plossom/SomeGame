@@ -1,0 +1,945 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3652c388436d2427eaf8dda7e5ed25ef, type: 3}
+  m_Name: StormRally
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Track.TrackLayout
+  waypoints:
+  - {x: 0, y: 0}
+  - {x: 36, y: 0}
+  - {x: 70, y: -4}
+  - {x: 98, y: 6}
+  - {x: 116, y: 26}
+  - {x: 118, y: 52}
+  - {x: 104, y: 72}
+  - {x: 110, y: 96}
+  - {x: 132, y: 110}
+  - {x: 156, y: 108}
+  - {x: 176, y: 122}
+  - {x: 180, y: 148}
+  - {x: 166, y: 170}
+  - {x: 140, y: 178}
+  - {x: 112, y: 172}
+  - {x: 90, y: 182}
+  - {x: 70, y: 198}
+  - {x: 44, y: 200}
+  - {x: 22, y: 188}
+  - {x: 10, y: 166}
+  - {x: -10, y: 150}
+  - {x: -30, y: 134}
+  - {x: -40, y: 110}
+  - {x: -34, y: 84}
+  - {x: -42, y: 58}
+  - {x: -36, y: 32}
+  - {x: -22, y: 12}
+  roadWidth: 5
+  widths:
+  - distance: 20
+    width: 5.5
+  - distance: 36
+    width: 4.6
+  - distance: 620
+    width: 4.6
+  - distance: 636
+    width: 6
+  - distance: 666
+    width: 6
+  - distance: 680
+    width: 5.5
+  kerbWidth: 0.7
+  sampleSpacing: 1
+  checkpointCount: 8
+  sections: 1
+  finishAtLastLine: 0
+  sectionLines: []
+  boundaryMargin: 28
+  rooms: []
+  houses: []
+  upstairs: []
+  stairs: []
+  decor: []
+  logJumps: []
+  rings:
+  - distance: 230
+    lateral: 0
+  - distance: 442
+    lateral: 0
+  waterfalls: []
+  dusk: 0
+  coasters: []
+  buntings: []
+  padLook: 0
+  boats:
+  - kind: 6
+    position: {x: 230, y: 120}
+    angle: 100
+    drift: 0
+  fireworks: 0
+  lastLapShow: 1
+  cows: []
+  fences: []
+  trains: []
+  props: []
+  bankMaterial: {fileID: 0}
+  sceneryMaterial: {fileID: 2100000, guid: 1550ddcd6b7bd4ab3adbdbf4660ffab7, type: 2}
+  roadMaterial: {fileID: 0}
+  vehicle: 2
+  noSnowfall: 0
+  lagoonIslands:
+  - points:
+    - {x: -20, y: 56.8}
+    - {x: -14.4, y: 70.8}
+    - {x: -12.2, y: 81}
+    - {x: -13, y: 93.6}
+    - {x: -18, y: 109}
+    - {x: -15.4, y: 116}
+    - {x: -10.7, y: 122.5}
+    - {x: 15.8, y: 141.6}
+    - {x: 24.3, y: 149.1}
+    - {x: 31.4, y: 158.4}
+    - {x: 38, y: 172.8}
+    - {x: 43.3, y: 176.5}
+    - {x: 51.6, y: 178.8}
+    - {x: 61.6, y: 177.6}
+    - {x: 77.9, y: 163.6}
+    - {x: 91.6, y: 155.5}
+    - {x: 101.7, y: 151.6}
+    - {x: 109.7, y: 150.1}
+    - {x: 117.1, y: 150.2}
+    - {x: 140.8, y: 155.9}
+    - {x: 152, y: 152.9}
+    - {x: 157.3, y: 146.6}
+    - {x: 158.5, y: 142.9}
+    - {x: 158.3, y: 137.1}
+    - {x: 157.2, y: 133.4}
+    - {x: 154.5, y: 131.2}
+    - {x: 151.8, y: 129.8}
+    - {x: 141.1, y: 132}
+    - {x: 133.6, y: 132.4}
+    - {x: 127.5, y: 131.5}
+    - {x: 119.2, y: 128.9}
+    - {x: 110.3, y: 124.5}
+    - {x: 101.9, y: 118.8}
+    - {x: 94.9, y: 112.3}
+    - {x: 90.1, y: 105.7}
+    - {x: 85.9, y: 97.3}
+    - {x: 83, y: 88.1}
+    - {x: 81.7, y: 78.9}
+    - {x: 81.9, y: 71}
+    - {x: 83.7, y: 63.2}
+    - {x: 86.4, y: 57.4}
+    - {x: 97, y: 44.7}
+    - {x: 97, y: 39.9}
+    - {x: 95.8, y: 34.8}
+    - {x: 92.9, y: 30.4}
+    - {x: 88, y: 25.9}
+    - {x: 82, y: 22.1}
+    - {x: 74.5, y: 19.2}
+    - {x: 66.8, y: 17.9}
+    - {x: 37.6, y: 21.9}
+    - {x: 8.4, y: 21.2}
+    - {x: 1.9, y: 22.3}
+    - {x: -6.7, y: 27.8}
+    - {x: -12.8, y: 34.9}
+    - {x: -18, y: 46.3}
+    kind: 4
+    beach: 5
+    palms: 30
+    huts: 0
+    seed: 90
+  - points:
+    - {x: 173.9, y: 38.6}
+    - {x: 172.3, y: 33.4}
+    - {x: 168.9, y: 29.2}
+    - {x: 164.1, y: 26.6}
+    - {x: 158.6, y: 26.1}
+    - {x: 153.4, y: 27.7}
+    - {x: 149.2, y: 31.1}
+    - {x: 146.6, y: 35.9}
+    - {x: 146.1, y: 41.4}
+    - {x: 147.7, y: 46.6}
+    - {x: 151.1, y: 50.8}
+    - {x: 155.9, y: 53.4}
+    - {x: 161.4, y: 53.9}
+    - {x: 166.6, y: 52.3}
+    - {x: 170.8, y: 48.9}
+    - {x: 173.4, y: 44.1}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 91
+  - points:
+    - {x: -65.1, y: 78.5}
+    - {x: -66.8, y: 72.9}
+    - {x: -70.5, y: 68.4}
+    - {x: -75.6, y: 65.6}
+    - {x: -81.5, y: 65.1}
+    - {x: -87.1, y: 66.8}
+    - {x: -91.6, y: 70.5}
+    - {x: -94.4, y: 75.6}
+    - {x: -94.9, y: 81.5}
+    - {x: -93.2, y: 87.1}
+    - {x: -89.5, y: 91.6}
+    - {x: -84.4, y: 94.4}
+    - {x: -78.5, y: 94.9}
+    - {x: -72.9, y: 93.2}
+    - {x: -68.4, y: 89.5}
+    - {x: -65.6, y: 84.4}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 92
+  - points:
+    - {x: 231.9, y: 168.8}
+    - {x: 230.6, y: 164.3}
+    - {x: 227.6, y: 160.7}
+    - {x: 223.5, y: 158.5}
+    - {x: 218.8, y: 158.1}
+    - {x: 214.3, y: 159.4}
+    - {x: 210.7, y: 162.4}
+    - {x: 208.5, y: 166.5}
+    - {x: 208.1, y: 171.2}
+    - {x: 209.4, y: 175.7}
+    - {x: 212.4, y: 179.3}
+    - {x: 216.5, y: 181.5}
+    - {x: 221.2, y: 181.9}
+    - {x: 225.7, y: 180.6}
+    - {x: 229.3, y: 177.6}
+    - {x: 231.5, y: 173.5}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 93
+  - points:
+    - {x: 82.9, y: 248.7}
+    - {x: 81.5, y: 243.9}
+    - {x: 78.2, y: 240}
+    - {x: 73.8, y: 237.6}
+    - {x: 68.7, y: 237.1}
+    - {x: 63.9, y: 238.5}
+    - {x: 60, y: 241.8}
+    - {x: 57.6, y: 246.2}
+    - {x: 57.1, y: 251.3}
+    - {x: 58.5, y: 256.1}
+    - {x: 61.8, y: 260}
+    - {x: 66.2, y: 262.4}
+    - {x: 71.3, y: 262.9}
+    - {x: 76.1, y: 261.5}
+    - {x: 80, y: 258.2}
+    - {x: 82.4, y: 253.8}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 94
+  - points:
+    - {x: -59.1, y: 188.9}
+    - {x: -60.3, y: 184.8}
+    - {x: -63, y: 181.5}
+    - {x: -66.8, y: 179.5}
+    - {x: -71.1, y: 179.1}
+    - {x: -75.2, y: 180.3}
+    - {x: -78.5, y: 183}
+    - {x: -80.5, y: 186.8}
+    - {x: -80.9, y: 191.1}
+    - {x: -79.7, y: 195.2}
+    - {x: -77, y: 198.5}
+    - {x: -73.2, y: 200.5}
+    - {x: -68.9, y: 200.9}
+    - {x: -64.8, y: 199.7}
+    - {x: -61.5, y: 197}
+    - {x: -59.5, y: 193.2}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 95
+  - points:
+    - {x: 140.9, y: -41.1}
+    - {x: 139.7, y: -45.2}
+    - {x: 137, y: -48.5}
+    - {x: 133.2, y: -50.5}
+    - {x: 128.9, y: -50.9}
+    - {x: 124.8, y: -49.7}
+    - {x: 121.5, y: -47}
+    - {x: 119.5, y: -43.2}
+    - {x: 119.1, y: -38.9}
+    - {x: 120.3, y: -34.8}
+    - {x: 123, y: -31.5}
+    - {x: 126.8, y: -29.5}
+    - {x: 131.1, y: -29.1}
+    - {x: 135.2, y: -30.3}
+    - {x: 138.5, y: -33}
+    - {x: 140.5, y: -36.8}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 96
+  - points:
+    - {x: 239, y: 79.1}
+    - {x: 237.9, y: 75.8}
+    - {x: 235.7, y: 73}
+    - {x: 232.6, y: 71.4}
+    - {x: 229.1, y: 71}
+    - {x: 225.8, y: 72.1}
+    - {x: 223, y: 74.3}
+    - {x: 221.4, y: 77.4}
+    - {x: 221, y: 80.9}
+    - {x: 222.1, y: 84.2}
+    - {x: 224.3, y: 87}
+    - {x: 227.4, y: 88.6}
+    - {x: 230.9, y: 89}
+    - {x: 234.2, y: 87.9}
+    - {x: 237, y: 85.7}
+    - {x: 238.6, y: 82.6}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 97
+  - points:
+    - {x: -30, y: -41}
+    - {x: -31.2, y: -44.7}
+    - {x: -33.7, y: -47.7}
+    - {x: -37.1, y: -49.6}
+    - {x: -41, y: -50}
+    - {x: -44.7, y: -48.8}
+    - {x: -47.7, y: -46.3}
+    - {x: -49.6, y: -42.9}
+    - {x: -50, y: -39}
+    - {x: -48.8, y: -35.3}
+    - {x: -46.3, y: -32.3}
+    - {x: -42.9, y: -30.4}
+    - {x: -39, y: -30}
+    - {x: -35.3, y: -31.2}
+    - {x: -32.3, y: -33.7}
+    - {x: -30.4, y: -37.1}
+    kind: 4
+    beach: 3.5
+    palms: 4
+    huts: 0
+    seed: 98
+  swells: []
+  currents: []
+  dolphins: []
+  footbridges: []
+  ferry:
+    branch: -1
+    at: 0.5
+    docked: 7
+    away: 5
+  cranes: []
+  duckBasins: []
+  ducks: 160
+  cruiseShip:
+    enabled: 0
+    from: 0
+    to: 0
+    lateral: 22
+    speed: 6
+  fireJets: []
+  seaplane:
+    enabled: 0
+    from: 0
+    to: 0
+    dropAt: -1
+  wild:
+    enabled: 1
+    mood: {r: 0.14, g: 0.2, b: 0.36, a: 1}
+    ledges:
+    - from: 24
+      to: 200
+      side: 0
+      reef: 0
+    - from: 230
+      to: 410
+      side: 0
+      reef: 0
+    - from: 444
+      to: 620
+      side: 0
+      reef: 0
+    props:
+    - sprite: Fortress
+      position: {x: -42.02107, y: 56.909386}
+      size: 30
+      angle: 0.2117691
+      overhead: 1
+    crocs: []
+    doors: []
+    doorPeriod: 4
+    cannon: {x: 0, y: 0}
+    cannonAims: {x: 0, y: 0}
+    cannonEvery: 1.6
+    coins: []
+    planks: []
+    jellyfish: []
+    mantas: []
+    lightning:
+    - {x: 120, y: 330}
+    - {x: 500, y: 610}
+    waves:
+    - {x: 60, y: 190}
+    - {x: 250, y: 400}
+    - {x: 470, y: 610}
+    rain: 1
+    river: 0
+    riverMargin: 2.6
+  coast:
+    enabled: 1
+    night: 0
+    lighthouse: {x: 0, y: 0}
+    beamPeriod: 7
+    lights: []
+    darkness: 0.72
+    flats: []
+    tideBranch: -1
+    rocks: []
+    gates: []
+    top: 0
+    gatePeriod: 3.6
+    gateOpen: 0.55
+    wreck: 690
+    lightning: 0
+    whirlpool: {x: 0, y: 0}
+    whirlRadius: 0
+    whirlPull: 5
+  waterWorld: 0
+  biome: 2
+  gaps:
+  - from: 204
+    to: 224
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 1
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+    barge: 0
+    logs: 0
+  - from: 416
+    to: 436
+    rampLateral: 0
+    period: 0
+    raised: 0
+    offset: 0
+    lift: 0
+    drop: 1
+    hidden: 0
+    collapse: 0
+    slowMotion: 0
+    trickJump: 1
+    kicker: 0
+    width: 0
+    tricks: 3
+    plunge: 0
+    barge: 0
+    logs: 0
+  elevatedRoad: 0
+  bouncers: []
+  geysers: []
+  sweepers: []
+  skyLife: 0
+  rivers: []
+  lakes: []
+  oil: []
+  rampLength: 3
+  rampWidth: 2.5
+  shortcuts: []
+  branches: []
+  banks: []
+  penguins: []
+  dashPanels:
+  - distance: 12
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 196
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 410
+    lateral: 0
+    length: 4
+    width: 3.2
+  - distance: 630
+    lateral: 0
+    length: 4
+    width: 3.2
+  icePatches: []
+  slopes: []
+  snowPiles: []
+  viaducts: []
+  fallingTrees: []
+  avalanche:
+    enabled: 0
+    from: -60
+    delay: 2
+    speed: 13
+    maxBehind: 90
+    stopAt: 0
+  train:
+    enabled: 0
+    points: []
+    speed: 12
+    trains: 2
+    wagons: 6
+    ramps: []
+    leapAt: 0
+  gifts: []
+  night: 0
+  santa: 0
+  snowballFights: []
+  turntables: []
+  nets: []
+  snowTunnels: []
+  chairlifts: []
+  helix:
+    enabled: 0
+    centre: {x: 0, y: 0}
+    radius: 12
+    entry: 0
+    from: 0
+    to: 0
+    exit: 0
+    turns: 6
+    mountainRadius: 40
+  holes: []
+  platforms: []
+  hatches: []
+  vortices: []
+  abyss: 0
+  islands: []
+  splits: []
+  slidingDoors: []
+  pools: []
+  bowling: []
+  billiards: []
+  glassFloors: []
+  storms: []
+  twisters: []
+  snowBase: 0
+  noHeadlights: 0
+  rides: []
+  pinball: []
+  rinks: []
+  slalom: []
+  fjord:
+    enabled: 0
+    center: {x: 0, y: 0}
+    radii: {x: 40, y: 20}
+    angle: 0
+    iceRoad: -1
+    crackLap: 2
+    breakLap: 3
+    panels: []
+    shipFrom: {x: 0, y: 0}
+    shipTo: {x: 0, y: 0}
+    shipSpeed: 7
+    shipWait: 4
+    refreeze: 6
+    floes: []
+  chasms: []
+  caves: []
+  scenery:
+  - name: Rock
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    count: 30
+    sizeRange: {x: 3, y: 5}
+    clearance: {x: 14, y: 40}
+    alignToRoad: 0
+    clustered: 0
+    cornerOnly: 0
+    squareAngle: 0
+    tints:
+    - {r: 1, g: 1, b: 1, a: 1}
+    along: {x: 0, y: 0}
+    canopy: 0
+    indoor: 0
+  bakedScenery:
+  - position: {x: 26.021494, y: 232.01643}
+    right: {x: 1.0074935, y: -1.2360135}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 97.52298, y: 221.72949}
+    right: {x: -1.4292387, y: 1.1373128}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 165.73074, y: 219.041}
+    right: {x: 0.89047104, y: 1.4780308}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 122.11017, y: 215.36131}
+    right: {x: 1.0434906, y: 1.9392185}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 105.28283, y: 211.56876}
+    right: {x: 0.0051680794, y: 2.3626041}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -8.464426, y: 178.81967}
+    right: {x: -1.494909, y: 0.15162696}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -47.985435, y: 173.77592}
+    right: {x: -0.6080766, y: 2.028398}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -45.589813, y: 169.92142}
+    right: {x: 1.285767, y: -1.104598}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -35.794807, y: 168.52455}
+    right: {x: -1.7589637, y: -0.06639691}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -67.43165, y: 145.01994}
+    right: {x: 0.04925097, y: 2.3310564}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 225.10059, y: 141.43729}
+    right: {x: 0.5292636, y: 2.3674893}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -60.853817, y: 137.00769}
+    right: {x: -0.24412046, y: 1.5367485}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -72.431366, y: 111.363235}
+    right: {x: 1.6110135, y: 0.7469056}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -78.54805, y: 109.40511}
+    right: {x: 2.0168533, y: 0.9069801}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 162.4235, y: 72.82593}
+    right: {x: -0.009923163, y: 2.2491262}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -59.088757, y: 34.21367}
+    right: {x: 0.14078629, y: -1.7427517}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -34.327168, y: -15.939048}
+    right: {x: -0.9466216, y: 2.2954476}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 104.263176, y: -17.758244}
+    right: {x: -1.53364, y: 0.5379613}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -32.338352, y: -22.03201}
+    right: {x: -1.026531, y: 1.6202623}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 44.10557, y: -24.872341}
+    right: {x: -0.04302486, y: -1.8652302}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 113.052216, y: -25.043867}
+    right: {x: 1.7440336, y: 1.5171984}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -6.3165436, y: -27.706392}
+    right: {x: -0.34968737, y: 1.532884}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 52.12513, y: -28.058764}
+    right: {x: 1.6931386, y: 1.1255913}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 101.080734, y: -29.252325}
+    right: {x: 2.2495997, y: 0.296272}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -25.177305, y: -29.500744}
+    right: {x: 1.1322764, y: -1.9297267}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -1.3847532, y: -34.644623}
+    right: {x: 0.5892159, y: -1.705783}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -16.267296, y: -36.61724}
+    right: {x: 1.7773302, y: 0.45755157}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: -0.4593942, y: -40.4623}
+    right: {x: 0.53832185, y: 2.1977527}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 26.415426, y: -40.602863}
+    right: {x: -0.75067705, y: 1.8612505}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  - position: {x: 4.744707, y: -45.474483}
+    right: {x: 0.37000477, y: -1.6480504}
+    uv:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.25
+    tint:
+      serializedVersion: 2
+      rgba: 4294967295
+    canopy: 0
+  bakedSignature: 

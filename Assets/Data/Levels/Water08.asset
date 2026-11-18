@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9bafd59837442cfa54ac9ee1605f92, type: 3}
+  m_Name: Water08
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.LevelDefinition
+  displayName: Storm Rally
+  chapter: "WATER CUP \xB7 RACE 8"
+  track: {fileID: 11400000, guid: 4af9c2bfa777e4cd0b1e68773dd66c9f, type: 2}
+  isTutorial: 0
+  isChallenge: 0
+  preview: {fileID: 21300000, guid: 95fb3e109d4ab412ba0d382d4b8de836, type: 3}
+  laps: 3
+  description: The final showdown at the storm fortress! The narrowest ledges of the cup, waves crashing across them, lightning, big trick leaps from rock to rock - and the finish through the fortress gate.
+  difficulty: 5
+  rivalCount: 7
+  rivalSpeedScale: 1.02
+  rivalCornerScale: 1.05
+  starsRequired: 54

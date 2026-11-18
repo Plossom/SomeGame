@@ -19,7 +19,6 @@ MonoBehaviour:
   look: 2
   mapBackground: {fileID: 21300000, guid: cb920d2598e894e47a12812f8f7b783c, type: 3}
   starsRequired: 40
-  comingSoonRaces:
-  - Storm Rally
+  comingSoonRaces: []
   challenge: {fileID: 0}
   challengeAfterRival: 

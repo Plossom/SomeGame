@@ -467,7 +467,7 @@ MonoBehaviour:
   bouncers: []
   geysers: []
   sweepers: []
-  skyLife: 1
+  skyLife: 0
   rivers: []
   lakes: []
   oil: []

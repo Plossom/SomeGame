@@ -9,7 +9,7 @@ towards the finale, mostly through **narrow channels where you can fall off the 
 | 5 | Pirate Bay | a pirate cove: a pirate ship, skull rock, wooden docks | cannon fire, treasure coins, plank ramps, the skull cave | 4 |
 | 6 | Coral Coast | a reef: bright shallows, coral, rays | reef channels (touch the reef and you run aground), jellyfish, manta rays | 4 |
 | 7 | Storm Chasers | a storm out at sea, rocky stacks, a giant whirlpool | cliff-top channels where you fall off the sides, lightning strikes, the whirlpool | 5 |
-| 8 | Storm Rally | the storm fortress on its rock | the narrowest channels, waves washing over them, drawbridges, the fortress gate | 5 |
+| 8 | Storm Rally | the storm fortress on its rock | the narrowest channels, waves washing over them, trick leaps between the stacks, the fortress gate | 5 |
 
 ## New system: ledges (falling off the sides)
 - Stretches of the course run along the top of the rocks: beyond the rim there is a sheer drop down to the sea far below.
@@ -32,6 +32,7 @@ towards the finale, mostly through **narrow channels where you can fall off the 
 - **Treasure coins:** lines of gold coins along risky lines; each one gives a little boost (TREASURE!).
 - **Plank ramps:** wooden ramps that launch you over the docks.
 - **The skull cave:** the route runs through skull rock.
+- **Rocks and a wreck:** boulders in the cannon zone, a wreck on the home stretch.
 - **First ledges:** a short stretch along the cliffs.
 
 ## Race 6 — Coral Coast
@@ -42,7 +43,8 @@ towards the finale, mostly through **narrow channels where you can fall off the 
 - **Jumps:** a coral arch trick jump.
 
 ## Race 7 — Storm Chasers
-- **Look:** a stormy sea (dark blue water, rain, waves) with rocky sea stacks and a lighthouse on a stack.
+- **Jumps:** two trick leaps from stack to stack.
+- **Look:** a stormy sea (dark blue water, rain, a grey-blue gloom) with rocky sea stacks and lighthouses on two of them.
 - **Ledges:** channels along the tops of the stacks, where you fall off the sides.
 - **Lightning:** a warning ring on the channel ahead, then a bolt strikes there. There's no full-screen flash, just a
   small burst of light where it hits.
@@ -52,5 +54,5 @@ towards the finale, mostly through **narrow channels where you can fall off the 
 - **Look:** the storm fortress on its rock, a wreck, and the storm at its worst.
 - **Ledges:** the narrowest channels of the cup, almost all on ledges.
 - **Waves:** they wash across the ledges and shove you towards the edge (warned first).
-- **Drawbridges:** they go up and down in front of the fortress.
+- **Trick leaps:** two big trick jumps from one rock stack to the next.
 - **The fortress gate:** the finish runs through the fortress.

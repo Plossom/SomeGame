@@ -47,8 +47,10 @@ namespace SomeGame.EditorTools
                 "Thread the narrow channels through the reef - touch the coral and you run aground! Dodge the drifting jellyfish and the leaping manta rays, sail under the coral arch and trick over the reef crest.");
             var level7 = WildLevel("Water07", "Storm Chasers", 7, BuildStormChasers(), 5, 1f, 52,
                 "Into the storm! Race along narrow ledges high above the raging sea - one slip and you fall. Watch for the rings where lightning will strike, skirt the giant whirlpool and leap from stack to stack.");
+            var level8 = WildLevel("Water08", "Storm Rally", 8, BuildStormRally(), 5, 1.02f, 54,
+                "The final showdown at the storm fortress! The narrowest ledges of the cup, waves crashing across them, lightning, big trick leaps from rock to rock - and the finish through the fortress gate.");
             var catalog = Asset<LevelCatalog>("Assets/Data/Levels/WaterCatalog.asset");
-            catalog.levels = new List<LevelDefinition> { level, level2, level3, level4, level5, level6, level7 };
+            catalog.levels = new List<LevelDefinition> { level, level2, level3, level4, level5, level6, level7, level8 };
             EditorUtility.SetDirty(catalog);
             var cup = Asset<CupDefinition>("Assets/Data/Cups/Water.asset");
             cup.displayName = "WATER CUP";
@@ -59,7 +61,7 @@ namespace SomeGame.EditorTools
             var map = AssetDatabase.LoadAssetAtPath<Sprite>($"{Art}/MapWater.png");
             if (map != null) cup.mapBackground = map;
             cup.starsRequired = 40;
-            cup.comingSoonRaces = new List<string> { "Storm Rally" };
+            cup.comingSoonRaces = new List<string>();
             EditorUtility.SetDirty(cup);
             var list = AssetDatabase.LoadAssetAtPath<CupList>("Assets/Resources/Cups.asset");
             if (!list.cups.Contains(cup)) list.cups.Insert(Mathf.Min(2, list.cups.Count), cup);
@@ -833,6 +835,7 @@ namespace SomeGame.EditorTools
         static TrackLayout BuildStormChasers()
         {
             var t = WildTrack("StormChasers", R7, 6f);
+            t.skyLife = 0f; // (no balloons in a storm)
             var path = new TrackPath(t.waypoints, t.sampleSpacing);
             Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
             t.lagoonIslands = new List<TrackLayout.Island>
@@ -898,6 +901,69 @@ namespace SomeGame.EditorTools
             return t;
         }
 
+        // ------------------------------------------------------------------ race 8: Storm Rally
+
+        static TrackLayout BuildStormRally()
+        {
+            var t = WildTrack("StormRally", R8, 5f);
+            t.skyLife = 0f; // (no balloons in a storm)
+            var path = new TrackPath(t.waypoints, t.sampleSpacing);
+            Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
+            float Ang(float d) => Mathf.Atan2(path.NormalAt(d).y, path.NormalAt(d).x) * Mathf.Rad2Deg - 90f;
+            t.lagoonIslands = new List<TrackLayout.Island>
+            {
+                new() { points = R8_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 5f, palms = 30, seed = 90 },
+                new() { points = R8_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 91 },
+                new() { points = R8_LAND2, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 92 },
+                new() { points = R8_LAND3, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 93 },
+                new() { points = R8_LAND4, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 94 },
+                new() { points = R8_LAND5, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 95 },
+                new() { points = R8_LAND6, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 96 },
+                new() { points = R8_LAND7, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 97 },
+                new() { points = R8_LAND8, kind = TrackLayout.IslandKind.Cliff, beach = 3.5f, palms = 4, seed = 98 },
+            };
+            var w = t.wild;
+            w.mood = new Color(0.14f, 0.2f, 0.36f, 1f);
+            w.rain = true;
+            // The narrowest channels of the cup, nearly all on ledges.
+            t.widths = new List<TrackLayout.WidthKey>
+            {
+                new() { distance = 20f, width = 5.5f }, new() { distance = 36f, width = 4.6f }, new() { distance = 620f, width = 4.6f }, new() { distance = 636f, width = 6f },
+                new() { distance = 666f, width = 6f }, new() { distance = 680f, width = 5.5f },
+            };
+            w.ledges = new List<TrackLayout.Ledge>
+            {
+                new() { from = 24f, to = 200f, side = 0f },
+                new() { from = 230f, to = 410f, side = 0f },
+                new() { from = 444f, to = 620f, side = 0f },
+            };
+            w.waves = new List<Vector2> { new(60f, 190f), new(250f, 400f), new(470f, 610f) };
+            w.lightning = new List<Vector2> { new(120f, 330f), new(500f, 610f) };
+            // The fortress over the channel: its water gate before the finish.
+            w.props = new List<TrackLayout.Piece> { Piece("Fortress", At(650f), 30f, Ang(650f) + 90f, true) };
+            // Trick leaps from stack to stack.
+            t.gaps = new List<TrackLayout.Gap>
+            {
+                new() { from = 204f, to = 224f, drop = true, trickJump = true, tricks = 3 },
+                new() { from = 416f, to = 436f, drop = true, trickJump = true, tricks = 3 },
+            };
+            t.coast = new TrackLayout.Coast
+            {
+                enabled = true, night = false, lights = new Vector2[0], flats = new Vector2[0], tideBranch = -1, gates = new float[0], wreck = 690f,
+                rocks = new List<TrackLayout.TideRock>(),
+            };
+            t.rings = new List<TrackLayout.Ring> { new() { distance = 230f }, new() { distance = 442f } };
+            t.dashPanels = new List<TrackLayout.DashPanel> { new() { distance = 12f }, new() { distance = 196f }, new() { distance = 410f }, new() { distance = 630f } };
+            t.boats = new List<TrackLayout.Boat> { new() { kind = TrackLayout.BoatKind.Trawler, position = new Vector2(230f, 120f), angle = 100f } };
+            t.scenery = new List<TrackScenery.Kind>
+            {
+                new() { name = "Rock", uv = LagoonSheet.Cell("Rock"), count = 30, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(14f, 40f) },
+            };
+            t.lastLapShow = true; // (the storm's finale: fireworks over the fortress)
+            Save(t);
+            return t;
+        }
+
         static LevelDefinition Level(string file, string title, TrackLayout track)
         {
             var level = Asset<LevelDefinition>($"Assets/Data/Levels/{file}.asset");
@@ -959,5 +1025,16 @@ namespace SomeGame.EditorTools
             R7_LAND5 = new Vector2[] { new(-49.1f, 168.9f), new(-50.3f, 164.8f), new(-53.0f, 161.5f), new(-56.8f, 159.5f), new(-61.1f, 159.1f), new(-65.2f, 160.3f), new(-68.5f, 163.0f), new(-70.5f, 166.8f), new(-70.9f, 171.1f), new(-69.7f, 175.2f), new(-67.0f, 178.5f), new(-63.2f, 180.5f), new(-58.9f, 180.9f), new(-54.8f, 179.7f), new(-51.5f, 177.0f), new(-49.5f, 173.2f) },
             R7_LAND6 = new Vector2[] { new(130.9f, -31.1f), new(129.7f, -35.2f), new(127.0f, -38.5f), new(123.2f, -40.5f), new(118.9f, -40.9f), new(114.8f, -39.7f), new(111.5f, -37.0f), new(109.5f, -33.2f), new(109.1f, -28.9f), new(110.3f, -24.8f), new(113.0f, -21.5f), new(116.8f, -19.5f), new(121.1f, -19.1f), new(125.2f, -20.3f), new(128.5f, -23.0f), new(130.5f, -26.8f) },
             R7_LAND7 = new Vector2[] { new(219.0f, 59.1f), new(217.9f, 55.8f), new(215.7f, 53.0f), new(212.6f, 51.4f), new(209.1f, 51.0f), new(205.8f, 52.1f), new(203.0f, 54.3f), new(201.4f, 57.4f), new(201.0f, 60.9f), new(202.1f, 64.2f), new(204.3f, 67.0f), new(207.4f, 68.6f), new(210.9f, 69.0f), new(214.2f, 67.9f), new(217.0f, 65.7f), new(218.6f, 62.6f) };
+
+        static readonly Vector2[] R8 = new Vector2[] { new(0.0f, 0.0f), new(36.0f, 0.0f), new(70.0f, -4.0f), new(98.0f, 6.0f), new(116.0f, 26.0f), new(118.0f, 52.0f), new(104.0f, 72.0f), new(110.0f, 96.0f), new(132.0f, 110.0f), new(156.0f, 108.0f), new(176.0f, 122.0f), new(180.0f, 148.0f), new(166.0f, 170.0f), new(140.0f, 178.0f), new(112.0f, 172.0f), new(90.0f, 182.0f), new(70.0f, 198.0f), new(44.0f, 200.0f), new(22.0f, 188.0f), new(10.0f, 166.0f), new(-10.0f, 150.0f), new(-30.0f, 134.0f), new(-40.0f, 110.0f), new(-34.0f, 84.0f), new(-42.0f, 58.0f), new(-36.0f, 32.0f), new(-22.0f, 12.0f) },
+            R8_LAND0 = new Vector2[] { new(-20.0f, 56.8f), new(-14.4f, 70.8f), new(-12.2f, 81.0f), new(-13.0f, 93.6f), new(-18.0f, 109.0f), new(-15.4f, 116.0f), new(-10.7f, 122.5f), new(15.8f, 141.6f), new(24.3f, 149.1f), new(31.4f, 158.4f), new(38.0f, 172.8f), new(43.3f, 176.5f), new(51.6f, 178.8f), new(61.6f, 177.6f), new(77.9f, 163.6f), new(91.6f, 155.5f), new(101.7f, 151.6f), new(109.7f, 150.1f), new(117.1f, 150.2f), new(140.8f, 155.9f), new(152.0f, 152.9f), new(157.3f, 146.6f), new(158.5f, 142.9f), new(158.3f, 137.1f), new(157.2f, 133.4f), new(154.5f, 131.2f), new(151.8f, 129.8f), new(141.1f, 132.0f), new(133.6f, 132.4f), new(127.5f, 131.5f), new(119.2f, 128.9f), new(110.3f, 124.5f), new(101.9f, 118.8f), new(94.9f, 112.3f), new(90.1f, 105.7f), new(85.9f, 97.3f), new(83.0f, 88.1f), new(81.7f, 78.9f), new(81.9f, 71.0f), new(83.7f, 63.2f), new(86.4f, 57.4f), new(97.0f, 44.7f), new(97.0f, 39.9f), new(95.8f, 34.8f), new(92.9f, 30.4f), new(88.0f, 25.9f), new(82.0f, 22.1f), new(74.5f, 19.2f), new(66.8f, 17.9f), new(37.6f, 21.9f), new(8.4f, 21.2f), new(1.9f, 22.3f), new(-6.7f, 27.8f), new(-12.8f, 34.9f), new(-18.0f, 46.3f) },
+            R8_LAND1 = new Vector2[] { new(173.9f, 38.6f), new(172.3f, 33.4f), new(168.9f, 29.2f), new(164.1f, 26.6f), new(158.6f, 26.1f), new(153.4f, 27.7f), new(149.2f, 31.1f), new(146.6f, 35.9f), new(146.1f, 41.4f), new(147.7f, 46.6f), new(151.1f, 50.8f), new(155.9f, 53.4f), new(161.4f, 53.9f), new(166.6f, 52.3f), new(170.8f, 48.9f), new(173.4f, 44.1f) },
+            R8_LAND2 = new Vector2[] { new(-65.1f, 78.5f), new(-66.8f, 72.9f), new(-70.5f, 68.4f), new(-75.6f, 65.6f), new(-81.5f, 65.1f), new(-87.1f, 66.8f), new(-91.6f, 70.5f), new(-94.4f, 75.6f), new(-94.9f, 81.5f), new(-93.2f, 87.1f), new(-89.5f, 91.6f), new(-84.4f, 94.4f), new(-78.5f, 94.9f), new(-72.9f, 93.2f), new(-68.4f, 89.5f), new(-65.6f, 84.4f) },
+            R8_LAND3 = new Vector2[] { new(231.9f, 168.8f), new(230.6f, 164.3f), new(227.6f, 160.7f), new(223.5f, 158.5f), new(218.8f, 158.1f), new(214.3f, 159.4f), new(210.7f, 162.4f), new(208.5f, 166.5f), new(208.1f, 171.2f), new(209.4f, 175.7f), new(212.4f, 179.3f), new(216.5f, 181.5f), new(221.2f, 181.9f), new(225.7f, 180.6f), new(229.3f, 177.6f), new(231.5f, 173.5f) },
+            R8_LAND4 = new Vector2[] { new(82.9f, 248.7f), new(81.5f, 243.9f), new(78.2f, 240.0f), new(73.8f, 237.6f), new(68.7f, 237.1f), new(63.9f, 238.5f), new(60.0f, 241.8f), new(57.6f, 246.2f), new(57.1f, 251.3f), new(58.5f, 256.1f), new(61.8f, 260.0f), new(66.2f, 262.4f), new(71.3f, 262.9f), new(76.1f, 261.5f), new(80.0f, 258.2f), new(82.4f, 253.8f) },
+            R8_LAND5 = new Vector2[] { new(-59.1f, 188.9f), new(-60.3f, 184.8f), new(-63.0f, 181.5f), new(-66.8f, 179.5f), new(-71.1f, 179.1f), new(-75.2f, 180.3f), new(-78.5f, 183.0f), new(-80.5f, 186.8f), new(-80.9f, 191.1f), new(-79.7f, 195.2f), new(-77.0f, 198.5f), new(-73.2f, 200.5f), new(-68.9f, 200.9f), new(-64.8f, 199.7f), new(-61.5f, 197.0f), new(-59.5f, 193.2f) },
+            R8_LAND6 = new Vector2[] { new(140.9f, -41.1f), new(139.7f, -45.2f), new(137.0f, -48.5f), new(133.2f, -50.5f), new(128.9f, -50.9f), new(124.8f, -49.7f), new(121.5f, -47.0f), new(119.5f, -43.2f), new(119.1f, -38.9f), new(120.3f, -34.8f), new(123.0f, -31.5f), new(126.8f, -29.5f), new(131.1f, -29.1f), new(135.2f, -30.3f), new(138.5f, -33.0f), new(140.5f, -36.8f) },
+            R8_LAND7 = new Vector2[] { new(239.0f, 79.1f), new(237.9f, 75.8f), new(235.7f, 73.0f), new(232.6f, 71.4f), new(229.1f, 71.0f), new(225.8f, 72.1f), new(223.0f, 74.3f), new(221.4f, 77.4f), new(221.0f, 80.9f), new(222.1f, 84.2f), new(224.3f, 87.0f), new(227.4f, 88.6f), new(230.9f, 89.0f), new(234.2f, 87.9f), new(237.0f, 85.7f), new(238.6f, 82.6f) },
+            R8_LAND8 = new Vector2[] { new(-30.0f, -41.0f), new(-31.2f, -44.7f), new(-33.7f, -47.7f), new(-37.1f, -49.6f), new(-41.0f, -50.0f), new(-44.7f, -48.8f), new(-47.7f, -46.3f), new(-49.6f, -42.9f), new(-50.0f, -39.0f), new(-48.8f, -35.3f), new(-46.3f, -32.3f), new(-42.9f, -30.4f), new(-39.0f, -30.0f), new(-35.3f, -31.2f), new(-32.3f, -33.7f), new(-30.4f, -37.1f) };
     }
 }
