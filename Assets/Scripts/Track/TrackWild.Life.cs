@@ -22,6 +22,7 @@ namespace SomeGame.Track
             public Vector2 Home, A, B, Dir, Pos;
             public float D, Lateral, Side, Phase, Scale, ExtraScale, Timer, Started = -100f, Radius, Speed;
             public int State;
+            public Color Tint = Color.white; // (what it flies off as)
         }
 
         readonly List<Critter> _life = new();
@@ -29,6 +30,8 @@ namespace SomeGame.Track
         static readonly Color[] ButterflyTints = { new(1f, 0.85f, 0.25f), new(1f, 0.55f, 0.2f), new(0.55f, 0.75f, 1f), new(1f, 0.6f, 0.85f), new(1f, 1f, 1f) };
         static readonly Color[] LeafTints = { new(0.55f, 0.78f, 0.3f), new(0.92f, 0.78f, 0.25f), new(0.92f, 0.52f, 0.2f), new(0.72f, 0.56f, 0.3f) };
         static readonly Color[] FishTints = { new(1f, 0.55f, 0.15f), new(1f, 0.85f, 0.2f), new(0.35f, 0.65f, 1f), new(1f, 0.45f, 0.7f) };
+        static readonly Color[] ShirtTints = { new(1f, 0.4f, 0.45f), new(0.35f, 0.6f, 1f), new(1f, 0.85f, 0.3f), new(0.4f, 0.85f, 0.6f), new(1f, 1f, 1f), new(0.95f, 0.55f, 0.85f) };
+        static readonly Color HeronFlying = new(0.62f, 0.66f, 0.72f);
 
         void BuildLife(TrackPath path)
         {
@@ -102,7 +105,21 @@ namespace SomeGame.Track
             c.Lateral = c.Side * Mathf.Max(outward < 0f ? 0.3f : 0f, edge + outward);
             c.Home = path.PointAt(c.D) + path.NormalAt(c.D) * c.Lateral;
             bool inChannel = life.spread.y <= 0f;
-            if (!inChannel && CrossesCourse(path, c.Home, 1f, c.D)) return false;
+            if (!inChannel && CrossesCourse(path, c.Home, Mathf.Min(1f, outward * 0.5f), c.D)) return false; // (the bank's own edge is right there)
+            // What lives ashore (in a lagoon race, where the land is islands): on an island, the beach folk near its shore,
+            // the strollers on a quay.
+            bool ashore = kind is TrackLayout.LifeKind.Gulls or TrackLayout.LifeKind.Crabs or TrackLayout.LifeKind.Sunbathers or TrackLayout.LifeKind.Walkers
+                || (!_wild.enabled && kind is TrackLayout.LifeKind.Butterflies or TrackLayout.LifeKind.Frogs or TrackLayout.LifeKind.Herons);
+            if (ashore)
+            {
+                var island = IslandAt(c.Home, -1f);
+                if (island == null) return false;
+                bool quay = island.kind == TrackLayout.IslandKind.Quay;
+                if (kind == TrackLayout.LifeKind.Walkers && !quay) return false;
+                if (quay && kind is not (TrackLayout.LifeKind.Walkers or TrackLayout.LifeKind.Gulls)) return false;
+                if (kind is TrackLayout.LifeKind.Crabs or TrackLayout.LifeKind.Sunbathers
+                    && (island.kind == TrackLayout.IslandKind.Rock || IslandAt(c.Home, -Mathf.Max(1.6f, island.beach * 0.55f)) != null)) return false;
+            }
             bool sea = kind is TrackLayout.LifeKind.Flotsam or TrackLayout.LifeKind.Rowboats or TrackLayout.LifeKind.Driftwood or TrackLayout.LifeKind.Buoys
                 or TrackLayout.LifeKind.Turtles or TrackLayout.LifeKind.TropicalFish or TrackLayout.LifeKind.Bubbles;
             if (sea && OnLand(c.Home, kind == TrackLayout.LifeKind.Rowboats ? 3f : 1.2f)) return false;
@@ -117,7 +134,10 @@ namespace SomeGame.Track
         }
 
         // On solid ground: an island (a reef is water).
-        bool OnLand(Vector2 p, float margin)
+        bool OnLand(Vector2 p, float margin) => IslandAt(p, margin) != null;
+
+        // The island a point is on (its shore pushed out by margin; a negative margin keeps to well inside it).
+        TrackLayout.Island IslandAt(Vector2 p, float margin)
         {
             var layout = track.Layout;
             foreach (var island in layout.lagoonIslands)
@@ -133,9 +153,9 @@ namespace SomeGame.Track
                     Vector2 a = pts[i] + (pts[i] - centre).normalized * margin, b = pts[j] + (pts[j] - centre).normalized * margin;
                     if ((a.y > p.y) != (b.y > p.y) && p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
                 }
-                if (inside) return true;
+                if (inside) return island;
             }
-            return false;
+            return null;
         }
 
         // In a cave, a ship, on an aqueduct or over a jump: nothing lives there.
@@ -189,9 +209,42 @@ namespace SomeGame.Track
                     break;
                 case TrackLayout.LifeKind.Herons:
                     c.Sr = New("Heron", R(2.4f, 2.8f), LifeBankOrder, Color.white);
-                    c.Extra = New("Bird", 2.6f, LifeAirOrder, new Color(0.62f, 0.66f, 0.72f, 0f));
+                    c.Tint = HeronFlying;
+                    c.Extra = New("Bird", 2.6f, LifeAirOrder, new Color(c.Tint.r, c.Tint.g, c.Tint.b, 0f));
                     c.Dir = -n * c.Side;
                     break;
+                case TrackLayout.LifeKind.Gulls:
+                {
+                    c.Sr = New("GullStanding", R(1.45f, 1.75f), LifeBankOrder, Color.white);
+                    c.Extra = New("Gull", 2.4f, LifeAirOrder, new Color(1f, 1f, 1f, 0f));
+                    float a = R(0f, Mathf.PI * 2f);
+                    c.Dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                    break;
+                }
+                case TrackLayout.LifeKind.Crabs:
+                {
+                    float a = R(0f, Mathf.PI * 2f);
+                    c.A = c.Home; c.B = c.Home + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * R(1f, 2.2f);
+                    if (!OnLand(c.B, -0.8f)) return false;
+                    c.Sr = New("Crab", R(0.75f, 0.95f), LifeBankOrder, Color.white);
+                    c.Speed = R(0.25f, 0.4f);
+                    break;
+                }
+                case TrackLayout.LifeKind.Sunbathers:
+                    c.Sr = New("Sunbather", R(2.5f, 2.9f), LifeBankOrder, Color.white);
+                    if (c.Sr != null) c.Sr.transform.rotation = Quaternion.Euler(0f, 0f, R(0f, 360f));
+                    break;
+                case TrackLayout.LifeKind.Walkers:
+                {
+                    // (a stroll along the quay, all of it on the paving)
+                    float a = R(0f, Mathf.PI * 2f);
+                    c.A = c.Home; c.B = c.Home + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * R(4f, 10f);
+                    for (int k = 1; k <= 4; k++)
+                        if (IslandAt(Vector2.Lerp(c.A, c.B, k / 4f), -1.2f) is not { kind: TrackLayout.IslandKind.Quay }) return false;
+                    c.Sr = New("Walker", R(1.75f, 2f), LifeBankOrder, ShirtTints[random.Next(ShirtTints.Length)]);
+                    c.Speed = R(0.9f, 1.3f);
+                    break;
+                }
                 case TrackLayout.LifeKind.Leaves:
                     c.Sr = New("Leaf", R(0.5f, 0.75f), LifeWaterOrder, LeafTints[random.Next(LeafTints.Length)]);
                     c.Speed = R(0.7f, 1.2f);
@@ -323,8 +376,34 @@ namespace SomeGame.Track
                         UpdateFrog(c, now, dt);
                         break;
                     case TrackLayout.LifeKind.Herons:
+                    case TrackLayout.LifeKind.Gulls:
                         UpdateHeron(c, now, dt, player);
                         break;
+                    case TrackLayout.LifeKind.Crabs:
+                    {
+                        // Scuttling sideways, a dash and a pause, to and fro.
+                        float u = Mathf.Repeat(now * c.Speed + c.Phase, 2f);
+                        float k = u < 1f ? Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(u * 1.6f)) : 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((u - 1f) * 1.6f));
+                        Vector2 across = c.B - c.A;
+                        float jitter = Mathf.Sin(now * 30f + c.Phase) * 4f * (k > 0.02f && k < 0.98f ? 1f : 0f);
+                        c.Sr.transform.SetPositionAndRotation(Vector2.Lerp(c.A, c.B, k), Quaternion.Euler(0f, 0f, Mathf.Atan2(across.y, across.x) * Mathf.Rad2Deg + jitter));
+                        break;
+                    }
+                    case TrackLayout.LifeKind.Sunbathers:
+                        break;
+                    case TrackLayout.LifeKind.Walkers:
+                    {
+                        float len = Vector2.Distance(c.A, c.B);
+                        // (there and back, a little stop at each end to look at the boats)
+                        float trip = len / c.Speed, u = Mathf.Repeat(now + c.Phase * trip, trip * 2f + 4f);
+                        float k = u < trip ? u / trip : u < trip + 2f ? 1f : u < trip * 2f + 2f ? 1f - (u - trip - 2f) / trip : 0f;
+                        bool walking = u < trip || (u > trip + 2f && u < trip * 2f + 2f);
+                        Vector2 dir = (u < trip + 2f ? c.B - c.A : c.A - c.B);
+                        c.Sr.transform.SetPositionAndRotation(Vector2.Lerp(c.A, c.B, k), Quaternion.Euler(0f, 0f, Heading(dir)));
+                        float step = walking ? Mathf.Sin(now * 9f + c.Phase) : 0f;
+                        c.Sr.transform.localScale = new Vector3(c.Scale * (1f + 0.04f * step), c.Scale * (1f - 0.05f * Mathf.Abs(step)), 1f);
+                        break;
+                    }
                     case TrackLayout.LifeKind.Leaves:
                     {
                         float d = c.D + Mathf.Repeat(now * c.Speed + c.Phase, 40f) - 20f;
@@ -554,9 +633,9 @@ namespace SomeGame.Track
                         c.Extra.transform.SetPositionAndRotation(p, Quaternion.Euler(0f, 0f, Heading(c.B)));
                         float flap = 0.75f + 0.25f * Mathf.Sin(now * 9f), grow = 1f + u * 0.4f;
                         c.Extra.transform.localScale = new Vector3(c.ExtraScale * flap * grow, c.ExtraScale * grow, 1f);
-                        c.Extra.color = new Color(0.62f, 0.66f, 0.72f, Mathf.Clamp01(1f - u) * Mathf.Clamp01(u * 10f));
+                        c.Extra.color = new Color(c.Tint.r, c.Tint.g, c.Tint.b, Mathf.Clamp01(1f - u) * Mathf.Clamp01(u * 10f));
                     }
-                    if (u >= 1f) { c.State = 2; c.Started = now; if (c.Extra != null) c.Extra.color = new Color(0.62f, 0.66f, 0.72f, 0f); }
+                    if (u >= 1f) { c.State = 2; c.Started = now; if (c.Extra != null) c.Extra.color = new Color(c.Tint.r, c.Tint.g, c.Tint.b, 0f); }
                     break;
                 }
                 default:

@@ -168,7 +168,8 @@ namespace SomeGame.EditorTools
                 "TargetRing", "Coin", "PlankRamp", "TreasureChest", "Jellyfish", "MantaRay", "CoralArch", "Fortress", "Bolt",
                 "GalleonInside", "GalleonTop", "DeckShip", "Tentacle", "KrakenHead", "SharkFin", "Parrot", "Snore", "Anchor", "XMark", "PirateBarrels",
                 "Butterfly", "Dragonfly", "Frog", "Heron", "Bat", "Leaf", "Barrel", "Crate", "Bottle", "Driftwood", "PirateFlag", "TropicalFish", "SeaTurtle",
-                "Bubbles", "BellBuoy", "SurfSpray", "Fish", "Ducks", "Rowboat", "Bird", "SplashRing", "FoamPuff" };
+                "Bubbles", "BellBuoy", "SurfSpray", "Fish", "Ducks", "Rowboat", "Bird", "SplashRing", "FoamPuff",
+                "GullStanding", "Gull", "Walker", "Crab", "Sunbather" };
             var list = wso.FindProperty("sprites");
             list.arraySize = wildSprites.Length;
             for (int i = 0; i < wildSprites.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = Sprite(wildSprites[i]);
@@ -221,7 +222,7 @@ namespace SomeGame.EditorTools
             {
                 new() { points = BEACH, kind = TrackLayout.IslandKind.Jungle, beach = 6f, palms = 26, huts = 7, seed = 1 },
                 new() { points = PALM, kind = TrackLayout.IslandKind.Jungle, beach = 4.5f, palms = 70, huts = 5, seed = 2 },
-                new() { points = LIGHT, kind = TrackLayout.IslandKind.Rock, beach = 2f, palms = 6, seed = 3 },
+                new() { points = LIGHT, kind = TrackLayout.IslandKind.Rock, beach = 2f, palms = 24, seed = 3 },
                 new() { points = EASTBANK, kind = TrackLayout.IslandKind.Jungle, beach = 4f, palms = 22, huts = 3, seed = 4 },
                 new() { points = NORTHBANK, kind = TrackLayout.IslandKind.Jungle, beach = 4f, palms = 18, huts = 3, seed = 5 },
                 new() { points = WESTBANK, kind = TrackLayout.IslandKind.Jungle, beach = 4f, palms = 18, huts = 2, seed = 6 },
@@ -284,6 +285,19 @@ namespace SomeGame.EditorTools
                 new() { name = "Turtle", uv = Cell("Turtle"), count = 10, sizeRange = new Vector2(2.6f, 3.4f), clearance = new Vector2(1.5f, 7f), along = all },
                 new() { name = "Rock", uv = Cell("Rock"), count = 8, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(5f, 0f) },
                 new() { name = "Canoe", uv = Cell("Canoe"), count = 3, sizeRange = new Vector2(5f, 6f), clearance = new Vector2(8f, 0f) },
+            };
+            // The lagoon's little lives: tropical fish, turtles and bubbles over the coral, fish leaping in the channel;
+            // gulls, crabs, sunbathers and butterflies on the islands.
+            t.wild = new TrackLayout.Wild
+            {
+                life = new List<TrackLayout.Life>
+                {
+                    Life(TrackLayout.LifeKind.TropicalFish, 26, 1.5f, 12f), Life(TrackLayout.LifeKind.Turtles, 8, 2f, 12f),
+                    Life(TrackLayout.LifeKind.Bubbles, 12, 1f, 10f), Life(TrackLayout.LifeKind.LeapingFish, 8, -2f, -0.6f),
+                    Life(TrackLayout.LifeKind.Butterflies, 18, 3f, 20f), Life(TrackLayout.LifeKind.Gulls, 20, 2f, 18f),
+                    Life(TrackLayout.LifeKind.Crabs, 16, 2f, 16f), Life(TrackLayout.LifeKind.Sunbathers, 9, 2f, 16f),
+                    Life(TrackLayout.LifeKind.Rowboats, 3, 8f, 24f),
+                },
             };
             t.bakedSignature = null;
             EditorUtility.SetDirty(t);
@@ -396,6 +410,16 @@ namespace SomeGame.EditorTools
             {
                 new() { name = "Seal", uv = H("Seal"), count = 8, sizeRange = new Vector2(2.6f, 3.4f), clearance = new Vector2(3f, 30f) },
             };
+            // The waterfront's life: people strolling along the quays, gulls on the paving (they take off as you pass),
+            // a crate or a barrel adrift, fish leaping in the channel.
+            t.wild = new TrackLayout.Wild
+            {
+                life = new List<TrackLayout.Life>
+                {
+                    Life(TrackLayout.LifeKind.Walkers, 60, 4f, 22f), Life(TrackLayout.LifeKind.Gulls, 44, 1.5f, 20f),
+                    Life(TrackLayout.LifeKind.Flotsam, 8, 1.2f, 6f), Life(TrackLayout.LifeKind.LeapingFish, 5, -2f, -0.6f),
+                },
+            };
             t.bakedSignature = null;
             EditorUtility.SetDirty(t);
             AssetDatabase.SaveAssets();
@@ -440,7 +464,7 @@ namespace SomeGame.EditorTools
             t.biome = TrackLayout.Biome.Lagoon;
             t.vehicle = TrackLayout.Vehicle.Boat;
             t.sceneryMaterial = Mat("SceneryLagoon");
-            t.skyLife = 1f;
+            t.skyLife = 0.5f;
             var path = new TrackPath(t.waypoints, t.sampleSpacing);
             Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
 
@@ -450,9 +474,9 @@ namespace SomeGame.EditorTools
             {
                 new() { points = F_INNER, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 80, huts = 6, seed = 51 },
                 new() { points = F_OUTER, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 90, huts = 5, seed = 52 },
-                new() { points = F_ISLET0, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 0, seed = 53 },
-                new() { points = F_ISLET1, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 0, seed = 54 },
-                new() { points = F_ISLET2, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 0, seed = 55 },
+                new() { points = F_ISLET0, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 9, seed = 53 },
+                new() { points = F_ISLET1, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 9, seed = 54 },
+                new() { points = F_ISLET2, kind = TrackLayout.IslandKind.Rock, beach = 1.5f, palms = 9, seed = 55 },
             };
             t.decor = new List<TrackLayout.Decor>
             {
@@ -535,6 +559,20 @@ namespace SomeGame.EditorTools
                 new() { name = "Coral", uv = Cell("Coral"), count = 40, sizeRange = new Vector2(3.5f, 6f), clearance = new Vector2(1.2f, 9f), along = all },
                 new() { name = "CoralPink", uv = Cell("CoralPink"), count = 34, sizeRange = new Vector2(3.5f, 6f), clearance = new Vector2(1.2f, 9f), along = all },
                 new() { name = "Turtle", uv = Cell("Turtle"), count = 8, sizeRange = new Vector2(2.6f, 3.4f), clearance = new Vector2(1.5f, 7f), along = all },
+                new() { name = "Seaweed", uv = Cell("Seaweed"), count = 30, sizeRange = new Vector2(3.5f, 5.5f), clearance = new Vector2(1f, 9f), along = all },
+                new() { name = "Rock", uv = Cell("Rock"), count = 8, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(5f, 0f) },
+            };
+            // The bay's little lives, as in the lagoon.
+            t.wild = new TrackLayout.Wild
+            {
+                life = new List<TrackLayout.Life>
+                {
+                    Life(TrackLayout.LifeKind.TropicalFish, 26, 1.5f, 12f), Life(TrackLayout.LifeKind.Turtles, 8, 2f, 12f),
+                    Life(TrackLayout.LifeKind.Bubbles, 12, 1f, 10f), Life(TrackLayout.LifeKind.LeapingFish, 8, -2f, -0.6f),
+                    Life(TrackLayout.LifeKind.Butterflies, 16, 3f, 20f), Life(TrackLayout.LifeKind.Gulls, 18, 2f, 18f),
+                    Life(TrackLayout.LifeKind.Crabs, 14, 2f, 16f), Life(TrackLayout.LifeKind.Sunbathers, 10, 2f, 16f),
+                    Life(TrackLayout.LifeKind.Rowboats, 2, 8f, 24f),
+                },
             };
             t.lastLapShow = true; // (sunset and fireworks on the last lap)
             t.bakedSignature = null;

@@ -245,6 +245,9 @@ namespace SomeGame.Track
             // (over any beach it meets: a beach runs on under the quay's paving, so they join in a clean promenade edge)
             Mesh("QuayFloor", quay != null ? quay : plain, JungleOrder + 1, Fill(shore, Color.white, 1f / 4f));
             Mesh("QuayEdge", plain, JungleOrder + 2, Ring(shore, -0.9f, 0f, new Color(0.55f, 0.52f, 0.47f), new Color(0.42f, 0.4f, 0.36f), 1f));
+            // The promenade along the water: warmer, brick-red paving, a kerb line on its inner side.
+            Mesh("QuayPromenade", quay != null ? quay : plain, JungleOrder + 2, Ring(shore, -4.4f, -0.9f, new Color(1f, 0.8f, 0.68f), new Color(1f, 0.8f, 0.68f), 1f / 4f));
+            Mesh("QuayKerb", plain, JungleOrder + 2, Ring(shore, -4.7f, -4.4f, new Color(0.5f, 0.47f, 0.43f), new Color(0.5f, 0.47f, 0.43f), 1f));
             // Tyre fenders on the wall (dark rounded blocks just over the water).
             var fv = new List<Vector3>(); var fu = new List<Vector2>(); var ft = new List<int>(); var fc = new List<Color32>();
             float walked = 0f;
@@ -306,12 +309,38 @@ namespace SomeGame.Track
                     Put(houses[random.Next(houses.Length)], p, R(8.5f, 9.5f), Mathf.Atan2(n.y, n.x) + Mathf.PI * 0.5f);
                     h++;
                 }
-                // The harbour's bits and pieces on the paving.
+                // Trees along the promenade.
+                walked = 0f;
+                for (int i = 0; i < shore.Count; i++)
+                {
+                    walked += Vector2.Distance(shore[i], shore[(i + 1) % shore.Count]);
+                    if (walked < 11f) continue;
+                    Vector2 n = OutwardNormal(shore, i), p = Vector2.Lerp(shore[i], shore[(i + 1) % shore.Count], 0.5f) - OutwardNormal(shore, i) * 6.2f;
+                    if (!Inside(shore, p) || !Inside(shore, p - n * 3f) || !Free(p, 2.2f)) continue;
+                    walked = 0f;
+                    Put("Palm", p, R(5f, 6.2f), R(0f, Mathf.PI * 2f));
+                }
+                // The harbour's bits and pieces on the paving, most of them near the water (where the boats see them).
                 string[] bits = { "Crates", "Barrels", "Containers", "People", "Nets", "FishStall", "Cafe", "Car", "People", "Lifebuoys", "Palm" };
                 var bounds = BoundsOf(shore);
-                for (int n = 0, tries = 0; n < island.palms && tries < island.palms * 60; tries++)
+                float perimeter = 0f;
+                for (int i = 0; i < shore.Count; i++) perimeter += Vector2.Distance(shore[i], shore[(i + 1) % shore.Count]);
+                Vector2 NearShore()
                 {
-                    var p = new Vector2(R(bounds.xMin, bounds.xMax), R(bounds.yMin, bounds.yMax));
+                    float at = R(0f, perimeter);
+                    for (int i = 0; i < shore.Count; i++)
+                    {
+                        Vector2 a = shore[i], b = shore[(i + 1) % shore.Count];
+                        float seg = Vector2.Distance(a, b);
+                        if (at > seg) { at -= seg; continue; }
+                        return Vector2.Lerp(a, b, at / Mathf.Max(0.01f, seg)) - OutwardNormal(shore, i) * R(6.5f, 20f);
+                    }
+                    return shore[0];
+                }
+                int wanted = island.palms * 2;
+                for (int n = 0, tries = 0; n < wanted && tries < wanted * 60; tries++)
+                {
+                    var p = random.NextDouble() < 0.75 ? NearShore() : new Vector2(R(bounds.xMin, bounds.xMax), R(bounds.yMin, bounds.yMax));
                     if (!Inside(shore, p)) continue;
                     string cell = bits[random.Next(bits.Length)];
                     float size = cell is "Containers" ? R(8f, 9f) : cell is "Palm" ? R(6f, 7.5f) : R(4f, 5.5f);
@@ -808,38 +837,44 @@ namespace SomeGame.Track
             if (_behind.Count > 2000) _behind.Clear();
         }
 
-        // Across the channel at the crest: a dark swell rising behind, a white foaming crest line, then calm.
+        // Across the channel at the crest (rolling forward): the wave's shadowed face ahead of it, a crisp white crest
+        // line with a ragged, scalloped back edge of foam, then paler water behind. It bows a little (its ends lag)
+        // and wobbles along its length; it fades out over the banks.
         void BuildSwellMesh(Mesh mesh, TrackPath path, float crest, float height, float now)
         {
-            (float along, Color color)[] rows =
+            (float along, float rag, Color color)[] rows =
             {
-                (-5f, new Color(SwellDark.r, SwellDark.g, SwellDark.b, 0f)),
-                (-1.4f, new Color(SwellDark.r, SwellDark.g, SwellDark.b, 0.42f * height)),
-                (-0.5f, new Color(0.75f, 0.95f, 1f, 0.75f * height)),
-                (0f, new Color(1f, 1f, 1f, 0.95f * height)),
-                (0.5f, new Color(1f, 1f, 1f, 0.55f * height)),
-                (1.3f, new Color(1f, 1f, 1f, 0f)),
+                (1.5f, 0f, new Color(SwellDark.r, SwellDark.g, SwellDark.b, 0f)),
+                (0.5f, 0f, new Color(SwellDark.r, SwellDark.g, SwellDark.b, 0.3f * height)),
+                (0.16f, 0f, new Color(SwellDark.r, SwellDark.g, SwellDark.b, 0.4f * height)),
+                (0.08f, 0f, new Color(1f, 1f, 1f, 0.95f * height)),
+                (-0.3f, 0.3f, new Color(1f, 1f, 1f, 0.9f * height)),
+                (-0.45f, 0.45f, new Color(0.85f, 0.97f, 1f, 0.3f * height)),
+                (-1.4f, 0.3f, new Color(0.8f, 0.95f, 1f, 0.16f * height)),
+                (-4f, 0f, new Color(0.8f, 0.95f, 1f, 0f)),
             };
-            const int across = 12;
+            const int across = 24;
             var vertices = new Vector3[rows.Length * (across + 1)];
             var colors = new Color[vertices.Length];
             var uvs = new Vector2[vertices.Length];
+            float w = track.OffRoadAt(crest) + 1.5f;
             for (int r = 0; r < rows.Length; r++)
             {
-                float d = crest + rows[r].along;
-                Vector2 p = path.PointAt(d), n = path.NormalAt(d);
-                float w = track.OffRoadAt(d) + 1.5f;
                 for (int k = 0; k <= across; k++)
                 {
-                    float lat = Mathf.Lerp(-w, w, k / (float)across);
-                    // The crest isn't a ruler line: it wobbles a little along its length.
-                    float wobble = Mathf.Sin(lat * 0.9f + now * 3f) * 0.25f * height;
+                    float x = k / (float)across, lat = Mathf.Lerp(-w, w, x);
+                    float bow = -0.7f * height * (lat / w) * (lat / w);
+                    float wobble = Mathf.Sin(lat * 0.9f + now * 3f) * 0.2f * height;
+                    // (the foam's back edge in scallops that shift as it rolls)
+                    float rag = rows[r].rag * Mathf.Abs(Mathf.Sin(lat * 1.7f + crest * 0.6f + now * 1.3f));
+                    float d = crest + rows[r].along - rag + bow + wobble;
+                    Vector2 p = path.PointAt(d), n = path.NormalAt(d);
                     int i = r * (across + 1) + k;
-                    vertices[i] = p + n * lat + path.TangentAt(d) * wobble;
+                    vertices[i] = p + n * lat;
                     var col = rows[r].color;
                     col.a *= Mathf.Clamp01((w - Mathf.Abs(lat)) / 1.5f);
                     colors[i] = col;
-                    uvs[i] = new Vector2(k / (float)across, r);
+                    uvs[i] = new Vector2(x, r);
                 }
             }
             var triangles = new List<int>();

@@ -281,7 +281,7 @@ MonoBehaviour:
     - {x: 54, y: 128.3}
     kind: 2
     beach: 2
-    palms: 6
+    palms: 24
     huts: 0
     seed: 3
     trees: 0
@@ -467,7 +467,52 @@ MonoBehaviour:
     krakenReach: {x: 0, y: 0}
     sharks: []
     parrots: 0
-    life: []
+    life:
+    - kind: 12
+      count: 26
+      along: {x: 0, y: 0}
+      spread: {x: 1.5, y: 12}
+      spots: []
+    - kind: 13
+      count: 8
+      along: {x: 0, y: 0}
+      spread: {x: 2, y: 12}
+      spots: []
+    - kind: 14
+      count: 12
+      along: {x: 0, y: 0}
+      spread: {x: 1, y: 10}
+      spots: []
+    - kind: 2
+      count: 8
+      along: {x: 0, y: 0}
+      spread: {x: -2, y: -0.6}
+      spots: []
+    - kind: 0
+      count: 18
+      along: {x: 0, y: 0}
+      spread: {x: 3, y: 20}
+      spots: []
+    - kind: 18
+      count: 20
+      along: {x: 0, y: 0}
+      spread: {x: 2, y: 18}
+      spots: []
+    - kind: 19
+      count: 16
+      along: {x: 0, y: 0}
+      spread: {x: 2, y: 16}
+      spots: []
+    - kind: 20
+      count: 9
+      along: {x: 0, y: 0}
+      spread: {x: 2, y: 16}
+      spots: []
+    - kind: 10
+      count: 3
+      along: {x: 0, y: 0}
+      spread: {x: 8, y: 24}
+      spots: []
   coast:
     enabled: 0
     night: 1
@@ -2510,4 +2555,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 
+  bakedSignature: 548d5fd64daa7a71

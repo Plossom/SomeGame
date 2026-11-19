@@ -24,11 +24,13 @@ namespace SomeGame.Track
             public float flap, life;
             public bool bird;
             public float baseScale;
+            public SpriteRenderer body;
         }
 
         readonly List<Flyer> _flyers = new();
         UnityEngine.Camera _camera;
         float _nextFlock, _nextBalloon;
+        SomeGame.Race.RaceManager _race;
 
         float Busy => track != null && track.Layout != null ? track.Layout.skyLife : 0.3f;
 
@@ -57,9 +59,18 @@ namespace SomeGame.Track
                 _nextBalloon = Time.time + Random.Range(4f, 8f) * Mathf.Lerp(2f, 0.8f, busy);
             }
 
+            if (_race == null) _race = FindAnyObjectByType<SomeGame.Race.RaceManager>();
+            Vector2? player = _race != null && _race.Player != null ? _race.Player.transform.position : null;
             for (int i = _flyers.Count - 1; i >= 0; i--)
             {
                 var f = _flyers[i];
+                // A balloon over your boat turns see-through, so it never hides you (or what is coming).
+                if (!f.bird && f.body != null && player.HasValue)
+                {
+                    float d = Vector2.Distance(f.transform.position, player.Value), reach = f.baseScale * f.body.sprite.bounds.extents.x;
+                    float target = Mathf.Lerp(0.25f, 1f, Mathf.Clamp01((d - reach) / 4f));
+                    var col = f.body.color; col.a = Mathf.MoveTowards(col.a, target, Time.deltaTime * 2.5f); f.body.color = col;
+                }
                 f.life -= Time.deltaTime;
                 f.transform.position += (Vector3)(f.velocity * Time.deltaTime);
                 if (f.shadow != null) f.shadow.position = f.transform.position + new Vector3(3f, -4f, 0f);
@@ -114,7 +125,7 @@ namespace SomeGame.Track
             var t = Create("Balloon", balloonSprite, start, size, Random.Range(0f, 360f), sortingOrder);
             var shadow = Create("BalloonShadow", balloonSprite, start + new Vector2(3f, -4f), size * 0.9f, 0f, sortingOrder - 30);
             shadow.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0.18f);
-            _flyers.Add(new Flyer { transform = t, shadow = shadow, velocity = dir * speed, life = distance / speed + 2f, bird = false, baseScale = t.localScale.x });
+            _flyers.Add(new Flyer { transform = t, shadow = shadow, velocity = dir * speed, life = distance / speed + 2f, bird = false, baseScale = t.localScale.x, body = t.GetComponent<SpriteRenderer>() });
         }
 
         Transform Create(string name, Sprite sprite, Vector2 position, float size, float angle, int order)

@@ -31,6 +31,8 @@ namespace SomeGame.EditorTools
             Write(f, "Bubbles", 96, 96, BubblesPixel, 80, false);
             Write(f, "BellBuoy", 128, 128, BellBuoyPixel, 64, false);
             Write(f, "SurfSpray", 128, 128, SurfSprayPixel, 64, false);
+            Write(f, "GullStanding", 96, 96, GullStandingPixel, 64, false);
+            Write(f, "Walker", 64, 64, WalkerPixel, 64, false);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
@@ -108,6 +110,42 @@ namespace SomeGame.EditorTools
             c = Over(c, Hex("2A2E36"), Fill(Capsule(x, y, 90, 158, 102, 158, 2.5f)));
             c = Over(c, Hex("F0B030"), Fill(beak));
             return Over(c, Line, Stroke(all, 3f));
+        }
+
+        // A gull standing (from above, head to the top): a white body, grey folded wings with black tips crossed
+        // over its tail, a yellow beak.
+        static Color GullStandingPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float body = Ellipse(x, y, 48, 44, 13, 24);
+            float head = Circle(x, y, 48, 70, 9);
+            float tail = Triangle(x, y, new Vector2(40, 26), new Vector2(56, 26), new Vector2(48, 10));
+            float all = Min(body, head, tail);
+            c = Over(c, new Color(0, 0.1f, 0.15f, 0.3f), Fill(all - 4f) * (1f - Fill(all)));
+            c = Over(c, Color.white, Fill(all));
+            float wings = Mathf.Min(Ellipse(x, y, 40, 40, 7, 22), Ellipse(x, y, 56, 40, 7, 22));
+            c = Over(c, Hex("AEB9C4"), Fill(wings));
+            c = Over(c, Hex("2A2F36"), Fill(wings) * Mathf.Clamp01((30f - y) / 4f));
+            c = Over(c, Hex("FFC93C"), Fill(Triangle(x, y, new Vector2(44, 76), new Vector2(52, 76), new Vector2(48, 88))));
+            c = Over(c, Hex("1C1F24"), Fill(Circle(x, y, 43, 72, 1.6f)) + Fill(Circle(x, y, 53, 72, 1.6f)));
+            return Over(c, Line, Stroke(all, 2f));
+        }
+
+        // Someone strolling along the quay, from above (facing the top): a shirt (white, tinted in the race),
+        // arms, a head of hair.
+        static Color WalkerPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float shoulders = Ellipse(x, y, 32, 30, 15, 8);
+            float arms = Mathf.Min(Capsule(x, y, 17, 33, 16, 24, 3.5f), Capsule(x, y, 47, 33, 48, 24, 3.5f));
+            float head = Circle(x, y, 32, 33, 7.5f);
+            float all = Min(shoulders, arms, head);
+            c = Over(c, new Color(0, 0.1f, 0.15f, 0.3f), Fill(all - 3f) * (1f - Fill(all)));
+            c = Over(c, Hex("F2B48C"), Fill(arms));
+            c = Over(c, Color.white, Fill(shoulders));
+            c = Over(c, Hex("F2B48C"), Fill(head));
+            c = Over(c, Hex("4A3226"), Fill(Mathf.Max(head, y - 37f)));
+            return Over(c, Line, Stroke(all, 1.8f));
         }
 
         // A bat, wings spread.

@@ -397,6 +397,7 @@ namespace SomeGame.Track
         {
             Butterflies, Dragonflies, LeapingFish, Ducks, Frogs, Herons, Leaves, Bats, Drips, Flotsam, Rowboats, Flags,
             TropicalFish, Turtles, Bubbles, Surf, Driftwood, Buoys,
+            Gulls, Crabs, Sunbathers, Walkers,
         }
 
         [Serializable]

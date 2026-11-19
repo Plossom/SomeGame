@@ -66,7 +66,15 @@ namespace SomeGame.Track
             _rain = null; _storm = null;
             Release();
             _wild = layout.wild;
-            if (layout.biome != TrackLayout.Biome.Lagoon || _wild == null || !_wild.enabled) return;
+            if (layout.biome != TrackLayout.Biome.Lagoon || _wild == null) return;
+            // (a lagoon race without the wild water still has its little lives)
+            if (!_wild.enabled)
+            {
+                if (!Application.isPlaying || _wild.life == null || _wild.life.Count == 0) return;
+                _race = FindAnyObjectByType<SomeGame.Race.RaceManager>();
+                BuildLife(path);
+                return;
+            }
             if (_wild.river) BuildRiver(path, layout);
             foreach (var ledge in _wild.ledges) BuildLedge(path, ledge);
             foreach (var gap in layout.gaps) if (gap.drop && !gap.hidden) { BuildStackEnd(path, gap.from, 1f); BuildStackEnd(path, gap.to, -1f); }
@@ -1455,8 +1463,9 @@ namespace SomeGame.Track
 
         void Update()
         {
-            if (!Application.isPlaying || _wild == null || !_wild.enabled || track == null || track.Layout == null || track.Layout.biome != TrackLayout.Biome.Lagoon) return;
+            if (!Application.isPlaying || _wild == null || track == null || track.Layout == null || track.Layout.biome != TrackLayout.Biome.Lagoon) return;
             float dt = Time.deltaTime;
+            if (!_wild.enabled) { UpdateLife(dt); return; }
             UpdateLedges();
             UpdateOverheads(dt);
             UpdateCaves(dt);
