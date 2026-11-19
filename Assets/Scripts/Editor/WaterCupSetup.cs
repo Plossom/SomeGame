@@ -43,7 +43,7 @@ namespace SomeGame.EditorTools
             var level4 = WildLevel("Water04", "Jungle Rapids", 4, BuildJungleRapids(), 3, 0.98f, 46,
                 "A tiny creek through the deep forest! Under the trees, over yourself on the old aqueduct, past crocodiles and the temple's stone doors, over the log jam, into the mountain through a water cave and down the rapids.", laps: 1);
             var level5 = WildLevel("Water05", "Pirate Bay", 5, BuildPirateBay(), 4, 0.99f, 48,
-                "A pirate movie! Sail right through a galleon - past the galley and the snoring pirates in their hammocks - into the jaws of skull rock, between two ships firing broadsides, over a wreck's deck and off its bow, and past the kraken and the sharks.");
+                "A pirate movie! Sail right through a galleon - past the galley and the snoring pirates in their hammocks - into the jaws of skull rock, between two ships firing broadsides, over a wreck's deck and off its bow, and past the kraken and the sharks.", laps: 1);
             var level6 = WildLevel("Water06", "Coral Coast", 6, BuildCoralCoast(), 4, 1f, 50,
                 "A maze through the reef: hairpin after hairpin down narrow channels - touch the coral and you run aground! Jellyfish, leaping manta rays, coral arches and trick jumps over the reef crests.");
             var level7 = WildLevel("Water07", "Storm Chasers", 7, BuildStormChasers(), 5, 1f, 52,

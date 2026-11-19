@@ -19,7 +19,7 @@ towards the finale, mostly through **narrow channels where you can fall off the 
 - **8 Storm Rally:** three loops in a chain, crossing itself four times.
 - Races 4, 5, 7 and 8 have water caves into mountains: the roof fades while you are inside, the water goes dark and crystals glow.
 - Race 4 is a small forest creek with a new forest scenery sheet: oaks, pines, birches and willows (their crowns overhang the creek), ferns, mushrooms, reeds and lily pads.
-- All five are two laps.
+- Races 4 and 5 are one lap; races 6–8 are two laps.
 
 ## New system: ledges (falling off the sides)
 - Stretches of the course run along the top of the rocks: beyond the rim there is a sheer drop down to the sea far below.
