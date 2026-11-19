@@ -125,6 +125,10 @@ namespace SomeGame.Track
             }
             foreach (float d in layout.footbridges) BuildBridge(path, d);
             foreach (var gap in layout.gaps) if (!gap.hidden) { if (gap.barge || gap.logs) BuildBarge(path, gap); else if (!gap.drop && !gap.IsDrawbridge) BuildSandbar(path, gap); }
+            // A leap off the channel's end over the shallows (the wild races' rock stacks draw their own): the deep
+            // water rounds off into the shallows instead of stopping square (no white water: it hid the jump).
+            bool stacks = layout.wild != null && layout.wild.enabled && layout.wild.ledges.Count > 0;
+            if (!stacks) foreach (var gap in layout.gaps) if (gap.drop && !gap.hidden) { BuildSpill(path, gap.from, 1f); BuildSpill(path, gap.to, -1f); }
             if (Application.isPlaying)
             {
                 _cars = FindObjectsByType<SomeGame.Car.CarMovement>(FindObjectsSortMode.None);
@@ -627,6 +631,32 @@ namespace SomeGame.Track
                     cr.transform.localScale = Vector3.one * 0.55f;
                     _crabs.Add((cr.transform, c + along * (k == 0 ? 3.8f : -3.8f), across, (k == 0 ? reachL : reachR) * 0.6f, k * 2.3f));
                 }
+        }
+
+        void BuildSpill(TrackPath path, float d, float forward)
+        {
+            Vector2 p = path.PointAt(d), n = path.NormalAt(d), f = path.TangentAt(d) * forward;
+            float r = track.OffRoadAt(d);
+            var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
+            void Quad(Vector2 a, Vector2 b, Vector2 cc, Vector2 dd, Color ca, Color cb)
+            {
+                int s0 = v.Count;
+                v.Add(a); v.Add(b); v.Add(dd); v.Add(cc);
+                for (int k = 0; k < 4; k++) u.Add(Vector2.zero);
+                c.Add(ca); c.Add(ca); c.Add(cb); c.Add(cb);
+                t.AddRange(new[] { s0, s0 + 2, s0 + 1, s0 + 1, s0 + 2, s0 + 3, s0, s0 + 1, s0 + 2, s0 + 1, s0 + 3, s0 + 2 });
+            }
+            // The channel's deep water carried on a little and rounded off, fading into the shallows.
+            var deep = new Color(0.12f, 0.42f, 0.78f, 0.75f);
+            const int Steps = 14;
+            float reach = forward > 0f ? 3.6f : 2.8f;
+            for (int k = 0; k < Steps; k++)
+            {
+                float a0 = Mathf.PI * (k / (float)Steps - 0.5f), a1 = Mathf.PI * ((k + 1) / (float)Steps - 0.5f);
+                Vector2 E(float a, float lat, float ahead) => p + n * lat * Mathf.Sin(a) + f * ahead * Mathf.Cos(a);
+                Quad(E(a0, r, 0f), E(a1, r, 0f), E(a1, r + 1.2f, reach), E(a0, r + 1.2f, reach), deep, new Color(deep.r, deep.g, deep.b, 0f));
+            }
+            Mesh("SpillWater", plain, CurrentOrder - 1, TrackMeshes.Quads("SpillWater", v, u, t, c));
         }
 
         readonly List<(Transform t, Vector2 centre, Vector2 across, float range, float phase)> _crabs = new();
