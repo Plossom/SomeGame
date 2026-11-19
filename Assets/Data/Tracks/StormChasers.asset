@@ -165,6 +165,8 @@ MonoBehaviour:
     palms: 12
     huts: 0
     seed: 70
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   - points:
     - {x: -85.2, y: 112.5}
     - {x: -99.7, y: 96.9}
@@ -186,6 +188,8 @@ MonoBehaviour:
     palms: 12
     huts: 0
     seed: 71
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   - points:
     - {x: 52.8, y: 152}
     - {x: 38.9, y: 159.6}
@@ -215,6 +219,8 @@ MonoBehaviour:
     palms: 12
     huts: 0
     seed: 72
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   - points:
     - {x: -33.6, y: 192.9}
     - {x: -34.4, y: 200}
@@ -247,6 +253,8 @@ MonoBehaviour:
     palms: 12
     huts: 0
     seed: 73
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   swells: []
   currents: []
   dolphins: []
@@ -280,11 +288,23 @@ MonoBehaviour:
       side: 0
       reef: 0
     - from: 180
-      to: 330
+      to: 336
+      side: 0
+      reef: 0
+    - from: 354
+      to: 366
       side: 0
       reef: 0
     - from: 560
       to: 638
+      side: 0
+      reef: 0
+    - from: 688
+      to: 700
+      side: 0
+      reef: 0
+    - from: 716
+      to: 728
       side: 0
       reef: 0
     - from: 900
@@ -320,6 +340,37 @@ MonoBehaviour:
     krakenReach: {x: 0, y: 0}
     sharks: []
     parrots: 0
+    life:
+    - kind: 15
+      count: 70
+      along: {x: 0, y: 0}
+      spread: {x: 1, y: 6}
+      spots: []
+    - kind: 16
+      count: 22
+      along: {x: 0, y: 0}
+      spread: {x: 8, y: 24}
+      spots: []
+    - kind: 9
+      count: 10
+      along: {x: 0, y: 0}
+      spread: {x: 8, y: 22}
+      spots: []
+    - kind: 17
+      count: 10
+      along: {x: 0, y: 0}
+      spread: {x: 9, y: 18}
+      spots: []
+    - kind: 7
+      count: 10
+      along: {x: 0, y: 0}
+      spread: {x: 1, y: 6}
+      spots: []
+    - kind: 8
+      count: 6
+      along: {x: 0, y: 0}
+      spread: {x: 1, y: 6}
+      spots: []
   coast:
     enabled: 1
     night: 0
@@ -883,4 +934,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 
+  bakedSignature: 991a72f147025a5a

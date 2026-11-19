@@ -27024,6 +27024,7 @@ MonoBehaviour:
   water: {fileID: 2100000, guid: 3d08ec25ef1264f9580e319109356ee3, type: 2}
   sand: {fileID: 2100000, guid: 3f19bc6965e0e4e628d7ff16959bce6b, type: 2}
   foam: {fileID: 2100000, guid: 6b0ce423357e848ef977c5a3e71f5ee0, type: 2}
+  forest: {fileID: 2100000, guid: 38c6762b75cc34366803987bca230482, type: 2}
   sprites:
   - {fileID: 21300000, guid: 0454c48623aed42559442b3c1db753f3, type: 3}
   - {fileID: 21300000, guid: 4e848e666a3b94d478bdc13e3c03d9ad, type: 3}
@@ -27054,6 +27055,28 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9d359fcf9949e401c9cc9e88543d77c9, type: 3}
   - {fileID: 21300000, guid: 6e421eb45022349dcaaee494ef759b47, type: 3}
   - {fileID: 21300000, guid: 67ab7a78d4f81401fa91e24c120617e3, type: 3}
+  - {fileID: 21300000, guid: 7c233116a7b3b4e15b8848e45bbd9e13, type: 3}
+  - {fileID: 21300000, guid: c79923ef4559c4a1b8524c1c0d7cced0, type: 3}
+  - {fileID: 21300000, guid: 18cb5529b12ab4bb4ba0d63cd9bcf52a, type: 3}
+  - {fileID: 21300000, guid: ea3794e7b86c04b4a961c444ed2e801b, type: 3}
+  - {fileID: 21300000, guid: 3661bfab541854c2fa11d9f43da57964, type: 3}
+  - {fileID: 21300000, guid: aba5d800ac8444a3d8e3b4c3530bd8a2, type: 3}
+  - {fileID: 21300000, guid: 55f5e0c5389e74ef89792c5517d9941c, type: 3}
+  - {fileID: 21300000, guid: e585ea0e30ca5448cb1c79f206c0e1ce, type: 3}
+  - {fileID: 21300000, guid: 4f1bd2b8608ea40ec940cbc732de79a5, type: 3}
+  - {fileID: 21300000, guid: 2d657b9ad2d88401488c013602dc75a5, type: 3}
+  - {fileID: 21300000, guid: 362c2966bf043498e8ae0e8975f623a9, type: 3}
+  - {fileID: 21300000, guid: 397faa9c3e14a4f0d9d31bd5ca17a964, type: 3}
+  - {fileID: 21300000, guid: 8b64bbc3cc8c6437e9ee34c265fbc5e6, type: 3}
+  - {fileID: 21300000, guid: ac9e2f627c3b74583b11760a368d213f, type: 3}
+  - {fileID: 21300000, guid: 53ce14874ce4245559b7f4d5dc0fc38c, type: 3}
+  - {fileID: 21300000, guid: be399e130eb8d441481bf71ca7d7b2d5, type: 3}
+  - {fileID: 21300000, guid: d03f0eddbe33b4db5a55728dc8818fea, type: 3}
+  - {fileID: 21300000, guid: 5ffdfb3052c464cd296de56de24a5e99, type: 3}
+  - {fileID: 21300000, guid: bbcb1c8a073d8454685f666b0d83c1c8, type: 3}
+  - {fileID: 21300000, guid: 156d748603eb54c46a1e532bb1627ec9, type: 3}
+  - {fileID: 21300000, guid: 1bcca3c55e7c7493c945906948bfb2fe, type: 3}
+  - {fileID: 21300000, guid: 97d052b342f9840188fc6f5777dfeda5, type: 3}
 --- !u!1 &1297106806
 GameObject:
   m_ObjectHideFlags: 0
@@ -39513,6 +39536,7 @@ MonoBehaviour:
   harbourScenery: {fileID: 2100000, guid: 7bce4edcc7a48459b9cb95ee519b73f6, type: 2}
   barge: {fileID: 21300000, guid: 44fc64986806b4f6e9512da668f31ec4, type: 3}
   logJam: {fileID: 21300000, guid: 9412a1c1cb0f04013a081b72ecfd2522, type: 3}
+  forestScenery: {fileID: 2100000, guid: 38c6762b75cc34366803987bca230482, type: 2}
 --- !u!4 &1905064030
 Transform:
   m_ObjectHideFlags: 0

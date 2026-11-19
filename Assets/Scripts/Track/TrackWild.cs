@@ -34,9 +34,11 @@ namespace SomeGame.Track
     /// - lightning striking the channel (a ring warns first; a small burst of light, no flash of the screen), waves
     ///   washing across the ledges, rain.
     /// </summary>
-    public class TrackWild : TrackDerivedBehaviour
+    public partial class TrackWild : TrackDerivedBehaviour
     {
         [SerializeField] Material plain, scenery, ground, water, sand, foam;
+        [Tooltip("The forest sheet: pines over the mountains' tops (the cave roofs).")]
+        [SerializeField] Material forest;
         [SerializeField] Sprite[] sprites = { };
 
         const int FaceOrder = -45, RimOrder = -44, RingOrder = 3, PropOrder = 4, CoinOrder = 7, ShadowOrder = 6, CrocOrder = 7,
@@ -60,13 +62,14 @@ namespace SomeGame.Track
         {
             foreach (var go in _parts) if (go != null) { if (Application.isPlaying) Destroy(go); else DestroyImmediate(go); }
             _parts.Clear(); _overheads.Clear(); _crocs.Clear(); _doors.Clear(); _coins.Clear(); _planks.Clear(); _jellies.Clear();
-            _mantas.Clear(); _strikes.Clear(); _waves.Clear(); _balls.Clear(); _fallen.Clear(); _caveViews.Clear(); _ships.Clear(); _snores.Clear(); _tentacles.Clear(); _fins.Clear(); _parrots.Clear(); _krakenHead = null;
+            _mantas.Clear(); _strikes.Clear(); _waves.Clear(); _balls.Clear(); _fallen.Clear(); _caveViews.Clear(); _ships.Clear(); _snores.Clear(); _tentacles.Clear(); _fins.Clear(); _parrots.Clear(); _life.Clear(); _krakenHead = null;
             _rain = null; _storm = null;
             Release();
             _wild = layout.wild;
             if (layout.biome != TrackLayout.Biome.Lagoon || _wild == null || !_wild.enabled) return;
             if (_wild.river) BuildRiver(path, layout);
             foreach (var ledge in _wild.ledges) BuildLedge(path, ledge);
+            foreach (var gap in layout.gaps) if (gap.drop && !gap.hidden) { BuildStackEnd(path, gap.from, 1f); BuildStackEnd(path, gap.to, -1f); }
             foreach (var cave in _wild.caves) BuildCave(path, cave);
             foreach (var g in _wild.galleons) BuildShip(path, g, true);
             foreach (var g in _wild.deckShips) BuildShip(path, g, false);
@@ -87,6 +90,7 @@ namespace SomeGame.Track
             BuildKraken();
             BuildSharks();
             BuildParrots(path);
+            BuildLife(path);
         }
 
         protected override void OnDisable()
@@ -241,7 +245,7 @@ namespace SomeGame.Track
 
         // ------------------------------------------------------------------ water caves
 
-        class CaveView { public Vector2 Span; public MeshRenderer Roof, Gloom, RoofRocks, Walls; public Color32[] RoofColors, RoofRockColors, WallColors; public float Shown = -1f; public readonly List<(SpriteRenderer sr, float phase)> Crystals = new(); public float Inside; }
+        class CaveView { public Vector2 Span; public MeshRenderer Roof, Gloom, RoofRocks, Walls, WallRocks; public Color32[] RoofColors, RoofRockColors, WallColors, WallRockColors; public float Shown = -1f; public readonly List<(SpriteRenderer sr, float phase)> Crystals = new(); public float Inside; }
         readonly List<CaveView> _caveViews = new();
         const int ShipInsideOrder = 3, DeckShipOrder = -40, SnoreOrder = 36, ParrotOrder = 41, CaveWallOrder = 6, CaveGloomOrder = 5, CrystalOrder = 7, RoofOrder = 33, RoofRockOrder = 34, MouthOrder = 35;
 
@@ -302,43 +306,106 @@ namespace SomeGame.Track
             view.Walls = Mesh("CaveWalls", plain, CaveWallOrder, TrackMeshes.Quads("CaveWalls", wv, wu, wt, wc)).GetComponent<MeshRenderer>();
             view.WallColors = wc.ToArray();
             SetAlpha(view.Walls, view.WallColors, 0);
-            // The mouths: dark arches of rock where the channel goes in and comes out.
+            // Boulders along the walls and stalagmites on the wet ledge (shown with the walls).
+            if (scenery != null)
+            {
+                var bv = new List<Vector3>(); var bu = new List<Vector2>(); var bt = new List<int>(); var bc = new List<Color32>();
+                var rnd = new System.Random((int)(span.x * 11f) + 5);
+                foreach (float side in new[] { 1f, -1f })
+                    for (float a = 1.5f; a < len - 1.5f; a += 2.6f)
+                    {
+                        float d = span.x + a + (float)rnd.NextDouble() * 1.2f;
+                        bool near = rnd.Next(3) == 0;
+                        float lat = track.OffRoadAt(d) + (near ? 1.2f : 2.2f + (float)rnd.NextDouble() * (roof - 1f));
+                        Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * lat;
+                        float size = near ? 1f + (float)rnd.NextDouble() * 0.6f : 2f + (float)rnd.NextDouble() * 2.4f, ang = (float)rnd.NextDouble() * 6.28f;
+                        Vector2 r = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * size * 0.5f;
+                        int first = bv.Count;
+                        TrackMeshes.AddQuad(bv, bu, bt, p, r, new Vector2(-r.y, r.x), Vector2.one);
+                        var uv = LagoonSheet.Cell("Rock");
+                        for (int k = first; k < bu.Count; k++) bu[k] = new Vector2(uv.x + bu[k].x * uv.width, uv.y + bu[k].y * uv.height);
+                        var tint = near ? new Color32(110, 126, 142, 255) : new Color32(78, 84, 96, 255);
+                        for (int k = 0; k < 4; k++) bc.Add(tint);
+                    }
+                view.WallRocks = Mesh("CaveWallRocks", scenery, CrystalOrder, TrackMeshes.Quads("CaveWallRocks", bv, bu, bt, bc)).GetComponent<MeshRenderer>();
+                view.WallRockColors = bc.ToArray();
+                SetAlpha(view.WallRocks, view.WallRockColors, 0);
+            }
+            // The mouths: arches of rock where the channel goes in and comes out - dark at the opening, lighter rock
+            // over it, fading out into the mountain (no hard outer edge), crags along it.
             var mv = new List<Vector3>(); var mu = new List<Vector2>(); var mt = new List<int>(); var mc = new List<Color32>();
+            var crags = new List<(Vector2 p, float size)>();
             foreach (float at in new[] { span.x, span.x + len })
             {
                 Vector2 p = path.PointAt(at), n = path.NormalAt(at), f = path.TangentAt(at) * (at == span.x ? 1f : -1f);
                 float half = track.OffRoadAt(at) + 1.2f;
-                for (int k = 0; k < 12; k++)
+                Vector2 Arc(float a, float wide, float deep) => p + n * Mathf.Cos(a) * (half + wide) + f * Mathf.Sin(a) * deep;
+                var inner = new Color32(30, 32, 38, 255); var mid = new Color32(82, 84, 90, 255); var outer = new Color32(104, 106, 108, 255); var gone = new Color32(104, 106, 108, 0);
+                for (int k = 0; k < 16; k++)
                 {
-                    float a0 = Mathf.PI * k / 12f, a1 = Mathf.PI * (k + 1) / 12f;
-                    Vector2 q0 = p + n * Mathf.Cos(a0) * half + f * Mathf.Sin(a0) * 1.8f, q1 = p + n * Mathf.Cos(a1) * half + f * Mathf.Sin(a1) * 1.8f;
-                    Vector2 o0 = p + n * Mathf.Cos(a0) * (half + 2.4f) + f * Mathf.Sin(a0) * 4.2f, o1 = p + n * Mathf.Cos(a1) * (half + 2.4f) + f * Mathf.Sin(a1) * 4.2f;
-                    int s0 = mv.Count;
-                    mv.Add(q0); mv.Add(q1); mv.Add(o0); mv.Add(o1);
-                    for (int z = 0; z < 4; z++) { mu.Add(Vector2.zero); mc.Add(new Color32(48, 50, 56, 255)); }
-                    mt.AddRange(new[] { s0, s0 + 2, s0 + 1, s0 + 1, s0 + 2, s0 + 3, s0, s0 + 1, s0 + 2, s0 + 1, s0 + 3, s0 + 2 });
+                    float a0 = Mathf.PI * k / 16f, a1 = Mathf.PI * (k + 1) / 16f;
+                    Band(mv, mu, mt, mc, Arc(a0, 0f, 1.8f), Arc(a1, 0f, 1.8f), Arc(a1, 1f, 2.8f), Arc(a0, 1f, 2.8f), inner, mid);
+                    Band(mv, mu, mt, mc, Arc(a0, 1f, 2.8f), Arc(a1, 1f, 2.8f), Arc(a1, 2.4f, 4.2f), Arc(a0, 2.4f, 4.2f), mid, outer);
+                    Band(mv, mu, mt, mc, Arc(a0, 2.4f, 4.2f), Arc(a1, 2.4f, 4.2f), Arc(a1, 3.8f, 5.8f), Arc(a0, 3.8f, 5.8f), outer, gone);
                 }
+                for (int k = 0; k < 7; k++) crags.Add((Arc(Mathf.PI * (k + 0.5f) / 7f, 1.6f, 3.4f), 1.8f + (k % 3) * 0.5f));
             }
             Mesh("CaveMouths", plain, MouthOrder, TrackMeshes.Quads("CaveMouths", mv, mu, mt, mc));
-            // Boulders and crags over the roof: a mountain, not a meadow.
             if (scenery != null)
+            {
+                var cv = new List<Vector3>(); var cu = new List<Vector2>(); var ct = new List<int>(); var cc = new List<Color32>();
+                int z = 0;
+                foreach (var (cp, size) in crags)
+                {
+                    float ang = (z++) * 2.4f;
+                    Vector2 r = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * size * 0.5f;
+                    int first = cv.Count;
+                    TrackMeshes.AddQuad(cv, cu, ct, cp, r, new Vector2(-r.y, r.x), Vector2.one);
+                    var uv = LagoonSheet.Cell("Rock");
+                    for (int q = first; q < cu.Count; q++) cu[q] = new Vector2(uv.x + cu[q].x * uv.width, uv.y + cu[q].y * uv.height);
+                    for (int q = 0; q < 4; q++) cc.Add(new Color32(200, 200, 205, 255));
+                }
+                Mesh("CaveMouthCrags", scenery, MouthOrder + 1, TrackMeshes.Quads("CaveMouthCrags", cv, cu, ct, cc));
+            }
+            // Pines, boulders and crags over the roof: a wooded mountain, not a meadow (the storm darkens it).
+            var roofSheet = forest != null ? forest : scenery;
+            if (roofSheet != null)
             {
                 var rv = new List<Vector3>(); var ru = new List<Vector2>(); var rt = new List<int>(); var rc = new List<Color32>();
                 var random = new System.Random((int)(span.x * 7f) + 1);
-                for (float a = 2f; a < len - 2f; a += 2.2f)
-                    for (int k = 0; k < 2; k++)
+                var tint = _wild.rain ? new Color32(178, 199, 219, 255) : new Color32(255, 255, 255, 255);
+                var items = new List<(Vector2 p, float size, float ang, Rect uv)>();
+                for (float a = 2f; a < len - 2f; a += 1.8f)
+                    for (int k = 0; k < 3; k++)
                     {
-                        float d = span.x + a, lat = ((float)random.NextDouble() * 2f - 1f) * (track.OffRoadAt(d) + roof * 0.7f);
+                        float d = span.x + a, lat = ((float)random.NextDouble() * 2f - 1f) * (track.OffRoadAt(d) + roof * 0.75f);
                         Vector2 p = path.PointAt(d) + path.NormalAt(d) * lat;
-                        float size = 3f + (float)random.NextDouble() * 3f, ang = (float)random.NextDouble() * 6.28f;
-                        Vector2 r = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * size * 0.5f;
-                        int first = rv.Count;
-                        TrackMeshes.AddQuad(rv, ru, rt, p, r, new Vector2(-r.y, r.x), Vector2.one);
-                        var uv = LagoonSheet.Cell(random.Next(3) == 0 ? "Bush" : "Rock");
-                        for (int z = first; z < ru.Count; z++) ru[z] = new Vector2(uv.x + ru[z].x * uv.width, uv.y + ru[z].y * uv.height);
-                        for (int z = 0; z < 4; z++) rc.Add(new Color32(255, 255, 255, 255));
+                        int pick = random.Next(10);
+                        Rect uv;
+                        float size;
+                        if (forest != null)
+                        {
+                            string cell = pick < 4 ? "PineDark" : pick < 7 ? "Pine" : pick < 9 ? "Bush" : "Fern";
+                            uv = ForestSheet.Cell(cell);
+                            size = cell.StartsWith("Pine") ? 5f + (float)random.NextDouble() * 2.5f : 2.5f + (float)random.NextDouble() * 2f;
+                        }
+                        else
+                        {
+                            uv = LagoonSheet.Cell(pick < 3 ? "Bush" : "Rock");
+                            size = 3f + (float)random.NextDouble() * 3f;
+                        }
+                        items.Add((p, size, (float)random.NextDouble() * 6.28f, uv));
                     }
-                view.RoofRocks = Mesh("CaveRoofRocks", scenery, RoofRockOrder, TrackMeshes.Quads("CaveRoofRocks", rv, ru, rt, rc)).GetComponent<MeshRenderer>();
+                items.Sort((x, y) => y.p.y.CompareTo(x.p.y));
+                foreach (var (p, size, ang, uv) in items)
+                {
+                    Vector2 r = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * size * 0.5f;
+                    int first = rv.Count;
+                    TrackMeshes.AddQuad(rv, ru, rt, p, r, new Vector2(-r.y, r.x), Vector2.one);
+                    for (int z = first; z < ru.Count; z++) ru[z] = new Vector2(uv.x + ru[z].x * uv.width, uv.y + ru[z].y * uv.height);
+                    for (int z = 0; z < 4; z++) rc.Add(tint);
+                }
+                view.RoofRocks = Mesh("CaveRoofRocks", roofSheet, RoofRockOrder, TrackMeshes.Quads("CaveRoofRocks", rv, ru, rt, rc)).GetComponent<MeshRenderer>();
                 view.RoofRockColors = rc.ToArray();
             }
             // Crystals glowing on the walls inside (seen once the roof fades).
@@ -367,6 +434,16 @@ namespace SomeGame.Track
             t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3, s, s + 1, s + 2, s + 1, s + 3, s + 2 });
         }
 
+        // A quad whose inner edge (a, b) has one colour and outer edge (c, d) another.
+        static void Band(List<Vector3> v, List<Vector2> u, List<int> t, List<Color32> c, Vector2 a, Vector2 b, Vector2 cc, Vector2 d, Color32 inner, Color32 outer)
+        {
+            int s = v.Count;
+            v.Add(a); v.Add(b); v.Add(d); v.Add(cc);
+            for (int k = 0; k < 4; k++) u.Add(Vector2.zero);
+            c.Add(inner); c.Add(inner); c.Add(outer); c.Add(outer);
+            t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3, s, s + 1, s + 2, s + 1, s + 3, s + 2 });
+        }
+
         static void SetAlpha(MeshRenderer r, Color32[] baseColors, byte alpha)
         {
             if (r == null || baseColors == null) return;
@@ -392,6 +469,7 @@ namespace SomeGame.Track
                     SetAlpha(view.Roof, view.RoofColors, roofAlpha);
                     SetAlpha(view.RoofRocks, view.RoofRockColors, roofAlpha);
                     SetAlpha(view.Walls, view.WallColors, (byte)(255f * Mathf.Clamp01(view.Inside * 1.4f)));
+                    SetAlpha(view.WallRocks, view.WallRockColors, (byte)(255f * Mathf.Clamp01(view.Inside * 1.4f)));
                 }
                 foreach (var (sr, phase) in view.Crystals)
                 {
@@ -650,17 +728,27 @@ namespace SomeGame.Track
             var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var rimC = new List<Color32>();
             var fv = new List<Vector3>(); var fu = new List<Vector2>(); var ft = new List<int>(); var faceC = new List<Color32>();
             float len = Mathf.Repeat(ledge.to - ledge.from, path.Length);
+            bool hardFrom = false, hardTo = false;
+            foreach (var gap in track.Layout.gaps)
+                if (gap.drop)
+                {
+                    hardFrom |= Mathf.Abs(path.DeltaDistance(gap.to, ledge.from)) < 1f;
+                    hardTo |= Mathf.Abs(path.DeltaDistance(ledge.to, gap.from)) < 1f;
+                }
             Color rimTop = ledge.reef ? new Color(1f, 0.55f, 0.55f) : new Color(0.56f, 0.53f, 0.49f);
-            Color faceTop = ledge.reef ? new Color(0.98f, 0.78f, 0.55f, 0.92f) : new Color(0.24f, 0.24f, 0.26f);
-            Color faceBottom = ledge.reef ? new Color(0.98f, 0.8f, 0.6f) : new Color(0.08f, 0.12f, 0.18f);
+            // (on a reef: the coral crest along the channel, then pale shallows over the reef fading into what is there)
+            Color faceTop = ledge.reef ? new Color(0.8f, 0.97f, 0.93f, 0.9f) : new Color(0.24f, 0.24f, 0.26f);
+            Color faceBottom = ledge.reef ? new Color(0.8f, 0.97f, 0.93f, 0f) : new Color(0.08f, 0.12f, 0.18f);
             foreach (float side in new[] { 1f, -1f })
             {
                 if (ledge.side != 0f && Mathf.Sign(ledge.side) != side) continue;
                 for (float a = 0f; a < len; a += 1f)
                 {
                     float d0 = ledge.from + a, d1 = ledge.from + Mathf.Min(len, a + 1f);
-                    // (fading in and out at the ends, so the ledge never starts with a hard edge)
-                    float k0 = Mathf.Clamp01(Mathf.Min(a, len - a) / 3f), k1 = Mathf.Clamp01(Mathf.Min(a + 1f, len - a - 1f) / 3f);
+                    // (fading in and out at the ends, so the ledge never starts with a hard edge - except where it
+                    // meets a leap: there the stack's end is a cliff too)
+                    float Fk(float x) => Mathf.Clamp01(Mathf.Min(hardFrom ? 3f : x, hardTo ? 3f : len - x) / 3f);
+                    float k0 = Fk(a), k1 = Fk(Mathf.Min(len, a + 1f));
                     Vector2 p0 = path.PointAt(d0), p1 = path.PointAt(d1), n0 = path.NormalAt(d0) * side, n1 = path.NormalAt(d1) * side;
                     float r0 = track.OffRoadAt(d0), r1 = track.OffRoadAt(d1);
                     Strip(v, u, t, rimC, p0 + n0 * r0, p1 + n1 * r1, p1 + n1 * (r1 + 0.9f), p0 + n0 * (r0 + 0.9f), Fade(rimTop, k0), Fade(rimTop, k1), Fade(rimTop, k1), Fade(rimTop, k0));
@@ -680,6 +768,28 @@ namespace SomeGame.Track
             }
             Mesh("LedgeFace", plain, FaceOrder, TrackMeshes.Quads("LedgeFace", fv, fu, ft, faceC));
             Mesh("LedgeRim", plain, RimOrder, TrackMeshes.Quads("LedgeRim", v, u, t, rimC));
+            // Crags and boulders down the cliff faces (the storm darkens them).
+            if (!ledge.reef && scenery != null)
+            {
+                var cv = new List<Vector3>(); var cu = new List<Vector2>(); var ct = new List<int>(); var cc = new List<Color32>();
+                var random = new System.Random((int)(ledge.from * 17f) + 3);
+                var tint = _wild.rain ? new Color32(120, 128, 140, 255) : new Color32(170, 170, 170, 255);
+                for (float a = 2.5f; a < len - 2.5f; a += 3.4f)
+                    foreach (float side in new[] { 1f, -1f })
+                    {
+                        if (ledge.side != 0f && Mathf.Sign(ledge.side) != side) continue;
+                        float d = ledge.from + a + (float)random.NextDouble() * 2f;
+                        Vector2 p = path.PointAt(d) + path.NormalAt(d) * side * (track.OffRoadAt(d) + 2f + (float)random.NextDouble() * 1.8f);
+                        float size = 2f + (float)random.NextDouble() * 1.6f, ang = (float)random.NextDouble() * 6.28f;
+                        Vector2 r = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * size * 0.5f;
+                        int first = cv.Count;
+                        TrackMeshes.AddQuad(cv, cu, ct, p, r, new Vector2(-r.y, r.x), Vector2.one);
+                        var uv = LagoonSheet.Cell("Rock");
+                        for (int k = first; k < cu.Count; k++) cu[k] = new Vector2(uv.x + cu[k].x * uv.width, uv.y + cu[k].y * uv.height);
+                        for (int k = 0; k < 4; k++) cc.Add(tint);
+                    }
+                Mesh("LedgeCrags", scenery, RimOrder + 1, TrackMeshes.Quads("LedgeCrags", cv, cu, ct, cc));
+            }
             // Coral over the reef flats.
             if (ledge.reef && scenery != null)
             {
@@ -702,6 +812,36 @@ namespace SomeGame.Track
                     }
                 Mesh("ReefCoral", scenery, RimOrder + 1, TrackMeshes.Quads("ReefCoral", cv, cu, ct, cc));
             }
+        }
+
+        // Where a leap leaves one rock stack and lands on the next: the end of the stack is a cliff too (its face
+        // dropping away beyond the channel's end, its shadow on the sea), the water spilling over the lip in foam.
+        void BuildStackEnd(TrackPath path, float d, float forward)
+        {
+            var fv = new List<Vector3>(); var fu = new List<Vector2>(); var ft = new List<int>(); var fc = new List<Color32>();
+            Vector2 p = path.PointAt(d), n = path.NormalAt(d), f = path.TangentAt(d) * forward;
+            float r = track.OffRoadAt(d), wide = r + 4f;
+            var faceTop = new Color(0.24f, 0.24f, 0.26f); var faceFoot = new Color(0.1f, 0.11f, 0.13f); var deep = new Color(0.02f, 0.1f, 0.18f, 0.75f);
+            Vector2 L(float lat, float ahead) => p + n * lat + f * ahead;
+            // A rounded end: from the lip (straight across) out to the foot of the face and the edge of its shadow,
+            // meeting the ledges' faces either side exactly (no seams where they join).
+            Vector2 E(float a, float lat, float ahead) => p + n * lat * Mathf.Sin(a) + f * ahead * Mathf.Cos(a);
+            const int Steps = 18;
+            for (int k = 0; k < Steps; k++)
+            {
+                float a0 = Mathf.PI * (k / (float)Steps - 0.5f), a1 = Mathf.PI * ((k + 1) / (float)Steps - 0.5f);
+                Band(fv, fu, ft, fc, E(a0, r + 0.9f, 0f), E(a1, r + 0.9f, 0f), E(a1, wide, 3.2f), E(a0, wide, 3.2f), Fade(faceTop, 1f), Fade(faceFoot, 1f));
+                Band(fv, fu, ft, fc, E(a0, wide, 3.2f), E(a1, wide, 3.2f), E(a1, r + 12f, 10f), E(a0, r + 12f, 10f), Fade(deep, 1f), Fade(deep, 0f));
+            }
+            Mesh("StackEndFace", plain, FaceOrder, TrackMeshes.Quads("StackEndFace", fv, fu, ft, fc));
+            var rv = new List<Vector3>(); var ru = new List<Vector2>(); var rt = new List<int>(); var rc = new List<Color32>();
+            var rim = new Color(0.56f, 0.53f, 0.49f);
+            // the rock rim round the corners, and a lip of foam where the water spills over
+            Strip(rv, ru, rt, rc, L(r, -0.2f), L(r + 0.9f, -0.2f), L(r + 0.9f, 0.6f), L(r, 0.6f), Fade(rim, 1f), Fade(rim, 1f), Fade(rim, 1f), Fade(rim, 1f));
+            Strip(rv, ru, rt, rc, L(-r - 0.9f, -0.2f), L(-r, -0.2f), L(-r, 0.6f), L(-r - 0.9f, 0.6f), Fade(rim, 1f), Fade(rim, 1f), Fade(rim, 1f), Fade(rim, 1f));
+            var lip = new Color(0.92f, 0.97f, 1f, 0.85f);
+            if (forward > 0f) Strip(rv, ru, rt, rc, L(-r, -0.15f), L(r, -0.15f), L(r, 0.45f), L(-r, 0.45f), Fade(lip, 0.4f), Fade(lip, 0.4f), Fade(lip, 1f), Fade(lip, 1f));
+            Mesh("StackEndRim", plain, RimOrder, TrackMeshes.Quads("StackEndRim", rv, ru, rt, rc));
         }
 
         static Color32 Fade(Color c, float k) => new Color(c.r, c.g, c.b, c.a * k);
@@ -1189,15 +1329,24 @@ namespace SomeGame.Track
         float _nextWave;
         const float WaveWarn = 0.9f, WaveCross = 1.4f, WaveLength = 9f;
 
+        const int WaveSteps = 14;
+
         void UpdateWaves(float dt)
         {
             var path = track.Path;
             if (PlayerIn(_wild.waves, out float pd) && Time.time >= _nextWave)
             {
                 _nextWave = Time.time + Random.Range(3.2f, 4.8f);
+                // A ribbon along the channel: (WaveSteps + 1) rows of 4 (the lead edge, the crest's front and back, the
+                // tail of the swell behind it), three bands between them.
                 var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>(); var c = new List<Color32>();
-                for (int k = 0; k < 16; k++) { v.Add(Vector3.zero); u.Add(Vector2.zero); c.Add(new Color32(255, 255, 255, 0)); }
-                for (int k = 0; k < 3; k++) { int s = k * 4; t.AddRange(new[] { s, s + 2, s + 1, s + 1, s + 2, s + 3 }); }
+                for (int k = 0; k < (WaveSteps + 1) * 4; k++) { v.Add(Vector3.zero); u.Add(Vector2.zero); c.Add(new Color32(255, 255, 255, 0)); }
+                for (int j = 0; j < WaveSteps; j++)
+                    for (int b = 0; b < 3; b++)
+                    {
+                        int a0 = j * 4 + b, a1 = a0 + 1, b0 = a0 + 4, b1 = a1 + 4;
+                        t.AddRange(new[] { a0, b0, a1, a1, b0, b1, a0, a1, b0, a1, b1, b0 });
+                    }
                 var go = Mesh("Wave", plain, BoltOrder - 2, TrackMeshes.Quads("Wave", v, u, t, c));
                 _waves.Add((go.GetComponent<MeshFilter>(), pd + Random.Range(8f, 14f), Random.value < 0.5f ? 1f : -1f, Time.time));
             }
@@ -1213,16 +1362,22 @@ namespace SomeGame.Track
                 float pos = Mathf.Lerp(reach, -reach, k);
                 byte alpha = (byte)(age < WaveWarn ? 120 + 100 * Mathf.Sin(age * 20f) : 230 * (1f - k * k));
                 var mesh = mf.sharedMesh;
-                var verts = new Vector3[16]; var cols = new Color32[16];
-                for (int q = 0; q < 3; q++)
+                int count = (WaveSteps + 1) * 4;
+                var verts = new Vector3[count]; var cols = new Color32[count];
+                // The crest follows the channel's curve, a little ragged, fading out at its two ends; behind it the
+                // swell's paler water. It rolls towards -n.
+                float[] lats = { -0.35f, 0f, 0.9f, 3f };
+                var tints = new[] { new Color32(240, 250, 255, 0), new Color32(245, 252, 255, alpha), new Color32(225, 242, 250, (byte)(alpha * 0.8f)), new Color32(170, 215, 235, 0) };
+                for (int j = 0; j <= WaveSteps; j++)
                 {
-                    float w = q == 0 ? 1.4f : q == 1 ? 0.6f : 0.3f, back = q == 0 ? 0f : q == 1 ? 1.3f : 2.2f;
-                    Vector2 mid = centre + n * (pos + back * Mathf.Sign(reach));
-                    int s = q * 4;
-                    verts[s] = mid - along * WaveLength * 0.5f - n * w * 0.5f; verts[s + 1] = mid + along * WaveLength * 0.5f - n * w * 0.5f;
-                    verts[s + 2] = mid - along * WaveLength * 0.5f + n * w * 0.5f; verts[s + 3] = mid + along * WaveLength * 0.5f + n * w * 0.5f;
-                    byte a = (byte)(alpha * (q == 0 ? 1f : q == 1 ? 0.6f : 0.35f));
-                    for (int z = 0; z < 4; z++) cols[s + z] = new Color32(240, 250, 255, a);
+                    float x = j / (float)WaveSteps, dd = d + (x - 0.5f) * WaveLength;
+                    Vector2 p = path.PointAt(dd), nn = path.NormalAt(dd) * side;
+                    float wobble = Mathf.Sin(dd * 1.7f + age * 5f) * 0.18f, ends = Mathf.Sqrt(Mathf.Sin(Mathf.PI * x));
+                    for (int b = 0; b < 4; b++)
+                    {
+                        verts[j * 4 + b] = p + nn * (pos + lats[b] + wobble);
+                        var col = tints[b]; col.a = (byte)(col.a * ends); cols[j * 4 + b] = col;
+                    }
                 }
                 mesh.vertices = verts;
                 mesh.colors32 = cols;
@@ -1319,6 +1474,7 @@ namespace SomeGame.Track
             UpdateLightning();
             UpdateWaves(dt);
             UpdateBursts();
+            UpdateLife(dt);
             if (_wild.rain) UpdateRain(dt);
         }
     }

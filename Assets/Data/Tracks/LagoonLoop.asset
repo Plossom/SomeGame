@@ -212,6 +212,8 @@ MonoBehaviour:
     palms: 26
     huts: 7
     seed: 1
+    trees: 0
+    treeTint: {r: 1, g: 1, b: 1, a: 1}
   - points:
     - {x: -25.8, y: 18.9}
     - {x: -16.9, y: 20.1}
@@ -264,6 +266,8 @@ MonoBehaviour:
     palms: 70
     huts: 5
     seed: 2
+    trees: 0
+    treeTint: {r: 1, g: 1, b: 1, a: 1}
   - points:
     - {x: 60.8, y: 137}
     - {x: 56.9, y: 152.4}
@@ -280,6 +284,8 @@ MonoBehaviour:
     palms: 6
     huts: 0
     seed: 3
+    trees: 0
+    treeTint: {r: 1, g: 1, b: 1, a: 1}
   - points:
     - {x: 66.6, y: -3.2}
     - {x: 73.1, y: 3.2}
@@ -312,6 +318,8 @@ MonoBehaviour:
     palms: 22
     huts: 3
     seed: 4
+    trees: 0
+    treeTint: {r: 1, g: 1, b: 1, a: 1}
   - points:
     - {x: 85.5, y: 141.4}
     - {x: 81.2, y: 152.5}
@@ -338,6 +346,8 @@ MonoBehaviour:
     palms: 18
     huts: 3
     seed: 5
+    trees: 0
+    treeTint: {r: 1, g: 1, b: 1, a: 1}
   - points:
     - {x: -35.7, y: 128.6}
     - {x: -42.4, y: 122.4}
@@ -368,6 +378,8 @@ MonoBehaviour:
     palms: 18
     huts: 2
     seed: 6
+    trees: 0
+    treeTint: {r: 1, g: 1, b: 1, a: 1}
   - points:
     - {x: -62, y: 150}
     - {x: -64.9, y: 156.4}
@@ -382,6 +394,8 @@ MonoBehaviour:
     palms: 7
     huts: 1
     seed: 7
+    trees: 0
+    treeTint: {r: 1, g: 1, b: 1, a: 1}
   swells:
   - from: 396
     to: 472
@@ -453,6 +467,7 @@ MonoBehaviour:
     krakenReach: {x: 0, y: 0}
     sharks: []
     parrots: 0
+    life: []
   coast:
     enabled: 0
     night: 1

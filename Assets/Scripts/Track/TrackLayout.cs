@@ -228,7 +228,7 @@ namespace SomeGame.Track
         [Tooltip("Wooden footbridges over the channel (lap distances): you race underneath.")]
         public List<float> footbridges = new();
 
-        public enum IslandKind { Jungle, Sand, Rock, Quay, Cliff }
+        public enum IslandKind { Jungle, Sand, Rock, Quay, Cliff, Reef }
 
         [Serializable]
         public class Island
@@ -242,6 +242,10 @@ namespace SomeGame.Track
             [Min(0)] public int palms = 8;
             [Min(0)] public int huts;
             public int seed;
+            [Tooltip("Forest over it (pines, oaks, bushes, rocks from the forest sheet), in clumps.")]
+            [Min(0)] public int trees;
+            [Tooltip("Tint of its forest (a storm darkens it).")]
+            public Color treeTint = Color.white;
         }
 
         [Serializable]
@@ -385,6 +389,27 @@ namespace SomeGame.Track
             public List<Vector3> sharks = new();
             [Tooltip("Parrots flying along the course.")]
             [Min(0)] public int parrots;
+            [Tooltip("The little lives along the course: butterflies, frogs, herons, floating barrels, fish, surf...")]
+            public List<Life> life = new();
+        }
+
+        public enum LifeKind
+        {
+            Butterflies, Dragonflies, LeapingFish, Ducks, Frogs, Herons, Leaves, Bats, Drips, Flotsam, Rowboats, Flags,
+            TropicalFish, Turtles, Bubbles, Surf, Driftwood, Buoys,
+        }
+
+        [Serializable]
+        public class Life
+        {
+            public LifeKind kind;
+            [Min(0)] public int count = 8;
+            [Tooltip("Lap distances they keep to (from, to; may wrap). (0, 0) = all round.")]
+            public Vector2 along;
+            [Tooltip("How far out from the channel's edge (min, max); negative = over the channel itself.")]
+            public Vector2 spread = new(1f, 6f);
+            [Tooltip("Set places instead (world positions): flags on the islands.")]
+            public List<Vector2> spots = new();
         }
 
         [Serializable]

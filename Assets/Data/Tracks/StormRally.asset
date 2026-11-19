@@ -112,6 +112,8 @@ MonoBehaviour:
     palms: 10
     huts: 0
     seed: 80
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   - points:
     - {x: -48.9, y: -0}
     - {x: -33.3, y: 22.7}
@@ -138,6 +140,8 @@ MonoBehaviour:
     palms: 10
     huts: 0
     seed: 81
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   - points:
     - {x: 71.1, y: 0}
     - {x: 86.7, y: 22.7}
@@ -171,6 +175,8 @@ MonoBehaviour:
     palms: 10
     huts: 0
     seed: 82
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   - points:
     - {x: 26.3, y: -60.6}
     - {x: 14.4, y: -65.2}
@@ -199,6 +205,8 @@ MonoBehaviour:
     palms: 10
     huts: 0
     seed: 83
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   - points:
     - {x: -37.5, y: -22.5}
     - {x: -31.7, y: -21.9}
@@ -221,6 +229,8 @@ MonoBehaviour:
     palms: 10
     huts: 0
     seed: 84
+    trees: 520
+    treeTint: {r: 0.7, g: 0.78, b: 0.86, a: 1}
   swells: []
   currents: []
   dolphins: []
@@ -250,15 +260,23 @@ MonoBehaviour:
     mood: {r: 0.14, g: 0.2, b: 0.36, a: 1}
     ledges:
     - from: 108
-      to: 226
+      to: 228
       side: 0
       reef: 0
-    - from: 272
+    - from: 244
       to: 416
       side: 0
       reef: 0
     - from: 440
       to: 548
+      side: 0
+      reef: 0
+    - from: 694
+      to: 700
+      side: 0
+      reef: 0
+    - from: 716
+      to: 728
       side: 0
       reef: 0
     - from: 768
@@ -301,6 +319,37 @@ MonoBehaviour:
     krakenReach: {x: 0, y: 0}
     sharks: []
     parrots: 0
+    life:
+    - kind: 15
+      count: 70
+      along: {x: 0, y: 0}
+      spread: {x: 1, y: 6}
+      spots: []
+    - kind: 16
+      count: 22
+      along: {x: 0, y: 0}
+      spread: {x: 8, y: 24}
+      spots: []
+    - kind: 9
+      count: 10
+      along: {x: 0, y: 0}
+      spread: {x: 8, y: 22}
+      spots: []
+    - kind: 17
+      count: 10
+      along: {x: 0, y: 0}
+      spread: {x: 9, y: 18}
+      spots: []
+    - kind: 7
+      count: 10
+      along: {x: 0, y: 0}
+      spread: {x: 1, y: 6}
+      spots: []
+    - kind: 8
+      count: 6
+      along: {x: 0, y: 0}
+      spread: {x: 1, y: 6}
+      spots: []
   coast:
     enabled: 1
     night: 0
@@ -850,4 +899,4 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
     canopy: 0
-  bakedSignature: 
+  bakedSignature: 7fb5250f5756121c

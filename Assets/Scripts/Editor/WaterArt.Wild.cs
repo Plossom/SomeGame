@@ -168,26 +168,58 @@ namespace SomeGame.EditorTools
             return Over(c, Line, Stroke(slab, 3f));
         }
 
-        // The head of the river: a jungle cliff with a waterfall pouring into a pool, mist round its foot (scenery).
+        // The head of the river: a craggy outcrop of mossy boulders (an irregular heap, no straight edges), a waterfall
+        // pouring out of a cleft between them into a round pool, mist and foam round its foot (scenery).
+        static readonly Vector3[] FallsRocks =
+        {
+            new(155, 365, 84), new(256, 390, 90), new(355, 365, 82), new(415, 300, 58), new(100, 290, 60),
+            new(205, 290, 66), new(310, 292, 66), new(185, 440, 46), new(325, 440, 44), new(430, 385, 40), new(75, 370, 40),
+        };
+
+        static float FallsHeap(float x, float y)
+        {
+            float d = float.MaxValue;
+            foreach (var r in FallsRocks)
+            {
+                float wobble = (Noise(x * 0.05f + r.x, y * 0.05f, 32) - 0.5f) * 18f;
+                d = SMin(d, Circle(x, y, r.x, r.y, r.z) + wobble, 26f);
+            }
+            return d;
+        }
+
         static Color JungleFallsPixel(float x, float y)
         {
             Color c = new(0, 0, 0, 0);
-            float cliff = Mathf.Min(RoundRect(x, y, 256, 360, 250, 150, 60), Ellipse(x, y, 256, 300, 240, 110));
+            float heap = FallsHeap(x, y);
+            // A soft shadow below and to the right, then the rock.
+            c = Over(c, new Color(0f, 0.08f, 0.05f, 0.35f), Fill(FallsHeap(x - 10f, y + 14f) - 6f) * (1f - Fill(heap)));
             float n = Noise(x * 0.03f, y * 0.03f, 64);
-            c = Over(c, Color.Lerp(Hex("5D6B5A"), Hex("7E8C78"), n), Fill(cliff));
-            c = Over(c, Color.Lerp(MossDark, Moss, n), Fill(cliff) * Mathf.Clamp01((n - 0.45f) * 4f));
-            // The fall: a bright ribbon down the cliff, darker stripes of water in it.
-            float fall = RoundRect(x, y, 256, 330, 54, 170, 20);
+            c = Over(c, Color.Lerp(Hex("5D6B5A"), Hex("8A9784"), n), Fill(heap));
+            // Each boulder lit from the top left, dark in the cracks between them.
+            float best = float.MaxValue, shade = 0f;
+            foreach (var r in FallsRocks)
+            {
+                float d = Circle(x, y, r.x, r.y, r.z);
+                if (d < best) { best = d; shade = ((x - r.x) * -0.6f + (y - r.y) * 0.8f) / r.z; }
+            }
+            c = Over(c, White(0.22f), Fill(heap) * Mathf.Clamp01(shade) * Mathf.Clamp01(-best / 30f));
+            c = Over(c, new Color(0.15f, 0.18f, 0.16f, 0.55f), Fill(heap) * Mathf.Clamp01(1f - Mathf.Abs(best) / 6f) * (best > -40f ? 1f : 0f));
+            c = Over(c, Color.Lerp(MossDark, Moss, n), Fill(heap) * Mathf.Clamp01((Noise(x * 0.045f, y * 0.045f, 64) - 0.5f) * 5f));
+            c = Over(c, Line, Stroke(heap, 4f));
+            // The fall: out of the cleft, a bright ribbon widening as it drops, darker stripes of water in it.
+            float t = Mathf.Clamp01((400f - y) / 240f);
+            float fall = Mathf.Max(Mathf.Abs(x - 256f) - (26f + 22f * t), Mathf.Max(y - 410f, 170f - y));
             float stripe = 0.85f + 0.15f * Mathf.Sin(x * 0.35f + Noise(x * 0.1f, y * 0.02f, 32) * 4f);
             c = Over(c, Color.Lerp(Hex("8FD8F0"), Color.white, stripe), Fill(fall));
-            // The pool at its foot and the mist.
-            float pool = Ellipse(x, y, 256, 140, 150, 80);
+            // The pool at its foot, its rim of foam and the mist.
+            float pool = Ellipse(x, y, 256, 132, 130, 74);
             c = Over(c, Hex("3FAFCB"), Fill(pool));
-            c = Over(c, White(0.85f), Gauss(Ellipse(x, y, 256, 168, 90, 34), 18f));
-            for (int i = 0; i < 18; i++)
+            c = Over(c, Hex("2E8FB0"), Fill(Ellipse(x, y, 256, 124, 92, 46)));
+            c = Over(c, White(0.85f), Gauss(Ellipse(x, y, 256, 168, 84, 30), 16f));
+            for (int i = 0; i < 20; i++)
             {
-                float a = i / 18f * Mathf.PI * 2f;
-                c = Over(c, White(0.7f), Fill(Circle(x, y, 256 + Mathf.Cos(a) * 100, 150 + Mathf.Sin(a) * 50, 7 + Hash(i, 2) * 6)));
+                float a = i / 20f * Mathf.PI * 2f;
+                c = Over(c, White(0.75f), Fill(Circle(x, y, 256 + Mathf.Cos(a) * 124, 132 + Mathf.Sin(a) * 68, 6 + Hash(i, 2) * 6)));
             }
             return c;
         }
@@ -513,20 +545,74 @@ namespace SomeGame.EditorTools
             return Over(c, Line, Stroke(body, 3f));
         }
 
+        static readonly Vector3[] ArchFeet =
+        {
+            new(58, 104, 46), new(84, 70, 34), new(40, 66, 26), new(96, 128, 26),
+            new(454, 88, 46), new(428, 122, 34), new(472, 126, 26), new(416, 64, 26),
+        };
+
+        static float CoralArchShape(float x, float y)
+        {
+            // A broad span of reef rock (craggy edges, gently bowed), its feet heaps of rock either side.
+            float bow = 96f + 8f * Mathf.Cos((x - 256f) / 512f * Mathf.PI) - 8f;
+            float rough = (Noise(x * 0.06f, y * 0.06f, 32) - 0.5f) * 14f;
+            float span = Mathf.Max(Mathf.Abs(y - bow) - 34f, Mathf.Abs(x - 256f) - 200f) + rough;
+            float feet = float.MaxValue;
+            foreach (var f in ArchFeet) feet = SMin(feet, Circle(x, y, f.x, f.y, f.z) + rough, 18f);
+            return SMin(span, feet, 22f);
+        }
+
         static Color CoralArchPixel(float x, float y)
         {
+            // A natural arch of reef rock over the channel, seen from above: mottled purple-grey rock lit along its
+            // crest, crusted with coral (patches of orange, pink and purple, staghorn sprigs, anemones, small brain
+            // coral heads on its feet).
             Color c = new(0, 0, 0, 0);
-            float arch = SMin(RoundRect(x, y, 256, 96, 200, 46, 30), Mathf.Min(Ellipse(x, y, 62, 96, 60, 84), Ellipse(x, y, 450, 96, 60, 84)), 30f);
-            float n = Noise(x * 0.05f, y * 0.05f, 64);
-            c = Over(c, new Color(0, 0.1f, 0.2f, 0.3f), Fill(arch - 6f) * (1f - Fill(arch)));
-            c = Over(c, Color.Lerp(Hex("C9A27A"), Hex("E8CFA8"), n), Fill(arch));
-            Color[] corals = { Hex("FF6F91"), Hex("FFB347"), Hex("B266FF"), Hex("3FD0C9"), Hex("FF5E5E") };
-            for (int i = 0; i < 46; i++)
+            float arch = CoralArchShape(x, y);
+            c = Over(c, new Color(0f, 0.12f, 0.25f, 0.35f), Fill(CoralArchShape(x - 6f, y + 8f) - 4f) * (1f - Fill(arch)));
+            float n = Noise(x * 0.05f, y * 0.05f, 64), m = Noise(x * 0.11f + 5f, y * 0.11f, 32);
+            c = Over(c, Color.Lerp(Hex("7E6585"), Hex("B39AB4"), n * 0.7f + m * 0.3f), Fill(arch));
+            // Lit along its crest, shaded at its edges (round, not flat).
+            c = Over(c, White(0.22f), Fill(arch) * Mathf.Clamp01(-arch / 30f));
+            c = Over(c, new Color(0.18f, 0.08f, 0.22f, 0.5f), Fill(arch) * Mathf.Clamp01(1f + arch / 9f));
+            // Patches of encrusting coral.
+            Color[] crust = { Hex("F08A5D"), Hex("F07AA0"), Hex("A77BE0"), Hex("5CCFC0") };
+            for (int i = 0; i < 26; i++)
             {
-                float cx = Hash(i, 1) * 512, cy = 20 + Hash(i, 2) * 152;
-                float blob = Circle(x, y, cx, cy, 7 + Hash(i, 3) * 11);
-                c = Over(c, corals[i % corals.Length], Fill(blob) * Fill(arch + 3f));
-                c = Over(c, Shade(corals[i % corals.Length], 0.7f), Stroke(blob, 2f) * Fill(arch + 3f));
+                float px = 30 + Hash(i, 41) * 452, py = 50 + Hash(i, 42) * 92;
+                float blob = Circle(x, y, px, py, 9 + Hash(i, 43) * 9) + (Noise(x * 0.2f + i, y * 0.2f, 16) - 0.5f) * 8f;
+                c = Over(c, crust[i % crust.Length], Fill(blob) * Fill(arch + 6f) * 0.85f);
+            }
+            // Brain coral heads on the feet.
+            foreach (var f in new[] { new Vector3(58, 104, 18), new Vector3(86, 72, 14), new Vector3(454, 88, 18), new Vector3(426, 120, 14) })
+            {
+                float head = Circle(x, y, f.x, f.y, f.z);
+                c = Over(c, Hex("E9A35B"), Fill(head));
+                float groove = Mathf.Sin((x - f.x) * 0.5f + Mathf.Sin((y - f.y) * 0.35f) * 2.2f);
+                c = Over(c, Hex("B86D33"), Fill(head + 2f) * Mathf.Clamp01((groove - 0.5f) * 4f));
+                c = Over(c, Line, Stroke(head, 2f));
+            }
+            // Staghorn sprigs and anemones.
+            Color[] corals = { Hex("FF6F91"), Hex("FFB347"), Hex("B266FF"), Hex("3FD0C9") };
+            for (int i = 0; i < 18; i++)
+            {
+                float cx = 40 + i * 25f + Hash(i, 21) * 10f, cy = 96f + (Hash(i, 22) - 0.5f) * 50f;
+                if (Fill(CoralArchShape(cx, cy) + 8f) <= 0f) continue;
+                var col = corals[i % corals.Length];
+                if (i % 3 == 2)
+                {
+                    c = Over(c, col, Fill(Star(x, y, cx, cy, 9, 4, 8, i)));
+                    c = Over(c, Shade(col, 0.6f), Fill(Circle(x, y, cx, cy, 2.5f)));
+                    continue;
+                }
+                float d = float.MaxValue;
+                for (int k = 0; k < 4; k++)
+                {
+                    float ang = Hash(i, 30 + k) * Mathf.PI * 2f;
+                    d = Mathf.Min(d, SegDist(new Vector2(x, y), new Vector2(cx, cy), new Vector2(cx + Mathf.Cos(ang) * 11f, cy + Mathf.Sin(ang) * 11f)) - 2.6f);
+                }
+                c = Over(c, col, Fill(d));
+                c = Over(c, Shade(col, 0.65f), Stroke(d, 1.5f));
             }
             return Over(c, Line, Stroke(arch, 3f));
         }

@@ -25,6 +25,7 @@ namespace SomeGame.EditorTools
             WaterArt.GenerateCoast();
             WaterArt.GenerateWild();
             WaterArt.GeneratePirates();
+            WaterArt.GenerateLife();
             ArtGenerator.BuildGarageArt();
             return SetUp();
         }
@@ -127,6 +128,7 @@ namespace SomeGame.EditorTools
             lso.FindProperty("harbourScenery").objectReferenceValue = Mat("SceneryHarbourWater");
             lso.FindProperty("barge").objectReferenceValue = Sprite("Barge");
             lso.FindProperty("logJam").objectReferenceValue = Sprite("LogJam");
+            lso.FindProperty("forestScenery").objectReferenceValue = Mat("SceneryForest");
             lso.ApplyModifiedPropertiesWithoutUndo();
 
             // The ferry route and the other branches on the water: channel water with foam edges.
@@ -161,9 +163,12 @@ namespace SomeGame.EditorTools
             wso.FindProperty("water").objectReferenceValue = Mat("LagoonSea");
             wso.FindProperty("sand").objectReferenceValue = Mat("LagoonSandMat");
             wso.FindProperty("foam").objectReferenceValue = Mat("LagoonFoamMat");
+            wso.FindProperty("forest").objectReferenceValue = Mat("SceneryForest");
             string[] wildSprites = { "Crocodile", "TempleRuin", "TempleStatue", "TempleArch", "StoneDoor", "JungleFalls", "PirateShip", "SkullRock", "Cannonball",
                 "TargetRing", "Coin", "PlankRamp", "TreasureChest", "Jellyfish", "MantaRay", "CoralArch", "Fortress", "Bolt",
-                "GalleonInside", "GalleonTop", "DeckShip", "Tentacle", "KrakenHead", "SharkFin", "Parrot", "Snore", "Anchor", "XMark", "PirateBarrels" };
+                "GalleonInside", "GalleonTop", "DeckShip", "Tentacle", "KrakenHead", "SharkFin", "Parrot", "Snore", "Anchor", "XMark", "PirateBarrels",
+                "Butterfly", "Dragonfly", "Frog", "Heron", "Bat", "Leaf", "Barrel", "Crate", "Bottle", "Driftwood", "PirateFlag", "TropicalFish", "SeaTurtle",
+                "Bubbles", "BellBuoy", "SurfSpray", "Fish", "Ducks", "Rowboat", "Bird", "SplashRing", "FoamPuff" };
             var list = wso.FindProperty("sprites");
             list.arraySize = wildSprites.Length;
             for (int i = 0; i < wildSprites.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = Sprite(wildSprites[i]);
@@ -629,6 +634,9 @@ namespace SomeGame.EditorTools
         static TrackLayout.Piece Piece(string sprite, Vector2 at, float size, float angle = 0f, bool overhead = false) =>
             new() { sprite = sprite, position = at, size = size, angle = angle, overhead = overhead };
 
+        static TrackLayout.Life Life(TrackLayout.LifeKind kind, int count, float min = 1f, float max = 6f) =>
+            new() { kind = kind, count = count, spread = new Vector2(min, max) };
+
         // ------------------------------------------------------------------ race 4: Jungle Rapids (a forest creek)
 
         static TrackLayout BuildJungleRapids()
@@ -641,8 +649,8 @@ namespace SomeGame.EditorTools
             float Ang(float d) => Mathf.Atan2(path.NormalAt(d).y, path.NormalAt(d).x) * Mathf.Rad2Deg - 90f;
             t.lagoonIslands = new List<TrackLayout.Island>
             {
-                new() { points = R4_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 40 },
-                new() { points = R4_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 41 },
+                new() { points = R4_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 6, huts = 0, seed = 40, trees = 160 },
+                new() { points = R4_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 6, huts = 0, seed = 41, trees = 160 },
             };
             t.viaducts = new List<TrackLayout.Span> { new() { from = 530f, to = 564f } };
             t.widths = new List<TrackLayout.WidthKey>
@@ -714,6 +722,15 @@ namespace SomeGame.EditorTools
                 new() { name = "Reeds", uv = Cell("Reeds"), count = 70, sizeRange = new Vector2(2.4f, 3.4f), clearance = new Vector2(0.2f, 1.6f) },
                 new() { name = "LilyPads", uv = Cell("LilyPads"), count = 40, sizeRange = new Vector2(2.4f, 3.2f), clearance = new Vector2(-1.4f, 0.4f) },
             };
+            // Life along the creek: butterflies over the banks, dragonflies and leaping fish over the water, ducks
+            // paddling along the edge, frogs and herons on the bank, leaves drifting down, bats at the cave.
+            w.life = new List<TrackLayout.Life>
+            {
+                Life(TrackLayout.LifeKind.Butterflies, 28, 0.5f, 5f), Life(TrackLayout.LifeKind.Dragonflies, 14, -1.6f, -0.4f),
+                Life(TrackLayout.LifeKind.LeapingFish, 10, -2f, -0.6f), Life(TrackLayout.LifeKind.Ducks, 5, -1f, -0.7f),
+                Life(TrackLayout.LifeKind.Frogs, 12, 0.2f, 0.6f), Life(TrackLayout.LifeKind.Herons, 5, 0.4f, 0.9f),
+                Life(TrackLayout.LifeKind.Leaves, 40, -2.4f, -0.3f), Life(TrackLayout.LifeKind.Bats, 12), Life(TrackLayout.LifeKind.Drips, 6),
+            };
             t.lastLapShow = true;
             Save(t);
             return t;
@@ -727,13 +744,14 @@ namespace SomeGame.EditorTools
             // snoring bunks), into skull rock's cave, between two ships firing broadsides, over the deck of a wreck and
             // off its bow, past the kraken's tentacles and circling sharks.
             var t = WildTrack("PirateBay", R5, 6.5f);
+            t.skyLife = 0f; // (parrots instead of balloons: nothing hides the cannon targets)
             var path = new TrackPath(t.waypoints, t.sampleSpacing);
             Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
             float Ang(float d) => Mathf.Atan2(path.NormalAt(d).y, path.NormalAt(d).x) * Mathf.Rad2Deg - 90f;
             t.lagoonIslands = new List<TrackLayout.Island>
             {
-                new() { points = R5_LAND0, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 40, huts = 2, seed = 50 },
-                new() { points = R5_LAND1, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 40, huts = 2, seed = 51 },
+                new() { points = R5_LAND0, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 170, huts = 5, seed = 50 },
+                new() { points = R5_LAND1, kind = TrackLayout.IslandKind.Jungle, beach = 5f, palms = 170, huts = 5, seed = 51 },
                 new() { points = R5_LAND2, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 4, huts = 0, seed = 52 },
                 new() { points = R5_LAND3, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 4, huts = 0, seed = 53 },
             };
@@ -786,6 +804,16 @@ namespace SomeGame.EditorTools
                 new() { name = "Coral", uv = Cell("Coral"), count = 30, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(1.2f, 8f), along = all },
                 new() { name = "CoralPink", uv = Cell("CoralPink"), count = 26, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(1.2f, 8f), along = all },
             };
+            // The bay's flotsam (barrels, crates, a bottle with a message), rowboats, bell buoys, pirate flags on the
+            // islands, dolphins.
+            w.life = new List<TrackLayout.Life>
+            {
+                Life(TrackLayout.LifeKind.Flotsam, 44, 1.5f, 14f), Life(TrackLayout.LifeKind.Rowboats, 5, 10f, 26f),
+                Life(TrackLayout.LifeKind.Buoys, 8, 3f, 8f), Life(TrackLayout.LifeKind.LeapingFish, 8, -2.5f, -0.6f),
+                Life(TrackLayout.LifeKind.Bats, 8), Life(TrackLayout.LifeKind.Drips, 5), Life(TrackLayout.LifeKind.Turtles, 6, 4f, 16f),
+                new() { kind = TrackLayout.LifeKind.Flags, count = 4, spots = new List<Vector2> { new(-140f, 2f), new(140f, -2f), new(-92f, -30f), new(92f, 30f) } },
+            };
+            t.dolphins = new List<float> { 150f, 470f, 700f };
             t.lastLapShow = true;
             Save(t);
             return t;
@@ -802,7 +830,7 @@ namespace SomeGame.EditorTools
             float Ang(float d) => Mathf.Atan2(path.NormalAt(d).y, path.NormalAt(d).x) * Mathf.Rad2Deg - 90f;
             t.lagoonIslands = new List<TrackLayout.Island>
             {
-                new() { points = R6_LAND0, kind = TrackLayout.IslandKind.Sand, beach = 3f, palms = 14, huts = 1, seed = 60 },
+                new() { points = R6_LAND0, kind = TrackLayout.IslandKind.Reef, beach = 3f, palms = 260, huts = 0, seed = 60 },
             };
             var w = t.wild;
             w.mood = new Color(0.85f, 1f, 1f, 0.35f);
@@ -845,6 +873,12 @@ namespace SomeGame.EditorTools
                 new() { name = "CoralPink", uv = Cell("CoralPink"), count = 60, sizeRange = new Vector2(3f, 5.5f), clearance = new Vector2(1.2f, 12f), along = all },
                 new() { name = "Turtle", uv = Cell("Turtle"), count = 14, sizeRange = new Vector2(2.6f, 3.4f), clearance = new Vector2(1.5f, 9f), along = all },
             };
+            // The reef's life: schools of tropical fish and turtles over the coral, bubbles, fish leaping in the channel.
+            w.life = new List<TrackLayout.Life>
+            {
+                Life(TrackLayout.LifeKind.TropicalFish, 30, 1.5f, 12f), Life(TrackLayout.LifeKind.Turtles, 10, 2f, 12f),
+                Life(TrackLayout.LifeKind.Bubbles, 16, 1f, 10f), Life(TrackLayout.LifeKind.LeapingFish, 8, -2f, -0.6f),
+            };
             t.lastLapShow = true;
             Save(t);
             return t;
@@ -862,10 +896,10 @@ namespace SomeGame.EditorTools
             Vector2 At(float d, float lateral = 0f) => path.PointAt(d) + path.NormalAt(d) * lateral;
             t.lagoonIslands = new List<TrackLayout.Island>
             {
-                new() { points = R7_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 70 },
-                new() { points = R7_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 71 },
-                new() { points = R7_LAND2, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 72 },
-                new() { points = R7_LAND3, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 73 },
+                new() { points = R7_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 70, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
+                new() { points = R7_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 71, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
+                new() { points = R7_LAND2, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 72, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
+                new() { points = R7_LAND3, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 12, huts = 0, seed = 73, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
             };
             t.viaducts = new List<TrackLayout.Span> { new() { from = 848f, to = 882f } };
             var w = t.wild;
@@ -876,8 +910,8 @@ namespace SomeGame.EditorTools
             w.ledges = new List<TrackLayout.Ledge>
             {
                 new() { from = 30f, to = 150f, side = 0f },
-                new() { from = 180f, to = 330f, side = 0f },
-                new() { from = 560f, to = 638f, side = 0f },
+                new() { from = 180f, to = 336f, side = 0f }, new() { from = 354f, to = 366f, side = 0f }, // (the leap's stacks)
+                new() { from = 560f, to = 638f, side = 0f }, new() { from = 688f, to = 700f, side = 0f }, new() { from = 716f, to = 728f, side = 0f },
                 new() { from = 900f, to = 990f, side = 0f },
             };
             w.lightning = new List<Vector2> { new(60f, 330f), new(560f, 640f), new(900f, 990f) };
@@ -903,6 +937,13 @@ namespace SomeGame.EditorTools
             {
                 new() { name = "Rock", uv = LagoonSheet.Cell("Rock"), count = 30, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(14f, 40f) },
             };
+            // The storm: surf bursting against the foot of the cliffs, driftwood and wreckage tossing on the sea, bell
+            // buoys rocking (their lamps blinking), bats at the cave, drips inside.
+            w.life = new List<TrackLayout.Life>
+            {
+                Life(TrackLayout.LifeKind.Surf, 70), Life(TrackLayout.LifeKind.Driftwood, 22, 8f, 24f), Life(TrackLayout.LifeKind.Flotsam, 10, 8f, 22f),
+                Life(TrackLayout.LifeKind.Buoys, 10, 9f, 18f), Life(TrackLayout.LifeKind.Bats, 10), Life(TrackLayout.LifeKind.Drips, 6),
+            };
             t.lastLapShow = false;
             Save(t);
             return t;
@@ -920,11 +961,11 @@ namespace SomeGame.EditorTools
             float Ang(float d) => Mathf.Atan2(path.NormalAt(d).y, path.NormalAt(d).x) * Mathf.Rad2Deg - 90f;
             t.lagoonIslands = new List<TrackLayout.Island>
             {
-                new() { points = R8_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 80 },
-                new() { points = R8_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 81 },
-                new() { points = R8_LAND2, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 82 },
-                new() { points = R8_LAND3, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 83 },
-                new() { points = R8_LAND4, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 84 },
+                new() { points = R8_LAND0, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 80, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
+                new() { points = R8_LAND1, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 81, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
+                new() { points = R8_LAND2, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 82, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
+                new() { points = R8_LAND3, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 83, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
+                new() { points = R8_LAND4, kind = TrackLayout.IslandKind.Cliff, beach = 4f, palms = 10, huts = 0, seed = 84, trees = 520, treeTint = new Color(0.7f, 0.78f, 0.86f) },
             };
             t.viaducts = new List<TrackLayout.Span> { new() { from = 66f, to = 100f }, new() { from = 556f, to = 590f } };
             var w = t.wild;
@@ -933,9 +974,10 @@ namespace SomeGame.EditorTools
             w.caves = new List<Vector2> { new(640f, 692f) };
             w.ledges = new List<TrackLayout.Ledge>
             {
-                new() { from = 108f, to = 226f, side = 0f },
-                new() { from = 272f, to = 416f, side = 0f },
+                new() { from = 108f, to = 228f, side = 0f }, // (on to the leap's edge)
+                new() { from = 244f, to = 416f, side = 0f },
                 new() { from = 440f, to = 548f, side = 0f },
+                new() { from = 694f, to = 700f, side = 0f }, new() { from = 716f, to = 728f, side = 0f }, // (the leap's stacks)
                 new() { from = 768f, to = 950f, side = 0f },
             };
             w.waves = new List<Vector2> { new(120f, 220f), new(290f, 400f), new(780f, 940f) };
@@ -957,6 +999,13 @@ namespace SomeGame.EditorTools
             t.scenery = new List<TrackScenery.Kind>
             {
                 new() { name = "Rock", uv = LagoonSheet.Cell("Rock"), count = 30, sizeRange = new Vector2(3f, 5f), clearance = new Vector2(14f, 40f) },
+            };
+            // The storm: surf bursting against the foot of the cliffs, driftwood and wreckage tossing on the sea, bell
+            // buoys rocking (their lamps blinking), bats at the cave, drips inside.
+            w.life = new List<TrackLayout.Life>
+            {
+                Life(TrackLayout.LifeKind.Surf, 70), Life(TrackLayout.LifeKind.Driftwood, 22, 8f, 24f), Life(TrackLayout.LifeKind.Flotsam, 10, 8f, 22f),
+                Life(TrackLayout.LifeKind.Buoys, 10, 9f, 18f), Life(TrackLayout.LifeKind.Bats, 10), Life(TrackLayout.LifeKind.Drips, 6),
             };
             t.lastLapShow = true;
             Save(t);

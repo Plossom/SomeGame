@@ -78,6 +78,8 @@ namespace SomeGame.Track
         [Tooltip("Quays (harbour races): their paving and the harbour scenery sheet.")]
         [SerializeField] Material quay, harbourScenery;
         [SerializeField] Sprite barge, logJam;
+        [Tooltip("The forest sheet: woods over the islands that have trees.")]
+        [SerializeField] Material forestScenery;
 
         const int HaloOrder = -69, FoamOrder = -68, SandOrder = -63, JungleOrder = -62, DecorOrder = 4,
                   CurrentOrder = -46, SwellOrder = -45, BarUnder = -66, PropOrder = 5, SplashOrder = 3, BridgeShadowOrder = 6, BridgeOrder = 26, DolphinOrder = 15;
@@ -159,6 +161,7 @@ namespace SomeGame.Track
             _shores.Add(shore);
             if (island.kind == TrackLayout.IslandKind.Quay) { BuildQuay(island, shore, index); return; }
             if (island.kind == TrackLayout.IslandKind.Cliff) { BuildCliff(island, shore, index); return; }
+            if (island.kind == TrackLayout.IslandKind.Reef) { BuildReef(island, shore, index); return; }
             // Pale shallows fading out round the shore, then a ring of foam, the sand, the jungle (or rock) inside.
             Mesh("IslandHalo", shallows, HaloOrder, Ring(shore, 0f, 5f, new Color(1f, 1f, 1f, 0.9f), new Color(1f, 1f, 1f, 0f), 0.25f));
             Mesh("IslandFoam", foam, FoamOrder, Ring(shore, -0.4f, 1.4f, Color.white, Color.white, 1f, true));
@@ -186,8 +189,18 @@ namespace SomeGame.Track
         // breaking along it), rough grass on top running out to the rock at the edge.
         void BuildCliff(TrackLayout.Island island, List<Vector2> shore, int index)
         {
-            Mesh("CliffShadow", plain, HaloOrder, Ring(shore, 0f, 4f, new Color(0f, 0.04f, 0.08f, 0.55f), new Color(0f, 0.04f, 0.08f, 0f), 1f));
-            Mesh("CliffSurf", foam, FoamOrder, Ring(shore, -0.3f, 1.6f, Color.white, Color.white, 1f, true));
+            // (in the river world it stands in the forest: a rocky slope and its shadow at its foot, no surf)
+            bool inland = track.Layout.wild != null && track.Layout.wild.enabled && track.Layout.wild.river;
+            if (inland)
+            {
+                Mesh("CliffShadow", plain, HaloOrder, Ring(shore, 0f, 3.5f, new Color(0.05f, 0.12f, 0.05f, 0.45f), new Color(0.05f, 0.12f, 0.05f, 0f), 1f));
+                Mesh("CliffSlope", plain, FoamOrder, Ring(shore, -0.2f, 1.4f, new Color(0.36f, 0.37f, 0.36f), new Color(0.36f, 0.37f, 0.36f, 0f), 1f));
+            }
+            else
+            {
+                Mesh("CliffShadow", plain, HaloOrder, Ring(shore, 0f, 4f, new Color(0f, 0.04f, 0.08f, 0.55f), new Color(0f, 0.04f, 0.08f, 0f), 1f));
+                Mesh("CliffSurf", foam, FoamOrder, Ring(shore, -0.3f, 1.6f, Color.white, Color.white, 1f, true));
+            }
             Mesh("CliffTop", jungle, SandOrder, Fill(shore, new Color(0.62f, 0.72f, 0.6f), 1f / 4f));
             Mesh("CliffRock", plain, JungleOrder, Ring(shore, -island.beach, 0f, new Color(0.25f, 0.27f, 0.3f, 0f), new Color(0.25f, 0.27f, 0.3f), 1f));
             Mesh("CliffEdge", plain, JungleOrder + 1, Ring(shore, -1.1f, 0f, new Color(0.17f, 0.18f, 0.21f), new Color(0.12f, 0.13f, 0.15f), 1f));
@@ -195,6 +208,24 @@ namespace SomeGame.Track
             if (Application.isPlaying)
             {
                 var go = new GameObject("CliffShore", typeof(PolygonCollider2D)) { hideFlags = HideFlags.DontSave };
+                go.transform.SetParent(transform, false);
+                go.GetComponent<PolygonCollider2D>().points = Offset(shore, -0.5f).ToArray();
+                _parts.Add(go);
+            }
+        }
+
+        // A reef: shallow water over the coral (pale turquoise, beds of coral and weed all over it, turtles), surf
+        // breaking along its edge. Boats run aground on it (the ledges along the channel say so).
+        void BuildReef(TrackLayout.Island island, List<Vector2> shore, int index)
+        {
+            Mesh("ReefHalo", shallows, HaloOrder, Ring(shore, 0f, 4f, new Color(1f, 1f, 1f, 0.8f), new Color(1f, 1f, 1f, 0f), 0.25f));
+            Mesh("ReefFlat", shallows, SandOrder, Fill(shore, new Color(0.86f, 1f, 0.97f), 1f / 4f));
+            Mesh("ReefBed", plain, JungleOrder, Fill(Offset(shore, -1.5f), new Color(0.2f, 0.62f, 0.62f, 0.22f), 1f));
+            Mesh("ReefSurf", foam, JungleOrder + 1, Ring(shore, -0.6f, 1.2f, Color.white, Color.white, 1f, true));
+            BuildDecor(island, shore, Offset(shore, -1.5f), index);
+            if (Application.isPlaying)
+            {
+                var go = new GameObject("ReefShore", typeof(PolygonCollider2D)) { hideFlags = HideFlags.DontSave };
                 go.transform.SetParent(transform, false);
                 go.GetComponent<PolygonCollider2D>().points = Offset(shore, -0.5f).ToArray();
                 _parts.Add(go);
@@ -337,19 +368,65 @@ namespace SomeGame.Track
                 Put(random.Next(3) == 0 ? "BeachBar" : random.Next(2) == 0 ? "Umbrella" : "Hut", p, R(5.5f, 7f), Mathf.Atan2(normal.y, normal.x) - Mathf.PI * 0.5f);
                 h++;
             }
-            string[] green = island.kind is TrackLayout.IslandKind.Rock or TrackLayout.IslandKind.Cliff ? new[] { "Rock", "Bush", "Rock" } : new[] { "Palm", "PalmTall", "PalmPair", "Palm", "Bush", "Flowers" };
+            string[] green = island.kind is TrackLayout.IslandKind.Rock or TrackLayout.IslandKind.Cliff ? new[] { "Rock", "Bush", "Rock" }
+                : island.kind == TrackLayout.IslandKind.Reef ? new[] { "Coral", "CoralPink", "Seaweed", "Coral", "CoralPink", "Seaweed", "Turtle", "Rock" }
+                : new[] { "Palm", "PalmTall", "PalmPair", "Palm", "Bush", "Flowers" };
             for (int n = 0, tries = 0; n < island.palms && tries < island.palms * 60; tries++)
             {
                 var p = new Vector2(R(bounds.xMin, bounds.xMax), R(bounds.yMin, bounds.yMax));
                 if (!Inside(inside, p)) continue;
                 string cell = green[random.Next(green.Length)];
-                float size = cell is "Bush" or "Flowers" ? R(3f, 4.2f) : R(5.5f, 7.5f);
+                float size = cell is "Bush" or "Flowers" ? R(3f, 4.2f) : cell is "Coral" or "CoralPink" or "Seaweed" ? R(2.6f, 4.6f) : cell is "Turtle" ? R(2.4f, 3f) : R(5.5f, 7.5f);
                 if (!Free(p, size * 0.3f)) continue;
                 Put(cell, p, size, R(0f, Mathf.PI * 2f));
                 n++;
             }
-            if (vertices.Count == 0) return;
-            Mesh("IslandDecor", scenery, DecorOrder, TrackMeshes.Quads("IslandDecor", vertices, uvs, triangles, tints));
+            if (vertices.Count > 0) Mesh("IslandDecor", scenery, DecorOrder, TrackMeshes.Quads("IslandDecor", vertices, uvs, triangles, tints));
+            BuildWoods(island, inside, placed, random);
+        }
+
+        // Woods over an island: clumps of pines and oaks (a noise field decides where), bushes and ferns at their
+        // edges, rocks in the clearings; drawn back to front so the crowns overlap naturally.
+        void BuildWoods(TrackLayout.Island island, List<Vector2> inside, List<(Vector2 p, float r)> placed, System.Random random)
+        {
+            if (island.trees <= 0 || forestScenery == null || inside.Count < 3) return;
+            float R(float a, float b) => a + (float)random.NextDouble() * (b - a);
+            var bounds = BoundsOf(inside);
+            Color32 tint = island.treeTint.a <= 0f ? (Color32)Color.white : (Color32)island.treeTint;
+            float seedX = island.seed * 3.7f;
+            var items = new List<(Vector2 p, float size, float angle, string cell)>();
+            for (int n = 0, tries = 0; n < island.trees && tries < island.trees * 40; tries++)
+            {
+                var p = new Vector2(R(bounds.xMin, bounds.xMax), R(bounds.yMin, bounds.yMax));
+                if (!Inside(inside, p)) continue;
+                float wood = Mathf.PerlinNoise(p.x * 0.08f + seedX, p.y * 0.08f + seedX * 0.5f);
+                string cell;
+                float size;
+                if (wood > 0.4f) { cell = random.Next(3) switch { 0 => "PineDark", 1 => "Pine", _ => wood > 0.55f ? "PineDark" : "Oak" }; size = R(5.5f, 8.5f); }
+                else if (wood > 0.3f) { cell = random.Next(3) switch { 0 => "Bush", 1 => "Fern", _ => "Birch" }; size = cell == "Birch" ? R(4.5f, 6f) : R(2.4f, 3.6f); }
+                else if (random.Next(4) == 0) { cell = random.Next(3) switch { 0 => "Mushrooms", 1 => "Stump", _ => "Log" }; size = R(2.2f, 3.4f); }
+                else continue;
+                float r = size * (cell.StartsWith("Pine") || cell == "Oak" ? 0.3f : 0.35f);
+                bool free = true;
+                foreach (var (q, s2) in placed) if ((q - p).sqrMagnitude < (r + s2) * (r + s2)) { free = false; break; }
+                if (!free) continue;
+                placed.Add((p, r));
+                items.Add((p, size, R(0f, Mathf.PI * 2f), cell));
+                n++;
+            }
+            if (items.Count == 0) return;
+            items.Sort((a, b) => b.p.y.CompareTo(a.p.y));
+            var vertices = new List<Vector3>(); var uvs = new List<Vector2>(); var triangles = new List<int>(); var tints = new List<Color32>();
+            foreach (var (p, size, angle, cell) in items)
+            {
+                Vector2 right = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * size * 0.5f;
+                int first = vertices.Count;
+                TrackMeshes.AddQuad(vertices, uvs, triangles, p, right, new Vector2(-right.y, right.x), Vector2.one);
+                var uv = ForestSheet.Cell(cell);
+                for (int k = first; k < uvs.Count; k++) uvs[k] = new Vector2(uv.x + uvs[k].x * uv.width, uv.y + uvs[k].y * uv.height);
+                for (int k = 0; k < 4; k++) tints.Add(tint);
+            }
+            Mesh("IslandWoods", forestScenery, DecorOrder, TrackMeshes.Quads("IslandWoods", vertices, uvs, triangles, tints));
         }
 
         // ------------------------------------------------------------------ currents and bridges
