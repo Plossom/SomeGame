@@ -140,7 +140,7 @@ namespace SomeGame.Track
         public List<Boat> boats = new();
         [Tooltip("Fireworks over the scenery, away from the road.")]
         public bool fireworks;
-        [Tooltip("Fireworks only on the player's last lap (and a sunset glow over everything on it).")]
+        [Tooltip("Fireworks only on the player's last lap.")]
         public bool lastLapShow;
 
         [Tooltip("Cows chilling on the road (farm).")]

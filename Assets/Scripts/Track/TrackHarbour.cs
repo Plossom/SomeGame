@@ -640,39 +640,6 @@ namespace SomeGame.Track
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.wallWhoosh, 0.8f);
         }
 
-        // ------------------------------------------------------------------ the last lap: sunset
-
-        MeshRenderer _sunset;
-        float _sunsetLevel;
-
-        void UpdateSunset(float dt)
-        {
-            if (!track.Layout.lastLapShow || _race == null || _race.Player == null) return;
-            bool last = _race.Player.TotalLaps > 1 && _race.Player.CurrentLap >= _race.Player.TotalLaps;
-            _sunsetLevel = Mathf.MoveTowards(_sunsetLevel, last ? 1f : 0f, dt / 4f);
-            if (_sunsetLevel <= 0f) { if (_sunset != null) _sunset.enabled = false; return; }
-            var cam = Camera.main;
-            if (cam == null) return;
-            if (_sunset == null)
-            {
-                var go = new GameObject("Sunset", typeof(MeshFilter), typeof(MeshRenderer)) { hideFlags = HideFlags.DontSave };
-                go.transform.SetParent(cam.transform, false);
-                go.transform.localPosition = new Vector3(0f, 0f, 5f);
-                var v = new List<Vector3>(); var u = new List<Vector2>(); var t = new List<int>();
-                TrackMeshes.AddQuad(v, u, t, Vector2.zero, Vector2.right * 400f, Vector2.up * 400f, Vector2.one);
-                // Warm at the top of the screen, a rosy glow lower down.
-                var c = new List<Color32> { new(255, 120, 90, 255), new(255, 120, 90, 255), new(255, 170, 60, 255), new(255, 170, 60, 255) };
-                Assign(go.GetComponent<MeshFilter>(), TrackMeshes.Quads("Sunset", v, u, t, c));
-                _sunset = go.GetComponent<MeshRenderer>();
-                _sunset.sharedMaterial = plain;
-                _sunset.sortingOrder = 60;
-                _parts.Add(go);
-            }
-            _sunset.enabled = true;
-            byte a = (byte)(255f * 0.2f * _sunsetLevel);
-            _sunset.GetComponent<MeshFilter>().sharedMesh.colors32 = new Color32[] { new(255, 120, 90, a), new(255, 120, 90, a), new(255, 170, 60, a), new(255, 170, 60, a) };
-        }
-
         void Update()
         {
             if (!Application.isPlaying || track == null || track.Layout == null || track.Layout.biome != TrackLayout.Biome.Lagoon) return;
@@ -683,7 +650,6 @@ namespace SomeGame.Track
             UpdateShip();
             UpdateJets(dt);
             UpdatePlane();
-            UpdateSunset(dt);
         }
     }
 }

@@ -405,7 +405,7 @@ namespace SomeGame.EditorTools
                 new() { kind = TrackLayout.BoatKind.Rowboat, position = new Vector2(12f, 0f) + new Vector2(0f, -1f) * 9.5f + new Vector2(12f, -1.5f), angle = 80f },
             };
             // Out on the open water only a few seals (the quays bring their own bits and pieces).
-            t.lastLapShow = true; // (the sun sets on the last lap, fireworks over the harbour)
+            t.lastLapShow = true; // (fireworks over the harbour on the last lap)
             t.scenery = new List<TrackScenery.Kind>
             {
                 new() { name = "Seal", uv = H("Seal"), count = 8, sizeRange = new Vector2(2.6f, 3.4f), clearance = new Vector2(3f, 30f) },
@@ -574,7 +574,7 @@ namespace SomeGame.EditorTools
                     Life(TrackLayout.LifeKind.Rowboats, 2, 8f, 24f),
                 },
             };
-            t.lastLapShow = true; // (sunset and fireworks on the last lap)
+            t.lastLapShow = true; // (fireworks on the last lap)
             t.bakedSignature = null;
             EditorUtility.SetDirty(t);
             AssetDatabase.SaveAssets();
