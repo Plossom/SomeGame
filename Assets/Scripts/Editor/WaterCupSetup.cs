@@ -878,7 +878,8 @@ namespace SomeGame.EditorTools
                 new() { from = 212f, to = 296f, side = 0f, reef = true },
                 new() { from = 362f, to = 462f, side = 0f, reef = true },
                 new() { from = 528f, to = 640f, side = 0f, reef = true },
-                new() { from = 706f, to = 780f, side = -1f, reef = true },
+                new() { from = 706f, to = 732f, side = -1f, reef = true },
+                new() { from = 758f, to = 780f, side = -1f, reef = true },
             };
             w.jellyfish = new List<Vector2> { new(220f, 290f), new(540f, 630f) };
             w.mantas = new List<float> { 170f, 330f, 495f, 680f };
@@ -888,16 +889,17 @@ namespace SomeGame.EditorTools
                 Piece("CoralArch", At(410f), 12f, Ang(410f), true),
                 Piece("CoralArch", At(590f), 12f, Ang(590f), true),
             };
-            // The hairpins have kickers over the reef crests on the way out.
-            t.gaps = new List<TrackLayout.Gap> { new() { from = 302f, to = 314f, trickJump = true, tricks = 2 }, new() { from = 784f, to = 798f, trickJump = true, tricks = 3 } };
+            // The hairpins have kickers over the reef crests on the way out. (The last one well before the starting grid:
+            // a boat at the back of the grid must never start in front of a kicker.)
+            t.gaps = new List<TrackLayout.Gap> { new() { from = 302f, to = 314f, trickJump = true, tricks = 2 }, new() { from = 738f, to = 752f, trickJump = true, tricks = 3 } };
             t.bouncers = new List<TrackLayout.Bouncer>
             {
                 new() { position = At(170f, 0f), radius = 1.9f, airTime = 0.8f, speedBoost = 1.15f },
                 new() { position = At(494f, 0f), radius = 1.9f, airTime = 0.8f, speedBoost = 1.15f },
             };
-            t.rings = new List<TrackLayout.Ring> { new() { distance = 178f }, new() { distance = 320f }, new() { distance = 502f }, new() { distance = 806f } };
+            t.rings = new List<TrackLayout.Ring> { new() { distance = 178f }, new() { distance = 320f }, new() { distance = 502f }, new() { distance = 760f } };
             t.dashPanels = new List<TrackLayout.DashPanel> { new() { distance = 10f }, new() { distance = 205f }, new() { distance = 355f }, new() { distance = 522f }, new() { distance = 700f } };
-            t.dolphins = new List<float> { 740f };
+            t.dolphins = new List<float> { 700f };
             t.boats = new List<TrackLayout.Boat>
             {
                 new() { kind = TrackLayout.BoatKind.Sailboat, position = new Vector2(130f, 60f), angle = 20f, drift = 8f },

@@ -283,8 +283,8 @@ namespace SomeGame.Track
                     var tint = FishTints[random.Next(FishTints.Length)];
                     c.Puffs = new SpriteRenderer[5];
                     for (int k = 0; k < c.Puffs.Length; k++) c.Puffs[k] = New("TropicalFish", R(0.55f, 0.75f), LifeUnderOrder, tint);
-                    c.Radius = R(2f, 3.5f);
-                    c.Speed = R(0.35f, 0.6f) * (random.Next(2) == 0 ? 1f : -1f);
+                    c.Radius = R(2.5f, 4f);
+                    c.Speed = R(0.18f, 0.3f) * (random.Next(2) == 0 ? 1f : -1f);
                     break;
                 }
                 case TrackLayout.LifeKind.Turtles:
@@ -465,10 +465,12 @@ namespace SomeGame.Track
                         break;
                     case TrackLayout.LifeKind.TropicalFish:
                     {
-                        float a = now * c.Speed + c.Phase;
+                        // (the angle builds up frame by frame: a school speeds up a little now and then, never spins)
                         float dart = 1f + 0.5f * Mathf.Max(0f, Mathf.Sin(now * 0.9f + c.Phase * 2f));
-                        Vector2 centre = c.Home + new Vector2(Mathf.Cos(a * dart), Mathf.Sin(a * dart)) * c.Radius;
-                        Vector2 tangent = new Vector2(-Mathf.Sin(a * dart), Mathf.Cos(a * dart)) * Mathf.Sign(c.Speed);
+                        c.Timer += dt * c.Speed * dart;
+                        float a = c.Timer + c.Phase;
+                        Vector2 centre = c.Home + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * c.Radius;
+                        Vector2 tangent = new Vector2(-Mathf.Sin(a), Mathf.Cos(a)) * Mathf.Sign(c.Speed);
                         Vector2 side = new(-tangent.y, tangent.x);
                         for (int k = 0; k < c.Puffs.Length; k++)
                         {

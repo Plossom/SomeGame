@@ -63,7 +63,7 @@ MonoBehaviour:
     lateral: 0
   - distance: 502
     lateral: 0
-  - distance: 806
+  - distance: 760
     lateral: 0
   waterfalls: []
   dusk: 0
@@ -155,7 +155,7 @@ MonoBehaviour:
   swells: []
   currents: []
   dolphins:
-  - 740
+  - 700
   footbridges: []
   ferry:
     branch: -1
@@ -198,6 +198,10 @@ MonoBehaviour:
       side: 0
       reef: 1
     - from: 706
+      to: 732
+      side: -1
+      reef: 1
+    - from: 758
       to: 780
       side: -1
       reef: 1
@@ -308,8 +312,8 @@ MonoBehaviour:
     plunge: 0
     barge: 0
     logs: 0
-  - from: 784
-    to: 798
+  - from: 738
+    to: 752
     rampLateral: 0
     period: 0
     raised: 0
