@@ -42,6 +42,25 @@ namespace SomeGame.Race
             Load(MapScene);
         }
 
+        /// <summary>True when the map should open on the race cards, on the race just played (MAP on the results).</summary>
+        public static bool OpenCardsOnMap { get; private set; }
+
+        /// <summary>Back to the map, which opens the race cards on the race just played.</summary>
+        public static void ReturnToMapCards()
+        {
+            if (Loading) return;
+            OpenCardsOnMap = true;
+            ReturnToMap();
+        }
+
+        /// <summary>Reads <see cref="OpenCardsOnMap"/> and clears it (it is for one visit to the map).</summary>
+        public static bool TakeOpenCards()
+        {
+            bool open = OpenCardsOnMap;
+            OpenCardsOnMap = false;
+            return open;
+        }
+
         /// <summary>Starts the practice drive (it counts as done once it has been finished or skipped: until then the app opens on it).</summary>
         public static void StartTutorial()
         {

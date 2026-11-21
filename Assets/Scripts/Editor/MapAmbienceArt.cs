@@ -84,7 +84,7 @@ namespace SomeGame.EditorTools
             float dx = x - 256f, dy = y - 256f, r = Mathf.Sqrt(dx * dx + dy * dy) / 256f;
             float a = Mathf.Atan2(dy, dx) / (Mathf.PI * 2f) * 16f;
             float wedge = Mathf.SmoothStep(0f, 1f, Mathf.Abs(Mathf.Repeat(a, 1f) - 0.5f) * 2f);
-            return White(Mathf.Clamp01(1f - r) * wedge * Mathf.SmoothStep(0f, 0.15f, r));
+            return White(Mathf.Clamp01(1f - r) * wedge * Mathf.SmoothStep(0f, 1f, r / 0.15f)); // (SmoothStep eases between its first two values: 0 to 1, not to 0.15)
         }, 100, false);
 
         /// <summary>A soft shadow strip: clear on the left, dark on the right (tinted and flipped in use).</summary>

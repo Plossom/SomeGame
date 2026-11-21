@@ -1805,6 +1805,14 @@ namespace SomeGame.EditorTools
             var checker = Img(band, "Checker", Color.white);
             checker.type = Image.Type.Tiled; checker.preserveAspect = false; checker.pixelsPerUnitMultiplier = 1.2f;
 
+            // Light rays turning behind the place, a soft glow under it (FinishScreen animates them).
+            var behind = At("Behind", safe, new Vector2(0.5f, 1f), new Vector2(0f, -280f), new Vector2(1100f, 360f));
+            var glow = Img(At("Glow", behind, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1300f, 900f)), "Glow", Theme.WithAlpha(Theme.Amber, 0f));
+            glow.preserveAspect = false;
+            var raysRt = At("Rays", behind, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1500f, 1500f));
+            raysRt.pivot = new Vector2(0.5f, 0.5f);
+            var rays = Img(raysRt, "Rays", Theme.WithAlpha(Theme.Amber, 0f));
+
             var raceLabel = Txt(At("Race", safe, new Vector2(1f, 1f), new Vector2(-60f, -90f), new Vector2(800f, 60f)), "VALLEY CUP · RACE 1", 42, Theme.Rust, _condItalic, TextAlignmentOptions.Right);
             raceLabel.characterSpacing = 8f;
             var position = Txt(At("Position", safe, new Vector2(0.5f, 1f), new Vector2(0f, -280f), new Vector2(1100f, 360f)), "1ST", 340, Theme.Orange, _black);
@@ -1841,7 +1849,20 @@ namespace SomeGame.EditorTools
 
             var bottom = At("Bottom", safe, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(1050f, 460f));
             var retry = SquareButton(bottom, "RetryButton", new Vector2(0f, 0f), new Vector2(0f, 80f), "IconRetry", 200f, white: true);
-            var next = BigRoundButton(bottom, "NextButton", new Vector2(1f, 0f), new Vector2(0f, 0f), 310f, "MAP", out _, out _, out _, out _);
+            // MAP beside Retry (the big button is NEXT, or MAP after the cup's last race).
+            var mapRt = At("MapButton", bottom, new Vector2(0f, 0f), new Vector2(240f, 80f), new Vector2(200f, 212f));
+            Img(At("Shadow", mapRt, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(200f, 200f)), "Round", Theme.Ink, sliced: true);
+            var mapFace = At("Face", mapRt, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(200f, 200f));
+            var mapBg = Img(mapFace, "Round", Color.white, sliced: true, raycast: true);
+            Txt(Stretch("Label", mapFace), "MAP", 64, Theme.Ink, _black).characterSpacing = 4f;
+            var map = mapRt.gameObject.AddComponent<Button>();
+            map.targetGraphic = mapBg; map.transition = Selectable.Transition.None;
+            mapRt.gameObject.AddComponent<ButtonFeedback>();
+            var next = BigRoundButton(bottom, "NextButton", new Vector2(1f, 0f), new Vector2(0f, 0f), 310f, "NEXT", out _, out _, out var nextText, out _);
+            Pop(bottom, 0.7f);
+
+            // Sparks, rings and confetti fly over everything.
+            var fx = Stretch("Fx", panel);
 
             panel.gameObject.SetActive(false);
             var finish = root.gameObject.AddComponent<FinishScreen>();
@@ -1850,7 +1871,9 @@ namespace SomeGame.EditorTools
             Set(so, "positionLabel", position); Set(so, "subtitle", subtitle); Set(so, "newBestTag", tag.gameObject);
             SetArray(so, "stars", stars); Set(so, "totalValue", totalValue); Set(so, "bestLapValue", bestValue); Set(so, "bestTimeValue", bestTime);
             Set(so, "nextStarLabel", nextLabel); Set(so, "nextStarValue", nextValue);
-            Set(so, "continueButton", next); Set(so, "retryButton", retry);
+            Set(so, "continueButton", next); Set(so, "continueLabel", nextText); Set(so, "mapButton", map); Set(so, "retryButton", retry);
+            Set(so, "rays", rays); Set(so, "glow", glow); Set(so, "fxLayer", fx);
+            Set(so, "confettiSprite", Sprite("Pill")); Set(so, "sparkSprite", Sprite("Sparkle")); Set(so, "ringSprite", Sprite("Ring"));
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

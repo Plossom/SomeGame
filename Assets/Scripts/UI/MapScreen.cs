@@ -166,17 +166,20 @@ namespace SomeGame.UI
             }
             SetLockedView(false, _cup);
             BuildDots();
-            StartCoroutine(OpenSequence(newRaces));
+            StartCoroutine(OpenSequence(newRaces, GameSession.TakeOpenCards()));
         }
 
         // Opening the map: everything pops in, the counters count up to what the last race earned, then
-        // any unlocks play.
-        System.Collections.IEnumerator OpenSequence(List<int> newRaces)
+        // any unlocks play. Back from the results' MAP: then the race cards open on the race just played.
+        System.Collections.IEnumerator OpenSequence(List<int> newRaces, bool openCards)
         {
             _celebrating = true;
+            var last = GameSession.CurrentLevel;
+            int played = openCards && last != null ? catalog.IndexOf(last) : -1;
             yield return Entrance();
             yield return CountUp();
-            yield return Celebrate(newRaces, true);
+            yield return Celebrate(newRaces, true, played < 0);
+            if (played >= 0 && played == _selected && !_switching && _wipeFrom == null) ShowInfo();
         }
 
         // The race stops pop up one after another along the road; the header pops in with them.
@@ -302,7 +305,7 @@ namespace SomeGame.UI
 
         // One after another: the new races unlock (the last one gets selected), then each newly unlocked
         // cup gets its big moment; after the last one the map switches to it. Input waits meanwhile.
-        System.Collections.IEnumerator Celebrate(List<int> races, bool cups)
+        System.Collections.IEnumerator Celebrate(List<int> races, bool cups, bool selectNewest = true)
         {
             _celebrating = true;
             yield return null; // let the layout settle
@@ -318,7 +321,7 @@ namespace SomeGame.UI
                 }
                 _hideFrom = int.MaxValue;
                 UnlockLog.SeeRaces(catalog);
-                Select(races[^1]); // drive to the newest race
+                if (selectNewest) Select(races[^1]); // drive to the newest race (not when its cards open on the race just played)
                 // A rival waits there: they come to say hello.
                 yield return new WaitForSecondsRealtime(0.9f);
                 bool met = false;
