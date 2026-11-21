@@ -64,9 +64,7 @@ namespace SomeGame.EditorTools
         {
             Color c = new(0, 0, 0, 0);
             float hull = SpeedHullSdf(x, y);
-            // A white racing stripe down the long foredeck, a thin white line along the gunwale.
-            float stripe = Mathf.Max(Mathf.Abs(x - 96f) - 9f + (y - 200f) * 0.07f, 200f - y);
-            c = Over(c, White(0.95f), Fill(stripe) * Fill(hull + 10f));
+            // A thin white line along the gunwale (no stripe down the foredeck: that's the decals' place).
             c = Over(c, White(0.85f), Fill(Shell(hull + 6f, 1.6f)) * Mathf.Clamp01((y - 130f) / 30f));
             // Two cleats near the bow (the decals have the foredeck).
             foreach (float cx in new[] { 80f, 112f }) c = Over(c, Hex("C9D3DC"), Fill(RoundRect(x, y, cx, 286, 2.6f, 6, 1.5f)));
