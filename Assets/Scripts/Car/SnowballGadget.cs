@@ -37,14 +37,14 @@ namespace SomeGame.Car
     }
 
     /// <summary>
-    /// A snowball from the snowball cannon: it flies straight on in a low arc (its shadow apart in the middle),
-    /// spinning; the first car it meets (not one in the air, nor the one that fired it) spins out like on oil, and
-    /// it bursts into snow. Out of puff it lands and bursts too.
+    /// A snowball from the snowball cannon (or a cannonball from Captain Kipper's broadside): it flies straight on in
+    /// a low arc (its shadow apart in the middle), spinning; the first car it meets (not one in the air, nor the one
+    /// that fired it) spins out like on oil, and it bursts into snow (or a splash). Out of puff it lands and bursts too.
     /// </summary>
     public class Snowball : MonoBehaviour
     {
         public const float Speed = 30f;
-        const float Life = 1.1f, Size = 1.25f;
+        const float Life = 1.1f;
 
         CarMovement _owner;
         Vector2 _velocity;
@@ -52,28 +52,36 @@ namespace SomeGame.Car
         Transform _ball, _shadow;
         float _size;
         bool _burst;
+        Color _burstFrom = Color.white, _burstTo = new(0.78f, 0.88f, 0.97f);
+        AudioClip _sound;
 
-        public static Snowball Fire(CarMovement owner, Sprite sprite, Vector2 at, Vector2 velocity)
+        /// <summary>A snowball: 1.25 across, bursting into snow.</summary>
+        public static Snowball Fire(CarMovement owner, Sprite sprite, Vector2 at, Vector2 velocity) =>
+            Fire(owner, sprite, at, velocity, 1.25f, Color.white, new Color(0.78f, 0.88f, 0.97f), SomeGame.Audio.AudioLibrary.Instance?.snowPoof);
+
+        /// <summary>Any ball: its size, the colours it bursts in and its sound when it does.</summary>
+        public static Snowball Fire(CarMovement owner, Sprite sprite, Vector2 at, Vector2 velocity, float size, Color burstFrom, Color burstTo, AudioClip sound)
         {
-            var go = new GameObject("Snowball");
+            var go = new GameObject("Ball");
             go.transform.position = at;
             var ball = go.AddComponent<Snowball>();
             ball._owner = owner;
             ball._velocity = velocity;
             ball._firedAt = Time.time;
-            ball._shadow = Child(go.transform, "Shadow", sprite, 13, new Color(0f, 0f, 0f, 0.3f));
-            ball._ball = Child(go.transform, "Ball", sprite, 14, Color.white);
+            ball._burstFrom = burstFrom; ball._burstTo = burstTo; ball._sound = sound;
+            ball._shadow = Child(go.transform, "Shadow", sprite, 13, new Color(0f, 0f, 0f, 0.3f), size);
+            ball._ball = Child(go.transform, "Ball", sprite, 14, Color.white, size);
             ball._size = ball._ball.localScale.x;
             var collider = go.AddComponent<CircleCollider2D>();
             collider.isTrigger = true;
-            collider.radius = Size * 0.5f;
+            collider.radius = size * 0.5f;
             var body = go.AddComponent<Rigidbody2D>();
             body.bodyType = RigidbodyType2D.Kinematic;
             body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             return ball;
         }
 
-        static Transform Child(Transform parent, string name, Sprite sprite, int order, Color color)
+        static Transform Child(Transform parent, string name, Sprite sprite, int order, Color color, float size)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -81,7 +89,7 @@ namespace SomeGame.Car
             sr.sprite = sprite;
             sr.sortingOrder = order;
             sr.color = color;
-            if (sprite != null) go.transform.localScale = Vector3.one * (Size / Mathf.Max(0.01f, sprite.bounds.size.x));
+            if (sprite != null) go.transform.localScale = Vector3.one * (size / Mathf.Max(0.01f, sprite.bounds.size.x));
             return go.transform;
         }
 
@@ -120,8 +128,8 @@ namespace SomeGame.Car
         void Burst()
         {
             _burst = true;
-            SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.snowPoof, 0.9f);
-            HayBale.Burst(transform.position, Color.white, new Color(0.78f, 0.88f, 0.97f));
+            SomeGame.Audio.GameAudio.Play(_sound, 0.9f);
+            HayBale.Burst(transform.position, _burstFrom, _burstTo);
             Destroy(gameObject);
         }
     }

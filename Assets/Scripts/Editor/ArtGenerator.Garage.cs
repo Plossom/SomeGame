@@ -141,7 +141,8 @@ namespace SomeGame.EditorTools
             Add("body.duck", "BoatDuck", "BoatDuck", "BoatDuckDetails");
             Add("shadow.boat", "BoatShadow");
             Add("top.radar", "TopRadar"); Add("top.surfboard", "TopSurfboard"); Add("top.parrot", "TopParrot");
-            Add("top.floatie", "TopFlamingoFloat"); Add("top.treasure", "TopTreasure");
+            Add("top.floatie", "TopFlamingoFloat"); Add("top.treasure", "TopTreasure"); Add("top.jollyroger", "TopJollyRoger");
+            Add("gadget.broadside", "Cannonball");
             Add("decal.wave", "DecalWave"); Add("decal.shark", "DecalShark"); Add("decal.palm", "DecalPalm");
             Add("decal.skull", "DecalSkull"); Add("decal.trident", "DecalTrident");
             Add("trail.bubbles", "TrailBubble"); Add("trail.rainbow", "Sparkle"); Add("trail.goldwake", "Sparkle");

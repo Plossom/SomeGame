@@ -513,6 +513,26 @@ MonoBehaviour:
       y: 216
       width: 64
       height: 56
+  - id: top.jollyroger
+    full: {fileID: 21300000, guid: 84a08798f8272440e92ce0cd9ecf1114, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 20
+      y: 64
+      width: 152
+      height: 165
+  - id: gadget.broadside
+    full: {fileID: 21300000, guid: 338aab08883004077bf4e0bf054e3f24, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: decal.wave
     full: {fileID: 21300000, guid: be760a20a9639472a9f68bdecadde0e8, type: 3}
     race: {fileID: 0}

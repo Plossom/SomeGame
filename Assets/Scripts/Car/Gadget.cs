@@ -34,6 +34,7 @@ namespace SomeGame.Car
         {
             "haybale" => Init(car.AddComponent<HayBaleGadget>(), ai),
             "snowball" => Init(car.AddComponent<SnowballGadget>(), ai),
+            "broadside" => Init(car.AddComponent<BroadsideGadget>(), ai),
             _ => null,
         };
 

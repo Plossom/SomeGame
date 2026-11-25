@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37c5d6ea3ac174d85a1db3563878df1b, type: 3}
+  m_Name: CaptainKipper
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.RivalCharacter
+  displayName: Captain Kipper
+  title: THE PIRATE WHO NEVER PAYS
+  bio: Says he sailed all seven seas, but only ever left Pirate Bay once, by mistake. Owes everybody money, loves his boat.
+  portrait: {fileID: 21300000, guid: 87bdb0ea06b9e4737a26791ec360e174, type: 3}
+  painting: {fileID: 21300000, guid: d2779c23758c14ec6aad2ee94d086f84, type: 3}
+  fullBody: {fileID: 21300000, guid: f0c7755fab33f47d39374c58602b42bf, type: 3}
+  driving: {fileID: 21300000, guid: f97d19e9b19f047c3af95c0cbb92e976, type: 3}
+  faces:
+  - {fileID: 21300000, guid: 2110ffa49fa954e53b8ed53594e83aa2, type: 3}
+  - {fileID: 21300000, guid: 76a8c61d87c3540408939d272ac75bff, type: 3}
+  - {fileID: 21300000, guid: 8770014fba1ed485184ddecf8291d622, type: 3}
+  - {fileID: 21300000, guid: aa201adafbb1742b3a7c56946a9ed026, type: 3}
+  - {fileID: 21300000, guid: 4c71d219397c046ba9c293ca52cb14e6, type: 3}
+  - {fileID: 21300000, guid: 9aef2e0133de74399b9a397e25556b12, type: 3}
+  homeRace: {fileID: 11400000, guid: 58a8a882dbacb4ed68d391f42598d17f, type: 2}
+  carColor: {r: 0.6039216, g: 0.38431373, b: 0.21176471, a: 1}
+  body: speedboat
+  top: jollyroger
+  decal: skull
+  gadget: broadside
+  meetLines:
+  - surprised|Arrr! Who goes there? A landlubber in MY bay?
+  - smug|Captain Kipper, terror of the seven seas! Well... of this bay, mostly.
+  - laugh|See these cannons? Come alongside me and BOOM! A broadside, right in your bilge!
+  - wink|Beat me round Pirate Bay and the broadside is yours. Fair trade, says I!
+  cardLine: Pirate Bay be MY waters. Turn back while ye can!
+  startLines:
+  - smug|Hoist the sails, ye scallywag!
+  - laugh|Stay off my port side... and my starboard side!
+  - wink|Last one round buys the rum! Er, lemonade!
+  winLines:
+  - laugh|Yo ho ho! Back to the shallows with ye!
+  - smug|That's how a captain sails!
+  - wink|Shiver me timbers, that was easy!
+  loseLines:
+  - angry|Barnacles! My peg leg slipped!
+  - surprised|Blow me down... ye beat the captain?
+  - thinking|Hmm. I'll blame the parrot.

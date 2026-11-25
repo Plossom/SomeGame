@@ -19,6 +19,7 @@ namespace SomeGame.EditorTools
             Write(f, "TopParrot", 192, 336, ParrotPixel, 192, false);
             Write(f, "TopFlamingoFloat", 192, 336, FloatiePixel, 192, false);
             Write(f, "TopTreasure", 192, 336, TreasurePixel, 192, false);
+            Write(f, "TopJollyRoger", 192, 336, JollyRogerPixel, 192, false);
             Write(f, "DecalWave", 192, 336, WaveDecal, 192, false);
             Write(f, "DecalShark", 192, 336, SharkDecal, 192, false);
             Write(f, "DecalPalm", 192, 336, PalmDecal, 192, false);
@@ -122,6 +123,40 @@ namespace SomeGame.EditorTools
             c = Over(c, Hex("E8B923"), Fill(RoundRect(x, y, 96, 262, 26, 1.5f, 1)) * Fill(lid));
             c = Over(c, Line, Stroke(Mathf.Min(chest, lid), 2.2f));
             return Over(c, Color.white, Fill(Star(x, y, 116, 252, 6, 2, 4)));
+        }
+
+        // Captain Kipper's: a brass cannon on each gunwale pointing out sideways (the broadside), and the Jolly Roger
+        // on a pole at the stern, streaming back.
+        static Color JollyRogerPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            foreach (float s in new[] { -1f, 1f })
+            {
+                float X(float dx) => 96 + s * dx;
+                float carriage = RoundRect(x, y, X(44), 214, 9, 12, 3);
+                c = Over(c, Hex("6B4426"), Fill(carriage));
+                c = Over(c, Line, Stroke(carriage, 2f));
+                float barrel = Mathf.Min(Capsule(x, y, X(40), 214, X(66), 214, 6.5f), Circle(x, y, X(38), 214, 7.5f));
+                float v = Mathf.Lerp(0.85f, 1.1f, Mathf.Clamp01((214f - y + 6f) / 12f));
+                c = Over(c, Shade(Hex("C9962E"), v), Fill(barrel));
+                c = Over(c, Hex("2A2F36"), Fill(Circle(x, y, X(66), 214, 3.6f)));
+                c = Over(c, Line, Stroke(barrel, 2f));
+            }
+            // The flag streams back from the pole (seen from above: a waving black sheet).
+            float wave = Mathf.Sin((112f - y) * 0.12f) * 3f;
+            float flag = RoundRect(x - wave, y, 146, 92, 14, 22, 2);
+            c = Over(c, new Color(0f, 0.05f, 0.1f, 0.3f), Fill(RoundRect(x - wave - 4f, y + 4f, 146, 92, 14, 22, 2)));
+            c = Over(c, Hex("1C1F24"), Fill(flag));
+            float bones = Mathf.Min(Capsule(x - wave, y, 138, 84, 154, 100, 1.8f), Capsule(x - wave, y, 138, 100, 154, 84, 1.8f));
+            c = Over(c, Color.white, Fill(bones) * Fill(flag));
+            float skull = Circle(x - wave, y, 146, 94, 5.5f);
+            c = Over(c, Color.white, Fill(skull));
+            c = Over(c, Hex("1C1F24"), Fill(Mathf.Min(Circle(x - wave, y, 144, 94, 1.5f), Circle(x - wave, y, 148, 94, 1.5f))));
+            c = Over(c, Line, Stroke(flag, 2f));
+            float pole = Circle(x, y, 146, 116, 4.5f);
+            c = Over(c, Hex("8E5A30"), Fill(pole));
+            c = Over(c, Hex("E8B923"), Fill(Circle(x, y, 146, 116, 2f)));
+            return Over(c, Line, Stroke(pole, 1.8f));
         }
 
         // ------------------------------------------------------------------ decals (on the bow, centre 96, 238)

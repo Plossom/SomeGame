@@ -11,7 +11,7 @@ namespace SomeGame.Race
     /// gadget for the race. One garage, a shelf per cup: each cup's things open with that cup's own stars, by
     /// beating its rival in their home race (their signature part and gadget), by its challenge, or with the cup's
     /// gold (all three stars in every race of the cup). Once open, a thing goes on your car everywhere. The rivals use the same
-    /// parts: Rosie Rust's car is the farm pickup with the hay-bale spoiler, Sven Snowdrift's a snowmobile with his snowball cannon. A part you no longer have (after a
+    /// parts: Rosie Rust's car is the farm pickup with the hay-bale spoiler, Sven Snowdrift's a snowmobile with his snowball cannon, Captain Kipper's a wooden speedboat under the Jolly Roger. A part you no longer have (after a
     /// reset) falls back to the first of its kind.
     /// </summary>
     public static class Garage
@@ -93,6 +93,7 @@ namespace SomeGame.Race
             new(S, Slot.Top, "surfboard", "SURFBOARD", "For when the waves get big.", Unlock.Stars, 3),
             new(S, Slot.Top, "parrot", "PARROT", "A parrot rides along. It talks a lot.", Unlock.Stars, 9),
             new(S, Slot.Top, "floatie", "FLAMINGO FLOAT", "An inflatable flamingo in tow.", Unlock.Stars, 15),
+            new(S, Slot.Top, "jollyroger", "JOLLY ROGER", "Captain Kipper's: a skull flag and a cannon each side.", Unlock.Rival, from: "CaptainKipper"),
             new(S, Slot.Top, "treasure", "TREASURE CHEST", "Three stars in every Water Cup race.", Unlock.CupGold, from: S),
 
             new(V, Slot.Decal, "none", "NOTHING", "Let the paint speak."),
@@ -127,6 +128,7 @@ namespace SomeGame.Race
             new(V, Slot.Gadget, "none", "NO GADGET", "Just you and the road."),
             new(V, Slot.Gadget, "haybale", "HAY BALE DROP", "Drop a hay bale behind you: whoever hits it spins out. Once a lap.", Unlock.Rival, from: "RosieRust"),
             new(W, Slot.Gadget, "snowball", "SNOWBALL CANNON", "Fire a snowball straight ahead: whoever it hits spins out. Once a lap.", Unlock.Rival, from: "SvenSnowdrift"),
+            new(S, Slot.Gadget, "broadside", "BROADSIDE", "Fire a cannonball out of each side: whoever it hits spins out. Once a lap.", Unlock.Rival, from: "CaptainKipper"),
         };
 
         /// <summary>What a vehicle's shop shows for a slot: its cup's things (and "nothing" / the plain tyre smoke,
