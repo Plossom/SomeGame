@@ -353,6 +353,26 @@ MonoBehaviour:
       y: 123
       width: 86
       height: 86
+  - id: top.snowcannon
+    full: {fileID: 21300000, guid: 2b097055207cb4de3bc1b1a6736169c0, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 40
+      y: 42
+      width: 109
+      height: 133
+  - id: gadget.snowball
+    full: {fileID: 21300000, guid: 9945b667134944b40bfc4e29c3b941a1, type: 3}
+    race: {fileID: 0}
+    details: {fileID: 0}
+    bounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   - id: decal.zigzag
     full: {fileID: 21300000, guid: 2d518bfa34efd451586bf9c91b678f94, type: 3}
     race: {fileID: 0}

@@ -6,7 +6,7 @@ namespace SomeGame.UI
 {
     /// <summary>
     /// The gadget's button in the race HUD (bottom right), shown when you raced with a gadget from the garage: its
-    /// icon on a round button, glowing and breathing while a bale is ready, greyed with NEXT LAP once used. Taps on
+    /// icon on a round button, glowing and breathing while it is ready, greyed with NEXT LAP once used. Taps on
     /// it don't steer or start a drift.
     /// </summary>
     public class GadgetButton : MonoBehaviour
@@ -16,7 +16,7 @@ namespace SomeGame.UI
         [SerializeField] UnityEngine.UI.Image face, icon, glow;
         [SerializeField] TMPro.TMP_Text label;
 
-        HayBaleGadget _gadget;
+        Gadget _gadget;
         float _usedAt = -10f;
 
         void Start()
@@ -26,7 +26,7 @@ namespace SomeGame.UI
             if (race != null && race.Player != null && race.Player.TryGetComponent(out _gadget))
             {
                 gameObject.SetActive(true);
-                icon.sprite = GarageArt.Instance?.Get("gadget.haybale")?.full;
+                icon.sprite = GarageArt.Instance?.Get("gadget." + _gadget.Id)?.full;
                 var rt = (RectTransform)transform;
                 SomeGame.Input.PlayerCarInput.ButtonAt = p => isActiveAndEnabled && RectTransformUtility.RectangleContainsScreenPoint(rt, p, null);
             }
@@ -36,7 +36,7 @@ namespace SomeGame.UI
 
         void Use()
         {
-            if (_gadget != null && _gadget.Drop()) _usedAt = Time.time;
+            if (_gadget != null && _gadget.Use()) _usedAt = Time.time;
         }
 
         void Update()
@@ -49,7 +49,7 @@ namespace SomeGame.UI
             icon.color = ready ? Color.white : new Color(1f, 1f, 1f, 0.4f);
             glow.gameObject.SetActive(ready);
             glow.transform.localScale = Vector3.one * (1f + 0.08f * Mathf.Sin(t * 5f));
-            label.text = spent && race.State == RaceState.Racing ? "NEXT LAP" : "HAY!";
+            label.text = spent && race.State == RaceState.Racing ? "NEXT LAP" : _gadget.Shout;
             float pop = Mathf.Clamp01((t - _usedAt) / 0.3f);
             transform.localScale = Vector3.one * (1f - 0.15f * Mathf.Sin(pop * Mathf.PI));
         }

@@ -97,7 +97,7 @@ namespace SomeGame.UI
         static readonly Vector2[] Anchors = { new(-140f, -40f), new(140f, -40f), new(40f, 110f), new(0f, 270f), new(0f, -330f), new(105f, -265f) };
 
         // The rivals still to come: their home races (names and faces stay a secret).
-        static readonly string[] MysteryHomes = { "VALLEY SPRINT", "RIVER JUMP", "LAGOON LEAP", "SNOWBALL VILLAGE", "FROSTBITE PARK", "THE ABYSS" };
+        static readonly string[] MysteryHomes = { "VALLEY SPRINT", "RIVER JUMP", "LAGOON LEAP", "FROSTBITE PARK", "THE ABYSS" };
 
         class Hotspot
         {

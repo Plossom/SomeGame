@@ -13,7 +13,7 @@ namespace SomeGame.EditorTools
     /// long seat with a backrest and a rack behind). Each as Snowmobile{Name} (with its skis, for the menus),
     /// Snowmobile{Name}Body (without, for races) and Snowmobile{Name}Details.</item>
     /// <item>Tops, laid over it: a tall windscreen, a safety flag, a cargo box, reindeer antlers, a snowman riding
-    /// pillion and the gold ice crown.</item>
+    /// pillion, the gold ice crown and Sven Snowdrift's snowball cannon.</item>
     /// <item>Decals on the hood: a zigzag, a pine tree, a penguin, a number one and the gold Winter crest.</item>
     /// </list>
     /// </summary>
@@ -39,6 +39,7 @@ namespace SomeGame.EditorTools
             Write(ArtGenerator.Folder, "TopSnowAntlers", 192, 336, AntlersPixel, 192, false);
             Write(ArtGenerator.Folder, "TopSnowman", 192, 336, SnowmanPixel, 192, false);
             Write(ArtGenerator.Folder, "TopIceCrown", 192, 336, IceCrownPixel, 192, false);
+            Write(ArtGenerator.Folder, "TopSnowCannon", 192, 336, SnowCannonPixel, 192, false);
             Write(ArtGenerator.Folder, "DecalZigzag", 192, 336, ZigzagPixel, 192, false);
             Write(ArtGenerator.Folder, "DecalPine", 192, 336, PinePixel, 192, false);
             Write(ArtGenerator.Folder, "DecalPenguin", 192, 336, PenguinPixel, 192, false);
@@ -297,6 +298,35 @@ namespace SomeGame.EditorTools
             c = Over(c, SledOutline, Stroke(nose, 1.5f));
             float eyes = Mathf.Min(Circle(x, y, 89, 104, 2.6f), Circle(x, y, 103, 104, 2.6f));
             return Over(c, SledOutline, Fill(eyes));
+        }
+
+        // Sven Snowdrift's: a teal cannon on a swivel at the back right, its barrel over the rider's shoulder pointing
+        // ahead (a snowflake on it, a gold muzzle ring), a pile of snowballs in a crate at the back left.
+        static Color SnowCannonPixel(float x, float y)
+        {
+            Color c = new(0, 0, 0, 0);
+            float crate = RoundRect(x, y, 66, 66, 22, 20, 5);
+            c = Over(c, Hex("9A6A3E"), Fill(crate));
+            c = Over(c, Hex("7A5030"), Fill(Shell(RoundRect(x, y, 66, 66, 15, 13, 3), 1.6f)));
+            c = Over(c, SledOutline, Stroke(crate, 2.5f));
+            foreach (var (bx, by) in new[] { (58f, 58f), (74f, 58f), (58f, 74f), (74f, 74f), (66f, 66f) })
+            {
+                float ball = Circle(x, y, bx, by, 7.5f);
+                c = Over(c, Hex("F4F8FB"), Fill(ball));
+                c = Over(c, new Color(0.78f, 0.86f, 0.94f), Fill(ball + 2.5f) * Mathf.Clamp01((x - bx) / 6f));
+                c = Over(c, SledOutline, Stroke(ball, 1.6f));
+            }
+            float mount = Circle(x, y, 128, 74, 17);
+            c = Over(c, Hex("2A2F36"), Fill(mount));
+            c = Over(c, SledOutline, Stroke(mount, 2.5f));
+            float barrel = Min(Capsule(x, y, 128, 74, 128, 160, 11f), RoundRect(x, y, 128, 162, 14, 6, 3));
+            float v = Mathf.Lerp(0.82f, 1.08f, Mathf.Clamp01((136f - x) / 16f));
+            c = Over(c, Shade(Hex("1FA5A0"), v), Fill(barrel));
+            c = Over(c, Hex("E8B923"), Fill(RoundRect(x, y, 128, 162, 14, 6, 3)));
+            c = Over(c, Hex("2A2F36"), Fill(Circle(x, y, 128, 165, 7)) * Fill(RoundRect(x, y, 128, 162, 14, 6, 3)));
+            float flake = Min(Capsule(x, y, 128, 104, 128, 124, 1.6f), Capsule(x, y, 119, 109, 137, 119, 1.6f), Capsule(x, y, 119, 119, 137, 109, 1.6f));
+            c = Over(c, Color.white, Fill(flake));
+            return Over(c, SledOutline, Stroke(barrel, 2.5f));
         }
 
         static Color IceCrownPixel(float x, float y)

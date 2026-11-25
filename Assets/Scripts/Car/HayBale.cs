@@ -75,14 +75,14 @@ namespace SomeGame.Car
             Vector2 side = (Vector2)(transform.position - car.transform.position);
             car.Slip(Vector3.Cross(car.transform.up, side).z > 0f ? -1 : 1);
             SomeGame.Audio.GameAudio.Play(SomeGame.Audio.AudioLibrary.Instance?.snowPoof, 0.9f);
-            Straw(transform.position);
+            Burst(transform.position, new Color(0.95f, 0.8f, 0.36f), new Color(0.78f, 0.6f, 0.2f));
             Destroy(gameObject);
         }
 
-        // A burst of straw.
-        static void Straw(Vector3 at)
+        // A burst of straw (or snow: Snowball), in shades between two colours.
+        internal static void Burst(Vector3 at, Color from, Color to)
         {
-            var go = new GameObject("StrawBurst");
+            var go = new GameObject("Burst");
             go.transform.position = at;
             var system = go.AddComponent<ParticleSystem>();
             system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -93,7 +93,7 @@ namespace SomeGame.Car
             main.startSpeed = new ParticleSystem.MinMaxCurve(3f, 8f);
             main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.2f);
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
-            main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.95f, 0.8f, 0.36f), new Color(0.78f, 0.6f, 0.2f));
+            main.startColor = new ParticleSystem.MinMaxGradient(from, to);
             main.gravityModifier = 0f;
             main.stopAction = ParticleSystemStopAction.Destroy;
             var emission = system.emission;

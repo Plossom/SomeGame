@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37c5d6ea3ac174d85a1db3563878df1b, type: 3}
+  m_Name: SvenSnowdrift
+  m_EditorClassIdentifier: Assembly-CSharp::SomeGame.Race.RivalCharacter
+  displayName: Sven Snowdrift
+  title: THE SHOW-OFF SKI INSTRUCTOR
+  bio: Teaches skiing, mostly to his own reflection. Has never once fallen over, he says. Loves his hair, hates losing.
+  portrait: {fileID: 21300000, guid: 187cf1aec13e04a4eb1755dfce722da1, type: 3}
+  painting: {fileID: 21300000, guid: 6715efd0f77014c07b3362b6f064bb72, type: 3}
+  fullBody: {fileID: 21300000, guid: aa9b06f2114684974af5a4edcadaa1ee, type: 3}
+  driving: {fileID: 21300000, guid: 392bada6936404d288970b28e174b379, type: 3}
+  faces:
+  - {fileID: 21300000, guid: aa2656abae32541a8a922f57190b9fed, type: 3}
+  - {fileID: 21300000, guid: 19a3800e734ee4300af8fad630c310df, type: 3}
+  - {fileID: 21300000, guid: c0ee454d6ec7440fcb9a7b8919fdff9e, type: 3}
+  - {fileID: 21300000, guid: f90acfd8dde09429eb97fa843a0b74df, type: 3}
+  - {fileID: 21300000, guid: ef7c484aac116470b959b5b1eef0485a, type: 3}
+  - {fileID: 21300000, guid: 02aa5befb1d0a4d809836ee50a1ed8a2, type: 3}
+  homeRace: {fileID: 11400000, guid: 56262b2cca29d4a6ca84e6e222eaa517, type: 2}
+  carColor: {r: 0.12156863, g: 0.64705884, b: 0.627451, a: 1}
+  body: sled
+  top: snowcannon
+  decal: zigzag
+  gadget: snowball
+  meetLines:
+  - surprised|Whoa, careful! You nearly scratched my goggles. Do you know who I am?
+  - smug|Sven Snowdrift. Ski instructor, snow legend, and the best hair on the mountain.
+  - laugh|This is my snowball cannon. Anyone in front of me gets a face full of snow!
+  - 'wink|Beat me on Glacier Pass and the cannon is yours. Spoiler: you won''t.'
+  cardLine: Glacier Pass is my mountain. Try not to cry, rookie!
+  startLines:
+  - smug|Watch and learn, rookie!
+  - wink|Stay in front of me... if you dare!
+  - laugh|Hope you like snowballs!
+  winLines:
+  - laugh|Ha! Did you see my hair? Not one strand moved!
+  - 'wink|Lesson one: never race Sven!'
+  - smug|Better luck next winter!
+  loseLines:
+  - angry|My goggles fogged up. Totally unfair!
+  - surprised|Wait... you beat ME?
+  - thinking|Hmm. Must have been the wax on my skis.

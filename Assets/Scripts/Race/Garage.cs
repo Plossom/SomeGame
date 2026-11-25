@@ -11,7 +11,7 @@ namespace SomeGame.Race
     /// gadget for the race. One garage, a shelf per cup: each cup's things open with that cup's own stars, by
     /// beating its rival in their home race (their signature part and gadget), by its challenge, or with the cup's
     /// gold (all three stars in every race of the cup). Once open, a thing goes on your car everywhere. The rivals use the same
-    /// parts: Rosie Rust's car is the farm pickup with the hay-bale spoiler. A part you no longer have (after a
+    /// parts: Rosie Rust's car is the farm pickup with the hay-bale spoiler, Sven Snowdrift's a snowmobile with his snowball cannon. A part you no longer have (after a
     /// reset) falls back to the first of its kind.
     /// </summary>
     public static class Garage
@@ -87,6 +87,7 @@ namespace SomeGame.Race
             new(W, Slot.Top, "cargo", "CARGO BOX", "Room for a thermos and a spare scarf.", Unlock.Stars, 11),
             new(W, Slot.Top, "antlers", "ANTLERS", "Reindeer antlers on your helmet.", Unlock.Stars, 16),
             new(W, Slot.Top, "snowman", "SNOWMAN", "A snowman riding along behind you.", Unlock.Stars, 21),
+            new(W, Slot.Top, "snowcannon", "SNOWBALL CANNON", "Sven Snowdrift's: a cannon and a pile of snowballs.", Unlock.Rival, from: "SvenSnowdrift"),
             new(W, Slot.Top, "icecrown", "ICE CROWN", "Three stars in every Winter Cup race.", Unlock.CupGold, from: W),
             new(S, Slot.Top, "radar", "RADAR ARCH", "An arch with a spinning radar.", Unlock.Stars, 2),
             new(S, Slot.Top, "surfboard", "SURFBOARD", "For when the waves get big.", Unlock.Stars, 3),
@@ -125,6 +126,7 @@ namespace SomeGame.Race
 
             new(V, Slot.Gadget, "none", "NO GADGET", "Just you and the road."),
             new(V, Slot.Gadget, "haybale", "HAY BALE DROP", "Drop a hay bale behind you: whoever hits it spins out. Once a lap.", Unlock.Rival, from: "RosieRust"),
+            new(W, Slot.Gadget, "snowball", "SNOWBALL CANNON", "Fire a snowball straight ahead: whoever it hits spins out. Once a lap.", Unlock.Rival, from: "SvenSnowdrift"),
         };
 
         /// <summary>What a vehicle's shop shows for a slot: its cup's things (and "nothing" / the plain tyre smoke,

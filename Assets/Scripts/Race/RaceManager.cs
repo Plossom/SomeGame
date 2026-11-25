@@ -150,7 +150,7 @@ namespace SomeGame.Race
             progress.Character = Character;
             progress.DisplayName = Character.displayName;
             SomeGame.Car.CarLook.Of(Character.body, Character.top, Character.decal, Character.carColor).Apply(rivals[0], TrackVehicle);
-            if (Character.gadget == "haybale") rivals[0].gameObject.AddComponent<SomeGame.Car.HayBaleGadget>().Ai = true;
+            SomeGame.Car.Gadget.Add(rivals[0].gameObject, Character.gadget, ai: true);
         }
 
         // What everyone races in on this track (each vehicle shows its own cup's parts from the garage).
@@ -162,8 +162,8 @@ namespace SomeGame.Race
             var vehicle = track.Layout != null ? track.Layout.vehicle : SomeGame.Track.TrackLayout.Vehicle.Car;
             SomeGame.Car.CarLook.For(vehicle).Apply(player, vehicle);
             // The gadget from the garage (not in the practice drive).
-            if (Garage.Equipped(Garage.Slot.Gadget, vehicle).Id == "haybale" && (Level == null || !(Level.isTutorial || Level.isChallenge)))
-                player.gameObject.AddComponent<SomeGame.Car.HayBaleGadget>();
+            if (Level == null || !(Level.isTutorial || Level.isChallenge))
+                SomeGame.Car.Gadget.Add(player.gameObject, Garage.Equipped(Garage.Slot.Gadget, vehicle).Id, ai: false);
         }
 
         // Rivals share their CarStats assets, so each gets a scaled runtime copy.

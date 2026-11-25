@@ -131,7 +131,8 @@ namespace SomeGame.EditorTools
             Add("body.tub", "SnowmobileTub", "SnowmobileTubBody", "SnowmobileTubDetails");
             Add("body.touring", "SnowmobileTouring", "SnowmobileTouringBody", "SnowmobileTouringDetails");
             Add("top.windscreen", "TopSnowScreen"); Add("top.flag", "TopSnowFlag"); Add("top.cargo", "TopSnowCargo");
-            Add("top.antlers", "TopSnowAntlers"); Add("top.snowman", "TopSnowman"); Add("top.icecrown", "TopIceCrown");
+            Add("top.antlers", "TopSnowAntlers"); Add("top.snowman", "TopSnowman"); Add("top.icecrown", "TopIceCrown"); Add("top.snowcannon", "TopSnowCannon");
+            Add("gadget.snowball", "Snowball");
             Add("decal.zigzag", "DecalZigzag"); Add("decal.pine", "DecalPine"); Add("decal.penguin", "DecalPenguin");
             Add("decal.one", "DecalNumberOne"); Add("decal.wintercrest", "DecalWinterCrest");
             // The boats' (the Water Cup's): one picture serves the menus and the race (no wheels to steer).
